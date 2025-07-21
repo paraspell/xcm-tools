@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -13,6 +13,7 @@ import {
   type TSendInternalOptions,
   type TXTokensTransferOptions
 } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Astar<TApi, TRes>
@@ -44,13 +45,7 @@ class Astar<TApi, TRes>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Assets',

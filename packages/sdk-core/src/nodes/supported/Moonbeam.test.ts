@@ -27,7 +27,7 @@ describe('Moonbeam', () => {
     api,
     asset: {
       symbol: 'GLMR',
-      amount: 100
+      amount: 100n
     }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -47,7 +47,7 @@ describe('Moonbeam', () => {
     const mockInputNative = {
       ...mockInput,
       scenario: 'ParaToPara',
-      asset: { symbol: 'GLMR', amount: 100 }
+      asset: { symbol: 'GLMR', amount: 100n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputNative)
@@ -78,7 +78,7 @@ describe('Moonbeam', () => {
     const mockInputDot = {
       ...mockInput,
       scenario: 'ParaToRelay',
-      asset: { symbol: 'DOT', amount: 100 }
+      asset: { symbol: 'DOT', amount: 100n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputDot)
@@ -117,7 +117,7 @@ describe('Moonbeam', () => {
           ]
         }
       },
-      amount: 100
+      amount: 100n
     }
     const mockInputUsdt = {
       ...mockInput,

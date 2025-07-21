@@ -19,7 +19,7 @@ describe('getXTokensParameters', () => {
         X2: [{ PalletInstance: '50' }, { Parachain: parachain.toString() }]
       }
     },
-    fun: { Fungible: '123456' }
+    fun: { Fungible: 123456n }
   })
 
   const version = Version.V4

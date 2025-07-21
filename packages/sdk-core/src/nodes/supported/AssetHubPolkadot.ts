@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
-import type { TAmount, TAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
@@ -44,7 +44,7 @@ import {
   type TPolkadotXCMTransferOptions,
   type TScenario
 } from '../../types'
-import { addXcmVersionHeader, assertHasLocation } from '../../utils'
+import { addXcmVersionHeader, assertHasLocation, assertIsForeign } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
 import { createMultiAsset } from '../../utils/multiAsset'
@@ -142,10 +142,7 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
+    assertIsForeign(asset)
     assertHasLocation(asset)
 
     const messageId = await generateMessageId(
@@ -213,10 +210,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new BridgeHaltedError()
     }
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
+    assertIsForeign(asset)
     assertHasLocation(asset)
 
     if (
@@ -276,10 +270,7 @@ class AssetHubPolkadot<TApi, TRes>
   ): TRes => {
     const { api, version, destination, asset, paraIdTo } = input
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
+    assertIsForeign(asset)
     assertHasLocation(asset)
 
     const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
@@ -435,7 +426,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   createCurrencySpec(
-    amount: TAmount,
+    amount: bigint,
     scenario: TScenario,
     version: Version,
     asset?: TAsset,
@@ -465,9 +456,7 @@ class AssetHubPolkadot<TApi, TRes>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
+    assertIsForeign(asset)
 
     if (asset.assetId !== undefined) {
       return api.callTxMethod({

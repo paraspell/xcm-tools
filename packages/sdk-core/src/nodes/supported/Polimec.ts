@@ -6,7 +6,13 @@ import {
   isForeignAsset,
   type TAsset
 } from '@paraspell/assets'
-import { isTMultiLocation, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import {
+  isTMultiLocation,
+  Parents,
+  replaceBigInt,
+  type TMultiLocation,
+  Version
+} from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
@@ -22,7 +28,12 @@ import type {
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
-import { createBeneficiaryLocation, createX1Payload } from '../../utils'
+import {
+  assertHasLocation,
+  assertIsForeign,
+  createBeneficiaryLocation,
+  createX1Payload
+} from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
@@ -42,7 +53,9 @@ const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
     return asset.multiLocation
   }
 
-  throw new InvalidCurrencyError(`Transfer of asset ${JSON.stringify(asset)} is not supported yet`)
+  throw new InvalidCurrencyError(
+    `Transfer of asset ${JSON.stringify(asset, replaceBigInt)} is not supported yet`
+  )
 }
 
 export const createTransferAssetsTransfer = <TRes>(
@@ -232,13 +245,8 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.multiLocation === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
-    }
+    assertIsForeign(asset)
+    assertHasLocation(asset)
 
     return api.callTxMethod({
       module: 'ForeignAssets',

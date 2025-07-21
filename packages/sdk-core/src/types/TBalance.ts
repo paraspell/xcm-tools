@@ -1,4 +1,9 @@
-import type { TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
+import type {
+  TCurrencyCore,
+  TCurrencyInput,
+  WithAmount,
+  WithComplexAmount
+} from '@paraspell/assets'
 import type {
   TNode,
   TNodeDotKsmWithRelayChains,
@@ -93,7 +98,7 @@ export type TGetOriginFeeDetailsOptionsBase = {
   /**
    * The currency to transfer.
    */
-  currency: WithAmount<TCurrencyCore>
+  currency: WithComplexAmount<TCurrencyCore>
   /**
    * The origin account.
    */

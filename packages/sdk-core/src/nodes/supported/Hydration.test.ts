@@ -63,7 +63,7 @@ describe('Hydration', () => {
 
   it('should call transferXTokens with currencyID', () => {
     const mockInput = {
-      asset: { assetId: '123', amount: '100' }
+      asset: { assetId: '123', amount: 100n }
     } as TXTokensTransferOptions<unknown, unknown>
 
     hydration.transferXTokens(mockInput)
@@ -96,7 +96,7 @@ describe('Hydration', () => {
         asset: {
           symbol: 'WETH',
           assetId: '0x1234567890abcdef',
-          amount: '1000',
+          amount: 1000n,
           multiLocation: {
             parents: 2,
             interior: {
@@ -152,7 +152,7 @@ describe('Hydration', () => {
       mockInput.asset = {
         symbol: 'DOT',
         assetId: '1',
-        amount: '1000'
+        amount: 1000n
       }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
@@ -171,7 +171,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer using assetId', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.asset = { symbol: 'DOT', assetId: '3', amount: '1000' }
+      mockInput.asset = { symbol: 'DOT', assetId: '3', amount: 1000n }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -191,7 +191,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'DOT', assetId: '1', amount: '1000' },
+        asset: { symbol: 'DOT', assetId: '1', amount: 1000n },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version
@@ -212,7 +212,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
+        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, multiLocation: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version
@@ -237,7 +237,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
+        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, multiLocation: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version

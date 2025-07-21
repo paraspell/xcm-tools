@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for ComposableFinance Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class ComposableFinance<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -15,9 +15,7 @@ class ComposableFinance<TApi, TRes> extends ParachainNode<TApi, TRes> implements
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return transferXTokens(input, BigInt(asset.assetId))
   }

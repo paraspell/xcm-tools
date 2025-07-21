@@ -24,11 +24,11 @@ describe('Astar', () => {
   let astar: Astar<unknown, unknown>
   const mockPolkadotXCMInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'DOT', amount: '100' }
+    asset: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   const mockXTokensInput = {
-    asset: { assetId: '123', amount: '100' }
+    asset: { assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

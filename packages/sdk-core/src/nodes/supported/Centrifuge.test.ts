@@ -17,7 +17,7 @@ describe('Centrifuge', () => {
     asset: {
       symbol: 'CFG',
       assetId: '123',
-      amount: '100'
+      amount: 100n
     }
   } as TXTokensTransferOptions<unknown, unknown>
 

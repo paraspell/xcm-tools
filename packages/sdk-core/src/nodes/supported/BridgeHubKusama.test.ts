@@ -15,7 +15,7 @@ describe('BridgeHubKusama', () => {
   let node: BridgeHubKusama<unknown, unknown>
   const mockInput = {
     scenario: 'RelayToPara',
-    asset: { symbol: 'KSM', amount: '100' }
+    asset: { symbol: 'KSM', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {

@@ -65,7 +65,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
   }
 
   createCurrencySpec(
-    amount: string,
+    amount: bigint,
     scenario: TScenario,
     version: Version,
     asset?: TAsset,

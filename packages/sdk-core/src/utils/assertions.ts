@@ -1,7 +1,7 @@
-import type { TAssetWithLocation } from '@paraspell/assets'
-import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
+import type { TAssetWithLocation, TForeignAsset, TForeignAssetWithId } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../errors'
 import type { TAddress, TDestination } from '../types'
@@ -29,6 +29,23 @@ export const assertAddressIsString: (
 
 export const assertHasLocation: (asset: TAsset) => asserts asset is TAssetWithLocation = asset => {
   if (!asset.multiLocation) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is missing multi-location`)
+    throw new InvalidCurrencyError(
+      `Asset ${JSON.stringify(asset, replaceBigInt)} is missing multi-location`
+    )
+  }
+}
+
+export const assertHasId: (asset: TAsset) => asserts asset is TForeignAssetWithId = asset => {
+  assertIsForeign(asset)
+  if (asset.assetId === undefined) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
+  }
+}
+
+export const assertIsForeign: (asset: TAsset) => asserts asset is TForeignAsset = asset => {
+  if (!isForeignAsset(asset)) {
+    throw new InvalidCurrencyError(
+      `Asset ${JSON.stringify(asset, replaceBigInt)} is not a foreign asset`
+    )
   }
 }

@@ -44,7 +44,7 @@ describe('prepareCommonExecuteXcm', () => {
     chain: 'Acala',
     destChain: 'Moonbeam',
     asset: {
-      amount: '1000000000000',
+      amount: 1000000000000n,
       multiLocation: { parents: 1, interior: { Here: null } }
     },
     fees: {

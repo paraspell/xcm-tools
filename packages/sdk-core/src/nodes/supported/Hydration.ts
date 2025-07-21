@@ -4,7 +4,6 @@ import {
   findAssetByMultiLocation,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
@@ -21,7 +20,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { createBeneficiaryLocation } from '../../utils'
+import { assertHasId, createBeneficiaryLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
@@ -152,9 +151,7 @@ class Hydration<TApi, TRes>
       return transferXTokens(input, Hydration.NATIVE_ASSET_ID)
     }
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return transferXTokens(input, Number(asset.assetId))
   }
@@ -192,13 +189,7 @@ class Hydration<TApi, TRes>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Tokens',

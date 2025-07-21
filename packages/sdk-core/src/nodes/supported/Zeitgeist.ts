@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -12,6 +12,7 @@ import {
   type TXTokensTransferOptions,
   type TZeitgeistAsset
 } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -27,9 +28,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
   private getCurrencySelection(asset: TAsset): TZeitgeistAsset | TXcmForeignAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Ztg'
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return { ForeignAsset: Number(asset.assetId) }
   }
@@ -43,13 +42,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'AssetManager',

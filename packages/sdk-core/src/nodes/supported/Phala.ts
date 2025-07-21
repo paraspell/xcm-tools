@@ -1,9 +1,10 @@
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTransfer } from '../../pallets/xTransfer'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferTransfer {
@@ -22,13 +23,7 @@ class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferT
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Assets',

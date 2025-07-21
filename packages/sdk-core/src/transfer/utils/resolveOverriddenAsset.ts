@@ -1,3 +1,4 @@
+import type { TAmount } from '@paraspell/assets'
 import {
   extractMultiAssetLoc,
   findAsset,
@@ -43,7 +44,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
       throw new InvalidCurrencyError('Fee asset cannot be an overridden multi location specifier')
     }
 
-    if (currency.multiasset.every(asset => isTMultiAsset(asset))) {
+    if (currency.multiasset.every(asset => isTMultiAsset<TAmount>(asset))) {
       if (!feeAsset) {
         throw new InvalidCurrencyError('Fee asset not provided')
       }
@@ -58,6 +59,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
         const ml = extractMultiAssetLoc(multiAsset)
         return {
           ...multiAsset,
+          fun: { Fungible: BigInt(multiAsset.fun.Fungible) },
           isFeeAsset: deepEqual(ml, feeAsset.multilocation)
         }
       })
@@ -91,7 +93,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
         isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
         ...createMultiAsset(
           originNode.version,
-          currency.amount,
+          BigInt(currency.amount),
           asset.multiLocation as TMultiLocation
         )
       }

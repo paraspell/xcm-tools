@@ -15,7 +15,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Peaq', () => {
   let peaq: Peaq<unknown, unknown>
   const mockInput = {
-    asset: { assetId: '123', amount: '100' },
+    asset: { assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 

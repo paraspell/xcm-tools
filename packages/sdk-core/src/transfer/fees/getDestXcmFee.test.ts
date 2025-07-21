@@ -48,7 +48,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'UNIT', amount: '1' },
+      currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
@@ -86,7 +86,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'UNIT', amount: '1' },
+      currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
@@ -125,7 +125,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'FOO', amount: '1' },
+      currency: { symbol: 'FOO', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
@@ -165,7 +165,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'UNIT', amount: '1' },
+      currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>)
 
@@ -193,7 +193,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'UNIT', amount: '1' },
+      currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
@@ -220,7 +220,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
-      currency: { symbol: 'UNIT', amount: '1' },
+      currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: true
     } as TGetFeeForDestNodeOptions<unknown, unknown>)
 

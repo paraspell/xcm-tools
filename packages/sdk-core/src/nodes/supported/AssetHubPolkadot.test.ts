@@ -95,7 +95,7 @@ describe('AssetHubPolkadot', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT', amount: '1000', isNative: true },
+    asset: { symbol: 'DOT', amount: 1000n, isNative: true },
     multiAsset: {} as TMultiAsset,
     scenario: 'ParaToRelay',
     destLocation: {} as TMultiLocation,
@@ -144,7 +144,7 @@ describe('AssetHubPolkadot', () => {
     it('throws InvalidCurrencyError for unsupported currency', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'UNKNOWN', amount: 100, isNative: true } as WithAmount<TNativeAsset>
+        asset: { symbol: 'UNKNOWN', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>
       }
       expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
     })
@@ -267,7 +267,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
+        asset: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -282,7 +282,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'KSM', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
+        asset: { symbol: 'KSM', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -326,7 +326,7 @@ describe('AssetHubPolkadot', () => {
         async ({ assetSymbol, feeAssetSymbol }) => {
           const input = {
             ...mockInput,
-            asset: { symbol: assetSymbol, amount: '100' },
+            asset: { symbol: assetSymbol, amount: 100n },
             feeAsset: { symbol: feeAssetSymbol }
           } as TPolkadotXCMTransferOptions<unknown, unknown>
           await assetHub.transferPolkadotXCM(input)
@@ -339,7 +339,7 @@ describe('AssetHubPolkadot', () => {
         const input = {
           ...mockInput,
           destination: 'Acala',
-          asset: { symbol: 'DOT', amount: '100' },
+          asset: { symbol: 'DOT', amount: 100n },
           feeAsset: { symbol: 'DOT' }
         } as TPolkadotXCMTransferOptions<unknown, unknown>
         await assetHub.transferPolkadotXCM(input)
@@ -385,7 +385,7 @@ describe('AssetHubPolkadot', () => {
       mockInput.asset = {
         symbol: 'WETH',
         assetId: '0x123',
-        amount: '1000',
+        amount: 1000n,
         multiLocation: {} as TMultiLocation
       }
 
@@ -466,7 +466,7 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for USDT currencySymbol', async () => {
       mockInput.asset = {
         symbol: 'USDT',
-        amount: '1000',
+        amount: 1000n,
         multiLocation: {
           parents: 1,
           interior: {
@@ -496,7 +496,7 @@ describe('AssetHubPolkadot', () => {
             }
           }
         } as TMultiLocation,
-        amount: '1000'
+        amount: 1000n
       }
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
@@ -510,7 +510,7 @@ describe('AssetHubPolkadot', () => {
       mockInput.destination = 'Hydration'
       mockInput.asset = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: 1000n,
         isNative: true
       } as WithAmount<TNativeAsset>
 
@@ -551,7 +551,7 @@ describe('AssetHubPolkadot', () => {
       const scenario: TScenario = 'RelayToPara'
       const mockAsset = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: 1000n,
         isNative: true
       } as WithAmount<TNativeAsset>
       const expectedSuperResult = {
@@ -580,7 +580,7 @@ describe('AssetHubPolkadot', () => {
       }
       const mockAsset = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: 1000n,
         isNative: true,
         multiLocation: mockMultiLocation
       } as WithAmount<TNativeAsset>
@@ -604,7 +604,7 @@ describe('AssetHubPolkadot', () => {
       }
       const mockAsset = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: 1000n,
         isNative: true,
         multiLocation: originalMultiLocation
       } as WithAmount<TNativeAsset>
@@ -644,7 +644,7 @@ describe('AssetHubPolkadot', () => {
       const scenario: TScenario = 'ParaToPara'
       const mockAsset = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: 1000n,
         isNative: true,
         multiLocation: {} as TMultiLocation
       } as WithAmount<TNativeAsset>
@@ -679,7 +679,7 @@ describe('AssetHubPolkadot', () => {
     it('should throw error if asset is not a foreign asset', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
+        asset: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
         scenario: 'RelayToPara',
         destination: 'Acala',
         to: 'AssetHubPolkadot'

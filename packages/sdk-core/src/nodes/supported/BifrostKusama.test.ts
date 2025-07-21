@@ -14,7 +14,7 @@ describe('BifrostKusama', () => {
   let bifrostKusama: BifrostKusama<unknown, unknown>
 
   const mockInput = {
-    asset: { symbol: 'BNC', amount: '100' }
+    asset: { symbol: 'BNC', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

@@ -1,7 +1,8 @@
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import { hasJunction, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { assertHasId, assertHasLocation, assertIsForeign } from '../../../utils'
 import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
@@ -11,12 +12,7 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   asset: TAsset
 ): Promise<bigint> => {
   if (node === 'Moonbeam' || node === 'Moonriver') {
-    if (!isForeignAsset(asset) || !asset.assetId || !asset.multiLocation) {
-      throw new InvalidCurrencyError(
-        `Asset ${JSON.stringify(asset)} has no multi-location or assetId`
-      )
-    }
-
+    assertHasId(asset)
     return getMoonbeamErc20Balance(node, asset.assetId, address)
   }
 
@@ -24,14 +20,10 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
     return api.getMythosForeignBalance(address)
   }
 
-  if (!isForeignAsset(asset)) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-  }
+  assertIsForeign(asset)
 
   if (node === 'Polimec') {
-    if (asset.multiLocation === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
-    }
+    assertHasLocation(asset)
 
     return api.getBalanceForeignAssetsPallet(address, asset.multiLocation)
   }

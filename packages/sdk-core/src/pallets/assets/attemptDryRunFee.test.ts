@@ -18,7 +18,7 @@ describe('attemptDryRunFee', () => {
 
   const mockOptions = {
     api: {},
-    currency: { amount: '1000' },
+    currency: { amount: 1000n },
     origin: 'Polkadot',
     destination: 'Kusama',
     builder: mockBuilder

@@ -21,7 +21,7 @@ describe('Interlay', () => {
     asset: {
       symbol: 'INTR',
       assetId: '456',
-      amount: '100'
+      amount: 100n
     }
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -48,7 +48,7 @@ describe('Interlay', () => {
       ...mockInput,
       asset: {
         symbol: 'INTR',
-        amount: '100',
+        amount: 100n,
         isNative: true
       } as WithAmount<TNativeAsset>
     }

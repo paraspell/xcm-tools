@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Zeitgeist', () => {
   let zeitgeist: Zeitgeist<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'ZTG', assetId: '123', amount: '100' }
+    asset: { symbol: 'ZTG', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

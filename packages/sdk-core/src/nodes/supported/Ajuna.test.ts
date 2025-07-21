@@ -76,7 +76,7 @@ describe('Ajuna', () => {
       vi.spyOn(ajuna, 'getNativeAssetSymbol').mockReturnValue('BNC')
       const badInput = {
         ...baseXTokensInput,
-        asset: { symbol: 'DOT', amount: '100' }
+        asset: { symbol: 'DOT', amount: 100n }
       } as TXTokensTransferOptions<unknown, unknown>
       expect(() => ajuna.transferXTokens(badInput)).toThrow(InvalidCurrencyError)
     })

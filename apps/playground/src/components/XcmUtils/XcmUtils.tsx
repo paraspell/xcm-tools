@@ -13,7 +13,7 @@ import type {
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
-  WithAmount,
+  WithComplexAmount,
 } from '@paraspell/sdk';
 import {
   Foreign,
@@ -236,8 +236,11 @@ const XcmUtils = () => {
           .to(to)
           .currency(
             currencyInputs.length === 1
-              ? (currencyInputs[0] as WithAmount<TCurrencyInput>)
-              : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+              ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
+              : {
+                  multiasset:
+                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
+                },
           )
           .feeAsset(body.feeAsset as TCurrencyInput)
           .address(address)
@@ -348,8 +351,11 @@ const XcmUtils = () => {
           .to(to)
           .currency(
             currencyInputs.length === 1
-              ? (currencyInputs[0] as WithAmount<TCurrencyInput>)
-              : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+              ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
+              : {
+                  multiasset:
+                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
+                },
           )
           .feeAsset(body.feeAsset as TCurrencyInput)
           .address(address)

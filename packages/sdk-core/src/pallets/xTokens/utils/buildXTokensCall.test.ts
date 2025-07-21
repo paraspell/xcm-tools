@@ -42,7 +42,7 @@ describe('buildXTokensCall', () => {
     origin: 'Acala',
     destination: 'Kusama',
     scenario: 'ParaToPara',
-    asset: { amount: '100' },
+    asset: { amount: 100n },
     address: '0x123',
     paraIdTo: 2000,
     version

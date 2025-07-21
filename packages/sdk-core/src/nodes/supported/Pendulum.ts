@@ -2,7 +2,7 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import { replaceBigInt, Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
@@ -22,7 +22,7 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       return { XCM: Number(asset.assetId) }
     }
 
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

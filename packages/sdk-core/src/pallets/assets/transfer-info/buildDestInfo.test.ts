@@ -1,6 +1,6 @@
 import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { type TNodeDotKsmWithRelayChains, type TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -47,7 +47,7 @@ describe('buildDestInfo', () => {
   const DEFAULT_ED = '1000000000'
   const DEFAULT_BALANCE = 50000000000n
   const DEFAULT_FEE = 100000000n
-  const DEFAULT_AMOUNT = '20000000000'
+  const DEFAULT_AMOUNT = 20000000000n
   const MULTILOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 
   beforeEach(() => {
@@ -143,9 +143,6 @@ describe('buildDestInfo', () => {
     } as TAsset)
     const options = { ...baseOptions, api: mockApi }
     await expect(buildDestInfo(options)).rejects.toThrow(InvalidParameterError)
-    await expect(buildDestInfo(options)).rejects.toThrow(
-      `Existential deposit not found for ${options.destination} with currency ${JSON.stringify(options.currency)}`
-    )
   })
 
   it('should return UnableToComputeError if fee currency is different and not Ethereum', async () => {

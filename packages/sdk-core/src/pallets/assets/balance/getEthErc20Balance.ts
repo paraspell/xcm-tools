@@ -1,9 +1,9 @@
 import type { TCurrencyCore } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, isForeignAsset } from '@paraspell/assets'
+import { findAssetForNodeOrThrow } from '@paraspell/assets'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { InvalidParameterError } from '../../../errors'
+import { assertHasId } from '../../../utils'
 
 const ERC20_ABI = [
   {
@@ -26,9 +26,7 @@ export const getEthErc20Balance = async (
 
   const asset = findAssetForNodeOrThrow('Ethereum', currency, null)
 
-  if (!isForeignAsset(asset) || !asset.assetId) {
-    throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} is not a foreign asset.`)
-  }
+  assertHasId(asset)
 
   if (asset.symbol === 'ETH') {
     return await client.getBalance({ address: address as `0x${string}` })

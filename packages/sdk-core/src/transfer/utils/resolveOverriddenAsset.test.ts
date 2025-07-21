@@ -93,7 +93,18 @@ describe('resolveOverriddenAsset', () => {
   })
 
   it('returns multiasset if all items in currency.multiasset are already TMultiAsset', () => {
-    const multiasset = [{}, {}] as TMultiAssetWithFee[]
+    const multiasset = [
+      {
+        fun: {
+          Fungible: 1000n
+        }
+      },
+      {
+        fun: {
+          Fungible: 2000n
+        }
+      }
+    ] as TMultiAssetWithFee[]
     const options = {
       ...defaultOptions,
       currency: { multiasset },
@@ -108,8 +119,8 @@ describe('resolveOverriddenAsset', () => {
 
   it('resolves multiasset by fetching assets when not all items are TMultiAsset', () => {
     const multiasset = [
-      { symbol: 'ASSET1', amount: '1000' },
-      { symbol: 'ASSET2', amount: '2000' }
+      { symbol: 'ASSET1', amount: 1000n },
+      { symbol: 'ASSET2', amount: 2000n }
     ]
     const options = {
       ...defaultOptions,
@@ -137,7 +148,7 @@ describe('resolveOverriddenAsset', () => {
   })
 
   it('throws an InvalidCurrencyError if fetched asset has no multiLocation', () => {
-    const multiasset = [{ symbol: 'ASSET_NO_LOCATION', amount: '500' }]
+    const multiasset = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
     const options = {
       ...defaultOptions,
       currency: { multiasset }

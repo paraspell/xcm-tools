@@ -42,7 +42,7 @@ describe('transferXTokens', () => {
       asset: {
         symbol: 'ACA',
         assetId: '123',
-        amount: '3000'
+        amount: 3000n
       },
       destination: 'Hydration'
       // fees omitted to test default
@@ -71,7 +71,7 @@ describe('transferXTokens', () => {
       asset: {
         symbol: 'ACA',
         assetId: '123',
-        amount: '3000'
+        amount: 3000n
       },
       destination: 'Hydration'
     }

@@ -1,6 +1,5 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAmount } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
@@ -16,6 +15,7 @@ import type { Version } from '@paraspell/sdk-common'
 import {
   isTMultiLocation,
   Parents,
+  replaceBigInt,
   type TEcosystemType,
   type TNodePolkadotKusama
 } from '@paraspell/sdk-common'
@@ -50,7 +50,12 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
-import { addXcmVersionHeader, assertHasLocation, createBeneficiaryLocation } from '../utils'
+import {
+  addXcmVersionHeader,
+  assertHasId,
+  assertHasLocation,
+  createBeneficiaryLocation
+} from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { createMultiAsset } from '../utils/multiAsset'
@@ -258,7 +263,7 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   createCurrencySpec(
-    amount: TAmount,
+    amount: bigint,
     scenario: TScenario,
     version: Version,
     _asset?: TAsset,
@@ -308,13 +313,7 @@ abstract class ParachainNode<TApi, TRes> {
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Tokens',
@@ -480,17 +479,15 @@ abstract class ParachainNode<TApi, TRes> {
 
     const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
 
-    const PARA_TO_PARA_FEE_DOT = 500000000 // 0.5 DOT
+    const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
 
-    const fee = useOnlyDepositInstruction
-      ? PARA_TO_PARA_FEE_DOT
-      : (bridgeFee + executionFee).toString()
+    const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
 
     const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
     if (!ethAsset) {
       throw new InvalidCurrencyError(
-        `Could not obtain Ethereum asset address for ${JSON.stringify(asset)}`
+        `Could not obtain Ethereum asset address for ${JSON.stringify(asset, replaceBigInt)}`
       )
     }
 
@@ -513,9 +510,7 @@ abstract class ParachainNode<TApi, TRes> {
         version
       )
     } else {
-      if (!ethAsset.assetId) {
-        throw new InvalidCurrencyError(`Ethereum asset ${JSON.stringify(ethAsset)} has no assetId`)
-      }
+      assertHasId(ethAsset)
 
       const messageId = await generateMessageId(
         api,

@@ -26,7 +26,7 @@ vi.mock('../../utils/multiAsset', () => ({
 
 describe('constructRelayToParaParameters', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
-  const mockAmount = 1000
+  const mockAmount = 1000n
   const mockAddress = 'address123'
   const mockParaId = 100
 

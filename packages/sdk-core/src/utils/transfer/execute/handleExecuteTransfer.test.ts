@@ -62,7 +62,7 @@ describe('handleExecuteTransfer', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT', amount: '1000', isNative: true },
+    asset: { symbol: 'DOT', amount: 1000n, isNative: true },
     multiAsset: {} as TMultiAsset,
     scenario: 'ParaToRelay',
     destLocation: {} as TMultiLocation,
@@ -100,7 +100,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '999' }
+      asset: { ...mockInput.asset, amount: 999n }
     }
     await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
       'Asset amount is too low, please increase the amount or use a different fee asset.'
@@ -111,7 +111,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '1500' }
+      asset: { ...mockInput.asset, amount: 1500n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -137,7 +137,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '1200' },
+      asset: { ...mockInput.asset, amount: 1200n },
       feeAsset: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -164,7 +164,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' }
+      asset: { ...mockInput.asset, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -184,7 +184,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' }
+      asset: { ...mockInput.asset, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -211,7 +211,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' }
+      asset: { ...mockInput.asset, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -283,7 +283,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' }
+      asset: { ...mockInput.asset, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -326,7 +326,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' },
+      asset: { ...mockInput.asset, amount: 10000n },
       feeAsset: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -379,7 +379,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: '10000' },
+      asset: { ...mockInput.asset, amount: 10000n },
       feeAsset: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>

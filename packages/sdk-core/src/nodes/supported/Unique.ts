@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Unique Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -23,9 +23,7 @@ class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       return transferXTokens(input, Unique.NATIVE_ASSET_ID)
     }
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return transferXTokens(input, Number(asset.assetId))
   }

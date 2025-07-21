@@ -22,7 +22,7 @@ describe('Darwinia', () => {
 
   const mockPolkadotXCMInput = {
     scenario: 'ParaToRelay',
-    asset: { symbol: 'DOT', amount: '100' }
+    asset: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -56,8 +56,8 @@ describe('Darwinia', () => {
   })
 
   it('should call createCurrencySpec with correct values', () => {
-    darwinia.createCurrencySpec('100', 'ParaToPara', darwinia.version)
-    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, '100', {
+    darwinia.createCurrencySpec(100n, 'ParaToPara', darwinia.version)
+    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -68,8 +68,8 @@ describe('Darwinia', () => {
   })
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    darwinia.createCurrencySpec('100', 'ParaToRelay', darwinia.version)
-    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, '100', {
+    darwinia.createCurrencySpec(100n, 'ParaToRelay', darwinia.version)
+    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {

@@ -4,7 +4,7 @@ import {
   getExistentialDepositOrThrow,
   normalizeSymbol
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { replaceBigInt, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -45,7 +45,7 @@ describe('verifyEdOnDestinationInternal', () => {
   const mockDestination = 'DestinationNode' as TNodeDotKsmWithRelayChains
   const mockAddress = 'destinationAddress'
   const mockSenderAddress = 'senderAddress'
-  const mockCurrency = { symbol: 'DOT', amount: '1000000000000' }
+  const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }
 
   const defaultOptions = {
     api: mockApi,
@@ -159,7 +159,7 @@ describe('verifyEdOnDestinationInternal', () => {
   it('should return false if amount after fee is not greater than ED when balance is less than ED', async () => {
     const testSpecificOptions = {
       ...defaultOptions,
-      currency: { ...defaultOptions.currency, amount: '100000000000' } // 10 DOT
+      currency: { ...defaultOptions.currency, amount: 10000000000n } // 10 DOT
     }
 
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n) // 0.5 DOT
@@ -196,7 +196,7 @@ describe('verifyEdOnDestinationInternal', () => {
       destination: { fee: undefined, currency: 'DOT' }
     } as TGetXcmFeeResult)
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrowError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency)} on node ${mockDestination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency, replaceBigInt)} on node ${mockDestination}.`
     )
   })
 

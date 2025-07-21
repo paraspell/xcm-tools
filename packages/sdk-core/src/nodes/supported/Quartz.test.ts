@@ -13,7 +13,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Quartz', () => {
   let quartz: Quartz<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'USDt', assetId: '123', amount: '100' }
+    asset: { symbol: 'USDt', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

@@ -21,7 +21,7 @@ const mockMultiLocation: TMultiLocation = {
 const mockMultiAsset: TMultiAsset = {
   id: mockMultiLocation,
   fun: {
-    Fungible: '123'
+    Fungible: 123n
   }
 }
 
@@ -49,7 +49,7 @@ describe('XTransferTransferImpl', () => {
       api: mockApi,
       origin: 'Phala',
       destination: 'Basilisk',
-      asset: { symbol: 'KSM', amount: 100 }
+      asset: { symbol: 'KSM', amount: 100n }
     } as TXTransferTransferOptions<unknown, unknown>
 
     vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
@@ -77,7 +77,7 @@ describe('XTransferTransferImpl', () => {
       api: mockApi,
       origin: 'Phala',
       destination: 'Karura',
-      asset: { symbol: 'KSM', amount: 100 }
+      asset: { symbol: 'KSM', amount: 100n }
     } as TXTransferTransferOptions<unknown, unknown>
 
     vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)

@@ -7,7 +7,11 @@ import {
   isAssetEqual,
   isNodeEvm
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import {
+  replaceBigInt,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -95,7 +99,7 @@ describe('getTransferInfo', () => {
       address: 'receiverCharlie',
       currency: {
         symbol: 'DOT',
-        amount: '10000000000',
+        amount: 10000000000n,
         type: 'NATIVE'
       } as WithAmount<TCurrencyCore>,
       feeAsset: { symbol: 'DOT', type: 'NATIVE' } as TCurrencyCore
@@ -322,7 +326,7 @@ describe('getTransferInfo', () => {
 
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
     await expect(getTransferInfo(options)).rejects.toThrow(
-      `Cannot get origin xcm fee for currency ${JSON.stringify(options.currency)} on node ${options.origin}.`
+      `Cannot get origin xcm fee for currency ${JSON.stringify(options.currency, replaceBigInt)} on node ${options.origin}.`
     )
     expect(mockApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
     expect(mockApi.disconnect).toHaveBeenCalled()
@@ -332,7 +336,7 @@ describe('getTransferInfo', () => {
     const ahOrigin = 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
     const sameCurrency = {
       symbol: 'USDT',
-      amount: '50000000'
+      amount: 50000000n
     } as WithAmount<TCurrencyCore>
     vi.mocked(isNodeEvm).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)

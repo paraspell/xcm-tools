@@ -20,7 +20,7 @@ const mockMultiLocation: TMultiLocation = {
 const mockMultiAsset: TMultiAsset = {
   id: mockMultiLocation,
   fun: {
-    Fungible: '123'
+    Fungible: 123n
   }
 }
 
@@ -40,7 +40,7 @@ describe('transferPolkadotXcm', () => {
     destLocation: mockMultiLocation,
     beneficiaryLocation: mockMultiLocation,
     multiAsset: mockMultiAsset,
-    asset: { amount: '123' } as WithAmount<TAsset>,
+    asset: { amount: 123n } as WithAmount<TAsset>,
     version: Version.V4
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 

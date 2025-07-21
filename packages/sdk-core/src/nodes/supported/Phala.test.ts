@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTransfer', () => ({
 describe('Phala', () => {
   let phala: Phala<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'PHA', amount: '100' }
+    asset: { symbol: 'PHA', amount: 100n }
   } as TXTransferTransferOptions<unknown, unknown>
 
   beforeEach(() => {

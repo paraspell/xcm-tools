@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Altair', () => {
   let altair: Altair<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'AIR', assetId: '1', amount: '100' }
+    asset: { symbol: 'AIR', assetId: '1', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

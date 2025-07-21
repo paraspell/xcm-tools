@@ -34,7 +34,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     throw new NodeNotSupportedError()
   }
 
-  createCurrencySpec(amount: string, scenario: TScenario, version: Version, _asset?: TAsset) {
+  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAsset) {
     if (scenario === 'ParaToPara') {
       return createMultiAsset(version, amount, {
         parents: Parents.ZERO,

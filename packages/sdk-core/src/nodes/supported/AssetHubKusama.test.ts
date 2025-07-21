@@ -59,7 +59,7 @@ describe('transferPolkadotXCM', () => {
   describe('createCurrencySpec', () => {
     it('should throw InvalidCurrencyError for ParaToPara if asset has no multiLocation', () => {
       const scenario: TScenario = 'ParaToPara'
-      const amount = '1000000000'
+      const amount = 1000000000n
       const assetWithoutML = { symbol: 'DOT', multiLocation: DOT_MULTILOCATION } as TAsset
 
       const spy = vi.spyOn(node, 'createCurrencySpec')

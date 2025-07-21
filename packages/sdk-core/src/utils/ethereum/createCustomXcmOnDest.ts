@@ -6,7 +6,7 @@ import {
   isNodeEvm
 } from '@paraspell/assets'
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
@@ -27,7 +27,9 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   messageId: string
 ) => {
   if (!isForeignAsset(asset)) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    throw new InvalidCurrencyError(
+      `Asset ${JSON.stringify(asset, replaceBigInt)} is not a foreign asset`
+    )
   }
 
   assertHasLocation(asset)
@@ -44,7 +46,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
 
   if (!ethAsset) {
     throw new InvalidCurrencyError(
-      `Could not obtain Ethereum asset address for ${JSON.stringify(asset)}`
+      `Could not obtain Ethereum asset address for ${JSON.stringify(asset, replaceBigInt)}`
     )
   }
 

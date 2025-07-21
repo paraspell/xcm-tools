@@ -87,7 +87,7 @@ describe('createCustomXcmOnDest', () => {
       asset: {
         symbol: 'DOT',
         multiLocation: {} as TMultiLocation,
-        amount: '1000000'
+        amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -103,7 +103,7 @@ describe('createCustomXcmOnDest', () => {
       asset: {
         symbol: 'ETH',
         multiLocation: mockMultiLocation,
-        amount: '1000000'
+        amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -118,7 +118,7 @@ describe('createCustomXcmOnDest', () => {
       asset: {
         symbol: 'ETH',
         multiLocation: mockMultiLocation,
-        amount: '1000000'
+        amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -134,7 +134,7 @@ describe('createCustomXcmOnDest', () => {
       asset: {
         symbol: 'ETH',
         multiLocation: mockMultiLocation,
-        amount: '1000000'
+        amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -155,7 +155,7 @@ describe('createCustomXcmOnDest', () => {
       asset: {
         symbol: 'ETH',
         multiLocation: mockMultiLocation,
-        amount: '1000000'
+        amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 

@@ -15,7 +15,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Unique', () => {
   let unique: Unique<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'GLMR', assetId: '123', amount: '100' }
+    asset: { symbol: 'GLMR', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
