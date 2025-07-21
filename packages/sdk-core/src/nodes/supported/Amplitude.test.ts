@@ -13,7 +13,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Amplitude', () => {
   let amplitude: Amplitude<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'AMPE', assetId: '123', amount: '100' }
+    asset: { symbol: 'AMPE', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

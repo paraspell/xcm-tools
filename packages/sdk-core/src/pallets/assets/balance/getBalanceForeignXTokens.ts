@@ -1,8 +1,8 @@
 import type { TAsset } from '@paraspell/assets'
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
+import { assertHasId } from '../../../utils'
 
 export const getBalanceForeignXTokens = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -11,9 +11,7 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
   asset: TAsset
 ): Promise<bigint> => {
   if (node === 'Astar' || node === 'Shiden') {
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))
   }

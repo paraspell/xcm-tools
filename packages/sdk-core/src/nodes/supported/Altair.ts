@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Altair Parachain
 
 import type { TAsset } from '@paraspell/assets'
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TForeignOrNativeAsset, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -17,9 +17,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
   private getCurrencySelection(asset: TAsset): TForeignOrNativeAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return { ForeignAsset: Number(asset.assetId) }
   }
@@ -33,13 +31,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Tokens',

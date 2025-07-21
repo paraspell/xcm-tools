@@ -54,7 +54,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT', amount: '1000' },
+      currency: { symbol: 'DOT', amount: 1000n },
       builder: mockBuilder
     })
 
@@ -65,7 +65,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'Astar',
       senderAddress: 'validAddress',
-      currency: { symbol: 'DOT', amount: '1000' },
+      currency: { symbol: 'DOT', amount: 1000n },
       disableFallback: false
     })
   })
@@ -84,7 +84,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'USDT', amount: '1000' },
+      currency: { symbol: 'USDT', amount: 1000n },
       builder: mockBuilder
     })
 
@@ -108,7 +108,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT', amount: '1000' },
+      currency: { symbol: 'DOT', amount: 1000n },
       builder: mockBuilder
     })
 
@@ -128,7 +128,7 @@ describe('getTransferableAmount', () => {
         senderAddress: 'validAddress',
         origin: 'Astar',
         destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT', amount: '1000' },
+        currency: { symbol: 'DOT', amount: 1000n },
         builder: mockBuilder
       })
     ).rejects.toThrow(
@@ -151,7 +151,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT', amount: '1000' },
+      currency: { symbol: 'DOT', amount: 1000n },
       builder: mockBuilder
     })
 
@@ -176,7 +176,7 @@ describe('getTransferableAmount', () => {
         senderAddress: 'validAddress',
         origin: 'Astar',
         destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT', amount: '1000' },
+        currency: { symbol: 'DOT', amount: 1000n },
         builder: mockBuilder
       })
     ).rejects.toThrow()

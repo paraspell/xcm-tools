@@ -19,7 +19,7 @@ vi.mock('../config', () => ({
 describe('Basilisk', () => {
   let basilisk: Basilisk<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'BSX', assetId: '123', amount: '100' }
+    asset: { symbol: 'BSX', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   const mockProviders = ['wss://non-preferred-rpc', 'wss://preferred-dwellir-rpc']

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for CrustShadow Parachain
 
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -10,7 +10,7 @@ import {
   type TReserveAsset,
   type TXTokensTransferOptions
 } from '../../types'
-import { getNode } from '../../utils'
+import { assertHasId, getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -23,9 +23,7 @@ class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTok
       return 'SelfReserve'
     }
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return { OtherReserve: BigInt(asset.assetId) }
   }

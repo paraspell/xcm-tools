@@ -30,7 +30,7 @@ describe('transferRelayToPara', () => {
 
   const baseOptions = {
     origin: 'Polkadot',
-    asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
+    asset: { symbol: 'DOT', amount: 100n } as WithAmount<TAsset>,
     address: 'some-address',
     version: Version.V4
   } as Partial<TRelayToParaOptions<unknown, unknown>>

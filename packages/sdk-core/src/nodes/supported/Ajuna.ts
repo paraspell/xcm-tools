@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Ajuna Parachain on Polkadot
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -15,6 +15,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Ajuna<TApi, TRes>
@@ -59,13 +60,7 @@ class Ajuna<TApi, TRes>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, asset, address } = options
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
-    }
-
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return api.callTxMethod({
       module: 'Assets',

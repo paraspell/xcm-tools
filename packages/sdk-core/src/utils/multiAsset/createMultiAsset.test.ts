@@ -11,7 +11,7 @@ vi.mock('../addXcmVersionHeader', () => ({
 }))
 
 describe('MultiAsset Creation', () => {
-  const mockAmount: TAmount = '1000000000000'
+  const mockAmount: TAmount = 1000000000000n
   const mockMultiLocation: TMultiLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
 
   describe('createMultiAsset', () => {

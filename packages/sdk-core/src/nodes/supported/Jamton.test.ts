@@ -1,17 +1,12 @@
 import type { TAsset, TMultiAsset } from '@paraspell/assets'
-import {
-  findAssetForNodeOrThrow,
-  InvalidCurrencyError,
-  isForeignAsset,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
-import { assertHasLocation, createMultiAsset } from '../../utils'
+import { assertHasId, assertHasLocation, createMultiAsset } from '../../utils'
 import { getNode } from '../../utils/getNode'
 import type Jamton from './Jamton'
 
@@ -28,6 +23,7 @@ vi.mock('@paraspell/assets', () => ({
 
 vi.mock('../../utils', () => ({
   assertHasLocation: vi.fn(),
+  assertHasId: vi.fn(),
   createMultiAsset: vi.fn()
 }))
 
@@ -56,108 +52,80 @@ describe('Jamton', () => {
       version: Version.V4
     } as TXTokensTransferOptions<unknown, unknown>
 
-    describe('native assets', () => {
-      it('should handle DOTON native asset', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'DOTON', amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
+    it('should handle DOTON native asset', () => {
+      const input = {
+        ...baseInput,
+        asset: { symbol: 'DOTON', amount: 100n }
+      } as TXTokensTransferOptions<unknown, unknown>
 
-        vi.mocked(isForeignAsset).mockReturnValue(false)
+      vi.mocked(isForeignAsset).mockReturnValue(false)
 
-        jamton.transferXTokens(input)
+      jamton.transferXTokens(input)
 
-        expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 0 })
-      })
-
-      it('should handle stDOT native asset', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'stDOT', amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
-
-        vi.mocked(isForeignAsset).mockReturnValue(false)
-
-        jamton.transferXTokens(input)
-
-        expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 1 })
-      })
-
-      it('should handle jamTON native asset', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'jamTON', amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
-
-        vi.mocked(isForeignAsset).mockReturnValue(false)
-
-        jamton.transferXTokens(input)
-
-        expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 2 })
-      })
+      expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 0 })
     })
 
-    describe('foreign assets', () => {
-      it('should handle foreign asset with assetId', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: '100' }
-        }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
-        vi.mocked(isSymbolMatch).mockReturnValue(false)
+    it('should handle stDOT native asset', () => {
+      const input = {
+        ...baseInput,
+        asset: { symbol: 'stDOT', amount: 100n }
+      } as TXTokensTransferOptions<unknown, unknown>
 
-        jamton.transferXTokens(input)
+      vi.mocked(isForeignAsset).mockReturnValue(false)
 
-        expect(transferXTokens).toHaveBeenCalledWith(input, { ForeignAsset: 123 })
-      })
+      jamton.transferXTokens(input)
 
-      it('should throw InvalidCurrencyError if foreign asset has no assetId', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'USDT', amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
-
-        vi.mocked(isForeignAsset).mockReturnValue(true)
-
-        expect(() => jamton.transferXTokens(input)).toThrow(InvalidCurrencyError)
-        expect(() => jamton.transferXTokens(input)).toThrow(
-          'Asset {"symbol":"USDT","amount":"100"} has no assetId'
-        )
-      })
-
-      it('should throw InvalidCurrencyError if foreign asset has undefined assetId', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'USDT', assetId: undefined, amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
-
-        vi.mocked(isForeignAsset).mockReturnValue(true)
-
-        expect(() => jamton.transferXTokens(input)).toThrow(InvalidCurrencyError)
-      })
+      expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 1 })
     })
 
-    describe('non-foreign assets without native asset ID', () => {
-      it('should throw InvalidCurrencyError if non-foreign asset has no assetId', () => {
-        const input = {
-          ...baseInput,
-          asset: { symbol: 'DOT', amount: '100' }
-        } as TXTokensTransferOptions<unknown, unknown>
+    it('should handle jamTON native asset', () => {
+      const input = {
+        ...baseInput,
+        asset: { symbol: 'jamTON', amount: 100n }
+      } as TXTokensTransferOptions<unknown, unknown>
 
-        vi.mocked(isForeignAsset).mockReturnValue(false)
+      vi.mocked(isForeignAsset).mockReturnValue(false)
 
-        expect(() => jamton.transferXTokens(input)).toThrow(InvalidCurrencyError)
-        expect(() => jamton.transferXTokens(input)).toThrow(
-          'Asset {"symbol":"DOT","amount":"100"} has no assetId'
-        )
-      })
+      jamton.transferXTokens(input)
+
+      expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 2 })
+    })
+
+    it('should handle foreign asset with assetId', () => {
+      const input = {
+        ...baseInput,
+        asset: { symbol: 'USDT', assetId: '123', amount: 100n }
+      }
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+      vi.mocked(isSymbolMatch).mockReturnValue(false)
+
+      jamton.transferXTokens(input)
+
+      expect(assertHasId).toHaveBeenCalledWith(input.asset)
+      expect(assertHasId).toHaveBeenCalledTimes(1)
+
+      expect(transferXTokens).toHaveBeenCalledWith(input, { ForeignAsset: 123 })
+    })
+
+    it('should NOT call assertHasId for native assets', () => {
+      const input = {
+        ...baseInput,
+        asset: { symbol: 'DOTON', amount: 100n }
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValue(false)
+
+      jamton.transferXTokens(input)
+
+      expect(assertHasId).not.toHaveBeenCalled()
+      expect(transferXTokens).toHaveBeenCalledWith(input, { Native: 0 })
     })
 
     describe('scenario validation', () => {
       it('should throw ScenarioNotSupportedError for ParaToPara to non-AssetHubPolkadot', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: '100' },
+          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
           scenario: 'ParaToPara' as const,
           destination: 'Acala' as const
         }
@@ -173,7 +141,7 @@ describe('Jamton', () => {
       it('should allow ParaToPara to AssetHubPolkadot', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: '100' },
+          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
           scenario: 'ParaToPara' as const,
           destination: 'AssetHubPolkadot' as const
         }
@@ -188,7 +156,7 @@ describe('Jamton', () => {
       it('should allow non-ParaToPara scenarios to any destination', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: '100' },
+          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
           scenario: 'ParaToRelay' as const,
           destination: 'Acala' as const
         }
@@ -213,7 +181,7 @@ describe('Jamton', () => {
           asset: {
             symbol: 'WUD',
             assetId: '456',
-            amount: '1000',
+            amount: 1000n,
             multiLocation: {}
           }
         } as TXTokensTransferOptions<unknown, unknown>
@@ -236,10 +204,10 @@ describe('Jamton', () => {
         expect(assertHasLocation).toHaveBeenCalledWith(mockUsdtAsset)
         expect(createMultiAsset).toHaveBeenCalledWith(
           Version.V4,
-          180_000,
+          180_000n,
           mockUsdtAsset.multiLocation
         )
-        expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, '1000', input.asset.multiLocation)
+        expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.asset.multiLocation)
 
         expect(transferXTokens).toHaveBeenCalledWith(
           {
@@ -256,7 +224,7 @@ describe('Jamton', () => {
       it('should not treat non-WUD symbols as WUD', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: '100' }
+          asset: { symbol: 'USDT', assetId: '123', amount: 100n }
         }
         vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
@@ -272,7 +240,7 @@ describe('Jamton', () => {
       it('should handle string assetId conversion to number', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '999', amount: '100' }
+          asset: { symbol: 'USDT', assetId: '999', amount: 100n }
         }
         vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
@@ -285,7 +253,7 @@ describe('Jamton', () => {
       it('should handle numeric assetId', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '777', amount: '100' }
+          asset: { symbol: 'USDT', assetId: '777', amount: 100n }
         } as TXTokensTransferOptions<unknown, unknown>
 
         vi.mocked(isForeignAsset).mockReturnValue(true)

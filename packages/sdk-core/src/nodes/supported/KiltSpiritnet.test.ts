@@ -17,7 +17,7 @@ describe('KiltSpiritnet', () => {
     scenario: 'ParaToPara',
     asset: {
       symbol: 'KILT',
-      amount: '100'
+      amount: 100n
     }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 

@@ -27,7 +27,7 @@ describe('isSufficientOrigin', () => {
   const destination = 'Astar'
   const senderAddress = 'Alice'
   const feeNative = 100n
-  const currency = { amount: '50' } as WithAmount<TCurrencyCore>
+  const currency = { amount: 50n } as WithAmount<TCurrencyCore>
   const asset = { symbol: 'ACA' } as TAsset
 
   beforeEach(() => {

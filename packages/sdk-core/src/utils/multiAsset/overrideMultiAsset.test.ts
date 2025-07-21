@@ -23,7 +23,7 @@ vi.mock('./createMultiAsset', () => ({
 
 describe('MultiAsset Override Logic', () => {
   const mockVersion = Version.V4
-  const mockAmount: TAmount = '1000000000000'
+  const mockAmount: TAmount = 1000000000000n
   const mockMultiLocation: TMultiLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
   const mockMultiAsset: TMultiAsset = {
     id: { Concrete: mockMultiLocation },
@@ -42,7 +42,7 @@ describe('MultiAsset Override Logic', () => {
     })
 
     it('should return a new asset array if override is a TMultiLocation', () => {
-      const newAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: '500' } }
+      const newAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: 500n } }
       vi.mocked(isTMultiLocation).mockReturnValue(true)
       vi.mocked(createMultiAsset).mockReturnValue(newAsset)
 
@@ -59,7 +59,7 @@ describe('MultiAsset Override Logic', () => {
     })
 
     it('should return the provided asset array if override is a TMultiAsset[]', () => {
-      const overrideAssets = [{ id: { Concrete: mockMultiLocation }, fun: { Fungible: '200' } }]
+      const overrideAssets = [{ id: { Concrete: mockMultiLocation }, fun: { Fungible: 200n } }]
       vi.mocked(createMultiAsset).mockReset()
       vi.mocked(isTMultiLocation).mockReturnValue(false)
 
@@ -83,7 +83,7 @@ describe('MultiAsset Override Logic', () => {
     })
 
     it('should return a new asset if override is a TMultiLocation', () => {
-      const newAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: '500' } }
+      const newAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: 500n } }
       vi.mocked(createMultiAsset).mockReturnValue(newAsset)
 
       const result = maybeOverrideMultiAsset(
@@ -98,7 +98,7 @@ describe('MultiAsset Override Logic', () => {
     })
 
     it('should return the single asset from the array if override is a TMultiAsset[] with one item', () => {
-      const overrideAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: '300' } }
+      const overrideAsset = { id: { Concrete: mockMultiLocation }, fun: { Fungible: 300n } }
       const result = maybeOverrideMultiAsset(mockVersion, mockAmount, mockMultiAsset, [
         overrideAsset
       ])

@@ -25,6 +25,10 @@ export type TForeignAsset = TBaseAsset &
     multiLocation?: TMultiLocation
   }>
 
+export type TForeignAssetWithId = TForeignAsset & {
+  assetId: string
+}
+
 export type TAsset = TNativeAsset | TForeignAsset
 
 export type TAssetWithLocation = TAsset & {

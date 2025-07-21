@@ -140,7 +140,7 @@ describe('getReverseTxFee', () => {
   it('should handle different currency amounts correctly', async () => {
     const optionsWithDifferentAmount = {
       ...defaultOptions,
-      currency: { symbol: 'DOT', amount: '5000000000' }
+      currency: { symbol: 'DOT', amount: 5000000000n }
     }
     const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
     const expectedCurrencyArg = {

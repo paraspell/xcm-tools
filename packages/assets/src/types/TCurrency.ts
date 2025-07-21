@@ -38,17 +38,19 @@ export type TMultiLocationValue = string | TMultiLocation
 export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier
 
 export type TCurrencyInputWithAmount =
-  | WithAmount<
+  | WithComplexAmount<
       TCurrencySymbol | { id: TCurrency } | { multilocation: TMultiLocationValueWithOverride }
     >
-  | { multiasset: TMultiAsset[] | WithAmount<TCurrencyCore>[] }
+  | { multiasset: TMultiAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
 
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
   | { multilocation: TMultiLocationValueWithOverride }
-  | { multiasset: TMultiAsset[] | WithAmount<TCurrencyCore>[] }
+  | { multiasset: TMultiAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
 
-export type WithAmount<TBase> = TBase & {
-  amount: TAmount
+export type WithAmount<TBase, T = bigint> = TBase & {
+  amount: T
 }
+
+export type WithComplexAmount<TBase> = WithAmount<TBase, TAmount>

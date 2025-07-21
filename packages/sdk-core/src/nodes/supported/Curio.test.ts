@@ -17,7 +17,7 @@ describe('Curio', () => {
     asset: {
       symbol: 'CUR',
       assetId: '123',
-      amount: '100'
+      amount: 100n
     }
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -44,7 +44,7 @@ describe('Curio', () => {
       ...mockInput,
       asset: {
         symbol: 'CUR',
-        amount: '100',
+        amount: 100n,
         isNative: true
       } as WithAmount<TNativeAsset>
     }

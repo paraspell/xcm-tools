@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Amplitude Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXcmAsset, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Amplitude<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -15,9 +15,7 @@ class Amplitude<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     const currencySelection: TXcmAsset = { XCM: Number(asset.assetId) }
     return transferXTokens(input, currencySelection)

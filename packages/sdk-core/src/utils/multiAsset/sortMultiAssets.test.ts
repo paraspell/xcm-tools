@@ -48,7 +48,7 @@ vi.mock('@paraspell/sdk-common', () => ({
 describe('sortMultiAssets', () => {
   const createAsset = (location: TMultiLocation): TMultiAsset => ({
     id: { Concrete: location },
-    fun: { Fungible: '1000' }
+    fun: { Fungible: 1000n }
   })
 
   const getLocation = (asset: TMultiAsset): TMultiLocation => {

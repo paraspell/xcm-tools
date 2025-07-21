@@ -20,7 +20,7 @@ describe('Crab', () => {
   let crab: Crab<unknown, unknown>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'KSM', amount: '100' }
+    asset: { symbol: 'KSM', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -53,8 +53,8 @@ describe('Crab', () => {
   })
 
   it('should call createCurrencySpec with correct values', () => {
-    crab.createCurrencySpec('100', 'ParaToPara', Version.V4)
-    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, '100', {
+    crab.createCurrencySpec(100n, 'ParaToPara', Version.V4)
+    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -65,8 +65,8 @@ describe('Crab', () => {
   })
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    crab.createCurrencySpec('100', 'ParaToRelay', Version.V4)
-    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, '100', {
+    crab.createCurrencySpec(100n, 'ParaToRelay', Version.V4)
+    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {

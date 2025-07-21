@@ -1,4 +1,4 @@
-import type { TAmount, TMultiAsset } from '@paraspell/assets'
+import type { TMultiAsset } from '@paraspell/assets'
 import { isTMultiLocation, type TMultiLocation, type Version } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
@@ -6,7 +6,7 @@ import { createMultiAsset } from './createMultiAsset'
 
 export const maybeOverrideMultiAssets = (
   version: Version,
-  amount: TAmount,
+  amount: bigint,
   multiAssets: TMultiAsset[],
   overriddenCurrency?: TMultiLocation | TMultiAsset[]
 ) => {
@@ -21,7 +21,7 @@ export const maybeOverrideMultiAssets = (
 
 export const maybeOverrideMultiAsset = (
   version: Version,
-  amount: TAmount,
+  amount: bigint,
   multiAsset: TMultiAsset,
   overriddenCurrency?: TMultiLocation | TMultiAsset[]
 ): TMultiAsset => {

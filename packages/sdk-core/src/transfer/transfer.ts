@@ -98,7 +98,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       address,
       asset: {
         ...asset,
-        amount: 'multiasset' in currency ? 0 : currency.amount
+        amount: 'multiasset' in currency ? 0n : BigInt(currency.amount)
       },
       paraIdTo,
       version: resolvedVersion,
@@ -125,9 +125,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const finalAsset =
     'multiasset' in currency
-      ? { ...resolvedAsset, amount: 0, assetId: '1' }
+      ? { ...resolvedAsset, amount: 0n, assetId: '1' }
       : // Ensure amount is at least 2 to avoid Rust panic
-        { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : currency.amount }
+        { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount) }
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)
 

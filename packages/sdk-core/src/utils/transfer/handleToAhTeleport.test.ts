@@ -30,7 +30,7 @@ describe('handleToAhTeleport', () => {
     destination: 'Astar',
     address: '5FakeAddress',
     senderAddress: 'FakeSender',
-    asset: { symbol: 'DOT', amount: '1000' },
+    asset: { symbol: 'DOT', amount: 1000n },
     currency: { symbol: 'DOT' }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 

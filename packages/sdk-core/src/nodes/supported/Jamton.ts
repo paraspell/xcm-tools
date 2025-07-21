@@ -1,17 +1,12 @@
 // Contains detailed structure of XCM call construction for Jamton Parachain
 
-import {
-  findAssetForNodeOrThrow,
-  InvalidCurrencyError,
-  isForeignAsset,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasLocation, createMultiAsset } from '../../utils'
+import { assertHasId, assertHasLocation, createMultiAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -32,9 +27,7 @@ class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       return transferXTokens(input, { Native: Jamton.NATIVE_ASSET_IDS[asset.symbol] })
     }
 
-    if (!isForeignAsset(asset) || asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     if (scenario === 'ParaToPara' && destination !== 'AssetHubPolkadot') {
       throw new ScenarioNotSupportedError(
@@ -48,7 +41,7 @@ class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       const usdt = findAssetForNodeOrThrow(this.node, { symbol: 'USDt' }, null)
       assertHasLocation(asset)
       assertHasLocation(usdt)
-      const MIN_USDT_AMOUNT = 180_000 // 0.18 USDt
+      const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
       return transferXTokens(
         {
           ...input,

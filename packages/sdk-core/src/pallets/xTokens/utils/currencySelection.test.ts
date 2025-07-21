@@ -21,7 +21,7 @@ describe('getModifiedCurrencySelection', () => {
   it('returns default DOT multiLocation when asset is non-foreign and destination is relay chain', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'DOT', amount: '500' },
+      asset: { symbol: 'DOT', amount: 500n },
       destination: 'Polkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
@@ -38,7 +38,7 @@ describe('getModifiedCurrencySelection', () => {
   it('returns assetHubAsset.multiLocation when non-foreign asset is found in AssetHub', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'DOT', amount: '1000' },
+      asset: { symbol: 'DOT', amount: 1000n },
       destination: 'AssetHubPolkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
@@ -69,7 +69,7 @@ describe('getModifiedCurrencySelection', () => {
   it('throws InvalidCurrencyError when non-foreign asset is not found in AssetHub', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'UNKNOWN', amount: '500' },
+      asset: { symbol: 'UNKNOWN', amount: 500n },
       destination: 'AssetHubPolkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
@@ -85,7 +85,7 @@ describe('getModifiedCurrencySelection', () => {
     const xTransferInput = {
       asset: {
         multiLocation: { parents: Parents.ONE, interior: 'Here' },
-        amount: '1500'
+        amount: 1500n
       },
       version
     } as TXTokensTransferOptions<unknown, unknown>
@@ -115,7 +115,7 @@ describe('getModifiedCurrencySelection', () => {
     const paraIdTo = 2000
 
     const xTransferInput = {
-      asset: { assetId: currencyID, amount: '1000' },
+      asset: { assetId: currencyID, amount: 1000n },
       paraIdTo,
       version
     } as TXTokensTransferOptions<unknown, unknown>
@@ -150,7 +150,7 @@ describe('getModifiedCurrencySelection', () => {
     const origin = 'BifrostPolkadot'
 
     const xTransferInput = {
-      asset: { assetId: currencyID, amount: '1000' },
+      asset: { assetId: currencyID, amount: 1000n },
       paraIdTo,
       origin,
       version

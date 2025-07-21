@@ -1,6 +1,6 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import { replaceBigInt, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -22,12 +22,12 @@ vi.mock('@paraspell/assets', async () => {
 describe('Pendulum', () => {
   let pendulum: Pendulum<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'PEN', assetId: '123', amount: '100' },
+    asset: { symbol: 'PEN', assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 
   const mockDOTInput = {
-    asset: { symbol: 'DOT', assetId: '123', amount: '100' },
+    asset: { symbol: 'DOT', assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -52,7 +52,7 @@ describe('Pendulum', () => {
 
   it('should call transferXTokens with XCM asset when foreign asset is provided', () => {
     const foreignAssetInput = {
-      asset: { symbol: 'USDC', assetId: '456', amount: '200' },
+      asset: { symbol: 'USDC', assetId: '456', amount: 200n },
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
@@ -76,14 +76,16 @@ describe('Pendulum', () => {
 
   it('should throw InvalidCurrencyError for asset without assetId and not foreign', () => {
     const invalidAssetInput = {
-      asset: { symbol: 'FAKE', amount: '50' }, // missing assetId
+      asset: { symbol: 'FAKE', amount: 50n }, // missing assetId
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
     expect(() => pendulum.transferXTokens(invalidAssetInput)).toThrowError(
-      new InvalidCurrencyError(`Asset ${JSON.stringify(invalidAssetInput.asset)} has no assetId`)
+      new InvalidCurrencyError(
+        `Asset ${JSON.stringify(invalidAssetInput.asset, replaceBigInt)} has no assetId`
+      )
     )
   })
 })

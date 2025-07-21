@@ -53,7 +53,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(ScenarioNotSupportedError)
@@ -67,7 +67,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -85,7 +85,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -104,7 +104,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000', multiLocation: DOT_MULTILOCATION }
+      asset: { symbol: 'DOT', amount: 1000n, multiLocation: DOT_MULTILOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const result = await polimec.transferPolkadotXCM(input)
@@ -131,7 +131,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ', multiLocation: assetMultiLocation, amount: '1000' }
+      asset: { symbol: 'XYZ', multiLocation: assetMultiLocation, amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const result = await polimec.transferPolkadotXCM(input)
@@ -156,7 +156,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ', amount: '1000' }
+      asset: { symbol: 'XYZ', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
@@ -169,7 +169,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       destination: 'Acala',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
     const call = polimec.transferRelayToPara(options)
@@ -191,7 +191,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       destination: 'Acala',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
     const call = polimec.transferRelayToPara(options)

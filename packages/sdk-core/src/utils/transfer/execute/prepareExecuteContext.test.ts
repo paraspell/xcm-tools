@@ -40,7 +40,7 @@ describe('prepareExecuteContext', () => {
     chain,
     destChain,
     asset: {
-      amount: '1000000000000',
+      amount: 1000000000000n,
       multiLocation: mockMultiLocation
     },
     fees: {

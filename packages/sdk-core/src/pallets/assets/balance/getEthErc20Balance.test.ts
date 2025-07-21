@@ -1,21 +1,17 @@
 import type { TAsset, TCurrencyCore, TForeignAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, isForeignAsset } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getEthErc20Balance } from './getEthErc20Balance'
 
 vi.mock('@paraspell/assets', () => ({
   findAssetForNodeOrThrow: vi.fn(),
-  isForeignAsset: vi.fn()
+  isForeignAsset: vi.fn(),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {
-    constructor(message: string) {
-      super(message)
-      this.name = 'InvalidParameterError'
-    }
-  }
+  InvalidParameterError: class extends Error {}
 }))
 
 vi.mock('viem', () => {
@@ -100,13 +96,13 @@ describe('getEthErc20Balance', () => {
 
   it('should throw if foreign asset is missing assetId', async () => {
     const currency: TCurrencyCore = { symbol: 'MISSING' }
-    const mockAsset = { symbol: 'MISSING', assetId: null } as unknown as TAsset
+    const mockAsset = { symbol: 'MISSING', assetId: undefined } as unknown as TAsset
 
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
     await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
-      /not a foreign asset/
+      InvalidCurrencyError
     )
   })
 

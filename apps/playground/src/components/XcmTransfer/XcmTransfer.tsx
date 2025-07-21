@@ -13,7 +13,7 @@ import type {
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
-  WithAmount,
+  WithComplexAmount,
 } from '@paraspell/sdk';
 import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import {
@@ -296,7 +296,10 @@ const XcmTransfer = () => {
           .currency(
             currencyInputs.length === 1
               ? currencyInputs[0]
-              : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+              : {
+                  multiasset:
+                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
+                },
           )
           .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
           .address(address)
@@ -316,7 +319,10 @@ const XcmTransfer = () => {
             .currency(
               currencyInputs.length === 1
                 ? currencyInputs[0]
-                : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+                : {
+                    multiasset:
+                      currencyInputs as WithComplexAmount<TCurrencyCore>[],
+                  },
             )
             .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
             .address(address)
@@ -416,7 +422,10 @@ const XcmTransfer = () => {
         .currency(
           currencyInputs.length === 1
             ? currencyInputs[0]
-            : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+            : {
+                multiasset:
+                  currencyInputs as WithComplexAmount<TCurrencyCore>[],
+              },
         )
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address)
@@ -567,7 +576,8 @@ const XcmTransfer = () => {
             currencyInputs.length === 1
               ? currencyInputs[0]
               : {
-                  multiasset: currencyInputs as WithAmount<TCurrencyCore>[],
+                  multiasset:
+                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
                 },
           )
           .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))

@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Quartz Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Quartz<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -21,9 +21,7 @@ class Quartz<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       return transferXTokens(input, Quartz.NATIVE_ASSET_ID)
     }
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-    }
+    assertHasId(asset)
 
     return transferXTokens(input, Number(asset.assetId))
   }

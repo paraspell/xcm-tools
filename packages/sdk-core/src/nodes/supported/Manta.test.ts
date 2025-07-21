@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Manta', () => {
   let manta: Manta<unknown, unknown>
   const mockInput = {
-    asset: { assetId: '123', amount: '100' }
+    asset: { assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

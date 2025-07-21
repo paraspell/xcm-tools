@@ -128,7 +128,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
-      asset: { symbol: 'TEST', amount: '100' },
+      asset: { symbol: 'TEST', amount: 100n },
       currency: options.currency,
       feeAsset: undefined,
       feeCurrency: undefined,
@@ -370,7 +370,7 @@ describe('send', () => {
       address: 'some-address',
       asset: {
         symbol: 'TEST',
-        amount: '100'
+        amount: 100n
       },
       paraIdTo: 1000,
       version: Version.V4,
@@ -507,7 +507,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: { symbol: 'TEST', amount: 0, assetId: '1' }
+        asset: { symbol: 'TEST', amount: 0n, assetId: '1' }
       })
     )
   })

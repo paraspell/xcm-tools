@@ -105,7 +105,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       scenario: 'ParaToPara',
       senderAddress,
       ahAddress,
-      asset: { ...foundAsset, amount: currency.amount },
+      asset: { ...foundAsset, amount: BigInt(currency.amount) },
       currency,
       destLocation: {} as TMultiLocation,
       multiAsset: {} as TMultiAsset,

@@ -27,11 +27,11 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<unknown, unknown>
   const mockXTokensInput = {
-    asset: { symbol: 'BNC', amount: '100' }
+    asset: { symbol: 'BNC', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   const mockPolkadotXCMInput = {
-    asset: { symbol: 'WETH', amount: '100' }
+    asset: { symbol: 'WETH', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -76,7 +76,7 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
-    const asset = { symbol: 'DOT', amount: '100' } as WithAmount<TAsset>
+    const asset = { symbol: 'DOT', amount: 100n } as WithAmount<TAsset>
 
     await bifrostPolkadot.transferPolkadotXCM({
       ...mockPolkadotXCMInput,

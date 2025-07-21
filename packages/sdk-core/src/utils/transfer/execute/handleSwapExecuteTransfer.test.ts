@@ -108,7 +108,7 @@ describe('handleSwapExecuteTransfer', () => {
   })
 
   it('throws if initial amount is too low', async () => {
-    const options = { ...baseOptions, assetFrom: { ...baseOptions.assetFrom, amount: '500' } }
+    const options = { ...baseOptions, assetFrom: { ...baseOptions.assetFrom, amount: 500n } }
 
     await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(InvalidParameterError)
   })

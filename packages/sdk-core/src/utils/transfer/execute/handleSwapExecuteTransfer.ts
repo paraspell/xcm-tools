@@ -299,7 +299,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
     updatedAssetTo = {
       ...assetTo,
-      amount: recalculatedMinAmountOut.toString()
+      amount: recalculatedMinAmountOut
     }
   }
 
@@ -357,7 +357,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
     const finalAssetTo = {
       ...assetTo,
-      amount: finalMinAmountOut.toString()
+      amount: finalMinAmountOut
     }
 
     const { call: finalCall } = await createXcmAndCall(

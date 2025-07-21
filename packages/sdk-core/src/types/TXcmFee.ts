@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TAsset, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
+import type {
+  TAsset,
+  TCurrencyCore,
+  TCurrencyInput,
+  WithAmount,
+  WithComplexAmount
+} from '@paraspell/assets'
 import type {
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
@@ -63,7 +69,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   origin: TNodeDotKsmWithRelayChains
   destination: TNodeWithRelayChains
   senderAddress: string
-  currency: WithAmount<TCurrencyCore>
+  currency: WithComplexAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
 }

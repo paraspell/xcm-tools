@@ -1,19 +1,17 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
 
-import type { TAmount } from './TCurrency'
+export type TMultiAsset<T = bigint> = TMultiAssetV3<T> | TMultiAssetV4<T>
 
-export type TMultiAsset = TMultiAssetV3 | TMultiAssetV4
-
-export interface TMultiAssetV3 {
+export interface TMultiAssetV3<T = bigint> {
   id: { Concrete: TMultiLocation }
   fun: {
-    Fungible: TAmount
+    Fungible: T
   }
 }
 
-export interface TMultiAssetV4 {
+export interface TMultiAssetV4<T = bigint> {
   id: TMultiLocation
   fun: {
-    Fungible: TAmount
+    Fungible: T
   }
 }

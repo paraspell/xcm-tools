@@ -45,7 +45,7 @@ vi.mock('../../utils/ethereum/createCustomXcmOnDest', () => ({
 describe('Mythos', () => {
   let mythos: Mythos<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'MYTH', amount: '100' },
+    asset: { symbol: 'MYTH', amount: 100n },
     scenario: 'ParaToPara',
     destination: 'Acala'
   } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -138,7 +138,7 @@ describe('Mythos', () => {
       api: mockApi,
       asset: {
         symbol: 'MYTH',
-        amount: '100',
+        amount: 100n,
         multiLocation: { parents: 0, interior: 'Here' },
         assetId: '123'
       },
@@ -172,7 +172,7 @@ describe('Mythos', () => {
         expect.any(Number),
         '123',
         mockEthereumInput.address,
-        '100'
+        100n
       )
       expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
       expect(mockApi.quoteAhPrice).toHaveBeenCalled()
@@ -218,7 +218,7 @@ describe('createTypeAndThenTransfer', () => {
     scenario: 'ParaToPara',
     asset: {
       symbol: 'MYTH',
-      amount: '1000',
+      amount: 1000n,
       multiLocation: { parents: 0, interior: 'Here' },
       assetId: '123'
     },
@@ -317,7 +317,7 @@ describe('createTypeAndThenTransfer', () => {
   it('should handle different asset amounts correctly', async () => {
     const largeAmountOptions = {
       ...mockOptions,
-      asset: { ...mockOptions.asset, amount: '999999999999' }
+      asset: { ...mockOptions.asset, amount: 999999999999n }
     }
 
     vi.mocked(generateMessageId).mockResolvedValue('message_id_large')
@@ -333,7 +333,7 @@ describe('createTypeAndThenTransfer', () => {
     expect((result as any).parameters.assets[Version.V4][1]).toEqual(
       expect.objectContaining({
         id: mockOptions.asset.multiLocation,
-        fun: { Fungible: '999999999999' }
+        fun: { Fungible: 999999999999n }
       })
     )
   })

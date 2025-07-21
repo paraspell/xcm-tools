@@ -13,7 +13,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('ComposableFinance', () => {
   let composableFinance: ComposableFinance<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'LAYR', assetId: '123', amount: '100' }
+    asset: { symbol: 'LAYR', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
