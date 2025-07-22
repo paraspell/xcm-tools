@@ -1,51 +1,58 @@
-import type { Repository } from 'typeorm';
+import type { user } from '@prisma/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { User } from './user.entity.js';
+import type { PrismaService } from '../prisma/prisma.service.js';
 import { UsersService } from './users.service.js';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let usersRepository: Repository<User>;
+  let prismaService: PrismaService;
 
   beforeEach(() => {
-    usersRepository = {
-      save: vi.fn(),
-      findOneBy: vi.fn(),
-    } as unknown as Repository<User>;
+    prismaService = {
+      user: {
+        create: vi.fn(),
+        findUnique: vi.fn(),
+      },
+    } as unknown as PrismaService;
 
-    service = new UsersService(usersRepository);
+    service = new UsersService(prismaService);
   });
 
   describe('create', () => {
-    it('should call usersRepository.save with an empty object and return the result', async () => {
-      const mockUser = { id: '1', name: 'Test User', requestLimit: 1 } as User;
+    it('should call prisma.user.create with the provided data and return the result', async () => {
+      const mockUser: user = {
+        id: '1',
+        requestLimit: 100,
+      };
 
-      const spy = vi.spyOn(usersRepository, 'save').mockResolvedValue(mockUser);
+      const spy = vi
+        .spyOn(prismaService.user, 'create')
+        .mockResolvedValue(mockUser);
 
       const result = await service.create();
 
-      expect(spy).toHaveBeenCalledWith({});
+      expect(spy).toHaveBeenCalledWith({ data: {} });
       expect(result).toBe(mockUser);
     });
   });
 
   describe('findOne', () => {
-    it('should call usersRepository.findOneBy with the correct userId and return the result', async () => {
+    it('should call prisma.user.findUnique with the correct userId and return the result', async () => {
       const userId = '1';
-      const mockUser = {
+
+      const mockUser: user = {
         id: userId,
-        name: 'Test User',
-        requestLimit: 1,
-      } as User;
+        requestLimit: 100,
+      };
 
       const spy = vi
-        .spyOn(usersRepository, 'findOneBy')
+        .spyOn(prismaService.user, 'findUnique')
         .mockResolvedValue(mockUser);
 
       const result = await service.findOne(userId);
 
-      expect(spy).toHaveBeenCalledWith({ id: userId });
+      expect(spy).toHaveBeenCalledWith({ where: { id: userId } });
       expect(result).toBe(mockUser);
     });
 
@@ -53,12 +60,12 @@ describe('UsersService', () => {
       const userId = '1';
 
       const spy = vi
-        .spyOn(usersRepository, 'findOneBy')
+        .spyOn(prismaService.user, 'findUnique')
         .mockResolvedValue(null);
 
       const result = await service.findOne(userId);
 
-      expect(spy).toHaveBeenCalledWith({ id: userId });
+      expect(spy).toHaveBeenCalledWith({ where: { id: userId } });
       expect(result).toBeNull();
     });
   });

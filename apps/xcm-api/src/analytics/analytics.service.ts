@@ -44,7 +44,7 @@ export class AnalyticsService {
     });
   }
 
-  identify(userId: string, properties: Record<string, string | number>) {
+  identify(userId: string, properties: Record<string, string | number | null>) {
     if (!this.client) return;
     this.client.people.set(userId, properties);
   }

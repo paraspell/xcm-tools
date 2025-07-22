@@ -2,16 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   HealthCheckService,
-  TypeOrmHealthIndicator,
+  PrismaHealthIndicator,
   HealthIndicatorStatus,
   HealthCheckResult,
 } from '@nestjs/terminus';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { HealthService } from './health.service.js';
 
 describe('HealthService', () => {
   let service: HealthService;
   let healthCheckService: HealthCheckService;
-  let typeOrmHealthIndicator: TypeOrmHealthIndicator;
+  let prismaHealthIndicator: PrismaHealthIndicator;
+  let prismaService: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,17 +24,24 @@ describe('HealthService', () => {
           useValue: { check: vi.fn() },
         },
         {
-          provide: TypeOrmHealthIndicator,
+          provide: PrismaHealthIndicator,
           useValue: { pingCheck: vi.fn() },
+        },
+        {
+          provide: PrismaService,
+          useValue: {
+            $queryRaw: vi.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<HealthService>(HealthService);
     healthCheckService = module.get<HealthCheckService>(HealthCheckService);
-    typeOrmHealthIndicator = module.get<TypeOrmHealthIndicator>(
-      TypeOrmHealthIndicator,
+    prismaHealthIndicator = module.get<PrismaHealthIndicator>(
+      PrismaHealthIndicator,
     );
+    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   describe('checkDb', () => {
@@ -42,7 +51,7 @@ describe('HealthService', () => {
         database: { status: 'up' as HealthIndicatorStatus },
       });
 
-      vi.mocked(typeOrmHealthIndicator.pingCheck).mockReturnValue(
+      vi.mocked(prismaHealthIndicator.pingCheck).mockReturnValue(
         mockPingCheckResult,
       );
 
@@ -53,7 +62,10 @@ describe('HealthService', () => {
 
       const result = await service.checkDb();
 
-      expect(typeOrmHealthIndicator.pingCheck).toHaveBeenCalledWith('database');
+      expect(prismaHealthIndicator.pingCheck).toHaveBeenCalledWith(
+        'database',
+        prismaService,
+      );
       expect(healthCheckService.check).toHaveBeenCalledWith([
         expect.any(Function),
       ]);
