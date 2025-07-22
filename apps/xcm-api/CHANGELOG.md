@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.10.11](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.10...xcm-api-v10.10.11) (2025-07-22)
+
+
+### Tests
+
+* **xcm-api:** Add prisma service unit tests 🧪 ([a14a33d](https://github.com/paraspell/xcm-tools/commit/a14a33d2efebeaf2e0c66b03e3d63b9286cdc066))
+
+
+### Build System
+
+* **xcm-api:** Migrate from TypeORM to Prisma 🪄 ([e5fa848](https://github.com/paraspell/xcm-tools/commit/e5fa8488b16febe6c40d5f9ee708112f14584fd6))
+
 ## [10.10.10](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.9...xcm-api-v10.10.10) (2025-07-22)
 
 

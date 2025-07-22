@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.10...sdk-core-v10.10.11) (2025-07-22)
+
+
+### Code Refactoring
+
+* **sdk-core:** Change internal TMultiAsset fungible type to bigint 🪄 ([ba9ec6c](https://github.com/paraspell/xcm-tools/commit/ba9ec6cde9e573daf4a151251be686a570e47f66))
+
 ## [10.10.10](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.9...sdk-core-v10.10.10) (2025-07-22)
 
 
