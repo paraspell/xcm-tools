@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.10](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.9...assets-v10.10.10) (2025-07-22)
+
+
+### Documentation
+
+* Add contact options ([0709bb2](https://github.com/paraspell/xcm-tools/commit/0709bb26210a3c97b913e7518eba01f400a10cd8))
+
 ## [10.10.9](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.8...assets-v10.10.9) (2025-07-17)
 
 

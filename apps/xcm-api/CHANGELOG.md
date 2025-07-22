@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.10.10](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.9...xcm-api-v10.10.10) (2025-07-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Tweak getTransferableAmount & add supported-assets to playground ✨ ([d1764f4](https://github.com/paraspell/xcm-tools/commit/d1764f4018777b7bb941f654ce86689fbfef99f5))
+
+
+### Documentation
+
+* Add contact options ([0709bb2](https://github.com/paraspell/xcm-tools/commit/0709bb26210a3c97b913e7518eba01f400a10cd8))
+
 ## [10.10.9](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.8...xcm-api-v10.10.9) (2025-07-17)
 
 
