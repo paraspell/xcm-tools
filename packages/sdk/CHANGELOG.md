@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.10.10](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.9...sdk-v10.10.10) (2025-07-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect DOT fees 🛠️ ([8bc61f9](https://github.com/paraspell/xcm-tools/commit/8bc61f9660269af414943c2011b2ca16fa7f0029))
+
+
+### Documentation
+
+* Add contact options ([0709bb2](https://github.com/paraspell/xcm-tools/commit/0709bb26210a3c97b913e7518eba01f400a10cd8))
+
 ## [10.10.9](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.8...sdk-v10.10.9) (2025-07-17)
 
 
