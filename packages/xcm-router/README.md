@@ -251,13 +251,19 @@ const pairs = getExchangePairs(exchange) // exchange can be also array of exchan
 
 XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-router/LICENSE).
 
-## Support
+## Supported by
 
 <div align="center">
  <p align="center">
