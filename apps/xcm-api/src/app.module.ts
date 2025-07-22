@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 import { join } from 'path';
 import path from 'path';
@@ -18,10 +17,10 @@ import { AuthGuard } from './auth/auth.guard.js';
 import { AuthModule } from './auth/auth.module.js';
 import { BalanceModule } from './balance/balance.module.js';
 import { throttlerConfig } from './config/throttler.config.js';
-import { typeOrmConfig } from './config/typeorm.config.js';
 import { HealthModule } from './health/health.module.js';
 import { NodeConfigsModule } from './node-configs/node-configs.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
+import { PrismaModule } from './prisma/prisma.module.js';
 import { RouterModule } from './router/router.module.js';
 import { UsersService } from './users/users.service.js';
 import { XTransferModule } from './x-transfer/x-transfer.module.js';
@@ -44,10 +43,6 @@ const __dirname = path.dirname(__filename);
     NodeConfigsModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: typeOrmConfig,
-    }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService, UsersService],
       useFactory: throttlerConfig,
@@ -58,6 +53,7 @@ const __dirname = path.dirname(__filename);
     }),
     SentryModule.forRoot(),
     HealthModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [
