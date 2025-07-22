@@ -182,7 +182,13 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
     })
 
     let hopCurrency: string
-    if (hopResult.feeType === 'dryRun') {
+    if (
+      hopResult.feeType === 'dryRun' &&
+      !(
+        destination === 'Ethereum' &&
+        (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
+      )
+    ) {
       if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
         hopCurrency = findAssetOnDestOrThrow(
           swapConfig.exchangeChain,

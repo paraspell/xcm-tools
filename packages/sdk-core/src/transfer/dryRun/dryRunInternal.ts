@@ -109,7 +109,13 @@ export const dryRunInternal = async <TApi, TRes>(
     // Add currency information
     if (hopDryRun.success) {
       let hopCurrency: string
-      if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
+
+      if (
+        destination === 'Ethereum' &&
+        (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
+      ) {
+        hopCurrency = getNativeAssetSymbol(currentChain)
+      } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
         hopCurrency = findAssetOnDestOrThrow(
           swapConfig.exchangeChain,
           currentChain,

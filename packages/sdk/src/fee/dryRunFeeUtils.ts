@@ -4,16 +4,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const processAssetsDepositedEvents = (events: any[], amount: bigint): bigint | undefined => {
+export const processAssetsDepositedEvents = (
+  events: any[],
+  amount: bigint,
+  pallet: string,
+  method: string,
+  returnOnOneEvent: boolean = true
+): bigint | undefined => {
   const assetsDepositedEvents = events.filter(
-    event => event.type === 'Assets' && event.value.type === 'Deposited'
+    event => event.type === pallet && event.value.type === method
   )
 
   if (assetsDepositedEvents.length === 0) {
     return undefined
   }
 
-  if (assetsDepositedEvents.length === 1) {
+  if (assetsDepositedEvents.length === 1 && returnOnOneEvent) {
     return BigInt(assetsDepositedEvents[0].value.value.amount)
   }
 
