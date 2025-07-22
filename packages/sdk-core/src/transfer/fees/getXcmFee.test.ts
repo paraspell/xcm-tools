@@ -1327,4 +1327,52 @@ describe('getXcmFee', () => {
     expect(res.hops[0].result.fee).toBe(5_000n)
     expect(res.bridgeHub?.fee).toBe(5_000n)
   })
+
+  it('handles processHop currency logic: Ethereum destination with AssetHub hop', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 1_000n,
+      currency: 'ACA',
+      feeType: 'dryRun',
+      dryRunError: undefined,
+      forwardedXcms: [null, [{ key: 'value' }]],
+      destParaId: 1000
+    })
+
+    let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    vi.mocked(traverseXcmHops).mockImplementation(async params => {
+      capturedProcessHop = params.processHop
+
+      const hopResult = await capturedProcessHop({
+        api: createOptions().api,
+        currentChain: 'AssetHubPolkadot',
+        currentOrigin: 'Acala',
+        currentAsset: { symbol: 'ACA' } as TAsset,
+        forwardedXcms: [null, [{ key: 'value' }]],
+        hasPassedExchange: false
+      } as HopProcessParams<unknown, unknown>)
+
+      return {
+        hops: [],
+        lastProcessedChain: 'AssetHubPolkadot',
+        destination: undefined,
+        assetHub: hopResult,
+        bridgeHub: undefined
+      }
+    })
+
+    vi.mocked(getDestXcmFee).mockResolvedValue({
+      fee: 2_000n,
+      feeType: 'dryRun'
+    })
+
+    vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+
+    await getXcmFee(createOptions({ destination: 'Ethereum' }))
+
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith('AssetHubPolkadot')
+  })
 })

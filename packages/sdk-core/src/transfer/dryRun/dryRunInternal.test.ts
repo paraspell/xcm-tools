@@ -627,5 +627,56 @@ describe('dryRunInternal', () => {
 
       if (res.origin.success) expect(res.origin.currency).toBe('DOT')
     })
+
+    it('handles processHop currency logic: Ethereum destination with AssetHub hop', async () => {
+      vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+      vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+      vi.mocked(hasDryRunSupport).mockReturnValue(true)
+      vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+
+      const originOk = {
+        success: true,
+        fee: 1_000n,
+        forwardedXcms: [null, [{ value: [1] }]],
+        destParaId: 1000
+      }
+
+      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      vi.mocked(traverseXcmHops).mockImplementation(async params => {
+        capturedProcessHop = params.processHop
+
+        const mockHopApi = {
+          getDryRunXcm: vi.fn().mockResolvedValue({
+            success: true,
+            fee: 2_000n
+          })
+        } as unknown as IPolkadotApi<unknown, unknown>
+
+        const hopResult = await capturedProcessHop({
+          api: mockHopApi,
+          currentChain: 'AssetHubPolkadot',
+          currentOrigin: 'Acala',
+          currentAsset: { symbol: 'ACA' } as TAsset,
+          forwardedXcms: [null, [{ value: [1] }]],
+          hasPassedExchange: false,
+          isDestination: false
+        } as HopProcessParams<unknown, unknown>)
+
+        return {
+          hops: [],
+          assetHub: hopResult
+        }
+      })
+
+      const api = createFakeApi(originOk)
+      await dryRunInternal(
+        createOptions(api, {
+          destination: 'Ethereum'
+        })
+      )
+
+      expect(getNativeAssetSymbol).toHaveBeenCalledWith('AssetHubPolkadot')
+    })
   })
 })

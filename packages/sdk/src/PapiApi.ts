@@ -645,8 +645,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const processedAssetsAmount =
       node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
-        ? processAssetsDepositedEvents(emitted, amount)
-        : undefined
+        ? processAssetsDepositedEvents(emitted, amount, 'Assets', 'Deposited', true)
+        : (processAssetsDepositedEvents(emitted, amount, 'Balances', 'Minted', false) ??
+          processAssetsDepositedEvents(emitted, amount, 'Balances', 'Issued', false))
 
     const feeEvent =
       feeAssetFeeEvent ??
