@@ -182,6 +182,12 @@ This should result into:
 
 XCM Analyser can be tested in [Playground](https://playground.paraspell.xyz/xcm-analyser).
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)

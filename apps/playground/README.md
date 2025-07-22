@@ -31,3 +31,9 @@ pnpm dev
 
 This will start the development server. Open the link given during startup to access the playground.
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+

@@ -550,6 +550,12 @@ $ pnpm start:prod
 
 API can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)

@@ -85,6 +85,12 @@ Run frontend:
 pnpm dev
 ```
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)

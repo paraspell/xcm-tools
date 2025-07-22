@@ -475,13 +475,19 @@ console.log(SUPPORTED_PALLETS)
 
 XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
 
+## Get Support 🚑
+
+- Contact form on our [landing page](https://paraspell.xyz/#contact-us).
+- Message us on our [X](https://x.com/paraspell).
+- Support channel on [telegram](https://t.me/paraspell).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/LICENSE).
 
-## Support
+## Supported by
 
 <div align="center">
  <p align="center">
