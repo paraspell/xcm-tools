@@ -13,6 +13,9 @@ const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
   const { t } = useTranslation();
   const icon = <IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />;
 
+  const handleChange = (val: [string | null, string | null]) =>
+    setValue(val.map(v => v && new Date(v)) as [Date | null, Date | null]);
+
   return (
     <DatePickerInput
       type="range"
@@ -21,7 +24,7 @@ const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
       leftSection={icon}
       leftSectionPointerEvents="none"
       value={value}
-      onChange={setValue}
+      onChange={handleChange}
       flex={1}
       {...props}
     />
