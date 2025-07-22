@@ -416,23 +416,23 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(graphql@16.11.0)
       '@mantine/charts':
-        specifier: ^7.17.7
-        version: 7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(recharts@2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
+        specifier: ^8.2.1
+        version: 8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(recharts@2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
       '@mantine/core':
-        specifier: ^7.17.7
-        version: 7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@mantine/dates':
-        specifier: ^7.17.7
-        version: 7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@mantine/form':
-        specifier: ^7.17.7
-        version: 7.17.7(react@19.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(react@19.1.0)
       '@mantine/hooks':
-        specifier: ^7.17.7
-        version: 7.17.7(react@19.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(react@19.1.0)
       '@mantine/notifications':
-        specifier: ^7.17.7
-        version: 7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -443,11 +443,11 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-three/drei':
-        specifier: ^10.3.0
-        version: 10.3.0(@react-three/fiber@9.1.4(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0))(@types/react@19.1.8)(@types/three@0.177.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0)
+        specifier: ^10.5.2
+        version: 10.5.2(@react-three/fiber@9.2.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0))(@types/react@19.1.8)(@types/three@0.177.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0)
       '@react-three/fiber':
-        specifier: ^9.1.4
-        version: 9.1.4(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0)
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0)
       '@tabler/icons-react':
         specifier: ^3.34.0
         version: 3.34.0(react@19.1.0)
@@ -461,7 +461,7 @@ importers:
         specifier: ^16.11.0
         version: 16.11.0
       highcharts:
-        specifier: ^12.2.0
+        specifier: ^12.3.0
         version: 12.3.0
       highcharts-react-official:
         specifier: ^3.2.2
@@ -494,8 +494,8 @@ importers:
         specifier: ^15.5.3
         version: 15.5.3(i18next@25.2.1(typescript@5.8.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
       three:
-        specifier: ^0.175.0
-        version: 0.175.0
+        specifier: ^0.178.0
+        version: 0.178.0
     devDependencies:
       '@types/d3-ease':
         specifier: ^3.0.2
@@ -3370,27 +3370,20 @@ packages:
     peerDependencies:
       '@polkadot/types': 16.3.1
 
-  '@mantine/charts@7.17.7':
-    resolution: {integrity: sha512-ZhvN6FaPY/kQs606NYBAFVm/SFTwq8p0taWeegZh2fpZbvUmNzVZEeBpoVhYOKEtZQRIQ7t1Y80WJafYumkhTw==}
+  '@mantine/charts@8.2.1':
+    resolution: {integrity: sha512-ZtVilizgZkX1PyT4lxZqbjI7hf26IYQ1vqTxIGiBZhg7JyI5b5f0/4cA3XgakAdqNY0MOuZL6BKlcDvYG0PRIQ==}
     peerDependencies:
-      '@mantine/core': 7.17.7
-      '@mantine/hooks': 7.17.7
+      '@mantine/core': 8.2.1
+      '@mantine/hooks': 8.2.1
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
-      recharts: ^2.13.3
+      recharts: '>=2.13.3'
 
   '@mantine/code-highlight@8.2.1':
     resolution: {integrity: sha512-gNmVxJ0OnX5kvVgdimnWpQb7bB5H2ExEoGLjX0LqILEfoTFxuOGncCJrHEEhHtK1QdaZo9TRtnhJdq+JThvtJg==}
     peerDependencies:
       '@mantine/core': 8.2.1
       '@mantine/hooks': 8.2.1
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
-
-  '@mantine/core@7.17.7':
-    resolution: {integrity: sha512-JMyV4/jPATXxmE31g8TJxsrH7XvdrA5pwT4gg25zBl1KE5vLBpBLLjsHG728+bDKuf+bDV+8lw+1kqgW7FcplQ==}
-    peerDependencies:
-      '@mantine/hooks': 7.17.7
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
@@ -3401,27 +3394,17 @@ packages:
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
-  '@mantine/dates@7.17.7':
-    resolution: {integrity: sha512-/F3QteV5Sb5H0zVkU7ZyKdlISYWngdViNLqmredJo8296ukLTsRPr/iIfuYSm3hy3wEWyW5/dWzNPVr1L5cyQg==}
+  '@mantine/dates@8.2.1':
+    resolution: {integrity: sha512-xNeI+Jw7p9UYEsLbg+QKny4NZ1O3bL6rlrtJKGqOm3HQoATpbRTrdunmY2sIOYXcPEasSCe+y2Ye0fORUcMUEA==}
     peerDependencies:
-      '@mantine/core': 7.17.7
-      '@mantine/hooks': 7.17.7
+      '@mantine/core': 8.2.1
+      '@mantine/hooks': 8.2.1
       dayjs: '>=1.0.0'
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
-  '@mantine/form@7.17.7':
-    resolution: {integrity: sha512-BloLbPLbSKyQ+crkwcREiaF22v1y8CvgAbS9tcrWdZvA3SwUvkmsEoX8QYui82eTLKrqFEvlqp0rYVQ+y2cjIQ==}
-    peerDependencies:
-      react: ^18.x || ^19.x
-
   '@mantine/form@8.2.1':
     resolution: {integrity: sha512-XXGdO3IgTNcDl6lP7FIysEaH0rP6CfOGulxQA3ot+hHA8/JxmHWoWeoKOBE8I6QW7UYqaBxARxgBHLMcp8qASw==}
-    peerDependencies:
-      react: ^18.x || ^19.x
-
-  '@mantine/hooks@7.17.7':
-    resolution: {integrity: sha512-5MIvN/YAcewc97nG3jVrlnFqAExnJRBNWmV6UgGHWbiZiPSCh5o2RJE/5ZVGSfkexDpav9gkm2jkWkIbemVqVA==}
     peerDependencies:
       react: ^18.x || ^19.x
 
@@ -3430,14 +3413,6 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@mantine/notifications@7.17.7':
-    resolution: {integrity: sha512-T6m4uUPEkPcTdo7J29lDey5YDJkVh/t6kWaCGQ0xDX1tzGGGPtaf1Exj1N0EtrIetbXPuEE8+yvq5P7wUJ3t9w==}
-    peerDependencies:
-      '@mantine/core': 7.17.7
-      '@mantine/hooks': 7.17.7
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
-
   '@mantine/notifications@8.2.1':
     resolution: {integrity: sha512-9s4oN0ruX7AqUghZIXEwx9/t+fHATe/kvn5O5Zum+MFoOH46p8k4ljNb6BBDKTtT3clRHx7KHTR7OrLWlDEjrw==}
     peerDependencies:
@@ -3445,11 +3420,6 @@ packages:
       '@mantine/hooks': 8.2.1
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
-
-  '@mantine/store@7.17.7':
-    resolution: {integrity: sha512-a2XmX6/ixuT+q1H7uNZq3opKZWlxS67XWU2fxCc/E/XHbzik25i2oj9inFpIZMT7UmhUkxj4/pbJQGMs3T5liw==}
-    peerDependencies:
-      react: ^18.x || ^19.x
 
   '@mantine/store@8.2.1':
     resolution: {integrity: sha512-4DAVJcI5Sa8Zez/23DV4eipYbqRfw7r+UkuWczPFyhAU+BZdfIql1gFipojAlR0FpWbB8aL0F7wFKNKfkZ0YCQ==}
@@ -4892,8 +4862,8 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  '@react-three/drei@10.3.0':
-    resolution: {integrity: sha512-+4NHCAUI38jp8XlbuKKWl/23y3F/JKdkvnYsrVXxhw150OyWKJoft+Yyd7dl6awxfV/Gn08x3R9pRRFUuDQwDA==}
+  '@react-three/drei@10.5.2':
+    resolution: {integrity: sha512-s6MpLahua5q59ZVTeJ9EQ52wNLOLNB5mIA9NeLWwKEIymg7owqnkfQock9u5IAFgFzCX7AB1b7U8eaLy4M+YgA==}
     peerDependencies:
       '@react-three/fiber': ^9.0.0
       react: ^19
@@ -4903,8 +4873,8 @@ packages:
       react-dom:
         optional: true
 
-  '@react-three/fiber@9.1.4':
-    resolution: {integrity: sha512-Ugzs6n6YNORSa4hRZH1CKTd5DLTzwOvYjze+EZWS8iVDyeNQETnLzuke+MMEuXTqM8eAV/gyWgd27t/GR41oGA==}
+  '@react-three/fiber@9.2.0':
+    resolution: {integrity: sha512-esZe+E9T/aYEM4HlBkirr/yRE8qWTp9WUsLISyHHMCHKlJv85uc5N4wwKw+Ay0QeTSITw6T9Q3Svpu383Q+CSQ==}
     peerDependencies:
       expo: '>=43.0'
       expo-asset: '>=8.4'
@@ -6827,8 +6797,9 @@ packages:
   camelize@1.0.1:
     resolution: {integrity: sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==}
 
-  camera-controls@2.10.1:
-    resolution: {integrity: sha512-KnaKdcvkBJ1Irbrzl8XD6WtZltkRjp869Jx8c0ujs9K+9WD+1D7ryBsCiVqJYUqt6i/HR5FxT7RLASieUD+Q5w==}
+  camera-controls@3.1.0:
+    resolution: {integrity: sha512-w5oULNpijgTRH0ARFJJ0R5ct1nUM3R3WP7/b8A6j9uTGpRfnsypc/RBMPQV8JQDPayUe37p/TZZY1PcUr4czOQ==}
+    engines: {node: '>=20.11.0', npm: '>=10.8.2'}
     peerDependencies:
       three: '>=0.126.1'
 
@@ -10662,8 +10633,8 @@ packages:
     peerDependencies:
       three: '>=0.128.0'
 
-  three@0.175.0:
-    resolution: {integrity: sha512-nNE3pnTHxXN/Phw768u0Grr7W4+rumGg/H6PgeseNJojkJtmeHJfZWi41Gp2mpXl1pg1pf1zjwR4McM1jTqkpg==}
+  three@0.178.0:
+    resolution: {integrity: sha512-ybFIB0+x8mz0wnZgSGy2MO/WCO6xZhQSZnmfytSPyNpM0sBafGRVhdaj+erYh5U+RhQOAg/eXqw5uVDiM2BjhQ==}
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
@@ -14868,10 +14839,10 @@ snapshots:
     dependencies:
       '@polkadot/types': 16.3.1
 
-  '@mantine/charts@7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(recharts@2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
+  '@mantine/charts@8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(recharts@2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
     dependencies:
-      '@mantine/core': 7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.7(react@19.1.0)
+      '@mantine/core': 8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks': 8.2.1(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       recharts: 2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -14884,20 +14855,6 @@ snapshots:
       highlight.js: 11.11.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  '@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@floating-ui/react': 0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.7(react@19.1.0)
-      clsx: 2.1.1
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-number-format: 5.4.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-remove-scroll: 2.7.0(@types/react@19.1.8)(react@19.1.0)
-      react-textarea-autosize: 8.5.9(@types/react@19.1.8)(react@19.1.0)
-      type-fest: 4.41.0
-    transitivePeerDependencies:
-      - '@types/react'
 
   '@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -14913,20 +14870,14 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mantine/dates@7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@mantine/dates@8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@mantine/core': 7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.7(react@19.1.0)
+      '@mantine/core': 8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks': 8.2.1(react@19.1.0)
       clsx: 2.1.1
       dayjs: 1.11.13
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  '@mantine/form@7.17.7(react@19.1.0)':
-    dependencies:
-      fast-deep-equal: 3.1.3
-      klona: 2.0.6
-      react: 19.1.0
 
   '@mantine/form@8.2.1(react@19.1.0)':
     dependencies:
@@ -14934,22 +14885,9 @@ snapshots:
       klona: 2.0.6
       react: 19.1.0
 
-  '@mantine/hooks@7.17.7(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
-
   '@mantine/hooks@8.2.1(react@19.1.0)':
     dependencies:
       react: 19.1.0
-
-  '@mantine/notifications@7.17.7(@mantine/core@7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@mantine/core': 7.17.7(@mantine/hooks@7.17.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.7(react@19.1.0)
-      '@mantine/store': 7.17.7(react@19.1.0)
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-transition-group: 4.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
   '@mantine/notifications@8.2.1(@mantine/core@8.2.1(@mantine/hooks@8.2.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -14959,10 +14897,6 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       react-transition-group: 4.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-
-  '@mantine/store@7.17.7(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
 
   '@mantine/store@8.2.1(react@19.1.0)':
     dependencies:
@@ -15058,10 +14992,10 @@ snapshots:
 
   '@microsoft/tsdoc@0.15.1': {}
 
-  '@monogrid/gainmap-js@3.1.0(three@0.175.0)':
+  '@monogrid/gainmap-js@3.1.0(three@0.178.0)':
     dependencies:
       promise-worker-transferable: 1.0.4
-      three: 0.175.0
+      three: 0.178.0
 
   '@moonbeam-network/types-bundle@1.0.2(@swc/core@1.12.7)(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(utf-8-validate@5.0.10)(yaml@2.8.0)':
     dependencies:
@@ -17378,28 +17312,28 @@ snapshots:
       '@swc/helpers': 0.5.17
       react: 19.1.0
 
-  '@react-three/drei@10.3.0(@react-three/fiber@9.1.4(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0))(@types/react@19.1.8)(@types/three@0.177.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0)':
+  '@react-three/drei@10.5.2(@react-three/fiber@9.2.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0))(@types/react@19.1.8)(@types/three@0.177.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0)':
     dependencies:
-      '@babel/runtime': 7.27.4
+      '@babel/runtime': 7.27.6
       '@mediapipe/tasks-vision': 0.10.17
-      '@monogrid/gainmap-js': 3.1.0(three@0.175.0)
-      '@react-three/fiber': 9.1.4(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0)
+      '@monogrid/gainmap-js': 3.1.0(three@0.178.0)
+      '@react-three/fiber': 9.2.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0)
       '@use-gesture/react': 10.3.1(react@19.1.0)
-      camera-controls: 2.10.1(three@0.175.0)
+      camera-controls: 3.1.0(three@0.178.0)
       cross-env: 7.0.3
       detect-gpu: 5.0.70
       glsl-noise: 0.0.0
       hls.js: 1.6.4
-      maath: 0.10.8(@types/three@0.177.0)(three@0.175.0)
-      meshline: 3.3.1(three@0.175.0)
+      maath: 0.10.8(@types/three@0.177.0)(three@0.178.0)
+      meshline: 3.3.1(three@0.178.0)
       react: 19.1.0
-      stats-gl: 2.4.2(@types/three@0.177.0)(three@0.175.0)
+      stats-gl: 2.4.2(@types/three@0.177.0)(three@0.178.0)
       stats.js: 0.17.0
       suspend-react: 0.1.3(react@19.1.0)
-      three: 0.175.0
-      three-mesh-bvh: 0.8.3(three@0.175.0)
-      three-stdlib: 2.36.0(three@0.175.0)
-      troika-three-text: 0.52.4(three@0.175.0)
+      three: 0.178.0
+      three-mesh-bvh: 0.8.3(three@0.178.0)
+      three-stdlib: 2.36.0(three@0.178.0)
+      troika-three-text: 0.52.4(three@0.178.0)
       tunnel-rat: 0.1.2(@types/react@19.1.8)(react@19.1.0)
       use-sync-external-store: 1.5.0(react@19.1.0)
       utility-types: 3.11.0
@@ -17411,9 +17345,9 @@ snapshots:
       - '@types/three'
       - immer
 
-  '@react-three/fiber@9.1.4(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.175.0)':
+  '@react-three/fiber@9.2.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.178.0)':
     dependencies:
-      '@babel/runtime': 7.27.4
+      '@babel/runtime': 7.27.6
       '@types/react-reconciler': 0.28.9(@types/react@19.1.8)
       '@types/webxr': 0.5.22
       base64-js: 1.5.1
@@ -17424,7 +17358,7 @@ snapshots:
       react-use-measure: 2.1.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       scheduler: 0.25.0
       suspend-react: 0.1.3(react@19.1.0)
-      three: 0.175.0
+      three: 0.178.0
       use-sync-external-store: 1.5.0(react@19.1.0)
       zustand: 5.0.5(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     optionalDependencies:
@@ -19647,9 +19581,9 @@ snapshots:
 
   camelize@1.0.1: {}
 
-  camera-controls@2.10.1(three@0.175.0):
+  camera-controls@3.1.0(three@0.178.0):
     dependencies:
-      three: 0.175.0
+      three: 0.178.0
 
   caniuse-lite@1.0.30001720: {}
 
@@ -22375,10 +22309,10 @@ snapshots:
 
   luxon@3.6.1: {}
 
-  maath@0.10.8(@types/three@0.177.0)(three@0.175.0):
+  maath@0.10.8(@types/three@0.177.0)(three@0.178.0):
     dependencies:
       '@types/three': 0.177.0
-      three: 0.175.0
+      three: 0.178.0
 
   magic-string@0.30.17:
     dependencies:
@@ -22430,9 +22364,9 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.15.34
 
-  meshline@3.3.1(three@0.175.0):
+  meshline@3.3.1(three@0.178.0):
     dependencies:
-      three: 0.175.0
+      three: 0.178.0
 
   meshoptimizer@0.18.1: {}
 
@@ -23884,10 +23818,10 @@ snapshots:
 
   stackback@0.0.2: {}
 
-  stats-gl@2.4.2(@types/three@0.177.0)(three@0.175.0):
+  stats-gl@2.4.2(@types/three@0.177.0)(three@0.178.0):
     dependencies:
       '@types/three': 0.177.0
-      three: 0.175.0
+      three: 0.178.0
 
   stats.js@0.17.0: {}
 
@@ -24187,11 +24121,11 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  three-mesh-bvh@0.8.3(three@0.175.0):
+  three-mesh-bvh@0.8.3(three@0.178.0):
     dependencies:
-      three: 0.175.0
+      three: 0.178.0
 
-  three-stdlib@2.36.0(three@0.175.0):
+  three-stdlib@2.36.0(three@0.178.0):
     dependencies:
       '@types/draco3d': 1.4.10
       '@types/offscreencanvas': 2019.7.3
@@ -24199,9 +24133,9 @@ snapshots:
       draco3d: 1.5.7
       fflate: 0.6.10
       potpack: 1.0.2
-      three: 0.175.0
+      three: 0.178.0
 
-  three@0.175.0: {}
+  three@0.178.0: {}
 
   through@2.3.8: {}
 
@@ -24277,17 +24211,17 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
-  troika-three-text@0.52.4(three@0.175.0):
+  troika-three-text@0.52.4(three@0.178.0):
     dependencies:
       bidi-js: 1.0.3
-      three: 0.175.0
-      troika-three-utils: 0.52.4(three@0.175.0)
+      three: 0.178.0
+      troika-three-utils: 0.52.4(three@0.178.0)
       troika-worker-utils: 0.52.0
       webgl-sdf-generator: 1.1.1
 
-  troika-three-utils@0.52.4(three@0.175.0):
+  troika-three-utils@0.52.4(three@0.178.0):
     dependencies:
-      three: 0.175.0
+      three: 0.178.0
 
   troika-worker-utils@0.52.0: {}
 
