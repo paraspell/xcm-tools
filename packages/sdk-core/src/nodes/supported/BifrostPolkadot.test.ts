@@ -42,7 +42,7 @@ describe('BifrostPolkadot', () => {
     expect(bifrostPolkadot.node).toBe('BifrostPolkadot')
     expect(bifrostPolkadot.info).toBe('bifrost')
     expect(bifrostPolkadot.type).toBe('polkadot')
-    expect(bifrostPolkadot.version).toBe(Version.V4)
+    expect(bifrostPolkadot.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {

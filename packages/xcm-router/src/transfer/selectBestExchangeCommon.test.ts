@@ -26,6 +26,10 @@ vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),
 }));
 
+vi.mock('./canBuildToExchangeTx', () => ({
+  canBuildToExchangeTx: vi.fn().mockResolvedValue({ success: true }),
+}));
+
 vi.spyOn(Logger, 'log').mockImplementation(() => {});
 
 const baseOptions = {
@@ -35,11 +39,11 @@ const baseOptions = {
   currencyTo: { symbol: 'BBB' },
 } as unknown as TCommonTransferOptions;
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe('selectBestExchangeCommon', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('throws error if assetFromOrigin is not found', async () => {
     vi.mocked(findAsset).mockReturnValue(null);
     await expect(
@@ -121,5 +125,58 @@ describe('selectBestExchangeCommon', () => {
     await expect(
       selectBestExchangeCommon(baseOptions, undefined, computeAmountOut),
     ).rejects.toThrow();
+  });
+
+  it('uses getExchangeAsset when from is not specified', async () => {
+    const optionsWithoutFrom = {
+      ...baseOptions,
+      from: undefined,
+      exchange: ['AcalaDex'],
+    } as unknown as TCommonTransferOptions;
+
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA' });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
+    vi.mocked(hasSupportForAsset).mockReturnValue(true);
+
+    const fakeDex = { node: 'Acala', exchangeNode: 'AcalaDex' } as unknown as ExchangeNode;
+    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
+
+    const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
+
+    const bestExchange = await selectBestExchangeCommon(
+      optionsWithoutFrom,
+      undefined,
+      computeAmountOut,
+    );
+
+    expect(bestExchange).toBe(fakeDex);
+    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithoutFrom.currencyFrom);
+  });
+
+  it('uses getExchangeAsset when from equals dex.node', async () => {
+    const optionsWithSameNode = {
+      ...baseOptions,
+      from: 'Acala',
+      exchange: ['AcalaDex'],
+    } as unknown as TCommonTransferOptions;
+
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA' });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
+    vi.mocked(hasSupportForAsset).mockReturnValue(true);
+
+    const fakeDex = { node: 'Acala', exchangeNode: 'AcalaDex' } as unknown as ExchangeNode;
+    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
+
+    const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
+
+    const bestExchange = await selectBestExchangeCommon(
+      optionsWithSameNode,
+      undefined,
+      computeAmountOut,
+    );
+
+    expect(bestExchange).toBe(fakeDex);
+    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithSameNode.currencyFrom);
   });
 });

@@ -34,7 +34,7 @@ describe('Moonriver', () => {
     expect(node.node).toBe('Moonriver')
     expect(node.info).toBe('moonriver')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {

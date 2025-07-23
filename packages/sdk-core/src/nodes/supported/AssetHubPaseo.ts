@@ -4,7 +4,7 @@ import AssetHubPolkadot from './AssetHubPolkadot'
 
 class AssetHubPaseo<TApi, TRes> extends AssetHubPolkadot<TApi, TRes> {
   constructor() {
-    super('AssetHubPaseo', 'PaseoAssetHub', 'paseo', Version.V4)
+    super('AssetHubPaseo', 'PaseoAssetHub', 'paseo', Version.V5)
   }
 }
 

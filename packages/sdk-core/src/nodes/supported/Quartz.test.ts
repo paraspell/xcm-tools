@@ -24,7 +24,7 @@ describe('Quartz', () => {
     expect(quartz.node).toBe('Quartz')
     expect(quartz.info).toBe('quartz')
     expect(quartz.type).toBe('kusama')
-    expect(quartz.version).toBe(Version.V4)
+    expect(quartz.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with asset id', () => {

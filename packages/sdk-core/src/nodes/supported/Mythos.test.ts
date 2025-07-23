@@ -59,7 +59,7 @@ describe('Mythos', () => {
     expect(mythos.node).toBe('Mythos')
     expect(mythos.info).toBe('mythos')
     expect(mythos.type).toBe('polkadot')
-    expect(mythos.version).toBe(Version.V4)
+    expect(mythos.version).toBe(Version.V5)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for non-AssetHubPolkadot destination', async () => {

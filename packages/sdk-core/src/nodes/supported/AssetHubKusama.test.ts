@@ -20,7 +20,7 @@ describe('transferPolkadotXCM', () => {
     expect(node.node).toBe('AssetHubKusama')
     expect(node.info).toBe('KusamaAssetHub')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {

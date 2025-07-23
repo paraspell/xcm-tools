@@ -16,6 +16,6 @@ describe('PeoplePaseo', () => {
     expect(chain.node).toBe('PeoplePaseo')
     expect(chain.info).toBe('PaseoPeopleChain')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

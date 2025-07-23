@@ -18,7 +18,7 @@ import ParachainNode from '../ParachainNode'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Moonriver', 'moonriver', 'kusama', Version.V4)
+    super('Moonriver', 'moonriver', 'kusama', Version.V5)
   }
 
   private getMultiLocation(asset: TAsset, scenario: TScenario): TMultiLocation {

@@ -103,7 +103,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
 
 class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Mythos', 'mythos', 'polkadot', Version.V4)
+    super('Mythos', 'mythos', 'polkadot', Version.V5)
   }
 
   private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

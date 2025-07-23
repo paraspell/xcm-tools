@@ -28,7 +28,7 @@ describe('Heima', () => {
       expect(heima.node).toBe('Heima')
       expect(heima.info).toBe('litentry')
       expect(heima.type).toBe('polkadot')
-      expect(heima.version).toBe(Version.V4)
+      expect(heima.version).toBe(Version.V5)
     })
 
     it('should not suppoert ParaToRelay scenario', () => {

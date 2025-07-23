@@ -339,7 +339,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -380,7 +380,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -402,7 +402,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -433,7 +433,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -474,7 +474,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from P
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -496,7 +496,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from P
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -527,7 +527,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DOT from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -547,7 +547,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DOT from P
       "type": "LocalReserve",
     },
     "custom_xcm_on_dest": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "type": "DepositAsset",
@@ -593,7 +593,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DOT from P
       ],
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -614,7 +614,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DOT from P
       "type": "LocalReserve",
     },
     "remote_fees_id": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -635,7 +635,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -661,7 +661,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from P
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -683,7 +683,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from P
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -714,7 +714,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KILT from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -755,7 +755,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KILT from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -777,7 +777,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KILT from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -808,7 +808,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KSM from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -835,7 +835,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KSM from P
       "type": "LocalReserve",
     },
     "custom_xcm_on_dest": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "type": "DepositAsset",
@@ -881,7 +881,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KSM from P
       ],
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -902,7 +902,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KSM from P
       "type": "LocalReserve",
     },
     "remote_fees_id": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -930,7 +930,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -971,7 +971,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -993,7 +993,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1024,7 +1024,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1065,7 +1065,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1087,7 +1087,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1118,7 +1118,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PEPE from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1159,7 +1159,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PEPE from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1181,7 +1181,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PEPE from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1212,7 +1212,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SHIB from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1253,7 +1253,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SHIB from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1275,7 +1275,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SHIB from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1306,7 +1306,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SKY from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1347,7 +1347,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SKY from P
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1369,7 +1369,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SKY from P
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1400,7 +1400,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TON from P
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1441,7 +1441,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TON from P
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1463,7 +1463,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TON from P
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1494,7 +1494,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDC from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1535,7 +1535,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDC from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1557,7 +1557,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDC from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1588,7 +1588,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDT from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1629,7 +1629,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDT from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1651,7 +1651,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDT from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1682,7 +1682,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WBTC from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1723,7 +1723,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WBTC from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1745,7 +1745,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WBTC from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1776,7 +1776,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WETH from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1817,7 +1817,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WETH from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1839,7 +1839,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WETH from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1870,7 +1870,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - tBTC from 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -1911,7 +1911,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - tBTC from 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1933,7 +1933,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - tBTC from 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -1964,7 +1964,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - wstETH fro
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -2005,7 +2005,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - wstETH fro
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -2027,7 +2027,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - wstETH fro
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -2471,21 +2471,6 @@ exports[`XCM - e2e > Local transfers (origin = destination) > should create loca
 }
 `;
 
-exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on Manta 1`] = `
-{
-  "method": "transfer",
-  "module": "Assets",
-  "parameters": {
-    "amount": 1000000000000n,
-    "id": 8n,
-    "target": {
-      "type": "Id",
-      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on Moonbeam 1`] = `
 {
   "method": "transfer",
@@ -2712,7 +2697,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -2735,7 +2720,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -2757,7 +2742,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -2791,7 +2776,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -2808,7 +2793,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -2830,7 +2815,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -2864,7 +2849,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -2887,7 +2872,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -2909,7 +2894,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -3008,7 +2993,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3025,7 +3010,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3047,7 +3032,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3073,7 +3058,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3090,7 +3075,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3112,7 +3097,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3138,7 +3123,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3155,7 +3140,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3177,7 +3162,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3203,7 +3188,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3220,7 +3205,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3242,7 +3227,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3333,7 +3318,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3350,7 +3335,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3372,7 +3357,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3466,7 +3451,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3483,7 +3468,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3505,7 +3490,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3865,7 +3850,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -3882,7 +3867,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3904,7 +3889,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -3998,7 +3983,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4018,7 +4003,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       "type": "Teleport",
     },
     "custom_xcm_on_dest": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "type": "DepositReserveAsset",
@@ -4098,7 +4083,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4114,7 +4099,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       "type": "Teleport",
     },
     "remote_fees_id": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -4203,7 +4188,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4220,7 +4205,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4242,7 +4227,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4469,7 +4454,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4486,7 +4471,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4508,7 +4493,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4599,7 +4584,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4616,7 +4601,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4638,7 +4623,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4664,7 +4649,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4681,7 +4666,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4703,7 +4688,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4729,7 +4714,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4746,7 +4731,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4768,7 +4753,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4862,7 +4847,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -4879,7 +4864,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -4901,7 +4886,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -5060,7 +5045,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -5077,7 +5062,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -5099,7 +5084,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -5193,7 +5178,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
   "module": "XcmPallet",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -5210,7 +5195,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -5232,7 +5217,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - KSM from Kusama t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8027,7 +8012,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8045,7 +8030,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8067,7 +8052,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8093,7 +8078,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8111,7 +8096,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8133,7 +8118,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8237,7 +8222,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8255,7 +8240,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8277,7 +8262,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8303,7 +8288,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > should creat
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8320,7 +8305,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > should creat
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8342,7 +8327,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > should creat
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -8364,7 +8349,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8405,7 +8390,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8427,7 +8412,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8453,7 +8438,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8471,7 +8456,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8493,7 +8478,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8519,7 +8504,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8537,7 +8522,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8559,7 +8544,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8728,7 +8713,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8746,7 +8731,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8768,7 +8753,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8794,7 +8779,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > should create
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8811,7 +8796,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > should create
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8833,7 +8818,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > should create
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -8921,7 +8906,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -8938,7 +8923,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8960,7 +8945,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -8986,7 +8971,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9004,7 +8989,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9026,7 +9011,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9052,7 +9037,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9070,7 +9055,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9092,7 +9077,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9118,7 +9103,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9136,7 +9121,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9158,7 +9143,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9396,7 +9381,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9413,7 +9398,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9435,7 +9420,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9461,7 +9446,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9482,7 +9467,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9504,7 +9489,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9530,7 +9515,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9548,7 +9533,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9570,7 +9555,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9596,7 +9581,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9613,7 +9598,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9635,7 +9620,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9661,7 +9646,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > should cre
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9678,7 +9663,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > should cre
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9700,7 +9685,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > should cre
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -9722,7 +9707,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9740,7 +9725,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9762,7 +9747,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9788,7 +9773,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9806,7 +9791,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9828,7 +9813,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9854,7 +9839,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9872,7 +9857,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9894,7 +9879,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9920,7 +9905,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -9938,7 +9923,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9960,7 +9945,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -9986,7 +9971,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > should crea
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -10003,7 +9988,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > should crea
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -10025,7 +10010,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > should crea
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -10154,7 +10139,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
   "module": "XTokens",
   "parameters": {
     "asset": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "fun": {
           "type": "Fungible",
@@ -10183,7 +10168,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -10223,7 +10208,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -10240,7 +10225,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -10262,7 +10247,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -10290,7 +10275,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -10374,7 +10359,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -10484,7 +10469,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -10841,7 +10826,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -10858,7 +10843,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -10880,7 +10865,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -11018,7 +11003,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -11170,7 +11155,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -11252,7 +11237,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > should create transfe
   "module": "XTokens",
   "parameters": {
     "asset": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "fun": {
           "type": "Fungible",
@@ -11268,7 +11253,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > should create transfe
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -12096,7 +12081,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12190,7 +12175,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12237,7 +12222,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12378,7 +12363,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12519,7 +12504,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12566,7 +12551,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12660,7 +12645,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -12707,7 +12692,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > should create
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -12791,7 +12776,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPaseo > ParaToPara > s
       "value": 13,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13020,7 +13005,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13067,7 +13052,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13112,7 +13097,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13202,7 +13187,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13292,7 +13277,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13660,7 +13645,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13797,7 +13782,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -13934,7 +13919,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -14026,7 +14011,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > should crea
       "value": 0,
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -14060,7 +14045,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubKusama > should crea
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -14077,7 +14062,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubKusama > should crea
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -14099,7 +14084,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubKusama > should crea
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -14121,7 +14106,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPaseo > should creat
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -14138,7 +14123,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPaseo > should creat
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -14160,7 +14145,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPaseo > should creat
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -14182,7 +14167,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPolkadot > should cr
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -14199,7 +14184,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPolkadot > should cr
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -14221,7 +14206,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubPolkadot > should cr
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -14243,7 +14228,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubWestend > should cre
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -14260,7 +14245,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubWestend > should cre
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -14282,7 +14267,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BridgeHubWestend > should cre
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -15399,7 +15384,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Collectives > should create t
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -15416,7 +15401,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Collectives > should create t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15438,7 +15423,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Collectives > should create t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -15460,7 +15445,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CollectivesWestend > should c
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -15477,7 +15462,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CollectivesWestend > should c
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15499,7 +15484,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CollectivesWestend > should c
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -15719,7 +15704,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -15736,7 +15721,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15758,7 +15743,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15784,7 +15769,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -15801,7 +15786,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15823,7 +15808,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15917,7 +15902,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -15934,7 +15919,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -15956,7 +15941,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16115,7 +16100,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16132,7 +16117,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16154,7 +16139,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16180,7 +16165,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16197,7 +16182,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16219,7 +16204,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16313,7 +16298,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16330,7 +16315,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16352,7 +16337,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16378,7 +16363,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > should creat
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16395,7 +16380,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > should creat
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16417,7 +16402,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > should creat
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -16504,7 +16489,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16521,7 +16506,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16543,7 +16528,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16569,7 +16554,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16586,7 +16571,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16608,7 +16593,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16699,7 +16684,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16716,7 +16701,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16738,7 +16723,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16764,7 +16749,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16781,7 +16766,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16803,7 +16788,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16829,7 +16814,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > should create
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -16846,7 +16831,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > should create
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -16868,7 +16853,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > should create
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -17020,7 +17005,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -17037,7 +17022,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17059,7 +17044,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17085,7 +17070,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -17102,7 +17087,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17124,7 +17109,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17150,7 +17135,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -17167,7 +17152,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17189,7 +17174,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17280,7 +17265,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -17297,7 +17282,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17319,7 +17304,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17809,7 +17794,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -17826,7 +17811,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -17848,7 +17833,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18007,7 +17992,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18024,7 +18009,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18046,7 +18031,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18208,7 +18193,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18225,7 +18210,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18247,7 +18232,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > ParaToPara
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18341,7 +18326,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > should cre
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18358,7 +18343,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > should cre
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18380,7 +18365,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePolkadot > should cre
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -18402,7 +18387,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18419,7 +18404,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18441,7 +18426,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18467,7 +18452,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18484,7 +18469,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18506,7 +18491,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18532,7 +18517,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18549,7 +18534,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18571,7 +18556,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18597,7 +18582,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18614,7 +18599,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18636,7 +18621,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > ParaToPara 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18662,7 +18647,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > should crea
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -18679,7 +18664,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > should crea
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -18701,7 +18686,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > should crea
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -20117,7 +20102,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -20134,7 +20119,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -20156,7 +20141,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -22907,1112 +22892,6 @@ exports[`XCM - e2e > Transfer scenarios for origin LaosPaseo > ParaToPara > shou
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Acala - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2000,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Ajuna - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2051,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to AssetHubPolkadot - (SHIB) 1`] = `
-{
-  "method": "transfer_multiasset",
-  "module": "XTokens",
-  "parameters": {
-    "asset": {
-      "type": "V3",
-      "value": {
-        "fun": {
-          "type": "Fungible",
-          "value": 1000000000000n,
-        },
-        "id": {
-          "type": "Concrete",
-          "value": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "Parachain",
-                  "value": 2000,
-                },
-                {
-                  "type": "GeneralKey",
-                  "value": {
-                    "data": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "length": 21,
-                  },
-                },
-              ],
-            },
-            "parents": 1,
-          },
-        },
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1000,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Astar - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2006,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to BifrostPolkadot - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2030,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to BridgeHubPolkadot - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1002,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Centrifuge - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2031,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Collectives - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1001,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to ComposableFinance - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2019,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to CoretimePolkadot - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1005,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Darwinia - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2046,
-            },
-            {
-              "type": "AccountKey20",
-              "value": {
-                "key": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Hydration - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2034,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Interlay - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2032,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Jamton - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 3397,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to KiltSpiritnet - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2086,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Moonbeam - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2004,
-            },
-            {
-              "type": "AccountKey20",
-              "value": {
-                "key": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Peaq - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 3338,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Pendulum - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2094,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to PeoplePolkadot - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1004,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Phala - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2035,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to RobonomicsPolkadot - (DOT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 3388,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Unique - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2037,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > ParaToPara > should create transfer tx from Manta to Zeitgeist - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 9n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2092,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Manta > should create transfer tx - ParaToRelay DOT from Manta to Relay 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "parameters": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "MantaCurrency",
-      "value": 8n,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Acala - (GLMR) 1`] = `
 {
   "method": "transfer_assets",
@@ -24167,7 +23046,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24188,7 +23067,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24210,7 +23089,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24236,7 +23115,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24257,7 +23136,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24279,7 +23158,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24305,7 +23184,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24326,7 +23205,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24348,7 +23227,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24374,7 +23253,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24392,7 +23271,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24414,7 +23293,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24509,7 +23388,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24527,7 +23406,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24549,7 +23428,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24647,7 +23526,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -24665,7 +23544,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -24687,7 +23566,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -25593,7 +24472,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -25611,7 +24490,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -25633,7 +24512,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -25872,7 +24751,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -25893,7 +24772,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -25915,7 +24794,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26013,7 +24892,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26030,7 +24909,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26052,7 +24931,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -26225,7 +25104,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26246,7 +25125,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26268,7 +25147,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26369,7 +25248,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26390,7 +25269,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26412,7 +25291,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26438,7 +25317,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26456,7 +25335,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26478,7 +25357,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26504,7 +25383,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26522,7 +25401,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26544,7 +25423,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26786,7 +25665,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -26804,7 +25683,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26826,7 +25705,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -26993,7 +25872,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -27011,7 +25890,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27033,7 +25912,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27131,7 +26010,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -27152,7 +26031,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27174,7 +26053,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27200,7 +26079,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > should create tra
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -27217,7 +26096,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > should create tra
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27239,7 +26118,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > should create tra
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -27265,7 +26144,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
       "ref_time": 3080024000n,
     },
     "message": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "type": "WithdrawAsset",
@@ -27747,7 +26626,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PAssetHub > should create tra
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -27764,7 +26643,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PAssetHub > should create tra
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -27786,7 +26665,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PAssetHub > should create tra
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -28801,7 +27680,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleKusama > should create 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -28818,7 +27697,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleKusama > should create 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -28840,7 +27719,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleKusama > should create 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -28862,7 +27741,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePaseo > should create t
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -28879,7 +27758,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePaseo > should create t
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -28901,7 +27780,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePaseo > should create t
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -28923,7 +27802,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePolkadot > should creat
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -28940,7 +27819,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePolkadot > should creat
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -28962,7 +27841,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePolkadot > should creat
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -28984,7 +27863,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleWestend > should create
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -29001,7 +27880,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleWestend > should create
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29023,7 +27902,7 @@ exports[`XCM - e2e > Transfer scenarios for origin PeopleWestend > should create
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -29204,7 +28083,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > ParaToPara > should
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -29235,7 +28114,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > ParaToPara > should
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29257,7 +28136,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > ParaToPara > should
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29348,7 +28227,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > should create trans
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -29368,7 +28247,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > should create trans
       "type": "Teleport",
     },
     "custom_xcm_on_dest": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "type": "DepositReserveAsset",
@@ -29444,7 +28323,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > should create trans
       ],
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29460,7 +28339,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polimec > should create trans
       "type": "Teleport",
     },
     "remote_fees_id": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -29565,7 +28444,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
   "module": "XTokens",
   "parameters": {
     "asset": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "fun": {
           "type": "Fungible",
@@ -29594,7 +28473,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -29676,7 +28555,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -29693,7 +28572,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29715,7 +28594,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -29743,7 +28622,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -29785,7 +28664,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -29979,7 +28858,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30126,7 +29005,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -30143,7 +29022,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -30165,7 +29044,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -30193,7 +29072,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 340282366920938463463374607431768211455n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30235,7 +29114,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 18446744073709551633n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30317,7 +29196,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > should create transf
   "module": "XTokens",
   "parameters": {
     "asset": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "fun": {
           "type": "Fungible",
@@ -30333,7 +29212,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > should create transf
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -30451,7 +29330,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
   "module": "XTokens",
   "parameters": {
     "asset": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "fun": {
           "type": "Fungible",
@@ -30480,7 +29359,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30522,7 +29401,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 459,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30564,7 +29443,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 459,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30606,7 +29485,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 437,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30690,7 +29569,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 437,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -30774,7 +29653,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 437,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -31110,7 +29989,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 459,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -31236,7 +30115,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
     "amount": 1000000000000n,
     "currency_id": 437,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -31404,7 +30283,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > should create transf
     "amount": 1000000000000n,
     "currency_id": 437,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",

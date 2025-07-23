@@ -9,7 +9,7 @@ import ParachainNode from '../ParachainNode'
 
 class CoretimeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V4)
+    super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

@@ -17,7 +17,7 @@ class BridgeHubPolkadot<TApi, TRes>
     chain: TNodePolkadotKusama = 'BridgeHubPolkadot',
     info: string = 'polkadotBridgeHub',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

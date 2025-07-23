@@ -26,7 +26,7 @@ describe('BridgeHubKusama', () => {
     expect(node.node).toBe('BridgeHubKusama')
     expect(node.info).toBe('kusamaBridgeHub')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {

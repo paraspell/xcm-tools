@@ -16,6 +16,6 @@ describe('BridgeHubPaseo', () => {
     expect(chain.node).toBe('BridgeHubPaseo')
     expect(chain.info).toBe('PaseoBridgeHub')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

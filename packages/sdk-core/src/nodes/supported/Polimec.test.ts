@@ -42,7 +42,7 @@ describe('Polimec', () => {
     expect(polimec.node).toBe('Polimec')
     expect(polimec.info).toBe('polimec')
     expect(polimec.type).toBe('polkadot')
-    expect(polimec.version).toBe(Version.V4)
+    expect(polimec.version).toBe(Version.V5)
   })
 
   it('should throw ScenarioNotSupportedError when scenario is not ParaToRelay or ParaToPara with AssetHubPolkadot or Hydration', async () => {

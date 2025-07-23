@@ -16,6 +16,6 @@ describe('CoretimePaseo', () => {
     expect(chain.node).toBe('CoretimePaseo')
     expect(chain.info).toBe('PaseoCoretime')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

@@ -26,7 +26,7 @@ describe('Unique', () => {
     expect(unique.node).toBe('Unique')
     expect(unique.info).toBe('unique')
     expect(unique.type).toBe('polkadot')
-    expect(unique.version).toBe(Version.V4)
+    expect(unique.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with asset id', () => {
