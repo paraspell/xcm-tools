@@ -1,10 +1,4 @@
-import type {
-  TCurrencyInput,
-  TForeignAsset,
-  TMultiLocation,
-  TNativeAsset,
-  TNodePolkadotKusama,
-} from '@paraspell/sdk';
+import type { TCurrencyInput, TForeignAsset, TMultiLocation, TNativeAsset } from '@paraspell/sdk';
 import {
   findAssetById,
   findAssetByMultiLocation,
@@ -19,7 +13,6 @@ import type { TExchangeNode, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAsset = (
-  exchangeBaseNode: TNodePolkadotKusama,
   exchange: TExchangeNode,
   currency: TCurrencyInput,
   throwOnDuplicateSymbol = false,
@@ -55,7 +48,7 @@ export const getExchangeAsset = (
       );
     }
 
-    asset = findAssetBySymbol(exchangeBaseNode, null, otherAssets, nativeAssets, currency.symbol);
+    asset = findAssetBySymbol(null, otherAssets, nativeAssets, currency.symbol);
   } else if (
     'multilocation' in currency &&
     !isOverrideMultiLocationSpecifier(currency.multilocation)

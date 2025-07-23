@@ -1,10 +1,4 @@
-import {
-  findAsset,
-  hasSupportForAsset,
-  type TAsset,
-  type TCurrencyInput,
-  type TNodePolkadotKusama,
-} from '@paraspell/sdk';
+import { findAsset, hasSupportForAsset, type TAsset, type TCurrencyInput } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
@@ -44,7 +38,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -74,7 +68,7 @@ describe('resolveAssets', () => {
     vi.mocked(findAsset).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
       },
@@ -124,7 +118,7 @@ describe('resolveAssets', () => {
     } as unknown as TTransferOptions;
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return null;
         if ('symbol' in currency && currency.symbol === 'ETH') return { symbol: 'ETH_EXCHANGE' };
         return null;
@@ -143,7 +137,7 @@ describe('resolveAssets', () => {
     } as unknown as TTransferOptions;
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return { symbol: 'BTC_EXCHANGE' };
         if ('symbol' in currency && currency.symbol === 'ETH') return null;
         return null;
@@ -165,7 +159,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -188,7 +182,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -219,7 +213,7 @@ describe('resolveAssets', () => {
     vi.mocked(findAsset).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_node: TNodePolkadotKusama, _exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
       },

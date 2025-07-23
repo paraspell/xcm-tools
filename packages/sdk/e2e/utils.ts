@@ -5,7 +5,7 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import { NODE_NAMES_DOT_KSM, TPapiTransaction } from '../src'
+import { NODE_NAMES_DOT_KSM, TPallet, TPapiTransaction, TSerializedApiCall } from '../src'
 import { expect } from 'vitest'
 
 export const createSr25519Signer = () => {
@@ -46,10 +46,21 @@ export const createEcdsaSigner = () => {
   )
 }
 
+const serializeTx = (tx: TPapiTransaction): TSerializedApiCall => {
+  const call = tx.decodedCall
+  return {
+    module: call.type as TPallet,
+    method: call.value.type,
+    parameters: call.value.value
+  }
+}
+
 export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) => {
   expect(tx).toBeDefined()
   const hex = await tx.sign(signer)
   expect(hex).toBeDefined()
+  const serialized = serializeTx(tx)
+  expect(serialized).toMatchSnapshot()
 }
 
 export const filteredNodes = NODE_NAMES_DOT_KSM.filter(

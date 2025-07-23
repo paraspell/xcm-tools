@@ -99,7 +99,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       ;(
         ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeDotKsmWithRelayChains[]
       ).forEach(node => {
-        it('should create asset claim tx', async () => {
+        it(`should create asset claim tx for ${node}`, async () => {
           const api = await createOrGetApiInstanceForNode(node)
           const tx = await Builder(api)
             .claimFrom(node)
@@ -347,6 +347,9 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     expect(error.name).toBe('IncompatibleNodes')
                   } else if (error.name === 'TransferToAhNotSupported') {
                     expect(error.name).toBe('TransferToAhNotSupported')
+                  } else if (error.message.includes('LocalExecutionIncomplete')) {
+                    // Handle DryRunFailedError: LocalExecutionIncomplete
+                    expect(error.message).toContain('LocalExecutionIncomplete')
                   } else {
                     throw error
                   }

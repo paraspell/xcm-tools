@@ -103,7 +103,7 @@ class AssetHubExchangeNode extends ExchangeNode {
   ): Promise<TMultiSwapResult> {
     const { assetFrom, assetTo } = options;
 
-    const nativeAsset = getExchangeAsset(this.node, this.exchangeNode, {
+    const nativeAsset = getExchangeAsset(this.exchangeNode, {
       symbol: getNativeAssetSymbol(this.node),
     });
 
@@ -176,7 +176,7 @@ class AssetHubExchangeNode extends ExchangeNode {
       throw new InvalidParameterError('Asset to multiLocation not found');
     }
 
-    const nativeAsset = getExchangeAsset(this.node, this.exchangeNode, {
+    const nativeAsset = getExchangeAsset(this.exchangeNode, {
       symbol: getNativeAssetSymbol(this.node),
     });
 
