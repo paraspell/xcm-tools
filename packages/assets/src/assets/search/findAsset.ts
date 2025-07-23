@@ -34,15 +34,13 @@ export const findAsset = (
     if (isEthereumDestination) {
       asset =
         findAssetBySymbol(
-          node,
           destination,
           getFilteredEthereumAssets(),
           nativeAssets,
           currency.symbol
-        ) ??
-        findAssetBySymbol(node, destination, getEthereumAssets(), nativeAssets, currency.symbol)
+        ) ?? findAssetBySymbol(destination, getEthereumAssets(), nativeAssets, currency.symbol)
     } else {
-      asset = findAssetBySymbol(node, destination, otherAssets, nativeAssets, currency.symbol)
+      asset = findAssetBySymbol(destination, otherAssets, nativeAssets, currency.symbol)
     }
   } else if (
     'multilocation' in currency &&
