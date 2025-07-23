@@ -8,19 +8,11 @@ import { findBestMatches } from './findBestMatches'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
 export const findAssetBySymbol = (
-  node: TNodeWithRelayChains,
   destination: TNodeWithRelayChains | null,
   otherAssets: TForeignAsset[],
   nativeAssets: TNativeAsset[],
   symbol: TCurrencySymbolValue
 ): TAsset | undefined => {
-  const supportsESuffix =
-    node === 'AssetHubPolkadot' ||
-    node === 'AssetHubKusama' ||
-    destination === 'AssetHubPolkadot' ||
-    destination === 'AssetHubKusama' ||
-    node === 'Ethereum'
-
   const isSpecifier = isSymbolSpecifier(symbol)
   let assetsMatches: TAsset[] = []
 
@@ -54,17 +46,9 @@ export const findAssetBySymbol = (
         return assetsMatches[0]
       }
 
-      if (lowerSymbol.endsWith('.e') && supportsESuffix) {
+      if (lowerSymbol.endsWith('.e')) {
         // Symbol ends with '.e', indicating a Snowbridge asset
         const strippedSymbol = value.slice(0, -2)
-
-        // Search in Ethereum assets without the '.e' suffix
-        const ethereumAssets = getOtherAssets('Ethereum')
-        const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
-
-        if (ethereumMatches.length > 0) {
-          return ethereumMatches[0]
-        }
 
         // If not found, search normal assets with '.e' suffix
         otherAssetsMatches = findBestMatches(otherAssets, value)
@@ -73,6 +57,30 @@ export const findAssetBySymbol = (
           throwDuplicateAssetError(value, [], otherAssetsMatches)
         } else if (otherAssetsMatches.length > 0) {
           return otherAssetsMatches[0]
+        }
+
+        if (lowerSymbol.startsWith('xc')) {
+          // Symbol starts with 'xc', try stripping 'xc' prefix
+          const strippedSymbol = value.substring(2)
+          otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
+        } else {
+          // Try adding 'xc' prefix
+          const prefixedSymbol = `xc${value}`
+          otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
+        }
+
+        if (otherAssetsMatches.length > 1) {
+          throwDuplicateAssetError(value, [], otherAssetsMatches)
+        } else if (otherAssetsMatches.length > 0) {
+          return otherAssetsMatches[0]
+        }
+
+        // Search in Ethereum assets without the '.e' suffix
+        const ethereumAssets = getOtherAssets('Ethereum')
+        const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
+
+        if (ethereumMatches.length > 0) {
+          return ethereumMatches[0]
         }
 
         // If still not found, search normal assets without suffix
@@ -144,17 +152,9 @@ export const findAssetBySymbol = (
       return assetsMatches[0]
     }
 
-    if (lowerSymbol.endsWith('.e') && supportsESuffix) {
+    if (lowerSymbol.endsWith('.e')) {
       // Symbol ends with '.e', indicating a Snowbridge asset
       const strippedSymbol = symbol.slice(0, -2)
-
-      // Search in Ethereum assets without the '.e' suffix
-      const ethereumAssets = getOtherAssets('Ethereum')
-      const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
-
-      if (ethereumMatches.length > 0) {
-        return ethereumMatches[0]
-      }
 
       // If not found, search normal assets with '.e' suffix
       otherAssetsMatches = findBestMatches(otherAssets, symbol)
@@ -162,6 +162,30 @@ export const findAssetBySymbol = (
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
         return otherAssetsMatches[0] || nativeAssetsMatches[0]
+      }
+
+      if (lowerSymbol.startsWith('xc')) {
+        // Symbol starts with 'xc', try stripping 'xc' prefix
+        const strippedSymbol = symbol.substring(2)
+        otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
+      } else {
+        // Try adding 'xc' prefix
+        const prefixedSymbol = `xc${symbol}`
+        otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
+      }
+
+      if (otherAssetsMatches.length > 1) {
+        throwDuplicateAssetError(symbol, [], otherAssetsMatches)
+      } else if (otherAssetsMatches.length > 0) {
+        return otherAssetsMatches[0]
+      }
+
+      // Search in Ethereum assets without the '.e' suffix
+      const ethereumAssets = getOtherAssets('Ethereum')
+      const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
+
+      if (ethereumMatches.length > 0) {
+        return ethereumMatches[0]
       }
 
       // If still not found, search normal assets without suffix
