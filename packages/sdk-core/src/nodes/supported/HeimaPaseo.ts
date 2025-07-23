@@ -4,7 +4,7 @@ import Heima from './Heima'
 
 class HeimaPaseo<TApi, TRes> extends Heima<TApi, TRes> {
   constructor() {
-    super('HeimaPaseo', 'heima-paseo', 'paseo', Version.V4)
+    super('HeimaPaseo', 'heima-paseo', 'paseo', Version.V5)
   }
 }
 

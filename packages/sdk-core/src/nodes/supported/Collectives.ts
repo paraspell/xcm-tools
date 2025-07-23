@@ -14,7 +14,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     chain: TNodePolkadotKusama = 'Collectives',
     info: string = 'polkadotCollectives',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

@@ -22,7 +22,7 @@ describe('CoretimePolkadot', () => {
     expect(node.node).toBe('CoretimePolkadot')
     expect(node.info).toBe('polkadotCoretime')
     expect(node.type).toBe('polkadot')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   describe('transferPolkadotXCM', () => {

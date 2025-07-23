@@ -29,7 +29,7 @@ describe('CoretimeKusama', () => {
     expect(node.node).toBe('CoretimeKusama')
     expect(node.info).toBe('kusamaCoretime')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {

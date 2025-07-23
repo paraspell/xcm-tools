@@ -11,7 +11,7 @@ class Quartz<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
   private static NATIVE_ASSET_ID = 0
 
   constructor() {
-    super('Quartz', 'quartz', 'kusama', Version.V4)
+    super('Quartz', 'quartz', 'kusama', Version.V5)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

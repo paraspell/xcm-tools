@@ -26,7 +26,7 @@ describe('Encointer', () => {
     expect(node.node).toBe('Encointer')
     expect(node.info).toBe('encointer')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', async () => {

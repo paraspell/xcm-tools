@@ -31,7 +31,7 @@ class BifrostPolkadot<TApi, TRes>
     chain: TNodePolkadotKusama = 'BifrostPolkadot',
     info: string = 'bifrost',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

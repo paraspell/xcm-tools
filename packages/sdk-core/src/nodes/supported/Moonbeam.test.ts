@@ -40,7 +40,7 @@ describe('Moonbeam', () => {
     expect(node.node).toBe('Moonbeam')
     expect(node.info).toBe('moonbeam')
     expect(node.type).toBe('polkadot')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {

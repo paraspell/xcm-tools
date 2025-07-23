@@ -25,7 +25,7 @@ describe('BifrostKusama', () => {
     expect(bifrostKusama.node).toBe('BifrostKusama')
     expect(bifrostKusama.info).toBe('bifrost')
     expect(bifrostKusama.type).toBe('kusama')
-    expect(bifrostKusama.version).toBe(Version.V4)
+    expect(bifrostKusama.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {

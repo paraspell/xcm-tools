@@ -16,6 +16,6 @@ describe('AssetHubPaseo', () => {
     expect(chain.node).toBe('AssetHubPaseo')
     expect(chain.info).toBe('PaseoAssetHub')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

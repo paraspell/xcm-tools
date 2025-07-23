@@ -13,7 +13,7 @@ class BridgeHubKusama<TApi, TRes>
   implements IPolkadotXCMTransfer
 {
   constructor() {
-    super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V4)
+    super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

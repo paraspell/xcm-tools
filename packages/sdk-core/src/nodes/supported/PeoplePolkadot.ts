@@ -14,7 +14,7 @@ class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     chain: TNodePolkadotKusama = 'PeoplePolkadot',
     info: string = 'polkadotPeople',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

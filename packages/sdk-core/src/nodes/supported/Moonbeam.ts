@@ -22,7 +22,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     chain: TNodePolkadotKusama = 'Moonbeam',
     info: string = 'moonbeam',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

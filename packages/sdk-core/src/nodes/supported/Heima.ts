@@ -14,7 +14,7 @@ class Heima<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXC
     chain: TNodePolkadotKusama = 'Heima',
     info: string = 'litentry',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

@@ -23,7 +23,7 @@ describe('PeoplePolkadot', () => {
     expect(node.node).toBe('PeoplePolkadot')
     expect(node.info).toBe('polkadotPeople')
     expect(node.type).toBe('polkadot')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   describe('transferPolkadotXCM', () => {

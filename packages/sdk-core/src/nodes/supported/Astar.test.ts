@@ -39,7 +39,7 @@ describe('Astar', () => {
     expect(astar.node).toBe('Astar')
     expect(astar.info).toBe('astar')
     expect(astar.type).toBe('polkadot')
-    expect(astar.version).toBe(Version.V4)
+    expect(astar.version).toBe(Version.V5)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {

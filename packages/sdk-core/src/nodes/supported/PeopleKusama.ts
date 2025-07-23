@@ -10,7 +10,7 @@ import ParachainNode from '../ParachainNode'
 
 class PeopleKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('PeopleKusama', 'kusamaPeople', 'kusama', Version.V4)
+    super('PeopleKusama', 'kusamaPeople', 'kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

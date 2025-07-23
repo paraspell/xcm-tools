@@ -16,6 +16,6 @@ describe('BifrostPaseo', () => {
     expect(chain.node).toBe('BifrostPaseo')
     expect(chain.info).toBe('Bifrost(Paseo)')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

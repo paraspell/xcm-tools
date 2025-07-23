@@ -79,7 +79,7 @@ class AssetHubPolkadot<TApi, TRes>
     chain: TNodePolkadotKusama = 'AssetHubPolkadot',
     info: string = 'PolkadotAssetHub',
     type: TEcosystemType = 'polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, type, version)
   }

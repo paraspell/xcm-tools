@@ -118,7 +118,7 @@ describe('AssetHubPolkadot', () => {
     expect(assetHub.node).toBe('AssetHubPolkadot')
     expect(assetHub.info).toBe('PolkadotAssetHub')
     expect(assetHub.type).toBe('polkadot')
-    expect(assetHub.version).toBe(Version.V4)
+    expect(assetHub.version).toBe(Version.V5)
   })
 
   describe('handleBridgeTransfer', () => {

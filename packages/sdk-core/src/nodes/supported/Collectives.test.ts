@@ -26,7 +26,7 @@ describe('Collectives', () => {
     expect(node.node).toBe('Collectives')
     expect(node.info).toBe('polkadotCollectives')
     expect(node.type).toBe('polkadot')
-    expect(node.version).toBe(Version.V4)
+    expect(node.version).toBe(Version.V5)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
