@@ -64,13 +64,13 @@ export const selectBestExchangeCommon = async <
     const assetFromExchange =
       originSpecified && assetFromOrigin
         ? getExchangeAssetByOriginAsset(dex.node, dex.exchangeNode, assetFromOrigin)
-        : getExchangeAsset(dex.node, dex.exchangeNode, currencyFrom);
+        : getExchangeAsset(dex.exchangeNode, currencyFrom);
 
     if (!assetFromExchange) {
       continue;
     }
 
-    const assetTo = getExchangeAsset(dex.node, dex.exchangeNode, currencyTo, true);
+    const assetTo = getExchangeAsset(dex.exchangeNode, currencyTo, true);
 
     if (!assetTo) {
       continue;

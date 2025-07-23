@@ -1,9 +1,4 @@
-import type {
-  TCurrencyInput,
-  TForeignAsset,
-  TNativeAsset,
-  TNodePolkadotKusama,
-} from '@paraspell/sdk';
+import type { TCurrencyInput, TForeignAsset, TNativeAsset } from '@paraspell/sdk';
 import {
   findAssetById,
   findAssetByMultiLocation,
@@ -38,7 +33,6 @@ vi.mock('./getExchangeConfig', () => ({
 }));
 
 describe('getExchangeAsset', () => {
-  const mockExchangeBaseNode = 'polkadot' as TNodePolkadotKusama;
   const mockExchange = 'AcalaDex';
   const mockNativeAsset: TNativeAsset = { symbol: 'DOT', isNative: true };
   const mockForeignAsset: TForeignAsset = {
@@ -59,13 +53,13 @@ describe('getExchangeAsset', () => {
 
   test('should throw error for multiasset or override multilocation currencies', () => {
     const currency = { multiasset: 'some-asset' } as unknown as TCurrencyInput;
-    expect(() => getExchangeAsset(mockExchangeBaseNode, mockExchange, currency)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError(
       'XCM Router does not support multi-location override or multi-asset currencies yet.',
     );
 
     const currency2 = { multilocation: { override: true } } as unknown as TCurrencyInput;
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true);
-    expect(() => getExchangeAsset(mockExchangeBaseNode, mockExchange, currency2)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency2)).toThrowError(
       'XCM Router does not support multi-location override or multi-asset currencies yet.',
     );
   });
@@ -74,7 +68,7 @@ describe('getExchangeAsset', () => {
     const currency = { symbol: { Token: 'DOT' } } as unknown as TCurrencyInput;
     vi.mocked(isSymbolSpecifier).mockReturnValue(true);
 
-    expect(() => getExchangeAsset(mockExchangeBaseNode, mockExchange, currency)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError(
       'Cannot use currency specifiers when using exchange auto select',
     );
   });
@@ -84,7 +78,7 @@ describe('getExchangeAsset', () => {
     vi.mocked(findAssetBySymbol).mockReturnValue(mockNativeAsset);
     vi.mocked(findBestMatches).mockReturnValue([mockNativeAsset]);
 
-    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+    const result = getExchangeAsset(mockExchange, currency);
     expect(result).toEqual(mockNativeAsset);
     expect(findAssetBySymbol).toHaveBeenCalled();
   });
@@ -93,7 +87,7 @@ describe('getExchangeAsset', () => {
     const currency = { symbol: 'DOT' } as TCurrencyInput;
     vi.mocked(findBestMatches).mockReturnValue([mockNativeAsset, mockNativeAsset]);
 
-    expect(() => getExchangeAsset(mockExchangeBaseNode, mockExchange, currency, true)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency, true)).toThrowError(
       `Multiple assets found for symbol DOT. Please specify the asset by Multi-Location.`,
     );
   });
@@ -103,7 +97,7 @@ describe('getExchangeAsset', () => {
     const currency = { multilocation: multiLocation } as TCurrencyInput;
     vi.mocked(findAssetByMultiLocation).mockReturnValue(mockForeignAsset);
 
-    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+    const result = getExchangeAsset(mockExchange, currency);
     expect(result).toEqual(mockForeignAsset);
     expect(findAssetByMultiLocation).toHaveBeenCalled();
   });
@@ -116,7 +110,7 @@ describe('getExchangeAsset', () => {
       .mockReturnValueOnce(undefined)
       .mockReturnValueOnce(mockNativeAsset as TForeignAsset);
 
-    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+    const result = getExchangeAsset(mockExchange, currency);
 
     expect(result).toEqual(mockNativeAsset);
     expect(findAssetByMultiLocation).toHaveBeenCalledTimes(2);
@@ -128,7 +122,7 @@ describe('getExchangeAsset', () => {
     const currency = { id: '123' };
     vi.mocked(findAssetById).mockReturnValue(mockForeignAsset);
 
-    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+    const result = getExchangeAsset(mockExchange, currency);
     expect(result).toEqual(mockForeignAsset);
     expect(findAssetById).toHaveBeenCalled();
   });
@@ -137,16 +131,14 @@ describe('getExchangeAsset', () => {
     const currency = { symbol: 'UNKNOWN' };
     vi.mocked(findAssetBySymbol).mockReturnValue(undefined);
 
-    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+    const result = getExchangeAsset(mockExchange, currency);
     expect(result).toBeNull();
   });
 
   test('should throw error for invalid currency input', () => {
     const currency = {} as TCurrencyInput;
 
-    expect(() => getExchangeAsset(mockExchangeBaseNode, mockExchange, currency)).toThrowError(
-      'Invalid currency input',
-    );
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError('Invalid currency input');
   });
 
   test('should enhance foreign assets with multiLocation from otherAssets', () => {
@@ -159,7 +151,7 @@ describe('getExchangeAsset', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([foreignAssetWithoutLocation]);
     vi.mocked(getOtherAssets).mockReturnValue(otherAssets);
 
-    getExchangeAsset(mockExchangeBaseNode, mockExchange, { symbol: 'USDT' });
+    getExchangeAsset(mockExchange, { symbol: 'USDT' });
 
     expect(findAssetBySymbol).toHaveBeenCalled();
   });

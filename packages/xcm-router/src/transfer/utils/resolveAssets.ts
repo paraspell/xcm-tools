@@ -27,7 +27,7 @@ export const resolveAssets = (
   const assetFromExchange =
     originSpecified && assetFromOrigin
       ? getExchangeAssetByOriginAsset(dex.node, dex.exchangeNode, assetFromOrigin)
-      : getExchangeAsset(dex.node, dex.exchangeNode, currencyFrom);
+      : getExchangeAsset(dex.exchangeNode, currencyFrom);
 
   if (!assetFromExchange) {
     throw new InvalidParameterError(
@@ -35,7 +35,7 @@ export const resolveAssets = (
     );
   }
 
-  const assetTo = getExchangeAsset(dex.node, dex.exchangeNode, currencyTo);
+  const assetTo = getExchangeAsset(dex.exchangeNode, currencyTo);
 
   if (!assetTo) {
     throw new InvalidParameterError(
