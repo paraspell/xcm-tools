@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.11...assets-v10.11.0) (2025-07-24)
+
+
+### Bug Fixes
+
+* **assets:** Fix snowbridge asset symbol matching 🔧 ([f9b57ad](https://github.com/paraspell/xcm-tools/commit/f9b57ada587210e4ba20fe0af70681fb64f03b7f))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.10...assets-v10.10.11) (2025-07-22)
 
 
