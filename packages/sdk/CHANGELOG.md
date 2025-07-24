@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.11...sdk-v10.11.0) (2025-07-24)
+
+
+### Features
+
+* **sdk-core:** Update chains to XCM v5 🪄 ([738de6d](https://github.com/paraspell/xcm-tools/commit/738de6d32f4d636017ca26e32d8a0009c3ad2c0d))
+
+
+### Tests
+
+* **sdk:** Add snapshot tests 🧪 ([6e34e92](https://github.com/paraspell/xcm-tools/commit/6e34e920e190e5ae447c964ac905ee546f83b9f9))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.10...sdk-v10.10.11) (2025-07-22)
 
 
