@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.8...xcm-analyser-v1.5.9) (2025-07-24)
+
+
+### Documentation
+
+* Add contact options ([0709bb2](https://github.com/paraspell/xcm-tools/commit/0709bb26210a3c97b913e7518eba01f400a10cd8))
+
 ## [1.5.8](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.7...xcm-analyser-v1.5.8) (2025-06-30)
 
 
