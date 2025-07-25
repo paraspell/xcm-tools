@@ -9,42 +9,43 @@
 import { blake2b } from '@noble/hashes/blake2'
 import { bytesToHex } from '@noble/hashes/utils'
 import type {
+  IPolkadotApi,
   TAsset,
+  TBuilderOptions,
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
+  TDryRunXcmBaseOptions,
   TMultiLocation,
+  TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
+  TNodeWithRelayChains,
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   BatchMode,
+  computeFeeFromDryRun,
+  createApiInstanceForNode,
   findAsset,
+  getAssetsObject,
   getNativeAssetSymbol,
+  getNode,
   getNodeProviders,
   hasXcmPaymentApiSupport,
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
+  isConfig,
+  isForeignAsset,
   isRelayChain,
   localizeLocation,
+  MissingChainApiError,
   Native,
+  NodeNotSupportedError,
   padFeeBy,
   Parents,
   Version
 } from '@paraspell/sdk-core'
-import {
-  computeFeeFromDryRun,
-  createApiInstanceForNode,
-  getAssetsObject,
-  getNode,
-  type IPolkadotApi,
-  isForeignAsset,
-  NodeNotSupportedError,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains
-} from '@paraspell/sdk-core'
-import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core/src'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { isAddress } from 'viem'
@@ -128,46 +129,69 @@ const isHex = (str: string) => {
 }
 
 class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
-  private _api?: TPapiApiOrUrl
+  private _config?: TBuilderOptions<TPapiApiOrUrl>
   private api: TPapiApi
   private _ttlMs = DEFAULT_TTL_MS
   private initialized = false
   private disconnectAllowed = true
   private _node: TNodeDotKsmWithRelayChains
 
-  setApi(api?: TPapiApiOrUrl) {
-    this._api = api
+  constructor(config?: TBuilderOptions<TPapiApiOrUrl>) {
+    this._config = config
   }
 
-  getApiOrUrl() {
-    return this._api
+  getConfig() {
+    return this._config
   }
 
   getApi() {
     return this.api
   }
 
-  async init(node: TNodeWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || node === 'Ethereum') {
+  async init(chain: TNodeWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
+    if (this.initialized || chain === 'Ethereum') {
       return
     }
 
-    if (unsupportedNodes.includes(node)) {
-      throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
+    if (unsupportedNodes.includes(chain)) {
+      throw new NodeNotSupportedError(`The node ${chain} is not yet supported by the Polkadot API.`)
     }
 
     this._ttlMs = clientTtlMs
+    this._node = chain
 
-    if (typeof this._api === 'string' || this._api instanceof Array) {
-      this.api = await this.createApiInstance(this._api)
-    } else {
-      this.api =
-        this._api ?? (await createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, node))
+    const apiConfig = this.getApiConfigForChain(chain)
+
+    // For development mode, api for each used chain must be provided
+    if (isConfig(this._config) && this._config.development && !apiConfig) {
+      throw new MissingChainApiError(chain)
     }
 
-    this._node = node
+    this.api = await this.resolveApi(apiConfig, chain)
 
     this.initialized = true
+  }
+
+  private getApiConfigForChain(chain: TNodeWithRelayChains): TPapiApiOrUrl | undefined {
+    if (isConfig(this._config)) {
+      return this._config.apiOverrides?.[chain]
+    }
+    return this._config
+  }
+
+  private async resolveApi(
+    apiConfig: TPapiApiOrUrl | undefined,
+    chain: TNodeDotKsmWithRelayChains
+  ): Promise<TPapiApi> {
+    if (!apiConfig) {
+      return createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, chain)
+    }
+
+    if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
+      return this.createApiInstance(apiConfig)
+    }
+
+    return apiConfig
   }
 
   async createApiInstance(wsUrl: string | string[]) {
@@ -368,7 +392,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   clone() {
-    return new PapiApi()
+    return new PapiApi(isConfig(this._config) ? this._config : undefined)
   }
 
   async createApiForNode(node: TNodeDotKsmWithRelayChains) {
@@ -732,17 +756,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
+    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._node] : this._config
+
     // Own client provided, destroy only if force true
-    if (force && typeof this._api === 'object') {
+    if (force && typeof api === 'object') {
       this.api.destroy()
     }
 
     // Client created automatically
-    if (typeof this._api === 'string' || Array.isArray(this._api) || this._api === undefined) {
+    if (typeof api === 'string' || Array.isArray(api) || api === undefined) {
       if (force) {
         this.api.destroy()
       } else {
-        const key = this._api === undefined ? getNodeProviders(this._node) : this._api
+        const key = api === undefined ? getNodeProviders(this._node) : api
         releasePolkadotClient(key)
       }
     }

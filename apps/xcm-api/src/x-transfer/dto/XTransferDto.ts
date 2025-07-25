@@ -38,6 +38,15 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
+export const BuilderOptionsSchema = z
+  .object({
+    apiOverrides: z
+      .record(z.string(), z.union([z.string(), z.array(z.string())]))
+      .optional(),
+    development: z.boolean().optional(),
+  })
+  .strict();
+
 const AmountSchema = z.union([
   z.string().refine(validateAmount, {
     message: 'Amount must be a positive number',
@@ -112,21 +121,24 @@ export const CurrencySchema = z.union([
 
 const versionValues = Object.values(Version) as [Version, ...Version[]];
 
-export const XTransferDtoSchema = z.object({
-  from: z.string(),
-  to: z.union([z.string(), MultiLocationSchema]),
-  address: z.union([
-    z.string().min(1, { message: 'Address is required' }),
-    MultiLocationSchema,
-  ]),
-  currency: CurrencySchema,
-  feeAsset: CurrencyCoreSchema.optional(),
-  xcmVersion: z.enum(versionValues).optional(),
-  pallet: z.string().optional(),
-  method: z.string().optional(),
-  senderAddress: z.string().optional(),
-  ahAddress: z.string().optional(),
-});
+export const XTransferDtoSchema = z
+  .object({
+    from: z.string(),
+    to: z.union([z.string(), MultiLocationSchema]),
+    address: z.union([
+      z.string().min(1, { message: 'Address is required' }),
+      MultiLocationSchema,
+    ]),
+    currency: CurrencySchema,
+    feeAsset: CurrencyCoreSchema.optional(),
+    xcmVersion: z.enum(versionValues).optional(),
+    pallet: z.string().optional(),
+    method: z.string().optional(),
+    senderAddress: z.string().optional(),
+    ahAddress: z.string().optional(),
+    options: BuilderOptionsSchema.optional(),
+  })
+  .strict();
 
 export const XTransferDtoWSenderAddressSchema = XTransferDtoSchema.extend({
   senderAddress: z.string().min(1, { message: 'Sender address is required' }),

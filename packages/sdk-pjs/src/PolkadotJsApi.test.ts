@@ -1,7 +1,14 @@
-import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
-import * as sdkCore from '@paraspell/sdk-core'
-import { BatchMode, type TMultiLocation, type TSerializedApiCall } from '@paraspell/sdk-core'
-import type { ApiPromise } from '@polkadot/api'
+import type { TAsset, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
+import {
+  BatchMode,
+  computeFeeFromDryRunPjs,
+  createApiInstanceForNode,
+  MissingChainApiError,
+  NodeNotSupportedError,
+  type TMultiLocation,
+  type TSerializedApiCall
+} from '@paraspell/sdk-core'
+import { ApiPromise } from '@polkadot/api'
 import type { VoidFn } from '@polkadot/api/types'
 import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
@@ -14,16 +21,23 @@ import type { Extrinsic, TPjsApi } from './types'
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
-  createApiInstanceForNodePjs: vi.fn().mockResolvedValue({} as ApiPromise),
+  createApiInstanceForNode: vi.fn().mockResolvedValue({} as ApiPromise),
   resolveModuleError: vi.fn().mockReturnValue('ModuleError')
+}))
+
+vi.mock('@polkadot/api', () => ({
+  ApiPromise: {
+    create: vi.fn()
+  },
+  WsProvider: vi.fn()
 }))
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
   let mockApiPromise: TPjsApi
+  const mockChain = 'Acala'
 
   beforeEach(async () => {
-    polkadotApi = new PolkadotJsApi()
     mockApiPromise = {
       createType: vi.fn().mockReturnValue({
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
@@ -89,35 +103,32 @@ describe('PolkadotJsApi', () => {
       },
       disconnect: vi.fn()
     } as unknown as TPjsApi
-    polkadotApi.setApi(mockApiPromise)
-    await polkadotApi.init('Acala')
+    vi.spyOn(ApiPromise, 'create').mockResolvedValue(mockApiPromise)
+    polkadotApi = new PolkadotJsApi(mockApiPromise)
+    await polkadotApi.init(mockChain)
   })
 
-  describe('setApi and getApi', () => {
-    it('should set and get the api', async () => {
-      const polkadotApi = new PolkadotJsApi()
-      const newApi = {} as TPjsApi
-      polkadotApi.setApi(newApi)
-      await polkadotApi.init('Acala')
-      const api = polkadotApi.getApi()
-      expect(api).toBe(newApi)
-    })
+  it('should set and get the api', async () => {
+    const newApi = {} as TPjsApi
+    const polkadotApi = new PolkadotJsApi(newApi)
+    expect(polkadotApi.getConfig()).toBe(newApi)
+    await polkadotApi.init('Acala')
+    const api = polkadotApi.getApi()
+    expect(api).toStrictEqual(newApi)
   })
 
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
-      const polkadotApi = new PolkadotJsApi()
       const mockApi = {} as TPjsApi
-      polkadotApi.setApi(mockApi)
+      const polkadotApi = new PolkadotJsApi(mockApi)
       await polkadotApi.init('Acala')
-      expect(polkadotApi.getApi()).toBe(mockApi)
+      expect(polkadotApi.getApi()).toStrictEqual(mockApi)
     })
 
     it('should create api instance when _api is undefined', async () => {
       const polkadotApi = new PolkadotJsApi()
-      polkadotApi.setApi(undefined)
       const mockCreateApiInstanceForNode = vi
-        .spyOn(sdkCore, 'createApiInstanceForNode')
+        .mocked(createApiInstanceForNode)
         .mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
@@ -126,6 +137,51 @@ describe('PolkadotJsApi', () => {
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
 
       mockCreateApiInstanceForNode.mockRestore()
+    })
+
+    it('should return early if already initialized', async () => {
+      vi.mocked(createApiInstanceForNode)
+
+      await polkadotApi.init('Moonbeam')
+
+      expect(createApiInstanceForNode).not.toHaveBeenCalled()
+      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+    })
+
+    it('should use apiOverrides when provided in config', async () => {
+      const polkadotApi = new PolkadotJsApi({
+        apiOverrides: {
+          Moonbeam: mockApiPromise
+        }
+      })
+      await polkadotApi.init('Moonbeam')
+
+      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      expect(vi.mocked(createApiInstanceForNode)).not.toHaveBeenCalled()
+    })
+
+    it('should throw MissingChainApiError in development mode when no override provided', async () => {
+      polkadotApi = new PolkadotJsApi({
+        development: true,
+        apiOverrides: {
+          Acala: mockApiPromise
+          // Moonbeam not provided
+        }
+      })
+
+      await expect(polkadotApi.init('Moonbeam')).rejects.toThrow(
+        new MissingChainApiError('Moonbeam')
+      )
+    })
+
+    it('should create api automatically when no config and no overrides', async () => {
+      const polkadotApi = new PolkadotJsApi()
+      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiPromise)
+
+      await polkadotApi.init('Acala')
+
+      expect(createApiInstanceForNode).toHaveBeenCalledWith(polkadotApi, 'Acala')
+      expect(polkadotApi.getApi()).toBe(mockApiPromise)
     })
   })
 
@@ -362,7 +418,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignBifrost(address, {
         symbol: 'DOT'
-      } as sdkCore.TAsset)
+      } as TAsset)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
@@ -381,7 +437,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignBifrost(address, {
         symbol: 'DOT'
-      } as sdkCore.TAsset)
+      } as TAsset)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
@@ -550,7 +606,7 @@ describe('PolkadotJsApi', () => {
     it('should create a new PolkadotJsApi instance and call init with the provided node', async () => {
       const node = 'Acala'
       const mockCreateApiInstanceForNode = vi
-        .spyOn(sdkCore, 'createApiInstanceForNode')
+        .mocked(createApiInstanceForNode)
         .mockResolvedValue(mockApiPromise)
 
       const newApi = await polkadotApi.createApiForNode(node)
@@ -566,7 +622,8 @@ describe('PolkadotJsApi', () => {
     it('should disconnect the api when _api is a string', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
-      polkadotApi.setApi('api')
+      polkadotApi = new PolkadotJsApi('api')
+      await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).toHaveBeenCalled()
@@ -575,9 +632,12 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should disconnect the api when _api is not provided', async () => {
-      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiPromise)
 
-      polkadotApi.setApi(undefined)
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect')
+
+      polkadotApi = new PolkadotJsApi()
+      await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).toHaveBeenCalled()
@@ -588,7 +648,7 @@ describe('PolkadotJsApi', () => {
     it('should not disconnect the api when _api is provided', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
-      polkadotApi.setApi(mockApiPromise)
+      polkadotApi = new PolkadotJsApi(mockApiPromise)
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).not.toHaveBeenCalled()
@@ -599,7 +659,8 @@ describe('PolkadotJsApi', () => {
     it('should disconnect the api when force is true', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
-      polkadotApi.setApi('api')
+      polkadotApi = new PolkadotJsApi('api')
+      await polkadotApi.init(mockChain)
       await polkadotApi.disconnect(true)
 
       expect(mockDisconnect).toHaveBeenCalled()
@@ -610,7 +671,7 @@ describe('PolkadotJsApi', () => {
     it('should not disconnect the api when force is false and disconnectAllowed is false', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
-      polkadotApi.setApi('api')
+      polkadotApi = new PolkadotJsApi('api')
       polkadotApi.setDisconnectAllowed(false)
       await polkadotApi.disconnect(false)
 
@@ -622,7 +683,9 @@ describe('PolkadotJsApi', () => {
 
   describe('getBalanceNativeAcala', () => {
     it('should return the free balance as bigint', async () => {
-      polkadotApi.setApi(mockApiPromise)
+      polkadotApi = new PolkadotJsApi(mockApiPromise)
+      await polkadotApi.init(mockChain)
+
       const balance = await polkadotApi.getBalanceNativeAcala('some_address', 'AUSD')
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledOnce()
@@ -740,7 +803,7 @@ describe('PolkadotJsApi', () => {
           address: 'some_address',
           node: 'Acala'
         })
-      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+      ).rejects.toThrow(NodeNotSupportedError)
     })
   })
 
@@ -764,7 +827,7 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: sdkCore.TMultiLocation = {
+    const originLocation: TMultiLocation = {
       parents: 0,
       interior: { Here: null }
     }
@@ -807,7 +870,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
 
-      vi.mocked(sdkCore.computeFeeFromDryRunPjs).mockReturnValue(555n)
+      vi.mocked(computeFeeFromDryRunPjs).mockReturnValue(555n)
 
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
@@ -867,7 +930,7 @@ describe('PolkadotJsApi', () => {
           node: 'Acala',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+      ).rejects.toThrow(NodeNotSupportedError)
     })
 
     it('should throw error if no issued event found', async () => {

@@ -8,6 +8,7 @@ import type {
 import type {
   BatchMode,
   TBridgeStatus,
+  TBuilderOptions,
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
@@ -17,9 +18,8 @@ import type {
 import type { TApiOrUrl } from '../types/TApi'
 
 export interface IPolkadotApi<TApi, TRes> {
-  setApi(api?: TApiOrUrl<TApi>): void
+  getConfig(): TBuilderOptions<TApiOrUrl<TApi>> | undefined
   getApi(): TApi
-  getApiOrUrl(): TApiOrUrl<TApi> | undefined
   init(node: TNodeWithRelayChains, clientTtlMs?: number): Promise<void>
   createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string

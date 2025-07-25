@@ -19,11 +19,9 @@ describe('Send function using PapiApi', () => {
     api: TPapiApiOrUrl
   }
 
-  let papiApiSetApiSpy: MockInstance
   let papiApiInitSpy: MockInstance
 
   beforeEach(() => {
-    papiApiSetApiSpy = vi.spyOn(PapiApi.prototype, 'setApi')
     papiApiInitSpy = vi.spyOn(PapiApi.prototype, 'init')
   })
 
@@ -31,7 +29,6 @@ describe('Send function using PapiApi', () => {
     it('should call setApi on papiApi and destPapiApi, and call send in transferImpl with correct arguments', async () => {
       await send(options)
 
-      expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
         ...options,
         api: expect.any(PapiApi)
@@ -51,7 +48,6 @@ describe('Send function using PapiApi', () => {
     it('should call setApi on papiApi and destPapiApi, and call getParaEthTransferFees in transferImpl with correct arguments', async () => {
       await getParaEthTransferFees(mockApi)
 
-      expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(papiApiInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(sdkCore.getParaEthTransferFees).toHaveBeenCalledWith(expect.any(PapiApi))
     })

@@ -42,7 +42,7 @@ describe('transferRelayToPara', () => {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
       callTxMethod: vi.fn().mockResolvedValue('callTxResult'),
-      getApiOrUrl: vi.fn().mockReturnValue({}),
+      getConfig: vi.fn().mockReturnValue({}),
       clone: vi.fn().mockReturnValue({
         getApi: vi.fn().mockReturnValue({})
       }),
@@ -67,7 +67,7 @@ describe('transferRelayToPara', () => {
       destination: {} as TMultiLocation
     } as TRelayToParaOptions<unknown, unknown>
 
-    vi.spyOn(apiMock, 'getApiOrUrl').mockReturnValue(undefined)
+    vi.spyOn(apiMock, 'getConfig').mockReturnValue(undefined)
     const spy = vi.spyOn(apiMock, 'init')
 
     await expect(transferRelayToPara(options)).rejects.toThrow(
