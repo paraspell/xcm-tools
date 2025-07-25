@@ -8,6 +8,7 @@ import type {
   TAsset,
   TBalanceResponse,
   TBridgeStatus,
+  TBuilderOptions,
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
@@ -18,7 +19,13 @@ import type {
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
-import { BatchMode, InvalidParameterError, NodeNotSupportedError } from '@paraspell/sdk-core'
+import {
+  BatchMode,
+  InvalidParameterError,
+  isConfig,
+  MissingChainApiError,
+  NodeNotSupportedError
+} from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
   createApiInstanceForNode,
@@ -47,35 +54,61 @@ const snakeToCamel = (str: string) =>
     .replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''))
 
 class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
-  private _api?: TPjsApiOrUrl
+  private _config?: TBuilderOptions<TPjsApiOrUrl>
   private api: TPjsApi
   private initialized = false
   private disconnectAllowed = true
+  private _node: TNodeDotKsmWithRelayChains
 
-  setApi(api?: TPjsApiOrUrl) {
-    this._api = api
+  constructor(config?: TBuilderOptions<TPjsApiOrUrl>) {
+    this._config = config
   }
 
-  getApiOrUrl() {
-    return this._api
+  getConfig() {
+    return this._config
   }
 
   getApi() {
     return this.api
   }
 
-  async init(node: TNodeWithRelayChains, _clientTtlMs?: number) {
-    if (this.initialized || node === 'Ethereum') {
+  async init(chain: TNodeWithRelayChains, _clientTtlMs?: number) {
+    if (this.initialized || chain === 'Ethereum') {
       return
     }
 
-    if (typeof this._api === 'string' || this._api instanceof Array) {
-      this.api = await this.createApiInstance(this._api)
-    } else {
-      this.api = this._api ?? (await createApiInstanceForNode<TPjsApi, Extrinsic>(this, node))
+    this._node = chain
+
+    const apiConfig = this.getApiConfigForChain(chain)
+
+    if (isConfig(this._config) && this._config.development && !apiConfig) {
+      throw new MissingChainApiError(chain)
     }
 
+    this.api = await this.resolveApi(apiConfig, chain)
     this.initialized = true
+  }
+
+  private getApiConfigForChain(chain: TNodeWithRelayChains): TPjsApiOrUrl | undefined {
+    if (isConfig(this._config)) {
+      return this._config.apiOverrides?.[chain]
+    }
+    return this._config
+  }
+
+  private async resolveApi(
+    apiConfig: TPjsApiOrUrl | undefined,
+    chain: TNodeDotKsmWithRelayChains
+  ): Promise<TPjsApi> {
+    if (!apiConfig) {
+      return createApiInstanceForNode<TPjsApi, Extrinsic>(this, chain)
+    }
+
+    if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
+      return this.createApiInstance(apiConfig)
+    }
+
+    return apiConfig
   }
 
   async createApiInstance(wsUrl: string | string[]) {
@@ -247,7 +280,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   clone() {
-    return new PolkadotJsApi()
+    return new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
   }
 
   async createApiForNode(node: TNodeDotKsmWithRelayChains) {
@@ -434,8 +467,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return
 
+    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._node] : this._config
+
     // Disconnect api only if it was created automatically
-    if (force || typeof this._api === 'string' || this._api === undefined) {
+    if (force || typeof api === 'string' || api === undefined) {
       await this.api.disconnect()
     }
   }

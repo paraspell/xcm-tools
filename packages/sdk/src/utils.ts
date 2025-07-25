@@ -13,8 +13,7 @@ export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult
   apiCall: (options: TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction> }) => Promise<TResult>
 ) => {
   return async (options: TArgs & { api?: TPapiApiOrUrl }): Promise<TResult> => {
-    const papiApi = new PapiApi()
-    papiApi.setApi(options.api)
+    const papiApi = new PapiApi(options.api)
 
     const optionsWithApi = {
       ...options,

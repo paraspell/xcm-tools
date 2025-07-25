@@ -30,7 +30,11 @@ export class XTransferService {
   ): Promise<T> {
     this.validateTransfer(transfer);
 
-    const sdkBuilder = Builder();
+    const { options } = transfer;
+
+    const hasOptions = options && Object.keys(options).length > 0;
+
+    const sdkBuilder = Builder(hasOptions ? options : undefined);
     const finalBuilder = this.buildXTransfer(sdkBuilder, transfer);
 
     try {
@@ -198,7 +202,12 @@ export class XTransferService {
       );
     }
 
-    let builder = Builder() as GeneralBuilder<TSendBaseOptions>;
+    const { mode, ...optionsWithoutMode } = options ?? {};
+    const hasOptions = options && Object.keys(optionsWithoutMode).length > 0;
+
+    let builder = Builder(
+      hasOptions ? optionsWithoutMode : undefined,
+    ) as GeneralBuilder<TSendBaseOptions>;
 
     for (const transfer of transfers) {
       this.validateTransfer(transfer);
@@ -211,7 +220,8 @@ export class XTransferService {
         builder = finalBuilder.addToBatch();
       }
 
-      const tx = await builder.buildBatch(options ?? undefined);
+      const batchOptions = options?.mode ? { mode: options.mode } : undefined;
+      const tx = await builder.buildBatch(batchOptions);
 
       const encoded = await tx.getEncodedData();
       return encoded.asHex();

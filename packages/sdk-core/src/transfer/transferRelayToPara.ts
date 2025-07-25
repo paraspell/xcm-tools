@@ -10,7 +10,7 @@ export const transferRelayToPara = async <TApi, TRes>(
   const { api, origin, destination, asset, address, paraIdTo, version, pallet, method } = options
   const isMultiLocationDestination = typeof destination === 'object'
 
-  if (api.getApiOrUrl() === undefined && isMultiLocationDestination) {
+  if (api.getConfig() === undefined && isMultiLocationDestination) {
     throw new InvalidParameterError('API is required when using MultiLocation as destination.')
   }
 

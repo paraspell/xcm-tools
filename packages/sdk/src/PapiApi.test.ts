@@ -1,15 +1,20 @@
-import type { TDryRunXcmBaseOptions, TNodeAssets } from '@paraspell/sdk-core'
+import type { TAsset, TDryRunXcmBaseOptions, TNodeAssets } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRun,
+  createApiInstanceForNode,
   getAssetsObject,
+  getNodeProviders,
   hasXcmPaymentApiSupport,
+  InvalidCurrencyError,
+  InvalidParameterError,
+  isAssetEqual,
+  MissingChainApiError,
   NodeNotSupportedError,
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
   type TSerializedApiCall
 } from '@paraspell/sdk-core'
-import * as sdkCore from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
@@ -62,7 +67,9 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   computeFeeFromDryRun: vi.fn(),
   createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
   getAssetsObject: vi.fn(),
-  hasXcmPaymentApiSupport: vi.fn()
+  hasXcmPaymentApiSupport: vi.fn(),
+  isAssetEqual: vi.fn(),
+  getNodeProviders: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -70,10 +77,9 @@ describe('PapiApi', () => {
   let mockPolkadotClient: PolkadotClient
   let mockTransaction: TPapiTransaction
   let mockDryRunResult
+  const mockChain = 'Acala'
 
   beforeEach(async () => {
-    papiApi = new PapiApi()
-
     mockTransaction = {
       getEstimatedFees: vi.fn().mockResolvedValue(1000n)
     } as unknown as TPapiTransaction
@@ -192,30 +198,29 @@ describe('PapiApi', () => {
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
-    papiApi.setApi(mockPolkadotClient)
-    await papiApi.init('Acala')
+    papiApi = new PapiApi(mockPolkadotClient)
+    await papiApi.init(mockChain)
   })
 
-  describe('setApi and getApi', () => {
-    it('should set and get the api', () => {
-      papiApi.setApi(mockPolkadotClient)
-      const api = papiApi.getApi()
-      expect(api).toBe(mockPolkadotClient)
-    })
+  it('should set config and get the api', async () => {
+    papiApi = new PapiApi(mockPolkadotClient)
+    expect(papiApi.getConfig()).toBe(mockPolkadotClient)
+    await papiApi.init(mockChain)
+    const api = papiApi.getApi()
+    expect(api).toBe(mockPolkadotClient)
   })
 
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
       await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
 
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
-      papiApi.setApi(undefined)
       const mockCreateApiInstanceForNode = vi
-        .spyOn(sdkCore, 'createApiInstanceForNode')
+        .mocked(createApiInstanceForNode)
         .mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
@@ -224,6 +229,71 @@ describe('PapiApi', () => {
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
 
       mockCreateApiInstanceForNode.mockRestore()
+    })
+
+    it('should return early if already initialized', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init('Acala')
+
+      vi.mocked(createApiInstanceForNode)
+
+      await papiApi.init('Moonbeam')
+
+      expect(createApiInstanceForNode).not.toHaveBeenCalled()
+      expect(papiApi.getApi()).toBe(mockPolkadotClient)
+    })
+
+    it('should throw NodeNotSupportedError for unsupported nodes', async () => {
+      papiApi = new PapiApi()
+
+      await expect(papiApi.init('ComposableFinance')).rejects.toThrow(
+        new NodeNotSupportedError(
+          'The node ComposableFinance is not yet supported by the Polkadot API.'
+        )
+      )
+
+      await expect(papiApi.init('Interlay')).rejects.toThrow(NodeNotSupportedError)
+      await expect(papiApi.init('Kintsugi')).rejects.toThrow(NodeNotSupportedError)
+    })
+
+    it('should use apiOverrides when provided in config', async () => {
+      const customClient = {
+        ...mockPolkadotClient,
+        customProp: 'custom'
+      } as unknown as PolkadotClient
+
+      papiApi = new PapiApi({
+        apiOverrides: {
+          Moonbeam: customClient
+        }
+      })
+
+      await papiApi.init('Moonbeam')
+
+      expect(papiApi.getApi()).toBe(customClient)
+      expect(vi.mocked(createApiInstanceForNode)).not.toHaveBeenCalled()
+    })
+
+    it('should throw MissingChainApiError in development mode when no override provided', async () => {
+      papiApi = new PapiApi({
+        development: true,
+        apiOverrides: {
+          Acala: mockPolkadotClient
+          // Moonbeam not provided
+        }
+      })
+
+      await expect(papiApi.init('Moonbeam')).rejects.toThrow(new MissingChainApiError('Moonbeam'))
+    })
+
+    it('should create api automatically when no config and no overrides', async () => {
+      papiApi = new PapiApi()
+      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockPolkadotClient)
+
+      await papiApi.init('Acala')
+
+      expect(createApiInstanceForNode).toHaveBeenCalledWith(papiApi, 'Acala')
+      expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
   })
 
@@ -308,7 +378,9 @@ describe('PapiApi', () => {
 
   describe('getBalanceNative', () => {
     it('should return the free balance as bigint', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
       const balance = await papiApi.getBalanceNative('some_address')
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -319,7 +391,8 @@ describe('PapiApi', () => {
 
   describe('getBalanceForeign', () => {
     it('should return the foreign balance as bigint when balance exists', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
       const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -342,7 +415,8 @@ describe('PapiApi', () => {
 
   describe('getMythosForeignBalance', () => {
     it('should return the Mythos foreign balance as bigint when balance exists', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
       const balance = await papiApi.getMythosForeignBalance('some_address')
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -371,7 +445,8 @@ describe('PapiApi', () => {
     }
 
     it('should return the balance as bigint when balance exists', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
       const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', multiLocation)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -398,10 +473,12 @@ describe('PapiApi', () => {
 
       vi.mocked(transform).mockReturnValue(transformedCurrencySelection)
 
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
       const balance = await papiApi.getBalanceForeignBifrost('some_address', {
         symbol: 'BNC'
-      } as sdkCore.TAsset)
+      } as TAsset)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledWith(
@@ -414,7 +491,8 @@ describe('PapiApi', () => {
 
   describe('getBalanceForeignXTokens', () => {
     it('should return the balance when asset matches symbolOrId', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
 
       const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
@@ -509,7 +587,9 @@ describe('PapiApi', () => {
 
   describe('getBalanceForeignMoonbeam', () => {
     it('should return the balance when balance exists', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
       const balance = await papiApi.getBalanceAssetsPallet('some_address', 1)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -549,20 +629,21 @@ describe('PapiApi', () => {
     it('releases (does NOT destroy) when _api is a string and force = false', async () => {
       const destroySpy = spyDestroy()
 
-      papiApi.setApi('ws://example:9944')
+      papiApi = new PapiApi('ws://example:9944')
+
       await papiApi.disconnect(false)
 
       expect(destroySpy).not.toHaveBeenCalled()
     })
 
     it('releases (does NOT destroy) when _api is undefined and force = false', async () => {
-      const providersSpy = vi
-        .spyOn(sdkCore, 'getNodeProviders')
-        .mockReturnValue(['ws://dummy:9944'])
+      papiApi = new PapiApi()
+      await papiApi.init(mockChain)
+
+      const providersSpy = vi.mocked(getNodeProviders).mockReturnValue(['ws://dummy:9944'])
 
       const destroySpy = spyDestroy()
 
-      papiApi.setApi(undefined)
       await papiApi.disconnect(false)
 
       expect(providersSpy).toHaveBeenCalledWith('Acala')
@@ -574,7 +655,8 @@ describe('PapiApi', () => {
     it('destroys when _api is a string and force = true', async () => {
       const destroySpy = spyDestroy()
 
-      papiApi.setApi('ws://example:9944')
+      papiApi = new PapiApi('ws://example:9944')
+      await papiApi.init(mockChain)
       await papiApi.disconnect(true)
 
       expect(destroySpy).toHaveBeenCalledTimes(1)
@@ -583,7 +665,7 @@ describe('PapiApi', () => {
     it('does NOT destroy when _api is an injected client and force = false', async () => {
       const destroySpy = spyDestroy()
 
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
       await papiApi.disconnect(false)
 
       expect(destroySpy).not.toHaveBeenCalled()
@@ -592,7 +674,8 @@ describe('PapiApi', () => {
     it('destroys when _api is an injected client AND force = true', async () => {
       const destroySpy = spyDestroy()
 
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
       await papiApi.disconnect(true)
 
       expect(destroySpy).toHaveBeenCalledTimes(1)
@@ -601,7 +684,7 @@ describe('PapiApi', () => {
     it('does nothing when disconnectAllowed = false and force = false', async () => {
       const destroySpy = spyDestroy()
 
-      papiApi.setApi('ws://example:9944')
+      papiApi = new PapiApi('ws://example:9944')
       papiApi.setDisconnectAllowed(false)
       await papiApi.disconnect(false)
 
@@ -611,7 +694,8 @@ describe('PapiApi', () => {
 
   describe('getBalanceNativeAcala', () => {
     it('should return the free balance as bigint', async () => {
-      papiApi.setApi(mockPolkadotClient)
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
       const balance = await papiApi.getBalanceNativeAcala('some_address', 'AUSD')
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -675,7 +759,7 @@ describe('PapiApi', () => {
         isValid: false
       })
 
-      expect(() => papiApi.accountToUint8a(badAddr)).toThrow(sdkCore.InvalidParameterError)
+      expect(() => papiApi.accountToUint8a(badAddr)).toThrow(InvalidParameterError)
       expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
     })
   })
@@ -1053,7 +1137,7 @@ describe('PapiApi', () => {
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: sdkCore.TMultiLocation = {
+    const originLocation: TMultiLocation = {
       parents: 0,
       interior: { Here: null }
     }
@@ -1106,7 +1190,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Hydration',
-        asset: { symbol: 'USDT', multiLocation: {} } as sdkCore.TAsset
+        asset: { symbol: 'USDT', multiLocation: {} } as TAsset
       } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
@@ -1156,7 +1240,7 @@ describe('PapiApi', () => {
           node: 'Acala',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+      ).rejects.toThrow(NodeNotSupportedError)
     })
 
     it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
@@ -1166,7 +1250,7 @@ describe('PapiApi', () => {
       const foreignAssetsIssuedAmount = 500n
 
       const baseOptions: TDryRunXcmBaseOptions = {
-        originLocation: { parents: 0, interior: { Here: null } } as sdkCore.TMultiLocation,
+        originLocation: { parents: 0, interior: { Here: null } } as TMultiLocation,
         xcm: { some: 'xcm-payload' },
         node: 'AssetHubPolkadot',
         origin: 'AssetHubPolkadot',
@@ -1207,12 +1291,11 @@ describe('PapiApi', () => {
         }
       }
 
-      const originalIsAssetEqual = sdkCore.isAssetEqual
-      vi.spyOn(sdkCore, 'isAssetEqual').mockImplementation((a1, a2) => {
+      vi.mocked(isAssetEqual).mockImplementation((a1, a2) => {
         if (a1 === mockAssetDetails && a2 === mockAssetDetails) {
           return true
         }
-        return originalIsAssetEqual(a1, a2)
+        return false
       })
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -1228,16 +1311,16 @@ describe('PapiApi', () => {
         expect(result.fee).toBe(expectedFee)
         expect(result.weight).toEqual({ refTime: 10n, proofSize: 20n })
       }
-      expect(sdkCore.isAssetEqual).toHaveBeenCalledWith(baseOptions.feeAsset, baseOptions.asset)
+      expect(isAssetEqual).toHaveBeenCalledWith(baseOptions.feeAsset, baseOptions.asset)
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalled()
 
-      vi.mocked(sdkCore.isAssetEqual).mockRestore?.()
-      vi.mocked(sdkCore.getAssetsObject).mockRestore?.()
+      vi.mocked(isAssetEqual).mockRestore()
+      vi.mocked(getAssetsObject).mockRestore()
     })
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: sdkCore.TMultiLocation = {
+    const originLocation: TMultiLocation = {
       parents: 0,
       interior: { Here: null }
     }
@@ -1323,7 +1406,7 @@ describe('PapiApi', () => {
     })
 
     it('should use processAssetsDepositedEvents for AssetHubPolkadot with non-DOT assets', async () => {
-      const originLocation: sdkCore.TMultiLocation = {
+      const originLocation: TMultiLocation = {
         parents: 0,
         interior: { Here: null }
       }
@@ -1400,7 +1483,7 @@ describe('PapiApi', () => {
     })
 
     it('should use processAssetsDepositedEvents for AssetHubPolkadot with DOT assets', async () => {
-      const originLocation: sdkCore.TMultiLocation = {
+      const originLocation: TMultiLocation = {
         parents: 0,
         interior: { Here: null }
       }
@@ -1484,7 +1567,7 @@ describe('PapiApi', () => {
           node: 'Acala',
           origin: 'Acala'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+      ).rejects.toThrow(NodeNotSupportedError)
     })
 
     it('should throw error if no issued event found', async () => {
@@ -1588,7 +1671,7 @@ describe('PapiApi', () => {
           origin: 'Acala',
           asset: { symbol: 'AUSD' }
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(sdkCore.InvalidCurrencyError)
+      ).rejects.toThrow(InvalidCurrencyError)
     })
   })
 
@@ -1758,6 +1841,10 @@ describe('PapiApi', () => {
   })
 
   describe('PapiApi - timed cache integration', () => {
+    beforeEach(() => {
+      vi.mocked(createClient).mockReset()
+    })
+
     it('re-uses the same PolkadotClient and destroys it after refs drop to 0 when destroyWanted=true', async () => {
       vi.useFakeTimers()
 
@@ -1768,20 +1855,16 @@ describe('PapiApi', () => {
         getChainSpecData: vi.fn().mockResolvedValue(undefined)
       } as unknown as PolkadotClient
 
-      // first lease will create the client; subsequent ones should not
       vi.mocked(createClient).mockReturnValue(sharedClient)
 
-      const apiA = new PapiApi()
-      apiA.setApi(ws)
+      const apiA = new PapiApi(ws)
       await apiA.init('Acala', 1_000) // ttl = 1 s
 
-      const apiB = new PapiApi()
-      apiB.setApi(ws)
+      const apiB = new PapiApi(ws)
       await apiB.init('Acala', 1_000)
 
-      expect(createClient).toHaveBeenCalledTimes(1) // same underlying connection
+      expect(createClient).toHaveBeenCalledTimes(1)
 
-      // ⏩ first expiry while still in use => mark destroyWanted but keep alive
       vi.advanceTimersByTime(1_001)
       expect(sharedClient.destroy).not.toHaveBeenCalled()
 
@@ -1807,15 +1890,13 @@ describe('PapiApi', () => {
       } as unknown as PolkadotClient
       vi.mocked(createClient).mockReturnValue(idleClient)
 
-      const api = new PapiApi()
-      api.setApi(ws)
+      const api = new PapiApi(ws)
       await api.init('Acala', 500) // ttl = 0.5 s
 
       // drop the only reference – entry.refs becomes 0
       await api.disconnect()
       expect(idleClient.destroy).not.toHaveBeenCalled()
 
-      // ⏩ timer fires, entry is evicted because refs==0
       vi.advanceTimersByTime(501)
       expect(idleClient.destroy).toHaveBeenCalledTimes(1)
 

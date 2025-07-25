@@ -13,8 +13,7 @@ import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
  * @returns A new Builder instance.
  */
 export const Builder = (api?: TPjsApiOrUrl) => {
-  const pjsApi = new PolkadotJsApi()
-  pjsApi.setApi(api)
+  const pjsApi = new PolkadotJsApi(api)
   return BuilderImpl<TPjsApi, Extrinsic>(pjsApi)
 }
 
