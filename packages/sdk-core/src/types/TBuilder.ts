@@ -75,3 +75,10 @@ export type TBatchOptions = {
    */
   mode: BatchMode
 }
+
+export type TBuilderOptions<TApi> = TApi | TBuilderConfig<TApi>
+
+export type TBuilderConfig<TApi> = {
+  apiOverrides?: Partial<Record<TNodeWithRelayChains, TApi>>
+  development?: boolean
+}

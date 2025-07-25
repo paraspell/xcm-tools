@@ -15,8 +15,7 @@ export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, T
   apiCall: (options: TArgs & { api: IPolkadotApi<TPjsApi, Extrinsic> }) => Promise<TResult>
 ) => {
   return async (options: TArgs & { api?: TPjsApiOrUrl }): Promise<TResult> => {
-    const pjsApi = new PolkadotJsApi()
-    pjsApi.setApi(options.api)
+    const pjsApi = new PolkadotJsApi(options.api)
 
     const optionsWithApi = {
       ...options,

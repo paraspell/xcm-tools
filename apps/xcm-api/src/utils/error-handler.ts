@@ -10,6 +10,7 @@ import {
   IncompatibleNodesError,
   InvalidCurrencyError,
   InvalidParameterError,
+  MissingChainApiError,
   NodeNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
@@ -36,6 +37,7 @@ const sdkErrors = [
   InvalidParameterError,
   UnableToComputeError,
   SmallAmountError,
+  MissingChainApiError,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

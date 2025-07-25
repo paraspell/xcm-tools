@@ -32,11 +32,9 @@ describe('Send Function using PolkadotJsAPI', () => {
     api: TPjsApiOrUrl
   }
 
-  let pjsApiSetApiSpy: MockInstance
   let pjsApiInitSpy: MockInstance
 
   beforeEach(() => {
-    pjsApiSetApiSpy = vi.spyOn(PolkadotJsApi.prototype, 'setApi')
     pjsApiInitSpy = vi.spyOn(PolkadotJsApi.prototype, 'init')
   })
 
@@ -44,7 +42,6 @@ describe('Send Function using PolkadotJsAPI', () => {
     it('should call setApi on pjsApi and destPjsApi, and call send in transferImpl with correct arguments', async () => {
       await send(options)
 
-      expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
         ...options,
         api: expect.any(PolkadotJsApi)
@@ -85,7 +82,6 @@ describe('Send Function using PolkadotJsAPI', () => {
     it('should call setApi on pjsApi and destPjsApi, and call getParaEthTransferFees in transferImpl with correct arguments', async () => {
       await getParaEthTransferFees(mockApi)
 
-      expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(pjsApiInitSpy).toHaveBeenCalledWith(
         'AssetHubPolkadot',
         sdkCore.DRY_RUN_CLIENT_TIMEOUT_MS

@@ -16,7 +16,7 @@ import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 @Injectable()
 export class AssetClaimService {
-  async claimAssets({ from, fungible, address }: AssetClaimDto) {
+  async claimAssets({ from, fungible, address, options }: AssetClaimDto) {
     const fromNode = from as TNodeDotKsmWithRelayChains | undefined;
 
     if (!fromNode) {
@@ -33,11 +33,13 @@ export class AssetClaimService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
+    const hasOptions = options && Object.keys(options).length > 0;
+
     let builder:
       | AssetClaimBuilder<TPapiApi, TPapiTransaction, TAssetClaimOptionsBase>
       | undefined;
     try {
-      builder = Builder()
+      builder = Builder(hasOptions ? options : undefined)
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
         .account(address);

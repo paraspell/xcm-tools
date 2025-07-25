@@ -10,6 +10,7 @@ import {
   IncompatibleNodesError,
   InvalidAddressError,
   InvalidCurrencyError,
+  MissingChainApiError,
   NodeNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
@@ -32,6 +33,7 @@ describe('handleXcmApiError', () => {
     new BridgeHaltedError(),
     new DryRunFailedError('Failed'),
     new TransferToAhNotSupported(),
+    new MissingChainApiError('Acala'),
   ];
 
   it('should throw BadRequestException for known SDK errors', () => {

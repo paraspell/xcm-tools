@@ -1,15 +1,25 @@
 import { BatchMode } from '@paraspell/sdk';
 import { z } from 'zod';
 
-import { XTransferDtoSchema } from './XTransferDto.js';
+import { BuilderOptionsSchema, XTransferDtoSchema } from './XTransferDto.js';
 
 export const BatchOptionsSchema = z.object({
-  mode: z.nativeEnum(BatchMode),
+  mode: z.nativeEnum(BatchMode).optional(),
 });
 
+export const CombinedBatchOptionsSchema =
+  BatchOptionsSchema.merge(BuilderOptionsSchema);
+
+const { options, ...XTransferDtoShapeWithoutOptions } =
+  XTransferDtoSchema.shape;
+
+export const XTransferDtoWithoutOptionsSchema = z.object(
+  XTransferDtoShapeWithoutOptions,
+);
+
 export const BatchXTransferDtoSchema = z.object({
-  transfers: z.array(XTransferDtoSchema),
-  options: BatchOptionsSchema.optional(),
+  transfers: z.array(XTransferDtoWithoutOptionsSchema),
+  options: CombinedBatchOptionsSchema.optional(),
 });
 
 export type TBatchOptions = z.infer<typeof BatchOptionsSchema>;

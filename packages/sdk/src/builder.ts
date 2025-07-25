@@ -1,5 +1,6 @@
 import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
+import type { TBuilderOptions } from '@paraspell/sdk-core/src'
 import type { PolkadotClient } from 'polkadot-api'
 
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
@@ -12,9 +13,8 @@ import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = (api?: TPapiApiOrUrl) => {
-  const papiApi = new PapiApi()
-  papiApi.setApi(api)
+export const Builder = (api?: TBuilderOptions<TPapiApiOrUrl>) => {
+  const papiApi = new PapiApi(api)
   return BuilderImpl<PolkadotClient, TPapiTransaction>(papiApi)
 }
 

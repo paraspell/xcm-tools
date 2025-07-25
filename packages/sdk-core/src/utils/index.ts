@@ -2,6 +2,7 @@
 
 export * from './addXcmVersionHeader'
 export * from './assertions'
+export * from './builder'
 export * from './chain'
 export * from './createApiInstanceForNode'
 export * from './dryRun'

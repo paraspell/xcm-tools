@@ -26,8 +26,7 @@ export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction>)
 export const dryRunOrigin = createPapiApiCall(dryRunOriginImpl<TPapiApi, TPapiTransaction>)
 
 export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
-  const papiApi = new PapiApi()
-  papiApi.setApi(ahApi)
+  const papiApi = new PapiApi(ahApi)
   await papiApi.init('AssetHubPolkadot')
   return getEthFeesImpl<TPapiApi, TPapiTransaction>(papiApi)
 }
@@ -36,8 +35,7 @@ export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
  * Gets the Ethereum bridge status.
  */
 export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
-  const papiApi = new PapiApi()
-  papiApi.setApi(ahApi)
+  const papiApi = new PapiApi(ahApi)
   return getBridgeStatusImpl<TPapiApi, TPapiTransaction>(papiApi)
 }
 

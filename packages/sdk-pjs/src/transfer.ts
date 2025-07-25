@@ -32,8 +32,7 @@ export const transferEthToPolkadot = (
   })
 
 export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
-  const pjsApi = new PolkadotJsApi()
-  pjsApi.setApi(api)
+  const pjsApi = new PolkadotJsApi(api)
   await pjsApi.init('AssetHubPolkadot', DRY_RUN_CLIENT_TIMEOUT_MS)
   return getEthFeesImpl(pjsApi)
 }
@@ -42,8 +41,7 @@ export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
  * Gets the Ethereum bridge status.
  */
 export const getBridgeStatus = async (api?: TPjsApiOrUrl) => {
-  const pjsApi = new PolkadotJsApi()
-  pjsApi.setApi(api)
+  const pjsApi = new PolkadotJsApi(api)
   return getBridgeStatusImpl(pjsApi)
 }
 

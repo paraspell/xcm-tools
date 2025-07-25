@@ -10,6 +10,7 @@ import {
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
+  TBuilderOptions,
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
@@ -236,8 +237,10 @@ const XcmTransfer = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      options?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     const firstItem = items[0];
 
@@ -382,8 +385,10 @@ const XcmTransfer = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      options?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     const {
       from,
@@ -530,8 +535,10 @@ const XcmTransfer = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      options?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     let api;
     try {

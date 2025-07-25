@@ -975,7 +975,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const createCurrency = (fungible: string | bigint): TMultiAsset[] => [
+      const createCurrency = (fungible: string): TMultiAsset<string>[] => [
         {
           id: {
             parents: 1,
@@ -1032,7 +1032,7 @@ describe('XCM API (e2e)', () => {
       const tx = await Builder()
         .from(from)
         .to(to)
-        .currency({ multiasset: createCurrency(1000000000n) })
+        .currency({ multiasset: createCurrency('1000000000') })
         .feeAsset({
           multilocation: feeAsset,
         })
