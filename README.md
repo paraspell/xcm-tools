@@ -103,5 +103,8 @@ packages | - XCM SDK
 
 **Tools supported by:**
 <div align="center">
-      <img width="500" alt="version" src="https://github.com/user-attachments/assets/bead14a7-6fa7-4bd2-9e09-31681994614e" />
+      <img width="750" alt="version" src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c" />
+
+
+
 </div>
