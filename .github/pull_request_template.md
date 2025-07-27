@@ -1,12 +1,3 @@
----
-name: Bug bounty fix PR
-about: Following PR introduces a fix for the reported bug issue.
-title: "[Bug bounty]"
-labels: "\U0001F4B0 Bug bounty"
-assignees: dudo50
-
----
-
 # 🐞 Bug Fix Pull Request
 
 ## 📌 Related Issue
