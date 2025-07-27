@@ -183,6 +183,40 @@ const response = await fetch('http://localhost:3001/v3/dry-run', {
 });
 ```
 
+### Localhost testing setup
+
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#localhost-testing-setup).
+
+Possible parameters:
+- Inherited from concrete endpoint
+
+```ts
+const response = await fetch("http://localhost:3001/v3/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        senderAddress: "1pze8UbJDcDAacrXcwkpqeRSYLphaAiXB8rUaC6Z3V1kBLq",
+        address: "0x1501C1413e4178c38567Ada8945A80351F7B8496",
+        from: "Hydration",
+        to: "Ethereum",
+        currency: {
+          symbol: "USDC.e",
+          amount: "10000000"
+        },
+        options: {
+          development: true,
+          apiOverrides: {
+            Hydration: "wss://hydration.ibp.network",
+            AssetHubPolkadot: "wss://dot-rpc.stakeworld.io/assethub"
+            BridgeHubPolkadot: "wss://sys.ibp.network/bridgehub-polkadot"
+          }
+        }
+    })
+});
+```
+
 ### XCM Fee queries
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).

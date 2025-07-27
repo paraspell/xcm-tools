@@ -71,15 +71,16 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed
 ```
 NOTES:
 - Local transfers are now available for every currency and every chain. To try them, simply use the same origin and destination parameters.
-```
-
-```
-Latest news:
 - Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
 - You can now query Ethereum asset balances on Ethereum via balance query
 ```
 
-### Sending XCM:
+```
+Latest news:
+- The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
+```
+
+### Sending XCM
 
 For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
 
@@ -271,6 +272,30 @@ import { hasDryRunSupport } from "@paraspell/sdk-pjs";
 const result = hasDryRunSupport(node)
 ```
 
+### Localhost test setup
+
+SDK offers enhanced localhost support. You can pass an object containing overrides for all WS endpoints (Including hops) used in the test transfer. This allows for advanced localhost testing such as localhost dry-run or xcm-fee queries. More information about available options can be found in the [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html#localhost-testing-setup).
+
+```ts
+const builder = await Builder({
+  development: true, // Optional: Enforces overrides for all chains used
+  apiOverrides: {
+    Hydration: // "wsEndpointString" | papiClient
+    BridgeHubPolkadot: // "wsEndpointString" | papiClient
+    //ChainName: ...
+  }
+})
+  .from(CHAIN)
+  .to(CHAIN)
+  .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+  .address(address)
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
+```
+
 ### XCM Fee queries
 
 For full documentation with examples on this feature, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
@@ -392,7 +417,7 @@ import { convertSs58 } from "@paraspell/sdk";
 let result = convertSs58(address, node) // returns converted address in string
 ```
 
-### Asset queries:
+### Asset queries
 
 For full documentation with examples on this feature, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
