@@ -7,26 +7,26 @@ assignees: dudo50
 
 ---
 
-**Describe the bug**
+### Describe the bug:
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+### How to reproduce:
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+### Expected behavior:
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+### Screenshots:
 If applicable, add screenshots to help explain your problem.
 
-** Enviroment(Please complete the following information):**
+### Enviroment(Please complete the following information):
  - OS: [e.g. Linux, MacOS, Windows ..]
  - Framework [Vue, React, React native ..]
  - NodeJS version [e.g. v22.0.1]
 
-### [AssetHub Polkadot wallet address](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-asset-hub-rpc.polkadot.io#/accounts)
-Please provide your AssetHub Polkadot wallet address so that we are able to pay you a reward if the bug is confirmed.
+### [AssetHub Polkadot wallet address](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-asset-hub-rpc.polkadot.io#/accounts):
+Please provide your AssetHub Polkadot wallet address so that we are able to pay you a reward if the bug is confirmed (Please make sure that the address is not from CEX, as the funds might not arrive).
