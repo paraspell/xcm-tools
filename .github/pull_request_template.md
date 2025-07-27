@@ -1,0 +1,59 @@
+---
+name: Bug bounty fix PR
+about: Following PR introduces a fix for the reported bug issue.
+title: "[Bug bounty]"
+labels: "\U0001F4B0 Bug bounty"
+assignees: dudo50
+
+---
+
+# 🐞 Bug Fix Pull Request
+
+## 📌 Related Issue
+
+<!--
+Please link to the issue that this PR resolves.
+Example: Closes #123
+-->
+Closes #
+
+---
+
+## 🛠️ Description of the Fix
+
+<!--
+Briefly describe the bug and what you have changed to resolve it.
+Explain the root cause if known and what was done to fix it.
+-->
+- Bug description:
+- Fix summary:
+
+---
+
+## ✅ Checklist
+
+- [ ] My code follows the project's code style.
+- [ ] I have added tests that prove my fix is effective (if applicable).
+- [ ] I have updated documentation where necessary.
+- [ ] I have verified the fix does not introduce new issues.
+
+---
+
+## 💸 Polkadot Asset Hub Address (for Reward)
+
+<!--
+Include your Polkadot Asset Hub address to receive a reward if eligible.
+-->
+Polkadot Asset Hub Address: `INSERT_ADDRESS_HERE`
+
+> ⚠️ **Important:**  
+> Do **NOT** provide a centralized exchange (CEX) address (e.g., Kraken, Binance, etc.).  
+> Rewards sent to CEX addresses **may be lost** and are **not recoverable**.
+
+---
+
+## 🧩 Additional Notes (Optional)
+
+<!--
+Add any additional information or context here.
+-->
