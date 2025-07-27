@@ -7,26 +7,64 @@ assignees: dudo50
 
 ---
 
-### Describe the bug:
-A clear and concise description of what the bug is.
+# 🐞 Bug Report
 
-### How to reproduce:
+## 🔍 Describe the Bug
+
+<!--
+A clear and concise description of what the bug is.
+What did you expect to happen, and what actually happened?
+-->
+
+## 🧪 To Reproduce
+
+<!--
 Steps to reproduce the behavior:
 1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+2. Click on '...'
+3. Scroll down to '...'
 4. See error
+-->
 
-### Expected behavior:
-A clear and concise description of what you expected to happen.
+## 🖥️ Environment
 
-### Screenshots:
-If applicable, add screenshots to help explain your problem.
+<!--
+Please provide some basic info about your setup.
+-->
 
-### Enviroment(Please complete the following information):
- - OS: [e.g. Linux, MacOS, Windows ..]
- - Framework [Vue, React, React native ..]
- - NodeJS version [e.g. v22.0.1]
+- OS: [e.g. Linux, MacOS, Windows ..]
+- Framework [e.g. Vue, React, React native .. (Also include version)]
+- XCM Tool version (e.g. XCM SDK 10.10.1)
+- NodeJS version [e.g. v22.0.1]
 
-### [AssetHub Polkadot wallet address](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-asset-hub-rpc.polkadot.io#/accounts):
-Please provide your AssetHub Polkadot wallet address so that we are able to pay you a reward if the bug is confirmed (Please make sure that the address is not from CEX, as the funds might not arrive).
+## 📸 Screenshots / Logs
+
+<!--
+If applicable, add screenshots or error logs to help explain your problem.
+-->
+
+## 💡 Expected Behavior
+
+<!--
+What did you expect to happen instead?
+-->
+
+## 📍 Additional Context
+
+<!--
+Add any other context about the problem here.
+-->
+
+---
+
+## 💸 Polkadot Asset Hub Address (Optional – for reward eligibility)
+
+<!--
+If this bug qualifies for a reward, you can include your address here.
+-->
+Polkadot Asset Hub Address: `INSERT_ADDRESS_HERE`
+
+> ⚠️ **Do NOT use a centralized exchange (CEX) address** (e.g., Binance, Kraken).  
+> Rewards sent to CEX addresses **may not arrive** and **cannot be recovered**.
+
+---
