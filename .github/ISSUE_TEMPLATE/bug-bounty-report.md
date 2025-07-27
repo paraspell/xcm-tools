@@ -2,7 +2,7 @@
 name: Bug bounty report
 about: Following issue describes freshly found bug with one of the tools.
 title: "[Bug bounty]"
-labels: "\U0001F4B0 Bug bounty"
+labels: "Bug bounty \U0001F4B0"
 assignees: dudo50
 
 ---
