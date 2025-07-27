@@ -1,3 +1,6 @@
+<!--
+Please rename "Bug Fix" to what is applicable in your PR (In case this is not a Bug bounty fix PR, but rather it is a new feature or something else)
+-->
 # 🐞 Bug Fix Pull Request
 
 ## 📌 Related Issue
@@ -25,7 +28,7 @@ Explain the root cause if known and what was done to fix it.
 
 - [ ] My code follows the project's code style.
 - [ ] I have added tests that prove my fix is effective (if applicable).
-- [ ] I have updated documentation where necessary.
+- [ ] I have updated the documentation where necessary.
 - [ ] I have verified the fix does not introduce new issues.
 
 ---
