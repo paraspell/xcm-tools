@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAsset, TCurrencyCore } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
@@ -48,7 +48,7 @@ describe('buildHopInfo', () => {
   const DEFAULT_NATIVE_BALANCE = 100000000000n
   const DEFAULT_ASSET_BALANCE = 5000000000n
   const DEFAULT_HOP_FEE = 100000000n
-  const DEFAULT_ED = '100000000'
+  const DEFAULT_ED = 100000000n
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -87,11 +87,11 @@ describe('buildHopInfo', () => {
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
-      multiLocation: {
+      location: {
         parents: 0,
         interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }
       }
-    } as TAsset)
+    } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_ASSET_BALANCE)
     vi.mocked(getExistentialDeposit).mockReturnValue(DEFAULT_ED)
   })
@@ -120,13 +120,11 @@ describe('buildHopInfo', () => {
       address: options.senderAddress,
       node: options.node,
       currency: {
-        multilocation: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAsset)
-          .multiLocation
+        location: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo).location
       }
     })
     expect(getExistentialDeposit).toHaveBeenCalledWith(options.node, {
-      multilocation: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAsset)
-        .multiLocation
+      location: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo).location
     })
 
     expect(result).toEqual({
@@ -206,9 +204,9 @@ describe('buildHopInfo', () => {
     const options = { ...baseOptions }
 
     await expect(buildHopInfo(options)).rejects.toThrow(InvalidParameterError)
-    const hopAsset = vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAsset
-    const expectedPayload = hopAsset.multiLocation
-      ? { multilocation: hopAsset.multiLocation }
+    const hopAsset = vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo
+    const expectedPayload = hopAsset.location
+      ? { location: hopAsset.location }
       : { symbol: hopAsset.symbol }
     await expect(buildHopInfo(options)).rejects.toThrow(
       `Existential deposit not found for node ${options.node} with currency ${JSON.stringify(expectedPayload)}`
@@ -219,12 +217,12 @@ describe('buildHopInfo', () => {
     expect(mockHopApi.disconnect).toHaveBeenCalledTimes(2)
   })
 
-  it('should handle hop asset without multiLocation correctly', async () => {
+  it('should handle hop asset without location correctly', async () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'OTHER',
       assetId: 'otherId',
       decimals: 12
-    } as TAsset)
+    } as TAssetInfo)
     const options = { ...baseOptions }
     await buildHopInfo(options)
 

@@ -24,7 +24,7 @@ export const supportsExchangePair = (
     const isBifrost = ex === 'BifrostPolkadotDex' || ex === 'BifrostKusamaDex';
 
     const sameAsset = (x: TRouterAsset, y: TRouterAsset): boolean => {
-      if (x.multiLocation && y.multiLocation && deepEqual(x.multiLocation, y.multiLocation)) {
+      if (x.location && y.location && deepEqual(x.location, y.location)) {
         return true;
       }
       if (!isBifrost && x.assetId && y.assetId && x.assetId === y.assetId) {

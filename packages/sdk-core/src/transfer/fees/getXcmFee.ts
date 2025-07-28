@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
@@ -73,7 +73,7 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
 }: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
-  const asset = findAssetForNodeOrThrow(origin, currency, destination)
+  const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const {
     fee: originFee,

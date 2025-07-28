@@ -1,6 +1,6 @@
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../../constants'
+import { DOT_LOCATION } from '../../../constants'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
@@ -14,7 +14,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
   originExecutionFee: bigint,
   destExecutionFee: bigint
 ): TRes => {
-  const { api, version, asset, destination, paraIdTo, address } = input
+  const { api, version, assetInfo: asset, destination, paraIdTo, address } = input
 
   const dest = createDestination(version, origin, destination, paraIdTo)
 
@@ -26,7 +26,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
 
   assertHasLocation(asset)
 
-  const transformedMultiLocation = localizeLocation(origin, asset.multiLocation)
+  const transformedLocation = localizeLocation(origin, asset.location)
 
   const call: TSerializedApiCall = {
     module: 'PolkadotXcm',
@@ -37,7 +37,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
           {
             WithdrawAsset: [
               {
-                id: transformedMultiLocation,
+                id: transformedLocation,
                 fun: {
                   Fungible: asset.amount
                 }
@@ -47,7 +47,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
           {
             BuyExecution: {
               fees: {
-                id: transformedMultiLocation,
+                id: transformedLocation,
                 fun: {
                   Fungible: originExecutionFee
                 }
@@ -63,7 +63,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
                 {
                   BuyExecution: {
                     fees: {
-                      id: asset.multiLocation,
+                      id: asset.location,
                       fun: {
                         Fungible: destExecutionFee
                       }
@@ -80,7 +80,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
                     },
                     want: [
                       {
-                        id: DOT_MULTILOCATION,
+                        id: DOT_LOCATION,
                         fun: { Fungible: 100000000n } // 0.01 DOT
                       }
                     ],

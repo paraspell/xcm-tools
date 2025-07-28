@@ -1,5 +1,5 @@
-import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk';
-import { findAsset, hasSupportForAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TNodePolkadotKusama } from '@paraspell/sdk';
+import { findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,7 +11,7 @@ import type { TCommonTransferOptions, TExchangeNode } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 vi.mock('@paraspell/sdk', () => ({
-  findAsset: vi.fn(),
+  findAssetInfo: vi.fn(),
   hasSupportForAsset: vi.fn(),
   getRelayChainOf: vi.fn(),
   InvalidParameterError: class extends Error {},
@@ -45,7 +45,7 @@ describe('selectBestExchangeCommon', () => {
   });
 
   it('throws error if assetFromOrigin is not found', async () => {
-    vi.mocked(findAsset).mockReturnValue(null);
+    vi.mocked(findAssetInfo).mockReturnValue(null);
     await expect(
       selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(new BigNumber(0))),
     ).rejects.toThrow(
@@ -55,7 +55,7 @@ describe('selectBestExchangeCommon', () => {
 
   it('throws error if currencyTo is specified by id', async () => {
     const options = { ...baseOptions, currencyTo: { id: 'some-id' } };
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     await expect(
       selectBestExchangeCommon(options, undefined, () => Promise.resolve(new BigNumber(0))),
     ).rejects.toThrow(
@@ -64,7 +64,7 @@ describe('selectBestExchangeCommon', () => {
   });
 
   it('returns best exchange if one qualifies', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA' });
     vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
@@ -89,7 +89,7 @@ describe('selectBestExchangeCommon', () => {
   });
 
   it('throws error if no exchange qualifies (assets not found)', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(undefined);
     vi.mocked(getExchangeAsset).mockReturnValue(null);
 
@@ -102,7 +102,7 @@ describe('selectBestExchangeCommon', () => {
   });
 
   it('throws error with aggregated errors if computeAmountOut fails for all exchanges', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA' });
     vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
@@ -160,7 +160,7 @@ describe('selectBestExchangeCommon', () => {
       exchange: ['AcalaDex'],
     } as unknown as TCommonTransferOptions;
 
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA' });
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);

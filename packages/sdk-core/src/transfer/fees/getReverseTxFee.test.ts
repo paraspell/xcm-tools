@@ -90,8 +90,8 @@ describe('getReverseTxFee', () => {
     expect(mockBuild).toHaveBeenCalled()
   })
 
-  it('should correctly call Builder with currencyInput as multilocation', async () => {
-    const currencyInput: TCurrencyInput = { multilocation: { parents: 1, interior: 'Here' } }
+  it('should correctly call Builder with currencyInput as location', async () => {
+    const currencyInput: TCurrencyInput = { location: { parents: 1, interior: 'Here' } }
     const expectedCurrencyArg = {
       ...currencyInput,
       amount: mockAmount

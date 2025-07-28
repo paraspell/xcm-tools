@@ -1,6 +1,7 @@
 import { TNodeDotKsmWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
-import { getNode, normalizeMultiLocation } from '../../../sdk-core/src'
+import { getNode } from '../../../sdk-core/src'
 import { ApiPromise } from '@polkadot/api'
+import { normalizeLocation } from '../src'
 
 export const getRelayChainSymbolOf = (node: TNodeDotKsmWithRelayChains): TRelayChainSymbol => {
   if (node === 'Polkadot') return 'DOT'
@@ -30,9 +31,9 @@ export const isNodeEvm = (api: ApiPromise) => {
   return type.includes('AccountId20')
 }
 
-export const capitalizeMultiLocation = (obj: any) => {
+export const capitalizeLocation = (obj: any) => {
   obj.interior = capitalizeKeys(obj.interior)
-  return normalizeMultiLocation(obj)
+  return normalizeLocation(obj)
 }
 
 export const capitalizeKeys = (obj: any, depth: number = 1): any => {

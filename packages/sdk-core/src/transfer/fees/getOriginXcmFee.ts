@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
@@ -23,7 +23,7 @@ export const getOriginXcmFee = async <TApi, TRes>({
     destParaId?: number
   }
 > => {
-  const asset = findAssetForNodeOrThrow(origin, currency, destination)
+  const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)

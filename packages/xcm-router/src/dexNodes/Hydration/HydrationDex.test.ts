@@ -1,13 +1,12 @@
 import type { Asset, SdkCtx, Trade, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk';
 import { createSdkContext } from '@galacticcouncil/sdk';
 import {
-  type Extrinsic,
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   InvalidParameterError,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,6 +15,7 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import HydrationExchangeNode from './HydrationDex';
 import * as utils from './utils';
+import { Extrinsic } from '@paraspell/sdk-pjs';
 
 vi.mock('@galacticcouncil/sdk', () => ({
   createSdkContext: vi.fn(),
@@ -30,12 +30,13 @@ vi.mock('@galacticcouncil/sdk', () => ({
   },
 }));
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   getAssetDecimals: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   InvalidParameterError: class extends Error {},
   getNativeAssetSymbol: vi.fn(),
   getAssets: vi.fn(),
+  isForeignAsset: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('./utils', () => ({
@@ -368,8 +369,8 @@ describe('HydrationExchangeNode', () => {
       expect(result).toEqual({
         isOmni: true,
         assets: [
-          { symbol: 'ABC', assetId: '1', multiLocation: undefined },
-          { symbol: 'XYZ', assetId: '2', multiLocation: undefined },
+          { symbol: 'ABC', assetId: '1', location: undefined },
+          { symbol: 'XYZ', assetId: '2', location: undefined },
         ],
         pairs: [],
       });

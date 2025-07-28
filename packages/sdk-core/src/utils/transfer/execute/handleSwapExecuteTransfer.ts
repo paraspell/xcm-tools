@@ -1,6 +1,6 @@
 import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
 import {
-  type TMultiLocation,
+  type TLocation,
   type TNodeDotKsmWithRelayChains,
   type TNodePolkadotKusama,
   type TNodeWithRelayChains
@@ -185,8 +185,8 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     chain,
     exchangeChain,
     destChain,
-    assetFrom,
-    assetTo,
+    assetInfoFrom: assetFrom,
+    assetInfoTo: assetTo,
     currencyTo,
     senderAddress,
     recipientAddress,
@@ -212,7 +212,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     senderAddress,
     address: recipientAddress,
     currency: {
-      multilocation: assetFrom.multiLocation as TMultiLocation,
+      location: assetFrom.location as TLocation,
       amount: assetFrom.amount
     },
     swapConfig: {
@@ -306,7 +306,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
   const { call: secondCall } = await createXcmAndCall(
     {
       ...internalOptions,
-      assetTo: updatedAssetTo,
+      assetInfoTo: updatedAssetTo,
       fees: extractedFees
     },
     firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
@@ -362,7 +362,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     const { call: finalCall } = await createXcmAndCall(
       {
         ...internalOptions,
-        assetTo: finalAssetTo,
+        assetInfoTo: finalAssetTo,
         fees: finalFees
       },
       secondDryRunResult.origin.success ? secondDryRunResult.origin.weight : undefined

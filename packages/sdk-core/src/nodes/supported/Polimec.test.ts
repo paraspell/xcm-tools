@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -53,7 +53,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n }
+      assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(ScenarioNotSupportedError)
@@ -67,7 +67,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n }
+      assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -85,7 +85,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n }
+      assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -104,15 +104,15 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n, multiLocation: DOT_MULTILOCATION }
+      assetInfo: { symbol: 'DOT', amount: 1000n, location: DOT_LOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const result = await polimec.transferPolkadotXCM(input)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       expect.objectContaining({
-        multiAsset: expect.objectContaining({
-          id: DOT_MULTILOCATION
+        asset: expect.objectContaining({
+          id: DOT_LOCATION
         })
       }),
       'transfer_assets',
@@ -121,8 +121,8 @@ describe('Polimec', () => {
     expect(result).toBe(mockExtrinsic)
   })
 
-  it('should use asset.multiLocation when asset is foreign and has multiLocation', async () => {
-    const assetMultiLocation = { parents: 0, interior: 'Here' }
+  it('should use asset.location when asset is foreign and has location', async () => {
+    const location = { parents: 0, interior: 'Here' }
 
     const input = {
       api: mockApi,
@@ -131,15 +131,15 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ', multiLocation: assetMultiLocation, amount: 1000n }
+      assetInfo: { symbol: 'XYZ', location: location, amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const result = await polimec.transferPolkadotXCM(input)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       expect.objectContaining({
-        multiAsset: expect.objectContaining({
-          id: assetMultiLocation
+        asset: expect.objectContaining({
+          id: location
         })
       }),
       'transfer_assets',
@@ -148,7 +148,7 @@ describe('Polimec', () => {
     expect(result).toBe(mockExtrinsic)
   })
 
-  it('should throw InvalidCurrencyError when asset is not supported in getAssetMultiLocation', async () => {
+  it('should throw InvalidCurrencyError when asset is not supported in getAssetLocation', async () => {
     const input = {
       api: mockApi,
       version: polimec.version,
@@ -156,7 +156,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ', amount: 1000n }
+      assetInfo: { symbol: 'XYZ', amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
@@ -169,7 +169,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       destination: 'Acala',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n }
+      assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
     const call = polimec.transferRelayToPara(options)
@@ -191,7 +191,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       destination: 'Acala',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: 1000n }
+      assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
     const call = polimec.transferRelayToPara(options)
@@ -243,7 +243,7 @@ describe('Polimec', () => {
 
       const mockOptions = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: 100n, assetId: '1', multiLocation: {} },
+        asset: { symbol: 'ACA', amount: 100n, assetId: '1', location: {} },
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

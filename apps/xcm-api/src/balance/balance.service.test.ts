@@ -198,7 +198,7 @@ describe('BalanceService', () => {
       const params: ExistentialDepositDto = {
         currency: { symbol: 'DOT' },
       };
-      const edMock = '1000000000';
+      const edMock = 1000000000n;
 
       vi.mocked(getExistentialDeposit).mockReturnValue(edMock);
 

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import {
-  findAssetByMultiLocation,
-  findAssetForNodeOrThrow,
+  findAssetInfoByLoc,
+  findAssetInfoOrThrow,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier
+  isOverrideLocationSpecifier
 } from '@paraspell/assets'
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
@@ -50,17 +50,17 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
-  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
+  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
+    throw new InvalidParameterError('Override location is not supported for Evm transfers')
   }
 
-  const foundAsset = findAssetForNodeOrThrow(from, currency, to)
+  const foundAsset = findAssetInfoOrThrow(from, currency, to)
 
-  if (!isForeignAsset(foundAsset) || !foundAsset.multiLocation) {
+  if (!isForeignAsset(foundAsset) || !foundAsset.location) {
     throw new InvalidCurrencyError('Currency must be a foreign asset with valid multi-location')
   }
 
-  const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), foundAsset.multiLocation)
+  const ethAsset = findAssetInfoByLoc(getOtherAssets('Ethereum'), foundAsset.location)
 
   if (!ethAsset || !ethAsset.assetId) {
     throw new InvalidCurrencyError(
@@ -105,11 +105,11 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       scenario: 'ParaToPara',
       senderAddress,
       ahAddress,
-      asset: { ...foundAsset, amount: BigInt(currency.amount) },
+      assetInfo: { ...foundAsset, amount: BigInt(currency.amount) },
       currency,
-      destLocation: {} as TMultiLocation,
-      multiAsset: {} as TMultiAsset,
-      beneficiaryLocation: {} as TMultiLocation,
+      destLocation: {} as TLocation,
+      asset: {} as TAsset,
+      beneficiaryLocation: {} as TLocation,
       version: Version.V4
     },
     from,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { DuplicateAssetError } from '../../errors'
-import type { TForeignAsset, TNativeAsset } from '../../types'
+import type { TForeignAssetInfo, TNativeAssetInfo } from '../../types'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
 describe('throwDuplicateAssetError', () => {
@@ -9,14 +9,14 @@ describe('throwDuplicateAssetError', () => {
 
   it('does not throw when only one native or one foreign match exists', () => {
     expect(() =>
-      throwDuplicateAssetError(symbol, [{ symbol: 'DOT', isNative: true } as TNativeAsset], [])
+      throwDuplicateAssetError(symbol, [{ symbol: 'DOT', isNative: true } as TNativeAssetInfo], [])
     ).not.toThrow()
 
     expect(() =>
       throwDuplicateAssetError(
         symbol,
         [],
-        [{ symbol: '', alias: 'USDT1', assetId: '100' } as TForeignAsset]
+        [{ symbol: '', alias: 'USDT1', assetId: '100' } as TForeignAssetInfo]
       )
     ).not.toThrow()
   })
@@ -25,8 +25,8 @@ describe('throwDuplicateAssetError', () => {
     expect(() =>
       throwDuplicateAssetError(
         symbol,
-        [{ symbol: 'DOT', isNative: true } as TNativeAsset],
-        [{ symbol: 'USDT', alias: 'USDT1', assetId: '100' } as TForeignAsset]
+        [{ symbol: 'DOT', isNative: true } as TNativeAssetInfo],
+        [{ symbol: 'USDT', alias: 'USDT1', assetId: '100' } as TForeignAssetInfo]
       )
     ).toThrowError(
       new DuplicateAssetError(
@@ -41,8 +41,8 @@ describe('throwDuplicateAssetError', () => {
         symbol,
         [],
         [
-          { alias: 'USDT1', assetId: '100' } as TForeignAsset,
-          { alias: 'USDT2', assetId: '200' } as TForeignAsset
+          { alias: 'USDT1', assetId: '100' } as TForeignAssetInfo,
+          { alias: 'USDT2', assetId: '200' } as TForeignAssetInfo
         ]
       )
     ).toThrowError(
@@ -61,13 +61,13 @@ describe('throwDuplicateAssetError', () => {
           {
             symbol: 'USDT',
             alias: 'USDT1',
-            multiLocation: { parents: 1, interior: {} }
-          } as TForeignAsset,
+            location: { parents: 1, interior: {} }
+          } as TForeignAssetInfo,
           {
             symbol: 'USDT',
             alias: 'USDT2',
             assetId: '123'
-          } as TForeignAsset
+          } as TForeignAssetInfo
         ]
       )
     ).toThrowError(
@@ -91,13 +91,13 @@ describe('throwDuplicateAssetError', () => {
           {
             symbol: 'USDT',
             alias: 'USDT1',
-            multiLocation: {}
-          } as TForeignAsset,
+            location: {}
+          } as TForeignAssetInfo,
           {
             symbol: 'USDT',
             alias: 'USDT2',
-            multiLocation: {}
-          } as TForeignAsset
+            location: {}
+          } as TForeignAssetInfo
         ]
       )
     ).toThrowError(

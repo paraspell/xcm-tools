@@ -3,7 +3,7 @@ import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
 import {
-  findAssetById,
+  findAssetInfoById,
   getNativeAssets,
   getOtherAssets,
   InvalidParameterError,
@@ -13,8 +13,7 @@ import { firstValueFrom } from 'rxjs';
 
 import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
 
-const getPairKey = (a: TRouterAsset) =>
-  (a.multiLocation as object | undefined) ?? a.assetId ?? a.symbol;
+const getPairKey = (a: TRouterAsset) => (a.location as object | undefined) ?? a.assetId ?? a.symbol;
 
 export const getDexConfig = async (
   api: ApiPromise,
@@ -40,16 +39,16 @@ export const getDexConfig = async (
 
       if (key.toLowerCase() === 'token') {
         const sdkAsset = getNativeAssets(node).find((a) => a.symbol === symbol);
-        routerAsset = { symbol, multiLocation: sdkAsset?.multiLocation };
+        routerAsset = { symbol, location: sdkAsset?.location };
       } else {
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
-          const sdkAsset = findAssetById(getOtherAssets(node), formatted);
+          const sdkAsset = findAssetInfoById(getOtherAssets(node), formatted);
           if (!sdkAsset) throw new InvalidParameterError(`Asset not found: ${formatted}`);
           routerAsset = {
             symbol,
             assetId: sdkAsset.assetId,
-            multiLocation: sdkAsset.multiLocation,
+            location: sdkAsset.location,
           };
         }
       }

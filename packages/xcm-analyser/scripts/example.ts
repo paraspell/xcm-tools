@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-import type { MultiLocation } from '../src/types';
+import type { Location } from '../src/types';
 import { convertMultilocationToUrl, convertXCMToUrls } from '../src/converter/convert';
 
-const multilocation: MultiLocation = {
+const location: Location = {
   parents: '1',
   interior: {
     X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
   },
 };
 
-const url = convertMultilocationToUrl(multilocation);
+const url = convertMultilocationToUrl(location);
 
 console.log();
 console.log(`URL: ${url}`);

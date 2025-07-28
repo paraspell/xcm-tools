@@ -49,7 +49,7 @@ export const getOriginFeeDetails = createPolkadotJsApiCall(
 )
 
 export {
-  findAsset,
+  findAssetInfo,
   Foreign,
   ForeignAbstract,
   getAllAssetsSymbols,

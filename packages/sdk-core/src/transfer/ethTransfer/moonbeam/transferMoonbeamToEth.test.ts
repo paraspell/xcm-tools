@@ -1,11 +1,11 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
-  findAssetByMultiLocation,
-  findAssetForNodeOrThrow,
+  findAssetInfoByLoc,
+  findAssetInfoOrThrow,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier
+  isOverrideLocationSpecifier
 } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -18,11 +18,11 @@ import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetByMultiLocation: vi.fn(),
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoByLoc: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }]),
   isForeignAsset: vi.fn(),
-  isOverrideMultiLocationSpecifier: vi.fn(),
+  isOverrideLocationSpecifier: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -102,14 +102,14 @@ describe('transferMoonbeamToEth', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: '',
-      multiLocation: { valid: 'location' } as unknown as TMultiLocation,
+      location: { valid: 'location' } as unknown as TLocation,
       assetId: '0xmockedAssetId'
     })
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
   })
 
   it('should throw error for missing AssetHub address', async () => {
@@ -130,14 +130,14 @@ describe('transferMoonbeamToEth', () => {
     ).rejects.toThrow('Multiassets syntax is not supported')
   })
 
-  it('should throw error for override multilocation', async () => {
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+  it('should throw error for override location', async () => {
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        currency: { multilocation: { type: 'override' } } as unknown as TCurrencyInputWithAmount
+        currency: { location: { type: 'override' } } as unknown as TCurrencyInputWithAmount
       })
-    ).rejects.toThrow('Override multilocation is not supported')
+    ).rejects.toThrow('Override location is not supported')
   })
 
   it('should throw error for non-foreign asset', async () => {
@@ -148,7 +148,7 @@ describe('transferMoonbeamToEth', () => {
   })
 
   it('should throw error when Ethereum asset not found', async () => {
-    vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
+    vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(
       'Could not obtain Ethereum asset address'
     )

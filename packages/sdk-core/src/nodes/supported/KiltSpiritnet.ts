@@ -23,7 +23,7 @@ class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPo
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset } = input
+    const { scenario, assetInfo: asset } = input
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
       throw new ScenarioNotSupportedError(

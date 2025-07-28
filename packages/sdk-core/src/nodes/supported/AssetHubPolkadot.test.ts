@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo, TForeignAssetInfo } from '@paraspell/assets'
 import {
+  findAssetInfoByLoc,
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
   normalizeSymbol,
-  type TMultiAsset,
-  type TNativeAsset,
+  type TAsset,
+  type TNativeAssetInfo,
   type WithAmount
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import { hasJunction, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { hasJunction, type TLocation, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
@@ -51,7 +52,7 @@ vi.mock('@paraspell/assets', async () => {
     InvalidCurrencyError: class extends Error {},
     isForeignAsset: vi.fn(),
     hasSupportForAsset: vi.fn(),
-    findAssetByMultiLocation: vi.fn(),
+    findAssetInfoByLoc: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
     normalizeSymbol: vi.fn(),
     isAssetEqual: vi.fn()
@@ -97,11 +98,11 @@ describe('AssetHubPolkadot', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT', amount: 1000n, isNative: true },
-    multiAsset: {} as TMultiAsset,
+    assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true },
+    asset: {} as TAsset,
     scenario: 'ParaToRelay',
-    destLocation: {} as TMultiLocation,
-    beneficiaryLocation: {} as TMultiLocation,
+    destLocation: {} as TLocation,
+    beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
     address: 'address',
     destination: 'Polkadot',
@@ -132,7 +133,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid DOT transfer to Kusama', async () => {
-      const input = { ...mockInput, asset: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
+      const input = { ...mockInput, assetInfo: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
         unknown,
         unknown
       >
@@ -146,7 +147,11 @@ describe('AssetHubPolkadot', () => {
     it('throws InvalidCurrencyError for unsupported currency', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'UNKNOWN', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>
+        assetInfo: {
+          symbol: 'UNKNOWN',
+          amount: 1000n,
+          isNative: true
+        } as WithAmount<TNativeAssetInfo>
       }
       expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
     })
@@ -179,7 +184,7 @@ describe('AssetHubPolkadot', () => {
 
       const input = {
         ...mockInput,
-        asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
+        assetInfo: { symbol: 'ETH', assetId: '0x123', location: {} },
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       const result = await assetHub.handleEthBridgeTransfer(input)
@@ -201,10 +206,10 @@ describe('AssetHubPolkadot', () => {
       )
     })
 
-    it('should throw if the address is multi-location', async () => {
+    it('should throw if the address is location', async () => {
       const input = {
         ...mockInput,
-        address: DOT_MULTILOCATION
+        address: DOT_LOCATION
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       await expect(assetHub.handleEthBridgeNativeTransfer(input)).rejects.toThrow(
@@ -240,7 +245,7 @@ describe('AssetHubPolkadot', () => {
 
       const input = {
         ...mockInput,
-        asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
+        assetInfo: { symbol: 'ETH', assetId: '0x123', location: {} },
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -269,7 +274,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
+        assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -284,7 +289,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'KSM', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
+        assetInfo: { symbol: 'KSM', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -328,8 +333,8 @@ describe('AssetHubPolkadot', () => {
         async ({ assetSymbol, feeAssetSymbol }) => {
           const input = {
             ...mockInput,
-            asset: { symbol: assetSymbol, amount: 100n },
-            feeAsset: { symbol: feeAssetSymbol }
+            assetInfo: { symbol: assetSymbol, amount: 100n },
+            feeAssetInfo: { symbol: feeAssetSymbol }
           } as TPolkadotXCMTransferOptions<unknown, unknown>
           await assetHub.transferPolkadotXCM(input)
           expect(handleExecuteTransfer).toHaveBeenCalledWith('AssetHubPolkadot', input)
@@ -341,8 +346,8 @@ describe('AssetHubPolkadot', () => {
         const input = {
           ...mockInput,
           destination: 'Acala',
-          asset: { symbol: 'DOT', amount: 100n },
-          feeAsset: { symbol: 'DOT' }
+          assetInfo: { symbol: 'DOT', amount: 100n },
+          feeAssetInfo: { symbol: 'DOT' }
         } as TPolkadotXCMTransferOptions<unknown, unknown>
         await assetHub.transferPolkadotXCM(input)
         expect(handleExecuteTransfer).not.toHaveBeenCalled()
@@ -382,11 +387,94 @@ describe('AssetHubPolkadot', () => {
       expect(handleMythosTransferSpy).toHaveBeenCalledWith(mockInput)
     })
 
+    it('should call transferPolkadotXCM when destination is BifrostPolkadot and currency WETH.e', async () => {
+      mockInput.destination = 'BifrostPolkadot'
+      mockInput.assetInfo = {
+        symbol: 'WETH',
+        assetId: '0x123',
+        amount: 1000n,
+        location: {} as TLocation
+      }
+
+      vi.mocked(getOtherAssets).mockReturnValue([
+        { symbol: 'WETH', assetId: '0x123', location: mockInput.assetInfo.location }
+      ])
+
+      vi.mocked(findAssetInfoByLoc).mockReturnValueOnce({
+        symbol: 'WETH',
+        location: {} as TLocation
+      })
+
+      vi.mocked(createBeneficiaryLocation).mockReturnValue({} as TLocation)
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalled()
+    })
+
+    it('should call handleLocalReserveTransfer when feeAsset is KSM', async () => {
+      const inputWithFeeAssetKSM = {
+        ...mockInput,
+        assetInfo: {
+          symbol: 'KSM'
+        },
+        feeAssetInfo: {
+          symbol: 'KSM'
+        },
+        destination: 'Moonbeam',
+        api: mockApi
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const handleLocalReserveTransferSpy = vi
+        .spyOn(assetHub, 'handleLocalReserveTransfer')
+        .mockReturnValue({} as unknown)
+
+      await assetHub.transferPolkadotXCM(inputWithFeeAssetKSM)
+
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputWithFeeAssetKSM)
+      expect(handleLocalReserveTransferSpy.mock.calls[0][1]).toBeUndefined()
+    })
+
+    it('should call handleLocalReserveTransfer if asset is Ethereum asset ', async () => {
+      const ethAsset = {
+        symbol: 'USDC',
+        amount: '1000',
+        decimals: 6,
+        location: {
+          parents: 1,
+          interior: { X2: [{ Parachain: 1000 }, { GeneralKey: '0x...' }] }
+        }
+      } as TForeignAssetInfo
+      const inputForEthereumAsset = {
+        ...mockInput,
+        assetInfo: ethAsset,
+        destination: 'Acala',
+        api: mockApi
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(getOtherAssets).mockReturnValue([
+        { symbol: 'USDC', location: ethAsset.location }
+      ] as TForeignAssetInfo[])
+      vi.mocked(findAssetInfoByLoc).mockReturnValue(ethAsset)
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
+
+      await assetHub.transferPolkadotXCM(inputForEthereumAsset)
+
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputForEthereumAsset, true)
+    })
+
     it('should modify input for USDT currencySymbol', async () => {
-      mockInput.asset = {
+      mockInput.assetInfo = {
         symbol: 'USDT',
         amount: 1000n,
-        multiLocation: {
+        location: {
           parents: 1,
           interior: {
             X1: {
@@ -395,7 +483,7 @@ describe('AssetHubPolkadot', () => {
           }
         },
         isNative: true
-      } as WithAmount<TNativeAsset>
+      } as WithAmount<TNativeAssetInfo>
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
 
@@ -405,16 +493,16 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should modify input for USDC currencyId', async () => {
-      mockInput.asset = {
+      mockInput.assetInfo = {
         symbol: 'USDC',
-        multiLocation: {
+        location: {
           parents: 1,
           interior: {
             X1: {
               Parachain: 1000
             }
           }
-        } as TMultiLocation,
+        } as TLocation,
         amount: 1000n
       }
       mockInput.scenario = 'ParaToPara'
@@ -427,11 +515,11 @@ describe('AssetHubPolkadot', () => {
 
     it('should modify input for DOT transfer to Hydration', async () => {
       mockInput.destination = 'Hydration'
-      mockInput.asset = {
+      mockInput.assetInfo = {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true
-      } as WithAmount<TNativeAsset>
+      } as WithAmount<TNativeAssetInfo>
 
       vi.mocked(getOtherAssets).mockImplementation(node =>
         node === 'Ethereum' ? [] : [{ symbol: 'DOT', assetId: '' }]
@@ -472,9 +560,9 @@ describe('AssetHubPolkadot', () => {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true
-      } as WithAmount<TNativeAsset>
+      } as WithAmount<TNativeAssetInfo>
       const expectedSuperResult = {
-        V3: [{ id: 'Here' as unknown as TMultiLocation, fun: { Fungible: amount } }]
+        V3: [{ id: 'Here' as unknown as TLocation, fun: { Fungible: amount } }]
       }
       superCreateCurrencySpecSpy.mockReturnValue(expectedSuperResult)
 
@@ -491,9 +579,9 @@ describe('AssetHubPolkadot', () => {
       expect(result).toEqual(expectedSuperResult)
     })
 
-    it('should use original MultiLocation for ParaToPara when transformation is not needed', () => {
+    it('should use original Location for ParaToPara when transformation is not needed', () => {
       const scenario: TScenario = 'ParaToPara'
-      const mockMultiLocation: TMultiLocation = {
+      const mockLocation: TLocation = {
         parents: 1,
         interior: { X1: { Parachain: 2000 } }
       }
@@ -501,23 +589,23 @@ describe('AssetHubPolkadot', () => {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true,
-        multiLocation: mockMultiLocation
-      } as WithAmount<TNativeAsset>
-      const expectedResult = { id: mockMultiLocation, fun: { Fungible: amount } }
+        location: mockLocation
+      } as WithAmount<TNativeAssetInfo>
+      const expectedResult = { id: mockLocation, fun: { Fungible: amount } }
 
       vi.mocked(hasJunction).mockReturnValue(false)
 
       const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
-      expect(hasJunction).toHaveBeenCalledWith(mockMultiLocation, 'Parachain', 1000)
+      expect(hasJunction).toHaveBeenCalledWith(mockLocation, 'Parachain', 1000)
       expect(localizeLocation).not.toHaveBeenCalled()
       expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
       expect(result).toEqual(expectedResult)
     })
 
-    it('should use transformed MultiLocation for ParaToPara when transformation is needed', () => {
+    it('should use transformed Location for ParaToPara when transformation is needed', () => {
       const scenario: TScenario = 'ParaToPara'
-      const originalMultiLocation: TMultiLocation = {
+      const originalLocation: TLocation = {
         parents: 1,
         interior: { X1: { Parachain: 1000 } }
       }
@@ -525,21 +613,21 @@ describe('AssetHubPolkadot', () => {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true,
-        multiLocation: originalMultiLocation
-      } as WithAmount<TNativeAsset>
-      const transformedMultiLocation: TMultiLocation = {
+        location: originalLocation
+      } as WithAmount<TNativeAssetInfo>
+      const transformedLocation: TLocation = {
         parents: 0,
         interior: { X1: { AccountId32: { id: '0x123...' } } }
       }
-      const expectedResult = { id: transformedMultiLocation, fun: { Fungible: amount } }
+      const expectedResult = { id: transformedLocation, fun: { Fungible: amount } }
 
       vi.mocked(hasJunction).mockReturnValue(true)
-      vi.mocked(localizeLocation).mockReturnValue(transformedMultiLocation)
+      vi.mocked(localizeLocation).mockReturnValue(transformedLocation)
 
       const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
-      expect(hasJunction).toHaveBeenCalledWith(originalMultiLocation, 'Parachain', 1000)
-      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalMultiLocation)
+      expect(hasJunction).toHaveBeenCalledWith(originalLocation, 'Parachain', 1000)
+      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalLocation)
       expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
       expect(result).toEqual(expectedResult)
     })
@@ -548,25 +636,25 @@ describe('AssetHubPolkadot', () => {
       const scenario: TScenario = 'ParaToPara'
       expect(() =>
         assetHub.createCurrencySpec(amount, scenario, assetHub.version, undefined)
-      ).toThrow('Asset does not have a multiLocation defined')
+      ).toThrow('Asset does not have a location defined')
     })
 
-    it('should throw InvalidCurrencyError for ParaToPara if asset has no multiLocation', () => {
+    it('should throw InvalidCurrencyError for ParaToPara if asset has no location', () => {
       const scenario: TScenario = 'ParaToPara'
-      const assetWithoutML = { symbol: 'TST' } as TAsset
+      const assetWithoutML = { symbol: 'TST' } as TAssetInfo
       expect(() =>
         assetHub.createCurrencySpec(amount, scenario, assetHub.version, assetWithoutML)
-      ).toThrow('Asset does not have a multiLocation defined')
+      ).toThrow('Asset does not have a location defined')
     })
 
-    it('should provide default multi-location if asset is overridden', () => {
+    it('should provide default location if asset is overridden', () => {
       const scenario: TScenario = 'ParaToPara'
       const mockAsset = {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true,
-        multiLocation: {} as TMultiLocation
-      } as WithAmount<TNativeAsset>
+        location: {} as TLocation
+      } as WithAmount<TNativeAssetInfo>
 
       const isOverriddenAsset = true
 
@@ -598,7 +686,7 @@ describe('AssetHubPolkadot', () => {
     it('should throw error if asset is not a foreign asset', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>,
+        asset: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
         scenario: 'RelayToPara',
         destination: 'Acala',
         to: 'AssetHubPolkadot'
@@ -643,7 +731,7 @@ describe('AssetHubPolkadot', () => {
 
       const mockInput = {
         api: mockApi,
-        asset: { symbol: 'USDC', amount: 1000n, multiLocation: {} },
+        asset: { symbol: 'USDC', amount: 1000n, location: {} },
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

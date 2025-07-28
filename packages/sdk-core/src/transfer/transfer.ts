@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
-import { normalizeMultiLocation, type TNativeAsset } from '@paraspell/assets'
-import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
+import { normalizeLocation, type TNativeAssetInfo } from '@paraspell/assets'
+import { isDotKsmBridge, isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
@@ -44,7 +44,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
 
-  const isBridge = !isTMultiLocation(destination) && isDotKsmBridge(origin, destination)
+  const isBridge = !isTLocation(destination) && isDotKsmBridge(origin, destination)
 
   const assetCheckEnabled = shouldPerformAssetCheck(origin, currency)
 
@@ -58,7 +58,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const originVersion = getChainVersion(origin)
 
-  const destVersion = !isTMultiLocation(destination) ? getChainVersion(destination) : undefined
+  const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
 
   const resolvedVersion = selectXcmVersion(version, originVersion, destVersion)
 
@@ -74,7 +74,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     const isLocalTransfer = origin === destination
 
     if (isLocalTransfer) {
-      if (isTMultiLocation(address)) {
+      if (isTLocation(address)) {
         throw new InvalidAddressError(
           'Multi-Location address is not supported for local transfers.'
         )
@@ -96,7 +96,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       origin,
       destination: destination as TRelayToParaDestination,
       address,
-      asset: {
+      assetInfo: {
         ...asset,
         amount: 'multiasset' in currency ? 0n : BigInt(currency.amount)
       },
@@ -121,7 +121,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     asset ??
     ({
       symbol: 'symbol' in currency ? currency.symbol : undefined
-    } as TNativeAsset)
+    } as TNativeAssetInfo)
 
   const finalAsset =
     'multiasset' in currency
@@ -131,10 +131,10 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)
 
-  const normalizedAsset = finalAsset.multiLocation
+  const normalizedAsset = finalAsset.location
     ? {
         ...finalAsset,
-        multiLocation: normalizeMultiLocation(finalAsset.multiLocation, finalVersion)
+        location: normalizeLocation(finalAsset.location, finalVersion)
       }
     : finalAsset
 

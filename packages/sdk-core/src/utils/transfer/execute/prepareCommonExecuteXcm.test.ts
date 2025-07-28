@@ -1,11 +1,11 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createBeneficiaryLocation } from '../../location'
-import { sortMultiAssets } from '../../multiAsset'
+import { sortAssets } from '../../asset'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
@@ -15,8 +15,8 @@ vi.mock('../../location', () => ({
   createBeneficiaryLocation: vi.fn()
 }))
 
-vi.mock('../../multiAsset', () => ({
-  sortMultiAssets: vi.fn()
+vi.mock('../../asset', () => ({
+  sortAssets: vi.fn()
 }))
 
 vi.mock('./createAssetsFilter', () => ({
@@ -29,12 +29,12 @@ vi.mock('./prepareExecuteContext', () => ({
 
 describe('prepareCommonExecuteXcm', () => {
   const mockApi = { api: 'mock' } as unknown as IPolkadotApi<unknown, unknown>
-  const mockMultiAsset = { id: {}, fun: { Fungible: 1000n } } as TMultiAsset
-  const mockFeeMultiAsset = { id: {}, fun: { Fungible: 100n } } as TMultiAsset
+  const mockAsset = { id: {}, fun: { Fungible: 1000n } } as TAsset
+  const mockFeeAsset = { id: {}, fun: { Fungible: 100n } } as TAsset
   const mockBeneficiary = {
     parents: 0,
     interior: { X1: { AccountId32: { id: 'address' } } }
-  } as TMultiLocation
+  } as TLocation
   const mockAssetsFilter = { Wild: 'All' } as unknown as ReturnType<typeof createAssetsFilter>
 
   const baseOptions = {
@@ -43,9 +43,9 @@ describe('prepareCommonExecuteXcm', () => {
     version: 'V3',
     chain: 'Acala',
     destChain: 'Moonbeam',
-    asset: {
+    assetInfo: {
       amount: 1000000000000n,
-      multiLocation: { parents: 1, interior: { Here: null } }
+      location: { parents: 1, interior: { Here: null } }
     },
     fees: {
       originFee: 100000000n
@@ -53,15 +53,15 @@ describe('prepareCommonExecuteXcm', () => {
   } as TCreateTransferXcmOptions<unknown, unknown>
 
   const mockContext = {
-    multiAssetLocalized: mockMultiAsset,
-    multiAssetLocalizedToDest: mockMultiAsset,
-    feeMultiAssetLocalized: undefined
+    assetLocalized: mockAsset,
+    assetLocalizedToDest: mockAsset,
+    feeAssetLocalized: undefined
   } as TExecuteContext
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(prepareExecuteContext).mockReturnValue(mockContext)
-    vi.mocked(sortMultiAssets).mockReturnValue([mockMultiAsset])
+    vi.mocked(sortAssets).mockReturnValue([mockAsset])
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
     vi.mocked(createAssetsFilter).mockReturnValue(mockAssetsFilter)
   })
@@ -70,16 +70,16 @@ describe('prepareCommonExecuteXcm', () => {
     const result = prepareCommonExecuteXcm(baseOptions)
 
     expect(prepareExecuteContext).toHaveBeenCalledWith(baseOptions)
-    expect(sortMultiAssets).toHaveBeenCalledWith([mockMultiAsset])
+    expect(sortAssets).toHaveBeenCalledWith([mockAsset])
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
       address: baseOptions.recipientAddress,
       version: 'V3'
     })
-    expect(createAssetsFilter).toHaveBeenCalledWith(mockMultiAsset)
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
 
     expect(result.prefix).toEqual([
-      { WithdrawAsset: [mockMultiAsset] },
+      { WithdrawAsset: [mockAsset] },
       { SetFeesMode: { jit_withdraw: true } }
     ])
 
@@ -94,28 +94,28 @@ describe('prepareCommonExecuteXcm', () => {
   it('creates XCM with fee asset', () => {
     const optionsWithFee = {
       ...baseOptions,
-      feeAsset: {
-        multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+      feeAssetInfo: {
+        location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
       }
     } as TCreateTransferXcmOptions<unknown, unknown>
 
     const contextWithFee = {
       ...mockContext,
-      feeMultiAssetLocalized: mockFeeMultiAsset
+      feeAssetLocalized: mockFeeAsset
     }
 
     vi.mocked(prepareExecuteContext).mockReturnValue(contextWithFee)
-    vi.mocked(sortMultiAssets).mockReturnValue([mockMultiAsset, mockFeeMultiAsset])
+    vi.mocked(sortAssets).mockReturnValue([mockAsset, mockFeeAsset])
 
     const result = prepareCommonExecuteXcm(optionsWithFee)
 
-    expect(sortMultiAssets).toHaveBeenCalledWith([mockMultiAsset, mockFeeMultiAsset])
+    expect(sortAssets).toHaveBeenCalledWith([mockAsset, mockFeeAsset])
 
     expect(result.prefix).toEqual([
-      { WithdrawAsset: [mockMultiAsset, mockFeeMultiAsset] },
+      { WithdrawAsset: [mockAsset, mockFeeAsset] },
       {
         BuyExecution: {
-          fees: mockFeeMultiAsset,
+          fees: mockFeeAsset,
           weight_limit: {
             Limited: { ref_time: 450n, proof_size: 0n }
           }
@@ -127,52 +127,52 @@ describe('prepareCommonExecuteXcm', () => {
   it('uses fee asset for BuyExecution when available', () => {
     const contextWithFee = {
       ...mockContext,
-      feeMultiAssetLocalized: mockFeeMultiAsset
+      feeAssetLocalized: mockFeeAsset
     } as TExecuteContext
 
     vi.mocked(prepareExecuteContext).mockReturnValue(contextWithFee)
 
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
-      feeAsset: { multiLocation: { parents: 1, interior: { Here: null } } }
+      feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(buyExecution.BuyExecution.fees).toBe(mockFeeMultiAsset)
+    expect(buyExecution.BuyExecution.fees).toBe(mockFeeAsset)
   })
 
   it('falls back to main asset for BuyExecution when no fee asset', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
-      feeAsset: { multiLocation: { parents: 1, interior: { Here: null } } }
+      feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(buyExecution.BuyExecution.fees).toBe(mockMultiAsset)
+    expect(buyExecution.BuyExecution.fees).toBe(mockAsset)
   })
 
-  it('uses custom multiAssetToDeposit when provided', () => {
-    const customAsset = { id: {}, fun: { Fungible: 500n } } as TMultiAsset
+  it('uses custom assetToDeposit when provided', () => {
+    const customAsset = { id: {}, fun: { Fungible: 500n } } as TAsset
 
     prepareCommonExecuteXcm(baseOptions, customAsset)
 
     expect(createAssetsFilter).toHaveBeenCalledWith(customAsset)
   })
 
-  it('uses multiAssetLocalizedToDest when no custom deposit asset', () => {
+  it('uses assetLocalizedToDest when no custom deposit asset', () => {
     prepareCommonExecuteXcm(baseOptions)
 
-    expect(createAssetsFilter).toHaveBeenCalledWith(mockMultiAsset)
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
   })
 
   it('creates correct weight limit for BuyExecution', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
-      feeAsset: { multiLocation: { parents: 1, interior: { Here: null } } }
+      feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

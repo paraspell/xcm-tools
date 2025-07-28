@@ -1,5 +1,5 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import type { TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import type { TLocation, Version } from '@paraspell/sdk-common'
 
 export type OneKey<K extends string, V = unknown> = {
   [P in K]: Record<P, V> & Partial<Record<Exclude<K, P>, never>> extends infer O
@@ -50,7 +50,7 @@ export type TBifrostToken =
   | { Token2: number }
 
 export type TXTokensCurrencySelection =
-  | TXcmVersioned<TMultiLocation | TMultiAsset | TMultiAsset[]>
+  | TXcmVersioned<TLocation | TAsset | TAsset[]>
   | TXcmForeignAsset
   | TForeignAssetId
   | TForeignOrTokenAsset

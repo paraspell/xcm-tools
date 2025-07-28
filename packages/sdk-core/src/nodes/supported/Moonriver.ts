@@ -1,9 +1,9 @@
 // Contains detailed structure of XCM call construction for Moonriver Parachain
 
-import { type TAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { type TAssetInfo } from '@paraspell/assets'
+import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -13,7 +13,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasLocation, getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -21,8 +21,8 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     super('Moonriver', 'moonriver', 'kusama', Version.V5)
   }
 
-  private getMultiLocation(asset: TAsset, scenario: TScenario): TMultiLocation {
-    if (scenario === 'ParaToRelay') return DOT_MULTILOCATION
+  private getLocation(asset: TAssetInfo, scenario: TScenario): TLocation {
+    if (scenario === 'ParaToRelay') return DOT_LOCATION
 
     if (asset.symbol === this.getNativeAssetSymbol())
       return {
@@ -36,16 +36,16 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
 
     assertHasLocation(asset)
 
-    return asset.multiLocation
+    return asset.location
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset, scenario, version } = input
-    const multiLocation = this.getMultiLocation(asset, scenario)
+    const { assetInfo, scenario, version } = input
+    const location = this.getLocation(assetInfo, scenario)
     return transferPolkadotXcm(
       {
         ...input,
-        multiAsset: createMultiAsset(version, asset.amount, multiLocation)
+        asset: createAsset(version, assetInfo.amount, location)
       },
       'transfer_assets',
       'Unlimited'

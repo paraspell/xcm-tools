@@ -4,20 +4,14 @@ import {
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isForeignAsset,
-  type TAsset
+  type TAssetInfo
 } from '@paraspell/assets'
-import {
-  isTMultiLocation,
-  Parents,
-  replaceBigInt,
-  type TMultiLocation,
-  Version
-} from '@paraspell/sdk-common'
+import { isTLocation, Parents, replaceBigInt, type TLocation, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
+import { createDestination } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
   TAddress,
@@ -34,14 +28,14 @@ import {
   createBeneficiaryLocation,
   createX1Payload
 } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 
 const GAS_LIMIT = 1000000000n
 
-const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
+const getAssetLocation = (asset: TAssetInfo): TLocation => {
   if (!isForeignAsset(asset) && asset.symbol === getNativeAssetSymbol('Polimec')) {
     return {
       parents: Parents.ZERO,
@@ -49,8 +43,8 @@ const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
     }
   }
 
-  if (isForeignAsset(asset) && asset.multiLocation !== undefined) {
-    return asset.multiLocation
+  if (isForeignAsset(asset) && asset.location !== undefined) {
+    return asset.location
   }
 
   throw new InvalidCurrencyError(
@@ -62,14 +56,14 @@ export const createTransferAssetsTransfer = <TRes>(
   options: TPolkadotXCMTransferOptions<unknown, TRes>,
   version: Version
 ): Promise<TRes> => {
-  const { asset } = options
+  const { assetInfo: asset } = options
 
-  const location = getAssetMultiLocation(asset)
+  const location = getAssetLocation(asset)
 
   return transferPolkadotXcm(
     {
       ...options,
-      multiAsset: createMultiAsset(version, asset.amount, location)
+      asset: createAsset(version, asset.amount, location)
     },
     'transfer_assets',
     'Unlimited'
@@ -80,8 +74,8 @@ const createTypeAndThenDest = (
   destination: TDestination,
   scenario: TScenario,
   version: Version
-): TMultiLocation =>
-  isTMultiLocation(destination)
+): TLocation =>
+  isTLocation(destination)
     ? destination
     : {
         parents: scenario === 'ParaToPara' ? Parents.ONE : Parents.ZERO,
@@ -93,14 +87,14 @@ const createTypeAndThenDest = (
 export const createTypeAndThenTransfer = <TApi, TRes>(
   {
     api,
-    asset,
+    assetInfo: asset,
     address,
     scenario,
     destination,
     paraIdTo
   }: Pick<
     TPolkadotXCMTransferOptions<TApi, TRes>,
-    'api' | 'asset' | 'address' | 'scenario' | 'destination' | 'paraIdTo'
+    'api' | 'assetInfo' | 'address' | 'scenario' | 'destination' | 'paraIdTo'
   >,
   version: Version,
   transferType: 'DestinationReserve' | 'Teleport' = 'DestinationReserve'
@@ -113,7 +107,7 @@ export const createTypeAndThenTransfer = <TApi, TRes>(
     },
     assets: {
       [version]: [
-        createMultiAsset(version, asset.amount, {
+        createAsset(version, asset.amount, {
           parents: scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE,
           interior: 'Here'
         })
@@ -149,18 +143,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
               AllCounted: 1
             }
           },
-          dest: (
-            Object.values(
-              createVersionedDestination(
-                version,
-                'Polimec',
-                destination,
-                paraId,
-                undefined,
-                Parents.ONE
-              )
-            ) as TMultiLocation[]
-          )[0],
+          dest: createDestination(version, 'Polimec', destination, paraId, undefined, Parents.ONE),
           xcm: [
             {
               BuyExecution: {
@@ -252,7 +235,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
       module: 'ForeignAssets',
       method: 'transfer',
       parameters: {
-        id: asset.multiLocation,
+        id: asset.location,
         target: { Id: address },
         amount: asset.amount
       }

@@ -23,12 +23,12 @@ class AssetHubExchangeNode extends ExchangeNode {
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
 
-    if (!assetFrom.multiLocation) {
-      throw new InvalidParameterError('Asset from multiLocation not found');
+    if (!assetFrom.location) {
+      throw new InvalidParameterError('Asset from location not found');
     }
 
-    if (!assetTo.multiLocation) {
-      throw new InvalidParameterError('Asset to multiLocation not found');
+    if (!assetTo.location) {
+      throw new InvalidParameterError('Asset to location not found');
     }
 
     const amountIn = BigNumber(amount);
@@ -42,8 +42,8 @@ class AssetHubExchangeNode extends ExchangeNode {
     } = await getQuotedAmount(
       papiApi,
       this.node,
-      assetFrom.multiLocation,
-      assetTo.multiLocation,
+      assetFrom.location,
+      assetTo.location,
       amountWithoutFee,
     );
 
@@ -72,7 +72,7 @@ class AssetHubExchangeNode extends ExchangeNode {
                 Here: null,
               },
             },
-            assetTo.multiLocation,
+            assetTo.location,
             toDestTxFee,
             true,
           ).then((res) => res.amountOut);
@@ -168,12 +168,12 @@ class AssetHubExchangeNode extends ExchangeNode {
   async getAmountOut(_api: ApiPromise, options: TGetAmountOutOptions) {
     const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
-    if (!assetFrom.multiLocation) {
-      throw new InvalidParameterError('Asset from multiLocation not found');
+    if (!assetFrom.location) {
+      throw new InvalidParameterError('Asset from location not found');
     }
 
-    if (!assetTo.multiLocation) {
-      throw new InvalidParameterError('Asset to multiLocation not found');
+    if (!assetTo.location) {
+      throw new InvalidParameterError('Asset to location not found');
     }
 
     const nativeAsset = getExchangeAsset(this.exchangeNode, {
@@ -199,22 +199,22 @@ class AssetHubExchangeNode extends ExchangeNode {
       const { amountOut } = await getQuotedAmount(
         papiApi,
         this.node,
-        assetFrom.multiLocation,
-        assetTo.multiLocation,
+        assetFrom.location,
+        assetTo.location,
         amountWithoutFee,
       );
 
       return amountOut;
     } else {
-      if (!nativeAsset.multiLocation) {
-        throw new InvalidParameterError('Native asset multiLocation not found');
+      if (!nativeAsset.location) {
+        throw new InvalidParameterError('Native asset location not found');
       }
 
       const { amountOut: hop1AmountOut } = await getQuotedAmount(
         papiApi,
         this.node,
-        assetFrom.multiLocation,
-        nativeAsset.multiLocation,
+        assetFrom.location,
+        nativeAsset.location,
         amountWithoutFee,
       );
 
@@ -230,8 +230,8 @@ class AssetHubExchangeNode extends ExchangeNode {
       const { amountOut: finalAmountOut } = await getQuotedAmount(
         papiApi,
         this.node,
-        nativeAsset.multiLocation,
-        assetTo.multiLocation,
+        nativeAsset.location,
+        assetTo.location,
         assumedInputForHop2,
       );
 

@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
 export const fetchAstarAssets = async (
   api: ApiPromise,
@@ -22,12 +22,11 @@ export const fetchAstarAssets = async (
         const assetDetails = await api.query[module].asset(era)
         const existentialDeposit = (assetDetails.toHuman() as any).minBalance
 
-        const multiLocationRes = await api.query.xcAssetConfig.assetIdToLocation(era)
+        const locationRes = await api.query.xcAssetConfig.assetIdToLocation(era)
 
-        const multiLocationJson = multiLocationRes.toJSON() as any
+        const locationJson = locationRes.toJSON() as any
 
-        const multiLocation =
-          multiLocationJson !== null ? capitalizeMultiLocation(multiLocationJson.v5) : undefined
+        const location = locationJson !== null ? capitalizeLocation(locationJson.v5) : undefined
 
         const assetId = era.toHuman() as string
 
@@ -35,7 +34,7 @@ export const fetchAstarAssets = async (
           assetId: assetId.replace(/[,]/g, ''),
           symbol,
           decimals: +decimals,
-          multiLocation,
+          location,
           existentialDeposit: existentialDeposit
         }
       }

@@ -29,7 +29,7 @@ describe.sequential('E2E tests', () => {
         .to('Astar')
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({
-          multilocation: {
+          location: {
             parents: 1,
             interior: {
               X2: [
@@ -62,7 +62,7 @@ describe.sequential('E2E tests', () => {
         .exchange('AcalaDex')
         .to('Astar')
         .currencyFrom({
-          multilocation: {
+          location: {
             parents: 1,
             interior: {
               X2: [
@@ -203,7 +203,7 @@ describe.sequential('E2E tests', () => {
         .from('Hydration')
         .exchange('AssetHubPolkadotDex')
         .currencyFrom({
-          multilocation: {
+          location: {
             parents: 1,
             interior: {
               Here: null,
@@ -225,7 +225,7 @@ describe.sequential('E2E tests', () => {
       const hashes = await RouterBuilder()
         .exchange('AssetHubKusamaDex')
         .currencyFrom({
-          multilocation: {
+          location: {
             parents: 1,
             interior: {
               Here: null,

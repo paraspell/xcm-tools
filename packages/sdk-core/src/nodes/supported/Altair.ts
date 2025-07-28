@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Altair Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -14,7 +14,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     super('Altair', 'altair', 'kusama', Version.V4)
   }
 
-  private getCurrencySelection(asset: TAsset): TForeignOrNativeAsset {
+  private getCurrencySelection(asset: TAssetInfo): TForeignOrNativeAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
 
     assertHasId(asset)

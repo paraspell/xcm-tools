@@ -1,5 +1,5 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { Parents, type TJunction, type TMultiLocation } from '@paraspell/sdk-common'
+import { Parents, type TJunction, type TLocation } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../types'
 
@@ -15,7 +15,7 @@ export const ETHEREUM_JUNCTION: TJunction = {
 
 export const DEFAULT_FEE = 'Unlimited'
 
-export const DOT_MULTILOCATION: TMultiLocation = {
+export const DOT_LOCATION: TLocation = {
   parents: Parents.ONE,
   interior: 'Here'
 }

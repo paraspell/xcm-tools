@@ -1,4 +1,4 @@
-import type { TAsset, TNodePolkadotKusama, TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TAssetInfo, TNodePolkadotKusama, TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,7 +18,7 @@ vi.mock('../consts', () => ({
 describe('canBuildToExchangeTx', () => {
   const mockOriginApi = {} as TPapiApi;
   const mockTx = 'mocked_tx' as unknown as TPapiTransaction;
-  const mockAssetFromOrigin: TAsset = { assetId: '1', symbol: 'DOT', decimals: 10 };
+  const mockAssetFromOrigin: TAssetInfo = { assetId: '1', symbol: 'DOT', decimals: 10 };
   const defaultOptions = {
     from: 'Polkadot' as TNodePolkadotKusama,
     amount: '10000000000',

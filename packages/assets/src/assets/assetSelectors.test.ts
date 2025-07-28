@@ -1,7 +1,7 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TOverrideMultiLocationSpecifier, TSymbolSpecifier } from '../types'
+import type { TOverrideLocationSpecifier, TSymbolSpecifier } from '../types'
 import { Foreign, ForeignAbstract, Native, Override } from './assetSelectors'
 
 describe('Symbol Specifiers', () => {
@@ -34,18 +34,18 @@ describe('Symbol Specifiers', () => {
 
 describe('Override Function', () => {
   it('should return an object with type "Override" and the correct value', () => {
-    const sampleMultiLocation: TMultiLocation = {
+    const sampleLocation: TLocation = {
       parents: 1,
       interior: {
         X1: { Parachain: 1000 }
       }
     }
 
-    const result = Override(sampleMultiLocation)
+    const result = Override(sampleLocation)
 
-    const expected: TOverrideMultiLocationSpecifier = {
+    const expected: TOverrideLocationSpecifier = {
       type: 'Override',
-      value: sampleMultiLocation
+      value: sampleLocation
     }
     expect(result).toEqual(expected)
   })

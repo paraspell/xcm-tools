@@ -1,5 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -12,7 +12,7 @@ import { getParaEthTransferFees } from '../ethTransfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   findAssetOnDestOrThrow: vi.fn()
 }))
 
@@ -55,8 +55,8 @@ describe('traverseXcmHops', () => {
     mockExtractNextHopData = vi.fn()
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ assetId: 'asset1' } as TAsset)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ assetId: 'asset1' } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAssetInfo)
   })
 
   it('should process a single hop successfully', async () => {

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
-import { type TAsset } from '@paraspell/assets'
+import { type TAssetInfo } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -25,7 +25,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     super(chain, info, type, version)
   }
 
-  private getCurrencySelection(asset: TAsset): TZeitgeistAsset | TXcmForeignAsset {
+  private getCurrencySelection(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Ztg'
 
     assertHasId(asset)

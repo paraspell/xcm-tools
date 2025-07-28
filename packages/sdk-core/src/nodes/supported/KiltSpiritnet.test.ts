@@ -15,7 +15,7 @@ describe('KiltSpiritnet', () => {
   let kiltSpiritnet: KiltSpiritnet<unknown, unknown>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: {
+    assetInfo: {
       symbol: 'KILT',
       amount: 100n
     }
@@ -45,8 +45,8 @@ describe('KiltSpiritnet', () => {
     expect(() =>
       kiltSpiritnet.transferPolkadotXCM({
         ...mockInput,
-        asset: {
-          ...mockInput.asset,
+        assetInfo: {
+          ...mockInput.assetInfo,
           symbol: 'DOT'
         }
       })

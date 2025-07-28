@@ -1,16 +1,16 @@
-import { MultiLocationSchema } from '../schema';
-import type { Junction, JunctionType, MultiLocation } from '../types';
-import { convertJunctionToReadable, findMultiLocationInObject } from '../utils/utils';
+import { LocationSchema } from '../schema';
+import type { Junction, JunctionType, Location } from '../types';
+import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
 
 /**
  * Converts a multi-location JSON string into its URL representation.
  *
- * @param multiLocationJson - The multi-location as a JSON string.
+ * @param locationJson - The multi-location as a JSON string.
  * @returns The URL representation of the multi-location.
  */
-export const convertMultilocationToUrlJson = (multiLocationJson: string): string => {
-  const multiLocation = JSON.parse(multiLocationJson) as MultiLocation;
-  return convertMultilocationToUrl(multiLocation);
+export const convertMultilocationToUrlJson = (locationJson: string): string => {
+  const location = JSON.parse(locationJson) as Location;
+  return convertMultilocationToUrl(location);
 };
 
 /**
@@ -21,7 +21,7 @@ export const convertMultilocationToUrlJson = (multiLocationJson: string): string
  * @throws Will throw an error if the interior or junction array is empty.
  */
 export const convertMultilocationToUrl = (args: unknown): string => {
-  const { parents, interior } = MultiLocationSchema.parse(args);
+  const { parents, interior } = LocationSchema.parse(args);
   const parentsNum = Number(parents);
 
   const entries = Object.entries(interior);
@@ -49,9 +49,9 @@ export const convertMultilocationToUrl = (args: unknown): string => {
  */
 export const convertXCMToUrls = (args: unknown[]): string[] => {
   return args.flatMap((arg) => {
-    const multiLocation = findMultiLocationInObject(arg);
-    if (multiLocation !== null && multiLocation !== undefined) {
-      return [convertMultilocationToUrl(multiLocation)];
+    const location = findLocationInObject(arg);
+    if (location !== null && location !== undefined) {
+      return [convertMultilocationToUrl(location)];
     } else {
       return [];
     }

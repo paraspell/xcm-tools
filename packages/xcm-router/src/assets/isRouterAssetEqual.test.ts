@@ -15,31 +15,31 @@ describe('isRouterAssetEqual', () => {
     vi.mocked(normalizeSymbol).mockImplementation((s) => (s ?? '').toUpperCase());
   });
 
-  it('returns true if multiLocation is defined and deepEqual returns true', () => {
+  it('returns true if location is defined and deepEqual returns true', () => {
     const asset1: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } },
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } },
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
 
     vi.mocked(deepEqual).mockReturnValue(true);
 
     const result = isRouterAssetEqual(asset1, asset2);
-    expect(deepEqual).toHaveBeenCalledWith(asset1.multiLocation, asset2.multiLocation);
+    expect(deepEqual).toHaveBeenCalledWith(asset1.location, asset2.location);
     expect(result).toBe(true);
   });
 
-  it('returns false if multiLocation is defined and deepEqual returns false', () => {
+  it('returns false if location is defined and deepEqual returns false', () => {
     const asset1: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } },
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 2000 } } },
+      location: { parents: 1, interior: { X1: { Parachain: 2000 } } },
     };
 
     vi.mocked(deepEqual).mockReturnValue(false);
@@ -48,14 +48,14 @@ describe('isRouterAssetEqual', () => {
     expect(result).toBe(false);
   });
 
-  it('falls back to symbol comparison when multiLocation is undefined', () => {
+  it('falls back to symbol comparison when location is undefined', () => {
     const asset1: TRouterAsset = {
       symbol: 'dot',
-      multiLocation: undefined,
+      location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: undefined,
+      location: undefined,
     };
 
     const result = isRouterAssetEqual(asset1, asset2);
@@ -67,25 +67,25 @@ describe('isRouterAssetEqual', () => {
   it('returns false if normalized symbols are different', () => {
     const asset1: TRouterAsset = {
       symbol: 'KSM',
-      multiLocation: undefined,
+      location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
-      multiLocation: undefined,
+      location: undefined,
     };
 
     const result = isRouterAssetEqual(asset1, asset2);
     expect(result).toBe(false);
   });
 
-  it('compares symbols when one multiLocation is undefined', () => {
+  it('compares symbols when one location is undefined', () => {
     const asset1: TRouterAsset = {
       symbol: 'abc',
-      multiLocation: undefined,
+      location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'ABC',
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } },
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
 
     const result = isRouterAssetEqual(asset1, asset2);

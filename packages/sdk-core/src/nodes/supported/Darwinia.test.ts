@@ -6,15 +6,15 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import type Darwinia from './Darwinia'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
 }))
 
-vi.mock('../../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn()
+vi.mock('../../utils/asset', () => ({
+  createAsset: vi.fn()
 }))
 
 describe('Darwinia', () => {
@@ -22,7 +22,7 @@ describe('Darwinia', () => {
 
   const mockPolkadotXCMInput = {
     scenario: 'ParaToRelay',
-    asset: { symbol: 'DOT', amount: 100n }
+    assetInfo: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe('Darwinia', () => {
 
   it('should call createCurrencySpec with correct values', () => {
     darwinia.createCurrencySpec(100n, 'ParaToPara', darwinia.version)
-    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
+    expect(createAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -69,7 +69,7 @@ describe('Darwinia', () => {
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
     darwinia.createCurrencySpec(100n, 'ParaToRelay', darwinia.version)
-    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
+    expect(createAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: {

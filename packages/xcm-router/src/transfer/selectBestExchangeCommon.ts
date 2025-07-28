@@ -1,5 +1,5 @@
 import {
-  findAsset,
+  findAssetInfo,
   getRelayChainOf,
   hasSupportForAsset,
   InvalidParameterError,
@@ -31,7 +31,7 @@ export const selectBestExchangeCommon = async <
 ): Promise<ExchangeNode> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
 
-  const assetFromOrigin = from ? findAsset(from, currencyFrom, null) : undefined;
+  const assetFromOrigin = from ? findAssetInfo(from, currencyFrom, null) : undefined;
 
   if (from && !assetFromOrigin) {
     throw new InvalidParameterError(

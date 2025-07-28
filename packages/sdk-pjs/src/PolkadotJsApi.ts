@@ -5,15 +5,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
-  TAsset,
+  TAssetInfo,
   TBalanceResponse,
   TBridgeStatus,
   TBuilderOptions,
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
+  TLocation,
   TModuleError,
-  TMultiLocation,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
   TSerializedApiCall,
@@ -161,12 +161,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return partialFee.toBigInt()
   }
 
-  async quoteAhPrice(
-    fromMl: TMultiLocation,
-    toMl: TMultiLocation,
-    amountIn: bigint,
-    includeFee = true
-  ) {
+  async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
     const quoted = await this.api.call.assetConversionApi.quotePriceExactTokensForTokens(
       fromMl,
       toMl,
@@ -195,8 +190,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return obj.free ? BigInt(obj.free) : 0n
   }
 
-  async getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation) {
-    const response: Codec = await this.api.query.foreignAssets.account(multiLocation, address)
+  async getBalanceForeignAssetsPallet(address: string, location: TLocation) {
+    const response: Codec = await this.api.query.foreignAssets.account(location, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
@@ -207,7 +202,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getBalanceForeignBifrost(address: string, asset: TAsset) {
+  async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
     const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
 
     const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
@@ -225,7 +220,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
-  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
+  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAssetInfo) {
     let pallet = 'tokens'
 
     if (node === 'Centrifuge' || node === 'Altair') {

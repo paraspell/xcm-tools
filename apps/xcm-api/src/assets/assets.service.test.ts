@@ -55,7 +55,7 @@ describe('AssetsService', () => {
     });
 
     it('should return assets object for a valid node', () => {
-      const assetsObject: paraspellSdk.TNodeAssets = {
+      const assetsObject: paraspellSdk.TChainAssetsInfo = {
         relayChainAssetSymbol: symbol,
         nativeAssetSymbol: 'DOT',
         isEVM: false,
@@ -64,7 +64,7 @@ describe('AssetsService', () => {
         supportsXcmPaymentApi: true,
         nativeAssets: [
           { symbol, decimals, isNative: true },
-        ] as paraspellSdk.TNativeAsset[],
+        ] as paraspellSdk.TNativeAssetInfo[],
         otherAssets: [{ assetId, symbol: 'BSK', decimals }],
       };
 
@@ -139,30 +139,27 @@ describe('AssetsService', () => {
     });
   });
 
-  describe('getAssetMultiLocation', () => {
-    let getAssetMultiLocationSpy: MockInstance;
+  describe('getAssetLocation', () => {
+    let getAssetLocationSpy: MockInstance;
 
     beforeEach(() => {
-      getAssetMultiLocationSpy = vi.spyOn(
-        paraspellSdk,
-        'getAssetMultiLocation',
-      );
+      getAssetLocationSpy = vi.spyOn(paraspellSdk, 'getAssetLocation');
     });
 
     afterEach(() => {
       vi.clearAllMocks();
     });
 
-    it('should return asset multi location for a valid node and symbol', () => {
-      const assetMultiLocation = { currency: { symbol } };
-      getAssetMultiLocationSpy.mockReturnValue(assetMultiLocation);
+    it('should return asset location for a valid node and symbol', () => {
+      const assetLocation = { currency: { symbol } };
+      getAssetLocationSpy.mockReturnValue(assetLocation);
 
-      const result = service.getAssetMultiLocation(node, {
+      const result = service.getAssetLocation(node, {
         currency: { symbol },
       });
 
-      expect(result).toEqual(JSON.stringify(assetMultiLocation));
-      expect(getAssetMultiLocationSpy).toHaveBeenCalledWith(node, { symbol });
+      expect(result).toEqual(JSON.stringify(assetLocation));
+      expect(getAssetLocationSpy).toHaveBeenCalledWith(node, { symbol });
     });
 
     it('should throw BadRequestException for invalid node', () => {
@@ -173,13 +170,13 @@ describe('AssetsService', () => {
         });
 
       expect(() =>
-        service.getAssetMultiLocation(invalidNode, { currency: { symbol } }),
+        service.getAssetLocation(invalidNode, { currency: { symbol } }),
       ).toThrow(BadRequestException);
 
       expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode, {
         withRelayChains: true,
       });
-      expect(getAssetMultiLocationSpy).not.toHaveBeenCalled();
+      expect(getAssetLocationSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -639,7 +636,9 @@ describe('AssetsService', () => {
   describe('getFeeAssets', () => {
     it('should return fee assets for a valid node', () => {
       const node = 'Acala';
-      const feeAssets = [{ symbol: 'KSM', decimals }] as paraspellSdk.TAsset[];
+      const feeAssets = [
+        { symbol: 'KSM', decimals },
+      ] as paraspellSdk.TAssetInfo[];
       const getFeeAssetsSpy = vi
         .spyOn(paraspellSdk, 'getFeeAssets')
         .mockReturnValue(feeAssets);

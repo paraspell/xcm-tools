@@ -1,11 +1,11 @@
-import type { TAsset, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
+import type { TAssetInfo, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRunPjs,
   createApiInstanceForNode,
   MissingChainApiError,
   NodeNotSupportedError,
-  type TMultiLocation,
+  type TLocation,
   type TSerializedApiCall
 } from '@paraspell/sdk-core'
 import { ApiPromise } from '@polkadot/api'
@@ -358,7 +358,7 @@ describe('PolkadotJsApi', () => {
     })
 
     describe('getAssetHubForeignBalance', () => {
-      const multiLocation: TMultiLocation = {
+      const location: TLocation = {
         parents: 1,
         interior: {
           X1: {
@@ -377,12 +377,9 @@ describe('PolkadotJsApi', () => {
           mockResponse as unknown as VoidFn
         )
 
-        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, multiLocation)
+        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, location)
 
-        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(
-          multiLocation,
-          address
-        )
+        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(location, address)
         expect(balance).toBe(5000n)
       })
 
@@ -397,12 +394,9 @@ describe('PolkadotJsApi', () => {
           mockResponse as unknown as VoidFn
         )
 
-        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, multiLocation)
+        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, location)
 
-        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(
-          multiLocation,
-          address
-        )
+        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(location, address)
         expect(balance).toBe(0n)
       })
     })
@@ -419,7 +413,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignBifrost(address, {
         symbol: 'DOT'
-      } as TAsset)
+      } as TAssetInfo)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
@@ -438,7 +432,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignBifrost(address, {
         symbol: 'DOT'
-      } as TAsset)
+      } as TAssetInfo)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
@@ -1038,7 +1032,7 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: TMultiLocation = {
+    const originLocation: TLocation = {
       parents: 0,
       interior: { Here: null }
     }

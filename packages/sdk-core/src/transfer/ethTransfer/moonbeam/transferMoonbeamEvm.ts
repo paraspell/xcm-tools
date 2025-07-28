@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TForeignAsset } from '@paraspell/assets'
+import type { TForeignAssetInfo } from '@paraspell/assets'
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier
+  isOverrideLocationSpecifier
 } from '@paraspell/assets'
 import { type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
@@ -16,7 +16,8 @@ import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
-import { getDestinationMultilocation } from './getDestinationMultilocation'
+import { getDestinationLocation } from './getDestinationLocation'
+import { assertIsForeign } from '../../../utils'
 
 const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
@@ -35,8 +36,8 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
-  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
+  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
+    throw new InvalidParameterError('Override location is not supported for Evm transfers')
   }
 
   const contract = getContract({
@@ -51,7 +52,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     }
   })
 
-  const foundAsset = findAssetForNodeOrThrow(from, currency, to)
+  const foundAsset = findAssetInfoOrThrow(from, currency, to)
 
   let asset: string
   if (foundAsset.symbol === getNativeAssetSymbol(from)) {
@@ -64,11 +65,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     asset = formatAssetIdToERC20(foundAsset.assetId)
   }
 
-  const destMultiLocation = getDestinationMultilocation(
-    api,
-    address,
-    to as TNodeDotKsmWithRelayChains
-  )
+  const destLocation = getDestinationLocation(api, address, to as TNodeDotKsmWithRelayChains)
 
   const weight = U_64_MAX
 
@@ -85,7 +82,8 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     to === 'AssetHubPolkadot' &&
     multiCurrencySymbols.includes(foundAsset.symbol)
 
-  const usdtAsset = findAssetForNodeOrThrow(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
+  const usdtAsset = findAssetInfoOrThrow(from, { symbol: 'xcUSDT' }, to)
+  assertIsForeign(usdtAsset)
 
   const tx = useMultiAssets
     ? await createTx('transferMultiCurrencies', [
@@ -94,10 +92,10 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
           [formatAssetIdToERC20(usdtAsset.assetId ?? ''), '200000']
         ],
         1, // index of the fee asset
-        destMultiLocation,
+        destLocation,
         weight
       ])
-    : await createTx('transfer', [asset, currency.amount, destMultiLocation, weight])
+    : await createTx('transfer', [asset, currency.amount, destLocation, weight])
 
   return tx
 }

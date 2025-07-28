@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TMultiLocation, TNode } from '@paraspell/sdk';
+import type { TLocation, TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
@@ -72,12 +72,12 @@ vi.mock('@paraspell/xcm-router', async () => {
         {
           symbol: 'ASTR',
           assetId: '0x1234567890abcdef',
-          multiLocation: {} as TMultiLocation,
+          location: {} as TLocation,
         },
         {
           symbol: 'GLMR',
           assetId: '0xabcdef1234567890',
-          multiLocation: {} as TMultiLocation,
+          location: {} as TLocation,
         },
       ],
     ]),
@@ -427,12 +427,12 @@ describe('RouterService', () => {
           {
             symbol: 'ASTR',
             assetId: '0x1234567890abcdef',
-            multiLocation: {} as TMultiLocation,
+            location: {} as TLocation,
           },
           {
             symbol: 'GLMR',
             assetId: '0xabcdef1234567890',
-            multiLocation: {} as TMultiLocation,
+            location: {} as TLocation,
           },
         ],
       ];

@@ -39,7 +39,7 @@ describe('Heima', () => {
     it('should only support native currency', () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'XYZ' }
+        assetInfo: { symbol: 'XYZ' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       expect(() => heima.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
@@ -47,7 +47,7 @@ describe('Heima', () => {
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'HEI' }
+        assetInfo: { symbol: 'HEI' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       await heima.transferPolkadotXCM(input)

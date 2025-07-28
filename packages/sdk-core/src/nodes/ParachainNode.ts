@@ -60,9 +60,9 @@ import {
   createBeneficiaryLocation,
   getRelayChainOf
 } from '../utils'
+import { createAsset } from '../utils/asset'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
-import { createMultiAsset } from '../utils/multiAsset'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
@@ -207,7 +207,7 @@ abstract class ParachainNode<TApi, TRes> {
           version
         }),
         address,
-        multiAsset: this.createCurrencySpec(
+        asset: this.createCurrencySpec(
           asset.amount,
           scenario,
           version,
@@ -215,9 +215,9 @@ abstract class ParachainNode<TApi, TRes> {
           overriddenAsset !== undefined
         ),
         overriddenAsset,
-        asset,
+        assetInfo: asset,
         currency,
-        feeAsset,
+        feeAssetInfo: feeAsset,
         feeCurrency,
         scenario,
         destination,
@@ -242,8 +242,7 @@ abstract class ParachainNode<TApi, TRes> {
 
       // Handle common cases
       const isEthAsset =
-        asset.multiLocation &&
-        findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+        asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
       const isEthDest = destination === 'Ethereum'
 
@@ -305,10 +304,10 @@ abstract class ParachainNode<TApi, TRes> {
     amount: bigint,
     scenario: TScenario,
     version: Version,
-    _asset?: TAsset,
+    _asset?: TAssetInfo,
     _isOverridenAsset?: boolean
-  ): TMultiAsset {
-    return createMultiAsset(version, amount, {
+  ): TAsset {
+    return createAsset(version, amount, {
       parents: scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
       interior: 'Here'
     })
@@ -321,7 +320,7 @@ abstract class ParachainNode<TApi, TRes> {
   transferLocal(options: TSendInternalOptions<TApi, TRes>): TRes {
     const { asset, address } = options
 
-    if (isTMultiLocation(address)) {
+    if (isTLocation(address)) {
       throw new InvalidAddressError('Multi-Location address is not supported for local transfers')
     }
 
@@ -369,7 +368,15 @@ abstract class ParachainNode<TApi, TRes> {
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
-    const { api, asset, version, destination, address, senderAddress, feeAsset } = input
+    const {
+      api,
+      assetInfo: asset,
+      version,
+      destination,
+      address,
+      senderAddress,
+      feeAssetInfo: feeAsset
+    } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -384,7 +391,7 @@ abstract class ParachainNode<TApi, TRes> {
       throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
     }
 
-    const ethMultiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)
+    const ethAsset = createAsset(version, asset.amount, asset.multiLocation)
 
     const ahApi = await api.createApiForNode('AssetHubPolkadot')
 
@@ -394,9 +401,9 @@ abstract class ParachainNode<TApi, TRes> {
 
     const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
 
-    const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+    const ethAssetInfo = findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
-    if (!ethAsset) {
+    if (!ethAssetInfo) {
       throw new InvalidCurrencyError(
         `Could not obtain Ethereum asset address for ${JSON.stringify(asset, replaceBigInt)}`
       )
@@ -421,13 +428,13 @@ abstract class ParachainNode<TApi, TRes> {
         version
       )
     } else {
-      assertHasId(ethAsset)
+      assertHasId(ethAssetInfo)
 
       const messageId = await generateMessageId(
         api,
         senderAddress,
         getParaId(this.node),
-        ethAsset.assetId,
+        ethAssetInfo.assetId,
         address,
         asset.amount
       )
@@ -446,15 +453,12 @@ abstract class ParachainNode<TApi, TRes> {
           getParaId('AssetHubPolkadot')
         ),
         assets: addXcmVersionHeader(
-          [
-            ...(!feeAsset ? [createMultiAsset(version, fee, DOT_MULTILOCATION)] : []),
-            ethMultiAsset
-          ],
+          [...(!feeAsset ? [createAsset(version, fee, DOT_LOCATION)] : []), ethAsset],
           version
         ),
 
         assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: addXcmVersionHeader(feeAsset?.multiLocation ?? DOT_MULTILOCATION, version),
+        remote_fees_id: addXcmVersionHeader(feeAsset?.location ?? DOT_LOCATION, version),
         fees_transfer_type: 'DestinationReserve',
         custom_xcm_on_dest: customXcmOnDest,
         weight_limit: 'Unlimited'

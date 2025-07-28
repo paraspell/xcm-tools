@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Pendulum Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { replaceBigInt, Version } from '@paraspell/sdk-common'
 
@@ -13,7 +13,7 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Pendulum', 'pendulum', 'polkadot', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAsset): TXcmAsset {
+  private getCurrencySelection(asset: TAssetInfo): TXcmAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) {
       return { Native: null }
     }

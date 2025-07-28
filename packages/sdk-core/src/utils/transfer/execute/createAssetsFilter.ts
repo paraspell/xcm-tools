@@ -1,9 +1,9 @@
-import { extractMultiAssetLoc, type TMultiAsset } from '@paraspell/assets'
+import { extractAssetLocation, type TAsset } from '@paraspell/assets'
 
-export const createAssetsFilter = (asset: TMultiAsset) => ({
+export const createAssetsFilter = (asset: TAsset) => ({
   Wild: {
     AllOf: {
-      id: extractMultiAssetLoc(asset),
+      id: extractAssetLocation(asset),
       fun: 'Fungible'
     }
   }

@@ -1,9 +1,9 @@
-import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import type { TDryRunNodeResultInternal, TGetFeeForDestNodeOptions } from '../../types'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
@@ -12,7 +12,7 @@ import { isSufficientDestination } from './isSufficient'
 vi.mock('@paraspell/assets', () => ({
   hasDryRunSupport: vi.fn(),
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  findAssetForNodeOrThrow: vi.fn()
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 vi.mock('./getReverseTxFee', () => ({
@@ -31,7 +31,7 @@ const createApi = (dryRunRes?: TDryRunNodeResultInternal) =>
 describe('getDestXcmFee', () => {
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'UNIT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'UNIT' } as TAssetInfo)
     vi.mocked(isSufficientDestination).mockResolvedValue(true)
   })
 
@@ -72,9 +72,9 @@ describe('getDestXcmFee', () => {
   it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has multi-location', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'UNIT',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
 
     const api = createApi()
@@ -93,7 +93,7 @@ describe('getDestXcmFee', () => {
 
     const res = await getDestXcmFee(options)
 
-    expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { location: DOT_LOCATION })
     expect(isSufficientDestination).toHaveBeenCalledWith(
       api,
       'Astar',
@@ -111,9 +111,9 @@ describe('getDestXcmFee', () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockRejectedValueOnce(new InvalidCurrencyError(''))
     vi.mocked(getReverseTxFee).mockResolvedValueOnce(130n)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'UNIT',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
 
     const api = createApi()
@@ -132,7 +132,7 @@ describe('getDestXcmFee', () => {
 
     const res = await getDestXcmFee(options)
 
-    expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { location: DOT_LOCATION })
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
     expect(isSufficientDestination).toHaveBeenCalledWith(
       api,

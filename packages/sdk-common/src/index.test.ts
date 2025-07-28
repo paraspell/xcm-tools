@@ -15,6 +15,6 @@ describe('index.ts re-exports', () => {
     expect(rootExports.Parents).toBeDefined()
     expect(rootExports.deepEqual).toBeDefined()
     expect(rootExports.hasJunction).toBeDefined()
-    expect(rootExports.isTMultiLocation).toBeDefined()
+    expect(rootExports.isTLocation).toBeDefined()
   })
 })

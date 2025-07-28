@@ -1,4 +1,4 @@
-import { findAsset, hasSupportForAsset, InvalidParameterError } from '@paraspell/sdk';
+import { findAssetInfo, hasSupportForAsset, InvalidParameterError } from '@paraspell/sdk';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeNode from '../../dexNodes/DexNode';
@@ -16,7 +16,7 @@ export const resolveAssets = (
   const originSpecified = from && from !== dex.node;
   const destinationSpecified = to && to !== dex.node;
 
-  const assetFromOrigin = originSpecified ? findAsset(from, currencyFrom, dex.node) : undefined;
+  const assetFromOrigin = originSpecified ? findAssetInfo(from, currencyFrom, dex.node) : undefined;
 
   if (originSpecified && !assetFromOrigin) {
     throw new InvalidParameterError(

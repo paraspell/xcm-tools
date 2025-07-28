@@ -10,12 +10,12 @@ import { blake2b } from '@noble/hashes/blake2'
 import { bytesToHex } from '@noble/hashes/utils'
 import type {
   IPolkadotApi,
-  TAsset,
+  TAssetInfo,
   TBuilderOptions,
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
-  TMultiLocation,
+  TLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
@@ -28,7 +28,7 @@ import {
   BatchMode,
   computeFeeFromDryRun,
   createApiInstanceForNode,
-  findAsset,
+  findAssetInfo,
   getAssetsObject,
   getNativeAssetSymbol,
   getNode,
@@ -270,12 +270,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return tx.getEstimatedFees(address)
   }
 
-  async quoteAhPrice(
-    fromMl: TMultiLocation,
-    toMl: TMultiLocation,
-    amountIn: bigint,
-    includeFee = true
-  ) {
+  async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
     const transformedFromMl = transform(fromMl)
     const transformedToMl = transform(toMl)
 
@@ -309,12 +304,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return res && res.free ? BigInt(res.free) : 0n
   }
 
-  async getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation) {
-    const transformedMultiLocation = transform(multiLocation)
+  async getBalanceForeignAssetsPallet(address: string, location: TLocation) {
+    const transformedLocation = transform(location)
 
     const res = await this.api
       .getUnsafeApi()
-      .query.ForeignAssets.Account.getValue(transformedMultiLocation, address)
+      .query.ForeignAssets.Account.getValue(transformedLocation, address)
 
     return BigInt(res === undefined ? 0 : res.balance)
   }
@@ -325,7 +320,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return BigInt(res === undefined ? 0 : res.balance)
   }
 
-  async getBalanceForeignBifrost(address: string, asset: TAsset) {
+  async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
     const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
 
     const transformedParameters = transform(currencySelection)
@@ -349,7 +344,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
-  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
+  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAssetInfo) {
     let pallet = 'Tokens'
 
     if (node === 'Centrifuge' || node === 'Altair') {
@@ -506,16 +501,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const executionFee = await this.calculateTransactionFee(tx, address)
 
-    const nativeAsset = findAsset(node, { symbol: Native(getNativeAssetSymbol(node)) }, null)
+    const nativeAsset = findAssetInfo(node, { symbol: Native(getNativeAssetSymbol(node)) }, null)
 
-    const hasMultiLocation = feeAsset
-      ? Boolean(feeAsset.multiLocation)
-      : Boolean(nativeAsset?.multiLocation)
+    const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
     if (
       hasXcmPaymentApiSupport(node) &&
       result.value.local_xcm &&
-      hasMultiLocation &&
+      hasLocation &&
       nativeAsset &&
       node !== 'AssetHubPolkadot' &&
       node !== 'Kusama'
@@ -564,7 +557,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getXcmPaymentApiFee(
     node: TNodeDotKsmWithRelayChains,
     xcm: any,
-    asset: TAsset,
+    asset: TAssetInfo,
     transformXcm = false
   ): Promise<bigint> {
     const weight = await this.api
@@ -575,8 +568,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const localizedLocation =
       node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
-        ? localizeLocation(node, asset.multiLocation)
-        : asset.multiLocation
+        ? localizeLocation(node, asset.location)
+        : asset.location
 
     const transformedLocation = transform(localizedLocation)
 

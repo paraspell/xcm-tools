@@ -1,11 +1,11 @@
 import { deepEqual } from '@paraspell/sdk-common'
 
 import { isForeignAsset } from '../guards'
-import type { TAsset } from '../types'
+import type { TAssetInfo } from '../types'
 
-export const isAssetEqual = (asset1: TAsset, asset2: TAsset) => {
-  const ml1 = asset1.multiLocation
-  const ml2 = asset2.multiLocation
+export const isAssetEqual = (asset1: TAssetInfo, asset2: TAssetInfo) => {
+  const ml1 = asset1.location
+  const ml2 = asset2.location
 
   if (ml1 && ml2 && deepEqual(ml1, ml2)) return true
 

@@ -120,7 +120,7 @@ export const InteriorSchema = z.union([
   Junctions,
 ]);
 
-export const MultiLocationSchema = z.object({
+export const LocationSchema = z.object({
   parents: StringOrNumber,
   interior: InteriorSchema,
 });

@@ -1,5 +1,5 @@
 export * from './assets'
 export * from './errors'
 export * from './guards'
-export * from './multi-location'
+export * from './location'
 export * from './types'

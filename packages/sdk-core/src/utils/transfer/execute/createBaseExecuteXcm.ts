@@ -1,4 +1,4 @@
-import { type TMultiAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { isSystemChain } from '@paraspell/sdk-common'
 
@@ -9,7 +9,7 @@ import { getChainLocation } from '../../location/getChainLocation'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-const updateAsset = (asset: TMultiAsset, amount: bigint): TMultiAsset => {
+const updateAsset = (asset: TAsset, amount: bigint): TAsset => {
   return {
     ...asset,
     fun: {
@@ -62,10 +62,10 @@ export const createBaseExecuteXcm = (
 
   const {
     amount,
-    multiAssetLocalized,
-    multiAssetLocalizedToReserve,
-    multiAssetLocalizedToDest,
-    feeMultiAsset,
+    assetLocalized,
+    assetLocalizedToReserve,
+    assetLocalizedToDest,
+    feeAsset,
     reserveChain
   } = prepareExecuteContext(options)
 
@@ -86,14 +86,14 @@ export const createBaseExecuteXcm = (
     : [
         {
           DepositReserveAsset: {
-            assets: createAssetsFilter(multiAssetLocalizedToReserve),
+            assets: createAssetsFilter(assetLocalizedToReserve),
             dest: createDestination(version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
               {
                 BuyExecution: {
                   fees: updateAsset(
-                    multiAssetLocalizedToDest,
-                    amount - (feeMultiAsset ? reserveFee : originFee + reserveFee)
+                    assetLocalizedToDest,
+                    amount - (feeAsset ? reserveFee : originFee + reserveFee)
                   ),
                   weight_limit: 'Unlimited'
                 }
@@ -112,15 +112,12 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(multiAssetLocalized),
+            assets: createAssetsFilter(assetLocalized),
             dest: destLocation,
             xcm: [
               {
                 BuyExecution: {
-                  fees: updateAsset(
-                    multiAssetLocalizedToDest,
-                    feeMultiAsset ? amount : amount - originFee
-                  ),
+                  fees: updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee),
                   weight_limit: 'Unlimited'
                 }
               },
@@ -136,14 +133,14 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(multiAssetLocalized),
+            assets: createAssetsFilter(assetLocalized),
             dest: getChainLocation(chain, reserveChain),
             xcm: [
               {
                 BuyExecution: {
                   fees: updateAsset(
-                    multiAssetLocalizedToReserve,
-                    feeMultiAsset ? amount : amount - originFee
+                    assetLocalizedToReserve,
+                    feeAsset ? amount : amount - originFee
                   ),
                   weight_limit: 'Unlimited'
                 }
@@ -161,7 +158,7 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateReserveWithdraw: {
-            assets: createAssetsFilter(multiAssetLocalized),
+            assets: createAssetsFilter(assetLocalized),
             reserve: getChainLocation(chain, reserveChain),
             xcm: [
               {
@@ -169,7 +166,7 @@ export const createBaseExecuteXcm = (
                   fees:
                     // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
                     // than requested, so we need to account for that
-                    updateAsset(multiAssetLocalizedToReserve, amount - 2n),
+                    updateAsset(assetLocalizedToReserve, amount - 2n),
                   weight_limit: 'Unlimited'
                 }
               },

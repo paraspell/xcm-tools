@@ -1,73 +1,69 @@
-import { isAssetEqual, type TMultiAsset } from '@paraspell/assets'
+import { isAssetEqual, type TAsset } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
+import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
-import { createMultiAsset } from '../../multiAsset'
 import { getAssetReserveChain } from './getAssetReserveChain'
 
 export type TExecuteContext = {
   amount: bigint
-  multiAsset: TMultiAsset
-  multiAssetLocalized: TMultiAsset
-  multiAssetLocalizedToDest: TMultiAsset
-  multiAssetLocalizedToReserve: TMultiAsset
-  feeMultiAsset?: TMultiAsset
-  feeMultiAssetLocalized?: TMultiAsset
+  asset: TAsset
+  assetLocalized: TAsset
+  assetLocalizedToDest: TAsset
+  assetLocalizedToReserve: TAsset
+  feeAsset?: TAsset
+  feeAssetLocalized?: TAsset
   reserveChain: TNodeDotKsmWithRelayChains
 }
 
 export const prepareExecuteContext = ({
   chain,
   destChain,
-  asset,
-  feeAsset,
+  assetInfo,
+  feeAssetInfo,
   fees: { originFee },
   version
 }: TCreateBaseTransferXcmOptions): TExecuteContext => {
-  assertHasLocation(asset)
-  if (feeAsset) assertHasLocation(feeAsset)
+  assertHasLocation(assetInfo)
+  if (feeAssetInfo) assertHasLocation(feeAssetInfo)
 
   const amount = asset.amount
-  const reserveChain = getAssetReserveChain(chain, destChain, asset.multiLocation)
+  const reserveChain = getAssetReserveChain(chain, destChain, asset.location)
 
-  const multiAsset = createMultiAsset(version, amount, asset.multiLocation)
+  const asset = createAsset(version, amount, assetInfo.location)
 
-  const multiAssetLocalized = createMultiAsset(
+  const assetLocalized = createAsset(version, amount, localizeLocation(chain, assetInfo.location))
+  const assetLocalizedToDest = createAsset(
     version,
     amount,
-    localizeLocation(chain, asset.multiLocation)
+    localizeLocation(destChain, assetInfo.location)
   )
-  const multiAssetLocalizedToDest = createMultiAsset(
+  const assetLocalizedToReserve = createAsset(
     version,
     amount,
-    localizeLocation(destChain, asset.multiLocation)
-  )
-  const multiAssetLocalizedToReserve = createMultiAsset(
-    version,
-    amount,
-    localizeLocation(reserveChain ?? chain, asset.multiLocation)
+    localizeLocation(reserveChain ?? chain, assetInfo.location)
   )
 
-  const feeMultiAsset =
-    feeAsset && !isAssetEqual(asset, feeAsset)
-      ? createMultiAsset(version, originFee, feeAsset.multiLocation)
+  const feeAsset =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(version, originFee, feeAssetInfo.location)
       : undefined
 
-  const feeMultiAssetLocalized =
-    feeAsset && !isAssetEqual(asset, feeAsset)
-      ? createMultiAsset(version, originFee, localizeLocation(chain, feeAsset.multiLocation))
+  const feeAssetLocalized =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(version, originFee, localizeLocation(chain, feeAssetInfo.location))
       : undefined
 
   return {
     amount,
-    multiAsset,
-    multiAssetLocalized,
-    multiAssetLocalizedToDest,
-    multiAssetLocalizedToReserve,
-    feeMultiAsset,
-    feeMultiAssetLocalized,
+    asset,
+    assetLocalized,
+    assetLocalizedToDest,
+    assetLocalizedToReserve,
+    feeAsset,
+    feeAssetLocalized,
     reserveChain
   }
 }

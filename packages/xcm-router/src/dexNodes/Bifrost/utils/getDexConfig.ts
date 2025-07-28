@@ -3,8 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
-import type { TForeignAsset } from '@paraspell/sdk';
-import { getAssets, getParaId, type TNodePolkadotKusama } from '@paraspell/sdk';
+import { getAssets, getParaId, isForeignAsset, type TNodePolkadotKusama } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
@@ -17,10 +16,10 @@ export const getDexConfig = async (
   const chainId = getParaId(node);
 
   const pairKey = (asset: TRouterAsset) =>
-    (asset.multiLocation as object | undefined) ?? asset.assetId ?? asset.symbol;
+    (asset.location as object | undefined) ?? asset.assetId ?? asset.symbol;
 
   const tokenMap = getTokenMap(node, chainId);
-  const sdkAssets = getAssets(node) as TForeignAsset[];
+  const sdkAssets = getAssets(node);
 
   const assetsMap = new Map<string, TRouterAsset>();
 
@@ -32,8 +31,8 @@ export const getDexConfig = async (
 
     assetsMap.set(symbol, {
       symbol,
-      assetId: sdkAsset?.assetId,
-      multiLocation: sdkAsset?.multiLocation,
+      assetId: sdkAsset && isForeignAsset(sdkAsset) ? sdkAsset.assetId : undefined,
+      location: sdkAsset?.location,
     });
   });
 

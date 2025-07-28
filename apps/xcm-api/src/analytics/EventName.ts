@@ -3,7 +3,7 @@ export enum EventName {
   GET_ASSETS_OBJECT = 'Get Assets Object',
   GET_NODE_BY_PARA_ID = 'Get Node By Para Id',
   GET_ASSET_ID = 'Get Asset Id',
-  GET_ASSET_MULTILOCATION = 'Get Asset Multi-location',
+  GET_ASSET_LOCATION = 'Get Asset Location',
   GET_RELAYCHAIN_SYMBOL = 'Get Relaychain Symbol',
   GET_NATIVE_ASSETS = 'Get Native Assets',
   GET_OTHER_ASSETS = 'Get Other Assets',

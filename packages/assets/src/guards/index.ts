@@ -1,4 +1,4 @@
 export * from './isForeignAsset'
-export * from './isOverrideMultiLocationSpecifier'
+export * from './isOverrideLocationSpecifier'
 export * from './isSymbolSpecifier'
-export * from './isTMultiAsset'
+export * from './isTAsset'

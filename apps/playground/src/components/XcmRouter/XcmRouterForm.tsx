@@ -15,7 +15,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import type {
-  TAsset,
+  TAssetInfo,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
@@ -71,8 +71,8 @@ export type TRouterFormValuesTransformed = Omit<
   'exchange'
 > & {
   exchange: TExchangeNode;
-  currencyFrom: TAsset;
-  currencyTo: TAsset;
+  currencyFrom: TAssetInfo;
+  currencyTo: TAssetInfo;
 };
 
 type Props = {
@@ -252,8 +252,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToOptionId,
   );
 
-  const pairKey = (asset?: { multiLocation?: object; symbol?: string }) =>
-    asset?.multiLocation ? JSON.stringify(asset.multiLocation) : asset?.symbol;
+  const pairKey = (asset?: { location?: object; symbol?: string }) =>
+    asset?.location ? JSON.stringify(asset.location) : asset?.symbol;
 
   useEffect(() => {
     if (!currencyFromOptionId || !currencyToOptionId) return;
@@ -308,7 +308,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       ...values,
       exchange: getExchange(values.exchange) as TExchangeNode,
       currencyFrom,
-      currencyTo: currencyTo as TAsset,
+      currencyTo: currencyTo as TAssetInfo,
     };
 
     onSubmit(transformedValues, submitType);

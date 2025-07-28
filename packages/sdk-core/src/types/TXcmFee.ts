@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  TAsset,
+  TAssetInfo,
   TCurrencyCore,
   TCurrencyInput,
   WithAmount,
@@ -95,7 +95,7 @@ export type TGetFeeForDestNodeBaseOptions = {
   address: string
   currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
-  asset: TAsset
+  asset: TAssetInfo
   originFee: bigint
   feeAsset?: TCurrencyInput
   disableFallback: boolean

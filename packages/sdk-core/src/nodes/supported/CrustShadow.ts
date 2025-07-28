@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for CrustShadow Parachain
 
-import { type TAsset } from '@paraspell/assets'
+import { type TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -18,7 +18,7 @@ class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTok
     super('CrustShadow', 'shadow', 'kusama', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAsset): TReserveAsset {
+  private getCurrencySelection(asset: TAssetInfo): TReserveAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) {
       return 'SelfReserve'
     }
