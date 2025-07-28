@@ -24,7 +24,7 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
@@ -76,7 +76,7 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
@@ -128,7 +128,7 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = '1000000000'
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)

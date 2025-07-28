@@ -1,4 +1,4 @@
-import type { TAsset, TDryRunXcmBaseOptions, TNodeAssets } from '@paraspell/sdk-core'
+import type { TAssetInfo, TDryRunXcmBaseOptions, TChainAssetsInfo } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRun,
@@ -11,7 +11,7 @@ import {
   isAssetEqual,
   MissingChainApiError,
   NodeNotSupportedError,
-  type TMultiLocation,
+  type TLocation,
   type TNodeDotKsmWithRelayChains,
   type TSerializedApiCall
 } from '@paraspell/sdk-core'
@@ -468,7 +468,7 @@ describe('PapiApi', () => {
   })
 
   describe('getAssetHubForeignBalance', () => {
-    const multiLocation: TMultiLocation = {
+    const location: TLocation = {
       parents: 1,
       interior: {
         X1: {
@@ -480,11 +480,11 @@ describe('PapiApi', () => {
     it('should return the balance as bigint when balance exists', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
       await papiApi.init(mockChain)
-      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', multiLocation)
+      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', location)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.ForeignAssets.Account.getValue).toHaveBeenCalledWith(
-        transform(multiLocation),
+        transform(location),
         'some_address'
       )
       expect(balance).toBe(5000n)
@@ -494,7 +494,7 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.ForeignAssets.Account.getValue = vi.fn().mockResolvedValue(undefined)
 
-      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', multiLocation)
+      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', location)
 
       expect(balance).toBe(0n)
     })
@@ -511,7 +511,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignBifrost('some_address', {
         symbol: 'BNC'
-      } as TAsset)
+      } as TAssetInfo)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledWith(
@@ -827,7 +827,7 @@ describe('PapiApi', () => {
     beforeEach(() => {
       vi.mocked(getAssetsObject).mockImplementation(
         (node: TNodeDotKsmWithRelayChains) =>
-          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TNodeAssets
+          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TChainAssetsInfo
       )
 
       dryRunApiCallMock = vi.fn()
@@ -1170,7 +1170,7 @@ describe('PapiApi', () => {
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: TMultiLocation = {
+    const originLocation: TLocation = {
       parents: 0,
       interior: { Here: null }
     }
@@ -1223,7 +1223,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Hydration',
-        asset: { symbol: 'USDT', multiLocation: {} } as TAsset
+        asset: { symbol: 'USDT', location: {} } as TAssetInfo
       } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
@@ -1283,7 +1283,7 @@ describe('PapiApi', () => {
       const foreignAssetsIssuedAmount = 500n
 
       const baseOptions: TDryRunXcmBaseOptions = {
-        originLocation: { parents: 0, interior: { Here: null } } as TMultiLocation,
+        originLocation: { parents: 0, interior: { Here: null } } as TLocation,
         xcm: { some: 'xcm-payload' },
         node: 'AssetHubPolkadot',
         origin: 'AssetHubPolkadot',
@@ -1353,7 +1353,7 @@ describe('PapiApi', () => {
   })
 
   describe('getDryRunXcm', () => {
-    const originLocation: TMultiLocation = {
+    const originLocation: TLocation = {
       parents: 0,
       interior: { Here: null }
     }
@@ -1362,7 +1362,7 @@ describe('PapiApi', () => {
     beforeEach(() => {
       vi.mocked(getAssetsObject).mockImplementation(
         (node: TNodeDotKsmWithRelayChains) =>
-          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TNodeAssets
+          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TChainAssetsInfo
       )
     })
 
@@ -1439,7 +1439,7 @@ describe('PapiApi', () => {
     })
 
     it('should use processAssetsDepositedEvents for AssetHubPolkadot with non-DOT assets', async () => {
-      const originLocation: TMultiLocation = {
+      const originLocation: TLocation = {
         parents: 0,
         interior: { Here: null }
       }
@@ -1516,7 +1516,7 @@ describe('PapiApi', () => {
     })
 
     it('should use processAssetsDepositedEvents for AssetHubPolkadot with DOT assets', async () => {
-      const originLocation: TMultiLocation = {
+      const originLocation: TLocation = {
         parents: 0,
         interior: { Here: null }
       }
@@ -1666,7 +1666,7 @@ describe('PapiApi', () => {
           xcm: dummyXcm,
           node: 'Moonbeam',
           origin: 'Acala',
-          asset: { symbol: 'AUSD', multiLocation: { parents: 0, interior: { Here: null } } }
+          asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } }
         } as TDryRunXcmBaseOptions)
       ).resolves.toEqual({
         success: true,

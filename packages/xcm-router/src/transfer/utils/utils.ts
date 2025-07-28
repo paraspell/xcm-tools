@@ -1,5 +1,5 @@
 import { Builder, isForeignAsset, isNodeEvm } from '@paraspell/sdk';
-import type { TAsset, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
+import type { TAssetInfo, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
@@ -7,12 +7,12 @@ import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../
 
 export const getCurrencySelection = (
   node: TNodeDotKsmWithRelayChains,
-  asset: TAsset,
+  asset: TAssetInfo,
 ): TCurrencyInput => {
   const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama';
   if (isForeignAsset(asset) && !isBifrost) {
     if (asset.assetId) return { id: asset.assetId };
-    if (asset.multiLocation) return { multilocation: asset.multiLocation };
+    if (asset.location) return { location: asset.location };
   }
 
   return { symbol: asset.symbol };
@@ -51,7 +51,7 @@ export const createFromExchangeBuilder = ({
     .from(baseNode)
     .to(node)
     .currency({
-      ...getCurrencySelection(baseNode, assetTo as TAsset),
+      ...getCurrencySelection(baseNode, assetTo as TAssetInfo),
       amount,
     })
     .address(address)

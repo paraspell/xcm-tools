@@ -5,22 +5,22 @@ import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import type Crab from './Crab'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
 }))
 
-vi.mock('../../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn()
+vi.mock('../../utils/asset', () => ({
+  createAsset: vi.fn()
 }))
 
 describe('Crab', () => {
   let crab: Crab<unknown, unknown>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'KSM', amount: 100n }
+    assetInfo: { symbol: 'KSM', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -58,7 +58,7 @@ describe('Crab', () => {
 
   it('should call createCurrencySpec with correct values', () => {
     crab.createCurrencySpec(100n, 'ParaToPara', Version.V4)
-    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
+    expect(createAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: [
@@ -72,7 +72,7 @@ describe('Crab', () => {
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
     crab.createCurrencySpec(100n, 'ParaToRelay', Version.V4)
-    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
+    expect(createAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
         X1: [

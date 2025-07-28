@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for AssetHubKusama Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
-import { isSystemChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
+import { isSystemChain, isTLocation, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -21,7 +21,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { destination, asset, scenario } = input
+    const { destination, assetInfo: asset, scenario } = input
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
 
@@ -29,7 +29,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       return getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
-    const isTrusted = !isTMultiLocation(destination) && isSystemChain(destination)
+    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
 
     if (
       scenario === 'ParaToPara' &&
@@ -68,7 +68,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     amount: bigint,
     scenario: TScenario,
     version: Version,
-    asset?: TAsset,
+    asset?: TAssetInfo,
     isOverridenAsset?: boolean
   ) {
     return getNode('AssetHubPolkadot').createCurrencySpec(

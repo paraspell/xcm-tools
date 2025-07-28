@@ -14,9 +14,9 @@ import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { AssetsService } from './assets.service.js';
 import {
-  AssetMultiLocationDto,
-  AssetMultiLocationDtoSchema,
-} from './dto/AssetMultiLocationDto.js';
+  AssetLocationDto,
+  AssetLocationDtoSchema,
+} from './dto/AssetLocationDto.js';
 import {
   OriginFeeDetailsDto,
   OriginFeeDetailsDtoSchema,
@@ -56,17 +56,17 @@ export class AssetsController {
     return this.assetsService.getAssetId(node, symbol);
   }
 
-  @Post('assets/:node/multilocation')
-  getAssetMultiLocation(
+  @Post('assets/:node/location')
+  getAssetLocation(
     @Param('node') node: string,
-    @Body(new ZodValidationPipe(AssetMultiLocationDtoSchema))
-    params: AssetMultiLocationDto,
+    @Body(new ZodValidationPipe(AssetLocationDtoSchema))
+    params: AssetLocationDto,
     @Req() req: Request,
   ) {
-    this.analyticsService.track(EventName.GET_ASSET_MULTILOCATION, req, {
+    this.analyticsService.track(EventName.GET_ASSET_LOCATION, req, {
       node,
     });
-    return this.assetsService.getAssetMultiLocation(node, params);
+    return this.assetsService.getAssetLocation(node, params);
   }
 
   @Get('assets/:node/relay-chain-symbol')

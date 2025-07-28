@@ -1,6 +1,6 @@
-import type { TAmount, TMultiAssetWithFee } from '@paraspell/assets'
+import type { TAmount, TAssetWithFee } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
-import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+import { isTLocation, type TLocation } from '@paraspell/sdk-common'
 
 import type { TXTokensCurrencySelection } from '../../../types'
 import { addXcmVersionHeader } from '../../../utils'
@@ -8,11 +8,11 @@ import { addXcmVersionHeader } from '../../../utils'
 export const getXTokensParameters = (
   isMultiAssetTransfer: boolean,
   currencySelection: TXTokensCurrencySelection,
-  destLocation: TMultiLocation,
+  destLocation: TLocation,
   amount: TAmount,
   weightLimit: string | number,
   version: Version,
-  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
+  overriddenAsset?: TLocation | TAssetWithFee[]
 ): Record<string, unknown> => {
   const versionedDestLocation = addXcmVersionHeader(destLocation, version)
 
@@ -25,7 +25,7 @@ export const getXTokensParameters = (
     }
   }
 
-  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+  const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
   const assetKey = isOverriddenMultiAssets ? 'assets' : 'asset'
   const feeAssetIndex = isOverriddenMultiAssets
     ? overriddenAsset.findIndex(asset => asset.isFeeAsset)

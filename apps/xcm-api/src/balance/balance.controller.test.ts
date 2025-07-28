@@ -130,7 +130,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const edMock = '1000000000';
+      const edMock = 1000000000n;
       const balanceServiceSpy = vi
         .spyOn(service, 'getExistentialDeposit')
         .mockReturnValue(edMock);

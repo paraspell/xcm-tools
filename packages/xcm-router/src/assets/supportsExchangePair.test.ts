@@ -1,15 +1,15 @@
-import type { TMultiLocation } from '@paraspell/sdk';
+import type { TLocation } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { TRouterAsset } from '../types';
 import { supportsExchangePair } from './supportsExchangePair';
 
-const mlA = { foo: 'bar' } as unknown as TMultiLocation;
-const mlB = { baz: 'qux' } as unknown as TMultiLocation;
+const mlA = { foo: 'bar' } as unknown as TLocation;
+const mlB = { baz: 'qux' } as unknown as TLocation;
 
-const assetA: TRouterAsset = { symbol: 'ABC', assetId: '1', multiLocation: mlA };
-const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', multiLocation: mlA };
-const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', multiLocation: mlB };
+const assetA: TRouterAsset = { symbol: 'ABC', assetId: '1', location: mlA };
+const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', location: mlA };
+const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', location: mlB };
 const assetC: TRouterAsset = { symbol: 'ZZZ', assetId: '9' };
 
 vi.mock('@paraspell/sdk', () => ({
@@ -46,8 +46,8 @@ describe('supportsExchangePair', () => {
     expect(supportsExchangePair('AcalaDex', assetB, assetA)).toBe(true);
   });
 
-  it('matches assets via multiLocation deep equality', () => {
-    const alt = { symbol: 'DIFF', multiLocation: mlA };
+  it('matches assets via location deep equality', () => {
+    const alt = { symbol: 'DIFF', location: mlA };
     expect(supportsExchangePair('AcalaDex', alt, assetB)).toBe(true);
   });
 

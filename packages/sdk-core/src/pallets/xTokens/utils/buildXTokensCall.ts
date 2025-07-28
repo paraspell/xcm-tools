@@ -1,5 +1,5 @@
 import type { TPallet } from '@paraspell/pallets'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 
 import type {
   TSerializedApiCall,
@@ -22,7 +22,7 @@ export const shouldUseMultiAssetTransfer = <TApi, TRes>({
     scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
   const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
   const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+  const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
 
   return (
     useMultiAssetTransfer ||
@@ -38,7 +38,7 @@ export const getXTokensMethod = <TApi, TRes>(
 ): TXTokensMethod => {
   if (!useMultiAsset) return 'transfer'
 
-  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+  const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
 
   return isOverriddenMultiAssets ? 'transfer_multiassets' : 'transfer_multiasset'
 }

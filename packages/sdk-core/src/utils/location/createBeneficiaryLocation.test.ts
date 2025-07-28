@@ -1,5 +1,5 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
-import { Parents, Version } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
+import { isTLocation, Parents, Version } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -24,7 +24,7 @@ vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')
   return {
     ...actual,
-    isTMultiLocation: vi.fn()
+    isTLocation: vi.fn()
   }
 })
 
@@ -42,11 +42,10 @@ describe('createBeneficiaryLocation', () => {
   })
 
   describe('createBeneficiaryLocXTokens', () => {
-    it('should return a multilocation object for a multilocation recipient address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
-      const recipientAddress = { parents: Parents.ONE, interior: {} } as TMultiLocation
+    it('should return a ocation object for a location recipient address', () => {
+      const recipientAddress = { parents: Parents.ONE, interior: {} } as TLocation
       const version = Version.V4
-      vi.mocked(isTMultiLocation).mockReturnValue(true)
+      vi.mocked(isTLocation).mockReturnValue(true)
 
       const result = createBeneficiaryLocXTokens({
         api: apiMock,
@@ -57,14 +56,13 @@ describe('createBeneficiaryLocation', () => {
       })
 
       expect(result).toEqual(recipientAddress)
-      expect(isTMultiLocation).toHaveBeenCalledWith(recipientAddress)
+      expect(isTLocation).toHaveBeenCalledWith(recipientAddress)
     })
 
-    it('should return a correct payload for ParaToRelay scenario', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a correct payload for ParaToRelay scenario', () => {
       const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(resolveScenario).mockReturnValue('ParaToRelay')
       const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
@@ -92,10 +90,9 @@ describe('createBeneficiaryLocation', () => {
       })
     })
 
-    it('should return a correct payload for ParaToPara scenario with Ethereum address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a correct payload for ParaToPara scenario with Ethereum address', () => {
       const ethAddress = '0x1234567890123456789012345678901234567890'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(resolveScenario).mockReturnValue('ParaToPara')
 
@@ -119,11 +116,10 @@ describe('createBeneficiaryLocation', () => {
       expect(isAddress).toHaveBeenCalledWith(ethAddress)
     })
 
-    it('should return a correct payload for ParaToPara scenario with standard address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a correct payload for ParaToPara scenario with standard address', () => {
       const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(resolveScenario).mockReturnValue('ParaToPara')
       const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
@@ -149,11 +145,10 @@ describe('createBeneficiaryLocation', () => {
       expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
     })
 
-    it('should return a fallback payload for an unknown scenario with standard address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a fallback payload for an unknown scenario with standard address', () => {
       const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(resolveScenario).mockReturnValue('RelayToPara')
       const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
@@ -181,10 +176,9 @@ describe('createBeneficiaryLocation', () => {
       })
     })
 
-    it('should return a fallback payload for an unknown scenario with Ethereum address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a fallback payload for an unknown scenario with Ethereum address', () => {
       const ethAddress = '0x1234567890123456789012345678901234567890'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(resolveScenario).mockReturnValue('RelayToPara')
       vi.mocked(createX1Payload).mockReturnValue({
@@ -213,11 +207,10 @@ describe('createBeneficiaryLocation', () => {
   })
 
   describe('createBeneficiaryLocation', () => {
-    it('should return a multilocation object for a multilocation recipient address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
-      const recipientAddress = { parents: Parents.ONE, interior: {} } as TMultiLocation
+    it('should return a location object for a location recipient address', () => {
+      const recipientAddress = { parents: Parents.ONE, interior: {} } as TLocation
       const version = Version.V4
-      vi.mocked(isTMultiLocation).mockReturnValue(true)
+      vi.mocked(isTLocation).mockReturnValue(true)
 
       const result = createBeneficiaryLocation({
         api: apiMock,
@@ -226,14 +219,13 @@ describe('createBeneficiaryLocation', () => {
       })
 
       expect(result).toEqual(recipientAddress)
-      expect(isTMultiLocation).toHaveBeenCalledWith(recipientAddress)
+      expect(isTLocation).toHaveBeenCalledWith(recipientAddress)
     })
 
-    it('should return a correct payload with standard address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a correct payload with standard address', () => {
       const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
       const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
       vi.mocked(createX1Payload).mockReturnValue({
@@ -258,10 +250,9 @@ describe('createBeneficiaryLocation', () => {
       })
     })
 
-    it('should return a correct payload with Ethereum address', async () => {
-      const { isTMultiLocation } = await import('@paraspell/sdk-common')
+    it('should return a correct payload with Ethereum address', () => {
       const ethAddress = '0x1234567890123456789012345678901234567890'
-      vi.mocked(isTMultiLocation).mockReturnValue(false)
+      vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(createX1Payload).mockReturnValue({
         X1: [{ AccountKey20: { key: ethAddress } }]

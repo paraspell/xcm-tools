@@ -1,8 +1,9 @@
-import type { TAsset, WithAmount } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { getAssetId } from '@paraspell/assets'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -13,7 +14,7 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { assertHasLocation, getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import type BifrostPolkadot from './BifrostPolkadot'
 
 vi.mock('../../pallets/xTokens', () => ({
@@ -39,8 +40,7 @@ describe('BifrostPolkadot', () => {
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockPolkadotXCMInput = {
-    api,
-    asset: { symbol: 'WETH', amount: 100n }
+    assetInfo: { symbol: 'WETH', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -67,7 +67,7 @@ describe('BifrostPolkadot', () => {
       symbol: 'WETH',
       amount: 100n,
       multiLocation: { parents: 1, interior: 'Here' }
-    } as WithAmount<TAsset>
+    } as WithAmount<TAssetInfo>
 
     await bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, asset })
 
@@ -77,7 +77,7 @@ describe('BifrostPolkadot', () => {
       {
         ...mockPolkadotXCMInput,
         asset,
-        multiAsset: createMultiAsset(bifrostPolkadot.version, asset.amount, asset.multiLocation)
+        multiAsset: createAsset(bifrostPolkadot.version, asset.amount, asset.multiLocation)
       },
       'transfer_assets',
       'Unlimited'
@@ -85,15 +85,15 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
-    const asset = {
+    const assetInfo = {
       symbol: 'DOT',
       amount: 100n,
       multiLocation: { parents: 1, interior: 'Here' }
-    } as WithAmount<TAsset>
+    } as WithAmount<TAssetInfo>
 
     await bifrostPolkadot.transferPolkadotXCM({
       ...mockPolkadotXCMInput,
-      asset
+      assetInfo
     })
 
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)

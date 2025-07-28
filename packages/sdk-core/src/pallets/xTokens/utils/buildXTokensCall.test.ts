@@ -1,7 +1,7 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
-import { isTMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
+import { isTLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -16,7 +16,7 @@ vi.mock('@paraspell/sdk-common', async importActual => {
   const actual = await importActual<typeof import('@paraspell/sdk-common')>()
   return {
     ...actual,
-    isTMultiLocation: vi.fn()
+    isTLocation: vi.fn()
   }
 })
 
@@ -53,9 +53,9 @@ describe('buildXTokensCall', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     currencySelection = { ForeignAsset: '1' }
-    vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TMultiAsset })
+    vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TAsset })
     vi.mocked(getXTokensParameters).mockReturnValue({ param1: 'value1', param2: 'value2' })
-    vi.mocked(isTMultiLocation).mockReturnValue(true)
+    vi.mocked(isTLocation).mockReturnValue(true)
     vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockDestLocation)
   })
 
@@ -138,8 +138,8 @@ describe('buildXTokensCall', () => {
     expect(result.module).toBe('TestPallet')
   })
 
-  it('selects transfer_multiasset when overriddenAsset is MultiLocation', () => {
-    const overridden = {} as TMultiLocation
+  it('selects transfer_multiasset when overriddenAsset is location', () => {
+    const overridden = {} as TLocation
 
     const input = {
       ...baseInput,
@@ -164,9 +164,9 @@ describe('buildXTokensCall', () => {
     expect(result.method).toBe('transfer_multiasset')
   })
 
-  it('selects transfer_multiassets when overriddenAsset is not MultiLocation', () => {
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
-    const overridden = {} as TMultiLocation
+  it('selects transfer_multiassets when overriddenAsset is not location', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    const overridden = {} as TLocation
 
     const input = {
       ...baseInput,

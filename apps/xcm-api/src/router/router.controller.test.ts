@@ -1,6 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TMultiLocation } from '@paraspell/sdk';
+import type { TLocation } from '@paraspell/sdk';
 import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -154,12 +154,12 @@ describe('RouterController', () => {
           {
             symbol: 'ASTR',
             assetId: '0x1234567890abcdef',
-            multiLocation: {} as TMultiLocation,
+            location: {} as TLocation,
           },
           {
             symbol: 'GLMR',
             assetId: '0xabcdef1234567890',
-            multiLocation: {} as TMultiLocation,
+            location: {} as TLocation,
           },
         ],
       ];

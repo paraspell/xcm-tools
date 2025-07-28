@@ -1,10 +1,10 @@
 import { DuplicateAssetError } from '../../errors'
-import type { TForeignAsset, TNativeAsset } from '../../types'
+import type { TForeignAssetInfo, TNativeAssetInfo } from '../../types'
 
 export const throwDuplicateAssetError = (
   symbol: string,
-  nativeMatches: TNativeAsset[],
-  foreignMatches: TForeignAsset[]
+  nativeMatches: TNativeAssetInfo[],
+  foreignMatches: TForeignAssetInfo[]
 ) => {
   if (nativeMatches.length > 0 && foreignMatches.length > 0) {
     throw new DuplicateAssetError(
@@ -16,7 +16,7 @@ export const throwDuplicateAssetError = (
         const idOrLocation =
           asset.assetId !== undefined
             ? `ID:${asset.assetId}`
-            : `Location:${JSON.stringify(asset.multiLocation)}`
+            : `Location:${JSON.stringify(asset.location)}`
         return `${asset.alias} (${idOrLocation})`
       })
       .join(', ')

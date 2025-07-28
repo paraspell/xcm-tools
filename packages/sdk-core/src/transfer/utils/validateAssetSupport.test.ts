@@ -1,9 +1,9 @@
-import type { TNativeAsset } from '@paraspell/assets'
+import type { TNativeAssetInfo } from '@paraspell/assets'
 import {
   getNativeAssets,
   hasSupportForAsset,
   InvalidCurrencyError,
-  type TAsset
+  type TAssetInfo
 } from '@paraspell/assets'
 import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +16,7 @@ import { validateAssetSupport } from './validateAssetSupport'
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
   isRelayChain: vi.fn(),
-  isTMultiLocation: vi.fn()
+  isTLocation: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -43,7 +43,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'DOT' } as TAsset
+    const asset = { symbol: 'DOT' } as TAssetInfo
 
     vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'DOT', isNative: true }])
 
@@ -64,9 +64,9 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = true
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' } as TNativeAsset])
+    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' } as TNativeAssetInfo])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -80,7 +80,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
 
@@ -96,7 +96,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
 
@@ -112,7 +112,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'DOT' } as TAsset
+    const asset = { symbol: 'DOT' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
     vi.mocked(getNativeAssets).mockReturnValue([
@@ -132,7 +132,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'UNSUPPORTED' } as TAsset
+    const asset = { symbol: 'UNSUPPORTED' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -154,7 +154,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'SUPPORTED' } as TAsset
+    const asset = { symbol: 'SUPPORTED' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
 
@@ -216,12 +216,12 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
 
-  it('should not throw when destination is a MultiLocation object', () => {
+  it('should not throw when destination is a location object', () => {
     const options = {
       from: 'Acala',
       to: {} as TDestination,
@@ -230,7 +230,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -244,7 +244,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
+    const asset = { symbol: 'TEST' } as TAssetInfo
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })

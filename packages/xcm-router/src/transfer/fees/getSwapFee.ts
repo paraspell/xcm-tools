@@ -16,9 +16,9 @@ export const getSwapFee = async (
   } = options;
   const { txs, amountOut } = await createSwapTx(exchange, options);
 
-  const currency = assetFrom.multiLocation
+  const currency = assetFrom.location
     ? {
-        multilocation: assetFrom.multiLocation,
+        location: assetFrom.location,
         amount,
       }
     : {

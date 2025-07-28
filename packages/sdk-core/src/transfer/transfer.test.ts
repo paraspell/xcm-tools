@@ -1,11 +1,11 @@
 import {
-  normalizeMultiLocation,
-  type TAsset,
-  type TCurrencyInput,
-  type TMultiAssetWithFee
+  normalizeLocation,
+  type TAssetInfo,
+  type TAssetWithFee,
+  type TCurrencyInput
 } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
-import { isDotKsmBridge, isRelayChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
+import { isDotKsmBridge, isRelayChain, isTLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -35,7 +35,7 @@ vi.mock('@paraspell/sdk-common', async () => {
   return {
     ...actual,
     isRelayChain: vi.fn(),
-    isTMultiLocation: vi.fn(),
+    isTLocation: vi.fn(),
     isDotKsmBridge: vi.fn()
   }
 })
@@ -50,8 +50,8 @@ vi.mock('../utils/chain', () => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  isOverrideMultiLocationSpecifier: vi.fn(),
-  normalizeMultiLocation: vi.fn()
+  isOverrideLocationSpecifier: vi.fn(),
+  normalizeLocation: vi.fn()
 }))
 
 vi.mock('./transferRelayToPara', () => ({
@@ -95,10 +95,10 @@ describe('send', () => {
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
-    vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
-    vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
+    vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
+    vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
     vi.mocked(selectXcmVersion).mockReturnValue(Version.V4)
-    vi.mocked(normalizeMultiLocation).mockImplementation(location => location)
+    vi.mocked(normalizeLocation).mockImplementation(location => location)
   })
 
   afterEach(() => {
@@ -214,9 +214,9 @@ describe('send', () => {
     expect(apiSpy).not.toHaveBeenCalled()
   })
 
-  it('should handle overriddenAsset when override multi-location is present', async () => {
-    vi.mocked(resolveOverriddenAsset).mockReturnValue({} as TMultiLocation)
-    const currency = { multilocation: { type: 'Override', value: {} }, amount: '100' }
+  it('should handle overriddenAsset when override location is present', async () => {
+    vi.mocked(resolveOverriddenAsset).mockReturnValue({} as TLocation)
+    const currency = { location: { type: 'Override', value: {} }, amount: '100' }
 
     const options = {
       api: apiMock,
@@ -240,13 +240,13 @@ describe('send', () => {
   })
 
   it('should handle overriddenAsset when multiasset is present', async () => {
-    vi.mocked(resolveOverriddenAsset).mockReturnValue([] as TMultiAssetWithFee[])
+    vi.mocked(resolveOverriddenAsset).mockReturnValue([] as TAssetWithFee[])
 
     const options = {
       api: apiMock,
       from: 'Acala',
       currency: { multiasset: [] } as TCurrencyInput,
-      feeAsset: { multilocation: {} },
+      feeAsset: { location: {} },
       address: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
@@ -368,7 +368,7 @@ describe('send', () => {
       origin: 'Polkadot',
       destination: 'Acala',
       address: 'some-address',
-      asset: {
+      assetInfo: {
         symbol: 'TEST',
         amount: 100n
       },
@@ -386,7 +386,7 @@ describe('send', () => {
 
     beforeEach(() => {
       vi.mocked(isRelayChain).mockReturnValue(true)
-      vi.mocked(resolveAsset).mockReturnValue({ symbol: 'DOT' } as TAsset)
+      vi.mocked(resolveAsset).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     })
 
     it('should perform a local transfer from relay chain successfully', async () => {
@@ -417,8 +417,8 @@ describe('send', () => {
       expect(result).toBe('localTransferResult')
     })
 
-    it('should throw an error when Multi-Location address is provided for local transfer', async () => {
-      vi.mocked(isTMultiLocation).mockReturnValue(true)
+    it('should throw an error when location address is provided for local transfer', async () => {
+      vi.mocked(isTLocation).mockReturnValue(true)
 
       const options = {
         api: apiMock,
@@ -532,12 +532,12 @@ describe('send', () => {
     )
   })
 
-  it('should normalize multiLocation when present', async () => {
-    const multiLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
+  it('should normalize location when present', async () => {
+    const location = { parents: 1, interior: { X1: { Parachain: 1000 } } }
     vi.mocked(resolveAsset).mockReturnValue({
       symbol: 'TEST',
-      multiLocation
-    } as TAsset)
+      location
+    } as TAssetInfo)
 
     const options = {
       api: apiMock,
@@ -554,7 +554,7 @@ describe('send', () => {
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         asset: expect.objectContaining({
-          multiLocation
+          location
         })
       })
     )

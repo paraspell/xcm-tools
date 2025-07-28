@@ -10,7 +10,7 @@ import { padFee } from './padFee'
 vi.mock('@paraspell/assets', () => ({
   hasDryRunSupport: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
-  findAssetForNodeOrThrow: vi.fn()
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 vi.mock('./padFee', () => ({

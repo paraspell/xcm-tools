@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createDestination } from '../../../pallets/xcmPallet/utils'
@@ -25,13 +25,13 @@ vi.mock('../../assertions')
 
 describe('createExecuteExchangeXcm', () => {
   const mockOrigin = 'Hydration'
-  const dummyDest = 'destValue' as unknown as TMultiLocation
-  const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
+  const dummyDest = 'destValue' as unknown as TLocation
+  const dummyBeneficiary = 'beneficiaryValue' as unknown as TLocation
 
   beforeEach(() => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(dummyBeneficiary)
-    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TMultiLocation)
+    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TLocation)
   })
 
   afterEach(() => {
@@ -45,8 +45,8 @@ describe('createExecuteExchangeXcm', () => {
     const input = {
       api: fakeApi,
       version: Version.V4,
-      asset: {
-        multiLocation: { foo: 'bar' },
+      assetInfo: {
+        location: { foo: 'bar' },
         amount: 1000n
       },
       destination: 'dest',
@@ -103,7 +103,7 @@ describe('createExecuteExchangeXcm', () => {
     // teleport xcm[0]: BuyExecution (dest)
     expect(teleport.xcm[0].BuyExecution).toEqual({
       fees: {
-        id: input.asset.multiLocation,
+        id: input.assetInfo.location,
         fun: { Fungible: destFee }
       },
       weight_limit: 'Unlimited'
@@ -114,7 +114,7 @@ describe('createExecuteExchangeXcm', () => {
       give: { Wild: { AllCounted: 1 } },
       want: [
         {
-          id: expect.anything(), // DOT_MULTILOCATION
+          id: expect.anything(), // DOT_LOCATION
           fun: { Fungible: 100000000n }
         }
       ],
@@ -134,8 +134,8 @@ describe('createExecuteExchangeXcm', () => {
     }
     const input = {
       api: fakeApi,
-      asset: {
-        multiLocation: { foo: 'bar' },
+      assetInfo: {
+        location: { foo: 'bar' },
         amount: 2000
       },
       scenario: 'scenario-default',

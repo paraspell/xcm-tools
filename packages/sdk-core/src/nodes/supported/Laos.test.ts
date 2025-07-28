@@ -35,7 +35,7 @@ describe('Laos', () => {
     it('should only support native currency', () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'XYZ' }
+        assetInfo: { symbol: 'XYZ' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       expect(() => laos.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
@@ -43,7 +43,7 @@ describe('Laos', () => {
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'LAOS' }
+        assetInfo: { symbol: 'LAOS' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       await laos.transferPolkadotXCM(input)
@@ -57,7 +57,7 @@ describe('Laos', () => {
     it('should not support transfer to AssetHubPolkadot', () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'LAOS' },
+        assetInfo: { symbol: 'LAOS' },
         destination: 'AssetHubPolkadot'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       expect(() => laos.transferPolkadotXCM(input)).toThrowError(TransferToAhNotSupported)

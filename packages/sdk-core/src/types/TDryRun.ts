@@ -1,5 +1,5 @@
 import type {
-  TAsset,
+  TAssetInfo,
   TCurrencyCore,
   TCurrencyInput,
   TCurrencyInputWithAmount
@@ -44,7 +44,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
-  feeAsset?: TAsset
+  feeAsset?: TAssetInfo
 }
 
 export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
@@ -65,8 +65,8 @@ export type TDryRunXcmBaseOptions = {
    * The origin node
    */
   origin: TNodeDotKsmWithRelayChains
-  asset: TAsset | null
-  feeAsset?: TAsset
+  asset: TAssetInfo | null
+  feeAsset?: TAssetInfo
   amount: bigint
   originFee: bigint
 }
@@ -119,7 +119,7 @@ export type HopProcessParams<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   currentChain: TNodeDotKsmWithRelayChains
   currentOrigin: TNodeDotKsmWithRelayChains
-  currentAsset: TAsset
+  currentAsset: TAssetInfo
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   forwardedXcms: any
   hasPassedExchange: boolean

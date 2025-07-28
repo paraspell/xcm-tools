@@ -52,9 +52,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   const asset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const destCurrency = asset.multiLocation
-    ? { multilocation: asset.multiLocation }
-    : { symbol: asset.symbol }
+  const destCurrency = asset.location ? { location: asset.location } : { symbol: asset.symbol }
 
   const ed = getExistentialDepositOrThrow(destination, destCurrency)
 

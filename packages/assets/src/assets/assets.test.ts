@@ -81,7 +81,7 @@ describe('getOtherAssets', () => {
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
-        if (!asset.multiLocation) expect(asset).toHaveProperty('assetId')
+        if (!asset.location) expect(asset).toHaveProperty('assetId')
       })
     })
   })

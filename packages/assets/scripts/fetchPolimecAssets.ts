@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src/types'
-import { capitalizeMultiLocation } from './utils'
-import { TMultiLocation } from '@paraspell/sdk-common'
+import { capitalizeLocation } from './utils'
+import { TLocation } from '@paraspell/sdk-common'
 
 export const fetchPolimecForeignAssets = async (
   api: ApiPromise,
@@ -21,14 +21,14 @@ export const fetchPolimecForeignAssets = async (
         value
       ]) => {
         const { symbol, decimals } = value.toHuman() as any
-        const multiLocation = capitalizeMultiLocation(era.toJSON()) as TMultiLocation
+        const location = capitalizeLocation(era.toJSON()) as TLocation
 
         const resDetail = await api.query[module].asset(era)
 
         return {
           symbol,
           decimals: +decimals,
-          multiLocation,
+          location,
           existentialDeposit: (resDetail.toHuman() as any)?.minBalance
         }
       }

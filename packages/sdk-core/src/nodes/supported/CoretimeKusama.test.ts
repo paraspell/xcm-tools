@@ -18,7 +18,7 @@ describe('CoretimeKusama', () => {
   let node: CoretimeKusama<unknown, unknown>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'KSM', amount: 100n }
+    assetInfo: { symbol: 'KSM', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {

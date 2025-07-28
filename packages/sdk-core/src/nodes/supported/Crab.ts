@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError } from '../../errors'
@@ -14,7 +14,7 @@ import {
   type TSerializedApiCall
 } from '../../types'
 import { createX1Payload, getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -33,9 +33,9 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     throw new NodeNotSupportedError()
   }
 
-  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAsset) {
+  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAssetInfo) {
     if (scenario === 'ParaToPara') {
-      return createMultiAsset(version, amount, {
+      return createAsset(version, amount, {
         parents: Parents.ZERO,
         interior: createX1Payload(version, {
           PalletInstance: 5

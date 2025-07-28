@@ -12,8 +12,8 @@ import {
   Native,
   Override,
   TCurrencyInputWithAmount,
-  TMultiAsset,
-  TMultiLocation,
+  TAsset,
+  TLocation,
   TNode,
   Version,
   getAllAssetsSymbols,
@@ -223,9 +223,9 @@ describe('XCM API (e2e)', () => {
         .expect(404);
     });
 
-    it(`Get asset multilocation`, () =>
+    it(`Get asset location`, () =>
       request(app.getHttpServer())
-        .post(`/assets/AssetHubPolkadot/multilocation`)
+        .post(`/assets/AssetHubPolkadot/location`)
         .send({
           currency: {
             symbol: 'USDt',
@@ -926,7 +926,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubPolkadot';
       const to: TNode = 'Hydration';
-      const currency: TMultiLocation = {
+      const currency: TLocation = {
         parents: 0,
         interior: {
           X1: {
@@ -937,7 +937,7 @@ describe('XCM API (e2e)', () => {
       const tx = await Builder()
         .from(from)
         .to(to)
-        .currency({ multilocation: Override(currency), amount })
+        .currency({ location: Override(currency), amount })
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -946,7 +946,7 @@ describe('XCM API (e2e)', () => {
           from,
           to,
           address,
-          currency: { multilocation: Override(currency), amount },
+          currency: { location: Override(currency), amount },
         })
         .expect(201)
         .expect((await tx.getEncodedData()).asHex());
@@ -974,7 +974,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const createCurrency = (fungible: string): TMultiAsset<string>[] => [
+      const createCurrency = (fungible: string): TAsset<string>[] => [
         {
           id: {
             parents: 1,
@@ -1015,7 +1015,7 @@ describe('XCM API (e2e)', () => {
           },
         },
       ];
-      const feeAsset: TMultiLocation = {
+      const feeAsset: TLocation = {
         parents: 1,
         interior: {
           X2: [
@@ -1033,7 +1033,7 @@ describe('XCM API (e2e)', () => {
         .to(to)
         .currency({ multiasset: createCurrency('1000000000') })
         .feeAsset({
-          multilocation: feeAsset,
+          location: feeAsset,
         })
         .address(address)
         .build();
@@ -1044,7 +1044,7 @@ describe('XCM API (e2e)', () => {
           to,
           address,
           currency: { multiasset: createCurrency('1000000000') },
-          feeAsset: { multilocation: feeAsset },
+          feeAsset: { location: feeAsset },
         })
         .expect(201)
         .expect((await tx.getEncodedData()).asHex());
@@ -1373,15 +1373,15 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('XCM Analyser controller', () => {
-    it('Get MultiLocation paths - No multilocation or xcm provided - /xcm-analyser', () => {
+    it('Get location paths - No location or xcm provided - /xcm-analyser', () => {
       return request(app.getHttpServer()).post('/xcm-analyser').expect(400);
     });
 
-    it('Get MultiLocation paths - Invalid multilocation provided - /xcm-analyser', () => {
+    it('Get location paths - Invalid location provided - /xcm-analyser', () => {
       return request(app.getHttpServer())
         .post('/xcm-analyser')
         .send({
-          multilocation: {
+          location: {
             parents: '0',
             exterior: {
               X1: {
@@ -1393,7 +1393,7 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it('Get MultiLocation paths - XCM without any multilocations provided - /xcm-analyser', () => {
+    it('Get location paths - XCM without any locations provided - /xcm-analyser', () => {
       return request(app.getHttpServer())
         .post('/xcm-analyser')
         .send({
@@ -1403,11 +1403,11 @@ describe('XCM API (e2e)', () => {
         .expect('[]');
     });
 
-    it('Get MultiLocation paths - Valid MultiLocation - /xcm-analyser', () => {
+    it('Get location paths - Valid location - /xcm-analyser', () => {
       return request(app.getHttpServer())
         .post('/xcm-analyser')
         .send({
-          multilocation: {
+          location: {
             parents: '0',
             interior: {
               X1: {
@@ -1420,7 +1420,7 @@ describe('XCM API (e2e)', () => {
         .expect('"./Parachain(2000)"');
     });
 
-    it('Get MultiLocation paths - Valid XCM - /xcm-analyser', () => {
+    it('Get location paths - Valid XCM - /xcm-analyser', () => {
       return request(app.getHttpServer())
         .post('/xcm-analyser')
         .send({

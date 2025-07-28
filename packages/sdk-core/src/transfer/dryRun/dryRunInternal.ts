@@ -3,7 +3,7 @@
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   getNativeAssetSymbol,
   hasDryRunSupport
@@ -54,7 +54,7 @@ export const dryRunInternal = async <TApi, TRes>(
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
     : undefined
 
-  const asset = findAssetForNodeOrThrow(origin, currency, destination)
+  const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const originDryRun = await api.getDryRunCall({
     tx,

@@ -1,6 +1,6 @@
-import type { TAsset } from '@paraspell/assets'
-import { findAsset, type TCurrencyInput } from '@paraspell/assets'
-import { isTMultiLocation, type TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfo, type TCurrencyInput } from '@paraspell/assets'
+import { isTLocation, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TDestination } from '../../types'
@@ -8,7 +8,7 @@ import { getRelayChainOf } from '../../utils'
 import { resolveAsset } from './resolveAsset'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn()
+  findAssetInfo: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -16,7 +16,7 @@ vi.mock('../../utils', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn()
+  isTLocation: vi.fn()
 }))
 
 describe('resolveAsset', () => {
@@ -33,7 +33,7 @@ describe('resolveAsset', () => {
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
     expect(result).toBeNull()
-    expect(findAsset).not.toHaveBeenCalled()
+    expect(findAssetInfo).not.toHaveBeenCalled()
   })
 
   it('should call getAssetBySymbolOrId with gerRelayChainOf(origin) when destination is undefined', () => {
@@ -41,51 +41,51 @@ describe('resolveAsset', () => {
     const origin = 'Acala' as TNodePolkadotKusama
     const destination: TDestination = 'Polkadot'
     const assetCheckEnabled = true
-    const asset = {} as TAsset
+    const asset = {} as TAssetInfo
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findAsset).mockReturnValue(asset)
+    vi.mocked(findAssetInfo).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
-    expect(findAsset).toHaveBeenCalledWith(origin, currency, 'Polkadot')
+    expect(findAssetInfo).toHaveBeenCalledWith(origin, currency, 'Polkadot')
     expect(result).toBe(asset)
   })
 
-  it('should call getAssetBySymbolOrId with destination when destination is defined and !isTMultiLocation(destination) is true', () => {
+  it('should call getAssetBySymbolOrId with destination when destination is defined and !isTLocation(destination) is true', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
     const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
-    const asset = {} as TAsset
+    const asset = {} as TAssetInfo
 
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(findAsset).mockReturnValue(asset)
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(findAssetInfo).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
-    expect(isTMultiLocation).toHaveBeenCalledWith(destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
     expect(getRelayChainOf).not.toHaveBeenCalled()
-    expect(findAsset).toHaveBeenCalledWith(origin, currency, destination)
+    expect(findAssetInfo).toHaveBeenCalledWith(origin, currency, destination)
     expect(result).toBe(asset)
   })
 
-  it('should call getAssetBySymbolOrId with null when destination is defined and !isTMultiLocation(destination) is false', () => {
+  it('should call getAssetBySymbolOrId with null when destination is defined and !isTLocation(destination) is false', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
     const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
 
-    const asset = {} as TAsset
+    const asset = {} as TAssetInfo
 
-    vi.mocked(isTMultiLocation).mockReturnValue(true)
-    vi.mocked(findAsset).mockReturnValue(asset)
+    vi.mocked(isTLocation).mockReturnValue(true)
+    vi.mocked(findAssetInfo).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
-    expect(isTMultiLocation).toHaveBeenCalledWith(destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
     expect(getRelayChainOf).not.toHaveBeenCalled()
-    expect(findAsset).toHaveBeenCalledWith(origin, currency, null)
+    expect(findAssetInfo).toHaveBeenCalledWith(origin, currency, null)
     expect(result).toBe(asset)
   })
 })

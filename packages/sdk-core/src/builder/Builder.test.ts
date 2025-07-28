@@ -6,7 +6,7 @@ import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { DOT_MULTILOCATION } from '../constants'
+import { DOT_LOCATION } from '../constants'
 import { InvalidParameterError } from '../errors'
 import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
 import * as claimAssets from '../pallets/assets/asset-claim'
@@ -694,7 +694,7 @@ describe('Builder', () => {
       expect(spy).toHaveBeenCalledWith({
         api: mockApi,
         node: NODE,
-        multiAssets: [],
+        assets: [],
         address: ADDRESS
       })
     })
@@ -739,11 +739,11 @@ describe('Builder', () => {
   })
 
   describe('Dry run', () => {
-    it('should throw when destination is a Multi-Location (dryRun)', async () => {
+    it('should throw when destination is a location (dryRun)', async () => {
       await expect(
         Builder(mockApi)
           .from(NODE)
-          .to(DOT_MULTILOCATION)
+          .to(DOT_LOCATION)
           .currency(CURRENCY)
           .address(ADDRESS)
           .senderAddress('alice')
@@ -751,13 +751,13 @@ describe('Builder', () => {
       ).rejects.toThrow(InvalidParameterError)
     })
 
-    it('should throw when address is a Multi-Location (dryRun)', async () => {
+    it('should throw when address is a location (dryRun)', async () => {
       await expect(
         Builder(mockApi)
           .from(NODE)
           .to(NODE_2)
           .currency(CURRENCY)
-          .address(DOT_MULTILOCATION)
+          .address(DOT_LOCATION)
           .senderAddress('alice')
           .dryRun()
       ).rejects.toThrow(InvalidParameterError)

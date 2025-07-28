@@ -1,11 +1,11 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import { Parents, type TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { TXTransferTransferOptions } from '../../types'
 import { assertToIsString, createBeneficiaryLocXTokens } from '../../utils'
-import { createMultiAsset, maybeOverrideMultiAsset } from '../../utils/multiAsset'
+import { createAsset, maybeOverrideAsset } from '../../utils/asset'
 import { transferXTransfer } from './transferXTransfer'
 import { determineDestWeight } from './utils/determineDestWeight'
 
@@ -13,21 +13,21 @@ const mockApi = {
   callTxMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
-const mockMultiLocation: TMultiLocation = {
+const mockLocation: TLocation = {
   parents: Parents.ONE,
   interior: 'Here'
 }
 
-const mockMultiAsset: TMultiAsset = {
-  id: mockMultiLocation,
+const mockAsset: TAsset = {
+  id: mockLocation,
   fun: {
     Fungible: 123n
   }
 }
 
-vi.mock('../../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn(),
-  maybeOverrideMultiAsset: vi.fn()
+vi.mock('../../utils/asset', () => ({
+  createAsset: vi.fn(),
+  maybeOverrideAsset: vi.fn()
 }))
 
 vi.mock('./utils/determineDestWeight', () => ({
@@ -52,9 +52,9 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100n }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(maybeOverrideMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockMultiLocation)
+    vi.mocked(createAsset).mockReturnValue(mockAsset)
+    vi.mocked(maybeOverrideAsset).mockReturnValue(mockAsset)
+    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockLocation)
 
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
@@ -65,8 +65,8 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       method: 'transfer',
       parameters: {
-        asset: mockMultiAsset,
-        dest: mockMultiLocation,
+        asset: mockAsset,
+        dest: mockLocation,
         dest_weight: undefined
       }
     })
@@ -80,9 +80,9 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100n }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(maybeOverrideMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockMultiLocation)
+    vi.mocked(createAsset).mockReturnValue(mockAsset)
+    vi.mocked(maybeOverrideAsset).mockReturnValue(mockAsset)
+    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockLocation)
 
     const mockDestWeight = {
       ref_time: 6000000000n,
@@ -100,8 +100,8 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       method: 'transfer',
       parameters: {
-        asset: mockMultiAsset,
-        dest: mockMultiLocation,
+        asset: mockAsset,
+        dest: mockLocation,
         dest_weight: mockDestWeight
       }
     })

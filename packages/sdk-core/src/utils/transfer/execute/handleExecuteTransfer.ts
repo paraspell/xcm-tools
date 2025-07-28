@@ -39,8 +39,17 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   chain: TNodePolkadotKusama,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> => {
-  const { api, senderAddress, paraIdTo, asset, currency, feeCurrency, address, feeAsset, version } =
-    options
+  const {
+    api,
+    senderAddress,
+    paraIdTo,
+    assetInfo,
+    currency,
+    feeCurrency,
+    address,
+    feeAssetInfo,
+    version
+  } = options
 
   if (!senderAddress) {
     throw new InvalidParameterError('Please provide senderAddress')
@@ -49,7 +58,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   assertAddressIsString(address)
 
   const feeAssetBalance =
-    feeCurrency && feeAsset && !isAssetEqual(asset, feeAsset)
+    feeCurrency && feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
       ? await getAssetBalanceInternal({
           api,
           address: senderAddress,
@@ -59,7 +68,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
       : undefined
 
   const checkAmount = (fee: bigint) => {
-    if (asset.amount <= fee) {
+    if (assetInfo.amount <= fee) {
       throw new InvalidParameterError(
         `Asset amount is too low, please increase the amount or use a different fee asset.`
       )
@@ -78,9 +87,9 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     chain,
     destChain,
     address,
-    asset,
+    assetInfo,
     currency,
-    feeAsset,
+    feeAssetInfo,
     feeCurrency,
     recipientAddress: address,
     senderAddress,
@@ -123,7 +132,9 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
   const reserveFee = padFeeBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
 
-  checkAmount(feeAsset && !isAssetEqual(asset, feeAsset) ? reserveFee : originFee + reserveFee)
+  checkAmount(
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee
+  )
 
   const xcm = createDirectExecuteXcm({
     ...internalOptions,

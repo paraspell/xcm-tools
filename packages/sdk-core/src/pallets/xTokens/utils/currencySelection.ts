@@ -1,27 +1,27 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 
 import type { TXcmVersioned, TXTokensTransferOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../../utils'
-import { createMultiAsset, maybeOverrideMultiAssets } from '../../../utils/multiAsset'
-import { buildMultiLocation } from './multiLocationResolvers'
+import { createAsset, maybeOverrideAssets } from '../../../utils/asset'
+import { buildLocation } from './locationResolvers'
 
 export const createDefaultCurrencySelection = <TApi, TRes>(
   input: TXTokensTransferOptions<TApi, TRes>
 ) => {
   const { asset, version } = input
-  const multiLocation = buildMultiLocation(input)
-  const multiAsset = createMultiAsset(version, asset.amount, multiLocation)
+  const location = buildLocation(input)
+  const multiAsset = createAsset(version, asset.amount, location)
   return addXcmVersionHeader(multiAsset, version)
 }
 
 export const getModifiedCurrencySelection = <TApi, TRes>(
   input: TXTokensTransferOptions<TApi, TRes>
-): TXcmVersioned<TMultiAsset | TMultiAsset[]> => {
+): TXcmVersioned<TAsset | TAsset[]> => {
   const { version, asset, overriddenAsset } = input
 
   if (overriddenAsset) {
     return addXcmVersionHeader(
-      maybeOverrideMultiAssets(version, asset.amount, [], overriddenAsset),
+      maybeOverrideAssets(version, asset.amount, [], overriddenAsset),
       version
     )
   }

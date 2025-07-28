@@ -1,5 +1,5 @@
 import * as sdkPapi from '@paraspell/sdk';
-import { findAsset } from '@paraspell/sdk';
+import { findAssetInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import * as assets from '../../assets';
@@ -34,7 +34,7 @@ vi.mock('@paraspell/sdk', async (importOriginal) => {
     ...mod,
     hasSupportForAsset: vi.fn(),
     createApiInstanceForNode: vi.fn(),
-    findAsset: vi.fn(),
+    findAssetInfo: vi.fn(),
   };
 });
 
@@ -81,7 +81,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue(null);
+    vi.mocked(findAssetInfo).mockReturnValue(null);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
@@ -104,7 +104,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(undefined);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
@@ -128,7 +128,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue(null);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
@@ -153,7 +153,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR' });
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(false);
@@ -182,12 +182,12 @@ describe('prepareTransformedOptions', () => {
       createApiInstancePapi: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode;
 
-    const mockOriginAsset = { symbol: 'ACA' } as sdkPapi.TAsset;
+    const mockOriginAsset = { symbol: 'ACA' } as sdkPapi.TAssetInfo;
     const mockExchangeAssetFrom = { symbol: 'EXCHANGE_ACA' };
     const mockExchangeAssetTo = { symbol: 'ASTR' };
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue(mockOriginAsset);
+    vi.mocked(findAssetInfo).mockReturnValue(mockOriginAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(mockExchangeAssetFrom);
     vi.mocked(assets.getExchangeAsset).mockReturnValue(mockExchangeAssetTo);
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(true);
@@ -228,7 +228,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({
       symbol: 'EXCHANGE_ACA',
     });

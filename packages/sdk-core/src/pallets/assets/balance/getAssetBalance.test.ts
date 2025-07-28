@@ -1,8 +1,8 @@
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { DOT_MULTILOCATION } from '../../../constants'
+import { DOT_LOCATION } from '../../../constants'
 import { createApiInstanceForNode } from '../../../utils'
 import { getAssetBalance } from './getAssetBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
@@ -14,7 +14,7 @@ vi.mock('../../../utils', () => ({
 
 vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn(),
-  findAssetForNodeOrThrow: vi.fn()
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 vi.mock('./getBalanceNative', () => ({
@@ -40,9 +40,9 @@ describe('getAssetBalance', () => {
     const account = '0x123'
     const node = 'Polkadot'
     const currency = { symbol: 'DOT' }
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'DOT',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000n)
@@ -56,9 +56,9 @@ describe('getAssetBalance', () => {
     const account = '0x456'
     const node = 'Kusama'
     const currency = { symbol: 'KSM' }
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'KSM',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(200n)
@@ -77,9 +77,9 @@ describe('getAssetBalance', () => {
     const account = '0x789'
     const node = 'Kusama'
     const currency = { symbol: 'XYZ' }
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'XYZ',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(0n)
@@ -92,9 +92,9 @@ describe('getAssetBalance', () => {
     const account = '0x234'
     const node = 'Interlay'
     const currency = { symbol: 'INTR' }
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'INTR',
-      multiLocation: DOT_MULTILOCATION
+      location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)

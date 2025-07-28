@@ -4,7 +4,7 @@ export const getApiEndpoint = (func: TAssetsQuery, node: string): string => {
   const endpoints: Record<TAssetsQuery, string> = {
     ASSETS_OBJECT: `/assets/${node}`,
     ASSET_ID: `/assets/${node}/id`,
-    ASSET_MULTILOCATION: `/assets/${node}/multilocation`,
+    ASSET_LOCATION: `/assets/${node}/location`,
     RELAYCHAIN_SYMBOL: `/assets/${node}/relay-chain-symbol`,
     NATIVE_ASSETS: `/assets/${node}/native`,
     OTHER_ASSETS: `/assets/${node}/other`,

@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
 import {
-  findAssetByMultiLocation,
+  findAssetByLocation,
   getOtherAssets,
   getRelayChainSymbol,
   isForeignAsset,
   isSymbolMatch,
-  type TAsset
+  type TAssetInfo
 } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
@@ -21,8 +21,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasLocation } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class BifrostPolkadot<TApi, TRes>
@@ -38,7 +37,7 @@ class BifrostPolkadot<TApi, TRes>
     super(chain, info, type, version)
   }
 
-  getCurrencySelection(asset: TAsset) {
+  getCurrencySelection(asset: TAssetInfo) {
     const nativeAssetSymbol = this.getNativeAssetSymbol()
 
     if (asset.symbol === nativeAssetSymbol) {
@@ -71,18 +70,18 @@ class BifrostPolkadot<TApi, TRes>
   async transferToAssetHub<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, asset } = input
+    const { api, asset: assetInfo } = input
 
-    if (isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))) {
+    if (isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.node))) {
       return api.callTxMethod(await createTypeAndThenCall(this.node, input))
     }
 
-    assertHasLocation(asset)
+    assertHasLocation(assetInfo)
 
     return transferPolkadotXcm(
       {
         ...input,
-        multiAsset: createMultiAsset(this.version, asset.amount, asset.multiLocation)
+        asset: createAsset(this.version, assetInfo.amount, assetInfo.multiLocation)
       },
       'transfer_assets',
       'Unlimited'
@@ -100,8 +99,7 @@ class BifrostPolkadot<TApi, TRes>
 
   canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
     const isEthAsset =
-      asset.multiLocation &&
-      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+      asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
     if (isEthAsset) return false
     if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'

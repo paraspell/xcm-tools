@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { handleSwapExecuteTransfer, type TPapiApi, type TPapiTransaction } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -169,11 +169,11 @@ describe('prepareExtrinsics', () => {
       chain: optionsWithAssetHub.origin?.node,
       exchangeChain: optionsWithAssetHub.exchange.baseNode,
       destChain: optionsWithAssetHub.destination?.node,
-      assetFrom: {
+      assetInfoFrom: {
         ...optionsWithAssetHub.exchange.assetFrom,
         amount: BigInt(optionsWithAssetHub.amount),
       },
-      assetTo: {
+      assetInfoTo: {
         ...optionsWithAssetHub.exchange.assetTo,
         amount: 500n,
       },
@@ -236,7 +236,7 @@ describe('prepareExtrinsics', () => {
     } as TBuildTransactionsOptionsModified;
 
     let capturedCalculateMinAmountOut:
-      | ((amountIn: bigint, assetTo?: TAsset) => Promise<bigint>)
+      | ((amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>)
       | undefined;
 
     vi.mocked(handleSwapExecuteTransfer).mockImplementation((params) => {
@@ -266,7 +266,7 @@ describe('prepareExtrinsics', () => {
 
     expect(capturedCalculateMinAmountOut).toBeDefined();
     if (capturedCalculateMinAmountOut) {
-      const testAsset = { symbol: 'USDC' } as TAsset;
+      const testAsset = { symbol: 'USDC' } as TAssetInfo;
       const result1 = await capturedCalculateMinAmountOut(200n, testAsset);
       expect(result1).toBe(250n);
 

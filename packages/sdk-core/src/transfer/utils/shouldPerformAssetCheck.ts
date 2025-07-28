@@ -1,4 +1,4 @@
-import { isOverrideMultiLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
+import { isOverrideLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 export const shouldPerformAssetCheck = (
@@ -8,8 +8,8 @@ export const shouldPerformAssetCheck = (
   if (isRelayChain(origin)) return true
 
   const hasMultiAsset = 'multiasset' in currency
-  const hasOverriddenMultilocation =
-    'multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)
+  const hasOverriddenLocation =
+    'location' in currency && isOverrideLocationSpecifier(currency.location)
 
-  return !(hasMultiAsset || hasOverriddenMultilocation)
+  return !(hasMultiAsset || hasOverriddenLocation)
 }

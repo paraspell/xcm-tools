@@ -1,4 +1,4 @@
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidAddressError } from '../../errors'
@@ -11,35 +11,32 @@ vi.mock('../../utils/validateAddress', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn()
+  isTLocation: vi.fn()
 }))
 
 describe('validateDestinationAddress', () => {
-  const mockedValidateAddress = vi.mocked(validateAddress)
-  const mockedIsTMultiLocation = vi.mocked(isTMultiLocation)
-
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should call validateAddress when destination is defined, not a TMultiLocation, and address is a string', () => {
+  it('should call validateAddress when destination is defined, not a TLocation, and address is a string', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678'
     const destination: TDestination = 'Moonbeam'
 
-    mockedIsTMultiLocation.mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
 
     validateDestinationAddress(address, destination)
 
-    expect(mockedIsTMultiLocation).toHaveBeenCalledWith(destination)
-    expect(mockedValidateAddress).toHaveBeenCalledWith(address, destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination)
   })
 
   it('should propagate InvalidAddressError thrown by validateAddress', () => {
     const address = 'invalid-address'
     const destination: TDestination = 'Moonbeam'
 
-    mockedIsTMultiLocation.mockReturnValue(false)
-    mockedValidateAddress.mockImplementation(() => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(validateAddress).mockImplementation(() => {
       throw new InvalidAddressError(
         'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.'
       )
@@ -50,16 +47,16 @@ describe('validateDestinationAddress', () => {
       'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.'
     )
 
-    expect(mockedIsTMultiLocation).toHaveBeenCalledWith(destination)
-    expect(mockedValidateAddress).toHaveBeenCalledWith(address, destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination)
   })
 
   it('should propagate InvalidAddressError when EVM address is provided but destination is not EVM', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678'
     const destination: TDestination = 'Acala'
 
-    mockedIsTMultiLocation.mockReturnValue(false)
-    mockedValidateAddress.mockImplementation(() => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(validateAddress).mockImplementation(() => {
       throw new InvalidAddressError(
         'EVM address provided but destination node is not an EVM chain.'
       )
@@ -70,22 +67,22 @@ describe('validateDestinationAddress', () => {
       'EVM address provided but destination node is not an EVM chain.'
     )
 
-    expect(mockedIsTMultiLocation).toHaveBeenCalledWith(destination)
-    expect(mockedValidateAddress).toHaveBeenCalledWith(address, destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination)
   })
 
   it('should not throw an error when validateAddress succeeds for a non-EVM chain and non-EVM address', () => {
     const address = 'some-non-ethereum-address'
     const destination: TDestination = 'Acala'
 
-    mockedIsTMultiLocation.mockReturnValue(false)
-    mockedValidateAddress.mockImplementation(() => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(validateAddress).mockImplementation(() => {
       // Assume success, no error thrown
     })
 
     expect(() => validateDestinationAddress(address, destination)).not.toThrow()
-    expect(mockedIsTMultiLocation).toHaveBeenCalledWith(destination)
-    expect(mockedValidateAddress).toHaveBeenCalledWith(address, destination)
+    expect(isTLocation).toHaveBeenCalledWith(destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination)
   })
 
   it('should not perform validation when address is not a string', () => {
@@ -103,11 +100,11 @@ describe('validateDestinationAddress', () => {
 
     validateDestinationAddress(address, destination)
 
-    expect(mockedIsTMultiLocation).not.toHaveBeenCalled()
-    expect(mockedValidateAddress).not.toHaveBeenCalled()
+    expect(isTLocation).not.toHaveBeenCalled()
+    expect(validateAddress).not.toHaveBeenCalled()
   })
 
-  it('should not perform validation when destination is a TMultiLocation', () => {
+  it('should not perform validation when destination is a TLocation', () => {
     const address = 'some-address'
     const destination: TDestination = {
       parents: 1,
@@ -120,11 +117,11 @@ describe('validateDestinationAddress', () => {
       }
     }
 
-    mockedIsTMultiLocation.mockReturnValue(true)
+    vi.mocked(isTLocation).mockReturnValue(true)
 
     validateDestinationAddress(address, destination)
 
-    expect(mockedIsTMultiLocation).toHaveBeenCalledWith(destination)
-    expect(mockedValidateAddress).not.toHaveBeenCalled()
+    expect(isTLocation).toHaveBeenCalledWith(destination)
+    expect(validateAddress).not.toHaveBeenCalled()
   })
 })

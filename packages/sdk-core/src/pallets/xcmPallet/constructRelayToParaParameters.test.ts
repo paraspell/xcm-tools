@@ -1,12 +1,12 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { addXcmVersionHeader, createBeneficiaryLocation, resolveParaId } from '../../utils'
-import { createVersionedMultiAssets } from '../../utils/multiAsset'
+import { createVersionedAssets } from '../../utils/asset'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
 import { createVersionedDestination } from './utils'
 
@@ -20,8 +20,8 @@ vi.mock('./utils', () => ({
   createVersionedDestination: vi.fn()
 }))
 
-vi.mock('../../utils/multiAsset', () => ({
-  createVersionedMultiAssets: vi.fn()
+vi.mock('../../utils/asset', () => ({
+  createVersionedAssets: vi.fn()
 }))
 
 describe('constructRelayToParaParameters', () => {
@@ -36,21 +36,21 @@ describe('constructRelayToParaParameters', () => {
     destination: 'Acala',
     address: mockAddress,
     paraIdTo: mockParaId,
-    asset: { amount: mockAmount }
+    assetInfo: { amount: mockAmount }
   } as TRelayToParaOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(createBeneficiaryLocation).mockReturnValue(
-      'mockedBeneficiary' as unknown as TMultiLocation
+      'mockedBeneficiary' as unknown as TLocation
     )
     vi.mocked(addXcmVersionHeader).mockReturnValue(
-      'mockedVersionedBeneficiary' as unknown as TXcmVersioned<TMultiLocation>
+      'mockedVersionedBeneficiary' as unknown as TXcmVersioned<TLocation>
     )
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
-    vi.mocked(createVersionedMultiAssets).mockReturnValue({} as TXcmVersioned<TMultiAsset[]>)
+    vi.mocked(createVersionedAssets).mockReturnValue({} as TXcmVersioned<TAsset[]>)
     vi.mocked(createVersionedDestination).mockReturnValue(
-      'mockedDest' as unknown as TXcmVersioned<TMultiLocation>
+      'mockedDest' as unknown as TXcmVersioned<TLocation>
     )
   })
 
@@ -68,7 +68,7 @@ describe('constructRelayToParaParameters', () => {
       address: mockAddress,
       version: Version.V4
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
@@ -95,7 +95,7 @@ describe('constructRelayToParaParameters', () => {
       address: mockAddress,
       version: Version.V4
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
@@ -131,7 +131,7 @@ describe('constructRelayToParaParameters', () => {
       address: mockAddress,
       version: Version.V4
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })

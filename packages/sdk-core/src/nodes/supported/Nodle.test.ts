@@ -13,7 +13,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 describe('Nodle', () => {
   let nodle: Nodle<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'NODL', amount: 100n },
+    assetInfo: { symbol: 'NODL', amount: 100n },
     scenario: 'ParaToPara'
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 

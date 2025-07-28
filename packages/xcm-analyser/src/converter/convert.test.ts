@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
-import { type MultiLocation } from '../types';
+import { type Location } from '../types';
 import { convertMultilocationToUrl, convertXCMToUrls } from './convert';
 
 describe('convert', () => {
-  it('convert multilocation to URL', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X2: [
@@ -20,12 +20,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(41)');
   });
 
-  it('convert multilocation to URL with parents', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL with parents', () => {
+    const location: Location = {
       parents: '3',
       interior: {
         X2: [
@@ -39,12 +39,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('../../../PalletInstance(50)/GeneralIndex(41)');
   });
 
-  it('convert multilocation to URL with parachain interior', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL with parachain interior', () => {
+    const location: Location = {
       parents: '1',
       interior: {
         X1: {
@@ -53,12 +53,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('../Parachain(2006)');
   });
 
-  it('convert multilocation to URL with account interior', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL with account interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -70,12 +70,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./AccountId32(null, 0x123)');
   });
 
-  it('should convert multilocation to URL with AccountIndex64 interior', () => {
-    const multilocation: MultiLocation = {
+  it('should convert location to URL with AccountIndex64 interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -87,12 +87,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./AccountIndex64(null, 100)');
   });
 
-  it('should convert multilocation to URL with AccountKey20 interior', () => {
-    const multilocation: MultiLocation = {
+  it('should convert location to URL with AccountKey20 interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -104,12 +104,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./AccountKey20(null, 0x123)');
   });
 
-  it('should convert multilocation to URL with GeneralKey interior', () => {
-    const multilocation: MultiLocation = {
+  it('should convert location to URL with GeneralKey interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -120,12 +120,12 @@ describe('convert', () => {
         },
       },
     };
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./GeneralKey(10, 0xabc)');
   });
 
-  it('should convert multilocation to URL with OnlyChild interior', () => {
-    const multilocation: MultiLocation = {
+  it('should convert location to URL with OnlyChild interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -134,12 +134,12 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./OnlyChild(child)');
   });
 
-  it('should convert multilocation to URL with GlobalConsensus interior', () => {
-    const multilocation: MultiLocation = {
+  it('should convert location to URL with GlobalConsensus interior', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X1: {
@@ -148,35 +148,35 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./GlobalConsensus(consensus)');
   });
 
-  it('convert multilocation to URL with currency and amount multilocation', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL with currency and amount location', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
   });
 
-  it('convert multilocation to URL with currency and amount multilocation with comma', () => {
-    const multilocation: MultiLocation = {
+  it('convert location to URL with currency and amount location with comma', () => {
+    const location: Location = {
       parents: '0',
       interior: {
         X2: [{ PalletInstance: '50' }, { GeneralIndex: '1,984' }],
       },
     };
 
-    const result = convertMultilocationToUrl(multilocation);
+    const result = convertMultilocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
   });
 
-  it('convert multilocation to URL from tx arguments with one multilocation', () => {
+  it('convert location to URL from tx arguments with one location', () => {
     const xcmCallArguments = [
       '1', // currency_id for KSM
       '100000000000', // amount - 0.1 KSM
@@ -208,7 +208,7 @@ describe('convert', () => {
     ]);
   });
 
-  it('convert multilocation to URL from tx arguments with multiple multilocations', () => {
+  it('convert location to URL from tx arguments with multiple locations', () => {
     const xcmCallArguments = [
       {
         V3: {
@@ -260,7 +260,7 @@ describe('convert', () => {
     ]);
   });
 
-  it('convert multilocation to URL from tx arguments with no multilocations', () => {
+  it('convert location to URL from tx arguments with no locations', () => {
     const xcmCallArguments = [
       '1', // currency_id for KSM
       '100000000000', // amount - 0.1 KSM
@@ -271,7 +271,7 @@ describe('convert', () => {
     expect(result).toStrictEqual([]);
   });
 
-  it('convert multilocation to URL with X2 with 3 elements', () => {
+  it('convert location to URL with X2 with 3 elements', () => {
     const xcmCallArguments = [
       {
         V3: [
@@ -315,7 +315,7 @@ describe('convert', () => {
     expect(t).toThrowError(ZodError);
   });
 
-  it('convert multilocation to URL with plurality', () => {
+  it('convert location to URL with plurality', () => {
     const xcmCallArguments = [
       {
         V3: [

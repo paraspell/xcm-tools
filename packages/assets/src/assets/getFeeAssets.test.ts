@@ -1,8 +1,8 @@
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../errors'
-import type { TAsset, TForeignAsset, TNativeAsset, TNodeAssets } from '../types'
+import type { TAssetInfo, TForeignAssetInfo, TNativeAssetInfo, TChainAssetsInfo } from '../types'
 import { getAssetsObject } from './assets'
 import { getFeeAssets } from './getFeeAssets'
 
@@ -10,11 +10,11 @@ vi.mock('./assets', () => ({
   getAssetsObject: vi.fn()
 }))
 
-const createAsset = (symbol: string, opts: Partial<TAsset> = {}): TForeignAsset => ({
+const createAsset = (symbol: string, opts: Partial<TAssetInfo> = {}): TForeignAssetInfo => ({
   symbol,
   decimals: 12,
   existentialDeposit: '0',
-  multiLocation: {} as TMultiLocation,
+  location: {} as TLocation,
   ...opts
 })
 
@@ -33,7 +33,7 @@ describe('getFeeAssets', () => {
       nativeAssets: [mainNative],
       otherAssets: [feeAsset],
       nativeAssetSymbol: 'NATIVE'
-    } as TNodeAssets
+    } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 
@@ -45,13 +45,13 @@ describe('getFeeAssets', () => {
   })
 
   it('falls back to the main native asset when no fee assets are present', () => {
-    const mainNative = createAsset('NATIVE', { isNative: true }) as TNativeAsset
+    const mainNative = createAsset('NATIVE', { isNative: true }) as TNativeAssetInfo
 
     const assetsObject = {
       nativeAssets: [mainNative],
       otherAssets: [createAsset('FOO')],
       nativeAssetSymbol: 'NATIVE'
-    } as TNodeAssets
+    } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 
@@ -61,13 +61,13 @@ describe('getFeeAssets', () => {
   })
 
   it('throws InvalidCurrencyError when neither fee assets nor main native asset exist', () => {
-    const otherNative = createAsset('BAR', { isNative: true }) as TNativeAsset
+    const otherNative = createAsset('BAR', { isNative: true }) as TNativeAssetInfo
 
     const assetsObject = {
       nativeAssets: [otherNative],
-      otherAssets: [] as TForeignAsset[],
+      otherAssets: [] as TForeignAssetInfo[],
       nativeAssetSymbol: 'NATIVE'
-    } as TNodeAssets
+    } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 

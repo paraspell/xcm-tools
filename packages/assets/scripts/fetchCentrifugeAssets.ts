@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import type { ApiPromise } from '@polkadot/api'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
 export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
   const [module, method] = query.split('.')
@@ -27,13 +27,11 @@ export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
         const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         const eraObj = era as any
 
-        const multiLocationJson = value.toJSON() as any
+        const locationJson = value.toJSON() as any
 
-        const multiLocation =
-          multiLocationJson.location !== null
-            ? capitalizeMultiLocation(
-                multiLocationJson.location.v3 ?? multiLocationJson.location.v4
-              )
+        const location =
+          locationJson.location !== null
+            ? capitalizeLocation(locationJson.location.v3 ?? locationJson.location.v4)
             : undefined
 
         return {
@@ -43,7 +41,7 @@ export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
               : Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
           symbol,
           decimals: +decimals,
-          multiLocation,
+          location,
           existentialDeposit: existentialDeposit
         }
       }

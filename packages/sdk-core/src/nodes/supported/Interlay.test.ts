@@ -1,4 +1,4 @@
-import type { TNativeAsset, WithAmount } from '@paraspell/assets'
+import type { TNativeAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -50,7 +50,7 @@ describe('Interlay', () => {
         symbol: 'INTR',
         amount: 100n,
         isNative: true
-      } as WithAmount<TNativeAsset>
+      } as WithAmount<TNativeAssetInfo>
     }
 
     interlay.transferXTokens(inputWithoutCurrencyID)

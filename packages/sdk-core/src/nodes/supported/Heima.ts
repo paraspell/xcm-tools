@@ -20,7 +20,7 @@ class Heima<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXC
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset } = input
+    const { scenario, assetInfo: asset } = input
 
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

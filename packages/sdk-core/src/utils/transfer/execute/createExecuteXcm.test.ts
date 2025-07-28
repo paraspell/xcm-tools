@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_MULTILOCATION } from '../../../constants'
+import { DOT_LOCATION } from '../../../constants'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
 import { assertHasLocation } from '../../assertions'
@@ -10,7 +10,7 @@ import { createBeneficiaryLocation, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
 vi.mock('../../../constants', () => ({
-  DOT_MULTILOCATION: { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+  DOT_LOCATION: { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 }))
 
 vi.mock('../../../pallets/xcmPallet/utils', () => ({
@@ -26,13 +26,13 @@ vi.mock('../../assertions')
 
 describe('createExecuteExchangeXcm', () => {
   const mockOrigin = 'Hydration'
-  const dummyDest = 'destValue' as unknown as TMultiLocation
-  const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
+  const dummyDest = 'destValue' as unknown as TLocation
+  const dummyBeneficiary = 'beneficiaryValue' as unknown as TLocation
 
   beforeEach(() => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(dummyBeneficiary)
-    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TMultiLocation)
+    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TLocation)
   })
 
   afterEach(() => {
@@ -46,8 +46,8 @@ describe('createExecuteExchangeXcm', () => {
     const input = {
       api: fakeApi,
       version: Version.V4,
-      asset: {
-        multiLocation: { foo: 'bar' },
+      assetInfo: {
+        location: { foo: 'bar' },
         amount: 1000n
       },
       destination: 'dest',
@@ -64,10 +64,10 @@ describe('createExecuteExchangeXcm', () => {
     const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
 
     expect(assertHasLocation).toHaveBeenCalledOnce()
-    expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
+    expect(assertHasLocation).toHaveBeenCalledWith(input.assetInfo)
 
     expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.asset.multiLocation)
+    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.assetInfo.location)
 
     expect(result).toBe('result')
     expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
@@ -108,7 +108,7 @@ describe('createExecuteExchangeXcm', () => {
     // teleport xcm[0]: BuyExecution (dest)
     expect(teleport.xcm[0].BuyExecution).toEqual({
       fees: {
-        id: input.asset.multiLocation,
+        id: input.assetInfo.location,
         fun: { Fungible: destFee }
       },
       weight_limit: 'Unlimited'
@@ -119,7 +119,7 @@ describe('createExecuteExchangeXcm', () => {
       give: { Wild: { AllCounted: 1 } },
       want: [
         {
-          id: DOT_MULTILOCATION,
+          id: DOT_LOCATION,
           fun: { Fungible: 100000000n }
         }
       ],
@@ -139,8 +139,8 @@ describe('createExecuteExchangeXcm', () => {
     }
     const input = {
       api: fakeApi,
-      asset: {
-        multiLocation: { foo: 'bar' },
+      assetInfo: {
+        location: { foo: 'bar' },
         amount: 2000
       },
       scenario: 'scenario-default',
@@ -160,10 +160,10 @@ describe('createExecuteExchangeXcm', () => {
     expect(result).toBe('defaultResult')
 
     expect(assertHasLocation).toHaveBeenCalledOnce()
-    expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
+    expect(assertHasLocation).toHaveBeenCalledWith(input.assetInfo)
 
     expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.asset.multiLocation)
+    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.assetInfo.location)
 
     expect(createDestination).toHaveBeenCalledWith(
       Version.V4,

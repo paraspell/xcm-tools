@@ -1,4 +1,4 @@
-import type { TAsset, TNodePolkadotKusama, TPapiApi } from '@paraspell/sdk';
+import type { TAssetInfo, TNodePolkadotKusama, TPapiApi } from '@paraspell/sdk';
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk';
 
 import { FALLBACK_FEE_CALC_ADDRESS, FALLBACK_FEE_CALC_EVM_ADDRESS } from '../consts';
@@ -9,7 +9,7 @@ export const canBuildToExchangeTx = async (
   options: TCommonTransferOptions | TGetBestAmountOutOptions,
   exchangeNode: TNodePolkadotKusama,
   originApi: TPapiApi | undefined,
-  assetFromOrigin: TAsset | null | undefined,
+  assetFromOrigin: TAssetInfo | null | undefined,
 ): Promise<{ success: true } | { success: false; error: Error }> => {
   // Try building the to exchange extrinsic to see if it will succeed for this exchange
 

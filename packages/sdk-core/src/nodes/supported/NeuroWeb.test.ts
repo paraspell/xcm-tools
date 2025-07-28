@@ -13,7 +13,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 describe('NeuroWeb', () => {
   let neuroweb: NeuroWeb<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'DOT', amount: 100n }
+    assetInfo: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {

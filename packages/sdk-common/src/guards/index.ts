@@ -1,1 +1,1 @@
-export * from './isTMultiLocation'
+export * from './isTLocation'

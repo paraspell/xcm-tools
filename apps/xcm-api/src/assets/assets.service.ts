@@ -3,7 +3,7 @@ import {
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
-  getAssetMultiLocation,
+  getAssetLocation,
   getAssetsObject,
   getFeeAssets,
   getNativeAssets,
@@ -20,7 +20,7 @@ import {
 
 import { validateNode } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
-import { AssetMultiLocationDto } from './dto/AssetMultiLocationDto.js';
+import { AssetLocationDto } from './dto/AssetLocationDto.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 
@@ -40,10 +40,10 @@ export class AssetsService {
     return id;
   }
 
-  getAssetMultiLocation(node: string, { currency }: AssetMultiLocationDto) {
+  getAssetLocation(node: string, { currency }: AssetLocationDto) {
     validateNode(node, { withRelayChains: true });
     return JSON.stringify(
-      getAssetMultiLocation(node as TNodeWithRelayChains, currency),
+      getAssetLocation(node as TNodeWithRelayChains, currency),
     );
   }
 

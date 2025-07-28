@@ -1,5 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -10,7 +10,7 @@ import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
@@ -71,7 +71,7 @@ describe('getXcmFeeEstimate', () => {
   })
 
   it('returns bridge constants polkadot → kusama with sufficiency checks', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
@@ -111,7 +111,7 @@ describe('getXcmFeeEstimate', () => {
   })
 
   it('returns bridge constants kusama → polkadot with sufficiency checks', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'KSM' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'KSM' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
@@ -160,7 +160,7 @@ describe('getXcmFeeEstimate', () => {
       sufficient: true
     })
     vi.mocked(padFee).mockImplementationOnce(() => 2600n)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ABC' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ABC' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('UNIT')
     vi.mocked(getReverseTxFee).mockResolvedValue(rawDest)
 

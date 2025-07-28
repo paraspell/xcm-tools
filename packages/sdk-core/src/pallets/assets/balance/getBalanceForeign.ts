@@ -1,4 +1,4 @@
-import { findAssetForNodeOrThrow } from '@paraspell/assets'
+import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { getDefaultPallet } from '@paraspell/pallets'
 
 import { InvalidParameterError } from '../../../errors'
@@ -15,7 +15,7 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
 }: TGetBalanceForeignOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
 
-  const asset = findAssetForNodeOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(node, currency, null)
 
   if (node === 'Ethereum') {
     return getEthErc20Balance(currency, address)

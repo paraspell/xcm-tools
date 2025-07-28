@@ -1,7 +1,7 @@
 import {
   isRelayChain,
   Parents,
-  type TMultiLocation,
+  type TLocation,
   type TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -53,7 +53,7 @@ describe('localizeLocation', () => {
 
   describe('Parachain junction filtering', () => {
     it('should filter out matching Parachain junction and set parents to 0', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X3: [{ Parachain: 2000 }, { PalletInstance: 50 }, { GeneralIndex: 50000028 }]
@@ -67,7 +67,7 @@ describe('localizeLocation', () => {
     })
 
     it('should NOT filter out non-matching Parachain junction and keep parents unchanged', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X3: [{ Parachain: 3000 }, { PalletInstance: 50 }, { GeneralIndex: 50000028 }]
@@ -79,7 +79,7 @@ describe('localizeLocation', () => {
     })
 
     it('should return interior as "Here" and set parents to 0 if only junction is matching Parachain', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 2,
         interior: {
           X1: [{ Parachain: 2000 }]
@@ -93,7 +93,7 @@ describe('localizeLocation', () => {
 
   describe('no Parachain filtering needed', () => {
     it('should not change anything if no Parachain is present', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 3,
         interior: {
           X2: [{ PalletInstance: 99 }, { GeneralKey: { length: 3, data: 'abc' } }]
@@ -105,7 +105,7 @@ describe('localizeLocation', () => {
     })
 
     it('should preserve complex junctions when no Parachain matches', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X5: [
@@ -125,7 +125,7 @@ describe('localizeLocation', () => {
 
   describe('relay chain specific behavior', () => {
     it('should handle relay chain with Parachain junction', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 0,
         interior: {
           X2: [{ Parachain: 1000 }, { GeneralIndex: 1 }]
@@ -139,7 +139,7 @@ describe('localizeLocation', () => {
     it('should set parents to 0 when relay chain processes empty interior result', () => {
       vi.mocked(getParaId).mockReturnValueOnce(1000)
 
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X1: [{ Parachain: 1000 }]
@@ -153,7 +153,7 @@ describe('localizeLocation', () => {
 
   describe('edge cases', () => {
     it('should handle X1 with single non-Parachain junction', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 2,
         interior: {
           X1: [{ AccountId32: { id: '0xabc', network: null } }]
@@ -165,7 +165,7 @@ describe('localizeLocation', () => {
     })
 
     it('should handle deeply nested junction structures', () => {
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X8: [
@@ -197,7 +197,7 @@ describe('localizeLocation', () => {
 
     it('should handle different node types correctly', () => {
       // Test with AssetHubPolkadot (paraId 1000)
-      const input: TMultiLocation = {
+      const input: TLocation = {
         parents: 1,
         interior: {
           X2: [{ Parachain: 1000 }, { GeneralIndex: 42 }]
@@ -211,7 +211,7 @@ describe('localizeLocation', () => {
     })
 
     it('should preserve parent count when no changes are made', () => {
-      const testCases: TMultiLocation[] = [
+      const testCases: TLocation[] = [
         { parents: Parents.ZERO, interior: { X1: [{ GeneralIndex: 1 }] } },
         { parents: Parents.ONE, interior: { X2: [{ PalletInstance: 1 }, { GeneralIndex: 2 }] } },
         { parents: Parents.TWO, interior: { X1: [{ Parachain: 9999 }] } } // Non-matching parachain

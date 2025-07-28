@@ -1,6 +1,6 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 
-import type { TOverrideMultiLocationSpecifier, TSymbolSpecifier } from '../types'
+import type { TOverrideLocationSpecifier, TSymbolSpecifier } from '../types'
 
 export const Native = (symbol: string): TSymbolSpecifier => ({
   type: 'Native',
@@ -17,7 +17,7 @@ export const ForeignAbstract = (symbol: string): TSymbolSpecifier => ({
   value: symbol
 })
 
-export const Override = (multiLocation: TMultiLocation): TOverrideMultiLocationSpecifier => ({
+export const Override = (location: TLocation): TOverrideLocationSpecifier => ({
   type: 'Override',
-  value: multiLocation
+  value: location
 })

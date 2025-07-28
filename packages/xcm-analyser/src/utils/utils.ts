@@ -1,7 +1,7 @@
-import { MultiLocationSchema } from '../schema';
+import { LocationSchema } from '../schema';
 import type {
   Junction,
-  MultiLocation,
+  Location,
   TJunctionAccountId32,
   TJunctionAccountIndex64,
   TJunctionAccountKey20,
@@ -43,7 +43,7 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
   throw new Error('Unknown junction type');
 };
 
-export function findMultiLocationInObject(obj: unknown): MultiLocation | null {
+export function findLocationInObject(obj: unknown): Location | null {
   function hasSpecificKeys(value: unknown): boolean {
     return (
       typeof value === 'object' &&
@@ -54,9 +54,9 @@ export function findMultiLocationInObject(obj: unknown): MultiLocation | null {
     );
   }
 
-  function searchObject(value: unknown): MultiLocation | null {
+  function searchObject(value: unknown): Location | null {
     if (hasSpecificKeys(value)) {
-      return MultiLocationSchema.parse(value);
+      return LocationSchema.parse(value);
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
         const result = searchObject((value as Record<string, unknown>)[key]);

@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type {
-  TAsset,
+  TAssetInfo,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
@@ -53,11 +53,7 @@ export type TCurrencyEntry = {
   customCurrency: string;
   amount: string;
   isCustomCurrency: boolean;
-  customCurrencyType?:
-    | 'id'
-    | 'symbol'
-    | 'multilocation'
-    | 'overridenMultilocation';
+  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
   customCurrencySymbolSpecifier?:
     | 'auto'
     | 'native'
@@ -75,7 +71,9 @@ export type FormValues = {
   useApi: boolean;
 };
 
-export type TCurrencyEntryTransformed = TCurrencyEntry & { currency?: TAsset };
+export type TCurrencyEntryTransformed = TCurrencyEntry & {
+  currency?: TAssetInfo;
+};
 
 export type FormValuesTransformed = FormValues & {
   currencies: TCurrencyEntryTransformed[];
@@ -174,7 +172,7 @@ const XcmUtilsForm: FC<Props> = ({
 
   const transformCurrency = (
     entry: TCurrencyEntry,
-    currencyMap: Record<string, TAsset>,
+    currencyMap: Record<string, TAssetInfo>,
   ) => {
     if (entry.isCustomCurrency) {
       // Custom currency doesn't map to currencyMap

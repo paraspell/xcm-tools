@@ -1,15 +1,17 @@
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../errors'
-import type { TAsset, TNativeAsset } from '../types'
+import type { TAssetInfo, TNativeAssetInfo } from '../types'
 import { getAssetsObject } from './assets'
 
-export const getFeeAssets = (node: TNodeDotKsmWithRelayChains): Omit<TAsset, 'isFeeAsset'>[] => {
+export const getFeeAssets = (
+  node: TNodeDotKsmWithRelayChains
+): Omit<TAssetInfo, 'isFeeAsset'>[] => {
   const assetsObject = getAssetsObject(node)
 
   const allAssets = [...assetsObject.nativeAssets, ...assetsObject.otherAssets]
 
-  const stripFlag = ({ isFeeAsset: _flag, ...rest }: TAsset) => rest
+  const stripFlag = ({ isFeeAsset: _flag, ...rest }: TAssetInfo) => rest
 
   const feeAssets = allAssets.filter(asset => asset.isFeeAsset === true).map(stripFlag)
 
@@ -26,7 +28,7 @@ export const getFeeAssets = (node: TNodeDotKsmWithRelayChains): Omit<TAsset, 'is
   }
 
   const nativeIncluded = feeAssets.some(
-    a => a.symbol === mainNativeAsset.symbol && (a as TNativeAsset).isNative === true
+    a => a.symbol === mainNativeAsset.symbol && (a as TNativeAssetInfo).isNative === true
   )
 
   if (!nativeIncluded) {

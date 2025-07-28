@@ -1,9 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
-import {
-  findAssetByMultiLocation,
-  findAssetForNodeOrThrow,
-  InvalidCurrencyError
-} from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -48,8 +44,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 
 vi.mock('@paraspell/assets', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
-  findAssetByMultiLocation: vi.fn(),
-  findAssetForNodeOrThrow: vi.fn()
+  findAssetInfoByLoc: vi.fn(),
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 describe('Hydration', () => {
@@ -102,11 +98,11 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolkadotAddress',
-        asset: {
+        assetInfo: {
           symbol: 'WETH',
           assetId: '0x1234567890abcdef',
           amount: 1000n,
-          multiLocation: {
+          location: {
             parents: 2,
             interior: {
               X2: [
@@ -131,13 +127,13 @@ describe('Hydration', () => {
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
+      vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     })
 
     it('should call api.callTxMethod with correct parameters', async () => {
       const spy = vi.spyOn(mockApi, 'callTxMethod')
 
-      vi.mocked(findAssetByMultiLocation).mockReturnValue({
+      vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
         symbol: 'WETH',
         decimals: 18
@@ -158,7 +154,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer using symbol', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.asset = {
+      mockInput.assetInfo = {
         symbol: 'DOT',
         assetId: '1',
         amount: 1000n
@@ -180,7 +176,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer using assetId', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.asset = { symbol: 'DOT', assetId: '3', amount: 1000n }
+      mockInput.assetInfo = { symbol: 'DOT', assetId: '3', amount: 1000n }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -200,7 +196,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'DOT', assetId: '1', amount: 1000n },
+        assetInfo: { symbol: 'DOT', assetId: '1', amount: 1000n },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version
@@ -221,7 +217,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, multiLocation: {} },
+        assetInfo: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, location: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version
@@ -246,7 +242,7 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
-        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, multiLocation: {} },
+        assetInfo: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, location: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
         version: hydration.version
@@ -333,7 +329,7 @@ describe('Hydration', () => {
     it('should return false when destination is Ethereum', () => {
       const result = hydration['canUseXTokens']({
         to: 'Ethereum',
-        asset: { multiLocation: {} }
+        asset: { location: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(false)
     })
@@ -341,7 +337,7 @@ describe('Hydration', () => {
     it('should return true when destination is not Ethereum', () => {
       const result = hydration['canUseXTokens']({
         to: 'Acala',
-        asset: { multiLocation: {} }
+        asset: { location: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(true)
     })
@@ -349,7 +345,7 @@ describe('Hydration', () => {
     it('should return false when destination AssetHubPolkadot and currency is DOT', () => {
       const result = hydration['canUseXTokens']({
         to: 'AssetHubPolkadot',
-        asset: { symbol: 'DOT', multiLocation: {} }
+        asset: { symbol: 'DOT', location: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(false)
     })

@@ -51,9 +51,9 @@ export const CurrencySelection: FC<Props> = ({
   const options = [
     { label: 'Asset ID', value: 'id' },
     { label: 'Symbol', value: 'symbol' },
-    { label: 'Multi-location', value: 'multilocation' },
+    { label: 'Location', value: 'location' },
     ...(currencies.length === 1
-      ? [{ label: 'Override Multi-location', value: 'overridenMultilocation' }]
+      ? [{ label: 'Override location', value: 'overridenLocation' }]
       : []),
   ];
 
@@ -79,10 +79,10 @@ export const CurrencySelection: FC<Props> = ({
           />
         )}
 
-      {isCustomCurrency && customCurrencyType === 'multilocation' && (
+      {isCustomCurrency && customCurrencyType === 'location' && (
         <JsonInput
           size={size}
-          placeholder="Input Multi-Location JSON or interior junctions JSON"
+          placeholder="Input JSON location or interior junctions"
           formatOnBlur
           autosize
           minRows={10}
@@ -90,10 +90,10 @@ export const CurrencySelection: FC<Props> = ({
         />
       )}
 
-      {isCustomCurrency && customCurrencyType === 'overridenMultilocation' && (
+      {isCustomCurrency && customCurrencyType === 'overridenLocation' && (
         <JsonInput
           size={size}
-          placeholder="Provide the XCM Multi-Location JSON to override the default configuration"
+          placeholder="Provide the JSON location to override the default configuration"
           formatOnBlur
           autosize
           minRows={10}

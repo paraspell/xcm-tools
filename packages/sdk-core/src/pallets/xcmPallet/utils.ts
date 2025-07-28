@@ -1,13 +1,13 @@
 import { InvalidCurrencyError, type TCurrencyInput } from '@paraspell/assets'
 import type {
   TJunction,
-  TMultiLocation,
+  TLocation,
   TNodeDotKsmWithRelayChains,
   TRelayChain,
   Version
 } from '@paraspell/sdk-common'
 import { getJunctionValue, replaceBigInt } from '@paraspell/sdk-common'
-import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
+import { isTLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
@@ -24,7 +24,7 @@ export const createDestination = (
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
-): TMultiLocation => {
+): TLocation => {
   const scenario = resolveScenario(origin, destination)
   const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
   const interior =
@@ -32,11 +32,9 @@ export const createDestination = (
       ? 'Here'
       : createX1Payload(version, junction ?? { Parachain: nodeId })
 
-  const isMultiLocationDestination = isTMultiLocation(destination)
+  const isLocationDestination = isTLocation(destination)
 
-  return isMultiLocationDestination
-    ? destination
-    : ({ parents: parentsResolved, interior } as TMultiLocation)
+  return isLocationDestination ? destination : ({ parents: parentsResolved, interior } as TLocation)
 }
 
 export const createVersionedDestination = (
@@ -46,7 +44,7 @@ export const createVersionedDestination = (
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
-): TXcmVersioned<TMultiLocation> => {
+): TXcmVersioned<TLocation> => {
   const plainDestination = createDestination(
     version,
     origin,
@@ -63,8 +61,8 @@ export const createBridgeDestination = (
   ecosystem: 'Kusama' | 'Polkadot',
   destination: TDestination,
   nodeId?: number
-): TMultiLocation => {
-  const multiLocation: TMultiLocation = {
+): TLocation => {
+  const location: TLocation = {
     parents: Parents.TWO,
     interior: {
       X2: [
@@ -77,16 +75,16 @@ export const createBridgeDestination = (
       ]
     }
   }
-  return isTMultiLocation(destination) ? destination : multiLocation
+  return isTLocation(destination) ? destination : location
 }
 
-export const resolveTNodeFromMultiLocation = (
+export const resolveTNodeFromLocation = (
   relayChain: TRelayChain,
-  multiLocation: TMultiLocation
+  location: TLocation
 ): TNodePolkadotKusama => {
-  const parachainId = getJunctionValue(multiLocation, 'Parachain')
+  const parachainId = getJunctionValue(location, 'Parachain')
   if (parachainId === undefined) {
-    throw new InvalidParameterError('Parachain ID not found in destination multi-location.')
+    throw new InvalidParameterError('Parachain ID not found in destination location.')
   }
 
   const node =
@@ -95,9 +93,7 @@ export const resolveTNodeFromMultiLocation = (
     ) ?? null
 
   if (node === null) {
-    throw new InvalidParameterError(
-      'Node with specified paraId not found in destination multi location.'
-    )
+    throw new InvalidParameterError('Node with specified paraId not found in destination location.')
   }
 
   return node
@@ -108,9 +104,9 @@ export const throwUnsupportedCurrency = (
   node: string,
   { isDestination } = { isDestination: false }
 ): never => {
-  if ('multilocation' in currency) {
+  if ('location' in currency) {
     throw new InvalidCurrencyError(`
-      Selected chain doesn't support multilocation you provided. Maybe you meant custom multilocation. If so, you need to use override option. Your selection should look like this: {multilocation: Override(${JSON.stringify(currency.multilocation)})}.`)
+      Selected chain doesn't support location you provided. Maybe you meant custom location. If so, you need to use override option. Your selection should look like this: {location: Override(${JSON.stringify(currency.location)})}.`)
   }
 
   throw new InvalidCurrencyError(

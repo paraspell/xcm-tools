@@ -1,4 +1,4 @@
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
@@ -13,7 +13,7 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
 }: TGetAssetBalanceOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
 
-  const asset = findAssetForNodeOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(node, currency, null)
 
   const isNativeSymbol = asset.symbol === getNativeAssetSymbol(node)
 

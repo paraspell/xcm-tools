@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
@@ -34,7 +34,7 @@ describe('Moonbeam', () => {
     api,
     version: Version.V5,
     senderAddress: 'senderAddress',
-    asset: {
+    assetInfo: {
       symbol: 'GLMR',
       amount: 100n
     }
@@ -52,11 +52,11 @@ describe('Moonbeam', () => {
     expect(node.version).toBe(Version.V5)
   })
 
-  it('should use correct multiLocation when transfering native asset', async () => {
+  it('should use correct location when transfering native asset', async () => {
     const mockInputNative = {
       ...mockInput,
       scenario: 'ParaToPara',
-      asset: { symbol: 'GLMR', amount: 100n }
+      assetInfo: { symbol: 'GLMR', amount: 100n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputNative)
@@ -64,9 +64,9 @@ describe('Moonbeam', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputNative,
-        multiAsset: {
+        asset: {
           fun: {
-            Fungible: mockInput.asset.amount
+            Fungible: mockInput.assetInfo.amount
           },
           id: {
             parents: 0,
@@ -83,11 +83,11 @@ describe('Moonbeam', () => {
     )
   })
 
-  it('should use correct multiLocation when transfering DOT to relay', async () => {
+  it('should use correct location when transfering DOT to relay', async () => {
     const mockInputDot = {
       ...mockInput,
       scenario: 'ParaToRelay',
-      asset: { symbol: 'DOT', amount: 100n, multiLocation: DOT_MULTILOCATION }
+      assetInfo: { symbol: 'DOT', amount: 100n, location: DOT_LOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputDot)
@@ -95,10 +95,10 @@ describe('Moonbeam', () => {
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
   })
 
-  it('should use correct multiLocation when transfering USDT', async () => {
+  it('should use correct location when transfering USDT', async () => {
     const asset = {
       symbol: 'USDT',
-      multiLocation: {
+      location: {
         parents: 1,
         interior: {
           X3: [
@@ -119,7 +119,7 @@ describe('Moonbeam', () => {
     const mockInputUsdt = {
       ...mockInput,
       scenario: 'ParaToPara',
-      asset
+      assetInfo: asset
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputUsdt)
@@ -127,11 +127,11 @@ describe('Moonbeam', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputUsdt,
-        multiAsset: {
+        asset: {
           fun: {
-            Fungible: mockInput.asset.amount
+            Fungible: mockInput.assetInfo.amount
           },
-          id: asset.multiLocation
+          id: asset.location
         }
       },
       'transfer_assets',

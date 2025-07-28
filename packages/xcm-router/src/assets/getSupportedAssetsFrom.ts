@@ -1,4 +1,4 @@
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
 import { getAssets } from '@paraspell/sdk';
 
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
@@ -16,7 +16,7 @@ import { isRouterAssetEqual } from './isRouterAssetEqual';
 export const getSupportedAssetsFrom = (
   from: TNodeWithRelayChains | undefined,
   exchange: TExchangeInput,
-): TAsset[] => {
+): TAssetInfo[] => {
   if (exchange === undefined) {
     if (!from) return [];
     return getAssets(from);
@@ -27,7 +27,7 @@ export const getSupportedAssetsFrom = (
     : getExchangeAssets(exchange);
 
   if (!from || (!Array.isArray(exchange) && from === createDexNodeInstance(exchange).node)) {
-    return exchangeAssets as TAsset[];
+    return exchangeAssets as TAssetInfo[];
   }
 
   const fromAssets = getAssets(from);

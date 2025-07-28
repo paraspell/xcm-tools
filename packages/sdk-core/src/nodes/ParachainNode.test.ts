@@ -56,9 +56,9 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
   }
 })
 
-vi.mock('../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
-  createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec')
+vi.mock('../utils/asset', () => ({
+  createAsset: vi.fn().mockReturnValue('asset'),
+  createVersionedAssets: vi.fn().mockReturnValue('currencySpec')
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -66,7 +66,7 @@ vi.mock('@paraspell/assets', async () => {
   return {
     ...actual,
     getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
-    findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
+    findAssetInfoByLoc: vi.fn().mockReturnValue({ symbol: 'DOT' }),
     getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
     isForeignAsset: vi.fn().mockReturnValue(true),
     isNodeEvm: vi.fn().mockReturnValue(false),
@@ -366,7 +366,7 @@ describe('ParachainNode', () => {
       isNative: true
     })
 
-    expect(result).toBe('multiAsset')
+    expect(result).toBe('asset')
   })
 
   it('should perform transfer to ethereum', async () => {
@@ -378,13 +378,13 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(options.api, 'callTxMethod')
 
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123' })
 
     await node.exposeTransferToEthereum(options)
 
@@ -404,7 +404,7 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: undefined
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -413,7 +413,7 @@ describe('ParachainNode', () => {
     )
   })
 
-  it('should throw if the address is multi-location', async () => {
+  it('should throw if the address is location', async () => {
     const options = {
       api: {
         accountToHex: vi.fn(),
@@ -422,9 +422,9 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456',
-      address: DOT_MULTILOCATION
+      address: DOT_LOCATION
     } as TPolkadotXCMTransferOptions<unknown, unknown>
     await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(
       'Multi-Location address is not supported for this transfer type.'
@@ -432,7 +432,7 @@ describe('ParachainNode', () => {
   })
 
   describe('transferLocal', () => {
-    it('should throw an error if the address is multi-location', () => {
+    it('should throw an error if the address is location', () => {
       const options = {
         api: {
           accountToHex: vi.fn(),
@@ -441,9 +441,9 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
-        address: DOT_MULTILOCATION
+        address: DOT_LOCATION
       } as TSendInternalOptions<unknown, unknown>
 
       expect(() => node.transferLocal(options)).toThrow(InvalidAddressError)
@@ -458,7 +458,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
@@ -482,7 +482,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
@@ -507,7 +507,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
@@ -573,7 +573,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '10', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '10', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
@@ -603,7 +603,7 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 

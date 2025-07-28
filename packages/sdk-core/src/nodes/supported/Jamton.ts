@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Jamton Parachain
 
-import { findAssetForNodeOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
+import { findAssetInfoOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, createMultiAsset } from '../../utils'
+import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -38,7 +38,7 @@ class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     }
 
     if (isSymbolMatch(asset.symbol, 'WUD')) {
-      const usdt = findAssetForNodeOrThrow(this.node, { symbol: 'USDt' }, null)
+      const usdt = findAssetInfoOrThrow(this.node, { symbol: 'USDt' }, null)
       assertHasLocation(asset)
       assertHasLocation(usdt)
       const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
@@ -46,8 +46,8 @@ class Jamton<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
         {
           ...input,
           overriddenAsset: [
-            { ...createMultiAsset(version, MIN_USDT_AMOUNT, usdt.multiLocation), isFeeAsset: true },
-            createMultiAsset(version, asset.amount, asset.multiLocation)
+            { ...createAsset(version, MIN_USDT_AMOUNT, usdt.location), isFeeAsset: true },
+            createAsset(version, asset.amount, asset.location)
           ]
         },
         asset.assetId

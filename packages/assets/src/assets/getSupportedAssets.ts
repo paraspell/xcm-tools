@@ -1,6 +1,6 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
-import type { TAsset, TForeignAsset } from '../types'
+import type { TAssetInfo, TForeignAssetInfo } from '../types'
 import { getAssets, getNativeAssetSymbol, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
 import { isSymbolMatch } from './isSymbolMatch'
@@ -16,7 +16,7 @@ import { normalizeSymbol } from './normalizeSymbol'
 export const getSupportedAssets = (
   origin: TNodeWithRelayChains,
   destination: TNodeWithRelayChains
-): TAsset[] => {
+): TAssetInfo[] => {
   const originAssets = getAssets(origin)
   const destinationAssets = getAssets(destination)
 
@@ -55,7 +55,7 @@ export const getSupportedAssets = (
       supportedAssets.push({
         assetId: wethAsset.assetId,
         symbol: `${wethAsset.symbol}.e`
-      } as TForeignAsset)
+      } as TForeignAssetInfo)
   }
 
   return supportedAssets

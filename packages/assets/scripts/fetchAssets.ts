@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getNativeAssetSymbol,
   type TAssetJsonMap,
   type TForeignAsset,
@@ -16,7 +16,7 @@ import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/s
 import { nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
-import { capitalizeMultiLocation, transformLocation } from './utils'
+import { capitalizeLocation } from './utils'
 import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifrostAssets'
 import { fetchCentrifugeAssets } from './fetchCentrifugeAssets'
 import { fetchExistentialDeposit } from './fetchEd'
@@ -30,11 +30,11 @@ import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
 import {
   isRelayChain,
   TJunction,
-  TMultiLocation,
+  TLocation,
   TNodePolkadotKusama,
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
-import { getNodeProviders, getParaId, reverseTransformMultiLocation } from '../../sdk-core/src'
+import { getNodeProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
 import { getRelayChainSymbolOf, isNodeEvm } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
@@ -142,8 +142,8 @@ const fetchNativeAssets = async (
     Hydration: { GeneralIndex: 0 }
   }
 
-  const getNativeLocation = (symbol: string): TMultiLocation | null => {
-    let interior: TMultiLocation['interior'] | null = null
+  const getNativeLocation = (symbol: string): TLocation | null => {
+    let interior: TLocation['interior'] | null = null
 
     if (symbol === getRelayChainSymbolOf(node)) {
       interior = { Here: null }
@@ -161,14 +161,13 @@ const fetchNativeAssets = async (
   const cleanAsset = (asset: TNativeAsset): TNativeAsset => {
     const generatedLoc = getNativeLocation(asset.symbol)
 
-    const multiLocation =
-      asset.multiLocation ?? (generatedLoc ? capitalizeMultiLocation(generatedLoc) : null)
+    const location = asset.location ?? (generatedLoc ? capitalizeLocation(generatedLoc) : null)
 
     return {
       ...asset,
       isNative: true,
       existentialDeposit: asset.existentialDeposit?.replace(/,/g, ''),
-      ...(multiLocation && { multiLocation: transformLocation(multiLocation, paraId) })
+      ...(location && { location: transformLocation(location, paraId) })
     }
   }
 
@@ -425,7 +424,7 @@ const fetchNodeAssets = async (
   const paraId = getParaId(node)
 
   const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
-  const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api, paraId) : []
+  const feeAssets: TLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api, paraId) : []
 
   const nativeAssetSymbol = await resolveNativeAsset(node, api)
 
@@ -460,8 +459,8 @@ const fetchNodeAssets = async (
 
     feeAssets.forEach(loc => {
       const matched =
-        findAssetByMultiLocation(allAssets, loc) ||
-        findAssetByMultiLocation(allAssets, reverseTransformMultiLocation(loc))
+        findAssetInfoByLoc(allAssets, loc) ||
+        findAssetInfoByLoc(allAssets, reverseTransformLocation(loc))
       if (matched) {
         matched.isFeeAsset = true
       }

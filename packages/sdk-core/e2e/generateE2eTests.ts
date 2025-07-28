@@ -15,7 +15,7 @@ import {
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
 import {
-  findAsset,
+  findAssetInfo,
   Foreign,
   ForeignAbstract,
   getNativeAssetSymbol,
@@ -69,7 +69,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .from('AssetHubPolkadot')
           .to('AssetHubKusama')
           .currency({
-            multilocation: {
+            location: {
               parents: 2,
               interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
             },
@@ -86,7 +86,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
           .currency({
-            multilocation: {
+            location: {
               parents: 2,
               interior: { X1: [{ GlobalConsensus: { polkadot: null } }] }
             },
@@ -103,7 +103,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
           .currency({
-            multilocation: {
+            location: {
               parents: 1,
               interior: { Here: null }
             },
@@ -215,7 +215,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         expect(tx).toBeDefined()
       })
 
-      it('should create transfer tx from BifrostPolkadot to AssetHubPolkadot - overridden multiasset', async () => {
+      it('should create transfer tx from BifrostPolkadot to AssetHubPolkadot - overridden asset', async () => {
         const api = await createOrGetApiInstanceForNode('BifrostPolkadot')
         const tx = await Builder(api)
           .from('BifrostPolkadot')
@@ -264,7 +264,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             amount: MOCK_AMOUNT
           })
           .feeAsset({
-            multilocation: {
+            location: {
               parents: 0,
               interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
             }
@@ -313,7 +313,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
       const relayChainSymbol = getRelayChainSymbol(node)
 
-      const relayChainAsset = findAsset(
+      const relayChainAsset = findAssetInfo(
         node,
         // Use native selector for AssetHub nodes because of duplicates
         { symbol: node.includes('AssetHub') ? Native(relayChainSymbol) : relayChainSymbol },

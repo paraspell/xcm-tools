@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset, TNativeAsset } from '../src'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,
@@ -50,7 +50,7 @@ const fetchBifrostAssets = async (
 
         const assetIdKey = _key.args[0].toHuman()
 
-        const multiLocation = await api.query[module].currencyIdToLocations(assetIdKey)
+        const location = await api.query[module].currencyIdToLocations(assetIdKey)
 
         const assetId = Object.values(assetIdKey ?? {})[0]
 
@@ -59,20 +59,16 @@ const fetchBifrostAssets = async (
               symbol: val.symbol,
               decimals: +val.decimals,
               existentialDeposit: val.minimalBalance,
-              multiLocation:
-                multiLocation.toJSON() !== null
-                  ? capitalizeMultiLocation(multiLocation.toJSON())
-                  : undefined
+              location:
+                location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined
             }
           : {
               assetId,
               symbol: val.symbol,
               decimals: +val.decimals,
               existentialDeposit: val.minimalBalance,
-              multiLocation:
-                multiLocation.toJSON() !== null
-                  ? capitalizeMultiLocation(multiLocation.toJSON())
-                  : undefined
+              location:
+                location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined
             }
       })
     )

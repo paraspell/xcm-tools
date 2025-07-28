@@ -1,4 +1,4 @@
-import type { TAsset, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import {
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
@@ -16,8 +16,8 @@ export const isSufficientOrigin = async <TApi, TRes>(
   senderAddress: string,
   feeNative: bigint,
   currency: WithComplexAmount<TCurrencyCore>,
-  asset: TAsset,
-  feeAsset: TAsset | undefined
+  asset: TAssetInfo,
+  feeAsset: TAssetInfo | undefined
 ): Promise<boolean | undefined> => {
   if (feeAsset) {
     return undefined
@@ -63,7 +63,7 @@ export const isSufficientDestination = async <TApi, TRes>(
   destination: TNodeWithRelayChains,
   address: string,
   amount: bigint,
-  asset: TAsset,
+  asset: TAssetInfo,
   feeNative: bigint
 ): Promise<boolean | undefined> => {
   const isNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))

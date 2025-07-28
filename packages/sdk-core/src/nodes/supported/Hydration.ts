@@ -7,9 +7,9 @@ import {
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { hasJunction, Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -61,7 +61,7 @@ class Hydration<TApi, TRes>
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
-    const { api, asset, version, destination } = input
+    const { api, assetInfo: asset, version, destination } = input
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -74,7 +74,7 @@ class Hydration<TApi, TRes>
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [version]: [createMultiAsset(version, asset.amount, DOT_MULTILOCATION)]
+          [version]: [createAsset(version, asset.amount, DOT_LOCATION)]
         },
         assets_transfer_type: 'DestinationReserve',
         remote_fees_id: {
@@ -93,8 +93,8 @@ class Hydration<TApi, TRes>
   }
 
   transferToPolimec<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { api, asset, version } = options
-    const symbol = asset.symbol.toUpperCase()
+    const { api, assetInfo, version = this.version } = options
+    const symbol = assetInfo.symbol.toUpperCase()
 
     if (symbol === 'DOT') {
       const call = createTypeAndThenTransfer(options, version)
@@ -103,11 +103,7 @@ class Hydration<TApi, TRes>
 
     if (
       (symbol === 'USDC' || symbol === 'USDT') &&
-      !hasJunction(
-        asset.multiLocation as TMultiLocation,
-        'Parachain',
-        getParaId('AssetHubPolkadot')
-      )
+      !hasJunction(assetInfo.location as TLocation, 'Parachain', getParaId('AssetHubPolkadot'))
     ) {
       throw new InvalidCurrencyError('The selected asset is not supported for transfer to Polimec')
     }
@@ -118,7 +114,7 @@ class Hydration<TApi, TRes>
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, destination, feeAsset, asset, overriddenAsset } = input
+    const { api, destination, feeAssetInfo: feeAsset, assetInfo: asset, overriddenAsset } = input
 
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)

@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
@@ -18,18 +18,18 @@ export const fetchInterlayAssets = async (
     ]) => {
       const { symbol, decimals, existentialDeposit } = value.toHuman() as any
 
-      const multiLocationJson = value.toJSON() as any
+      const locationJson = value.toJSON() as any
 
-      const multiLocation =
-        multiLocationJson.location !== null
-          ? capitalizeMultiLocation(multiLocationJson.location.v3 ?? multiLocationJson.location.v2)
+      const location =
+        locationJson.location !== null
+          ? capitalizeLocation(locationJson.location.v3 ?? locationJson.location.v2)
           : undefined
 
       return {
         assetId: Object.values(era.toHuman() ?? {})[0],
         symbol,
         decimals: +decimals,
-        multiLocation,
+        location,
         existentialDeposit: existentialDeposit
       }
     }

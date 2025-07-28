@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 import {
   BuilderOptionsSchema,
-  MultiAssetSchema,
+  AssetSchema,
 } from '../../x-transfer/dto/XTransferDto.js';
 
 export const AssetClaimSchema = z.object({
   from: z.string().optional(),
-  fungible: z.array(MultiAssetSchema),
+  fungible: z.array(AssetSchema),
   address: z.string().min(1, { message: 'Address is required' }),
   options: BuilderOptionsSchema.optional(),
 });

@@ -28,7 +28,7 @@ class Laos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset, destination } = input
+    const { scenario, assetInfo: asset, destination } = input
 
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

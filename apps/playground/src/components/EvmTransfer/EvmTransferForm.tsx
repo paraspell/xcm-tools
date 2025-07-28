@@ -9,7 +9,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import { getTokenBalance } from '@paraspell/sdk-pjs';
 import { type BrowserProvider, ethers, formatEther } from 'ethers';
@@ -36,7 +36,7 @@ export type FormValues = {
 };
 
 export type FormValuesTransformed = FormValues & {
-  currency?: TAsset;
+  currency?: TAssetInfo;
 };
 
 type Props = {

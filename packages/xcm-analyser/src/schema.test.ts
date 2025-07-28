@@ -7,7 +7,7 @@ import {
   JunctionGeneralKey,
   JunctionPalletInstance,
   JunctionParachain,
-  MultiLocationSchema,
+  LocationSchema,
 } from './schema';
 import type {
   Junction,
@@ -443,10 +443,10 @@ describe('InteriorSchema', () => {
   });
 });
 
-describe('MultiLocationSchema', () => {
+describe('LocationSchema', () => {
   it('should pass with valid parents and Interior "Here"', () => {
     const data = { parents: 0, interior: 'Here' };
-    const result = MultiLocationSchema.safeParse(data);
+    const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ parents: 0, interior: 'Here' });
@@ -455,7 +455,7 @@ describe('MultiLocationSchema', () => {
 
   it('should pass with valid parents (string with comma) and Interior { Here: null }', () => {
     const data = { parents: '1,000', interior: { Here: null } };
-    const result = MultiLocationSchema.safeParse(data);
+    const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ parents: '1000', interior: { Here: null } });
@@ -464,7 +464,7 @@ describe('MultiLocationSchema', () => {
 
   it('should pass with valid parents and Interior with X1 Junction', () => {
     const data = { parents: 1, interior: { X1: mockParachain } };
-    const result = MultiLocationSchema.safeParse(data);
+    const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ parents: 1, interior: { X1: mockParachain } });
@@ -473,13 +473,13 @@ describe('MultiLocationSchema', () => {
 
   it('should fail if interior is invalid', () => {
     const data = { parents: 0, interior: { InvalidInterior: true } };
-    const result = MultiLocationSchema.safeParse(data);
+    const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(false);
   });
 
   it('should fail if parents is invalid', () => {
     const data = { parents: 'abc', interior: 'Here' };
-    const result = MultiLocationSchema.safeParse(data);
+    const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(false);
   });
 });
