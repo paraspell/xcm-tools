@@ -99,6 +99,15 @@ packages | - XCM SDK
 
 </details>
 
+<details><summary><b>XCM Tools bug bounty:</b></summary>
+<br>
+
+**Contribute to XCM Tools and earn rewards 💰**
+
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+
+</details>
+
 <br>
 
 **Tools supported by:**
