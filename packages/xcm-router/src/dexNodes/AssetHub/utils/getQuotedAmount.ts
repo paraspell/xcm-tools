@@ -3,19 +3,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TNodePolkadotKusama, TPapiApi } from '@paraspell/sdk';
-import {
-  InvalidParameterError,
-  localizeLocation,
-  type TMultiLocation,
-  transform,
-} from '@paraspell/sdk';
+import { InvalidParameterError, localizeLocation, type TLocation, transform } from '@paraspell/sdk';
 import type BigNumber from 'bignumber.js';
 
 export const getQuotedAmount = async (
   api: TPapiApi,
   chain: TNodePolkadotKusama,
-  assetFromML: TMultiLocation,
-  assetToML: TMultiLocation,
+  assetFromML: TLocation,
+  assetToML: TLocation,
   amountIn: BigNumber,
   includeFee = true,
 ) => {

@@ -1,9 +1,9 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
-import { hasJunction, type TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, type TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { DOT_MULTILOCATION } from '../../../constants'
+import { DOT_LOCATION } from '../../../constants'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
@@ -14,10 +14,6 @@ vi.mock('@paraspell/sdk-common', async importActual => {
     hasJunction: vi.fn()
   }
 })
-
-vi.mock('./getAssetHubMultiLocation', () => ({
-  getAssetHubMultiLocation: vi.fn()
-}))
 
 vi.mock('./getMoonbeamErc20Balance', () => ({
   getMoonbeamErc20Balance: vi.fn()
@@ -48,13 +44,13 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
       symbol: 'DOT',
-      multiLocation: { foo: 'bar' } as unknown as TMultiLocation
+      location: { foo: 'bar' } as unknown as TLocation
     })
 
     expect(result).toBe(200n)
   })
 
-  it('Polimec - throws if multiLocation missing', async () => {
+  it('Polimec - throws if location missing', async () => {
     const api = {} as unknown as IPolkadotApi<unknown, unknown>
 
     await expect(
@@ -70,14 +66,14 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getBalanceAssetsPallet: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    const multiloc = {} as TMultiLocation
+    const multiloc = {} as TLocation
 
     const spy = vi.spyOn(api, 'getBalanceAssetsPallet')
 
     const res = await getBalanceForeignPolkadotXcm(api, 'Moonbeam', 'addr', {
       symbol: 'DOT',
       assetId: '1234',
-      multiLocation: multiloc
+      location: multiloc
     })
 
     expect(res).toBe(MOONBEAM_BAL)
@@ -93,14 +89,14 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getBalanceAssetsPallet: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    const multiloc = {} as TMultiLocation
+    const multiloc = {} as TLocation
 
     const spy = vi.spyOn(api, 'getBalanceAssetsPallet')
 
     const res = await getBalanceForeignPolkadotXcm(api, 'Moonriver', 'addr', {
       symbol: 'DOT',
       assetId: '1234',
-      multiLocation: multiloc
+      location: multiloc
     })
 
     expect(res).toBe(MOONBEAM_BAL)
@@ -127,7 +123,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     ).rejects.toThrowError(InvalidCurrencyError)
   })
 
-  it('AssetHubPolkadot -> no multiLocation - uses getBalanceAssetsPallet', async () => {
+  it('AssetHubPolkadot -> no location - uses getBalanceAssetsPallet', async () => {
     const api = {
       getBalanceAssetsPallet: vi.fn().mockResolvedValue(111n),
       getBalanceForeignAssetsPallet: vi.fn()
@@ -156,7 +152,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getBalanceForeignAssetsPallet: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    const ml = {} as TMultiLocation
+    const ml = {} as TLocation
 
     const spyAssetsPallet = vi.spyOn(api, 'getBalanceAssetsPallet')
     const spyForeignAssetsPallet = vi.spyOn(api, 'getBalanceForeignAssetsPallet')
@@ -164,7 +160,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     const res = await getBalanceForeignPolkadotXcm(api, 'AssetHubPolkadot', 'addr', {
       symbol: 'DOT',
       assetId: '4242',
-      multiLocation: ml
+      location: ml
     })
 
     expect(res).toBe(222n)
@@ -172,10 +168,10 @@ describe('getBalanceForeignPolkadotXcm', () => {
     expect(spyForeignAssetsPallet).not.toHaveBeenCalled()
   })
 
-  it('AssetHubPolkadot -> multiLocation without required junctions - uses getBalanceForeignAssetsPallet', async () => {
+  it('AssetHubPolkadot -> location without required junctions - uses getBalanceForeignAssetsPallet', async () => {
     vi.mocked(hasJunction).mockReturnValue(false)
 
-    const ml = DOT_MULTILOCATION
+    const ml = DOT_LOCATION
 
     const api = {
       getBalanceForeignAssetsPallet: vi.fn().mockResolvedValue(333n),
@@ -188,7 +184,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     const res = await getBalanceForeignPolkadotXcm(api, 'AssetHubPolkadot', 'addr', {
       symbol: 'DOT',
       assetId: '7',
-      multiLocation: ml
+      location: ml
     })
 
     expect(res).toBe(333n)

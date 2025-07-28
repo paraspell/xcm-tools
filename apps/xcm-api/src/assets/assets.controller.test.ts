@@ -1,10 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
-  TAsset,
-  TNativeAsset,
+  TAssetInfo,
+  TNativeAssetInfo,
   TNode,
-  TNodeAssets,
+  TChainAssetsInfo,
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -54,7 +54,7 @@ describe('AssetsController', () => {
       nativeAssets: [{ symbol, decimals, isNative: true }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,
-    } as TNodeAssets;
+    } as TChainAssetsInfo;
     it('should return assets object for a valid node', () => {
       const spy = vi
         .spyOn(assetsService, 'getAssetsObject')
@@ -82,14 +82,14 @@ describe('AssetsController', () => {
     });
   });
 
-  describe('getAssetMultiLocation', () => {
-    it('should return asset multi location for a valid node and symbol', () => {
+  describe('getAssetLocation', () => {
+    it('should return asset location for a valid node and symbol', () => {
       const mockResult = JSON.stringify({ currency: { symbol } });
       const spy = vi
-        .spyOn(assetsService, 'getAssetMultiLocation')
+        .spyOn(assetsService, 'getAssetLocation')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetMultiLocation(
+      const result = controller.getAssetLocation(
         node,
         { currency: { symbol } },
         mockRequestObject,
@@ -118,7 +118,7 @@ describe('AssetsController', () => {
     it('should return native assets for a valid node', () => {
       const mockResult = [
         { symbol, decimals, isNative: true },
-      ] as TNativeAsset[];
+      ] as TNativeAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getNativeAssets')
         .mockReturnValue(mockResult);
@@ -203,7 +203,7 @@ describe('AssetsController', () => {
           symbol: 'DOT',
           assetId: '1234',
         },
-      ] as TAsset[];
+      ] as TAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getSupportedAssets')
         .mockReturnValue(mockResult);
@@ -263,7 +263,7 @@ describe('AssetsController', () => {
     it('should return fee assets for a valid node', () => {
       const mockResult = [
         { symbol, decimals, isNative: true },
-      ] as TNativeAsset[];
+      ] as TNativeAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getFeeAssets')
         .mockReturnValue(mockResult);

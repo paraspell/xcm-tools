@@ -3,14 +3,14 @@ import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeFeeFromDryRun } from './computeFeeFromDryRun'
-import { getMultiLocationTokenId } from './getMultiLocationTokenId'
+import { getLocationTokenId } from './getLocationTokenId'
 
 vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn()
 }))
 
-vi.mock('./getMultiLocationTokenId', () => ({
-  getMultiLocationTokenId: vi.fn()
+vi.mock('./getLocationTokenId', () => ({
+  getLocationTokenId: vi.fn()
 }))
 
 describe('computeFeeFromDryRun', () => {
@@ -41,7 +41,7 @@ describe('computeFeeFromDryRun', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: string) =>
       id === 'tokenId1' ? 'nativeSymbol' : null
     )
 
@@ -50,7 +50,7 @@ describe('computeFeeFromDryRun', () => {
 
     expect(result).toBe(700n) // 500 (delivery fee) + 200 (execution fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
-    expect(getMultiLocationTokenId).toHaveBeenCalledTimes(2)
+    expect(getLocationTokenId).toHaveBeenCalledTimes(2)
   })
 
   it('should return only the execution fee if there are no matching delivery fees', () => {
@@ -71,13 +71,13 @@ describe('computeFeeFromDryRun', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getMultiLocationTokenId).mockReturnValue(null)
+    vi.mocked(getLocationTokenId).mockReturnValue(null)
 
     const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
     expect(result).toBe(200n) // Only execution fee
-    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+    expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 
   it('should exclude NonFungible fees from the total delivery fee', () => {
@@ -101,7 +101,7 @@ describe('computeFeeFromDryRun', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: string) =>
       id === 'tokenId2' ? 'nativeSymbol' : null
     )
 
@@ -130,7 +130,7 @@ describe('computeFeeFromDryRun', () => {
 
     expect(result).toBe(0n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
-    expect(getMultiLocationTokenId).not.toHaveBeenCalled()
+    expect(getLocationTokenId).not.toHaveBeenCalled()
   })
 
   it('should return only execution fee if no delivery fees are found', () => {
@@ -181,14 +181,14 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const isFeeAsset = true
 
-    vi.mocked(getMultiLocationTokenId).mockReturnValue('someRelevantSymbolOrNull')
+    vi.mocked(getLocationTokenId).mockReturnValue('someRelevantSymbolOrNull')
 
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee, isFeeAsset)
 
     expect(result).toBe(1000n)
 
     expect(getNativeAssetSymbol).not.toHaveBeenCalled()
-    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+    expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 
   it('should sum multiple AssetConversion fees if isFeeAsset is true', () => {
@@ -234,7 +234,7 @@ describe('computeFeeFromDryRun', () => {
 
     expect(result).toBe(1500n)
     expect(getNativeAssetSymbol).not.toHaveBeenCalled()
-    expect(getMultiLocationTokenId).not.toHaveBeenCalled()
+    expect(getLocationTokenId).not.toHaveBeenCalled()
   })
 
   it('should use delivery and execution fees if isFeeAsset is true but no valid AssetConversion fee is found', () => {
@@ -273,7 +273,7 @@ describe('computeFeeFromDryRun', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: string) =>
       id === 'tokenId1' ? 'nativeSymbol' : null
     )
 
@@ -284,7 +284,7 @@ describe('computeFeeFromDryRun', () => {
 
     expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
-    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+    expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 
   it('should ignore AssetConversion events and use delivery/execution fees if isFeeAsset is false', () => {
@@ -315,7 +315,7 @@ describe('computeFeeFromDryRun', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: string) =>
       id === 'tokenId1' ? 'nativeSymbol' : null
     )
 
@@ -326,6 +326,6 @@ describe('computeFeeFromDryRun', () => {
 
     expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
-    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+    expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 })

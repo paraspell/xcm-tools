@@ -1,9 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
-import type {
-  TMultiLocation,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import type { TAssetInfo } from '@paraspell/assets'
+import type { TLocation, TNodePolkadotKusama, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type {
   BatchMode,
@@ -32,8 +28,8 @@ export interface IPolkadotApi<TApi, TRes> {
   getMethod(tx: TRes): string
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   quoteAhPrice(
-    fromMl: TMultiLocation,
-    toMl: TMultiLocation,
+    fromMl: TLocation,
+    toMl: TLocation,
     amountIn: bigint,
     includeFee?: boolean
   ): Promise<bigint | undefined>
@@ -43,14 +39,14 @@ export interface IPolkadotApi<TApi, TRes> {
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>
   getMythosForeignBalance(address: string): Promise<bigint>
-  getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation): Promise<bigint>
+  getBalanceForeignAssetsPallet(address: string, location: TLocation): Promise<bigint>
   getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>
   getBalanceForeignXTokens(
     node: TNodePolkadotKusama,
     address: string,
-    asset: TAsset
+    asset: TAssetInfo
   ): Promise<bigint>
-  getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint>
+  getBalanceForeignBifrost(address: string, asset: TAssetInfo): Promise<bigint>
   getBalanceAssetsPallet(address: string, assetId: bigint | number): Promise<bigint>
   getFromRpc(module: string, method: string, key: string): Promise<string>
   blake2AsHex(data: Uint8Array): string

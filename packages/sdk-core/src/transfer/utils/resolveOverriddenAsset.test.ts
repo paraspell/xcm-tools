@@ -1,29 +1,30 @@
 import type {
-  TAsset,
-  TMultiAsset,
-  TMultiAssetWithFee,
-  TMultiLocationValueWithOverride
+  TAssetInfo,
+  TAssetWithFee,
+  TLocationValueWithOverride,
+  TAsset
 } from '@paraspell/assets'
 import {
-  findAsset,
+  findAssetInfo,
   InvalidCurrencyError,
   isAssetEqual,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier,
-  isTMultiAsset
+  isOverrideLocationSpecifier,
+  isTAsset
 } from '@paraspell/assets'
-import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type AssetHubPolkadot from '../../nodes/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
-vi.mock('../../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn()
+vi.mock('../../utils/asset', () => ({
+  createAsset: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -31,18 +32,18 @@ vi.mock('../../utils', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn(),
+  isTLocation: vi.fn(),
   Parents: vi.fn(),
   deepEqual: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
-  isTMultiAsset: vi.fn(),
+  findAssetInfo: vi.fn(),
+  isTAsset: vi.fn(),
   isForeignAsset: vi.fn(),
   isAssetEqual: vi.fn(),
-  isOverrideMultiLocationSpecifier: vi.fn(),
-  extractMultiAssetLoc: vi.fn().mockResolvedValue({} as TMultiLocation),
+  isOverrideLocationSpecifier: vi.fn(),
+  extractAssetLocation: vi.fn().mockResolvedValue({} as TLocation),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -53,7 +54,7 @@ vi.mock('./validateAssetSupport', () => ({
 describe('resolveOverriddenAsset', () => {
   const mockOriginNode = { version: 'testVersion' } as unknown as AssetHubPolkadot<unknown, unknown>
   const mockOrigin = 'Acala'
-  const mockDestination = {} as TMultiLocation
+  const mockDestination = {} as TLocation
 
   const defaultOptions = {
     currency: { symbol: 'TEST', amount: '1000' },
@@ -63,36 +64,36 @@ describe('resolveOverriddenAsset', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
-    vi.mocked(isTMultiAsset).mockReturnValue(false)
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isTAsset).mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getNode).mockReturnValue(mockOriginNode)
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(createMultiAsset).mockReturnValue({} as TMultiAsset)
-    vi.mocked(findAsset).mockReturnValue({
-      multiLocation: {} as TMultiLocation
-    } as TAsset)
+    vi.mocked(createAsset).mockReturnValue({} as TAsset)
+    vi.mocked(findAssetInfo).mockReturnValue({
+      location: {}
+    } as TAssetInfo)
   })
 
-  it('returns the overridden multiLocation if currency has override multilocation', () => {
+  it('returns the overridden location if currency has override location', () => {
     const options = {
       ...defaultOptions,
       currency: {
-        multilocation: {
+        location: {
           type: 'Override',
-          value: {} as TMultiLocation
-        } as TMultiLocationValueWithOverride,
+          value: {}
+        } as TLocationValueWithOverride,
         amount: '1000'
       }
     } as TSendOptions<unknown, unknown>
 
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
 
-    const result = resolveOverriddenAsset(options, false, false, {} as TAsset)
+    const result = resolveOverriddenAsset(options, false, false, {} as TAssetInfo)
     expect(result).toEqual({})
   })
 
-  it('returns multiasset if all items in currency.multiasset are already TMultiAsset', () => {
+  it('returns multiasset if all items in currency.multiasset are already TAsset', () => {
     const multiasset = [
       {
         fun: {
@@ -104,20 +105,20 @@ describe('resolveOverriddenAsset', () => {
           Fungible: 2000n
         }
       }
-    ] as TMultiAssetWithFee[]
+    ] as TAssetWithFee[]
     const options = {
       ...defaultOptions,
       currency: { multiasset },
-      feeAsset: { multilocation: {} }
+      feeAsset: { location: {} }
     } as TSendOptions<unknown, unknown>
 
-    vi.mocked(isTMultiAsset).mockReturnValue(true)
+    vi.mocked(isTAsset).mockReturnValue(true)
 
-    const result = resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAsset)
+    const result = resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAssetInfo)
     expect(result).toEqual(multiasset)
   })
 
-  it('resolves multiasset by fetching assets when not all items are TMultiAsset', () => {
+  it('resolves multiasset by fetching assets when not all items are TAsset', () => {
     const multiasset = [
       { symbol: 'ASSET1', amount: 1000n },
       { symbol: 'ASSET2', amount: 2000n }
@@ -128,15 +129,15 @@ describe('resolveOverriddenAsset', () => {
       feeAsset: { symbol: 'ASSET2' }
     }
 
-    vi.mocked(isTMultiAsset).mockImplementationOnce(() => false)
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
+    vi.mocked(isTAsset).mockImplementationOnce(() => false)
+    vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValueOnce(false).mockReturnValueOnce(true)
 
-    const result = resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAsset)
+    const result = resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAssetInfo)
 
     expect(validateAssetSupport).toHaveBeenCalledTimes(2)
-    expect(findAsset).toHaveBeenCalledTimes(multiasset.length)
-    expect(createMultiAsset).toHaveBeenCalledTimes(multiasset.length)
+    expect(findAssetInfo).toHaveBeenCalledTimes(multiasset.length)
+    expect(createAsset).toHaveBeenCalledTimes(multiasset.length)
     expect(result).toEqual([
       {
         isFeeAsset: false
@@ -147,17 +148,17 @@ describe('resolveOverriddenAsset', () => {
     ])
   })
 
-  it('throws an InvalidCurrencyError if fetched asset has no multiLocation', () => {
-    const multiasset = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
+  it('throws an InvalidCurrencyError if fetched asset has no location', () => {
+    const asset = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
     const options = {
       ...defaultOptions,
-      currency: { multiasset }
+      currency: { multiasset: asset }
     }
 
-    vi.mocked(isTMultiAsset).mockImplementationOnce(() => false)
-    vi.mocked(findAsset).mockReturnValue({} as TAsset)
+    vi.mocked(isTAsset).mockImplementationOnce(() => false)
+    vi.mocked(findAssetInfo).mockReturnValue({} as TAssetInfo)
 
-    expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
+    expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
       InvalidCurrencyError
     )
   })
@@ -168,9 +169,9 @@ describe('resolveOverriddenAsset', () => {
       currency: { multiasset: [{}, {}] }
     } as TSendOptions<unknown, unknown>
 
-    vi.mocked(isTMultiAsset).mockReturnValue(true)
+    vi.mocked(isTAsset).mockReturnValue(true)
 
-    expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
+    expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
       'Overridden multi assets cannot be used without specifying fee asset'
     )
   })
@@ -182,41 +183,41 @@ describe('resolveOverriddenAsset', () => {
       feeAsset: { symbol: 'ASSET' }
     } as TSendOptions<unknown, unknown>
 
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
-    vi.mocked(isTMultiAsset).mockReturnValue(true)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isTAsset).mockReturnValue(true)
 
     expect(() =>
-      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET' } as TAsset)
-    ).toThrow('Fee asset must be specified by multilocation when using raw overridden multi assets')
+      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET' } as TAssetInfo)
+    ).toThrow('Fee asset must be specified by location when using raw overridden multi assets')
   })
 
-  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset uses override multi-location', () => {
+  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset uses override location', () => {
     const options = {
       ...defaultOptions,
       currency: { multiasset: [{}, {}] },
       feeAsset: {
-        multilocation: {
+        location: {
           type: 'Override',
           value: {}
         }
       }
     } as TSendOptions<unknown, unknown>
 
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
-    vi.mocked(isTMultiAsset).mockReturnValue(true)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
+    vi.mocked(isTAsset).mockReturnValue(true)
 
-    expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
-      'Fee asset cannot be an overridden multi location specifier'
+    expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
+      'Fee asset cannot be an overridden location specifier'
     )
   })
 
-  it('returns undefined if currency has no multiasset or multilocation', () => {
+  it('returns undefined if currency has no multiasset or location', () => {
     const options = {
       ...defaultOptions,
       currency: { symbol: 'NO_OVERRIDE' }
     } as TSendOptions<unknown, unknown>
 
-    const result = resolveOverriddenAsset(options, false, false, {} as TAsset)
+    const result = resolveOverriddenAsset(options, false, false, {} as TAssetInfo)
     expect(result).toBeUndefined()
   })
 })

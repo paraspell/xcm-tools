@@ -1,5 +1,5 @@
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getExistentialDepositOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
@@ -40,7 +40,7 @@ export const getTransferInfo = async <TApi, TRes>({
   api.setDisconnectAllowed(false)
 
   try {
-    const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
+    const originAsset = findAssetInfoOrThrow(origin, currency, destination)
 
     const originBalanceFee =
       feeAsset && resolvedFeeAsset

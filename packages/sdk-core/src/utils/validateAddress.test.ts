@@ -20,7 +20,7 @@ describe('validateAddress', () => {
     vi.clearAllMocks()
   })
 
-  it('should not throw when address is a TMultiLocation', () => {
+  it('should not throw when address is a TLocation', () => {
     const address: TAddress = { parents: 0, interior: { X1: { Parachain: 100 } } }
     const node: TNodeWithRelayChains = 'Polkadot'
 

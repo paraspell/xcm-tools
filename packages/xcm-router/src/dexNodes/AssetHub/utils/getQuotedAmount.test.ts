@@ -1,5 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import { localizeLocation, type TMultiLocation, transform } from '@paraspell/sdk';
+import { localizeLocation, type TLocation, transform } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,8 +18,8 @@ describe('getQuotedAmount', () => {
   let api: TPapiApi;
   let quotePriceExactTokensForTokens: ReturnType<typeof vi.fn>;
   const mockChain = 'AssetHubPolkadot';
-  const assetFromML: TMultiLocation = { parents: 0, interior: 'Here' };
-  const assetToML: TMultiLocation = { parents: 0, interior: 'Here' };
+  const assetFromML: TLocation = { parents: 0, interior: 'Here' };
+  const assetToML: TLocation = { parents: 0, interior: 'Here' };
   const amountIn = BigNumber('1000');
 
   beforeEach(() => {

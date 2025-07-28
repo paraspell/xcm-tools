@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Crust Parachain
 
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset, type TAssetInfo } from '@paraspell/assets'
 import { replaceBigInt, Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -18,7 +18,7 @@ class Crust<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     super('Crust', 'crustParachain', 'polkadot', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAsset): TReserveAsset {
+  private getCurrencySelection(asset: TAssetInfo): TReserveAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) {
       return 'SelfReserve'
     }

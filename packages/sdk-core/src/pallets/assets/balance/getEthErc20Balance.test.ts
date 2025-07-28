@@ -1,11 +1,11 @@
-import type { TAsset, TCurrencyCore, TForeignAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, TForeignAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getEthErc20Balance } from './getEthErc20Balance'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   isForeignAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
@@ -47,10 +47,10 @@ describe('getEthErc20Balance', () => {
     const mockAsset = {
       symbol: 'USDT',
       assetId: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-    } as TForeignAsset
+    } as TForeignAssetInfo
 
     const expectedBalance = 1234567890n
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     mockReadContract.mockResolvedValue(expectedBalance)
 
@@ -71,7 +71,7 @@ describe('getEthErc20Balance', () => {
     const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
     const expectedBalance = 1000000000000000000n
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     mockGetBalance.mockResolvedValue(expectedBalance)
 
@@ -86,7 +86,7 @@ describe('getEthErc20Balance', () => {
     const currency: TCurrencyCore = { symbol: 'XYZ' }
     const mockAsset = { symbol: 'XYZ', assetId: 'some-id' }
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
     await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
@@ -96,9 +96,9 @@ describe('getEthErc20Balance', () => {
 
   it('should throw if foreign asset is missing assetId', async () => {
     const currency: TCurrencyCore = { symbol: 'MISSING' }
-    const mockAsset = { symbol: 'MISSING', assetId: undefined } as unknown as TAsset
+    const mockAsset = { symbol: 'MISSING', assetId: undefined } as unknown as TAssetInfo
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
     await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
@@ -108,10 +108,10 @@ describe('getEthErc20Balance', () => {
 
   it('should propagate error from readContract', async () => {
     const currency: TCurrencyCore = { symbol: 'USDC' }
-    const mockAsset = { symbol: 'USDC', assetId: '0x1234' } as TForeignAsset
+    const mockAsset = { symbol: 'USDC', assetId: '0x1234' } as TForeignAssetInfo
 
     const error = new Error('revert')
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     mockReadContract.mockRejectedValue(error)
 
@@ -123,7 +123,7 @@ describe('getEthErc20Balance', () => {
     const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
 
     const error = new Error('eth getBalance failed')
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     mockGetBalance.mockRejectedValue(error)
 

@@ -1,4 +1,4 @@
-import { getNativeAssetSymbol, type TAsset } from '@paraspell/assets'
+import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -9,8 +9,8 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 describe('isMultiHopSwap', () => {
-  const mockAssetFrom: TAsset = { symbol: 'DOT' } as TAsset
-  const mockAssetTo: TAsset = { symbol: 'USDT' } as TAsset
+  const mockAssetFrom = { symbol: 'DOT' } as TAssetInfo
+  const mockAssetTo = { symbol: 'USDT' } as TAssetInfo
 
   it('returns true for AssetHub with non-native assets', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')

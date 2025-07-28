@@ -44,8 +44,8 @@ vi.mock('@acala-network/sdk-swap', () => {
 
 vi.mock('@paraspell/sdk', () => ({
   findAssetById: vi.fn(() => ({ symbol: 'DOT', assetId: '1' })),
-  getNativeAssets: vi.fn(() => [{ symbol: 'ACA', multiLocation: { Here: '' } }]),
-  getOtherAssets: vi.fn(() => [{ symbol: 'DOT', assetId: '1', multiLocation: undefined }]),
+  getNativeAssets: vi.fn(() => [{ symbol: 'ACA', location: { Here: '' } }]),
+  getOtherAssets: vi.fn(() => [{ symbol: 'DOT', assetId: '1', location: undefined }]),
 }));
 
 vi.mock('rxjs', () => {

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Acala Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
@@ -18,7 +18,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     super('Acala', 'acala', 'polkadot', Version.V4)
   }
 
-  getCurrencySelection(asset: TAsset): TForeignOrTokenAsset {
+  getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
     return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: symbol }
   }

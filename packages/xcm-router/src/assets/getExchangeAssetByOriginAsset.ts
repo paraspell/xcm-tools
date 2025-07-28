@@ -1,5 +1,5 @@
-import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk';
-import { deepEqual, findAsset, findBestMatches, isForeignAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TForeignAssetInfo, TNodePolkadotKusama } from '@paraspell/sdk';
+import { deepEqual, findAssetInfo, findBestMatches, isForeignAsset } from '@paraspell/sdk';
 
 import type { TExchangeNode, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
@@ -7,7 +7,7 @@ import { getExchangeAssets } from './getExchangeConfig';
 export const getExchangeAssetByOriginAsset = (
   exchangeBaseNode: TNodePolkadotKusama,
   exchange: TExchangeNode,
-  originAsset: TAsset,
+  originAsset: TAssetInfo,
 ): TRouterAsset | undefined => {
   const assets = getExchangeAssets(exchange);
 
@@ -22,9 +22,7 @@ export const getExchangeAssetByOriginAsset = (
   if (candidates.length === 1) {
     // Exactly one asset found by symbol.
     const candidate = candidates[0];
-    return originAsset.multiLocation
-      ? { ...candidate, multiLocation: originAsset.multiLocation }
-      : candidate;
+    return originAsset.location ? { ...candidate, location: originAsset.location } : candidate;
   }
 
   if (!isForeignAsset(originAsset)) {
@@ -35,18 +33,22 @@ export const getExchangeAssetByOriginAsset = (
   // Origin asset is a foreign asset, try matching by multi-location.
   const candidateByML = candidates.find((asset) => {
     if (asset.assetId === undefined) return false;
-    const sdkAsset = findAsset(exchangeBaseNode, { id: asset.assetId }, null) as TForeignAsset;
+    const sdkAsset = findAssetInfo(
+      exchangeBaseNode,
+      { id: asset.assetId },
+      null,
+    ) as TForeignAssetInfo;
 
-    if (sdkAsset.multiLocation === undefined) return false;
+    if (sdkAsset.location === undefined) return false;
 
-    if (sdkAsset.multiLocation && originAsset.multiLocation) {
-      return deepEqual(sdkAsset.multiLocation, originAsset.multiLocation);
+    if (sdkAsset.location && originAsset.location) {
+      return deepEqual(sdkAsset.location, originAsset.location);
     }
 
     return false;
   });
 
-  return candidateByML && originAsset.multiLocation
-    ? { ...candidateByML, multiLocation: originAsset.multiLocation }
+  return candidateByML && originAsset.location
+    ? { ...candidateByML, location: originAsset.location }
     : candidateByML;
 };

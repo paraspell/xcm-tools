@@ -1,23 +1,23 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createBeneficiaryLocation } from '../../location'
-import { sortMultiAssets } from '../../multiAsset'
+import { sortAssets } from '../../asset'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
 export const prepareCommonExecuteXcm = <TApi, TRes>(
   options: TCreateTransferXcmOptions<TApi, TRes>,
-  multiAssetToDeposit?: TMultiAsset
+  assetToDeposit?: TAsset
 ) => {
-  const { api, feeAsset, recipientAddress, version } = options
+  const { api, feeAssetInfo: feeAsset, recipientAddress, version } = options
 
   const context = prepareExecuteContext(options)
 
-  const { multiAssetLocalized, multiAssetLocalizedToDest, feeMultiAssetLocalized } = context
+  const { assetLocalized, assetLocalizedToDest, feeAssetLocalized } = context
 
-  const withdrawAssets = sortMultiAssets(
-    feeMultiAssetLocalized ? [multiAssetLocalized, feeMultiAssetLocalized] : [multiAssetLocalized]
+  const withdrawAssets = sortAssets(
+    feeAssetLocalized ? [assetLocalized, feeAssetLocalized] : [assetLocalized]
   )
 
   const prefix = []
@@ -29,7 +29,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes>(
   if (feeAsset) {
     prefix.push({
       BuyExecution: {
-        fees: feeMultiAssetLocalized ?? multiAssetLocalized,
+        fees: feeAssetLocalized ?? assetLocalized,
         weight_limit: {
           Limited: { ref_time: 450n, proof_size: 0n }
         }
@@ -51,7 +51,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes>(
 
   const depositInstruction = {
     DepositAsset: {
-      assets: createAssetsFilter(multiAssetToDeposit ?? multiAssetLocalizedToDest),
+      assets: createAssetsFilter(assetToDeposit ?? assetLocalizedToDest),
       beneficiary
     }
   }

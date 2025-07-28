@@ -1,6 +1,6 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -62,11 +62,11 @@ describe('handleExecuteTransfer', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT', amount: 1000n, isNative: true },
-    multiAsset: {} as TMultiAsset,
+    assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true },
+    asset: {} as TAsset,
     scenario: 'ParaToRelay',
-    destLocation: {} as TMultiLocation,
-    beneficiaryLocation: {} as TMultiLocation,
+    destLocation: {} as TLocation,
+    beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
     address: 'address',
     destination: 'Polkadot',
@@ -100,7 +100,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 999n }
+      assetInfo: { ...mockInput.assetInfo, amount: 999n }
     }
     await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
       'Asset amount is too low, please increase the amount or use a different fee asset.'
@@ -111,7 +111,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 1500n }
+      assetInfo: { ...mockInput.assetInfo, amount: 1500n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -137,8 +137,8 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 1200n },
-      feeAsset: { symbol: 'USDT' },
+      assetInfo: { ...mockInput.assetInfo, amount: 1200n },
+      feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -164,7 +164,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n }
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -184,7 +184,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n }
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -211,7 +211,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n }
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -237,9 +237,9 @@ describe('handleExecuteTransfer', () => {
       chain: mockChain,
       destChain: mockDestChain,
       address: 'address',
-      asset: input.asset,
+      assetInfo: input.assetInfo,
       currency: input.currency,
-      feeAsset: undefined,
+      feeAssetInfo: undefined,
       feeCurrency: undefined,
       recipientAddress: 'address',
       senderAddress: '0xvalid',
@@ -256,9 +256,9 @@ describe('handleExecuteTransfer', () => {
       chain: mockChain,
       destChain: mockDestChain,
       address: 'address',
-      asset: input.asset,
+      assetInfo: input.assetInfo,
       currency: input.currency,
-      feeAsset: undefined,
+      feeAssetInfo: undefined,
       feeCurrency: undefined,
       recipientAddress: 'address',
       senderAddress: '0xvalid',
@@ -283,7 +283,7 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n }
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
@@ -307,9 +307,9 @@ describe('handleExecuteTransfer', () => {
       chain: mockChain,
       destChain: mockDestChain,
       address: 'address',
-      asset: input.asset,
+      assetInfo: input.assetInfo,
       currency: input.currency,
-      feeAsset: undefined,
+      feeAssetInfo: undefined,
       feeCurrency: undefined,
       recipientAddress: 'address',
       senderAddress: '0xvalid',
@@ -326,8 +326,8 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n },
-      feeAsset: { symbol: 'USDT' },
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n },
+      feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -360,9 +360,9 @@ describe('handleExecuteTransfer', () => {
       chain: mockChain,
       destChain: mockDestChain,
       address: 'address',
-      asset: input.asset,
+      assetInfo: input.assetInfo,
       currency: input.currency,
-      feeAsset: { symbol: 'USDT' },
+      feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' },
       recipientAddress: 'address',
       senderAddress: '0xvalid',
@@ -379,8 +379,8 @@ describe('handleExecuteTransfer', () => {
     const input = {
       ...mockInput,
       senderAddress: '0xvalid',
-      asset: { ...mockInput.asset, amount: 10000n },
-      feeAsset: { symbol: 'USDT' },
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n },
+      feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -405,9 +405,9 @@ describe('handleExecuteTransfer', () => {
       chain: mockChain,
       destChain: mockDestChain,
       address: 'address',
-      asset: input.asset,
+      assetInfo: input.assetInfo,
       currency: input.currency,
-      feeAsset: { symbol: 'USDT' },
+      feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' },
       recipientAddress: 'address',
       senderAddress: '0xvalid',

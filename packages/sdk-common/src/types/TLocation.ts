@@ -90,7 +90,7 @@ export type TJunction =
   | TJunctionPlurality
   | TJunctionGlobalConsensus
 
-export interface TJunctions {
+export type TJunctions = {
   Here?: null
   X1?: TJunction | TJunction[]
   X2?: TJunction[]
@@ -102,7 +102,7 @@ export interface TJunctions {
   X8?: TJunction[]
 }
 
-export interface TMultiLocation {
+export type TLocation = {
   parents: TStringOrNumber
   interior: TJunctions | 'Here'
 }

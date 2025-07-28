@@ -16,7 +16,7 @@ import {
   getOtherAssets,
   isForeignAsset,
   replaceBigInt,
-  type TAsset,
+  type TAssetInfo,
   type TCurrencyInput,
   type TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
@@ -98,14 +98,14 @@ export const XcmRouter = () => {
 
   const determineCurrency = (
     node: TNodeDotKsmWithRelayChains | undefined,
-    asset: TAsset,
+    asset: TAssetInfo,
     isAutoExchange = false,
   ): TCurrencyInput => {
     if (!isForeignAsset(asset)) {
       return { symbol: asset.symbol };
     }
 
-    if (asset.assetId === undefined && asset.multiLocation === undefined) {
+    if (asset.assetId === undefined && asset.location === undefined) {
       return { symbol: asset.symbol };
     }
 
@@ -114,8 +114,8 @@ export const XcmRouter = () => {
     }
 
     if (isAutoExchange) {
-      return asset.multiLocation
-        ? { multilocation: asset.multiLocation }
+      return asset.location
+        ? { location: asset.location }
         : { symbol: asset.symbol };
     }
 
@@ -130,7 +130,7 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    if (asset.multiLocation) return { multilocation: asset.multiLocation };
+    if (asset.location) return { location: asset.location };
 
     if (asset.assetId) return { id: asset.assetId };
 

@@ -21,7 +21,7 @@ class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXC
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset, scenario } = input
+    const { assetInfo: asset, scenario } = input
 
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

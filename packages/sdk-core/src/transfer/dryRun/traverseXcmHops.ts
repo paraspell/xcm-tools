@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
+import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { type TEcosystemType, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
@@ -37,10 +37,10 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
   let forwardedXcms = initialForwardedXcms
   let nextParaId = initialDestParaId
 
-  const asset = findAssetForNodeOrThrow(origin, currency, destination)
+  const asset = findAssetInfoOrThrow(origin, currency, destination)
   let currentAsset =
     origin === swapConfig?.exchangeChain
-      ? findAssetForNodeOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, null)
+      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, null)
       : asset
 
   let hasPassedExchange = origin === swapConfig?.exchangeChain

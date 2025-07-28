@@ -53,11 +53,11 @@ const baseOptions = {
   chain: 'A' as TNodeDotKsmWithRelayChains,
   exchangeChain: 'B' as TNodePolkadotKusama,
   destChain: 'C' as TNodeDotKsmWithRelayChains,
-  assetFrom: {
+  assetInfoFrom: {
     amount: '2000',
-    multiLocation: {}
+    location: {}
   },
-  assetTo: { multiLocation: {}, amount: '0' },
+  assetInfoTo: { location: {}, amount: '0' },
   senderAddress: 'alice',
   recipientAddress: 'bob',
   calculateMinAmountOut: vi.fn().mockResolvedValue(1500n)
@@ -108,7 +108,10 @@ describe('handleSwapExecuteTransfer', () => {
   })
 
   it('throws if initial amount is too low', async () => {
-    const options = { ...baseOptions, assetFrom: { ...baseOptions.assetFrom, amount: 500n } }
+    const options = {
+      ...baseOptions,
+      assetInfoFrom: { ...baseOptions.assetInfoFrom, amount: 500n }
+    }
 
     await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(InvalidParameterError)
   })

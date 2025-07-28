@@ -17,7 +17,7 @@ const collectDuplicateSymbolsInChains = (
       const symbol = asset.symbol
       let assetKey = ''
       if (isForeignAsset(asset)) {
-        assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+        assetKey = asset.assetId ?? JSON.stringify(asset.location)
       }
       if (symbol && assetKey) {
         if (!symbolToAssetKeys[symbol]) {
@@ -68,7 +68,7 @@ export const addAliasesToDuplicateSymbols = (assetsMap: TAssetJsonMap): TAssetJs
 
       for (const asset of allAssets) {
         if (asset.symbol === symbol && isForeignAsset(asset)) {
-          const assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+          const assetKey = asset.assetId ?? JSON.stringify(asset.location)
           const aliasNumber = aliasNumbers[assetKey]
           if (aliasNumber !== undefined) {
             asset.alias = `${symbol}${aliasNumber}`

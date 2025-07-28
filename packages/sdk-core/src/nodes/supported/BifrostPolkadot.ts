@@ -1,11 +1,11 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getAssetId,
   getOtherAssets,
   isForeignAsset,
-  type TAsset
+  type TAssetInfo
 } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
@@ -20,7 +20,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class BifrostPolkadot<TApi, TRes>
@@ -36,7 +36,7 @@ class BifrostPolkadot<TApi, TRes>
     super(chain, info, type, version)
   }
 
-  getCurrencySelection(asset: TAsset) {
+  getCurrencySelection(asset: TAssetInfo) {
     const nativeAssetSymbol = this.getNativeAssetSymbol()
 
     if (asset.symbol === nativeAssetSymbol) {
@@ -67,12 +67,12 @@ class BifrostPolkadot<TApi, TRes>
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset } = input
+    const { assetInfo: asset } = input
 
     return transferPolkadotXcm(
       {
         ...input,
-        multiAsset: createMultiAsset(this.version, asset.amount, {
+        asset: createAsset(this.version, asset.amount, {
           parents: asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
           interior:
             asset.symbol === 'WETH'
@@ -103,8 +103,7 @@ class BifrostPolkadot<TApi, TRes>
 
   protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
     const isEthAsset =
-      asset.multiLocation &&
-      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+      asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
     if (isEthAsset) return false
     if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'

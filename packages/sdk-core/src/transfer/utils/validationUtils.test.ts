@@ -7,7 +7,7 @@ import {
 import {
   isDotKsmBridge,
   isRelayChain,
-  isTMultiLocation,
+  isTLocation,
   type TNodeDotKsmWithRelayChains,
   type TNodePolkadotKusama
 } from '@paraspell/sdk-common'
@@ -23,7 +23,7 @@ vi.mock('@paraspell/pallets', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn(),
+  isTLocation: vi.fn(),
   isRelayChain: vi.fn(),
   isDotKsmBridge: vi.fn()
 }))
@@ -34,7 +34,7 @@ vi.mock('@paraspell/assets', () => ({
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isSymbolSpecifier: vi.fn(),
-  isTMultiAsset: vi.fn()
+  isTAsset: vi.fn()
 }))
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
@@ -57,14 +57,14 @@ describe('validateCurrency', () => {
     const currency = { multiasset: [] } as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency)).toThrow('Overridden multi assets cannot be empty')
+    expect(() => validateCurrency(currency)).toThrow('Overridden assets cannot be empty')
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is specified', () => {
     const currency = { multiasset: [{ symbol: 'DOT' }] } as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length >1 and feeAsset is undefined', () => {
@@ -72,7 +72,7 @@ describe('validateCurrency', () => {
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow(
-      'Overridden multi assets cannot be used without specifying fee asset'
+      'Overridden assets cannot be used without specifying fee asset'
     )
   })
 
@@ -85,7 +85,7 @@ describe('validateCurrency', () => {
   it('should throw when currency has multiasset with length 1 or less', () => {
     const currency = { multiasset: [{}] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })
 })
 
@@ -125,7 +125,7 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should not throw when destination is a MultiLocation object', () => {
+  it('should not throw when destination is a Location object', () => {
     origin = 'AssetHubPolkadot'
     destination = {} as TDestination
 
@@ -162,7 +162,7 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should not throw when destination is a MultiLocation object and other conditions are met', () => {
+  it('should not throw when destination is a location object and other conditions are met', () => {
     origin = 'Acala'
     destination = {} as TDestination
 
@@ -196,7 +196,7 @@ describe('validateDestination', () => {
     destination = 'Kusama'
 
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
 
     expect(() => validateDestination(origin, destination)).toThrow()
     expect(isRelayChain).toHaveBeenCalled()

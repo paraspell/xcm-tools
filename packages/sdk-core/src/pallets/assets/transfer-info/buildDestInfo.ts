@@ -58,8 +58,8 @@ export const buildDestInfo = async <TApi, TRes>({
 
   const edDestBn = BigInt(edDest)
 
-  const destCurrency = destAsset.multiLocation
-    ? { multilocation: destAsset.multiLocation }
+  const destCurrency = destAsset.location
+    ? { location: destAsset.location }
     : { symbol: destAsset.symbol }
 
   const destBalance = await getAssetBalanceInternal({

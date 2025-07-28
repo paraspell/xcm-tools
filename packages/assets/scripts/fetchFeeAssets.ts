@@ -1,8 +1,8 @@
-import { TMultiLocation } from '@paraspell/sdk-common'
+import { TLocation } from '@paraspell/sdk-common'
 import { ApiPromise } from '@polkadot/api'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
-export const fetchFeeAssets = async (api: ApiPromise): Promise<TMultiLocation[]> => {
+export const fetchFeeAssets = async (api: ApiPromise): Promise<TLocation[]> => {
   const xcmVersion = 4
   const result = await api.call.xcmPaymentApi.queryAcceptablePaymentAssets(xcmVersion)
 
@@ -13,6 +13,6 @@ export const fetchFeeAssets = async (api: ApiPromise): Promise<TMultiLocation[]>
   }
 
   return resultJson.ok.map((asset: any) =>
-    capitalizeMultiLocation(asset[`v${xcmVersion}`])
-  ) as TMultiLocation[]
+    capitalizeLocation(asset[`v${xcmVersion}`])
+  ) as TLocation[]
 }

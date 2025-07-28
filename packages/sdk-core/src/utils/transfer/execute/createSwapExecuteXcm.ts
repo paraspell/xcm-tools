@@ -1,16 +1,11 @@
-import {
-  findAssetForNodeOrThrow,
-  getNativeAssetSymbol,
-  Native,
-  type TMultiAsset
-} from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from '@paraspell/assets'
 
 import { getParaId } from '../../../nodes/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
 import { localizeLocation } from '../../location'
-import { createMultiAsset } from '../../multiAsset'
+import { createAsset } from '../../asset'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
@@ -18,23 +13,23 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
 export const createExchangeInstructions = async <TApi, TRes>(
   options: TCreateSwapXcmInternalOptions<TApi, TRes>,
-  multiAssetFrom: TMultiAsset,
-  multiAssetTo: TMultiAsset
+  assetFrom: TAsset,
+  assetTo: TAsset
 ) => {
   const {
     chain,
     exchangeChain,
-    assetFrom,
-    assetTo,
+    assetInfoFrom,
+    assetInfoTo,
     version,
     calculateMinAmountOut,
     fees: { originReserveFee, exchangeFee }
   } = options
 
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
-  const needsMultiHop = isMultiHopSwap(exchangeChain, assetFrom, assetTo)
+  const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
-  const nativeAsset = findAssetForNodeOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
+  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
 
   assertHasLocation(nativeAsset)
 
@@ -44,8 +39,8 @@ export const createExchangeInstructions = async <TApi, TRes>(
     return [
       {
         ExchangeAsset: {
-          give: createAssetsFilter(multiAssetFrom),
-          want: [multiAssetTo],
+          give: createAssetsFilter(assetFrom),
+          want: [assetTo],
           maximal: shouldUseMaximal
         }
       }
@@ -55,28 +50,28 @@ export const createExchangeInstructions = async <TApi, TRes>(
   // Multi-hop through native asset
 
   const nativeAmountOut = await calculateMinAmountOut(
-    BigInt(assetFrom.amount) - (chain ? originReserveFee + exchangeFee : 0n),
+    BigInt(assetInfoFrom.amount) - (chain ? originReserveFee + exchangeFee : 0n),
     nativeAsset
   )
 
-  const multiAssetNative = createMultiAsset(
+  const assetNative = createAsset(
     version,
     exchangeFee === 0n ? (nativeAmountOut + 1n) / 2n : nativeAmountOut,
-    localizeLocation(exchangeChain, nativeAsset.multiLocation)
+    localizeLocation(exchangeChain, nativeAsset.location)
   )
 
   return [
     {
       ExchangeAsset: {
-        give: createAssetsFilter(multiAssetFrom),
-        want: [multiAssetNative],
+        give: createAssetsFilter(assetFrom),
+        want: [assetNative],
         maximal: shouldUseMaximal
       }
     },
     {
       ExchangeAsset: {
-        give: createAssetsFilter(multiAssetNative),
-        want: [multiAssetTo],
+        give: createAssetsFilter(assetNative),
+        want: [assetTo],
         maximal: true
       }
     }
@@ -91,37 +86,37 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
     chain,
     exchangeChain,
     destChain,
-    assetFrom,
-    assetTo,
+    assetInfoFrom,
+    assetInfoTo,
     fees: { originReserveFee, exchangeFee, destReserveFee },
     recipientAddress,
     version,
     paraIdTo
   } = options
 
-  assertHasLocation(assetFrom)
-  assertHasLocation(assetTo)
+  assertHasLocation(assetInfoFrom)
+  assertHasLocation(assetInfoTo)
 
-  const multiAssetFrom = createMultiAsset(
+  const assetFrom = createAsset(
     version,
-    BigInt(assetFrom.amount),
-    localizeLocation(exchangeChain, assetFrom.multiLocation)
+    BigInt(assetInfoFrom.amount),
+    localizeLocation(exchangeChain, assetInfoFrom.location)
   )
 
   // Exchange fee 0n means we are creating a dummy tx
   // Set want to 1000n to prevent NoDeal
-  const amountOut = chain && exchangeFee === 0n ? 1000n : BigInt(assetTo.amount)
+  const amountOut = chain && exchangeFee === 0n ? 1000n : BigInt(assetInfoTo.amount)
 
-  const multiAssetTo = createMultiAsset(
+  const assetTo = createAsset(
     version,
     amountOut,
-    localizeLocation(exchangeChain, assetTo.multiLocation)
+    localizeLocation(exchangeChain, assetInfoTo.location)
   )
 
-  const multiAssetToLocalizedToDest = createMultiAsset(
+  const assetToLocalizedToDest = createAsset(
     version,
     amountOut,
-    localizeLocation(destChain ?? exchangeChain, assetTo.multiLocation)
+    localizeLocation(destChain ?? exchangeChain, assetInfoTo.location)
   )
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
@@ -129,26 +124,22 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
       api,
       chain: chain ?? exchangeChain,
       destChain: destChain ?? exchangeChain,
-      asset: assetFrom,
+      assetInfo: assetInfoFrom,
       recipientAddress,
       // Deal with this after feeAsset for swaps is supported
       fees: { originFee: 0n, reserveFee: originReserveFee },
       version
     },
-    multiAssetToLocalizedToDest
+    assetToLocalizedToDest
   )
 
-  const exchangeInstructions = await createExchangeInstructions(
-    options,
-    multiAssetFrom,
-    multiAssetTo
-  )
+  const exchangeInstructions = await createExchangeInstructions(options, assetFrom, assetTo)
 
   const exchangeToDestXcm = destChain
     ? createBaseExecuteXcm({
         chain: exchangeChain,
         destChain,
-        asset: assetTo,
+        assetInfo: assetInfoTo,
         paraIdTo,
         version,
         recipientAddress,
@@ -162,7 +153,7 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
     ? createBaseExecuteXcm({
         chain: chain,
         destChain: exchangeChain,
-        asset: assetFrom,
+        assetInfo: assetInfoFrom,
         paraIdTo: getParaId(exchangeChain),
         version,
         recipientAddress,

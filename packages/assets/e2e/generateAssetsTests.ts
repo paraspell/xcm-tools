@@ -65,10 +65,8 @@ export const generateAssetsTests = () => {
             if (node !== 'Ethereum') expect(asset).toHaveProperty('decimals')
             expect(asset).toHaveProperty('existentialDeposit')
 
-            // Check that asset has either 'assetId' or 'multiLocation'
-            const hasAssetId = 'assetId' in asset
-            const hasMultiLocation = 'multiLocation' in asset
-            expect(hasAssetId || hasMultiLocation).toBe(true)
+            // Check that asset has either 'assetId' or 'location'
+            expect('assetId' in asset || 'location' in asset).toBe(true)
           })
         })
 
@@ -137,10 +135,8 @@ export const generateAssetsTests = () => {
             if (node !== 'Ethereum' && !isEthAssetInAhAssets)
               expect(asset).toHaveProperty('decimals')
 
-            // Check that asset has either 'assetId' or 'multiLocation'
-            const hasAssetId = 'assetId' in asset
-            const hasMultiLocation = 'multiLocation' in asset
-            expect(hasAssetId || hasMultiLocation).toBe(true)
+            // Check that asset has either 'assetId' or 'location'
+            expect('assetId' in asset || 'location' in asset).toBe(true)
           })
         })
 
@@ -243,12 +239,12 @@ export const generateAssetsTests = () => {
           })
         })
 
-        describe('getAssetMultiLocation', () => {
-          it('should return multiLocation for foreign assets', () => {
+        describe('getAssetLocation', () => {
+          it('should return location for foreign assets', () => {
             const { otherAssets } = getAssetsObject(node)
             otherAssets.forEach(asset => {
-              if (asset.multiLocation) {
-                expect(asset.multiLocation).toBeDefined()
+              if (asset.location) {
+                expect(asset.location).toBeDefined()
               }
             })
           })

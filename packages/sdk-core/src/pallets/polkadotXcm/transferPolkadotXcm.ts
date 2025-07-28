@@ -1,21 +1,21 @@
 // Contains basic structure of polkadotXCM call
 
 import type { TPallet } from '@paraspell/pallets'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TPolkadotXcmMethod, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
-import { maybeOverrideMultiAssets } from '../../utils/multiAsset'
+import { maybeOverrideAssets } from '../../utils/asset'
 
 export const transferPolkadotXcm = <TApi, TRes>(
   {
     api,
     destLocation,
-    asset,
+    assetInfo: asset,
     beneficiaryLocation,
-    multiAsset,
+    asset: multiAsset,
     overriddenAsset,
     pallet,
     version,
@@ -24,7 +24,7 @@ export const transferPolkadotXcm = <TApi, TRes>(
   method: TPolkadotXcmMethod,
   fees: 'Unlimited' | { Limited: string } | undefined = undefined
 ): Promise<TRes> => {
-  const resolvedMultiAssets = maybeOverrideMultiAssets(
+  const resolvedMultiAssets = maybeOverrideAssets(
     version,
     asset.amount,
     [multiAsset],
@@ -32,7 +32,7 @@ export const transferPolkadotXcm = <TApi, TRes>(
   )
 
   const feeAssetIndex =
-    overriddenAsset === undefined || isTMultiLocation(overriddenAsset)
+    overriddenAsset === undefined || isTLocation(overriddenAsset)
       ? DEFAULT_FEE_ASSET
       : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 

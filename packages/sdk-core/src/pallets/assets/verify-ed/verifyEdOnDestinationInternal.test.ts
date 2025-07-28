@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
   getExistentialDepositOrThrow,
@@ -60,7 +60,7 @@ describe('verifyEdOnDestinationInternal', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(validateAddress).mockImplementation(() => {})
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n) // 1 DOT
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n) // 5 DOT
     vi.mocked(getXcmFee).mockResolvedValue({
@@ -201,7 +201,7 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('should throw InvalidParameterError if asset symbol does not match fee currency symbol', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAssetInfo)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
       destination: { fee: 1000000000n, currency: 'DOT' }

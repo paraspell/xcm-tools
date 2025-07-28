@@ -28,25 +28,25 @@ describe('XcmAnalyserService', () => {
     service = module.get<XcmAnalyserService>(XcmAnalyserService);
   });
 
-  it('throws BadRequestException when neither multilocation nor xcm is provided', () => {
+  it('throws BadRequestException when neither location nor xcm is provided', () => {
     expect(() =>
-      service.getMultiLocationPaths({
-        multilocation: undefined,
+      service.getLocationPaths({
+        location: undefined,
         xcm: undefined,
       }),
     ).toThrow(BadRequestException);
     expect(() =>
-      service.getMultiLocationPaths({
-        multilocation: undefined,
+      service.getLocationPaths({
+        location: undefined,
         xcm: undefined,
       }),
     ).toThrow(BadRequestException);
   });
 
-  it('throws BadRequestException when both multilocation and xcm are provided', () => {
+  it('throws BadRequestException when both location and xcm are provided', () => {
     expect(() =>
-      service.getMultiLocationPaths({
-        multilocation: {
+      service.getLocationPaths({
+        location: {
           parents: 1,
           interior: {
             X1: [
@@ -61,8 +61,8 @@ describe('XcmAnalyserService', () => {
     ).toThrow(BadRequestException);
   });
 
-  it('returns the correct URL for multilocation', () => {
-    const multilocation = {
+  it('returns the correct URL for location', () => {
+    const location = {
       parents: 1,
       interior: {
         X1: {
@@ -73,12 +73,12 @@ describe('XcmAnalyserService', () => {
     const expectedUrl = '../Parachain(1)';
     vi.mocked(convertMultilocationToUrl).mockReturnValue(expectedUrl);
 
-    const result = service.getMultiLocationPaths({
-      multilocation,
+    const result = service.getLocationPaths({
+      location,
       xcm: undefined,
     });
 
-    expect(convertMultilocationToUrl).toHaveBeenCalledWith(multilocation);
+    expect(convertMultilocationToUrl).toHaveBeenCalledWith(location);
     expect(result).toEqual(`"${expectedUrl}"`);
   });
 
@@ -96,8 +96,8 @@ describe('XcmAnalyserService', () => {
     const expectedUrls = ['http://example.com/xcm1', 'http://example.com/xcm2'];
     vi.mocked(convertXCMToUrls).mockReturnValue(expectedUrls);
 
-    const result = service.getMultiLocationPaths({
-      multilocation: undefined,
+    const result = service.getLocationPaths({
+      location: undefined,
       xcm,
     });
 
@@ -121,7 +121,7 @@ describe('XcmAnalyserService', () => {
     });
 
     expect(() =>
-      service.getMultiLocationPaths({ multilocation: undefined, xcm }),
+      service.getLocationPaths({ location: undefined, xcm }),
     ).toThrow(InternalServerErrorException);
   });
 });

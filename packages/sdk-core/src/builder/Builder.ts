@@ -5,7 +5,7 @@ import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/a
 import type { Version } from '@paraspell/sdk-common'
 import {
   isRelayChain,
-  isTMultiLocation,
+  isTLocation,
   type TNodeDotKsmWithRelayChains,
   type TNodeWithRelayChains
 } from '@paraspell/sdk-common'
@@ -94,7 +94,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
-   * Specifies the currency to be used in the transaction. Symbol, ID, multi-location or multi-asset.
+   * Specifies the currency to be used in the transaction. Symbol, ID, location or multi-asset.
    *
    * @param currency - The currency to be transferred.
    * @returns An instance of Builder
@@ -216,7 +216,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     const { from, to } = this._options
 
-    if (!isTMultiLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
+    if (!isTLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
       throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
@@ -228,13 +228,13 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     const tx = await this.build()
 
-    if (isTMultiLocation(to)) {
+    if (isTLocation(to)) {
       throw new InvalidParameterError(
         'Multi-Location destination is not supported for XCM fee calculation.'
       )
     }
 
-    if (isTMultiLocation(address)) {
+    if (isTLocation(address)) {
       throw new InvalidParameterError(
         'Multi-Location address is not supported for XCM fee calculation.'
       )

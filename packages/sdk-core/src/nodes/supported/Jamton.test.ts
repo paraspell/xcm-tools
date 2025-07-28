@@ -1,12 +1,12 @@
-import type { TAsset, TMultiAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
+import type { TAssetInfo, TAsset } from '@paraspell/assets'
+import { findAssetInfoOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, createMultiAsset } from '../../utils'
+import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import { getNode } from '../../utils/getNode'
 import type Jamton from './Jamton'
 
@@ -16,7 +16,7 @@ vi.mock('../../pallets/xTokens', () => ({
 
 vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   isForeignAsset: vi.fn(),
   isSymbolMatch: vi.fn()
 }))
@@ -24,7 +24,7 @@ vi.mock('@paraspell/assets', () => ({
 vi.mock('../../utils', () => ({
   assertHasLocation: vi.fn(),
   assertHasId: vi.fn(),
-  createMultiAsset: vi.fn()
+  createAsset: vi.fn()
 }))
 
 describe('Jamton', () => {
@@ -173,8 +173,8 @@ describe('Jamton', () => {
       it('should handle WUD symbol with multi-asset transfer', () => {
         const mockUsdtAsset = {
           symbol: 'USDt',
-          multiLocation: {}
-        } as TAsset
+          location: {}
+        } as TAssetInfo
 
         const input = {
           ...baseInput,
@@ -182,40 +182,33 @@ describe('Jamton', () => {
             symbol: 'WUD',
             assetId: '456',
             amount: 1000n,
-            multiLocation: {}
+            location: {}
           }
         } as TXTokensTransferOptions<unknown, unknown>
 
         vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(true)
-        vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockUsdtAsset)
-        vi.mocked(createMultiAsset)
+        vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockUsdtAsset)
+        vi.mocked(createAsset)
           .mockReturnValueOnce({
-            mockMultiAsset: 'usdt',
+            mockAsset: 'usdt',
             isFeeAsset: true
-          } as unknown as TMultiAsset)
-          .mockReturnValueOnce({ mockMultiAsset: 'wud' } as unknown as TMultiAsset)
+          } as unknown as TAsset)
+          .mockReturnValueOnce({ mockAsset: 'wud' } as unknown as TAsset)
 
         jamton.transferXTokens(input)
 
         expect(isSymbolMatch).toHaveBeenCalledWith('WUD', 'WUD')
-        expect(findAssetForNodeOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' }, null)
+        expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' }, null)
         expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
         expect(assertHasLocation).toHaveBeenCalledWith(mockUsdtAsset)
-        expect(createMultiAsset).toHaveBeenCalledWith(
-          Version.V4,
-          180_000n,
-          mockUsdtAsset.multiLocation
-        )
-        expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.asset.multiLocation)
+        expect(createAsset).toHaveBeenCalledWith(Version.V4, 180_000n, mockUsdtAsset.location)
+        expect(createAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.asset.location)
 
         expect(transferXTokens).toHaveBeenCalledWith(
           {
             ...input,
-            overriddenAsset: [
-              { mockMultiAsset: 'usdt', isFeeAsset: true },
-              { mockMultiAsset: 'wud' }
-            ]
+            overriddenAsset: [{ mockAsset: 'usdt', isFeeAsset: true }, { mockAsset: 'wud' }]
           },
           '456'
         )
@@ -231,7 +224,7 @@ describe('Jamton', () => {
 
         jamton.transferXTokens(input)
 
-        expect(findAssetForNodeOrThrow).not.toHaveBeenCalled()
+        expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
         expect(transferXTokens).toHaveBeenCalledWith(input, { ForeignAsset: 123 })
       })
     })

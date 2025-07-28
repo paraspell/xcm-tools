@@ -1,4 +1,4 @@
-import { isOverrideMultiLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
+import { isOverrideLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -9,7 +9,7 @@ vi.mock('@paraspell/sdk-common', () => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  isOverrideMultiLocationSpecifier: vi.fn()
+  isOverrideLocationSpecifier: vi.fn()
 }))
 
 describe('shouldPerformAssetCheck', () => {
@@ -37,18 +37,18 @@ describe('shouldPerformAssetCheck', () => {
     expect(result).toBe(false)
   })
 
-  it('returns false if "multilocation" is in currency and isOverrideMultiLocationSpecifier returns true', () => {
+  it('returns false if "location" is in currency and isOverrideLocationSpecifier returns true', () => {
     const origin = {} as TNodeDotKsmWithRelayChains
-    const currency = { multilocation: {} } as TCurrencyInput
+    const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
 
     const result = shouldPerformAssetCheck(origin, currency)
     expect(result).toBe(false)
   })
 
-  it('returns true if neither "multiasset" nor overridden "multilocation" is present', () => {
+  it('returns true if neither "multiasset" nor overridden "location" is present', () => {
     const origin = {} as TNodeDotKsmWithRelayChains
     const currency = {} as TCurrencyInput
 
@@ -58,12 +58,12 @@ describe('shouldPerformAssetCheck', () => {
     expect(result).toBe(true)
   })
 
-  it('returns true if "multilocation" exists but override is false', () => {
+  it('returns true if "location" exists but override is false', () => {
     const origin = {} as TNodeDotKsmWithRelayChains
-    const currency = { multilocation: {} } as TCurrencyInput
+    const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
 
     const result = shouldPerformAssetCheck(origin, currency)
     expect(result).toBe(true)

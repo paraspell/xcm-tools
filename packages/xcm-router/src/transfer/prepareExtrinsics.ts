@@ -1,4 +1,4 @@
-import type { TAsset, WithAmount } from '@paraspell/sdk';
+import type { TAssetInfo, WithAmount } from '@paraspell/sdk';
 import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk';
 
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -35,15 +35,15 @@ export const prepareExtrinsics = async (
         chain: origin?.node,
         exchangeChain: exchange.baseNode,
         destChain: destination?.node,
-        assetFrom: {
+        assetInfoFrom: {
           ...(origin?.assetFrom ?? exchange.assetFrom),
           amount: BigInt(amount),
-        } as WithAmount<TAsset>,
-        assetTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAsset>,
+        } as WithAmount<TAssetInfo>,
+        assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
         senderAddress: evmSenderAddress ?? senderAddress,
         currencyTo,
         recipientAddress: recipientAddress ?? senderAddress,
-        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) =>
+        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
           dex.getAmountOut(exchange.api, {
             ...options,
             amount: amountIn.toString(),

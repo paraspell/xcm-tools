@@ -1,11 +1,11 @@
-import type { TAsset, TCurrencyInput, TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
+import type { TAssetInfo, TCurrencyInput, TForeignAssetInfo, TLocation } from '@paraspell/sdk';
 import {
   deepEqual,
-  findAsset,
+  findAssetInfo,
   findBestMatches,
   getAssets,
   isForeignAsset,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TRouterAsset } from '../types';
@@ -13,10 +13,10 @@ import { getSdkAssetByRouterAsset } from './getSdkAssetByRouterAsset';
 
 const exchangeBaseNode = 'Acala';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   getAssets: vi.fn(),
   findBestMatches: vi.fn(),
-  findAsset: vi.fn(),
+  findAssetInfo: vi.fn(),
   isForeignAsset: vi.fn(),
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
 }));
@@ -35,7 +35,7 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return candidate when exactly one candidate is found', () => {
-    const candidate: TAsset = { symbol: 'ABC', assetId: '1' };
+    const candidate: TAssetInfo = { symbol: 'ABC', assetId: '1' };
     vi.mocked(getAssets).mockReturnValue([candidate]);
     vi.mocked(findBestMatches).mockReturnValue([candidate]);
     const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1' };
@@ -44,8 +44,8 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return undefined when multiple candidates are found and routerAsset has no id', () => {
-    const candidate1: TAsset = { symbol: 'ABC', assetId: '1' };
-    const candidate2: TAsset = { symbol: 'ABC', assetId: '2' };
+    const candidate1: TAssetInfo = { symbol: 'ABC', assetId: '1' };
+    const candidate2: TAssetInfo = { symbol: 'ABC', assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     const routerAsset: TRouterAsset = { symbol: 'ABC' };
@@ -53,38 +53,35 @@ describe('getSdkAssetByRouterAsset', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should return a candidate when matching by multiLocation', () => {
-    const multiLoc: TMultiLocation = { parents: 0, interior: 'Here' };
-    const candidate1: TForeignAsset = { symbol: 'ABC', assetId: '1', multiLocation: multiLoc };
-    const candidate2: TAsset = { symbol: 'ABC', assetId: '2' };
+  it('should return a candidate when matching by location', () => {
+    const location: TLocation = { parents: 0, interior: 'Here' };
+    const candidate1: TForeignAssetInfo = { symbol: 'ABC', assetId: '1', location };
+    const candidate2: TAssetInfo = { symbol: 'ABC', assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
-    vi.mocked(isForeignAsset).mockImplementation((asset: TAsset) =>
-      Boolean((asset as TForeignAsset).assetId),
+    vi.mocked(isForeignAsset).mockImplementation((asset: TAssetInfo) =>
+      Boolean((asset as TForeignAssetInfo).assetId),
     );
-    vi.mocked(findAsset).mockImplementation((_node, currency: TCurrencyInput) => {
-      if (
-        'multilocation' in currency &&
-        deepEqual(currency.multilocation, candidate1.multiLocation)
-      ) {
+    vi.mocked(findAssetInfo).mockImplementation((_node, currency: TCurrencyInput) => {
+      if ('location' in currency && deepEqual(currency.location, candidate1.location)) {
         return candidate1;
       }
       return null;
     });
-    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', multiLocation: multiLoc };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', location };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
-    expect(result).toEqual({ ...candidate1, multiLocation: multiLoc });
+    expect(result).toEqual({ ...candidate1, location });
   });
 
   it('should return a candidate when matching by assetId', () => {
-    const candidate1: TForeignAsset = { symbol: 'ABC', assetId: '1' };
-    const candidate2: TForeignAsset = { symbol: 'ABC', assetId: '2' };
+    const candidate1: TForeignAssetInfo = { symbol: 'ABC', assetId: '1' };
+    const candidate2: TForeignAssetInfo = { symbol: 'ABC', assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     vi.mocked(isForeignAsset).mockImplementation(
-      (asset: TAsset) => (asset as TForeignAsset).assetId === '2',
+      (asset: TAssetInfo) => (asset as TForeignAssetInfo).assetId === '2',
     );
-    vi.mocked(findAsset).mockImplementation((_node, currency: TCurrencyInput) => {
+    vi.mocked(findAssetInfo).mockImplementation((_node, currency: TCurrencyInput) => {
       if ('id' in currency && currency.id === candidate2.assetId) return candidate2;
       return null;
     });
@@ -94,24 +91,24 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return undefined when multiple candidates are found but none match', () => {
-    const candidate1: TForeignAsset = {
+    const candidate1: TForeignAssetInfo = {
       symbol: 'ABC',
       assetId: '1',
-      multiLocation: { parents: 0, interior: 'Here' },
+      location: { parents: 0, interior: 'Here' },
     };
-    const candidate2: TForeignAsset = {
+    const candidate2: TForeignAssetInfo = {
       symbol: 'ABC',
       assetId: '2',
-      multiLocation: { parents: 0, interior: 'Here' },
+      location: { parents: 0, interior: 'Here' },
     };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     vi.mocked(isForeignAsset).mockReturnValue(true);
-    vi.mocked(findAsset).mockReturnValue(null);
+    vi.mocked(findAssetInfo).mockReturnValue(null);
     const routerAsset: TRouterAsset = {
       symbol: 'ABC',
       assetId: '1',
-      multiLocation: candidate1.multiLocation,
+      location: candidate1.location,
     };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
     expect(result).toBeUndefined();

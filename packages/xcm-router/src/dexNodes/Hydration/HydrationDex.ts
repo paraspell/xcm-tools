@@ -1,12 +1,12 @@
 import { createSdkContext } from '@galacticcouncil/sdk';
-import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import {
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   InvalidParameterError,
-} from '@paraspell/sdk-pjs';
+  isForeignAsset,
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
@@ -203,16 +203,16 @@ class HydrationExchangeNode extends ExchangeNode {
 
     const assets = await tradeRouter.getAllAssets();
 
-    const sdkAssets = getAssets(this.node) as TForeignAsset[];
+    const sdkAssets = getAssets(this.node);
 
     const transformedAssets = assets.map(({ symbol, id }) => {
       const asset =
-        sdkAssets.find((a) => a.assetId === id) ??
+        sdkAssets.find((a) => isForeignAsset(a) && a.assetId === id) ??
         sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
       return {
         symbol,
-        assetId: asset?.assetId,
-        multiLocation: asset?.multiLocation,
+        assetId: asset && isForeignAsset(asset) ? asset.assetId : undefined,
+        location: asset?.location,
       };
     });
 

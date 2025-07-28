@@ -1,11 +1,11 @@
-import type { TJunctionType, TMultiLocation } from '../../types'
+import type { TJunctionType, TLocation } from '../../types'
 import { flattenJunctions } from './flattenJunctions'
 
-const findMatchingJunction = (multiLocation: TMultiLocation, junctionType: TJunctionType) => {
-  if (multiLocation.interior === 'Here') {
+const findMatchingJunction = (location: TLocation, junctionType: TJunctionType) => {
+  if (location.interior === 'Here') {
     return undefined
   }
-  const allJunctions = flattenJunctions(multiLocation.interior)
+  const allJunctions = flattenJunctions(location.interior)
   return allJunctions.find(junction => {
     const keys = Object.keys(junction)
     if (keys.length !== 1) {
@@ -17,21 +17,21 @@ const findMatchingJunction = (multiLocation: TMultiLocation, junctionType: TJunc
 }
 
 export const getJunctionValue = <T = unknown>(
-  multiLocation: TMultiLocation,
+  location: TLocation,
   junctionType: TJunctionType
 ): T | undefined => {
-  const matchingJunction = findMatchingJunction(multiLocation, junctionType)
+  const matchingJunction = findMatchingJunction(location, junctionType)
   return matchingJunction
     ? ((matchingJunction as Record<string, unknown>)[junctionType] as T)
     : undefined
 }
 
 export const hasJunction = (
-  multiLocation: TMultiLocation,
+  location: TLocation,
   junctionType: TJunctionType,
   junctionValue?: unknown
 ): boolean => {
-  const matchingJunction = findMatchingJunction(multiLocation, junctionType)
+  const matchingJunction = findMatchingJunction(location, junctionType)
 
   if (!matchingJunction) {
     return false

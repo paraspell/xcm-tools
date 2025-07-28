@@ -1,6 +1,6 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
@@ -15,13 +15,13 @@ export const handleToAhTeleport = async <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
   defaultTx: TRes
 ): Promise<TRes> => {
-  const { api, destination, address, senderAddress, asset, currency } = input
+  const { api, destination, address, senderAddress, assetInfo: asset, currency } = input
 
-  if (isTMultiLocation(destination)) {
+  if (isTLocation(destination)) {
     throw new InvalidParameterError('Multi-Location destination is not supported for this scenario')
   }
 
-  if (isTMultiLocation(address)) {
+  if (isTLocation(address)) {
     throw new InvalidParameterError('Multi-Location address is not supported for this scenario')
   }
 

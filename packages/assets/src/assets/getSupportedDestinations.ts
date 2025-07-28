@@ -2,13 +2,13 @@ import { NODES_WITH_RELAY_CHAINS, type TNodeWithRelayChains } from '@paraspell/s
 
 import { DuplicateAssetError, InvalidCurrencyError } from '../errors'
 import type { TCurrencyCore } from '../types'
-import { findAssetForNodeOrThrow, findAssetOnDest } from './search'
+import { findAssetInfoOnDest, findAssetInfoOrThrow } from './search'
 
 export const getSupportedDestinations = (
   origin: TNodeWithRelayChains,
   currency: TCurrencyCore
 ): TNodeWithRelayChains[] => {
-  findAssetForNodeOrThrow(origin, currency, null)
+  findAssetInfoOrThrow(origin, currency, null)
 
   return NODES_WITH_RELAY_CHAINS.filter(destination => {
     if (destination === origin) return false
@@ -16,7 +16,7 @@ export const getSupportedDestinations = (
     // Check if we still can find asset if we specify destination
     let originAsset
     try {
-      originAsset = findAssetForNodeOrThrow(origin, currency, destination)
+      originAsset = findAssetInfoOrThrow(origin, currency, destination)
     } catch (error) {
       if (error instanceof InvalidCurrencyError) {
         return false
@@ -25,7 +25,7 @@ export const getSupportedDestinations = (
     }
 
     try {
-      return !!findAssetOnDest(origin, destination, currency, originAsset)
+      return !!findAssetInfoOnDest(origin, destination, currency, originAsset)
     } catch (error) {
       if (error instanceof DuplicateAssetError) {
         return true

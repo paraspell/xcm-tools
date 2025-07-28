@@ -24,7 +24,7 @@ describe('Astar', () => {
   let astar: Astar<unknown, unknown>
   const mockPolkadotXCMInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'DOT', amount: 100n }
+    assetInfo: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   const mockXTokensInput = {

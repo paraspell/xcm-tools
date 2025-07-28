@@ -65,8 +65,8 @@ export const buildHopInfo = async <TApi, TRes>({
     } else {
       const hopAsset = findAssetOnDestOrThrow(originNode, node, currency)
 
-      const hopCurrencyPayload = hopAsset.multiLocation
-        ? { multilocation: hopAsset.multiLocation }
+      const hopCurrencyPayload = hopAsset.location
+        ? { location: hopAsset.location }
         : { symbol: hopAsset.symbol }
 
       const balance = await getAssetBalanceInternal({

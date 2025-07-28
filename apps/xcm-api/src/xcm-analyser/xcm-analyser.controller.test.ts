@@ -32,10 +32,10 @@ describe('XcmAnalyserController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getMultiLocationPaths', () => {
+  describe('getLocationPaths', () => {
     it('should call analyticsService and xcmAnalyserService', () => {
       const bodyParams: XcmAnalyserDto = {
-        multilocation: {
+        location: {
           parents: 1,
           interior: {
             X1: {
@@ -46,16 +46,16 @@ describe('XcmAnalyserController', () => {
       };
       const req = mockRequestObject;
 
-      const xcmAnalyserServiceSpy = vi.spyOn(service, 'getMultiLocationPaths');
+      const xcmAnalyserServiceSpy = vi.spyOn(service, 'getLocationPaths');
 
-      controller.getMultiLocationPaths(bodyParams, req);
+      controller.getLocationPaths(bodyParams, req);
 
       expect(xcmAnalyserServiceSpy).toHaveBeenCalledWith(bodyParams);
     });
 
     it('should return the value from xcmAnalyserService', () => {
       const bodyParams: XcmAnalyserDto = {
-        multilocation: {
+        location: {
           parents: 1,
           interior: {
             X1: {
@@ -67,9 +67,9 @@ describe('XcmAnalyserController', () => {
       const req = mockRequestObject;
       const mockResponse = ['path1', 'path2'];
 
-      vi.spyOn(service, 'getMultiLocationPaths').mockReturnValue(mockResponse);
+      vi.spyOn(service, 'getLocationPaths').mockReturnValue(mockResponse);
 
-      const result = controller.getMultiLocationPaths(bodyParams, req);
+      const result = controller.getLocationPaths(bodyParams, req);
 
       expect(result).toBe(mockResponse);
     });

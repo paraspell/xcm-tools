@@ -8,7 +8,7 @@ import {
   getJunctionValue,
   hasJunction,
   Parents,
-  type TMultiLocation
+  type TLocation
 } from '@paraspell/sdk-common'
 
 import { CHAINS_DOT_RESERVE_AH } from '../../../constants'
@@ -19,7 +19,7 @@ import { getRelayChainOf } from '../..'
 export const getAssetReserveChain = (
   chain: TNodeDotKsmWithRelayChains,
   destChain: TNodeWithRelayChains,
-  assetLocation: TMultiLocation
+  assetLocation: TLocation
 ): TNodeDotKsmWithRelayChains => {
   const hasGlobalConsensusJunction = hasJunction(assetLocation, 'GlobalConsensus')
 

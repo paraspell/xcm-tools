@@ -1,5 +1,5 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import { isRelayChain, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import { isRelayChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
@@ -35,13 +35,13 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
       node: nodeMock,
-      multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
+      assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
     const argsMock = {
-      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V4]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
+      beneficiary: { [Version.V4]: {} as TLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -63,14 +63,14 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
       node: nodeMock,
-      multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
+      assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
     const apiInstanceMock = apiMock
     const argsMock = {
-      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V4]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
+      beneficiary: { [Version.V4]: {} as TLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -93,13 +93,13 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
       node: nodeMock,
-      multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
+      assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
     const argsMock = {
-      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V4]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
+      beneficiary: { [Version.V4]: {} as TLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(true)

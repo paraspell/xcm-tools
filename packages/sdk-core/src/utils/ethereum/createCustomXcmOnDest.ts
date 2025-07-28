@@ -1,5 +1,5 @@
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
@@ -18,7 +18,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   {
     api,
     address,
-    asset,
+    assetInfo: asset,
     senderAddress,
     ahAddress,
     version
@@ -42,7 +42,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     throw new InvalidParameterError(`Please provide ahAddress`)
   }
 
-  const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+  const ethAsset = findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
   if (!ethAsset) {
     throw new InvalidCurrencyError(
@@ -78,7 +78,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
         InitiateReserveWithdraw: {
           assets: {
             Wild: {
-              AllOf: { id: asset.multiLocation, fun: 'Fungible' }
+              AllOf: { id: asset.location, fun: 'Fungible' }
             }
           },
           reserve: {

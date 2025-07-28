@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getExistentialDepositOrThrow } from '@paraspell/assets'
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
   isNodeEvm
@@ -34,7 +34,7 @@ vi.mock('@paraspell/assets', async importOriginal => {
   const actual = await importOriginal<typeof import('@paraspell/assets')>()
   return {
     ...actual,
-    findAssetForNodeOrThrow: vi.fn(),
+    findAssetInfoOrThrow: vi.fn(),
     getExistentialDepositOrThrow: vi.fn(),
     getRelayChainSymbol: vi.fn(),
     isAssetEqual: vi.fn(),
@@ -106,8 +106,8 @@ describe('getTransferInfo', () => {
     }
 
     vi.mocked(isNodeEvm).mockReturnValue(false)
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAsset)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'DOT',
       assetId: 'DOT',
       decimals: 10
@@ -159,7 +159,7 @@ describe('getTransferInfo', () => {
 
     expect(mockApi.init).toHaveBeenCalledWith(options.origin)
     expect(mockApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
-    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith(
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
       options.origin,
       options.currency,
       options.destination
@@ -340,12 +340,12 @@ describe('getTransferInfo', () => {
     } as WithAmount<TCurrencyCore>
     vi.mocked(isNodeEvm).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6
     })
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAsset)
+    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(getAssetBalanceInternal)
       .mockResolvedValueOnce(100000000n)
       .mockResolvedValueOnce(100000000n)
@@ -442,13 +442,13 @@ describe('getTransferInfo', () => {
   })
 
   it('should call api.setDisconnectAllowed(true) and api.disconnect() in finally block even on error', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockImplementation(() => {
-      throw new Error('Simulated error in findAssetOnDestOrThrow')
+    vi.mocked(findAssetInfoOrThrow).mockImplementation(() => {
+      throw new Error('Simulated error in findAssetInfoOrThrow')
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
 
     await expect(getTransferInfo(options)).rejects.toThrow(
-      'Simulated error in findAssetOnDestOrThrow'
+      'Simulated error in findAssetInfoOrThrow'
     )
 
     expect(mockApi.setDisconnectAllowed).toHaveBeenCalledTimes(2)

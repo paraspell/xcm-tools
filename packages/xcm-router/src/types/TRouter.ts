@@ -1,7 +1,7 @@
 import type {
-  TAsset,
+  TAssetInfo,
   TCurrencyInput,
-  TMultiLocation,
+  TLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
@@ -164,7 +164,7 @@ export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 
 export type TOriginInfo = {
   api: TPapiApi;
   node: TNodeDotKsmWithRelayChains;
-  assetFrom: TAsset;
+  assetFrom: TAssetInfo;
 };
 
 export type TExchangeInfo = {
@@ -197,7 +197,7 @@ export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'sig
 export type TRouterAsset = {
   symbol: string;
   assetId?: string;
-  multiLocation?: TMultiLocation;
+  location?: TLocation;
 };
 
 export type TPairKey = string | object;

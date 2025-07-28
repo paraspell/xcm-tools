@@ -6,8 +6,8 @@ vi.mock('../consts/assets.json', () => ({
   HydrationDex: {
     isOmni: true,
     assets: [
-      { symbol: 'ABC', assetId: '1', multiLocation: undefined },
-      { symbol: 'XYZ', assetId: '2', multiLocation: undefined },
+      { symbol: 'ABC', assetId: '1' },
+      { symbol: 'XYZ', assetId: '2' },
     ],
     pairs: [['1', '2']],
   },
@@ -20,8 +20,8 @@ describe('exchange-config helpers', () => {
     expect(cfg).toEqual({
       isOmni: true,
       assets: [
-        { symbol: 'ABC', assetId: '1', multiLocation: undefined },
-        { symbol: 'XYZ', assetId: '2', multiLocation: undefined },
+        { symbol: 'ABC', assetId: '1' },
+        { symbol: 'XYZ', assetId: '2' },
       ],
       pairs: [['1', '2']],
     });
@@ -32,8 +32,8 @@ describe('exchange-config helpers', () => {
     const assets = getExchangeAssets('HydrationDex');
 
     expect(assets).toEqual([
-      { symbol: 'ABC', assetId: '1', multiLocation: undefined },
-      { symbol: 'XYZ', assetId: '2', multiLocation: undefined },
+      { symbol: 'ABC', assetId: '1' },
+      { symbol: 'XYZ', assetId: '2' },
     ]);
     expect(Array.isArray(assets)).toBe(true);
   });

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TForeignAsset } from '@paraspell/assets'
+import type { TForeignAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -45,7 +45,7 @@ vi.mock('../../utils/ethereum/createCustomXcmOnDest', () => ({
 describe('Mythos', () => {
   let mythos: Mythos<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'MYTH', amount: 100n },
+    assetInfo: { symbol: 'MYTH', amount: 100n },
     scenario: 'ParaToPara',
     destination: 'Acala'
   } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -136,10 +136,10 @@ describe('Mythos', () => {
 
     const mockEthereumInput = {
       api: mockApi,
-      asset: {
+      assetInfo: {
         symbol: 'MYTH',
         amount: 100n,
-        multiLocation: { parents: 0, interior: 'Here' },
+        location: { parents: 0, interior: 'Here' },
         assetId: '123'
       },
       scenario: 'ParaToPara',
@@ -216,10 +216,10 @@ describe('createTypeAndThenTransfer', () => {
   const mockOptions = {
     api: mockApi,
     scenario: 'ParaToPara',
-    asset: {
+    assetInfo: {
       symbol: 'MYTH',
       amount: 1000n,
-      multiLocation: { parents: 0, interior: 'Here' },
+      location: { parents: 0, interior: 'Here' },
       assetId: '123'
     },
     currency: { symbol: 'MYTH' },
@@ -247,7 +247,7 @@ describe('createTypeAndThenTransfer', () => {
   it('should throw InvalidCurrencyError for non-foreign assets', async () => {
     const optionsWithNonForeignAsset = {
       ...mockOptions,
-      asset: { ...mockOptions.asset, assetId: undefined }
+      assetInfo: { ...mockOptions.assetInfo, assetId: undefined }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(
@@ -304,9 +304,9 @@ describe('createTypeAndThenTransfer', () => {
       mockApi,
       mockOptions.senderAddress,
       expect.any(Number), // paraId
-      (mockOptions.asset as TForeignAsset).assetId,
+      (mockOptions.assetInfo as TForeignAssetInfo).assetId,
       mockOptions.address,
-      mockOptions.asset.amount
+      mockOptions.assetInfo.amount
     )
     expect(mockApi.clone).toHaveBeenCalled()
     expect(mockApi.init).toHaveBeenCalledWith('AssetHubPolkadot')
@@ -317,7 +317,7 @@ describe('createTypeAndThenTransfer', () => {
   it('should handle different asset amounts correctly', async () => {
     const largeAmountOptions = {
       ...mockOptions,
-      asset: { ...mockOptions.asset, amount: 999999999999n }
+      assetInfo: { ...mockOptions.assetInfo, amount: 999999999999n }
     }
 
     vi.mocked(generateMessageId).mockResolvedValue('message_id_large')
@@ -332,7 +332,7 @@ describe('createTypeAndThenTransfer', () => {
     expect((result as any).parameters.assets[Version.V4]).toHaveLength(2)
     expect((result as any).parameters.assets[Version.V4][1]).toEqual(
       expect.objectContaining({
-        id: mockOptions.asset.multiLocation,
+        id: mockOptions.assetInfo.location,
         fun: { Fungible: 999999999999n }
       })
     )

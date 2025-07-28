@@ -1,4 +1,4 @@
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -30,7 +30,7 @@ vi.mock('../..', () => ({
 describe('getAssetReserveChain', () => {
   const mockOrigin = 'Acala' as TNodeDotKsmWithRelayChains
   const mockDest = 'Moonbeam' as TNodeDotKsmWithRelayChains
-  const mockAssetLocation: TMultiLocation = {
+  const mockAssetLocation: TLocation = {
     parents: 1,
     interior: { X1: { Parachain: 1000 } }
   }

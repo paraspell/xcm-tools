@@ -11,6 +11,7 @@ import { getDexConfig } from './getDexConfig';
 vi.mock('@paraspell/sdk', () => ({
   getParaId: vi.fn().mockReturnValue(2001),
   getAssets: vi.fn(),
+  isForeignAsset: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('./bifrostUtils', () => {
@@ -57,8 +58,8 @@ const makeApi = (pairEntries: any[]) =>
   }) as unknown as Parameters<typeof getDexConfig>[0];
 
 const makeSdkAssets = () => [
-  { symbol: 'btc', assetId: '1', multiLocation: undefined },
-  { symbol: 'eth', assetId: '2', multiLocation: undefined },
+  { symbol: 'btc', assetId: '1', location: undefined },
+  { symbol: 'eth', assetId: '2', location: undefined },
 ];
 
 describe('getDexConfig', () => {

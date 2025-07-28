@@ -1,9 +1,9 @@
-import type { TAsset, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { getAssetId } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -13,7 +13,7 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import type BifrostPolkadot from './BifrostPolkadot'
 
 vi.mock('../../pallets/xTokens', () => ({
@@ -31,7 +31,7 @@ describe('BifrostPolkadot', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   const mockPolkadotXCMInput = {
-    asset: { symbol: 'WETH', amount: 100n }
+    assetInfo: { symbol: 'WETH', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -58,7 +58,7 @@ describe('BifrostPolkadot', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        multiAsset: createMultiAsset(bifrostPolkadot.version, mockPolkadotXCMInput.asset.amount, {
+        asset: createAsset(bifrostPolkadot.version, mockPolkadotXCMInput.assetInfo.amount, {
           parents: Parents.TWO,
           interior: {
             X2: [
@@ -76,21 +76,21 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
-    const asset = { symbol: 'DOT', amount: 100n } as WithAmount<TAsset>
+    const assetInfo = { symbol: 'DOT', amount: 100n } as WithAmount<TAssetInfo>
 
     await bifrostPolkadot.transferPolkadotXCM({
       ...mockPolkadotXCMInput,
-      asset
+      assetInfo
     })
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        asset,
-        multiAsset: createMultiAsset(
+        assetInfo,
+        asset: createAsset(
           bifrostPolkadot.version,
-          mockPolkadotXCMInput.asset.amount,
-          DOT_MULTILOCATION
+          mockPolkadotXCMInput.assetInfo.amount,
+          DOT_LOCATION
         )
       },
       'transfer_assets',

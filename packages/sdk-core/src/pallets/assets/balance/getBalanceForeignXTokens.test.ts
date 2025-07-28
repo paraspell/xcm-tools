@@ -1,4 +1,4 @@
-import { InvalidCurrencyError, type TAsset, type TNativeAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAssetInfo, type TNativeAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -12,7 +12,7 @@ const mockApi = {
 
 describe('getBalanceForeignXTokens', () => {
   const address = '5F3sa2TJAWMqDhXG6jhV4N8ko9NmoaMZP8F3sa2TJAWMqDh'
-  const asset: TAsset = { assetId: '1', symbol: 'AssetName' }
+  const asset: TAssetInfo = { assetId: '1', symbol: 'AssetName' }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -70,7 +70,7 @@ describe('getBalanceForeignXTokens', () => {
     await expect(
       getBalanceForeignXTokens(mockApi, 'Astar', address, {
         symbol: 'AssetName'
-      } as TNativeAsset)
+      } as TNativeAssetInfo)
     ).rejects.toThrow(InvalidCurrencyError)
   })
 })

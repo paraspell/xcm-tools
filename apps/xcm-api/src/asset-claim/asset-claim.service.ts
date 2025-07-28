@@ -4,7 +4,7 @@ import {
   Builder,
   NODES_WITH_RELAY_CHAINS,
   TAssetClaimOptionsBase,
-  TMultiAsset,
+  TAsset,
   TNodeDotKsmWithRelayChains,
   TPapiApi,
   TPapiTransaction,
@@ -41,7 +41,7 @@ export class AssetClaimService {
     try {
       builder = Builder(hasOptions ? options : undefined)
         .claimFrom(fromNode)
-        .fungible(fungible as TMultiAsset[])
+        .fungible(fungible)
         .account(address);
 
       const tx = await builder.build();

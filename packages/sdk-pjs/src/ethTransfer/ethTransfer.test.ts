@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { beforeEach } from 'node:test'
 
-import type { IPolkadotApi, TAsset } from '@paraspell/sdk-core'
-import { findAsset, getParaId, isOverrideMultiLocationSpecifier } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core'
+import { findAssetInfo, getParaId, isOverrideLocationSpecifier } from '@paraspell/sdk-core'
 import { type Context, toPolkadotV2 } from '@snowbridge/api'
 import type { ValidationResult } from '@snowbridge/api/dist/toPolkadot_v2'
 import type { AbstractProvider, Signer } from 'ethers'
@@ -20,11 +20,11 @@ vi.mock('./createContext', () => ({
 
 vi.mock('@paraspell/sdk-core', () => ({
   getParaId: vi.fn(),
-  findAsset: vi.fn(),
+  findAssetInfo: vi.fn(),
   isForeignAsset: vi.fn().mockReturnValue(true),
   InvalidCurrencyError: class extends Error {},
   InvalidParameterError: class extends Error {},
-  isOverrideMultiLocationSpecifier: vi.fn().mockReturnValue(false),
+  isOverrideLocationSpecifier: vi.fn().mockReturnValue(false),
   isEthersSigner: vi.fn()
 }))
 
@@ -66,7 +66,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('successfully returns tx response and message receipt', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -146,7 +146,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if asset is not found', async () => {
-    vi.mocked(findAsset).mockReturnValue(null)
+    vi.mocked(findAssetInfo).mockReturnValue(null)
 
     const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
@@ -165,7 +165,7 @@ describe('transferEthToPolkadot', () => {
 
   it('throws error if asset has no asset id', async () => {
     vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(findAsset).mockReturnValue({ symbol: '' } as TAsset)
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: '' } as TAssetInfo)
 
     const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
@@ -200,13 +200,13 @@ describe('transferEthToPolkadot', () => {
     )
   })
 
-  it('throws an error if trying to override multilocation', async () => {
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+  it('throws an error if trying to override location', async () => {
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
       provider: {} as AbstractProvider,
       currency: {
-        multilocation: {
+        location: {
           type: 'Override',
           value: {
             parents: 1,
@@ -224,12 +224,12 @@ describe('transferEthToPolkadot', () => {
     }
 
     await expect(transferEthToPolkadot(options)).rejects.toThrow(
-      'Override multilocation is not supported for Evm transfers'
+      'Override location is not supported for Evm transfers'
     )
   })
 
   it('throws error if message receipt is missing', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -272,7 +272,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if transaction receipt is missing', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(createContext).mockReturnValue({
       config: {},
@@ -313,7 +313,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if validation fails', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({

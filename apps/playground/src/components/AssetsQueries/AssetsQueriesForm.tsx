@@ -34,7 +34,7 @@ export type FormValues = {
   amount: string;
   address: string;
   useApi: boolean;
-  currencyType?: 'id' | 'symbol' | 'multilocation';
+  currencyType?: 'id' | 'symbol' | 'location';
   customCurrencySymbolSpecifier?:
     | 'auto'
     | 'native'
@@ -69,7 +69,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
-    func === 'ASSET_MULTILOCATION' ||
+    func === 'ASSET_LOCATION' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
@@ -77,7 +77,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'SUPPORTED_DESTINATIONS';
 
   const supportsCurrencyType =
-    func === 'ASSET_MULTILOCATION' ||
+    func === 'ASSET_LOCATION' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'SUPPORTED_DESTINATIONS';
@@ -217,9 +217,9 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
                 />
               )}
 
-              {currencyType === 'multilocation' && (
+              {currencyType === 'location' && (
                 <JsonInput
-                  placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
+                  placeholder="Input JSON location or interior junctions to search for and identify the asset"
                   formatOnBlur
                   autosize
                   minRows={10}
@@ -233,7 +233,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
                   data={[
                     { label: 'Asset ID', value: 'id' },
                     { label: 'Symbol', value: 'symbol' },
-                    { label: 'Multi-location', value: 'multilocation' },
+                    { label: 'Location', value: 'location' },
                   ]}
                   onClick={onSelectCurrencyTypeClick}
                   data-testid="currency-type"

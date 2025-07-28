@@ -1,6 +1,6 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
@@ -14,7 +14,7 @@ import { getAssetBalanceInternal } from './balance/getAssetBalance'
 import { getTransferableAmount } from './getTransferableAmount'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   getExistentialDepositOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn()
 }))
@@ -43,7 +43,7 @@ describe('getTransferableAmount', () => {
     const ed = 100n
     const fee = 200n
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
@@ -74,7 +74,7 @@ describe('getTransferableAmount', () => {
     const balance = 1000n
     const ed = 100n
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'USDT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'USDT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
@@ -97,7 +97,7 @@ describe('getTransferableAmount', () => {
     const ed = 100n
     const fee = 200n
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
@@ -116,7 +116,7 @@ describe('getTransferableAmount', () => {
   })
 
   test('throws error when XCM fee is undefined for native asset', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
@@ -137,7 +137,7 @@ describe('getTransferableAmount', () => {
   })
 
   test('sets disconnect allowed to false and disconnects after', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
@@ -161,7 +161,7 @@ describe('getTransferableAmount', () => {
   })
 
   test('disconnects even if internal function throws', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)

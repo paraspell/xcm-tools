@@ -1,10 +1,10 @@
-import { findAssetByMultiLocation, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { findAssetInfoByLoc, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import * as BuilderModule from '../builder'
-import { DOT_MULTILOCATION } from '../constants'
+import { DOT_LOCATION } from '../constants'
 import { BridgeHaltedError, InvalidAddressError, NoXCMSupportImplementedError } from '../errors'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions, TTransferLocalOptions } from '../types'
@@ -30,9 +30,8 @@ vi.mock('../utils', async () => {
     ...actual,
     createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
     getFees: vi.fn().mockReturnValue('fees'),
-    verifyMultiLocation: vi.fn(),
-    isTMultiLocation: vi.fn(),
-    createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
+    isTLocation: vi.fn(),
+    createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryLocation')
   }
 })
 
@@ -46,9 +45,9 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
   }
 })
 
-vi.mock('../utils/multiAsset', () => ({
-  createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
-  createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec')
+vi.mock('../utils/asset', () => ({
+  createAsset: vi.fn().mockReturnValue('asset'),
+  createVersionedAssets: vi.fn().mockReturnValue('currencySpec')
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -56,7 +55,7 @@ vi.mock('@paraspell/assets', async () => {
   return {
     ...actual,
     getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
-    findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
+    findAssetInfoByLoc: vi.fn().mockReturnValue({ symbol: 'DOT' }),
     getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
     isForeignAsset: vi.fn().mockReturnValue(true),
     isNodeEvm: vi.fn().mockReturnValue(false),
@@ -319,7 +318,7 @@ describe('ParachainNode', () => {
       isNative: true
     })
 
-    expect(result).toBe('multiAsset')
+    expect(result).toBe('asset')
   })
 
   it('should perform transfer to ethereum', async () => {
@@ -331,13 +330,13 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(options.api, 'callTxMethod')
 
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123' })
 
     await node.exposeTransferToEthereum(options)
 
@@ -357,7 +356,7 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: undefined
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -366,7 +365,7 @@ describe('ParachainNode', () => {
     )
   })
 
-  it('should throw if the address is multi-location', async () => {
+  it('should throw if the address is location', async () => {
     const options = {
       api: {
         accountToHex: vi.fn(),
@@ -375,9 +374,9 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456',
-      address: DOT_MULTILOCATION
+      address: DOT_LOCATION
     } as TPolkadotXCMTransferOptions<unknown, unknown>
     await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(
       'Multi-location address is not supported for Ethereum transfers'
@@ -393,13 +392,13 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(options.api, 'callTxMethod')
 
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123' })
 
     await node.exposeTransferToEthereum(options, true)
 
@@ -411,7 +410,7 @@ describe('ParachainNode', () => {
   })
 
   describe('transferLocal', () => {
-    it('should throw an error if the address is multi-location', () => {
+    it('should throw an error if the address is location', () => {
       const options = {
         api: {
           accountToHex: vi.fn(),
@@ -420,9 +419,9 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
-        address: DOT_MULTILOCATION
+        address: DOT_LOCATION
       } as TSendInternalOptions<unknown, unknown>
 
       expect(() => node.transferLocal(options)).toThrow(InvalidAddressError)
@@ -437,7 +436,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
@@ -460,7 +459,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
@@ -485,7 +484,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
@@ -551,7 +550,7 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '10', multiLocation: {}, amount: 100n },
+        asset: { symbol: 'WETH', assetId: '10', location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
@@ -581,7 +580,7 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -604,11 +603,11 @@ describe('ParachainNode', () => {
       vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
     })
 
-    it('should throw an error if the asset has no multi-location', async () => {
+    it('should throw an error if the asset has no location', async () => {
       await expect(
         node.exposeTransferEthAssetViaAH({
           ...options,
-          asset: { symbol: 'WETH', assetId: '', multiLocation: undefined, amount: 100n }
+          assetInfo: { symbol: 'WETH', assetId: '', location: undefined, amount: 100n }
         })
       ).rejects.toThrowError(InvalidCurrencyError)
     })
@@ -622,12 +621,12 @@ describe('ParachainNode', () => {
       ).rejects.toThrowError()
     })
 
-    it('should throw an error if the address is multi-location', async () => {
+    it('should throw an error if the address is location', async () => {
       await expect(
         node.exposeTransferEthAssetViaAH({
           ...options,
           senderAddress: '0x123',
-          address: DOT_MULTILOCATION
+          address: DOT_LOCATION
         })
       ).rejects.toThrowError()
     })
@@ -661,13 +660,13 @@ describe('ParachainNode', () => {
           getFromRpc: vi.fn(),
           clone: vi.fn()
         } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+        assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const spy = vi.spyOn(options.api, 'callTxMethod')
 
-      vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+      vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123' })
 
       await node.exposeTransferEthAssetViaAH(options)
 
@@ -688,7 +687,7 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn(),
         clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
+      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 

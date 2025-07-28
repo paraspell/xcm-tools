@@ -18,13 +18,13 @@ describe('buildBeneficiaryInput', () => {
     accountToHex: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  it('should return the address if it is a TMultiLocation', () => {
-    const multiLocation = {
+  it('should return the address if it is a TLocation', () => {
+    const location = {
       parents: Parents.ONE,
       interior: {}
     }
-    const result = buildBeneficiaryInput(apiMock, multiLocation)
-    expect(result).toBe(multiLocation)
+    const result = buildBeneficiaryInput(apiMock, location)
+    expect(result).toBe(location)
   })
 
   it('should return AccountKey20 if the address is an Ethereum address', () => {

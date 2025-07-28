@@ -1,4 +1,4 @@
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -35,13 +35,13 @@ describe('getSupportedAssetsFrom', () => {
       node: exchangeNode,
     } as ExchangeNode);
 
-    const exchangeAssets: TAsset[] = [
+    const exchangeAssets: TAssetInfo[] = [
       { symbol: 'HDX', assetId: '123' },
       { symbol: 'WUD', assetId: '1000085' },
     ];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
-    const fromAssets: TAsset[] = [
+    const fromAssets: TAssetInfo[] = [
       { symbol: 'WUD', assetId: '1000085' },
       { symbol: 'ACA', assetId: '999' },
     ];
@@ -55,7 +55,7 @@ describe('getSupportedAssetsFrom', () => {
   it('should return all assets from node when exchange is auto select', () => {
     const fromNode = 'Acala' as TNodeWithRelayChains;
     const exchange = undefined;
-    const fromAssets: TAsset[] = [{ symbol: 'ACA', assetId: '1000099' }];
+    const fromAssets: TAssetInfo[] = [{ symbol: 'ACA', assetId: '1000099' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromNode, exchange);
@@ -70,7 +70,7 @@ describe('getSupportedAssetsFrom', () => {
       node: fromNode,
     } as ExchangeNode);
 
-    const exchangeAssets: TAsset[] = [{ symbol: 'HDX', assetId: '123' }];
+    const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
     const result = getSupportedAssetsFrom(fromNode, exchange);
@@ -86,7 +86,7 @@ describe('getSupportedAssetsFrom', () => {
       node: 'Hydration',
     } as ExchangeNode);
 
-    const exchangeAssets: TAsset[] = [{ symbol: 'HDX', assetId: '123' }];
+    const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
     const result = getSupportedAssetsFrom(undefined, exchange);
@@ -102,10 +102,10 @@ describe('getSupportedAssetsFrom', () => {
       node: 'Hydration',
     } as ExchangeNode);
 
-    const exchangeAssets: TAsset[] = [{ symbol: 'usdt', assetId: '123' }];
+    const exchangeAssets: TAssetInfo[] = [{ symbol: 'usdt', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
-    const fromAssets: TAsset[] = [{ symbol: 'USDT', assetId: '456' }];
+    const fromAssets: TAssetInfo[] = [{ symbol: 'USDT', assetId: '456' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromNode, exchange);
@@ -123,10 +123,10 @@ describe('getSupportedAssetsFrom', () => {
       node: 'Hydration',
     } as ExchangeNode);
 
-    const exchangeAssets: TAsset[] = [{ symbol: 'HDX', assetId: '123' }];
+    const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
-    const fromAssets: TAsset[] = [{ symbol: 'ACA', assetId: '456' }];
+    const fromAssets: TAssetInfo[] = [{ symbol: 'ACA', assetId: '456' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromNode, exchange);

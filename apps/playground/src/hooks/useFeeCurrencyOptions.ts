@@ -1,4 +1,4 @@
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
 import { getAssets, isForeignAsset } from '@paraspell/sdk';
 import { useMemo } from 'react';
 
@@ -10,7 +10,7 @@ export const useFeeCurrencyOptions = (from: TNodeWithRelayChains) => {
 
   const currencyMap = useMemo(
     () =>
-      supportedAssets.reduce((map: Record<string, TAsset>, asset) => {
+      supportedAssets.reduce((map: Record<string, TAssetInfo>, asset) => {
         const key = `${asset.symbol ?? 'NO_SYMBOL'}-${isForeignAsset(asset) ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
@@ -22,7 +22,7 @@ export const useFeeCurrencyOptions = (from: TNodeWithRelayChains) => {
     () =>
       Object.keys(currencyMap).map((key) => ({
         value: key,
-        label: `${currencyMap[key].symbol} - ${isForeignAsset(currencyMap[key]) ? (currencyMap[key].assetId ?? 'Multi-location') : 'Native'}`,
+        label: `${currencyMap[key].symbol} - ${isForeignAsset(currencyMap[key]) ? (currencyMap[key].assetId ?? 'Location') : 'Native'}`,
       })),
     [currencyMap],
   );

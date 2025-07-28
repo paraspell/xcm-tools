@@ -1,4 +1,4 @@
-import { findAssetForNodeOrThrow } from '@paraspell/assets'
+import { findAssetInfoOrThrow } from '@paraspell/assets'
 import * as palletsModule from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -14,7 +14,7 @@ vi.mock('../../../utils', () => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn()
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 vi.mock('./getBalanceForeignXTokens', () => ({
@@ -40,7 +40,7 @@ describe('getBalanceForeign', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApi)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
   })
 
   it('should return Ethereum ERC20 balance if node is Ethereum', async () => {
@@ -67,7 +67,7 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(createApiInstanceForNode).not.toHaveBeenCalled()
-    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
   })
 
   it('should create an API instance if none is provided', async () => {

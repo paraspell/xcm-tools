@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAsset, TForeignAsset, TNativeAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import type { TAssetInfo, TForeignAsset, TNativeAsset } from '../src'
+import { capitalizeLocation } from './utils'
 import { getParaId } from '../../sdk-core/src'
 
 const ACALA_ASSET_GENERAL_KEYS = new Map<string, { length: number; data: string; paraId?: number }>(
@@ -100,7 +100,7 @@ const fetchAssets = async (
   query: string,
   isNative: boolean,
   key: string
-): Promise<TAsset[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -133,23 +133,21 @@ const fetchAssets = async (
           if (isNative) {
             return {
               ...baseAsset,
-              multiLocation: constructNativeLocation(chain, symbol)
+              location: constructNativeLocation(chain, symbol)
             }
           }
 
           const assetId = Object.values(era.toHuman() ?? {})[0].replaceAll(',', '')
 
-          const multiLocationRes = await api.query[module].foreignAssetLocations(Number(assetId))
+          const locationRes = await api.query[module].foreignAssetLocations(Number(assetId))
 
-          const multiLocation =
-            multiLocationRes.toJSON() !== null
-              ? capitalizeMultiLocation(multiLocationRes.toJSON())
-              : undefined
+          const location =
+            locationRes.toJSON() !== null ? capitalizeLocation(locationRes.toJSON()) : undefined
 
           return {
             ...baseAsset,
             assetId,
-            multiLocation
+            location
           }
         }
       )

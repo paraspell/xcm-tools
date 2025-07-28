@@ -40,7 +40,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       symbol: 'ETH',
       assetId: '0x0000000000000000000000000000000000000000',
       existentialDeposit: '15000000000000',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X1: [
@@ -58,7 +58,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     {
       assetId: '0x56072c95faa701256059aa122697b133aded9279',
       symbol: 'SKY',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X2: [
@@ -83,7 +83,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     {
       assetId: '0x514910771af9ca656af840dff83e8264ecf986ca',
       symbol: 'LINK',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X2: [
@@ -108,7 +108,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     {
       symbol: 'DOT',
       existentialDeposit: '1',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X1: [
@@ -124,7 +124,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     {
       symbol: 'KSM',
       existentialDeposit: '1',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X1: [
@@ -141,7 +141,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       symbol: 'MYTH',
       assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
       existentialDeposit: '1',
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X2: [
@@ -187,7 +187,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       symbol: JSON.parse(symbol),
       assetId: JSON.parse(assetId),
       existentialDeposit: edTransformed.toString(),
-      multiLocation: {
+      location: {
         parents: 2,
         interior: {
           X2: [

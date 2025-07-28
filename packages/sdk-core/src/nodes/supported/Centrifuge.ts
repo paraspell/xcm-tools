@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Centrifuge Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -14,7 +14,7 @@ class Centrifuge<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToke
     super('Centrifuge', 'centrifuge', 'polkadot', Version.V4)
   }
 
-  private getCurrencySelection(asset: TAsset) {
+  private getCurrencySelection(asset: TAssetInfo) {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
 
     assertHasId(asset)

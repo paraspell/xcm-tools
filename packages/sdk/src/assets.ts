@@ -51,7 +51,7 @@ export const getOriginFeeDetails = createPapiApiCall(
 )
 
 export {
-  findAsset,
+  findAssetInfo,
   Foreign,
   ForeignAbstract,
   getAllAssetsSymbols,

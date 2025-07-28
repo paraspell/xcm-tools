@@ -1,36 +1,31 @@
 import type { TAmount } from '@paraspell/assets'
 import {
-  extractMultiAssetLoc,
-  findAsset,
+  extractAssetLocation,
+  findAssetInfo,
   InvalidCurrencyError,
   isAssetEqual,
-  isOverrideMultiLocationSpecifier,
-  isTMultiAsset,
-  type TAsset,
-  type TMultiAssetWithFee
+  isOverrideLocationSpecifier,
+  isTAsset,
+  type TAssetInfo,
+  type TAssetWithFee
 } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
-import {
-  deepEqual,
-  isTMultiLocation,
-  replaceBigInt,
-  type TMultiLocation
-} from '@paraspell/sdk-common'
+import { deepEqual, isTLocation, replaceBigInt, type TLocation } from '@paraspell/sdk-common'
 
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import { validateAssetSupport } from './validateAssetSupport'
 
 export const resolveOverriddenAsset = <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
-  resolvedFeeAsset: TAsset | undefined
-): TMultiLocation | TMultiAssetWithFee[] | undefined => {
+  resolvedFeeAsset: TAssetInfo | undefined
+): TLocation | TAssetWithFee[] | undefined => {
   const { currency, feeAsset, from: origin, to: destination } = options
-  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    return currency.multilocation.value
+  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
+    return currency.location.value
   }
 
   if ('multiasset' in currency) {
@@ -40,38 +35,38 @@ export const resolveOverriddenAsset = <TApi, TRes>(
       )
     }
 
-    if ('multilocation' in feeAsset && isOverrideMultiLocationSpecifier(feeAsset.multilocation)) {
-      throw new InvalidCurrencyError('Fee asset cannot be an overridden multi location specifier')
+    if ('location' in feeAsset && isOverrideLocationSpecifier(feeAsset.location)) {
+      throw new InvalidCurrencyError('Fee asset cannot be an overridden location specifier')
     }
 
-    if (currency.multiasset.every(asset => isTMultiAsset<TAmount>(asset))) {
+    if (currency.multiasset.every(asset => isTAsset<TAmount>(asset))) {
       if (!feeAsset) {
         throw new InvalidCurrencyError('Fee asset not provided')
       }
 
-      if (!('multilocation' in feeAsset)) {
+      if (!('location' in feeAsset)) {
         throw new InvalidCurrencyError(
-          'Fee asset must be specified by multilocation when using raw overridden multi assets'
+          'Fee asset must be specified by location when using raw overridden multi assets'
         )
       }
 
       return currency.multiasset.map(multiAsset => {
-        const ml = extractMultiAssetLoc(multiAsset)
+        const ml = extractAssetLocation(multiAsset)
         return {
           ...multiAsset,
           fun: { Fungible: BigInt(multiAsset.fun.Fungible) },
-          isFeeAsset: deepEqual(ml, feeAsset.multilocation)
+          isFeeAsset: deepEqual(ml, feeAsset.location)
         }
       })
     }
 
     // MultiAsset is an array of TCurrencyCore, search for assets
     const assets = currency.multiasset.map(currency => {
-      const asset = findAsset(origin, currency, !isTMultiLocation(destination) ? destination : null)
+      const asset = findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
 
-      if (asset && !asset.multiLocation) {
+      if (asset && !asset.location) {
         throw new InvalidCurrencyError(
-          `Asset ${JSON.stringify(currency, replaceBigInt)} does not have a multiLocation`
+          `Asset ${JSON.stringify(currency, replaceBigInt)} does not have a location`
         )
       }
 
@@ -91,11 +86,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
       const originNode = getNode<TApi, TRes, typeof originTyped>(originTyped)
       return {
         isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
-        ...createMultiAsset(
-          originNode.version,
-          BigInt(currency.amount),
-          asset.multiLocation as TMultiLocation
-        )
+        ...createAsset(originNode.version, BigInt(currency.amount), asset.location as TLocation)
       }
     })
 

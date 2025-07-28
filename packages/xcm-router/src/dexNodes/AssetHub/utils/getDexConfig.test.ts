@@ -1,4 +1,4 @@
-import { getAssets, localizeLocation, type TAsset, type TMultiLocation } from '@paraspell/sdk-pjs';
+import { getAssets, localizeLocation, type TAssetInfo, type TLocation } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getDexConfig } from './getDexConfig';
@@ -12,10 +12,10 @@ vi.mock('@paraspell/sdk-pjs', async (importOriginal) => {
   };
 });
 
-const makeAsset = (symbol: string, id: string, ml: object): TAsset => ({
+const makeAsset = (symbol: string, id: string, ml: object): TAssetInfo => ({
   symbol,
   assetId: id,
-  multiLocation: ml as TMultiLocation,
+  location: ml as TLocation,
 });
 
 const DOT_ML = { Parachain: 1000 };
@@ -53,8 +53,8 @@ describe('getDexConfig', () => {
 
     expect(cfg.assets).toEqual(
       expect.arrayContaining([
-        { symbol: 'DOT', assetId: '1', multiLocation: DOT_ML },
-        { symbol: 'ACA', assetId: '2', multiLocation: ACA_ML },
+        { symbol: 'DOT', assetId: '1', location: DOT_ML },
+        { symbol: 'ACA', assetId: '2', location: ACA_ML },
       ]),
     );
     expect(cfg.assets.length).toBe(2);
@@ -83,7 +83,7 @@ describe('getDexConfig', () => {
     expect(getAssets).toHaveBeenCalledWith('AssetHubPolkadot');
   });
 
-  it('includes an asset if its transformed multiLocation matches a pool multiLocation', async () => {
+  it('includes an asset if its transformed location matches a pool location', async () => {
     const poolMl = { parents: 1, interior: { X1: { Parachain: 4000 } } };
 
     const assetOriginalMl = { assetVersion: 'v1', network: 'Polkadot', id: 'uniqueAsset' };
@@ -94,7 +94,7 @@ describe('getDexConfig', () => {
 
     vi.mocked(localizeLocation).mockImplementation((_node, ml) => {
       if (JSON.stringify(ml) === JSON.stringify(assetOriginalMl)) {
-        return assetTransformedMl as TMultiLocation;
+        return assetTransformedMl as TLocation;
       }
       return ml;
     });
@@ -107,16 +107,14 @@ describe('getDexConfig', () => {
     expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', assetOriginalMl);
     expect(cfg.assets.length).toBe(1);
     expect(cfg.assets).toEqual(
-      expect.arrayContaining([
-        { symbol: 'SPECIAL', assetId: 'sp_id', multiLocation: assetOriginalMl },
-      ]),
+      expect.arrayContaining([{ symbol: 'SPECIAL', assetId: 'sp_id', location: assetOriginalMl }]),
     );
 
     expect(cfg.pairs).toEqual([]);
     expect(cfg.isOmni).toBe(true);
   });
 
-  it('handles assets whose multiLocation directly matches a pool multiLocation (no transformation needed)', async () => {
+  it('handles assets whose location directly matches a pool location (no transformation needed)', async () => {
     vi.mocked(getAssets).mockReturnValue([DOT_FA]);
 
     const eraMock = { toJSON: () => [DOT_ML, OTHER_ML] };

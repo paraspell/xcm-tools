@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/sdk-pjs';
+import type { TAssetInfo } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -46,7 +46,7 @@ describe('getBestAmountOut', () => {
     vi.mocked(selectBestExchangeAmountOut).mockResolvedValue({} as ExchangeNode);
 
     const fakeAssets = {
-      assetFromOrigin: { symbol: 'BTC' } as TAsset,
+      assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
       assetFromExchange: { symbol: 'BTC_EXCHANGE' } as TRouterAsset,
       assetTo: { symbol: 'ETH_EXCHANGE' } as TRouterAsset,
     };
@@ -94,7 +94,7 @@ describe('getBestAmountOut', () => {
     vi.mocked(createDexNodeInstance).mockReturnValue({} as ExchangeNode);
 
     const fakeAssets = {
-      assetFromOrigin: { symbol: 'BTC' } as TAsset,
+      assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
       assetFromExchange: { symbol: 'USD_EXCHANGE' } as TRouterAsset,
       assetTo: { symbol: 'EUR_EXCHANGE' } as TRouterAsset,
     };

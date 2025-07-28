@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
@@ -8,7 +8,7 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   node: TNodePolkadotKusama,
   address: string,
-  asset: TAsset
+  asset: TAssetInfo
 ): Promise<bigint> => {
   if (node === 'Astar' || node === 'Shiden') {
     assertHasId(asset)

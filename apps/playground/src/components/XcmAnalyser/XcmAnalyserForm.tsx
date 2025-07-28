@@ -4,7 +4,7 @@ import type { FC } from 'react';
 
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 
-const PLACEHOLDER_MULTI_LOCATION = `{
+const PLACEHOLDER_LOCATION = `{
   "parents": 1,
   "interior": {
     "X1": {
@@ -37,8 +37,8 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
         <Stack gap="lg">
           <JsonInput
             label="Multi-Location"
-            description="Enter the multi-location in JSON format"
-            placeholder={PLACEHOLDER_MULTI_LOCATION}
+            description="Enter the location in JSON format"
+            placeholder={PLACEHOLDER_LOCATION}
             formatOnBlur
             autosize
             minRows={10}

@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
@@ -17,13 +17,13 @@ import type {
 import {
   hasJunction,
   isSystemChain,
-  isTMultiLocation,
+  isTLocation,
   Parents,
-  type TMultiLocation,
+  type TLocation,
   Version
 } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
@@ -47,7 +47,7 @@ import {
 import { addXcmVersionHeader, assertHasLocation, assertIsForeign } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
@@ -88,7 +88,7 @@ class AssetHubPolkadot<TApi, TRes>
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     targetChain: 'Polkadot' | 'Kusama'
   ): Promise<TRes> {
-    const { api, asset, destination, address, version, paraIdTo } = input
+    const { api, assetInfo: asset, destination, address, version, paraIdTo } = input
     if (
       (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === this.getNativeAssetSymbol())
@@ -101,7 +101,7 @@ class AssetHubPolkadot<TApi, TRes>
           address: address,
           version
         }),
-        multiAsset: createMultiAsset(version, asset.amount, asset.multiLocation as TMultiLocation)
+        asset: createAsset(version, asset.amount, asset.location as TLocation)
       }
       return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
     } else if (
@@ -111,7 +111,7 @@ class AssetHubPolkadot<TApi, TRes>
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
         destLocation: createBridgeDestination(targetChain, destination, paraIdTo),
-        multiAsset: createMultiAsset(version, asset.amount, DOT_MULTILOCATION)
+        asset: createAsset(version, asset.amount, DOT_LOCATION)
       }
 
       return transferPolkadotXcm(modifiedInput, 'limited_reserve_transfer_assets', 'Unlimited')
@@ -124,7 +124,7 @@ class AssetHubPolkadot<TApi, TRes>
   public async handleEthBridgeNativeTransfer<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, version, destination, senderAddress, address, paraIdTo, asset } = input
+    const { api, version, destination, senderAddress, address, paraIdTo, assetInfo: asset } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -136,7 +136,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
     }
 
-    if (isTMultiLocation(address)) {
+    if (isTLocation(address)) {
       throw new InvalidParameterError(
         'Multi-location address is not supported for Ethereum transfers'
       )
@@ -149,13 +149,12 @@ class AssetHubPolkadot<TApi, TRes>
       api,
       senderAddress,
       getParaId(this.node),
-      JSON.stringify(asset.multiLocation),
+      JSON.stringify(asset.location),
       address,
       asset.amount
     )
 
-    const multiLocation =
-      asset.symbol === this.getNativeAssetSymbol() ? DOT_MULTILOCATION : asset.multiLocation
+    const location = asset.symbol === this.getNativeAssetSymbol() ? DOT_LOCATION : asset.location
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -169,12 +168,9 @@ class AssetHubPolkadot<TApi, TRes>
           ETHEREUM_JUNCTION,
           Parents.TWO
         ),
-        assets: addXcmVersionHeader(
-          [createMultiAsset(version, asset.amount, multiLocation)],
-          version
-        ),
+        assets: addXcmVersionHeader([createAsset(version, asset.amount, location)], version),
         assets_transfer_type: 'LocalReserve',
-        remote_fees_id: addXcmVersionHeader(multiLocation, version),
+        remote_fees_id: addXcmVersionHeader(location, version),
         fees_transfer_type: 'LocalReserve',
         custom_xcm_on_dest: addXcmVersionHeader(
           [
@@ -202,7 +198,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, destination, paraIdTo, address, asset, version } = input
+    const { api, destination, paraIdTo, address, assetInfo: asset, version } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -235,15 +231,15 @@ class AssetHubPolkadot<TApi, TRes>
         address: address,
         version: this.version
       }),
-      multiAsset: createMultiAsset(version, asset.amount, asset.multiLocation)
+      asset: createAsset(version, asset.amount, asset.location)
     }
     return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
   }
 
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, address, asset, destination, paraIdTo, version } = input
+    const { api, address, assetInfo: asset, destination, paraIdTo, version } = input
     const paraId = resolveParaId(paraIdTo, destination)
-    const customMultiLocation: TMultiLocation = {
+    const customLocation: TLocation = {
       parents: Parents.ONE,
       interior: {
         X1: {
@@ -259,7 +255,7 @@ class AssetHubPolkadot<TApi, TRes>
         address: address,
         version
       }),
-      multiAsset: createMultiAsset(version, asset.amount, customMultiLocation)
+      asset: createAsset(version, asset.amount, customLocation)
     }
     return transferPolkadotXcm(modifiedInput, 'limited_teleport_assets', 'Unlimited')
   }
@@ -268,7 +264,7 @@ class AssetHubPolkadot<TApi, TRes>
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useDOTAsFeeAsset = false
   ): TRes => {
-    const { api, version, destination, asset, paraIdTo } = input
+    const { api, version, destination, assetInfo: asset, paraIdTo } = input
 
     assertIsForeign(asset)
     assertHasLocation(asset)
@@ -282,17 +278,15 @@ class AssetHubPolkadot<TApi, TRes>
         dest: createVersionedDestination(version, this.node, destination, paraIdTo),
         assets: addXcmVersionHeader(
           [
-            ...(useDOTAsFeeAsset
-              ? [createMultiAsset(version, PARA_TO_PARA_FEE_DOT, DOT_MULTILOCATION)]
-              : []),
-            createMultiAsset(version, asset.amount, asset.multiLocation)
+            ...(useDOTAsFeeAsset ? [createAsset(version, PARA_TO_PARA_FEE_DOT, DOT_LOCATION)] : []),
+            createAsset(version, asset.amount, asset.location)
           ],
           version
         ),
 
         assets_transfer_type: 'LocalReserve',
         remote_fees_id: addXcmVersionHeader(
-          useDOTAsFeeAsset ? DOT_MULTILOCATION : asset.multiLocation,
+          useDOTAsFeeAsset ? DOT_LOCATION : asset.location,
           version
         ),
         fees_transfer_type: 'LocalReserve',
@@ -307,7 +301,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { asset, destination, version = this.version } = input
+    const { assetInfo: asset, destination, version = this.version } = input
 
     if (
       (destination === 'Hydration' ||
@@ -318,7 +312,7 @@ class AssetHubPolkadot<TApi, TRes>
     ) {
       return {
         ...input,
-        multiAsset: createMultiAsset(version, asset.amount, DOT_MULTILOCATION)
+        asset: createAsset(version, asset.amount, DOT_LOCATION)
       }
     }
 
@@ -326,7 +320,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
-    const isTrusted = !isTMultiLocation(destination) && isSystemChain(destination)
+    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
     if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
     return scenario === 'ParaToPara' && !isTrusted
       ? 'limited_reserve_transfer_assets'
@@ -336,7 +330,14 @@ class AssetHubPolkadot<TApi, TRes>
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, scenario, asset, destination, feeAsset, overriddenAsset } = input
+    const {
+      api,
+      scenario,
+      assetInfo: asset,
+      destination,
+      feeAssetInfo: feeAsset,
+      overriddenAsset
+    } = input
 
     if (feeAsset) {
       if (overriddenAsset) {
@@ -368,8 +369,7 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     const isEthereumAsset =
-      asset.multiLocation &&
-      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+      asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
     if (destination === 'BifrostPolkadot' && isEthereumAsset) {
       return this.handleLocalReserveTransfer(input)
@@ -388,9 +388,8 @@ class AssetHubPolkadot<TApi, TRes>
       'Ajuna'
     ] as const)
 
-    const isTrusted = !isTMultiLocation(destination) && isSystemChain(destination)
-    const isDotReserveAh =
-      !isTMultiLocation(destination) && CHAINS_SUPPORT_DOT_TRANSFER.has(destination)
+    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
+    const isDotReserveAh = !isTLocation(destination) && CHAINS_SUPPORT_DOT_TRANSFER.has(destination)
 
     if (
       scenario === 'ParaToPara' &&
@@ -429,25 +428,25 @@ class AssetHubPolkadot<TApi, TRes>
     amount: bigint,
     scenario: TScenario,
     version: Version,
-    asset?: TAsset,
+    asset?: TAssetInfo,
     isOverriddenAsset?: boolean
   ) {
     if (scenario === 'ParaToPara') {
       // If the asset has overridden multi-locaiton, provide default multi-location
       // as it will be replaced later
-      const multiLocation: TMultiLocation | undefined = isOverriddenAsset
+      const location: TLocation | undefined = isOverriddenAsset
         ? { parents: Parents.ZERO, interior: 'Here' }
-        : asset?.multiLocation
+        : asset?.location
 
-      if (!multiLocation) {
-        throw new InvalidCurrencyError('Asset does not have a multiLocation defined')
+      if (!location) {
+        throw new InvalidCurrencyError('Asset does not have a location defined')
       }
 
-      const transformedMultiLocation = hasJunction(multiLocation, 'Parachain', getParaId(this.node))
-        ? localizeLocation(this.node, multiLocation)
-        : multiLocation
+      const transformedLocation = hasJunction(location, 'Parachain', getParaId(this.node))
+        ? localizeLocation(this.node, location)
+        : location
 
-      return createMultiAsset(version, amount, transformedMultiLocation)
+      return createAsset(version, amount, transformedLocation)
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }
@@ -474,7 +473,7 @@ class AssetHubPolkadot<TApi, TRes>
       module: 'ForeignAssets',
       method: 'transfer',
       parameters: {
-        id: asset.multiLocation,
+        id: asset.location,
         target: { Id: address },
         amount: BigInt(asset.amount)
       }

@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
 import { getNativeAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import {
   InvalidParameterError,
   NodeNotSupportedError,
@@ -22,7 +22,7 @@ import {
 import { assertAddressIsString, assertHasLocation } from '../../utils'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import { handleToAhTeleport } from '../../utils/transfer'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -32,7 +32,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   node: TNodeDotKsmWithRelayChains,
   version: Version
 ): Promise<TSerializedApiCall> => {
-  const { api, asset, senderAddress, address, destination } = options
+  const { api, assetInfo: asset, senderAddress, address, destination } = options
 
   assertHasLocation(asset)
   assertAddressIsString(address)
@@ -62,8 +62,8 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi)
 
   const feeConverted = await ahApi.quoteAhPrice(
-    DOT_MULTILOCATION,
-    getNativeAssets(node)[0].multiLocation as TMultiLocation,
+    DOT_LOCATION,
+    getNativeAssets(node)[0].location as TLocation,
     bridgeFee + ahExecutionFee
   )
 
@@ -80,11 +80,11 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
       dest: createVersionedDestination(version, node, destination, getParaId('AssetHubPolkadot')),
       assets: {
         [version]: [
-          createMultiAsset(version, nativeMythAmount, {
+          createAsset(version, nativeMythAmount, {
             parents: Parents.ZERO,
             interior: 'Here'
           }),
-          createMultiAsset(version, asset.amount, asset.multiLocation)
+          createAsset(version, asset.amount, asset.location)
         ]
       },
       assets_transfer_type: 'DestinationReserve',
@@ -107,7 +107,7 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
   }
 
   private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset, destination } = input
+    const { scenario, assetInfo: asset, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }

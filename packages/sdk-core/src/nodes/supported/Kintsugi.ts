@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Kintsugi Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
@@ -18,7 +18,7 @@ class Kintsugi<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Kintsugi', 'kintsugi', 'kusama', Version.V3)
   }
 
-  getCurrencySelection(asset: TAsset): TForeignOrTokenAsset {
+  getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {
     return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: asset.symbol }
   }
 

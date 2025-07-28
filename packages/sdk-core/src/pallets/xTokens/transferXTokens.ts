@@ -3,7 +3,7 @@
 import { DEFAULT_FEE } from '../../constants'
 import type { TXTokensCurrencySelection, TXTokensTransferOptions } from '../../types'
 import { assertToIsString } from '../../utils'
-import { ERR_MULTILOCATION_DEST_NOT_SUPPORTED } from './consts'
+import { ERR_LOCATION_DEST_NOT_SUPPORTED } from './consts'
 import { buildXTokensCall } from './utils'
 
 export const transferXTokens = <TApi, TRes>(
@@ -13,7 +13,7 @@ export const transferXTokens = <TApi, TRes>(
 ): TRes => {
   const { api, destination } = input
 
-  assertToIsString(destination, ERR_MULTILOCATION_DEST_NOT_SUPPORTED)
+  assertToIsString(destination, ERR_LOCATION_DEST_NOT_SUPPORTED)
   const call = buildXTokensCall(input, currencySelection, fees)
   return api.callTxMethod(call)
 }

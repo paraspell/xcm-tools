@@ -1,5 +1,5 @@
-import { hasSupportForAsset, InvalidCurrencyError, type TAsset } from '@paraspell/assets'
-import { isRelayChain, isTMultiLocation, replaceBigInt } from '@paraspell/sdk-common'
+import { hasSupportForAsset, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
+import { isRelayChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
 import { TransferToAhNotSupported } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
@@ -9,7 +9,7 @@ export const validateAssetSupport = <TApi, TRes>(
   { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
-  asset: TAsset | null
+  asset: TAssetInfo | null
 ) => {
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
@@ -34,13 +34,13 @@ export const validateAssetSupport = <TApi, TRes>(
     throw new TransferToAhNotSupported(`Node ${origin} does not support DOT transfer to AssetHub`)
   }
 
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-  const isMultiLocationDestination = typeof destination === 'object'
+  const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
+  const isLocationDestination = typeof destination === 'object'
 
   if (
     !isBridge &&
     !isRelayDestination &&
-    !isMultiLocationDestination &&
+    !isLocationDestination &&
     asset?.symbol !== undefined &&
     assetCheckEnabled &&
     !('id' in currency) &&

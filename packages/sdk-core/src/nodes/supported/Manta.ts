@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Manta Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -16,7 +16,7 @@ class Manta<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     super('Manta', 'manta', 'polkadot', Version.V3)
   }
 
-  private getAssetId(asset: TAsset) {
+  private getAssetId(asset: TAssetInfo) {
     if (asset.symbol === this.getNativeAssetSymbol()) return Manta.NATIVE_ASSET_ID
 
     assertHasId(asset)

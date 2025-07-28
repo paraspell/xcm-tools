@@ -94,7 +94,7 @@ describe('deepEqual', () => {
     expect(deepEqual({}, [])).toBe(false)
   })
 
-  it('should return true for multilocation objects', () => {
+  it('should return true for location objects', () => {
     const objA = {
       parents: 1,
       interior: {
@@ -114,7 +114,7 @@ describe('deepEqual', () => {
     expect(deepEqual(objA, objB)).toBe(true)
   })
 
-  it('should return false for different multilocation objects', () => {
+  it('should return false for different location objects', () => {
     const objA = {
       parents: 1,
       interior: {
@@ -134,7 +134,7 @@ describe('deepEqual', () => {
     expect(deepEqual(objA, objB)).toBe(false)
   })
 
-  it('should return false for different multilocation objects with different keys', () => {
+  it('should return false for different location objects with different keys', () => {
     const objA = {
       parents: 1,
       interior: {
@@ -154,7 +154,7 @@ describe('deepEqual', () => {
     expect(deepEqual(objA, objB)).toBe(false)
   })
 
-  it('should return false for different multilocation objects with different values', () => {
+  it('should return false for different location objects with different values', () => {
     const objA = {
       parents: 1,
       interior: {
@@ -174,7 +174,7 @@ describe('deepEqual', () => {
     expect(deepEqual(objA, objB)).toBe(false)
   })
 
-  it('should return true for different multilocation objects with lowercase keys', () => {
+  it('should return true for different location objects with lowercase keys', () => {
     const objA = {
       parents: 1,
       interior: {
@@ -194,7 +194,7 @@ describe('deepEqual', () => {
     expect(deepEqual(objA, objB)).toBe(true)
   })
 
-  it('should return true for different multilocation objects with lowercase keys but one key different', () => {
+  it('should return true for different location objects with lowercase keys but one key different', () => {
     const objA = {
       parents: 1,
       interior: {

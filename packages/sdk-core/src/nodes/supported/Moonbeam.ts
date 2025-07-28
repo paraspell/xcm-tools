@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
-import { type TAsset } from '@paraspell/assets'
+import { type TAssetInfo } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -14,7 +14,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId, assertHasLocation } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -27,8 +27,8 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     super(chain, info, type, version)
   }
 
-  private getMultiLocation(asset: TAsset, scenario: TScenario): TMultiLocation {
-    if (scenario === 'ParaToRelay') return DOT_MULTILOCATION
+  private getLocation(asset: TAssetInfo, scenario: TScenario): TLocation {
+    if (scenario === 'ParaToRelay') return DOT_LOCATION
 
     if (asset.symbol === this.getNativeAssetSymbol())
       return {
@@ -42,21 +42,21 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
 
     assertHasLocation(asset)
 
-    return asset.multiLocation
+    return asset.location
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { destination, asset, scenario, version = this.version } = input
+    const { destination, assetInfo: asset, scenario, version = this.version } = input
 
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
     }
 
-    const multiLocation = this.getMultiLocation(asset, scenario)
+    const location = this.getLocation(asset, scenario)
     return transferPolkadotXcm(
       {
         ...input,
-        multiAsset: createMultiAsset(version, asset.amount, multiLocation)
+        asset: createAsset(version, asset.amount, location)
       },
       'transfer_assets',
       'Unlimited'

@@ -1,10 +1,10 @@
 import {
-  findAsset,
+  findAssetInfo,
   getParaId,
   InvalidCurrencyError,
   InvalidParameterError,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier
+  isOverrideLocationSpecifier
 } from '@paraspell/sdk-core'
 import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
 import type { RegistryOptions } from '@snowbridge/api/dist/assets_v2'
@@ -34,8 +34,8 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
-  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
+  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
+    throw new InvalidParameterError('Override location is not supported for Evm transfers')
   }
 
   if (!provider) {
@@ -46,7 +46,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new InvalidParameterError('Snowbridge does not support Viem provider yet.')
   }
 
-  const ethAsset = findAsset('Ethereum', currency, to)
+  const ethAsset = findAssetInfo('Ethereum', currency, to)
 
   if (ethAsset === null) {
     throw new InvalidCurrencyError(

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import { type TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
@@ -49,7 +49,7 @@ export const fetchMoonbeamForeignAssets = async (
       ]) => {
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
-        const multiLocation = capitalizeMultiLocation(value.toJSON() as any)
+        const location = capitalizeLocation(value.toJSON() as any)
 
         const tokenAddress = formatAssetIdToERC20(numberAssetId)
 
@@ -70,7 +70,7 @@ export const fetchMoonbeamForeignAssets = async (
           decimals: decimals as number,
           existentialDeposit: '1',
           assetId: numberAssetId,
-          multiLocation
+          location
         }
       }
     )

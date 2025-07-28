@@ -15,7 +15,7 @@ describe('Encointer', () => {
   let node: Encointer<unknown, unknown>
   const mockInput = {
     scenario: 'ParaToRelay',
-    asset: { symbol: 'KSM', amount: 100n }
+    assetInfo: { symbol: 'KSM', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {

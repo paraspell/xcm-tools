@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -12,7 +12,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { createAsset } from '../../utils/asset'
 import ParachainNode from '../ParachainNode'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -21,7 +21,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset } = input
+    const { scenario, assetInfo: asset } = input
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -30,9 +30,9 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAsset) {
+  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAssetInfo) {
     if (scenario === 'ParaToPara') {
-      return createMultiAsset(version, amount, {
+      return createAsset(version, amount, {
         parents: Parents.ZERO,
         interior: {
           X1: {

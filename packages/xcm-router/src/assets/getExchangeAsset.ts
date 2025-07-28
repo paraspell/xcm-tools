@@ -1,11 +1,16 @@
-import type { TCurrencyInput, TForeignAsset, TMultiLocation, TNativeAsset } from '@paraspell/sdk';
+import type {
+  TCurrencyInput,
+  TForeignAssetInfo,
+  TLocation,
+  TNativeAssetInfo,
+} from '@paraspell/sdk';
 import {
-  findAssetById,
-  findAssetByMultiLocation,
-  findAssetBySymbol,
+  findAssetInfoById,
+  findAssetInfoByLoc,
+  findAssetInfoBySymbol,
   findBestMatches,
   InvalidParameterError,
-  isOverrideMultiLocationSpecifier,
+  isOverrideLocationSpecifier,
   isSymbolSpecifier,
 } from '@paraspell/sdk';
 
@@ -18,19 +23,19 @@ export const getExchangeAsset = (
   throwOnDuplicateSymbol = false,
 ): TRouterAsset | null => {
   if (
-    ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
+    ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
     'multiasset' in currency
   ) {
     throw new InvalidParameterError(
-      'XCM Router does not support multi-location override or multi-asset currencies yet.',
+      'XCM Router does not support location override or multi-asset currencies yet.',
     );
   }
 
   const assets = getExchangeAssets(exchange);
 
-  const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TNativeAsset[];
+  const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TNativeAssetInfo[];
 
-  const otherAssets = assets.filter((asset) => !('isNative' in asset)) as TForeignAsset[];
+  const otherAssets = assets.filter((asset) => !('isNative' in asset)) as TForeignAssetInfo[];
 
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
@@ -44,23 +49,20 @@ export const getExchangeAsset = (
 
     if (matches.length > 1 && throwOnDuplicateSymbol) {
       throw new InvalidParameterError(
-        `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by Multi-Location.`,
+        `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by location.`,
       );
     }
 
-    asset = findAssetBySymbol(null, otherAssets, nativeAssets, currency.symbol);
-  } else if (
-    'multilocation' in currency &&
-    !isOverrideMultiLocationSpecifier(currency.multilocation)
-  ) {
+    asset = findAssetInfoBySymbol(null, otherAssets, nativeAssets, currency.symbol);
+  } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
     asset =
-      findAssetByMultiLocation(otherAssets, currency.multilocation as string | TMultiLocation) ??
-      findAssetByMultiLocation(
-        nativeAssets as TForeignAsset[],
-        currency.multilocation as string | TMultiLocation,
+      findAssetInfoByLoc(otherAssets, currency.location as string | TLocation) ??
+      findAssetInfoByLoc(
+        nativeAssets as TForeignAssetInfo[],
+        currency.location as string | TLocation,
       );
   } else if ('id' in currency) {
-    asset = findAssetById(otherAssets, currency.id);
+    asset = findAssetInfoById(otherAssets, currency.id);
   } else {
     throw new InvalidParameterError('Invalid currency input');
   }

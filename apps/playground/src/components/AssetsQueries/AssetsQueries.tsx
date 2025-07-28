@@ -13,7 +13,7 @@ import {
   Native,
   replaceBigInt,
   type TCurrencyCore,
-  type TMultiLocation,
+  type TLocation,
 } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
@@ -82,9 +82,9 @@ export const AssetsQueries = () => {
       }
     }
 
-    if (currencyType === 'multilocation') {
+    if (currencyType === 'location') {
       return {
-        multilocation: JSON.parse(currency) as TMultiLocation,
+        location: JSON.parse(currency) as TLocation,
       };
     } else if (currencyType === 'id') {
       return { id: currency };
@@ -98,7 +98,7 @@ export const AssetsQueries = () => {
 
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
-      'ASSET_MULTILOCATION',
+      'ASSET_LOCATION',
       'EXISTENTIAL_DEPOSIT',
     ]);
 

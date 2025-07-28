@@ -1,4 +1,4 @@
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetXcmFeeEstimateOptions, TGetXcmFeeEstimateResult } from '../../types/TXcmFee'
@@ -15,7 +15,7 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
 ): Promise<TGetXcmFeeEstimateResult> => {
   const { api, origin, destination, currency, feeAsset, address, senderAddress } = options
 
-  const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
+  const originAsset = findAssetInfoOrThrow(origin, currency, destination)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
@@ -71,8 +71,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
 
   const originFeeDetails = await getOriginXcmFeeEstimate(options)
 
-  const currencyInput = originAsset.multiLocation
-    ? { multilocation: originAsset.multiLocation }
+  const currencyInput = originAsset.location
+    ? { location: originAsset.location }
     : { symbol: originAsset.symbol }
 
   const destinationFee =

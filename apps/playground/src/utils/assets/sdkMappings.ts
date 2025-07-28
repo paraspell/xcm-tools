@@ -8,7 +8,7 @@ import {
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
-  getAssetMultiLocation,
+  getAssetLocation,
   getAssetsObject,
   getFeeAssets,
   getNativeAssets,
@@ -35,8 +35,8 @@ export const callSdkFunc = (
     ASSETS_OBJECT: () => Promise.resolve(getAssetsObject(node)),
     ASSET_ID: () =>
       Promise.resolve(getAssetId(node as TNodePolkadotKusama, currency)),
-    ASSET_MULTILOCATION: () =>
-      Promise.resolve(getAssetMultiLocation(node, resolvedCurrency)),
+    ASSET_LOCATION: () =>
+      Promise.resolve(getAssetLocation(node, resolvedCurrency)),
     RELAYCHAIN_SYMBOL: () => Promise.resolve(getRelayChainSymbol(node)),
     NATIVE_ASSETS: () =>
       Promise.resolve(getNativeAssets(node as TNodePolkadotKusama)),

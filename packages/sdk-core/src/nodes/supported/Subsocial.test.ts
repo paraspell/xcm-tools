@@ -31,7 +31,7 @@ describe('Subsocial', () => {
     it('should only support native currency', () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'XYZ' }
+        assetInfo: { symbol: 'XYZ' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       expect(() => subsocial.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
@@ -39,7 +39,7 @@ describe('Subsocial', () => {
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'SUB' }
+        assetInfo: { symbol: 'SUB' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       await subsocial.transferPolkadotXCM(input)

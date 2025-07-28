@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { findAssetForNodeOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
+import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { getParaId } from '../../nodes/config'
 import type { TDestXcmFeeDetail } from '../../types'
 import { type TGetFeeForDestNodeOptions } from '../../types'
@@ -17,8 +17,8 @@ import { isSufficientDestination } from './isSufficient'
 export const createOriginLocation = (
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains
-): TMultiLocation => {
-  if (isRelayChain(origin)) return DOT_MULTILOCATION
+): TLocation => {
+  if (isRelayChain(origin)) return DOT_LOCATION
 
   return {
     parents: isRelayChain(destination) ? Parents.ZERO : Parents.ONE,
@@ -56,13 +56,13 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
   const calcPaymentInfoFee = async (): Promise<bigint> => {
     if (destination === 'Ethereum') return 0n
 
-    const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
+    const originAsset = findAssetInfoOrThrow(origin, currency, destination)
 
-    if (originAsset.multiLocation) {
+    if (originAsset.location) {
       try {
         return await getReverseTxFee(
           { ...options, destination },
-          { multilocation: originAsset.multiLocation }
+          { location: originAsset.location }
         )
       } catch (err: any) {
         if (err instanceof InvalidCurrencyError) {

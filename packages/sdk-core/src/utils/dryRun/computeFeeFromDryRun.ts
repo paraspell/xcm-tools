@@ -5,7 +5,7 @@
 import { getNativeAssetSymbol } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
-import { getMultiLocationTokenId } from './getMultiLocationTokenId'
+import { getLocationTokenId } from './getLocationTokenId'
 
 export const computeFeeFromDryRun = (
   dryRun: any,
@@ -25,7 +25,7 @@ export const computeFeeFromDryRun = (
       for (const feeItem of e.value.value.fees) {
         if (feeItem.fun.type === 'NonFungible') continue
         const plancks = feeItem.fun.value
-        const tokenSymbol = getMultiLocationTokenId(feeItem.id, node)
+        const tokenSymbol = getLocationTokenId(feeItem.id, node)
         if (!tokenSymbol || !plancks) continue
         deliveryFees.push({ plancks, tokenSymbol })
       }

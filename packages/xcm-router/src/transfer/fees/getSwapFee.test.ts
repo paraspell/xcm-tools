@@ -101,7 +101,7 @@ describe('getSwapFee', () => {
     expect(amountOut).toBe('200');
   });
 
-  it('enters currency as multilocation', async () => {
+  it('enters currency as location', async () => {
     const dryError = 'Dry run error';
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
@@ -116,7 +116,7 @@ describe('getSwapFee', () => {
 
     const { result, amountOut } = await getSwapFee(exchange, {
       ...options,
-      exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT', multiLocation: {} } },
+      exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT', location: {} } },
     } as unknown as TBuildTransactionsOptionsModified);
 
     expect(result.fee).toBe(0n);

@@ -3,8 +3,8 @@
 import type { TNodeWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
 
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
-import type { TAsset, TForeignAsset } from '../types'
-import { type TAssetJsonMap, type TNativeAsset, type TNodeAssets } from '../types'
+import type { TAssetInfo, TForeignAssetInfo } from '../types'
+import { type TAssetJsonMap, type TNativeAssetInfo, type TChainAssetsInfo } from '../types'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
@@ -14,7 +14,7 @@ const assetsMap = assetsMapJson as TAssetJsonMap
  * @param node - The node for which to retrieve the assets object.
  * @returns The assets object associated with the given node.
  */
-export const getAssetsObject = (node: TNodeWithRelayChains): TNodeAssets => assetsMap[node]
+export const getAssetsObject = (node: TNodeWithRelayChains): TChainAssetsInfo => assetsMap[node]
 
 export const isNodeEvm = (node: TNodeWithRelayChains): boolean => {
   return assetsMap[node].isEVM
@@ -47,7 +47,7 @@ export const getRelayChainSymbol = (node: TNodeWithRelayChains): TRelayChainSymb
  * @param node - The node for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (node: TNodeWithRelayChains): TNativeAsset[] =>
+export const getNativeAssets = (node: TNodeWithRelayChains): TNativeAssetInfo[] =>
   getAssetsObject(node).nativeAssets
 
 /**
@@ -56,7 +56,7 @@ export const getNativeAssets = (node: TNodeWithRelayChains): TNativeAsset[] =>
  * @param node - The node for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (node: TNodeWithRelayChains): TForeignAsset[] => {
+export const getOtherAssets = (node: TNodeWithRelayChains): TForeignAssetInfo[] => {
   const otherAssets = getAssetsObject(node).otherAssets
   return node === 'AssetHubPolkadot'
     ? [...otherAssets, ...getAssetsObject('Ethereum').otherAssets]
@@ -69,7 +69,7 @@ export const getOtherAssets = (node: TNodeWithRelayChains): TForeignAsset[] => {
  * @param node - The node for which to get the assets.
  * @returns An array of objects of all assets associated with the node.
  */
-export const getAssets = (node: TNodeWithRelayChains): TAsset[] => {
+export const getAssets = (node: TNodeWithRelayChains): TAssetInfo[] => {
   const { nativeAssets, otherAssets } = getAssetsObject(node)
   return [...nativeAssets, ...otherAssets]
 }

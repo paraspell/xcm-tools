@@ -1,5 +1,5 @@
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
   isAssetEqual
@@ -28,7 +28,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     ? resolveFeeAsset(feeAsset, node, destination, currency)
     : undefined
 
-  const asset = findAssetForNodeOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(node, currency, null)
 
   const balance = await getAssetBalanceInternal({
     api,

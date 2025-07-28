@@ -1,4 +1,4 @@
-import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { type TNodeDotKsmWithRelayChains, type TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -48,7 +48,7 @@ describe('buildDestInfo', () => {
   const DEFAULT_BALANCE = 50000000000n
   const DEFAULT_FEE = 100000000n
   const DEFAULT_AMOUNT = 20000000000n
-  const MULTILOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+  const LOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -66,9 +66,9 @@ describe('buildDestInfo', () => {
       symbol: 'GLMR',
       assetId: 'glmrid',
       decimals: 18,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
 
     baseOptions = {
       api: mockApi,
@@ -114,7 +114,7 @@ describe('buildDestInfo', () => {
       api: mockClonedApi,
       address: options.address,
       node: options.destination,
-      currency: { multilocation: MULTILOCATION }
+      currency: { location: LOCATION }
     })
 
     expect(result.receivedCurrency.currencySymbol).toBe('GLMR')
@@ -138,9 +138,9 @@ describe('buildDestInfo', () => {
       symbol: 'GLMR',
       assetId: 'glmrid',
       decimals: 18,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: undefined // No ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = { ...baseOptions, api: mockApi }
     await expect(buildDestInfo(options)).rejects.toThrow(InvalidParameterError)
   })
@@ -178,9 +178,9 @@ describe('buildDestInfo', () => {
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
+      } as TAssetInfo)
       vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
         if (node === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -204,9 +204,9 @@ describe('buildDestInfo', () => {
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
+      } as TAssetInfo)
       vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
         if (node === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -231,9 +231,9 @@ describe('buildDestInfo', () => {
         symbol: 'USDT',
         assetId: 'usdtAssetId',
         decimals: 6,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
+      } as TAssetInfo)
       vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
         if (node === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -258,9 +258,9 @@ describe('buildDestInfo', () => {
       symbol: 'USDT',
       assetId: 'usdtId',
       decimals: 6,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = {
       ...baseOptions,
       api: mockApi,
@@ -289,13 +289,13 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.sufficient).toBe(expectedSufficient)
   })
 
-  it('should use destAsset.symbol if multiLocation is not present for getExistentialDeposit call', async () => {
+  it('should use destAsset.symbol if location is not present for getExistentialDeposit call', async () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'CFG',
       assetId: 'cfgId',
       decimals: 18,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = {
       ...baseOptions,
       api: mockApi
