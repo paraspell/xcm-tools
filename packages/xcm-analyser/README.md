@@ -182,6 +182,10 @@ This should result into:
 
 XCM Analyser can be tested in [Playground](https://playground.paraspell.xyz/xcm-analyser).
 
+## Contribute to XCM Tools and earn rewards 💰
+
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+
 ## Get Support 🚑
 
 - Contact form on our [landing page](https://paraspell.xyz/#contact-us).

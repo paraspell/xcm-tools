@@ -506,6 +506,10 @@ XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/x
 - Message us on our [X](https://x.com/paraspell).
 - Support channel on [telegram](https://t.me/paraspell).
 
+## Contribute to XCM Tools and earn rewards 💰
+
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+
 ## License
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
