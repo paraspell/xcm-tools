@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
 
@@ -9,10 +6,10 @@ export const fetchComposableAssets = async (
   query: string
 ): Promise<TForeignAsset[]> => {
   const [module, method] = query.split('.')
-  const symbolsResponse = await api.query[module][method].entries()
+  const assets = await api.query[module][method].entries()
 
-  const assets = await Promise.all(
-    symbolsResponse.map(
+  return Promise.all(
+    assets.map(
       async ([
         {
           args: [era]
@@ -35,6 +32,4 @@ export const fetchComposableAssets = async (
       }
     )
   )
-
-  return assets
 }

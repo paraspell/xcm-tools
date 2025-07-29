@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset, TNativeAsset } from '../src'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import { capitalizeMultiLocation } from './utils'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,

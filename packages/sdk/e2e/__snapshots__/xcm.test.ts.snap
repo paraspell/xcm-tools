@@ -2120,35 +2120,7 @@ exports[`XCM - e2e > Local transfers (origin = destination) > should create loca
 }
 `;
 
-exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on AssetHubKusama 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Balances",
-  "parameters": {
-    "dest": {
-      "type": "Id",
-      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-    },
-    "value": 1000000000000n,
-  },
-}
-`;
-
 exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on AssetHubPaseo 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Balances",
-  "parameters": {
-    "dest": {
-      "type": "Id",
-      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-    },
-    "value": 1000000000000n,
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on AssetHubPolkadot 1`] = `
 {
   "method": "transfer_keep_alive",
   "module": "Balances",
@@ -5299,75 +5271,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to AssetHubPolkadot - (LOVA) 1`] = `
-{
-  "method": "transfer_multiasset",
-  "module": "XTokens",
-  "parameters": {
-    "asset": {
-      "type": "V4",
-      "value": {
-        "fun": {
-          "type": "Fungible",
-          "value": 1000000000000n,
-        },
-        "id": {
-          "interior": {
-            "type": "X3",
-            "value": [
-              {
-                "type": "Parachain",
-                "value": 1000,
-              },
-              {
-                "type": "PalletInstance",
-                "value": 50,
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 50000028,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1000,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to Astar - (ACA) 1`] = `
 {
   "method": "transfer",
@@ -5697,7 +5600,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to Crust - (PINK) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to Crust - (EQD) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -5705,7 +5608,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
     "amount": 1000000000000n,
     "currency_id": {
       "type": "ForeignAsset",
-      "value": 13,
+      "value": 8,
     },
     "dest": {
       "type": "V3",
@@ -8153,7 +8056,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara > should create transfer tx from AssetHubKusama to CrustShadow - (MOVR) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara > should create transfer tx from AssetHubKusama to CrustShadow - (XRT) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
@@ -8173,16 +8076,16 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
                 "type": "X2",
                 "value": [
                   {
-                    "type": "Parachain",
-                    "value": 2023,
+                    "type": "PalletInstance",
+                    "value": 50,
                   },
                   {
-                    "type": "PalletInstance",
-                    "value": 10,
+                    "type": "GeneralIndex",
+                    "value": 2077,
                   },
                 ],
               },
-              "parents": 1,
+              "parents": 0,
             },
           },
         },
@@ -8358,7 +8261,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > should creat
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > should create transfer tx from AssetHubPaseo to BifrostPaseo - (WETH) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > should create transfer tx from AssetHubPaseo to BifrostPaseo - (ETH) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
@@ -8373,31 +8276,16 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
           },
           "id": {
             "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
+              "type": "X1",
+              "value": {
+                "type": "GlobalConsensus",
+                "value": {
+                  "type": "Ethereum",
                   "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 11155111n,
-                    },
+                    "chain_id": 11155111n,
                   },
                 },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
+              },
             },
             "parents": 2,
           },
@@ -10106,13 +9994,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Ajuna - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Ajuna - (USDC) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 4294969281n,
     "dest": {
       "type": "V4",
       "value": {
@@ -10148,7 +10036,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to AssetHubPolkadot - (GAME) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to AssetHubPolkadot - (BNC) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -10162,19 +10050,24 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
         },
         "id": {
           "interior": {
-            "type": "X3",
+            "type": "X2",
             "value": [
               {
                 "type": "Parachain",
-                "value": 1000,
+                "value": 2030,
               },
               {
-                "type": "PalletInstance",
-                "value": 50,
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 555,
+                "type": "GeneralKey",
+                "value": {
+                  "data": FixedSizeBinary {
+                    "asBytes": [Function],
+                    "asHex": [Function],
+                    "asOpaqueBytes": [Function],
+                    "asOpaqueHex": [Function],
+                    "asText": [Function],
+                  },
+                  "length": 2,
+                },
               },
             ],
           },
@@ -10324,13 +10217,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Centrifuge - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Centrifuge - (GLMR) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551619n,
     "dest": {
       "type": "V4",
       "value": {
@@ -10667,13 +10560,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Interlay - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Interlay - (BNC) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551623n,
     "dest": {
       "type": "V3",
       "value": {
@@ -10793,13 +10686,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Manta - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Manta - (BNC) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551623n,
     "dest": {
       "type": "V3",
       "value": {
@@ -10900,13 +10793,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Peaq - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Peaq - (GLMR) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551619n,
     "dest": {
       "type": "V4",
       "value": {
@@ -11162,13 +11055,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Unique - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Unique - (GLMR) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551619n,
     "dest": {
       "type": "V5",
       "value": {
@@ -11204,13 +11097,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Zeitgeist - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to Zeitgeist - (BNC) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551623n,
     "dest": {
       "type": "V3",
       "value": {
@@ -11380,7 +11273,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to AssetHubKusama - (USDT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to AssetHubKusama - (DAI) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -11394,19 +11287,24 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
         },
         "id": {
           "interior": {
-            "type": "X3",
+            "type": "X2",
             "value": [
               {
                 "type": "Parachain",
-                "value": 1000,
+                "value": 2000,
               },
               {
-                "type": "PalletInstance",
-                "value": 50,
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 1984,
+                "type": "GeneralKey",
+                "value": {
+                  "data": FixedSizeBinary {
+                    "asBytes": [Function],
+                    "asHex": [Function],
+                    "asOpaqueBytes": [Function],
+                    "asOpaqueHex": [Function],
+                    "asText": [Function],
+                  },
+                  "length": 21,
+                },
               },
             ],
           },
@@ -11575,13 +11473,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to CrustShadow - (aUSD) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to CrustShadow - (XRT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 2,
+    "currency_id": 16,
     "dest": {
       "type": "V3",
       "value": {
@@ -11617,13 +11515,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to Curio - (KSM) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to Curio - (CGT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 1,
+    "currency_id": 20,
     "dest": {
       "type": "V3",
       "value": {
@@ -11843,6 +11741,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
             {
               "type": "Parachain",
               "value": 1004,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to Quartz - (QTZ) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 19,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2095,
             },
             {
               "type": "AccountId32",
@@ -12962,7 +12902,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Ajuna - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Ajuna - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -12970,7 +12910,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
     "amount": 1000000000000n,
     "currency_id": {
       "type": "Token2",
-      "value": 0,
+      "value": 2,
     },
     "dest": {
       "type": "V4",
@@ -13146,7 +13086,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Centrifuge - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Centrifuge - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -13154,7 +13094,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
     "amount": 1000000000000n,
     "currency_id": {
       "type": "Token2",
-      "value": 0,
+      "value": 2,
     },
     "dest": {
       "type": "V4",
@@ -13236,7 +13176,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to ComposableFinance - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to ComposableFinance - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -13244,7 +13184,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
     "amount": 1000000000000n,
     "currency_id": {
       "type": "Token2",
-      "value": 0,
+      "value": 2,
     },
     "dest": {
       "type": "V3",
@@ -13510,7 +13450,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Jamton - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Jamton - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -13518,7 +13458,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
     "amount": 1000000000000n,
     "currency_id": {
       "type": "Token2",
-      "value": 0,
+      "value": 2,
     },
     "dest": {
       "type": "V4",
@@ -13923,7 +13863,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Unique - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Unique - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -13931,7 +13871,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
     "amount": 1000000000000n,
     "currency_id": {
       "type": "Token2",
-      "value": 0,
+      "value": 2,
     },
     "dest": {
       "type": "V5",
@@ -15174,7 +15114,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > sho
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > should create transfer tx from Centrifuge to Phala - (DOT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > should create transfer tx from Centrifuge to Phala - (aUSD) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -15182,7 +15122,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > sho
     "amount": 1000000000000n,
     "currency_id": {
       "type": "ForeignAsset",
-      "value": 5,
+      "value": 3,
     },
     "dest": {
       "type": "V3",
@@ -19553,7 +19493,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should c
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should create transfer tx from Curio to Basilisk - (KSM) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should create transfer tx from Curio to Basilisk - (CGT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
@@ -19562,7 +19502,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should c
     "currency_id": {
       "type": "Token",
       "value": {
-        "type": "KSM",
+        "type": "CGT",
       },
     },
     "dest": {
@@ -20214,6 +20154,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Ajuna - (USDT) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 10,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2051,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to AssetHubPolkadot - (HDX) 1`] = `
 {
   "method": "transfer_multiasset",
@@ -20321,6 +20303,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to BifrostPolkadot - (USDT) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 10,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2030,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to BridgeHubPolkadot - (DOT) 1`] = `
 {
   "method": "transfer",
@@ -20337,6 +20361,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
             {
               "type": "Parachain",
               "value": 1002,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Centrifuge - (USDT) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 10,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2031,
             },
             {
               "type": "AccountId32",
@@ -20699,13 +20765,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Manta - (LDO) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Manta - (USDT) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 1000796,
+    "currency_id": 10,
     "dest": {
       "type": "V3",
       "value": {
@@ -21449,7 +21515,7 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should create transfer tx from Jamton to AssetHubPolkadot - (USDt) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should create transfer tx from Jamton to AssetHubPolkadot - (jamTON) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -21475,7 +21541,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
               },
               {
                 "type": "GeneralIndex",
-                "value": 1984,
+                "value": 22222078,
               },
             ],
           },
@@ -21696,7 +21762,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should create transfer tx from Karura to AssetHubKusama - (RMRK) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should create transfer tx from Karura to AssetHubKusama - (TEER) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -21710,19 +21776,24 @@ exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should 
         },
         "id": {
           "interior": {
-            "type": "X3",
+            "type": "X2",
             "value": [
               {
                 "type": "Parachain",
-                "value": 1000,
+                "value": 2015,
               },
               {
-                "type": "PalletInstance",
-                "value": 50,
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 8,
+                "type": "GeneralKey",
+                "value": {
+                  "data": FixedSizeBinary {
+                    "asBytes": [Function],
+                    "asHex": [Function],
+                    "asOpaqueBytes": [Function],
+                    "asOpaqueHex": [Function],
+                    "asText": [Function],
+                  },
+                  "length": 4,
+                },
               },
             ],
           },
@@ -29559,7 +29630,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to AssetHubKusama - (BILL) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to AssetHubKusama - (MOVR) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -29573,19 +29644,15 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
         },
         "id": {
           "interior": {
-            "type": "X3",
+            "type": "X2",
             "value": [
               {
                 "type": "Parachain",
-                "value": 1000,
+                "value": 2023,
               },
               {
                 "type": "PalletInstance",
-                "value": 50,
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 223,
+                "value": 10,
               },
             ],
           },
@@ -29628,13 +29695,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Basilisk - (KSM) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Basilisk - (QTZ) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551633n,
     "dest": {
       "type": "V4",
       "value": {
@@ -30078,13 +30145,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Kintsugi - (KSM) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Kintsugi - (LKSM) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
-    "currency_id": 340282366920938463463374607431768211455n,
+    "currency_id": 18446744073709551619n,
     "dest": {
       "type": "V3",
       "value": {

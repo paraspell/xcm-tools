@@ -89,7 +89,7 @@ describe('findAsset', () => {
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
-    const asset = findAsset('AssetHubKusama', { symbol: 'USDt' }, null)
+    const asset = findAsset('AssetHubKusama', { symbol: Foreign('KSM') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })

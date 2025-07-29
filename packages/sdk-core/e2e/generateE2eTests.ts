@@ -18,12 +18,14 @@ import {
   findAsset,
   Foreign,
   ForeignAbstract,
+  getNativeAssetSymbol,
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
   isForeignAsset,
   isNodeEvm,
-  Native
+  Native,
+  TCurrencyCore
 } from '@paraspell/assets'
 
 const MOCK_AMOUNT = 1000000000000
@@ -66,7 +68,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('AssetHubKusama')
-          .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
+          .currency({
+            multilocation: {
+              parents: 2,
+              interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
+            },
+            amount: MOCK_AMOUNT
+          })
           .address(MOCK_ADDRESS)
           .build()
         await validateTx(tx, signer)
@@ -77,7 +85,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const tx = await Builder(api)
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
-          .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+          .currency({
+            multilocation: {
+              parents: 2,
+              interior: { X1: [{ GlobalConsensus: { polkadot: null } }] }
+            },
+            amount: MOCK_AMOUNT
+          })
           .address(MOCK_ADDRESS)
           .build()
         await validateTx(tx, signer)
@@ -88,7 +102,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const tx = await Builder(api)
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
-          .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
+          .currency({
+            multilocation: {
+              parents: 1,
+              interior: { Here: null }
+            },
+            amount: MOCK_AMOUNT
+          })
           .address(MOCK_ADDRESS)
           .build()
         await validateTx(tx, signer)
@@ -290,9 +310,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
     reorderedNodes.forEach(node => {
       const scenarios = generateTransferScenarios(node)
+
+      const relayChainSymbol = getRelayChainSymbol(node)
+
       const relayChainAsset = findAsset(
         node,
-        { symbol: getRelayChainSymbol(node) },
+        // Use native selector for AssetHub nodes because of duplicates
+        { symbol: node.includes('AssetHub') ? Native(relayChainSymbol) : relayChainSymbol },
         getRelayChainOf(node)
       )
       const paraToRelaySupported = relayChainAsset && !doesNotSupportParaToRelay.includes(node)
@@ -303,7 +327,16 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         describe.sequential('ParaToPara', () => {
           scenarios.forEach(({ destNode, asset }) => {
             it(`should create transfer tx from ${node} to ${destNode} - (${asset.symbol})`, async () => {
-              const getCurrency = () => {
+              const getCurrency = (): TCurrencyCore => {
+                if (
+                  (node.startsWith('AssetHub') || node === 'Astar' || node === 'Hydration') &&
+                  asset.symbol.toUpperCase() === getNativeAssetSymbol(node)
+                ) {
+                  return {
+                    symbol: Native(asset.symbol)
+                  }
+                }
+
                 // Bifrost has duplicated asset ids, thus use symbol specifier
                 if (isForeignAsset(asset) && asset.assetId && !node.includes('Bifrost')) {
                   return { id: asset.assetId }
@@ -363,11 +396,14 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
             node
           )} from ${node} to Relay`, async () => {
+            const symbol = node.startsWith('AssetHub')
+              ? Native(getRelayChainSymbol(node))
+              : getRelayChainSymbol(node)
             const api = await createOrGetApiInstanceForNode(node)
             const tx = await Builder(api)
               .from(node)
               .to(getRelayChainOf(node))
-              .currency({ symbol: getRelayChainSymbol(node), amount: MOCK_AMOUNT })
+              .currency({ symbol, amount: MOCK_AMOUNT })
               .address(MOCK_ADDRESS)
               .build()
             await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
@@ -380,8 +416,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       NODES_WITH_RELAY_CHAINS_DOT_KSM.forEach(node => {
         it(`should create local transfer tx on ${node}`, async () => {
           const api = await createOrGetApiInstanceForNode(node)
-          const symbol = getRelayChainSymbol(node)
           const resolvedAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+
+          const symbol = getRelayChainSymbol(node)
+
           try {
             const tx = await Builder(api)
               .from(node)

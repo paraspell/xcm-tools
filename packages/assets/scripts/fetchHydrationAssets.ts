@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import { capitalizeMultiLocation } from './utils'
 
-export const fetchHydrationOtherAssets = async (
+export const fetchHydrationAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {

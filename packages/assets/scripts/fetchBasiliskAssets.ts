@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
 import { capitalizeMultiLocation } from './utils'
 
-export const fetchAjunaOtherAssets = async (
+export const fetchBasiliskAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
@@ -24,24 +21,25 @@ export const fetchAjunaOtherAssets = async (
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
-        const assetDetails = await api.query[module].asset(era)
-        const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+        const multiLocation = await api.query.assetRegistry.assetLocations(era)
 
-        const multiLocation = await api.query.assetRegistry.assetIdLocation(era)
+        const assetsRes = await api.query[module].assets(era)
+
+        const { existentialDeposit } = assetsRes.toHuman() as any
 
         return {
           assetId: numberAssetId,
-          symbol,
+          symbol: symbol ?? '',
           decimals: +decimals,
-          existentialDeposit,
           multiLocation:
             multiLocation.toJSON() !== null
               ? capitalizeMultiLocation(multiLocation.toJSON())
-              : undefined
+              : undefined,
+          existentialDeposit: existentialDeposit
         }
       }
     )
   )
 
-  return assets
+  return assets.filter(asset => asset.decimals && asset.decimals > 0)
 }

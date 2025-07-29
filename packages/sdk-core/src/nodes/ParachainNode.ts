@@ -7,6 +7,7 @@ import {
   InvalidCurrencyError,
   isForeignAsset,
   isNodeEvm,
+  Native,
   type TAsset,
   type TMultiAsset
 } from '@paraspell/assets'
@@ -355,7 +356,7 @@ abstract class ParachainNode<TApi, TRes> {
       .from('AssetHubPolkadot')
       .to(destination)
       .currency({
-        symbol: 'DOT',
+        symbol: Native('DOT'),
         amount: AH_EXECUTION_FEE_PADDED
       })
       .address(address)

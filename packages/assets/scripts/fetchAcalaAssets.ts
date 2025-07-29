@@ -1,77 +1,175 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset, TNativeAsset } from '../src'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import type { TAsset, TForeignAsset, TNativeAsset } from '../src'
+import { capitalizeMultiLocation } from './utils'
+import { getParaId } from '../../sdk-core/src'
+
+const ACALA_ASSET_GENERAL_KEYS = new Map<string, { length: number; data: string; paraId?: number }>(
+  [
+    [
+      'ACA',
+      { length: 2, data: '0x0000000000000000000000000000000000000000000000000000000000000000' }
+    ],
+    [
+      'aSEED',
+      { length: 2, data: '0x0001000000000000000000000000000000000000000000000000000000000000' }
+    ],
+    [
+      'LcDOT',
+      { length: 5, data: '0x040d000000000000000000000000000000000000000000000000000000000000' }
+    ],
+    [
+      'LDOT',
+      { length: 2, data: '0x0003000000000000000000000000000000000000000000000000000000000000' }
+    ]
+  ]
+)
+
+const KARURA_ASSET_GENERAL_KEYS = new Map<
+  string,
+  { length: number; data: string; paraId?: number }
+>([
+  [
+    'KAR',
+    {
+      length: 2,
+      data: '0x0080000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2000
+    }
+  ],
+  [
+    'LKSM',
+    {
+      length: 2,
+      data: '0x0083000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2000
+    }
+  ],
+  [
+    'aSEED',
+    {
+      length: 2,
+      data: '0x0081000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2000
+    }
+  ],
+  [
+    'KINT',
+    {
+      length: 2,
+      data: '0x000c000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2092
+    }
+  ],
+  [
+    'KBTC',
+    {
+      length: 2,
+      data: '0x000b000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2092
+    }
+  ]
+])
+
+const constructNativeLocation = (chain: 'Acala' | 'Karura', symbol: string): any | undefined => {
+  const assetMap = chain === 'Acala' ? ACALA_ASSET_GENERAL_KEYS : KARURA_ASSET_GENERAL_KEYS
+  const assetInfo = assetMap.get(symbol)
+
+  if (!assetInfo) {
+    return undefined
+  }
+
+  return {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: assetInfo?.paraId ?? getParaId(chain) },
+        {
+          GeneralKey: {
+            length: assetInfo.length,
+            data: assetInfo.data
+          }
+        }
+      ]
+    }
+  }
+}
 
 const fetchAssets = async (
+  chain: 'Acala' | 'Karura',
   api: ApiPromise,
   query: string,
   isNative: boolean,
-  nativeKey = 'NativeAssetId'
-): Promise<TForeignAsset[]> => {
+  key: string
+): Promise<TAsset[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
-  return res
-    .filter(
-      ([
-        {
-          args: [era]
+  return await Promise.all(
+    res
+      .filter(
+        ([
+          {
+            args: [era]
+          }
+        ]) => {
+          return Object.prototype.hasOwnProperty.call(era.toHuman(), key)
         }
-      ]) => {
-        const hasNativeAssetId = Object.prototype.hasOwnProperty.call(era.toHuman(), nativeKey)
-        return isNative ? hasNativeAssetId : !hasNativeAssetId
-      }
-    )
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
+      )
+      .map(
+        async ([
+          {
+            args: [era]
+          },
+          value
+        ]) => {
+          const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
 
-        const multiLocationJson = value.toJSON() as any
+          const baseAsset = {
+            symbol,
+            decimals: +decimals,
+            existentialDeposit: minimalBalance ?? existentialDeposit
+          } as TNativeAsset
 
-        const multiLocation =
-          multiLocationJson.location !== null && multiLocationJson.location !== undefined
-            ? capitalizeMultiLocation(
-                multiLocationJson.location.v4 ??
-                  multiLocationJson.location.v3 ??
-                  multiLocationJson.location.v2
-              )
-            : undefined
+          if (isNative) {
+            return {
+              ...baseAsset,
+              multiLocation: constructNativeLocation(chain, symbol)
+            }
+          }
 
-        return {
-          assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
-          symbol,
-          decimals: +decimals,
-          existentialDeposit: minimalBalance ?? existentialDeposit,
-          multiLocation
+          const assetId = Object.values(era.toHuman() ?? {})[0].replaceAll(',', '')
+
+          const multiLocationRes = await api.query[module].foreignAssetLocations(Number(assetId))
+
+          const multiLocation =
+            multiLocationRes.toJSON() !== null
+              ? capitalizeMultiLocation(multiLocationRes.toJSON())
+              : undefined
+
+          return {
+            ...baseAsset,
+            assetId,
+            multiLocation
+          }
         }
-      }
-    )
+      )
+  )
 }
 
 export const fetchAcalaNativeAssets = async (
+  chain: 'Acala' | 'Karura',
   api: ApiPromise,
-  query: string,
-  nativeKey?: string
+  query: string
 ): Promise<TNativeAsset[]> => {
-  return (await fetchAssets(api, query, true, nativeKey)).map(asset => ({
-    isNative: true,
-    symbol: asset.symbol,
-    decimals: asset.decimals,
-    existentialDeposit: asset.existentialDeposit
+  return (await fetchAssets(chain, api, query, true, 'NativeAssetId')).map(asset => ({
+    ...asset,
+    isNative: true
   }))
 }
 
 export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
-  query: string,
-  nativeKey?: string
+  query: string
 ): Promise<TForeignAsset[]> => {
-  return fetchAssets(api, query, false, nativeKey)
+  return fetchAssets('Acala', api, query, false, 'ForeignAssetId') as Promise<TForeignAsset[]>
 }
