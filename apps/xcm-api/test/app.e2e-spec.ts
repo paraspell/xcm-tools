@@ -458,9 +458,7 @@ describe('XCM API (e2e)', () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
-      const currency = { symbol: 'USDT', amount };
-      const amount1 = '1000';
-      const amount2 = '2000';
+      const currency = { id: 11, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
@@ -718,7 +716,7 @@ describe('XCM API (e2e)', () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
-      const currency = { symbol: 'USDT', amount };
+      const currency = { id: 11, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
@@ -764,7 +762,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT', amount: '1000' };
+      const currency = { id: 11, amount };
 
       const builder = Builder()
         .from(from)
@@ -797,7 +795,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT', amount: '1000' };
+      const currency = { id: 11, amount };
       const xcmVersion = Version.V3;
 
       const builder = Builder()
@@ -905,7 +903,8 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT', amount };
+      const currency = { id: 11, amount };
+
       const tx = await Builder()
         .from(from)
         .to(to)
@@ -1052,8 +1051,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
-      const currency = {
-        symbol: 'KSM',
+      const currency: TCurrencyInputWithAmount = {
+        symbol: { type: 'Native', value: 'KSM' },
         amount,
       };
 
@@ -1101,13 +1100,15 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
+      const currency: TCurrencyInputWithAmount = {
+        symbol: { type: 'Native', value: 'KSM' },
+        amount,
+      };
+
       const tx = await Builder()
         .from('AssetHubKusama')
         .to('Kusama')
-        .currency({
-          symbol: 'KSM',
-          amount,
-        })
+        .currency(currency)
         .address(address)
         .xcmVersion(Version.V3)
         .build();
@@ -1116,10 +1117,7 @@ describe('XCM API (e2e)', () => {
         .send({
           from: 'AssetHubKusama',
           to: 'Kusama',
-          currency: {
-            symbol: 'KSM',
-            amount,
-          },
+          currency,
           address,
           xcmVersion: Version.V3,
         })
@@ -1163,7 +1161,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to relaychain override pallet and method - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const currency = {
-        symbol: 'KSM',
+        symbol: { type: 'Native', value: 'KSM' },
         amount,
       };
       return request(app.getHttpServer())
@@ -1196,31 +1194,13 @@ describe('XCM API (e2e)', () => {
       from: 'Astar',
       exchange: 'HydrationDex',
       to: 'BifrostPolkadot',
-      currencyFrom: { symbol: 'ASTR' },
-      currencyTo: { symbol: 'BNC' },
+      currencyFrom: { symbol: 'BNC' },
+      currencyTo: { symbol: 'ASTR' },
       amount: '10000000000000000000',
       senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       slippagePct: '1',
     };
-
-    it(`Generate router call - manual exchange select - ${routerUrl}`, async () => {
-      return request(app.getHttpServer())
-        .post(routerUrl)
-        .send(routerOptions)
-        .expect(201)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(2);
-          data.forEach((txInfo: any) => {
-            expect(txInfo).toHaveProperty('tx');
-            expect(txInfo).toHaveProperty('node');
-            expect(txInfo).toHaveProperty('type');
-            expect(txInfo.tx).toBeTypeOf('string');
-          });
-        });
-    });
 
     it(`Generate router call - manual exchange select - ${routerUrl}`, async () => {
       return request(app.getHttpServer())

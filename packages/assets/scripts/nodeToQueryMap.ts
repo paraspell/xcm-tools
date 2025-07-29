@@ -1,36 +1,33 @@
 import { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
-export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
-
 export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   // Chain state query: <module>.<method> for assets metadata
-  // Or GLOBAL flag to use global XCM registry
-  Polkadot: [GLOBAL],
-  Kusama: [GLOBAL],
+  Polkadot: [],
+  Kusama: [],
   Westend: [],
   Paseo: [],
-  Acala: [GLOBAL, 'assetRegistry.assetMetadatas'],
+  Acala: ['assetRegistry.assetMetadatas'],
   Ajuna: ['assets.metadata'],
-  Astar: [GLOBAL, 'assets.metadata'],
-  BifrostPolkadot: [GLOBAL, 'assetRegistry.currencyMetadatas'],
-  Centrifuge: [GLOBAL, 'ormlAssetRegistry.metadata'],
+  Astar: ['assets.metadata'],
+  BifrostPolkadot: ['assetRegistry.currencyMetadatas'],
+  Centrifuge: ['ormlAssetRegistry.metadata'],
   ComposableFinance: ['assetsRegistry.assetSymbol'],
-  Darwinia: [GLOBAL, 'assets.metadata'],
-  Hydration: [GLOBAL, 'assetRegistry.assets'],
-  Interlay: [GLOBAL, 'assetRegistry.metadata'],
+  Darwinia: ['assets.metadata'],
+  Hydration: ['assetRegistry.assets'],
+  Interlay: ['assetRegistry.metadata'],
   Heima: ['assets.metadata'],
   Jamton: ['assetRegistry.metadata'],
   Moonbeam: ['evmForeignAssets.assetsById'],
-  AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
-  Altair: [GLOBAL, 'ormlAssetRegistry.metadata'],
+  AssetHubPolkadot: ['assets.metadata'],
+  Altair: ['ormlAssetRegistry.metadata'],
   Amplitude: ['assetRegistry.metadata'],
-  Basilisk: [GLOBAL, 'assetRegistry.assetMetadataMap'],
-  BifrostKusama: [GLOBAL, 'assetRegistry.currencyMetadatas'],
+  Basilisk: ['assetRegistry.assetMetadataMap'],
+  BifrostKusama: ['assetRegistry.currencyMetadatas'],
   Crab: ['assets.metadata'],
   CrustShadow: ['assets.metadata'],
   Encointer: [], // No assets metadata query
-  Karura: [GLOBAL, 'assetRegistry.assetMetadatas'],
-  Kintsugi: [GLOBAL, 'assetRegistry.metadata'],
+  Karura: ['assetRegistry.assetMetadatas'],
+  Kintsugi: ['assetRegistry.metadata'],
   Moonriver: ['evmForeignAssets.assetsById'],
   Laos: [], // No assets metadata query
   Quartz: ['foreignAssets.collectionToForeignAsset'],
@@ -38,17 +35,17 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   RobonomicsPolkadot: ['assets.metadata'],
   PeopleKusama: [], // Does not support ParaToPara transfers
   PeoplePolkadot: [], // Does not support ParaToPara transfers
-  Shiden: [GLOBAL, 'assets.metadata'],
-  AssetHubKusama: [GLOBAL, 'assets.metadata'],
+  Shiden: ['assets.metadata'],
+  AssetHubKusama: ['assets.metadata'],
   Unique: ['foreignAssets.collectionToForeignAsset'],
   Crust: ['assets.metadata'],
   Manta: ['assets.metadata'],
   Nodle: [],
   NeuroWeb: ['assets.metadata'],
-  Pendulum: [GLOBAL, 'assetRegistry.metadata'],
+  Pendulum: ['assetRegistry.metadata'],
   Zeitgeist: ['assetRegistry.metadata'],
   Collectives: [],
-  Phala: [GLOBAL, 'assets.metadata'],
+  Phala: ['assets.metadata'],
   CoretimeKusama: [],
   CoretimePolkadot: [],
   Subsocial: [], // No assets metadata query

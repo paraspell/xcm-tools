@@ -1,9 +1,11 @@
 import { TNode } from '@paraspell/sdk-common'
 import { TAssetJsonMap, isForeignAsset } from '../src'
 
-function collectDuplicateSymbolsInChains(assetsMap: TAssetJsonMap): {
+const collectDuplicateSymbolsInChains = (
+  assetsMap: TAssetJsonMap
+): {
   [node: string]: { [symbol: string]: string[] }
-} {
+} => {
   const chainDuplicates: { [node: string]: { [symbol: string]: string[] } } = {}
 
   for (const node in assetsMap) {
@@ -52,7 +54,7 @@ function assignAliasNumbers(assetIds: string[]): { [assetId: string]: number } {
   return aliasMapping
 }
 
-export function addAliasesToDuplicateSymbols(assetsMap: TAssetJsonMap): TAssetJsonMap {
+export const addAliasesToDuplicateSymbols = (assetsMap: TAssetJsonMap): TAssetJsonMap => {
   const chainDuplicates = collectDuplicateSymbolsInChains(assetsMap)
 
   for (const node in chainDuplicates) {

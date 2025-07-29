@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import { type TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import { capitalizeMultiLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'

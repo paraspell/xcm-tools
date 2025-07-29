@@ -51,14 +51,18 @@ vi.mock('../utils/multiAsset', () => ({
   createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec')
 }))
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
-  findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
-  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
-  isForeignAsset: vi.fn().mockReturnValue(true),
-  isNodeEvm: vi.fn().mockReturnValue(false),
-  InvalidCurrencyError: class extends Error {}
-}))
+vi.mock('@paraspell/assets', async () => {
+  const actual = await vi.importActual('@paraspell/assets')
+  return {
+    ...actual,
+    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
+    findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
+    getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
+    isForeignAsset: vi.fn().mockReturnValue(true),
+    isNodeEvm: vi.fn().mockReturnValue(false),
+    InvalidCurrencyError: class extends Error {}
+  }
+})
 
 vi.mock('./config', () => ({
   getNodeProviders: vi.fn().mockReturnValue(['provider1', 'provider2']),

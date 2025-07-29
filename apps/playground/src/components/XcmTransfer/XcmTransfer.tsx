@@ -33,7 +33,6 @@ import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import { ethers } from 'ethers';
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
@@ -145,27 +144,30 @@ const XcmTransfer = () => {
         };
       }
     } else if (currency) {
-      if (isForeignAsset(currency) && ethers.isAddress(currency.assetId)) {
-        return { symbol: currency.symbol };
-      }
-
-      if (
-        !isForeignAsset(currency) ||
-        (isForeignAsset(currency) && currency.assetId === undefined)
-      ) {
-        return { symbol: currency.symbol };
-      }
-
       const hasDuplicateIds = isRelayChain(from)
         ? false
         : getOtherAssets(from as TNodePolkadotKusama).filter(
-            (asset) => asset.assetId === currency.assetId,
+            (asset) =>
+              isForeignAsset(asset) &&
+              isForeignAsset(currency) &&
+              asset.assetId === currency.assetId,
           ).length > 1;
-      return hasDuplicateIds
+
+      if (isForeignAsset(currency) && currency.assetId && !hasDuplicateIds) {
+        return {
+          id: currency.assetId,
+        };
+      }
+
+      if (currency.multiLocation) {
+        return {
+          multilocation: currency.multiLocation,
+        };
+      }
+
+      return isForeignAsset(currency)
         ? { symbol: currency.symbol }
-        : {
-            id: currency.assetId ?? '',
-          };
+        : { symbol: Native(currency.symbol) };
     } else {
       throw Error('Currency is required');
     }

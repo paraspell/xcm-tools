@@ -1,6 +1,6 @@
 import { TMultiLocation } from '@paraspell/sdk-common'
 import { ApiPromise } from '@polkadot/api'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import { capitalizeMultiLocation } from './utils'
 
 export const fetchFeeAssets = async (api: ApiPromise): Promise<TMultiLocation[]> => {
   const xcmVersion = 4

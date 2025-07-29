@@ -99,7 +99,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'NATIVE_ASSETS' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ASSET_BALANCE' ||
-    func === 'HAS_DRY_RUN_SUPPORT';
+    func === 'HAS_DRY_RUN_SUPPORT' ||
+    func === 'ALL_SYMBOLS';
 
   const optionalCurrency = func === 'EXISTENTIAL_DEPOSIT';
 

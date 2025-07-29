@@ -1,4 +1,9 @@
-import { findAssetForNodeOrThrow, getNativeAssetSymbol, type TMultiAsset } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  getNativeAssetSymbol,
+  Native,
+  type TMultiAsset
+} from '@paraspell/assets'
 
 import { getParaId } from '../../../nodes/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
@@ -29,7 +34,7 @@ export const createExchangeInstructions = async <TApi, TRes>(
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetFrom, assetTo)
 
-  const nativeAsset = findAssetForNodeOrThrow(exchangeChain, { symbol: nativeSymbol }, null)
+  const nativeAsset = findAssetForNodeOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
 
   assertHasLocation(nativeAsset)
 

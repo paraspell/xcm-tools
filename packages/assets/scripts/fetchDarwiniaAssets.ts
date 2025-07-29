@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
 import { capitalizeMultiLocation } from './utils'
 
-export const fetchMantaOtherAssets = async (
+export const fetchDarwiniaAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
@@ -21,25 +18,25 @@ export const fetchMantaOtherAssets = async (
         value
       ]) => {
         const { symbol, decimals } = value.toHuman() as any
-        const assetId = era.toHuman() as string
-        const numberAssetId = assetId.replace(/[,]/g, '')
 
         const assetDetails = await api.query[module].asset(era)
         const existentialDeposit = (assetDetails.toHuman() as any).minBalance
 
-        const multiLocationVersioned = await api.query.assetManager.assetIdLocation(era)
+        const multiLocationRes = await api.query.assetManager.assetIdType(era)
 
-        const multiLocationJson = multiLocationVersioned.toJSON() as any
+        const multiLocationJson = multiLocationRes.toJSON() as any
 
         const multiLocation =
-          multiLocationJson !== null ? capitalizeMultiLocation(multiLocationJson.v3) : undefined
+          multiLocationJson !== null ? capitalizeMultiLocation(multiLocationJson.xcm) : undefined
+
+        const assetId = era.toHuman() as string
 
         return {
-          assetId: numberAssetId,
+          assetId: assetId.replace(/[,]/g, ''),
           symbol,
           decimals: +decimals,
-          existentialDeposit,
-          multiLocation
+          multiLocation,
+          existentialDeposit: existentialDeposit
         }
       }
     )
