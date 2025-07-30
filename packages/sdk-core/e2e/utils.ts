@@ -5,9 +5,9 @@ import {
   hasSupportForAsset,
   isForeignAsset
 } from '@paraspell/assets'
-import { NODE_NAMES_DOT_KSM, TNode } from '@paraspell/sdk-common'
+import { SUBSTRATE_CHAINS, TChain } from '@paraspell/sdk-common'
 
-const supportsOnlyNativeAsset: TNode[] = [
+const supportsOnlyNativeAsset: TChain[] = [
   'Nodle',
   'Pendulum',
   'Phala',
@@ -18,7 +18,7 @@ const supportsOnlyNativeAsset: TNode[] = [
   'IntegriteePaseo'
 ]
 
-const assetIdRequired: TNode[] = [
+const assetIdRequired: TChain[] = [
   'Manta',
   'Unique',
   'Quartz',
@@ -28,7 +28,7 @@ const assetIdRequired: TNode[] = [
   'Pendulum'
 ]
 
-export const doesNotSupportParaToRelay: TNode[] = [
+export const doesNotSupportParaToRelay: TChain[] = [
   'Phala',
   'Peaq',
   'Pendulum',
@@ -40,37 +40,41 @@ export const doesNotSupportParaToRelay: TNode[] = [
   'EnergyWebXPaseo'
 ]
 
-export const generateTransferScenarios = (originNode: TNode) => {
+export const generateTransferScenarios = (originChain: TChain) => {
   const scenarios = []
-  const allAssets = getAssets(originNode)
+  const allAssets = getAssets(originChain)
 
-  const isNativeOnly = supportsOnlyNativeAsset.includes(originNode)
-  const isAssetIdRequired = assetIdRequired.includes(originNode)
+  const isNativeOnly = supportsOnlyNativeAsset.includes(originChain)
+  const isAssetIdRequired = assetIdRequired.includes(originChain)
 
-  for (const destNode of NODE_NAMES_DOT_KSM) {
-    if (destNode === originNode) continue
-    if (getRelayChainSymbol(originNode) !== getRelayChainSymbol(destNode)) continue
+  for (const destChain of SUBSTRATE_CHAINS) {
+    if (destChain === originChain) continue
+    if (getRelayChainSymbol(originChain) !== getRelayChainSymbol(destChain)) continue
 
     // Loop through assets to find the first compatible one
     for (const asset of allAssets) {
-      if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originNode)) continue
+      if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
       if (isAssetIdRequired && !isForeignAsset(asset)) continue
 
       // Special case: Sending assets to Polimec is supported only from AssetHubPolkadot
-      if (destNode === 'Polimec' && originNode !== 'AssetHubPolkadot') {
+      if (destChain === 'Polimec' && originChain !== 'AssetHubPolkadot') {
         continue
       }
 
-      if (originNode === 'Polimec' && destNode === 'AssetHubPolkadot' && asset.symbol === 'PLMC') {
+      if (
+        originChain === 'Polimec' &&
+        destChain === 'AssetHubPolkadot' &&
+        asset.symbol === 'PLMC'
+      ) {
         continue
       }
 
       const notCompatible =
         ['DOT', 'KSM'].includes(asset.symbol) &&
-        (destNode === 'AssetHubPolkadot' || destNode === 'AssetHubKusama')
+        (destChain === 'AssetHubPolkadot' || destChain === 'AssetHubKusama')
 
-      if (hasSupportForAsset(destNode, asset.symbol) && !notCompatible) {
-        scenarios.push({ originNode, destNode, asset })
+      if (hasSupportForAsset(destChain, asset.symbol) && !notCompatible) {
+        scenarios.push({ originChain, destChain, asset })
 
         break
       }

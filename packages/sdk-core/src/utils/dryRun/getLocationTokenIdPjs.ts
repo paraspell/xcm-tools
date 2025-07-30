@@ -3,19 +3,19 @@ import {
   getJunctionValue,
   hasJunction,
   type TLocation,
-  type TNodeDotKsmWithRelayChains
+  type TSubstrateChain
 } from '@paraspell/sdk-common'
 
 export const getLocationTokenIdPjs = (
   location: TLocation,
-  node: TNodeDotKsmWithRelayChains
+  chain: TSubstrateChain
 ): string | null => {
   if (location.interior === 'Here') {
     // native token
-    return getNativeAssetSymbol(node)
+    return getNativeAssetSymbol(chain)
   }
 
-  const foreignAssets = getOtherAssets(node)
+  const foreignAssets = getOtherAssets(chain)
 
   if (
     location.interior.X2 &&

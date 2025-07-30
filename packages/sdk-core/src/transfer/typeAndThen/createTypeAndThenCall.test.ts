@@ -1,5 +1,5 @@
-import type { TMultiLocation, Version } from '@paraspell/sdk-common'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import type { TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { RELAY_LOCATION } from '../../constants'
@@ -8,7 +8,13 @@ import type {
   TSerializedApiCall,
   TTypeAndThenCallContext
 } from '../../types'
+import { createAsset } from '../../utils'
+import { buildTypeAndThenCall } from './buildTypeAndThenCall'
+import { computeAllFees } from './computeFees'
+import { createTypeAndThenCallContext } from './createContext'
+import { createCustomXcm } from './createCustomXcm'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
+import { createRefundInstruction } from './utils'
 
 vi.mock('./createContext', () => ({
   createTypeAndThenCallContext: vi.fn()
@@ -31,21 +37,12 @@ vi.mock('./buildTypeAndThenCall', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  createMultiAsset: vi.fn()
+  createAsset: vi.fn()
 }))
-
-import type { TMultiAsset } from '@paraspell/assets'
-
-import { createMultiAsset } from '../../utils'
-import { buildTypeAndThenCall } from './buildTypeAndThenCall'
-import { computeAllFees } from './computeFees'
-import { createTypeAndThenCallContext } from './createContext'
-import { createCustomXcm } from './createCustomXcm'
-import { createRefundInstruction } from './utils'
 
 describe('createTypeAndThenCall', () => {
   const mockApi = {}
-  const mockChain = 'Polkadot' as TNodeDotKsmWithRelayChains
+  const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = 'V3' as Version
   const mockSenderAddress = '0x123'
   const mockSerializedCall = {
@@ -57,7 +54,7 @@ describe('createTypeAndThenCall', () => {
   const mockRefundInstruction = { refund: 'instruction' } as unknown as ReturnType<
     typeof createRefundInstruction
   >
-  const mockMultiAsset = { id: {} as TMultiLocation, fun: { Fungible: 1000n } } as TMultiAsset
+  const mockAsset = { id: {} as TLocation, fun: { Fungible: 1000n } } as TAsset
 
   const mockFees = {
     reserveFee: 100n,
@@ -66,9 +63,9 @@ describe('createTypeAndThenCall', () => {
   } as Awaited<ReturnType<typeof computeAllFees>>
 
   const mockContext = {
-    asset: {
+    assetInfo: {
       amount: 1000n,
-      multiLocation: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
     }
   } as TTypeAndThenCallContext<unknown, unknown>
 
@@ -80,15 +77,15 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
-    vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
+    vi.mocked(createAsset).mockReturnValue(mockAsset)
   })
 
   it('should handle DOT asset with RELAY_LOCATION', async () => {
     const dotContext = {
       ...mockContext,
-      asset: {
-        ...mockContext.asset,
-        multiLocation: RELAY_LOCATION
+      assetInfo: {
+        ...mockContext.assetInfo,
+        location: RELAY_LOCATION
       }
     } as TTypeAndThenCallContext<unknown, unknown>
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(dotContext)
@@ -112,14 +109,14 @@ describe('createTypeAndThenCall', () => {
       mockRefundInstruction
     )
 
-    expect(createMultiAsset).toHaveBeenCalledTimes(1)
-    expect(createMultiAsset).toHaveBeenCalledWith(mockVersion, 1000n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenCalledTimes(1)
+    expect(createAsset).toHaveBeenCalledWith(mockVersion, 1000n, RELAY_LOCATION)
 
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       dotContext,
       true,
       [mockRefundInstruction, mockCustomXcm],
-      [mockMultiAsset]
+      [mockAsset]
     )
   })
 
@@ -139,9 +136,9 @@ describe('createTypeAndThenCall', () => {
 
     const kusamaContext = {
       ...mockContext,
-      asset: {
-        ...mockContext.asset,
-        multiLocation: kusamaLocation
+      assetInfo: {
+        ...mockContext.assetInfo,
+        location: kusamaLocation
       }
     } as TTypeAndThenCallContext<unknown, unknown>
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(kusamaContext)
@@ -163,7 +160,7 @@ describe('createTypeAndThenCall', () => {
       mockRefundInstruction
     )
 
-    expect(createMultiAsset).toHaveBeenCalledTimes(1)
+    expect(createAsset).toHaveBeenCalledTimes(1)
   })
 
   it('should handle non-DOT asset', async () => {
@@ -184,22 +181,22 @@ describe('createTypeAndThenCall', () => {
       mockRefundInstruction
     )
 
-    expect(createMultiAsset).toHaveBeenCalledTimes(2)
+    expect(createAsset).toHaveBeenCalledTimes(2)
 
-    expect(createMultiAsset).toHaveBeenNthCalledWith(1, mockVersion, 350n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 350n, RELAY_LOCATION)
 
-    expect(createMultiAsset).toHaveBeenNthCalledWith(
+    expect(createAsset).toHaveBeenNthCalledWith(
       2,
       mockVersion,
       1000n,
-      mockContext.asset.multiLocation
+      mockContext.assetInfo.location
     )
 
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       mockContext,
       false,
       [mockRefundInstruction, mockCustomXcm],
-      [mockMultiAsset, mockMultiAsset]
+      [mockAsset, mockAsset]
     )
   })
 
@@ -243,7 +240,7 @@ describe('createTypeAndThenCall', () => {
 
     await createTypeAndThenCall(mockChain, options)
 
-    expect(createMultiAsset).toHaveBeenNthCalledWith(1, mockVersion, 3500n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 3500n, RELAY_LOCATION)
   })
 
   it('should create custom XCM twice with correct parameters', async () => {

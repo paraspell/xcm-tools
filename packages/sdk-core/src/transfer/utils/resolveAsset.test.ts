@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfo, type TCurrencyInput } from '@paraspell/assets'
-import { isTLocation, type TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TDestination } from '../../types'
@@ -26,7 +26,7 @@ describe('resolveAsset', () => {
 
   it('should return null when assetCheckEnabled is false', () => {
     const currency = {} as TCurrencyInput
-    const origin = 'Acala' as TNodePolkadotKusama
+    const origin: TSubstrateChain = 'Acala'
     const destination: TDestination = 'Astar'
     const assetCheckEnabled = false
 
@@ -38,7 +38,7 @@ describe('resolveAsset', () => {
 
   it('should call getAssetBySymbolOrId with gerRelayChainOf(origin) when destination is undefined', () => {
     const currency = {} as TCurrencyInput
-    const origin = 'Acala' as TNodePolkadotKusama
+    const origin: TSubstrateChain = 'Acala'
     const destination: TDestination = 'Polkadot'
     const assetCheckEnabled = true
     const asset = {} as TAssetInfo
@@ -54,7 +54,7 @@ describe('resolveAsset', () => {
 
   it('should call getAssetBySymbolOrId with destination when destination is defined and !isTLocation(destination) is true', () => {
     const currency = {} as TCurrencyInput
-    const origin = 'Acala' as TNodePolkadotKusama
+    const origin: TSubstrateChain = 'Acala'
     const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
     const asset = {} as TAssetInfo
@@ -72,7 +72,7 @@ describe('resolveAsset', () => {
 
   it('should call getAssetBySymbolOrId with null when destination is defined and !isTLocation(destination) is false', () => {
     const currency = {} as TCurrencyInput
-    const origin = 'Acala' as TNodePolkadotKusama
+    const origin: TSubstrateChain = 'Acala'
     const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
 

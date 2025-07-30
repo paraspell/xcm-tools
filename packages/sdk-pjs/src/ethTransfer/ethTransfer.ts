@@ -50,7 +50,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
 
   if (ethAsset === null) {
     throw new InvalidCurrencyError(
-      `Origin node Ethereum does not support currency ${JSON.stringify(currency)}.`
+      `Origin chain Ethereum does not support currency ${JSON.stringify(currency)}.`
     )
   }
 

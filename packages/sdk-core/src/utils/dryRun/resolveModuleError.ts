@@ -1,11 +1,11 @@
 import { getSupportedPalletsDetails } from '@paraspell/pallets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import { PolkadotXcmError, type TModuleError, XTokensError } from '../../types'
 
-export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TModuleError) => {
-  const palletDetails = getSupportedPalletsDetails(node).find(p => p.index === Number(error.index))
+export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError) => {
+  const palletDetails = getSupportedPalletsDetails(chain).find(p => p.index === Number(error.index))
 
   if (!palletDetails) {
     throw new InvalidParameterError(`Pallet with index ${error.index} not found`)

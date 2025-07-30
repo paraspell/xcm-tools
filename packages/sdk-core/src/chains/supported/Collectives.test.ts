@@ -1,0 +1,54 @@
+import { Version } from '@paraspell/sdk-common'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { ScenarioNotSupportedError } from '../../errors'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions } from '../../types'
+import { getChain } from '../../utils/getChain'
+import type Collectives from './Collectives'
+
+vi.mock('../../pallets/polkadotXcm', () => ({
+  transferPolkadotXcm: vi.fn()
+}))
+
+describe('Collectives', () => {
+  let chain: Collectives<unknown, unknown>
+  const mockInput = {
+    scenario: 'RelayToPara',
+    assetInfo: { symbol: 'DOT', amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+  beforeEach(() => {
+    chain = getChain<unknown, unknown, 'Collectives'>('Collectives')
+  })
+
+  it('should initialize with correct values', () => {
+    expect(chain.chain).toBe('Collectives')
+    expect(chain.info).toBe('polkadotCollectives')
+    expect(chain.type).toBe('polkadot')
+    expect(chain.version).toBe(Version.V5)
+  })
+
+  it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
+    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown
+    >
+
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
+  })
+
+  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_teleport_assets',
+      'Unlimited'
+    )
+  })
+
+  it('should return correct parameters for getRelayToParaOverrides', () => {
+    const result = chain.getRelayToParaOverrides()
+    expect(result).toEqual({ method: 'limited_teleport_assets', includeFee: true })
+  })
+})

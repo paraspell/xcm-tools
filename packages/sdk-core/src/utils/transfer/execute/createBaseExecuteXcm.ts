@@ -1,5 +1,5 @@
 import { type TAsset } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { isSystemChain } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
@@ -21,9 +21,9 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => {
 type TTransferType = 'teleport' | 'reserve_transfer' | 'direct_deposit' | 'teleport_to_reserve'
 
 const getTransferType = (
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TNodeWithRelayChains,
-  reserveChain?: TNodeWithRelayChains
+  origin: TSubstrateChain,
+  destination: TChain,
+  reserveChain?: TSubstrateChain
 ): TTransferType => {
   if (
     reserveChain !== undefined &&

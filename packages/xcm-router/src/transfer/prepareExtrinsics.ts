@@ -1,14 +1,14 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/sdk';
 import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified } from '../types';
 import type { TPreparedExtrinsics } from '../types';
 import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
 export const prepareExtrinsics = async (
-  dex: ExchangeNode,
+  dex: ExchangeChain,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TPreparedExtrinsics> => {
   const {
@@ -22,7 +22,7 @@ export const prepareExtrinsics = async (
     recipientAddress,
   } = options;
 
-  if ((origin || destination) && (dex.node.includes('AssetHub') || dex.node === 'Hydration')) {
+  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
       const amountOut = await dex.getAmountOut(exchange.api, {
         ...options,
@@ -32,9 +32,9 @@ export const prepareExtrinsics = async (
       });
 
       const tx = await handleSwapExecuteTransfer({
-        chain: origin?.node,
-        exchangeChain: exchange.baseNode,
-        destChain: destination?.node,
+        chain: origin?.chain,
+        exchangeChain: exchange.baseChain,
+        destChain: destination?.chain,
         assetInfoFrom: {
           ...(origin?.assetFrom ?? exchange.assetFrom),
           amount: BigInt(amount),
@@ -70,7 +70,7 @@ export const prepareExtrinsics = async (
 
   // 1. Create transfer origin -> exchange (optional)
   const toExchangeTx =
-    origin && origin.node !== exchange.baseNode
+    origin && origin.chain !== exchange.baseChain
       ? await buildToExchangeExtrinsic({ ...options, origin })
       : undefined;
 
@@ -79,7 +79,7 @@ export const prepareExtrinsics = async (
 
   // 3. Create transfer exchange -> destination (optional)
   const toDestTx =
-    destination && destination.node !== exchange.baseNode
+    destination && destination.chain !== exchange.baseChain
       ? await buildFromExchangeExtrinsic({
           exchange,
           destination,

@@ -18,7 +18,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { BalanceModule } from './balance/balance.module.js';
 import { throttlerConfig } from './config/throttler.config.js';
 import { HealthModule } from './health/health.module.js';
-import { NodeConfigsModule } from './node-configs/node-configs.module.js';
+import { ChainConfigsModule } from './chain-configs/chain-configs.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { RouterModule } from './router/router.module.js';
@@ -40,7 +40,7 @@ const __dirname = path.dirname(__filename);
     PalletsModule,
     BalanceModule,
     AddressModule,
-    NodeConfigsModule,
+    ChainConfigsModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRootAsync({

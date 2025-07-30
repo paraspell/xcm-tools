@@ -8,16 +8,16 @@ import {
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
-  isNodeEvm
+  isChainEvm
 } from '../src'
-import { NODES_WITH_RELAY_CHAINS, TNode } from '@paraspell/sdk-common'
+import { CHAINS, TChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 export const generateAssetsTests = () => {
   describe('Assets E2E', () => {
-    NODES_WITH_RELAY_CHAINS.forEach(node => {
-      describe(`getAssetsObject: ${node}`, () => {
-        const assetsObj = getAssetsObject(node)
+    CHAINS.forEach(chain => {
+      describe(`getAssetsObject: ${chain}`, () => {
+        const assetsObj = getAssetsObject(chain)
 
         it('should have asset data defined', () => {
           expect(assetsObj).toBeDefined()
@@ -32,11 +32,11 @@ export const generateAssetsTests = () => {
           expect(assetsObj).toHaveProperty('supportsDryRunApi')
         })
 
-        if (node !== 'Ethereum') {
+        if (chain !== 'Ethereum') {
           it('should have a valid native asset symbol in nativeAssets', () => {
-            const nativeSymbol = getNativeAssetSymbol(node)
+            const nativeSymbol = getNativeAssetSymbol(chain)
             const nativeSymbols = assetsObj.nativeAssets.map(a => a.symbol)
-            if (node !== 'BifrostPaseo') {
+            if (chain !== 'BifrostPaseo') {
               expect(nativeSymbols).toContain(nativeSymbol)
             }
           })
@@ -45,14 +45,14 @@ export const generateAssetsTests = () => {
         it('Every native asset should have required properties', () => {
           assetsObj.nativeAssets.forEach(asset => {
             expect(asset).toHaveProperty('symbol')
-            if (node !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
             expect(asset).toHaveProperty('isNative')
             if (
-              node !== 'AssetHubPolkadot' &&
+              chain !== 'AssetHubPolkadot' &&
               asset.symbol !== 'KSM' &&
-              node !== 'AssetHubKusama' &&
+              chain !== 'AssetHubKusama' &&
               asset.symbol !== 'DOT' &&
-              node !== 'Ethereum'
+              chain !== 'Ethereum'
             ) {
               expect(asset).toHaveProperty('existentialDeposit')
             }
@@ -62,7 +62,7 @@ export const generateAssetsTests = () => {
         it('Every foreign asset should have required properties', () => {
           assetsObj.otherAssets.forEach(asset => {
             expect(asset).toHaveProperty('symbol')
-            if (node !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
             expect(asset).toHaveProperty('existentialDeposit')
 
             // Check that asset has either 'assetId' or 'location'
@@ -72,24 +72,24 @@ export const generateAssetsTests = () => {
 
         it('should support its native asset via hasSupportForAsset', () => {
           const nativeSymbol = assetsObj.nativeAssetSymbol
-          if (nativeSymbol && node !== 'BifrostPaseo') {
-            expect(hasSupportForAsset(node, nativeSymbol)).toBe(true)
+          if (nativeSymbol && chain !== 'BifrostPaseo') {
+            expect(hasSupportForAsset(chain, nativeSymbol)).toBe(true)
           }
         })
       })
 
-      describe('isNodeEvm', () => {
+      describe('isChainEvm', () => {
         it('should return boolean value', () => {
-          const value = isNodeEvm(node)
+          const value = isChainEvm(chain)
           expect(value).toBeTypeOf('boolean')
         })
       })
 
       describe('getAssetId', () => {
         it('should return string value for every foreign asset', () => {
-          const assets = getOtherAssets(node)
+          const assets = getOtherAssets(chain)
           assets.forEach(asset => {
-            const assetId = getAssetId(node as TNode, asset.symbol)
+            const assetId = getAssetId(chain as TChain, asset.symbol)
             if (assetId !== null) expect(assetId).toBeTypeOf('string')
           })
         })
@@ -97,7 +97,7 @@ export const generateAssetsTests = () => {
 
       describe('getRelayChainSymbol', () => {
         it('should return string value', () => {
-          const value = getRelayChainSymbol(node)
+          const value = getRelayChainSymbol(chain)
           expect(['KSM', 'DOT', 'WND', 'PAS']).toContain(value)
           expect(value).toBeTypeOf('string')
         })
@@ -105,20 +105,20 @@ export const generateAssetsTests = () => {
 
       describe('getNativeAssets', () => {
         it('should return array of native assets', () => {
-          const assets = getNativeAssets(node)
+          const assets = getNativeAssets(chain)
           expect(assets).toBeInstanceOf(Array)
           assets.forEach(asset => {
             expect(asset).toBeTypeOf('object')
             expect(asset).toHaveProperty('symbol')
             expect(asset.symbol).toBeTypeOf('string')
-            if (node !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
           })
         })
       })
 
-      describe(`getOtherAssets ${node}`, () => {
+      describe(`getOtherAssets ${chain}`, () => {
         it('should return array of other assets', () => {
-          const assets = getOtherAssets(node)
+          const assets = getOtherAssets(chain)
           expect(assets).toBeInstanceOf(Array)
           const ethAssets = getOtherAssets('Ethereum')
           assets.forEach(asset => {
@@ -126,13 +126,13 @@ export const generateAssetsTests = () => {
             expect(asset).toHaveProperty('symbol')
             expect(asset.symbol).toBeTypeOf('string')
 
-            if (node === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)) {
+            if (chain === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)) {
             }
 
             const isEthAssetInAhAssets =
-              node === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)
+              chain === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)
 
-            if (node !== 'Ethereum' && !isEthAssetInAhAssets)
+            if (chain !== 'Ethereum' && !isEthAssetInAhAssets)
               expect(asset).toHaveProperty('decimals')
 
             // Check that asset has either 'assetId' or 'location'
@@ -142,26 +142,26 @@ export const generateAssetsTests = () => {
 
         describe('getAssets', () => {
           it('should return array of assets', () => {
-            const assets = getAssets(node)
+            const assets = getAssets(chain)
             expect(assets).toBeInstanceOf(Array)
             assets.forEach(asset => {
               expect(asset).toBeTypeOf('object')
               expect(asset).toHaveProperty('symbol')
               expect(asset.symbol).toBeTypeOf('string')
-              if (node !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+              if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
             })
           })
 
           it('should return combined list of native and other assets', () => {
-            const { nativeAssets, otherAssets } = getAssetsObject(node)
-            const assets = getAssets(node)
+            const { nativeAssets, otherAssets } = getAssetsObject(chain)
+            const assets = getAssets(chain)
             expect(assets.length).toEqual(nativeAssets.length + otherAssets.length)
           })
         })
 
         describe('getAllAssetsSymbols', () => {
           it('should return array of asset symbols', () => {
-            const assetsSymbols = getAssets(node).map(asset => asset.symbol)
+            const assetsSymbols = getAssets(chain).map(asset => asset.symbol)
             expect(assetsSymbols).toBeInstanceOf(Array)
             assetsSymbols.forEach(assetSymbol => {
               expect(assetSymbol).toBeTypeOf('string')
@@ -169,8 +169,8 @@ export const generateAssetsTests = () => {
           })
 
           it('should return combined list of native and other asset symbols', () => {
-            const { nativeAssets, otherAssets } = getAssetsObject(node)
-            const assetsSymbols = getAssets(node).map(asset => asset.symbol)
+            const { nativeAssets, otherAssets } = getAssetsObject(chain)
+            const assetsSymbols = getAssets(chain).map(asset => asset.symbol)
             const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
             const otherAssetsSymbols = otherAssets.map(({ symbol }) => symbol)
             expect(assetsSymbols).toEqual([...nativeAssetsSymbols, ...otherAssetsSymbols])
@@ -179,16 +179,16 @@ export const generateAssetsTests = () => {
 
         describe('getNativeAssetSymbol', () => {
           it('should return native asset symbol', () => {
-            const symbol = getNativeAssetSymbol(node)
+            const symbol = getNativeAssetSymbol(chain)
             expect(symbol).toBeTypeOf('string')
           })
 
-          if (node !== 'Ethereum') {
+          if (chain !== 'Ethereum') {
             it('should return native asset symbol from native assets', () => {
-              const { nativeAssets } = getAssetsObject(node)
-              const symbol = getNativeAssetSymbol(node)
+              const { nativeAssets } = getAssetsObject(chain)
+              const symbol = getNativeAssetSymbol(chain)
               // BifrostPaseo is an exception it has only vBNC in native assets
-              if (node !== 'BifrostPaseo') {
+              if (chain !== 'BifrostPaseo') {
                 expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
               }
             })
@@ -197,23 +197,23 @@ export const generateAssetsTests = () => {
 
         describe('hasSupportForAsset', () => {
           it('should return boolean value', () => {
-            const symbol = getNativeAssetSymbol(node)
-            const value = hasSupportForAsset(node, symbol)
+            const symbol = getNativeAssetSymbol(chain)
+            const value = hasSupportForAsset(chain, symbol)
             expect(value).toBeTypeOf('boolean')
           })
 
           it('should return true for native asset', () => {
-            const symbol = getNativeAssetSymbol(node)
-            const value = hasSupportForAsset(node, symbol)
-            if (node !== 'BifrostPaseo') {
+            const symbol = getNativeAssetSymbol(chain)
+            const value = hasSupportForAsset(chain, symbol)
+            if (chain !== 'BifrostPaseo') {
               expect(value).toBe(true)
             }
           })
 
           it('should return true for non-native asset', () => {
-            const { otherAssets } = getAssetsObject(node)
+            const { otherAssets } = getAssetsObject(chain)
             otherAssets.forEach(asset => {
-              const value = hasSupportForAsset(node, asset.symbol)
+              const value = hasSupportForAsset(chain, asset.symbol)
               expect(value).toBe(true)
             })
           })
@@ -221,10 +221,10 @@ export const generateAssetsTests = () => {
 
         describe('getAssetDecimals', () => {
           it('should return valid decimals for all available assets', () => {
-            const { nativeAssets, otherAssets } = getAssetsObject(node)
+            const { nativeAssets, otherAssets } = getAssetsObject(chain)
             ;[...nativeAssets, ...otherAssets].forEach(asset => {
               if (asset.symbol !== undefined && asset.decimals !== undefined) {
-                const decimals = getAssetDecimals(node, asset.symbol)
+                const decimals = getAssetDecimals(chain, asset.symbol)
                 expect(decimals).toBeTypeOf('number')
                 expect(decimals).toBeGreaterThanOrEqual(0)
               }
@@ -234,14 +234,14 @@ export const generateAssetsTests = () => {
 
         describe('hasDryRunSupport', () => {
           it('should return boolean value', () => {
-            const value = getAssetsObject(node).supportsDryRunApi
+            const value = getAssetsObject(chain).supportsDryRunApi
             expect(value).toBeTypeOf('boolean')
           })
         })
 
         describe('getAssetLocation', () => {
           it('should return location for foreign assets', () => {
-            const { otherAssets } = getAssetsObject(node)
+            const { otherAssets } = getAssetsObject(chain)
             otherAssets.forEach(asset => {
               if (asset.location) {
                 expect(asset.location).toBeDefined()
@@ -252,7 +252,7 @@ export const generateAssetsTests = () => {
 
         describe('getExistentialDeposit', () => {
           it('should return existential deposit for all assets', () => {
-            const { nativeAssets, otherAssets } = getAssetsObject(node)
+            const { nativeAssets, otherAssets } = getAssetsObject(chain)
             ;[...nativeAssets, ...otherAssets].forEach(asset => {
               const deposit = asset.existentialDeposit
               if (deposit !== undefined) {

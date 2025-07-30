@@ -3,9 +3,9 @@ import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
   getNativeAssetSymbol,
-  isNodeEvm
+  isChainEvm
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError } from '../../../errors'
@@ -14,12 +14,12 @@ import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 
 export type BuildHopInfoOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  node: TNodeDotKsmWithRelayChains
+  chain: TSubstrateChain
   feeData: {
     fee: bigint
     currency: string
   }
-  originNode: TNodeDotKsmWithRelayChains
+  originChain: TSubstrateChain
   currency: TCurrencyCore
   senderAddress: string
   ahAddress?: string
@@ -27,27 +27,27 @@ export type BuildHopInfoOptions<TApi, TRes> = {
 
 export const buildHopInfo = async <TApi, TRes>({
   api,
-  node,
+  chain,
   feeData,
-  originNode,
+  originChain,
   currency,
   senderAddress,
   ahAddress
 }: BuildHopInfoOptions<TApi, TRes>): Promise<TTransferInfo['assetHub']> => {
   const hopApi = api.clone()
-  await hopApi.init(node)
+  await hopApi.init(chain)
   hopApi.setDisconnectAllowed(false)
 
   try {
-    const resolvedAddress = isNodeEvm(originNode) && ahAddress ? ahAddress : senderAddress
+    const resolvedAddress = isChainEvm(originChain) && ahAddress ? ahAddress : senderAddress
 
     const nativeBalanceOnHop = await getBalanceNativeInternal({
       api: hopApi,
       address: resolvedAddress,
-      node: node
+      chain
     })
 
-    const nativeAssetSymbolOnHop = getNativeAssetSymbol(node)
+    const nativeAssetSymbolOnHop = getNativeAssetSymbol(chain)
 
     const xcmFeeDetails = {
       fee: feeData.fee,
@@ -55,15 +55,15 @@ export const buildHopInfo = async <TApi, TRes>({
       currencySymbol: nativeAssetSymbolOnHop
     }
 
-    const isBridgeHubNode = node.includes('BridgeHub')
+    const isBridgeHub = chain.includes('BridgeHub')
 
-    if (isBridgeHubNode) {
+    if (isBridgeHub) {
       return {
-        currencySymbol: getNativeAssetSymbol(node),
+        currencySymbol: getNativeAssetSymbol(chain),
         xcmFee: xcmFeeDetails
       } as TTransferInfo['assetHub']
     } else {
-      const hopAsset = findAssetOnDestOrThrow(originNode, node, currency)
+      const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
 
       const hopCurrencyPayload = hopAsset.location
         ? { location: hopAsset.location }
@@ -72,14 +72,14 @@ export const buildHopInfo = async <TApi, TRes>({
       const balance = await getAssetBalanceInternal({
         api: hopApi,
         address: resolvedAddress,
-        node: node,
+        chain,
         currency: hopCurrencyPayload
       })
 
-      const ed = getExistentialDeposit(node, hopCurrencyPayload)
+      const ed = getExistentialDeposit(chain, hopCurrencyPayload)
       if (!ed) {
         throw new InvalidParameterError(
-          `Existential deposit not found for node ${node} with currency ${JSON.stringify(hopCurrencyPayload)}`
+          `Existential deposit not found for chain ${chain} with currency ${JSON.stringify(hopCurrencyPayload)}`
         )
       }
 

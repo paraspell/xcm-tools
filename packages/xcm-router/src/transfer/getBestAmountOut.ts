@@ -1,6 +1,6 @@
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createChainClient } from '@paraspell/sdk';
 
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import type { TGetBestAmountOutOptions, TGetBestAmountOutResult } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
@@ -11,18 +11,18 @@ export const getBestAmountOut = async (
 ): Promise<TGetBestAmountOutResult> => {
   const { exchange, amount, from } = options;
 
-  const originApi = from ? await createApiInstanceForNode(from) : undefined;
+  const originApi = from ? await createChainClient(from) : undefined;
 
   const isExchangeAutoSelect = exchange === undefined || Array.isArray(exchange);
 
   const dex = isExchangeAutoSelect
     ? await selectBestExchangeAmountOut(options, originApi)
-    : createDexNodeInstance(exchange);
+    : createExchangeInstance(exchange);
 
   const { assetFromOrigin, assetFromExchange: assetFrom, assetTo } = resolveAssets(dex, options);
 
   if (!isExchangeAutoSelect) {
-    const res = await canBuildToExchangeTx(options, dex.node, originApi, assetFromOrigin);
+    const res = await canBuildToExchangeTx(options, dex.chain, originApi, assetFromOrigin);
     if (!res.success) {
       throw res.error;
     }
@@ -32,7 +32,7 @@ export const getBestAmountOut = async (
   const papiApi = await dex.createApiInstancePapi();
 
   return {
-    exchange: dex.exchangeNode,
+    exchange: dex.exchangeChain,
     amountOut: await dex.getAmountOut(api, {
       papiApi,
       assetFrom,

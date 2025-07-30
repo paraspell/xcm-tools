@@ -1,12 +1,12 @@
 import type { TLocation } from '@paraspell/sdk';
 import { deepEqual, reverseTransformLocation } from '@paraspell/sdk';
 
-import { EXCHANGE_NODES } from '../consts';
-import type { TExchangeInput, TExchangeNode, TRouterAsset } from '../types';
+import { EXCHANGE_CHAINS } from '../consts';
+import type { TExchangeChain, TExchangeInput, TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 
 const resolveRouterAsset = (
-  exchange: TExchangeNode,
+  exchange: TExchangeChain,
   pairKey: string | object,
 ): TRouterAsset | undefined => {
   const exchangeAssets = getExchangeConfig(exchange).assets;
@@ -31,7 +31,7 @@ const resolveRouterAsset = (
 };
 
 const asArray = (ex: TExchangeInput) =>
-  ex === undefined ? EXCHANGE_NODES : Array.isArray(ex) ? ex : [ex];
+  ex === undefined ? EXCHANGE_CHAINS : Array.isArray(ex) ? ex : [ex];
 
 export const getExchangePairs = (exchange: TExchangeInput): [TRouterAsset, TRouterAsset][] =>
   asArray(exchange).flatMap((ex) => {

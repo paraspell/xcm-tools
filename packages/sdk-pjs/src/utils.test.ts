@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
+import type { TSubstrateChain } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { Contract, Signer } from 'ethers'
 import type { Abi, GetContractReturnType, WalletClient } from 'viem'
@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { TPjsApi } from './types'
 import {
-  createApiInstanceForNode,
+  createChainClient,
   createPolkadotJsApiCall,
   isEthersContract,
   isEthersSigner
@@ -17,17 +17,14 @@ vi.mock('./PolkadotJsApi')
 vi.mock('@paraspell/sdk-core')
 
 describe('API Instance and Call Utility Functions', () => {
-  const mockNode = {} as TNodeDotKsmWithRelayChains
+  const mockChain = {} as TSubstrateChain
   const mockApi = {} as TPjsApi
 
-  describe('createApiInstanceForNode', () => {
-    it('should initialize PolkadotJsApi and call createApiInstanceForNode from internalUtils with the correct arguments', async () => {
-      await createApiInstanceForNode(mockNode)
+  describe('createChainClient', () => {
+    it('should initialize PolkadotJsApi and call createChainClient from internalUtils with the correct arguments', async () => {
+      await createChainClient(mockChain)
 
-      expect(sdkCore.createApiInstanceForNode).toHaveBeenCalledWith(
-        expect.any(PolkadotJsApi),
-        mockNode
-      )
+      expect(sdkCore.createChainClient).toHaveBeenCalledWith(expect.any(PolkadotJsApi), mockChain)
     })
   })
 

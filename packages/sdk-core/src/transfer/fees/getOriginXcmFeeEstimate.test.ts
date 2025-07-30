@@ -1,6 +1,6 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -28,8 +28,8 @@ describe('getOriginXcmFeeEstimate', () => {
   } as unknown as IPolkadotApi<unknown, unknown>
   const mockTx = {} as unknown
   const mockSenderAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-  const mockOriginNode = 'origin' as TNodeDotKsmWithRelayChains
-  const mockDestinationNode = 'destination' as TNodeDotKsmWithRelayChains
+  const mockOriginChain = 'origin' as TSubstrateChain
+  const mockDestinationChain = 'destination' as TChain
   const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
 
   const MOCK_RAW_FEE = 100000000000n
@@ -45,9 +45,9 @@ describe('getOriginXcmFeeEstimate', () => {
     const options: TGetOriginXcmFeeEstimateOptions<unknown, unknown> = {
       api: mockApi,
       tx: mockTx,
-      origin: mockOriginNode,
+      origin: mockOriginChain,
       currency,
-      destination: mockDestinationNode,
+      destination: mockDestinationChain,
       senderAddress: mockSenderAddress
     }
 
@@ -57,13 +57,18 @@ describe('getOriginXcmFeeEstimate', () => {
     expect(spy).toHaveBeenCalledWith(mockTx, mockSenderAddress)
 
     expect(padFee).toHaveBeenCalledTimes(1)
-    expect(padFee).toHaveBeenCalledWith(MOCK_RAW_FEE, mockOriginNode, mockDestinationNode, 'origin')
+    expect(padFee).toHaveBeenCalledWith(
+      MOCK_RAW_FEE,
+      mockOriginChain,
+      mockDestinationChain,
+      'origin'
+    )
 
     expect(isSufficientOrigin).toHaveBeenCalledTimes(1)
     expect(isSufficientOrigin).toHaveBeenCalledWith(
       mockApi,
-      mockOriginNode,
-      mockDestinationNode,
+      mockOriginChain,
+      mockDestinationChain,
       mockSenderAddress,
       MOCK_PADDED_FEE,
       currency,
@@ -72,7 +77,7 @@ describe('getOriginXcmFeeEstimate', () => {
     )
 
     expect(getNativeAssetSymbol).toHaveBeenCalledTimes(1)
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockOriginNode)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockOriginChain)
 
     expect(result).toEqual({
       fee: MOCK_PADDED_FEE,

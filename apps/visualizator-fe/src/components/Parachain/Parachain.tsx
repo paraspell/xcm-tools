@@ -14,7 +14,7 @@ import { adjustUVs } from '../../utils/adjustUVs';
 import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
-import { getLogoScaleFactor, getNodeLogo } from './utils';
+import { getChainLogo, getLogoScaleFactor } from './utils';
 
 type Props = {
   name: string;
@@ -50,7 +50,7 @@ const Parachain: FC<Props> = ({
 
   useImperativeHandle(ref, () => groupRef.current!);
 
-  const logo = getNodeLogo(name, ecosystem);
+  const logo = getChainLogo(name, ecosystem);
   const texture = logo ? useLoader(TextureLoader, logo) : null;
 
   useEffect(() => {

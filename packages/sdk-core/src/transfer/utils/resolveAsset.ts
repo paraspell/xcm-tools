@@ -1,11 +1,11 @@
 import { findAssetInfo, type TAssetInfo, type TCurrencyInput } from '@paraspell/assets'
-import { isTLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { TDestination } from '../../types'
 
 export const resolveAsset = (
   currency: TCurrencyInput,
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TSubstrateChain,
   destination: TDestination,
   assetCheckEnabled: boolean
 ): TAssetInfo | null => {

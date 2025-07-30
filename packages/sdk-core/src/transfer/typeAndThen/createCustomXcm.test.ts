@@ -1,4 +1,4 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -16,7 +16,7 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 
 vi.mock('../../utils', () => ({
   createBeneficiaryLocation: vi.fn(),
-  createMultiAsset: vi.fn((_version, amount, location) => ({
+  createAsset: vi.fn((_version, amount, location) => ({
     id: location,
     fun: { Fungible: amount }
   })),
@@ -34,7 +34,7 @@ describe('createCustomXcm', () => {
     origin: { chain: 'AssetHubPolkadot', api: mockApi } as TChainWithApi<unknown, unknown>,
     dest: { chain: 'Acala' } as TChainWithApi<unknown, unknown>,
     reserve: { chain: 'AssetHubPolkadot', api: mockApi } as TChainWithApi<unknown, unknown>,
-    asset: { amount: 1000000n, multiLocation: RELAY_LOCATION },
+    assetInfo: { amount: 1000000n, location: RELAY_LOCATION },
     options: {
       destination: 'Acala',
       version: mockVersion,
@@ -48,7 +48,7 @@ describe('createCustomXcm', () => {
       ({ api, address, version }) =>
         ({
           mockBeneficiary: { api, address, version }
-        }) as unknown as TMultiLocation
+        }) as unknown as TLocation
     )
   })
 

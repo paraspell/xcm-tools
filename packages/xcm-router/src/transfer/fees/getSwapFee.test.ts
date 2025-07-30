@@ -2,7 +2,7 @@ import type { TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
 import { getOriginXcmFee } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../../dexNodes/DexNode';
+import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 import { getSwapFee } from './getSwapFee';
@@ -16,7 +16,7 @@ vi.mock('@paraspell/sdk', () => ({
 }));
 
 describe('getSwapFee', () => {
-  const exchange = { node: 'TEST_NODE' } as unknown as ExchangeNode;
+  const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
   const options = {
     senderAddress: '0xSender',
     exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT' } },
@@ -44,8 +44,8 @@ describe('getSwapFee', () => {
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: 'apiInstance',
       tx: 'dummyTx',
-      origin: 'TEST_NODE',
-      destination: 'TEST_NODE',
+      origin: 'TEST_CHAIN',
+      destination: 'TEST_CHAIN',
       senderAddress: '0xSender',
       disableFallback: false,
       currency: { symbol: 'DOT', amount: '100' },
@@ -68,7 +68,7 @@ describe('getSwapFee', () => {
     await expect(getSwapFee(exchange, options)).rejects.toThrow('create error');
   });
 
-  it('propagates errors from getFeeForOriginNode', async () => {
+  it('propagates errors from getFeeForOriginChain', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
       amountOut: '100',

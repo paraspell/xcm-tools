@@ -45,15 +45,15 @@ describe('AssetClaimService', () => {
     service = module.get<AssetClaimService>(AssetClaimService);
   });
 
-  it('throws BadRequestException if the node is not valid', async () => {
-    const dto = { from: 'InvalidNode', fungible: [], address: 'validAddress' };
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(false);
+  it('throws BadRequestException if the chain is not valid', async () => {
+    const dto = { from: 'InvalidChain', fungible: [], address: 'validAddress' };
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(false);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(BadRequestException);
   });
 
-  it('throws BadRequestException when fromNode is undefined', async () => {
+  it('throws BadRequestException when fromChain is undefined', async () => {
     const dto = { from: undefined, fungible: [], address: 'validAddress' };
 
     await expect(service.claimAssets(dto)).rejects.toThrow(
@@ -63,7 +63,7 @@ describe('AssetClaimService', () => {
 
   it('throws BadRequestException if the wallet address is not valid', async () => {
     const dto = { from: 'Acala', fungible: [], address: 'invalidAddress' };
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(false);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(BadRequestException);
@@ -85,7 +85,7 @@ describe('AssetClaimService', () => {
       ],
       address: 'validAddress',
     } as AssetClaimDto;
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
     const result = await service.claimAssets(dto);
@@ -109,7 +109,7 @@ describe('AssetClaimService', () => {
       ],
       address: 'validAddress',
     } as AssetClaimDto;
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
     const result = await service.claimAssets(dto);
 
@@ -122,7 +122,7 @@ describe('AssetClaimService', () => {
     });
 
     const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(
@@ -136,7 +136,7 @@ describe('AssetClaimService', () => {
     });
 
     const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(

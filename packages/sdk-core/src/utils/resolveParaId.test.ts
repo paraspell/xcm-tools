@@ -1,14 +1,14 @@
 import { isTLocation, type TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getParaId } from '../nodes/config'
+import { getParaId } from '../chains/config'
 import { resolveParaId } from './resolveParaId'
 
 vi.mock('@paraspell/sdk-common', () => ({
   isTLocation: vi.fn()
 }))
 
-vi.mock('../nodes/config', () => ({
+vi.mock('../chains/config', () => ({
   getParaId: vi.fn()
 }))
 

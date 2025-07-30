@@ -1,92 +1,92 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
-import type { TNodeWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
+import type { TChain, TRelayChainSymbol } from '@paraspell/sdk-common'
 
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
 import type { TAssetInfo, TForeignAssetInfo } from '../types'
-import { type TAssetJsonMap, type TNativeAssetInfo, type TChainAssetsInfo } from '../types'
+import { type TAssetJsonMap, type TChainAssetsInfo, type TNativeAssetInfo } from '../types'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
 /**
- * Retrieves the assets object for a given node containing the native and foreign assets.
+ * Retrieves the assets object for a given chain containing the native and foreign assets.
  *
- * @param node - The node for which to retrieve the assets object.
- * @returns The assets object associated with the given node.
+ * @param chain - The chain for which to retrieve the assets object.
+ * @returns The assets object associated with the given chain.
  */
-export const getAssetsObject = (node: TNodeWithRelayChains): TChainAssetsInfo => assetsMap[node]
+export const getAssetsObject = (chain: TChain): TChainAssetsInfo => assetsMap[chain]
 
-export const isNodeEvm = (node: TNodeWithRelayChains): boolean => {
-  return assetsMap[node].isEVM
+export const isChainEvm = (chain: TChain): boolean => {
+  return assetsMap[chain].isEVM
 }
 
 /**
- * Retrieves the asset ID for a given symbol on a specified node.
+ * Retrieves the asset ID for a given symbol on a specified chain.
  *
- * @param node - The node to search for the asset.
+ * @param chain - The chain to search for the asset.
  * @param symbol - The symbol of the asset.
  * @returns The asset ID if found; otherwise, null.
  */
-export const getAssetId = (node: TNodeWithRelayChains, symbol: string): string | null => {
-  const asset = getAssetsObject(node).otherAssets.find(o => o.symbol === symbol)
+export const getAssetId = (chain: TChain, symbol: string): string | null => {
+  const asset = getAssetsObject(chain).otherAssets.find(o => o.symbol === symbol)
   return asset != null && asset.assetId ? asset.assetId : null
 }
 
 /**
- * Retrieves the relay chain asset symbol for a specified node.
+ * Retrieves the relay chain asset symbol for a specified chain.
  *
- * @param node - The node for which to get the relay chain symbol.
+ * @param chain - The chain for which to get the relay chain symbol.
  * @returns The relay chain asset symbol.
  */
-export const getRelayChainSymbol = (node: TNodeWithRelayChains): TRelayChainSymbol =>
-  getAssetsObject(node).relayChainAssetSymbol
+export const getRelayChainSymbol = (chain: TChain): TRelayChainSymbol =>
+  getAssetsObject(chain).relaychainSymbol
 
 /**
- * Retrieves the list of native assets for a specified node.
+ * Retrieves the list of native assets for a specified chain.
  *
- * @param node - The node for which to get native assets.
+ * @param chain - The chain for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (node: TNodeWithRelayChains): TNativeAssetInfo[] =>
-  getAssetsObject(node).nativeAssets
+export const getNativeAssets = (chain: TChain): TNativeAssetInfo[] =>
+  getAssetsObject(chain).nativeAssets
 
 /**
- * Retrieves the list of other (non-native) assets for a specified node.
+ * Retrieves the list of other (non-native) assets for a specified chain.
  *
- * @param node - The node for which to get other assets.
+ * @param chain - The chain for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (node: TNodeWithRelayChains): TForeignAssetInfo[] => {
-  const otherAssets = getAssetsObject(node).otherAssets
-  return node === 'AssetHubPolkadot'
+export const getOtherAssets = (chain: TChain): TForeignAssetInfo[] => {
+  const otherAssets = getAssetsObject(chain).otherAssets
+  return chain === 'AssetHubPolkadot'
     ? [...otherAssets, ...getAssetsObject('Ethereum').otherAssets]
     : otherAssets
 }
 
 /**
- * Retrieves the complete list of assets for a specified node, including relay chain asset, native, and other assets.
+ * Retrieves the complete list of assets for a specified chain, including relay chain asset, native, and other assets.
  *
- * @param node - The node for which to get the assets.
- * @returns An array of objects of all assets associated with the node.
+ * @param chain - The chain for which to get the assets.
+ * @returns An array of objects of all assets associated with the chain.
  */
-export const getAssets = (node: TNodeWithRelayChains): TAssetInfo[] => {
-  const { nativeAssets, otherAssets } = getAssetsObject(node)
+export const getAssets = (chain: TChain): TAssetInfo[] => {
+  const { nativeAssets, otherAssets } = getAssetsObject(chain)
   return [...nativeAssets, ...otherAssets]
 }
 
 /**
- * Retrieves the symbols of all assets (relay chain, native, and other assets) for a specified node.
+ * Retrieves the symbols of all assets (relay chain, native, and other assets) for a specified chain.
  *
- * @param node - The node for which to get asset symbols.
+ * @param chain - The chain for which to get asset symbols.
  * @returns An array of asset symbols.
  */
-export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
-  const { nativeAssets, otherAssets } = getAssetsObject(node)
+export const getAllAssetsSymbols = (chain: TChain): string[] => {
+  const { nativeAssets, otherAssets } = getAssetsObject(chain)
   const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
   const otherAssetsSymbols = otherAssets.map(({ symbol }) => symbol)
 
   const ethAssetsSymbols =
-    node === 'AssetHubPolkadot'
+    chain === 'AssetHubPolkadot'
       ? getAssetsObject('Ethereum').otherAssets.map(({ symbol }) => symbol)
       : []
 
@@ -94,24 +94,24 @@ export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
 }
 
 /**
- * Retrieves the symbol of the native asset for a specified node.
+ * Retrieves the symbol of the native asset for a specified chain.
  *
- * @param node - The node for which to get the native asset symbol.
+ * @param chain - The chain for which to get the native asset symbol.
  * @returns The symbol of the native asset.
  */
-export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
-  if (node === 'Ethereum') return 'ETH'
-  return getAssetsObject(node).nativeAssetSymbol
+export const getNativeAssetSymbol = (chain: TChain): string => {
+  if (chain === 'Ethereum') return 'ETH'
+  return getAssetsObject(chain).nativeAssetSymbol
 }
 
 /**
- * Determines whether a specified node supports an asset with the given symbol.
+ * Determines whether a specified chain supports an asset with the given symbol.
  *
- * @param node - The node to check for asset support.
+ * @param chain - The chain to check for asset support.
  * @param symbol - The symbol of the asset to check.
  * @returns True if the asset is supported; otherwise, false.
  */
-export const hasSupportForAsset = (node: TNodeWithRelayChains, symbol: string): boolean => {
+export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
   const lowerSymbol = symbol.toLowerCase()
   const symbolsToCheck = new Set<string>()
 
@@ -129,29 +129,29 @@ export const hasSupportForAsset = (node: TNodeWithRelayChains, symbol: string): 
     symbolsToCheck.add(`${lowerSymbol}.e`)
   }
 
-  const nodeSymbols = getAllAssetsSymbols(node).map(s => s.toLowerCase())
+  const chainSymbols = getAllAssetsSymbols(chain).map(s => s.toLowerCase())
 
-  return nodeSymbols.some(nodeSymbol => symbolsToCheck.has(nodeSymbol))
+  return chainSymbols.some(chainSymbol => symbolsToCheck.has(chainSymbol))
 }
 /**
- * Retrieves the number of decimals for an asset with the given symbol on a specified node.
+ * Retrieves the number of decimals for an asset with the given symbol on a specified chain.
  *
- * @param node - The node where the asset is located.
+ * @param chain - The chain where the asset is located.
  * @param symbol - The symbol of the asset.
  * @returns The number of decimals if the asset is found; otherwise, null.
  */
-export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): number | null => {
-  const { otherAssets, nativeAssets } = getAssetsObject(node)
+export const getAssetDecimals = (chain: TChain, symbol: string): number | null => {
+  const { otherAssets, nativeAssets } = getAssetsObject(chain)
   const asset = [...otherAssets, ...nativeAssets].find(o => o.symbol === symbol)
   return asset?.decimals !== undefined ? asset.decimals : null
 }
 
-export const hasDryRunSupport = (node: TNodeWithRelayChains): boolean => {
-  return getAssetsObject(node).supportsDryRunApi
+export const hasDryRunSupport = (chain: TChain): boolean => {
+  return getAssetsObject(chain).supportsDryRunApi
 }
 
-export const hasXcmPaymentApiSupport = (node: TNodeWithRelayChains): boolean => {
-  return getAssetsObject(node).supportsXcmPaymentApi
+export const hasXcmPaymentApiSupport = (chain: TChain): boolean => {
+  return getAssetsObject(chain).supportsXcmPaymentApi
 }
 
 export * from './getExistentialDeposit'

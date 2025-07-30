@@ -1,20 +1,20 @@
-import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TChain } from '@paraspell/sdk';
 import { getAssets } from '@paraspell/sdk';
 
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import type { TExchangeInput } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 import { isRouterAssetEqual } from './isRouterAssetEqual';
 
 /**
- * Retrieves the list of assets supported for transfer from the origin node to the exchange node.
+ * Retrieves the list of assets supported for transfer from the origin chain to the exchange chain.
  *
- * @param from - The origin node.
- * @param exchange - The exchange node or 'Auto select'.
+ * @param from - The origin chain.
+ * @param exchange - The exchange chain or 'Auto select'.
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsFrom = (
-  from: TNodeWithRelayChains | undefined,
+  from: TChain | undefined,
   exchange: TExchangeInput,
 ): TAssetInfo[] => {
   if (exchange === undefined) {
@@ -26,7 +26,7 @@ export const getSupportedAssetsFrom = (
     ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
     : getExchangeAssets(exchange);
 
-  if (!from || (!Array.isArray(exchange) && from === createDexNodeInstance(exchange).node)) {
+  if (!from || (!Array.isArray(exchange) && from === createExchangeInstance(exchange).chain)) {
     return exchangeAssets as TAssetInfo[];
   }
 

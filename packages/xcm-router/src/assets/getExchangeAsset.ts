@@ -14,11 +14,11 @@ import {
   isSymbolSpecifier,
 } from '@paraspell/sdk';
 
-import type { TExchangeNode, TRouterAsset } from '../types';
+import type { TExchangeChain, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAsset = (
-  exchange: TExchangeNode,
+  exchange: TExchangeChain,
   currency: TCurrencyInput,
   throwOnDuplicateSymbol = false,
 ): TRouterAsset | null => {

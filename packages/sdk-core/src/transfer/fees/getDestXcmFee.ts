@@ -2,22 +2,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
-import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
+import { getParaId } from '../../chains/config'
 import { DOT_LOCATION } from '../../constants'
-import { getParaId } from '../../nodes/config'
 import type { TDestXcmFeeDetail } from '../../types'
-import { type TGetFeeForDestNodeOptions } from '../../types'
+import { type TGetFeeForDestChainOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
 
-export const createOriginLocation = (
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TNodeDotKsmWithRelayChains
-): TLocation => {
+export const createOriginLocation = (origin: TSubstrateChain, destination: TChain): TLocation => {
   if (isRelayChain(origin)) return DOT_LOCATION
 
   return {
@@ -33,12 +30,12 @@ export const createOriginLocation = (
 }
 
 export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
-  options: TGetFeeForDestNodeOptions<TApi, TRes>
+  options: TGetFeeForDestChainOptions<TApi, TRes>
 ): Promise<TDestXcmFeeDetail<TDisableFallback>> => {
   const {
     api,
     origin,
-    prevNode: hopNode,
+    prevChain: hopChain,
     destination,
     currency,
     forwardedXcms,
@@ -95,9 +92,9 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
   }
 
   const dryRunResult = await api.getDryRunXcm({
-    originLocation: addXcmVersionHeader(createOriginLocation(hopNode, destination), Version.V4),
+    originLocation: addXcmVersionHeader(createOriginLocation(hopChain, destination), Version.V4),
     xcm: forwardedXcms[1][0],
-    node: destination,
+    chain: destination,
     origin,
     asset,
     originFee,

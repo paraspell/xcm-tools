@@ -1,5 +1,5 @@
-import { getAssetsObject, isNodeEvm } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { getAssetsObject, isChainEvm } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -13,7 +13,7 @@ vi.mock('viem', () => ({
 
 vi.mock('@paraspell/assets', () => ({
   getAssetsObject: vi.fn(() => ({ ss58Prefix: 2 })),
-  isNodeEvm: vi.fn()
+  isChainEvm: vi.fn()
 }))
 
 const makeSeq = (len: number, start = 0) =>
@@ -77,10 +77,10 @@ describe('crypto helpers', () => {
 
   describe('convertSs58', () => {
     const evmAddr = '0x0123456789abcdef0123456789ABCDEF01234567'
-    const ss58Addr = '5D4zMwP97r...' // dummy; never parsed by mocks
+    const ss58Addr = '5D4zMwP97r...'
 
     const pubkey = makeSeq(32)
-    const node = 'NODE' as TNodeDotKsmWithRelayChains
+    const chain: TSubstrateChain = 'AssetHubPolkadot'
 
     let apiMock: IPolkadotApi<unknown, unknown>
 
@@ -92,53 +92,53 @@ describe('crypto helpers', () => {
       } as unknown as IPolkadotApi<unknown, unknown>
     })
 
-    it('EVM address on EVM node - returns the address untouched', () => {
+    it('EVM address on EVM chain - returns the address untouched', () => {
       vi.mocked(isAddress).mockReturnValue(true)
-      vi.mocked(isNodeEvm).mockReturnValue(true)
+      vi.mocked(isChainEvm).mockReturnValue(true)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
 
-      const res = convertSs58(apiMock, evmAddr, node)
+      const res = convertSs58(apiMock, evmAddr, chain)
       expect(res).toBe(evmAddr)
 
       expect(spy).not.toHaveBeenCalled()
       expect(getAssetsObject).not.toHaveBeenCalled()
     })
 
-    it('EVM address on NON-EVM node - throws InvalidParameterError', () => {
+    it('EVM address on NON-EVM chain - throws InvalidParameterError', () => {
       vi.mocked(isAddress).mockReturnValue(true)
-      vi.mocked(isNodeEvm).mockReturnValue(false)
+      vi.mocked(isChainEvm).mockReturnValue(false)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
 
-      expect(() => convertSs58(apiMock, evmAddr, node)).toThrow(
+      expect(() => convertSs58(apiMock, evmAddr, chain)).toThrow(
         'Cannot convert EVM address to SS58.'
       )
       expect(spy).not.toHaveBeenCalled()
     })
 
-    it('SS58 address on EVM node - throws InvalidParameterError', () => {
+    it('SS58 address on EVM chain - throws InvalidParameterError', () => {
       vi.mocked(isAddress).mockReturnValue(false)
-      vi.mocked(isNodeEvm).mockReturnValue(true)
+      vi.mocked(isChainEvm).mockReturnValue(true)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
 
-      expect(() => convertSs58(apiMock, ss58Addr, node)).toThrow(
+      expect(() => convertSs58(apiMock, ss58Addr, chain)).toThrow(
         'Cannot convert SS58 address to EVM.'
       )
       expect(spy).not.toHaveBeenCalled()
     })
 
-    it('SS58 address on NON-EVM node - performs a normal conversion', () => {
+    it('SS58 address on NON-EVM chain - performs a normal conversion', () => {
       vi.mocked(isAddress).mockReturnValue(false)
-      vi.mocked(isNodeEvm).mockReturnValue(false)
+      vi.mocked(isChainEvm).mockReturnValue(false)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
 
-      const res = convertSs58(apiMock, ss58Addr, node)
+      const res = convertSs58(apiMock, ss58Addr, chain)
 
       expect(spy).toHaveBeenCalledWith(ss58Addr)
-      expect(getAssetsObject).toHaveBeenCalledWith(node)
+      expect(getAssetsObject).toHaveBeenCalledWith(chain)
 
       const expected = encodeSs58(deriveAccountId(pubkey), 2)
       expect(res).toBe(expected)

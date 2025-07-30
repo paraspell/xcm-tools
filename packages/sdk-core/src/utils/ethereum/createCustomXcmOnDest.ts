@@ -2,10 +2,10 @@ import {
   findAssetInfoByLoc,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset,
-  isNodeEvm
+  isChainEvm,
+  isForeignAsset
 } from '@paraspell/assets'
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
@@ -23,7 +23,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     ahAddress,
     version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  origin: TNodeWithRelayChains,
+  origin: TChain,
   messageId: string
 ) => {
   if (!isForeignAsset(asset)) {
@@ -38,7 +38,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     throw new InvalidParameterError(`Please provide senderAddress`)
   }
 
-  if (isNodeEvm(origin) && !ahAddress) {
+  if (isChainEvm(origin) && !ahAddress) {
     throw new InvalidParameterError(`Please provide ahAddress`)
   }
 
@@ -67,7 +67,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                     assets: { Wild: 'All' },
                     beneficiary: createBeneficiaryLocation({
                       api,
-                      address: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
+                      address: isChainEvm(origin) ? (ahAddress as string) : senderAddress,
                       version
                     })
                   }

@@ -47,7 +47,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     const candidate2 = { symbol: 'DOT', assetId: '2' };
     vi.spyOn(sdk, 'findBestMatches').mockReturnValue([candidate1, candidate2]);
     vi.spyOn(sdk, 'isForeignAsset').mockReturnValue(true);
-    vi.spyOn(sdk, 'findAssetInfo').mockImplementation((_node, currency) => {
+    vi.spyOn(sdk, 'findAssetInfo').mockImplementation((_chain, currency) => {
       if ('id' in currency && currency.id === '1')
         return {
           symbol: 'DOT',

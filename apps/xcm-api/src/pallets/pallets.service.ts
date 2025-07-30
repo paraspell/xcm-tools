@@ -3,28 +3,29 @@ import {
   getDefaultPallet,
   getPalletIndex,
   getSupportedPallets,
-  TNodePolkadotKusama,
+  SUBSTRATE_CHAINS,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
-import { validateNode } from '../utils.js';
+import { validateChain } from '../utils.js';
 import { validatePallet } from './utils/index.js';
 
 @Injectable()
 export class PalletsService {
-  getDefaultPallet(node: string) {
-    validateNode(node);
-    return JSON.stringify(getDefaultPallet(node as TNodePolkadotKusama));
+  getDefaultPallet(chain: string) {
+    validateChain(chain, SUBSTRATE_CHAINS);
+    return JSON.stringify(getDefaultPallet(chain as TSubstrateChain));
   }
 
-  getPallets(node: string) {
-    validateNode(node);
-    return getSupportedPallets(node as TNodePolkadotKusama);
+  getPallets(chain: string) {
+    validateChain(chain, SUBSTRATE_CHAINS);
+    return getSupportedPallets(chain as TSubstrateChain);
   }
 
-  getPalletIndex(node: string, pallet: string) {
-    validateNode(node);
+  getPalletIndex(chain: string, pallet: string) {
+    validateChain(chain, SUBSTRATE_CHAINS);
     const palletTyped = validatePallet(pallet);
-    const index = getPalletIndex(node as TNodePolkadotKusama, palletTyped);
+    const index = getPalletIndex(chain as TSubstrateChain, palletTyped);
     return index === undefined ? null : index;
   }
 }

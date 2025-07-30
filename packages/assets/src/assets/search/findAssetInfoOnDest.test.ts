@@ -1,4 +1,4 @@
-import type { TLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../../errors'
@@ -10,8 +10,8 @@ import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
 vi.mock('./findAssetInfo')
 vi.mock('./findAssetInfoOrThrow')
 
-const mockOriginNode = 'OriginNode' as TNodeWithRelayChains
-const mockDestinationNode = 'DestinationNode' as TNodeWithRelayChains
+const mockOriginChain: TChain = 'Acala'
+const mockDestinationChain: TChain = 'AssetHubPolkadot'
 
 const mockAssetSymbol = 'DOT'
 const mockLocation = {} as TLocation
@@ -47,15 +47,15 @@ describe('findAssetOnDest', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
 
-    const result = findAssetInfoOnDest(mockOriginNode, mockDestinationNode, currencyInput)
+    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginNode,
+      mockOriginChain,
       currencyInput,
-      mockDestinationNode
+      mockDestinationChain
     )
     expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationNode,
+      mockDestinationChain,
       { location: mockLocation },
       null
     )
@@ -69,20 +69,20 @@ describe('findAssetOnDest', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
     vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(mockDestinationAsset)
 
-    const result = findAssetInfoOnDest(mockOriginNode, mockDestinationNode, currencyInput)
+    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginNode,
+      mockOriginChain,
       currencyInput,
-      mockDestinationNode
+      mockDestinationChain
     )
     expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationNode,
+      mockDestinationChain,
       { location: mockLocation },
       null
     )
     expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationNode,
+      mockDestinationChain,
       { symbol: mockAssetSymbol },
       null
     )
@@ -97,15 +97,15 @@ describe('findAssetOnDest', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithoutLocation)
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
 
-    const result = findAssetInfoOnDest(mockOriginNode, mockDestinationNode, currencyInput)
+    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginNode,
+      mockOriginChain,
       currencyInput,
-      mockDestinationNode
+      mockDestinationChain
     )
     expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationNode,
+      mockDestinationChain,
       { symbol: mockAssetSymbol },
       null
     )
@@ -160,13 +160,13 @@ describe('findAssetOnDest', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
     vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(null)
 
-    const result = findAssetInfoOnDest(mockOriginNode, mockDestinationNode, currencyInput)
+    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(result).toBeNull()
     expect(findAssetInfo).toHaveBeenCalledTimes(2)
   })
 
-  it('should throw error if findAssetForNodeOrThrow throws an error', () => {
+  it('should throw error if findAssetInfoOrThrow throws an error', () => {
     const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
     const expectedError = new Error('Asset not found on origin')
 
@@ -174,13 +174,13 @@ describe('findAssetOnDest', () => {
       throw expectedError
     })
 
-    expect(() => findAssetInfoOnDest(mockOriginNode, mockDestinationNode, currencyInput)).toThrow(
+    expect(() => findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)).toThrow(
       expectedError
     )
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginNode,
+      mockOriginChain,
       currencyInput,
-      mockDestinationNode
+      mockDestinationChain
     )
     expect(findAssetInfo).not.toHaveBeenCalled()
   })
@@ -197,7 +197,7 @@ describe('findAssetOnDestOrThrow', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
 
-    const result = findAssetOnDestOrThrow(mockOriginNode, mockDestinationNode, currencyInput)
+    const result = findAssetOnDestOrThrow(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(result).toEqual(mockDestinationAsset)
   })
@@ -209,7 +209,7 @@ describe('findAssetOnDestOrThrow', () => {
     vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(null)
 
     expect(() =>
-      findAssetOnDestOrThrow(mockOriginNode, mockDestinationNode, currencyInput)
+      findAssetOnDestOrThrow(mockOriginChain, mockDestinationChain, currencyInput)
     ).toThrow(InvalidCurrencyError)
   })
 
@@ -222,7 +222,7 @@ describe('findAssetOnDestOrThrow', () => {
     })
 
     expect(() =>
-      findAssetOnDestOrThrow(mockOriginNode, mockDestinationNode, currencyInput)
+      findAssetOnDestOrThrow(mockOriginChain, mockDestinationChain, currencyInput)
     ).toThrow(expectedError)
   })
 })

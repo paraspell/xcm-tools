@@ -25,12 +25,12 @@ describe('getBalanceNative', () => {
     vi.clearAllMocks()
   })
 
-  it('returns the correct balance when node is Polkadot', async () => {
+  it('returns the correct balance when chain is Polkadot', async () => {
     const spy = vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(1000n)
 
     const balance = await getBalanceNative({
       address: '0x123',
-      node: 'Polkadot',
+      chain: 'Polkadot',
       api: apiMock
     })
 
@@ -38,12 +38,12 @@ describe('getBalanceNative', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it('returns the correct balance when node is Interlay', async () => {
+  it('returns the correct balance when chain is Interlay', async () => {
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
 
     const balance = await getBalanceNative({
       address: '0x234',
-      node: 'Interlay',
+      chain: 'Interlay',
       api: apiMock
     })
 
@@ -51,12 +51,12 @@ describe('getBalanceNative', () => {
     expect(getBalanceForeignInternal).toHaveBeenCalled()
   })
 
-  it('returns the correct balance for Ethereum node', async () => {
+  it('returns the correct balance for Ethereum chain', async () => {
     vi.mocked(getEthErc20Balance).mockResolvedValue(888n)
 
     const balance = await getBalanceNative({
       address: '0xETH',
-      node: 'Ethereum',
+      chain: 'Ethereum',
       api: apiMock,
       currency: { symbol: 'ETH' }
     })
@@ -71,7 +71,7 @@ describe('getBalanceNative', () => {
     await expect(
       getBalanceNative({
         address: '0xfail',
-        node: 'Polkadot',
+        chain: 'Polkadot',
         api: apiMock
       })
     ).rejects.toThrow('API error')

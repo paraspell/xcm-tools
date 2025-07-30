@@ -1,10 +1,10 @@
-import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAssetInfo, TSubstrateChain } from '@paraspell/sdk';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TExchangeNode } from '../types';
+import type ExchangeChain from '../exchanges/ExchangeChain';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
+import type { TExchangeChain } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
@@ -13,8 +13,8 @@ vi.mock('@paraspell/sdk', () => ({
   normalizeSymbol: vi.fn((symbol: string) => symbol.toLowerCase()),
 }));
 
-vi.mock('../dexNodes/DexNodeFactory', () => ({
-  createDexNodeInstance: vi.fn(),
+vi.mock('../exchanges/ExchangeChainFactory', () => ({
+  createExchangeInstance: vi.fn(),
 }));
 
 vi.mock('./getExchangeConfig', () => ({
@@ -26,14 +26,14 @@ describe('getSupportedAssetsFrom', () => {
     vi.clearAllMocks();
   });
 
-  it('should return assets from exchange that match node assets', () => {
-    const fromNode = 'Acala' as TNodeWithRelayChains;
-    const exchange: TExchangeNode = 'HydrationDex';
+  it('should return assets from exchange that match chain assets', () => {
+    const fromChain: TSubstrateChain = 'Acala';
+    const exchange: TExchangeChain = 'HydrationDex';
 
-    const exchangeNode = 'Hydration';
-    vi.mocked(createDexNodeInstance).mockReturnValue({
-      node: exchangeNode,
-    } as ExchangeNode);
+    const exchangeChain = 'Hydration';
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: exchangeChain,
+    } as ExchangeChain);
 
     const exchangeAssets: TAssetInfo[] = [
       { symbol: 'HDX', assetId: '123' },
@@ -47,44 +47,44 @@ describe('getSupportedAssetsFrom', () => {
     ];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
-    const result = getSupportedAssetsFrom(fromNode, exchange);
+    const result = getSupportedAssetsFrom(fromChain, exchange);
 
     expect(result).toEqual([{ symbol: 'WUD', assetId: '1000085' }]);
   });
 
-  it('should return all assets from node when exchange is auto select', () => {
-    const fromNode = 'Acala' as TNodeWithRelayChains;
+  it('should return all assets from chain when exchange is auto select', () => {
+    const fromChain: TSubstrateChain = 'Acala';
     const exchange = undefined;
     const fromAssets: TAssetInfo[] = [{ symbol: 'ACA', assetId: '1000099' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
-    const result = getSupportedAssetsFrom(fromNode, exchange);
+    const result = getSupportedAssetsFrom(fromChain, exchange);
     expect(result).toEqual(fromAssets);
   });
 
-  it('should return exchange assets when from node is same as exchange node', () => {
-    const fromNode = 'Hydration' as TNodeWithRelayChains;
-    const exchange: TExchangeNode = 'HydrationDex';
+  it('should return exchange assets when from chain is same as exchange chain', () => {
+    const fromChain: TSubstrateChain = 'Hydration';
+    const exchange: TExchangeChain = 'HydrationDex';
 
-    vi.mocked(createDexNodeInstance).mockReturnValue({
-      node: fromNode,
-    } as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: fromChain,
+    } as ExchangeChain);
 
     const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
-    const result = getSupportedAssetsFrom(fromNode, exchange);
+    const result = getSupportedAssetsFrom(fromChain, exchange);
 
     expect(result).toEqual(exchangeAssets);
     expect(getAssets).not.toHaveBeenCalled();
   });
 
   it('should return exchange assets when from is undefined', () => {
-    const exchange: TExchangeNode = 'HydrationDex';
+    const exchange: TExchangeChain = 'HydrationDex';
 
-    vi.mocked(createDexNodeInstance).mockReturnValue({
-      node: 'Hydration',
-    } as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'Hydration',
+    } as ExchangeChain);
 
     const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
@@ -95,12 +95,12 @@ describe('getSupportedAssetsFrom', () => {
   });
 
   it('should match assets with different symbol cases after normalization', () => {
-    const fromNode = 'Acala' as TNodeWithRelayChains;
-    const exchange: TExchangeNode = 'HydrationDex';
+    const fromChain: TSubstrateChain = 'Acala';
+    const exchange: TExchangeChain = 'HydrationDex';
 
-    vi.mocked(createDexNodeInstance).mockReturnValue({
-      node: 'Hydration',
-    } as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'Hydration',
+    } as ExchangeChain);
 
     const exchangeAssets: TAssetInfo[] = [{ symbol: 'usdt', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
@@ -108,20 +108,20 @@ describe('getSupportedAssetsFrom', () => {
     const fromAssets: TAssetInfo[] = [{ symbol: 'USDT', assetId: '456' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
-    const result = getSupportedAssetsFrom(fromNode, exchange);
+    const result = getSupportedAssetsFrom(fromChain, exchange);
 
     expect(result).toEqual(fromAssets);
     expect(normalizeSymbol).toHaveBeenCalledWith('usdt');
     expect(normalizeSymbol).toHaveBeenCalledWith('USDT');
   });
 
-  it('should return empty array when no assets match between node and exchange', () => {
-    const fromNode = 'Acala' as TNodeWithRelayChains;
-    const exchange: TExchangeNode = 'HydrationDex';
+  it('should return empty array when no assets match between chain and exchange', () => {
+    const fromChain: TSubstrateChain = 'Acala';
+    const exchange: TExchangeChain = 'HydrationDex';
 
-    vi.mocked(createDexNodeInstance).mockReturnValue({
-      node: 'Hydration',
-    } as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'Hydration',
+    } as ExchangeChain);
 
     const exchangeAssets: TAssetInfo[] = [{ symbol: 'HDX', assetId: '123' }];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
@@ -129,7 +129,7 @@ describe('getSupportedAssetsFrom', () => {
     const fromAssets: TAssetInfo[] = [{ symbol: 'ACA', assetId: '456' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
-    const result = getSupportedAssetsFrom(fromNode, exchange);
+    const result = getSupportedAssetsFrom(fromChain, exchange);
 
     expect(result).toEqual([]);
   });

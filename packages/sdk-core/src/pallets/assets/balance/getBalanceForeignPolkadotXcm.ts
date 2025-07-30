@@ -1,5 +1,6 @@
 import { type TAssetInfo } from '@paraspell/assets'
-import { hasJunction, type TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
+import { hasJunction } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { assertHasId, assertHasLocation, assertIsForeign } from '../../../utils'
@@ -7,28 +8,28 @@ import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  node: TNodePolkadotKusama,
+  chain: TChain,
   address: string,
   asset: TAssetInfo
 ): Promise<bigint> => {
-  if (node === 'Moonbeam' || node === 'Moonriver') {
+  if (chain === 'Moonbeam' || chain === 'Moonriver') {
     assertHasId(asset)
-    return getMoonbeamErc20Balance(node, asset.assetId, address)
+    return getMoonbeamErc20Balance(chain, asset.assetId, address)
   }
 
-  if (node === 'Mythos') {
+  if (chain === 'Mythos') {
     return api.getMythosForeignBalance(address)
   }
 
   assertIsForeign(asset)
 
-  if (node === 'Polimec') {
+  if (chain === 'Polimec') {
     assertHasLocation(asset)
 
     return api.getBalanceForeignAssetsPallet(address, asset.location)
   }
 
-  if (node === 'AssetHubPolkadot') {
+  if (chain === 'AssetHubPolkadot') {
     const ASSETS_PALLET_ID = 50
 
     const hasRequiredJunctions =

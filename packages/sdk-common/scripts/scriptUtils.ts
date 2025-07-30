@@ -1,7 +1,7 @@
 // Contains basic Utils for scripts that pull data for Assets and XCM pallets maps
 
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import type { TNodeDotKsmWithRelayChains } from '../src'
+import type { TSubstrateChain } from '../src'
 import { readFileSync, writeFileSync } from 'fs'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
@@ -20,11 +20,11 @@ export const checkForNodeJsEnvironment = () => {
 }
 
 export const fetchTryMultipleProviders = <T>(
-  node: TNodeDotKsmWithRelayChains,
-  getNodeProviders: (node: TNodeDotKsmWithRelayChains) => string[],
+  chain: TSubstrateChain,
+  getChainProviders: (chain: TSubstrateChain) => string[],
   fetcher: (wsUrl: string) => T
 ): T | null => {
-  const providers = getNodeProviders(node)
+  const providers = getChainProviders(chain)
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
@@ -33,7 +33,7 @@ export const fetchTryMultipleProviders = <T>(
       console.log(`Error fetching data from ${provider}. Trying from another RPC endpoint`)
     }
   }
-  console.error(`Data for ${node} could not be fetched from any endpoint`)
+  console.error(`Data for ${chain} could not be fetched from any endpoint`)
   return null
 }
 
@@ -66,11 +66,11 @@ export const fetchWithTimeout = async <T>(
 }
 
 export const fetchTryMultipleProvidersWithTimeout = async <T>(
-  node: TNodeDotKsmWithRelayChains,
-  fetchNodeProviders: (node: TNodeDotKsmWithRelayChains) => string[],
+  chain: TSubstrateChain,
+  fetchChainProviders: (chain: TSubstrateChain) => string[],
   fetcher: (api: ApiPromise) => T
 ) => {
-  return fetchTryMultipleProviders(node, fetchNodeProviders, async wsUrl => {
+  return fetchTryMultipleProviders(chain, fetchChainProviders, async wsUrl => {
     return fetchWithTimeout(wsUrl, api => fetcher(api))
   })
 }

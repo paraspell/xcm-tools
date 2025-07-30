@@ -2,16 +2,16 @@ import { InvalidCurrencyError, type TCurrencyInput } from '@paraspell/assets'
 import type {
   TJunction,
   TLocation,
-  TNodeDotKsmWithRelayChains,
-  TRelayChain,
+  TParachain,
+  TRelaychain,
+  TSubstrateChain,
   Version
 } from '@paraspell/sdk-common'
-import { getJunctionValue, replaceBigInt } from '@paraspell/sdk-common'
+import { getJunctionValue, PARACHAINS, replaceBigInt } from '@paraspell/sdk-common'
 import { isTLocation, Parents } from '@paraspell/sdk-common'
-import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
+import { getParaId } from '../../chains/config'
 import { InvalidParameterError } from '../../errors'
-import { getParaId } from '../../nodes/config'
 import type { TXcmVersioned } from '../../types'
 import { type TDestination } from '../../types'
 import { addXcmVersionHeader, createX1Payload, getRelayChainOf } from '../../utils'
@@ -19,9 +19,9 @@ import { resolveScenario } from '../../utils/transfer/resolveScenario'
 
 export const createDestination = (
   version: Version,
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TSubstrateChain,
   destination: TDestination,
-  nodeId?: number,
+  chainId?: number,
   junction?: TJunction,
   parents?: Parents
 ): TLocation => {
@@ -30,7 +30,7 @@ export const createDestination = (
   const interior =
     scenario === 'ParaToRelay'
       ? 'Here'
-      : createX1Payload(version, junction ?? { Parachain: nodeId })
+      : createX1Payload(version, junction ?? { Parachain: chainId })
 
   const isLocationDestination = isTLocation(destination)
 
@@ -39,9 +39,9 @@ export const createDestination = (
 
 export const createVersionedDestination = (
   version: Version,
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TSubstrateChain,
   destination: TDestination,
-  nodeId?: number,
+  chainId?: number,
   junction?: TJunction,
   parents?: Parents
 ): TXcmVersioned<TLocation> => {
@@ -49,7 +49,7 @@ export const createVersionedDestination = (
     version,
     origin,
     destination,
-    nodeId,
+    chainId,
     junction,
     parents
   )
@@ -60,7 +60,7 @@ export const createVersionedDestination = (
 export const createBridgeDestination = (
   ecosystem: 'Kusama' | 'Polkadot',
   destination: TDestination,
-  nodeId?: number
+  chainId?: number
 ): TLocation => {
   const location: TLocation = {
     parents: Parents.TWO,
@@ -70,7 +70,7 @@ export const createBridgeDestination = (
           GlobalConsensus: ecosystem
         },
         {
-          Parachain: nodeId
+          Parachain: chainId
         }
       ]
     }
@@ -78,30 +78,32 @@ export const createBridgeDestination = (
   return isTLocation(destination) ? destination : location
 }
 
-export const resolveTNodeFromLocation = (
-  relayChain: TRelayChain,
+export const resolveTChainFromLocation = (
+  relaychain: TRelaychain,
   location: TLocation
-): TNodePolkadotKusama => {
+): TParachain => {
   const parachainId = getJunctionValue(location, 'Parachain')
   if (parachainId === undefined) {
     throw new InvalidParameterError('Parachain ID not found in destination location.')
   }
 
-  const node =
-    NODE_NAMES_DOT_KSM.find(
-      nodeName => getParaId(nodeName) === parachainId && getRelayChainOf(nodeName) === relayChain
+  const chain =
+    PARACHAINS.find(
+      chain => getParaId(chain) === parachainId && getRelayChainOf(chain) === relaychain
     ) ?? null
 
-  if (node === null) {
-    throw new InvalidParameterError('Node with specified paraId not found in destination location.')
+  if (chain === null) {
+    throw new InvalidParameterError(
+      'Chain with specified paraId not found in destination location.'
+    )
   }
 
-  return node
+  return chain
 }
 
 export const throwUnsupportedCurrency = (
   currency: TCurrencyInput,
-  node: string,
+  chain: string,
   { isDestination } = { isDestination: false }
 ): never => {
   if ('location' in currency) {
@@ -110,7 +112,7 @@ export const throwUnsupportedCurrency = (
   }
 
   throw new InvalidCurrencyError(
-    `${isDestination ? 'Destination' : 'Origin'} node ${node} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
+    `${isDestination ? 'Destination' : 'Origin'} chain ${chain} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
   )
 }
 

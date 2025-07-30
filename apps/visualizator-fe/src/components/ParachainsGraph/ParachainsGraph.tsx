@@ -7,7 +7,7 @@ import { useSelectedParachain } from '../../context/SelectedParachain/useSelecte
 import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
-import { getNodesByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
+import { getChainsByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
 import LineBetween from '../LineBetween';
 import Parachain from '../Parachain/Parachain';
 import Relaychain from '../Relaychain/Relaychain';
@@ -45,7 +45,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       return acc;
     }, {});
 
-    return getNodesByEcosystem(ecosystem)
+    return getChainsByEcosystem(ecosystem)
       .slice()
       .sort((a, b) => {
         const countA = nameToCountMap[getParachainId(a, ecosystem)] || 0;
@@ -54,13 +54,13 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       });
   }, [totalMessageCounts, ecosystem]);
 
-  const handleParachainClick = (node: string) => {
-    if (ecosystem === Ecosystem.POLKADOT) toggleParachain(node);
+  const handleParachainClick = (chain: string) => {
+    if (ecosystem === Ecosystem.POLKADOT) toggleParachain(chain);
   };
 
-  const onRightClick = (node: string) => {
+  const onRightClick = (chain: string) => {
     if (ecosystem === Ecosystem.POLKADOT) {
-      toggleActiveEditParachain(`${ecosystem};${node}`);
+      toggleActiveEditParachain(`${ecosystem};${chain}`);
     }
   };
 
@@ -124,19 +124,19 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
         isSelected={parachains.includes('Polkadot')}
         ref={relaychainRef}
       />
-      {sortedParachainNames?.map((node, index) => {
+      {sortedParachainNames?.map((chain, index) => {
         return (
           <Parachain
-            key={node}
-            name={node}
+            key={chain}
+            name={chain}
             index={index}
             onClick={handleParachainClick}
             onRightClick={onRightClick}
-            isSelected={parachains.includes(node)}
-            scale={calculateParachainScale(node)}
+            isSelected={parachains.includes(chain)}
+            scale={calculateParachainScale(chain)}
             ecosystem={ecosystem}
             ref={el => {
-              parachainRefs.current[`${ecosystem};${node}`] = el;
+              parachainRefs.current[`${ecosystem};${chain}`] = el;
             }}
           />
         );

@@ -1,13 +1,8 @@
-import type {
-  TGetXcmFeeResult,
-  TNodePolkadotKusama,
-  TPapiTransaction,
-  TXcmFeeDetail,
-} from '@paraspell/sdk';
+import type { TGetXcmFeeResult, TPapiTransaction, TParachain, TXcmFeeDetail } from '@paraspell/sdk';
 import { DryRunFailedError, getXcmFee, handleSwapExecuteTransfer } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type {
   TBuildTransactionsOptionsModified,
   TDestinationInfo,
@@ -37,8 +32,8 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 describe('getRouterFees', () => {
-  let dex: ExchangeNode;
-  let baseNode: TNodePolkadotKusama;
+  let dex: ExchangeChain;
+  let baseChain: TParachain;
   let options: TBuildTransactionsOptionsModified;
 
   const swapFee = { fee: 1234n, currency: 'FOO' } as TXcmFeeDetail;
@@ -64,17 +59,17 @@ describe('getRouterFees', () => {
 
   beforeEach(() => {
     dex = {
-      get node() {
+      get chain() {
         return 'SomeOtherDex';
       },
       getAmountOut: vi.fn().mockResolvedValue(5000n),
-    } as unknown as ExchangeNode;
-    baseNode = 'AssetHubPolkadot' as TNodePolkadotKusama;
+    } as unknown as ExchangeChain;
+    baseChain = 'AssetHubPolkadot' as TParachain;
 
     options = {
       exchange: {
-        baseNode,
-        exchangeNode: 'HydrationDex',
+        baseChain: baseChain,
+        exchangeChain: 'HydrationDex',
         api: {},
         apiPapi: {},
         assetFrom: { symbol: 'DOT' },
@@ -100,13 +95,13 @@ describe('getRouterFees', () => {
   describe('Execute transfer path', () => {
     it('uses execute transfer for AssetHub DEX with origin', async () => {
       const assetHubDex = {
-        get node() {
+        get chain() {
           return 'AssetHubPolkadot';
         },
         getAmountOut: vi.fn().mockResolvedValue(5000n),
-      } as unknown as ExchangeNode;
+      } as unknown as ExchangeChain;
 
-      options.origin = { node: 'Acala', assetFrom: { symbol: 'ACA' } } as unknown as TOriginInfo;
+      options.origin = { chain: 'Acala', assetFrom: { symbol: 'ACA' } } as unknown as TOriginInfo;
 
       const result = await getRouterFees(assetHubDex, options);
 
@@ -129,13 +124,13 @@ describe('getRouterFees', () => {
 
     it('falls back to separate transactions when execute transfer fails with Filtered error', async () => {
       const assetHubDex = {
-        get node() {
+        get chain() {
           return 'AssetHubPolkadot';
         },
         getAmountOut: vi.fn().mockResolvedValue(5000n),
-      } as unknown as ExchangeNode;
+      } as unknown as ExchangeChain;
 
-      options.origin = { node: 'Acala' } as unknown as TOriginInfo;
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo;
 
       const filteredError = new DryRunFailedError('Filtered', 'origin');
       vi.mocked(handleSwapExecuteTransfer).mockRejectedValue(filteredError);
@@ -161,7 +156,7 @@ describe('getRouterFees', () => {
     });
 
     it('adds exchange to hops only when origin exists but destination undefined', async () => {
-      options.origin = { node: 'Acala', amount: 1000n } as unknown as TOriginInfo;
+      options.origin = { chain: 'Acala', amount: 1000n } as unknown as TOriginInfo;
 
       const result = await getRouterFees(dex, options);
 
@@ -171,7 +166,7 @@ describe('getRouterFees', () => {
     });
 
     it('adds exchange to hops only when destination exists but origin undefined', async () => {
-      options.destination = { node: 'Moonbeam', min: 0n } as unknown as TDestinationInfo;
+      options.destination = { chain: 'Moonbeam', min: 0n } as unknown as TDestinationInfo;
 
       const result = await getRouterFees(dex, options);
 
@@ -181,8 +176,8 @@ describe('getRouterFees', () => {
     });
 
     it('handles both origin and destination - exchange added to hops', async () => {
-      options.origin = { node: 'Acala' } as unknown as TOriginInfo;
-      options.destination = { node: 'Moonbeam' } as unknown as TDestinationInfo;
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo;
+      options.destination = { chain: 'Moonbeam' } as unknown as TDestinationInfo;
 
       const result = await getRouterFees(dex, options);
 
@@ -194,7 +189,7 @@ describe('getRouterFees', () => {
         hops: [
           ...toExchangeFeeValue.hops,
           {
-            chain: baseNode,
+            chain: baseChain,
             result: {
               ...swapFee,
               fee: (swapFee.fee ?? 0n) + (toDestFeeValue.origin.fee ?? 0n),
@@ -207,7 +202,7 @@ describe('getRouterFees', () => {
     });
 
     it('includes failure information when sending chain fails', async () => {
-      options.origin = { node: 'Acala' } as unknown as TOriginInfo;
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo;
       const failedToExchangeFee = {
         ...toExchangeFeeValue,
         failureReason: 'InsufficientBalance',

@@ -31,7 +31,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
 
   const nativeBalance = await getBalanceNativeInternal({
     address: account,
-    node: origin,
+    chain: origin,
     api
   })
 

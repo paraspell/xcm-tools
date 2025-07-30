@@ -1,5 +1,5 @@
 import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeFeeFromDryRunPjs } from './computeFeeFromDryRunPjs'
@@ -14,7 +14,7 @@ vi.mock('./getLocationTokenIdPjs', () => ({
 }))
 
 describe('computeFeeFromDryRunPjs', () => {
-  const mockNode: TNodeDotKsmWithRelayChains = {} as TNodeDotKsmWithRelayChains
+  const mockChain = {} as TSubstrateChain
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -53,10 +53,10 @@ describe('computeFeeFromDryRunPjs', () => {
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
+    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
 
     expect(result).toBe(700n) // 500 (delivery fee) + 200 (execution fee)
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
     expect(getLocationTokenIdPjs).toHaveBeenCalledTimes(2)
   })
 
@@ -84,12 +84,12 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getLocationTokenIdPjs).mockReturnValue(null)
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
+    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
 
     expect(result).toBe(200n) // Only execution fee
     expect(getLocationTokenIdPjs).toHaveBeenCalledWith(
       { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
-      mockNode
+      mockChain
     )
   })
 
@@ -125,7 +125,7 @@ describe('computeFeeFromDryRunPjs', () => {
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
+    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
 
     expect(result).toBe(500n) // 300 (delivery fee) + 200 (execution fee)
   })
@@ -146,10 +146,10 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 0n
-    const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
+    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
 
     expect(result).toBe(0n)
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
     expect(getLocationTokenIdPjs).not.toHaveBeenCalled()
   })
 
@@ -163,7 +163,7 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 300n
-    const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
+    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
 
     expect(result).toBe(300n) // Only execution fee
   })

@@ -1,12 +1,12 @@
-import type { TAssetInfo, TForeignAssetInfo, TNodePolkadotKusama } from '@paraspell/sdk';
+import type { TAssetInfo, TForeignAssetInfo, TParachain } from '@paraspell/sdk';
 import { deepEqual, findAssetInfo, findBestMatches, isForeignAsset } from '@paraspell/sdk';
 
-import type { TExchangeNode, TRouterAsset } from '../types';
+import type { TExchangeChain, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAssetByOriginAsset = (
-  exchangeBaseNode: TNodePolkadotKusama,
-  exchange: TExchangeNode,
+  exchangeBaseChain: TParachain,
+  exchange: TExchangeChain,
   originAsset: TAssetInfo,
 ): TRouterAsset | undefined => {
   const assets = getExchangeAssets(exchange);
@@ -34,7 +34,7 @@ export const getExchangeAssetByOriginAsset = (
   const candidateByML = candidates.find((asset) => {
     if (asset.assetId === undefined) return false;
     const sdkAsset = findAssetInfo(
-      exchangeBaseNode,
+      exchangeBaseChain,
       { id: asset.assetId },
       null,
     ) as TForeignAssetInfo;

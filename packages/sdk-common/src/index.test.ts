@@ -8,10 +8,11 @@ describe('index.ts re-exports', () => {
   })
 
   it('contains expected exports', () => {
-    expect(rootExports.NODES_WITH_RELAY_CHAINS).toBeDefined()
-    expect(rootExports.NODES_WITH_RELAY_CHAINS_DOT_KSM).toBeDefined()
-    expect(rootExports.NODE_NAMES).toBeDefined()
-    expect(rootExports.NODE_NAMES_DOT_KSM).toBeDefined()
+    expect(rootExports.PARACHAINS).toBeDefined()
+    expect(rootExports.RELAYCHAINS).toBeDefined()
+    expect(rootExports.SUBSTRATE_CHAINS).toBeDefined()
+    expect(rootExports.EXTERNAL_CHAINS).toBeDefined()
+    expect(rootExports.CHAINS).toBeDefined()
     expect(rootExports.Parents).toBeDefined()
     expect(rootExports.deepEqual).toBeDefined()
     expect(rootExports.hasJunction).toBeDefined()

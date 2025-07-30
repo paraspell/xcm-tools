@@ -1,5 +1,5 @@
 import { isOverrideLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
-import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { shouldPerformAssetCheck } from './shouldPerformAssetCheck'
@@ -18,7 +18,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if origin is a relay chain', () => {
-    const origin = {} as TNodeDotKsmWithRelayChains
+    const origin = {} as TSubstrateChain
     const currency = {} as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(true)
@@ -28,7 +28,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns false if "multiasset" is in currency', () => {
-    const origin = {} as TNodeDotKsmWithRelayChains
+    const origin = {} as TSubstrateChain
     const currency = { multiasset: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -38,7 +38,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns false if "location" is in currency and isOverrideLocationSpecifier returns true', () => {
-    const origin = {} as TNodeDotKsmWithRelayChains
+    const origin = {} as TSubstrateChain
     const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -49,7 +49,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if neither "multiasset" nor overridden "location" is present', () => {
-    const origin = {} as TNodeDotKsmWithRelayChains
+    const origin = {} as TSubstrateChain
     const currency = {} as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -59,7 +59,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if "location" exists but override is false', () => {
-    const origin = {} as TNodeDotKsmWithRelayChains
+    const origin = {} as TSubstrateChain
     const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)

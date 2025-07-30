@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { SUPPORTED_PALLETS } from '../constants'
 
@@ -11,4 +11,4 @@ export interface TPalletMap {
   defaultPallet: TPallet
   supportedPallets: TPalletDetails[]
 }
-export type TPalletJsonMap = Record<TNodeDotKsmWithRelayChains, TPalletMap>
+export type TPalletJsonMap = Record<TSubstrateChain, TPalletMap>

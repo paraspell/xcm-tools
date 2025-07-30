@@ -1,5 +1,5 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TParachain } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT } from '../../constants'
@@ -11,7 +11,7 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { createExecuteExchangeXcm } from './execute'
 
 export const handleToAhTeleport = async <TApi, TRes>(
-  origin: TNodePolkadotKusama,
+  origin: TParachain,
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
   defaultTx: TRes
 ): Promise<TRes> => {

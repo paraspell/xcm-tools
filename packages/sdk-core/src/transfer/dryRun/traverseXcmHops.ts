@@ -3,13 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { type TEcosystemType, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TEcosystemType, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
+import { getTChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { InvalidParameterError } from '../../errors'
-import { getTNode } from '../../nodes/getTNode'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
@@ -30,8 +29,8 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
     extractNextHopData
   } = config
 
-  const assetHubNode = `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
-  const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
+  const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
 
   let currentOrigin = origin
   let forwardedXcms = initialForwardedXcms
@@ -45,7 +44,7 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
 
   let hasPassedExchange = origin === swapConfig?.exchangeChain
 
-  const hops: Array<{ chain: TNodeDotKsmWithRelayChains; result: THopResult }> = []
+  const hops: Array<{ chain: TSubstrateChain; result: THopResult }> = []
   const intermediateResults: Partial<{ assetHub?: THopResult; bridgeHub?: THopResult }> = {}
   let destinationResult: THopResult | undefined
 
@@ -58,10 +57,10 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTNode(nextParaId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
+    const nextChain = getTChain(nextParaId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
 
     if (!nextChain) {
-      throw new InvalidParameterError(`Unable to find TNode for paraId ${nextParaId}`)
+      throw new InvalidParameterError(`Unable to find TChain for paraId ${nextParaId}`)
     }
 
     const hopApi = api.clone()
@@ -71,12 +70,12 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
 
       const isDestination = nextChain === destination
 
-      const isAssetHub = nextChain === assetHubNode
-      const isBridgeHub = nextChain === bridgeHubNode
+      const isAssetHub = nextChain === assetHubChain
+      const isBridgeHub = nextChain === bridgeHubChain
 
       const hopResult = await processHop({
         api: hopApi,
-        currentChain: nextChain as TNodeDotKsmWithRelayChains,
+        currentChain: nextChain as TSubstrateChain,
         currentOrigin,
         currentAsset,
         forwardedXcms,
@@ -88,7 +87,7 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
 
       if (!isDestination) {
         hops.push({
-          chain: nextChain as TNodeDotKsmWithRelayChains,
+          chain: nextChain as TSubstrateChain,
           result: hopResult
         })
       }
@@ -118,7 +117,7 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
       const { forwardedXcms: newXcms, destParaId } = extractNextHopData(hopResult)
       forwardedXcms = newXcms
       nextParaId = destParaId
-      currentOrigin = nextChain as TNodeDotKsmWithRelayChains
+      currentOrigin = nextChain as TSubstrateChain
     } finally {
       await hopApi.disconnect()
     }
@@ -137,15 +136,15 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
 export const addEthereumBridgeFees = async <TApi, TRes, TResult extends { fee?: bigint }>(
   api: IPolkadotApi<TApi, TRes>,
   bridgeHubResult: TResult | undefined,
-  destination: TNodeWithRelayChains,
-  assetHubNode: TNodeDotKsmWithRelayChains
+  destination: TChain,
+  assetHubChain: TSubstrateChain
 ): Promise<TResult | undefined> => {
   if (!bridgeHubResult || !('fee' in bridgeHubResult) || destination !== 'Ethereum') {
     return bridgeHubResult
   }
 
   const ahApi = api.clone()
-  await ahApi.init(assetHubNode, DRY_RUN_CLIENT_TIMEOUT_MS)
+  await ahApi.init(assetHubChain, DRY_RUN_CLIENT_TIMEOUT_MS)
   const [bridgeFee] = await getParaEthTransferFees(ahApi)
 
   return {

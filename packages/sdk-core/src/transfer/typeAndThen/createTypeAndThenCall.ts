@@ -1,10 +1,10 @@
 import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
-import { deepEqual, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { deepEqual, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import { createMultiAsset } from '../../utils'
+import { createAsset } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -20,10 +20,10 @@ const buildAssets = (
   const assets = []
 
   if (!isDotAsset) {
-    assets.push(createMultiAsset(version, feeAmount, RELAY_LOCATION))
+    assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
 
-  assets.push(createMultiAsset(version, asset.amount, asset.multiLocation))
+  assets.push(createAsset(version, asset.amount, asset.location))
 
   return assets
 }
@@ -32,18 +32,18 @@ const buildAssets = (
  * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
  */
 export const createTypeAndThenCall = async <TApi, TRes>(
-  chain: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> => {
   const { api, senderAddress, version } = options
 
   const context = await createTypeAndThenCallContext(chain, options)
 
-  const { asset } = context
+  const { assetInfo } = context
 
   const isDotAsset =
-    deepEqual(asset.multiLocation, RELAY_LOCATION) ||
-    deepEqual(asset.multiLocation, {
+    deepEqual(assetInfo.location, RELAY_LOCATION) ||
+    deepEqual(assetInfo.location, {
       parents: 2,
       interior: {
         X1: [
@@ -72,7 +72,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
 
-  const assets = buildAssets(asset, totalFee, isDotAsset, version)
+  const assets = buildAssets(assetInfo, totalFee, isDotAsset, version)
 
   return buildTypeAndThenCall(context, isDotAsset, finalCustomXcm, assets)
 }

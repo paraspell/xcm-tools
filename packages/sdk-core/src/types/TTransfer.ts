@@ -1,18 +1,18 @@
 import type {
+  TAsset,
   TAssetInfo,
   TAssetWithFee,
   TCurrencyInput,
   TCurrencyInputWithAmount,
-  TAsset,
   WithAmount
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
 import type {
+  TChain,
   TLocation,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
-  TRelayChain,
+  TParachain,
+  TRelaychain,
+  TSubstrateChain,
   Version
 } from '@paraspell/sdk-common'
 
@@ -45,7 +45,7 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   asset: WithAmount<TAssetInfo>
   address: TAddress
   scenario: TScenario
-  origin: TNodePolkadotKusama
+  origin: TParachain
   destination: TDestination
   paraIdTo?: number
   version: Version
@@ -59,7 +59,7 @@ export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAssetInfo>
   recipientAddress: TAddress
-  origin: TNodePolkadotKusama
+  origin: TParachain
   paraIdTo?: number
   destination: TDestination
   overriddenAsset?: TLocation | TAsset[]
@@ -82,14 +82,14 @@ export interface IXTransferTransfer {
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 
 export type TAddress = string | TLocation
-export type TDestination = TNodeWithRelayChains | TLocation
-export type TRelayToParaDestination = TNodePolkadotKusama | TLocation
+export type TDestination = TChain | TLocation
+export type TRelayToParaDestination = TParachain | TLocation
 
 export type TSendBaseOptions = {
   /**
-   * The origin node
+   * The origin chain
    */
-  from: TNodeDotKsmWithRelayChains
+  from: TSubstrateChain
   /**
    * The destination address. A SS58 or H160 format.
    */
@@ -103,7 +103,7 @@ export type TSendBaseOptions = {
    */
   ahAddress?: string
   /**
-   * The destination node or multi-location
+   * The destination chain or multi-location
    */
   to: TDestination
   /**
@@ -151,7 +151,7 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes>
-  asset: WithAmount<TAssetInfo>
+  assetInfo: WithAmount<TAssetInfo>
   feeAsset?: TAssetInfo
   feeCurrency?: TCurrencyInput
   overriddenAsset?: TLocation | TAssetWithFee[]
@@ -160,11 +160,11 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
 
 type TRelayToParaBaseOptions = {
   /**
-   * The origin node
+   * The origin chain
    */
-  origin: TRelayChain
+  origin: TRelaychain
   /**
-   * The destination node or multi-location
+   * The destination chain or multi-location
    */
   destination: TRelayToParaDestination
   /**
@@ -239,7 +239,7 @@ export type TCreateBeneficiaryOptions<TApi, TRes> = {
 
 export type TCreateBeneficiaryXTokensOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  origin: TNodeDotKsmWithRelayChains
+  origin: TSubstrateChain
   destination: TDestination
   address: TAddress
   version: Version
@@ -261,8 +261,8 @@ export type TTransferFeeEstimates = {
 }
 
 export type TCreateBaseTransferXcmOptions = {
-  chain: TNodeDotKsmWithRelayChains
-  destChain: TNodeWithRelayChains
+  chain: TSubstrateChain
+  destChain: TChain
   assetInfo: WithAmount<TAssetInfo>
   feeAssetInfo?: TAssetInfo
   fees: TTransferFeeEstimates
@@ -279,9 +279,9 @@ export type TCreateTransferXcmOptions<TApi, TRes> = WithApi<
 >
 
 export type TCreateBaseSwapXcmOptions = {
-  chain?: TNodeDotKsmWithRelayChains
-  exchangeChain: TNodePolkadotKusama
-  destChain?: TNodeWithRelayChains
+  chain?: TSubstrateChain
+  exchangeChain: TParachain
+  destChain?: TChain
   assetInfoFrom: WithAmount<TAssetInfo>
   assetInfoTo: WithAmount<TAssetInfo>
   currencyTo: TCurrencyInput

@@ -1,6 +1,6 @@
 import type { TCurrencyInput } from '@paraspell/assets'
-import { isNodeEvm } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isChainEvm } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import { Builder } from '../../builder'
@@ -8,11 +8,11 @@ import type { TGetReverseTxFeeOptions } from '../../types'
 import { padFee } from './padFee'
 
 const determineAddress = (
-  chain: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   address: string,
   senderAddress: string
 ): string => {
-  if (isNodeEvm(chain)) {
+  if (isChainEvm(chain)) {
     return isAddress(address) ? address : senderAddress
   }
   return isAddress(address) ? senderAddress : address

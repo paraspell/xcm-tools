@@ -9,10 +9,10 @@ import { isDotKsmBridge, isRelayChain, isTLocation, Version } from '@paraspell/s
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../types'
-import { getNode, validateAddress } from '../utils'
+import { getChain, validateAddress } from '../utils'
 import { getChainVersion } from '../utils/chain'
 import { send } from './transfer'
 import { transferRelayToPara } from './transferRelayToPara'
@@ -41,7 +41,7 @@ vi.mock('@paraspell/sdk-common', async () => {
 })
 
 vi.mock('../utils', () => ({
-  getNode: vi.fn(),
+  getChain: vi.fn(),
   validateAddress: vi.fn()
 }))
 
@@ -73,7 +73,7 @@ vi.mock('./utils', () => ({
 
 describe('send', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
-  let originNodeMock: AssetHubPolkadot<unknown, unknown>
+  let originChainMock: AssetHubPolkadot<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -86,12 +86,12 @@ describe('send', () => {
       getApiOrUrl: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    originNodeMock = {
+    originChainMock = {
       transfer: vi.fn().mockResolvedValue('transferResult'),
       version: Version.V4
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
-    vi.mocked(getNode).mockReturnValue(originNodeMock)
+    vi.mocked(getChain).mockReturnValue(originChainMock)
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
@@ -113,7 +113,7 @@ describe('send', () => {
       address: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
 
     const result = await send(options)
@@ -128,7 +128,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
-      asset: { symbol: 'TEST', amount: 100n },
+      assetInfo: { symbol: 'TEST', amount: 100n },
       currency: options.currency,
       feeAsset: undefined,
       feeCurrency: undefined,
@@ -156,7 +156,7 @@ describe('send', () => {
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     const result = await send(options)
 
@@ -226,7 +226,7 @@ describe('send', () => {
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     const result = await send(options)
 
@@ -251,7 +251,7 @@ describe('send', () => {
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     const result = await send(options)
 
@@ -295,7 +295,7 @@ describe('send', () => {
       senderAddress: undefined
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     const result = await send(options)
 
@@ -452,7 +452,7 @@ describe('send', () => {
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     const result = await send(options)
 
@@ -501,13 +501,13 @@ describe('send', () => {
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     await send(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: { symbol: 'TEST', amount: 0n, assetId: '1' }
+        assetInfo: { symbol: 'TEST', amount: 0n, assetId: '1' }
       })
     )
   })
@@ -521,13 +521,13 @@ describe('send', () => {
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     await send(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: { symbol: 'TEST', amount: 2n }
+        assetInfo: { symbol: 'TEST', amount: 2n }
       })
     )
   })
@@ -547,13 +547,13 @@ describe('send', () => {
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
     await send(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: expect.objectContaining({
+        assetInfo: expect.objectContaining({
           location
         })
       })

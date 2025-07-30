@@ -1,19 +1,19 @@
 import type { TChainAssetsInfo } from '@paraspell/assets'
 import { getAssetsObject } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TParachain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { getNodeConfig } from '../../../nodes/config'
-import type { TNodeConfig } from '../../../types'
+import { getChainConfig } from '../../../chains/config'
+import type { TChainConfig } from '../../../types'
 import { getDestinationLocation } from './getDestinationLocation'
 
 vi.mock('@paraspell/assets', () => ({
   getAssetsObject: vi.fn()
 }))
 
-vi.mock('../../../nodes/config', () => ({
-  getNodeConfig: vi.fn()
+vi.mock('../../../chains/config', () => ({
+  getChainConfig: vi.fn()
 }))
 
 describe('getDestinationLocation', () => {
@@ -21,14 +21,14 @@ describe('getDestinationLocation', () => {
     accountToHex: vi.fn().mockReturnValue('abc123')
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  let mockDestination: TNodePolkadotKusama
+  let mockDestination: TParachain
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockDestination = 'Polkadot' as TNodePolkadotKusama
+    mockDestination = 'AssetHubPolkadot' as TParachain
 
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: false } as TChainAssetsInfo)
-    vi.mocked(getNodeConfig).mockReturnValue({ paraId: 2000 } as TNodeConfig)
+    vi.mocked(getChainConfig).mockReturnValue({ paraId: 2000 } as TChainConfig)
   })
 
   it('returns correct location when isEVM=false', () => {
@@ -54,7 +54,7 @@ describe('getDestinationLocation', () => {
 
   it('returns correct location when isEVM=true', () => {
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: true } as TChainAssetsInfo)
-    vi.mocked(getNodeConfig).mockReturnValue({ paraId: 3000 } as TNodeConfig)
+    vi.mocked(getChainConfig).mockReturnValue({ paraId: 3000 } as TChainConfig)
     const spy = vi.spyOn(mockApi, 'accountToHex').mockReturnValue('deadbeef')
 
     const result = getDestinationLocation(mockApi, 'another-address', mockDestination)
@@ -69,10 +69,10 @@ describe('getDestinationLocation', () => {
     expect(finalAddress).toBe('0x03deadbeef00')
   })
 
-  it('calls getNodeConfig with the correct destination', () => {
+  it('calls getChainConfig with the correct destination', () => {
     getDestinationLocation(mockApi, 'some-address', mockDestination)
-    expect(getNodeConfig).toHaveBeenCalledTimes(1)
-    expect(getNodeConfig).toHaveBeenCalledWith(mockDestination)
+    expect(getChainConfig).toHaveBeenCalledTimes(1)
+    expect(getChainConfig).toHaveBeenCalledWith(mockDestination)
   })
 
   it('calls getAssetsObject with the correct destination', () => {

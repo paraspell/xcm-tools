@@ -1,8 +1,4 @@
-import type {
-  TCurrencyInput,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-} from '@paraspell/sdk-pjs';
+import type { TChain, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
 import { buildApiTransactions, getBestAmountOut, getXcmFees, transfer } from '../transfer';
@@ -27,37 +23,35 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   }
 
   /**
-   * Specifies the origin node of the transfer.
+   * Specifies the origin chain of the transfer.
    *
-   * @param node - The origin node.
+   * @param chain - The origin chain.
    * @returns The current builder instance.
    */
   from(
-    node: TNodeDotKsmWithRelayChains | undefined,
-  ): RouterBuilderCore<T & { from: TNodeDotKsmWithRelayChains | undefined }> {
-    return new RouterBuilderCore({ ...this._options, from: node });
+    chain: TSubstrateChain | undefined,
+  ): RouterBuilderCore<T & { from: TSubstrateChain | undefined }> {
+    return new RouterBuilderCore({ ...this._options, from: chain });
   }
 
   /**
-   * Specifies the exchange node to use.
+   * Specifies the exchange chain to use.
    *
-   * @param node - The exchange node, or `undefined` to auto-select.
+   * @param chain - The exchange chain, or `undefined` to auto-select.
    * @returns The current builder instance.
    */
-  exchange(node: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
-    return new RouterBuilderCore({ ...this._options, exchange: node });
+  exchange(chain: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
+    return new RouterBuilderCore({ ...this._options, exchange: chain });
   }
 
   /**
-   * Specifies the destination node of the transfer.
+   * Specifies the destination chain of the transfer.
    *
-   * @param node - The destination node.
+   * @param chain - The destination chain.
    * @returns The current builder instance.
    */
-  to(
-    node: TNodeWithRelayChains | undefined,
-  ): RouterBuilderCore<T & { to: TNodeWithRelayChains | undefined }> {
-    return new RouterBuilderCore({ ...this._options, to: node });
+  to(chain: TChain | undefined): RouterBuilderCore<T & { to: TChain | undefined }> {
+    return new RouterBuilderCore({ ...this._options, to: chain });
   }
 
   /**
@@ -123,7 +117,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   }
 
   /**
-   * Specifies the EVM sender address, required if `evmSigner` is provided. Used when dealing with EVM nodes.
+   * Specifies the EVM sender address, required if `evmSigner` is provided. Used when dealing with EVM chains.
    *
    * @param evmSenderAddress - The EVM sender address.
    * @returns The current builder instance.

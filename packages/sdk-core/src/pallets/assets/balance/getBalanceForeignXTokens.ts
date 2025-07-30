@@ -1,24 +1,24 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
 import { assertHasId } from '../../../utils'
 
 export const getBalanceForeignXTokens = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  node: TNodePolkadotKusama,
+  chain: TSubstrateChain,
   address: string,
   asset: TAssetInfo
 ): Promise<bigint> => {
-  if (node === 'Astar' || node === 'Shiden') {
+  if (chain === 'Astar' || chain === 'Shiden') {
     assertHasId(asset)
 
     return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))
   }
 
-  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+  if (chain === 'BifrostPolkadot' || chain === 'BifrostKusama') {
     return api.getBalanceForeignBifrost(address, asset)
   }
 
-  return api.getBalanceForeignXTokens(node, address, asset)
+  return api.getBalanceForeignXTokens(chain, address, asset)
 }

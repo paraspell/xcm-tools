@@ -25,8 +25,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
-vi.mock('../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -128,8 +128,8 @@ describe('dryRunInternal', () => {
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return 'DOT'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return 'DOT'
       return 'ACA'
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -205,9 +205,9 @@ describe('dryRunInternal', () => {
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(initialAsset)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return 'DOT'
-      if (node === 'BridgeHubPolkadot') return 'DOT'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return 'DOT'
+      if (chain === 'BridgeHubPolkadot') return 'DOT'
       return 'ACA'
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -471,8 +471,8 @@ describe('dryRunInternal', () => {
 
     it('handles bridge hub fee update when fees differ', async () => {
       vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === 'BridgeHubPolkadot') return 'DOT'
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === 'BridgeHubPolkadot') return 'DOT'
         return 'ACA'
       })
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')

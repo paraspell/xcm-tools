@@ -5,7 +5,7 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import { NODE_NAMES_DOT_KSM, TPallet, TPapiTransaction, TSerializedApiCall } from '../src'
+import { SUBSTRATE_CHAINS, TPallet, TPapiTransaction, TSerializedApiCall } from '../src'
 import { expect } from 'vitest'
 
 export const createSr25519Signer = () => {
@@ -63,16 +63,16 @@ export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) =
   expect(serialized).toMatchSnapshot()
 }
 
-export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
-  node =>
-    // PAPI UNSUPPORTED NODES START
-    node !== 'ComposableFinance' &&
-    node !== 'Interlay' &&
-    node !== 'CrustShadow' &&
-    node !== 'Kintsugi' &&
-    node !== 'RobonomicsKusama' &&
-    node !== 'RobonomicsPolkadot' &&
-    node !== 'Pendulum' &&
-    node !== 'Subsocial' &&
-    node !== 'Darwinia'
+export const filteredChains = SUBSTRATE_CHAINS.filter(
+  chain =>
+    // PAPI UNSUPPORTED CHAINS START
+    chain !== 'ComposableFinance' &&
+    chain !== 'Interlay' &&
+    chain !== 'CrustShadow' &&
+    chain !== 'Kintsugi' &&
+    chain !== 'RobonomicsKusama' &&
+    chain !== 'RobonomicsPolkadot' &&
+    chain !== 'Pendulum' &&
+    chain !== 'Subsocial' &&
+    chain !== 'Darwinia'
 )

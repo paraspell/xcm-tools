@@ -1,4 +1,4 @@
-import type { TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -13,7 +13,7 @@ describe('createRefundInstruction', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
   const mockSenderAddress = '0x123'
   const mockVersion = 'V3' as Version
-  const mockBeneficiaryLocation = {} as TMultiLocation
+  const mockBeneficiaryLocation = {} as TLocation
 
   beforeEach(() => {
     vi.clearAllMocks()

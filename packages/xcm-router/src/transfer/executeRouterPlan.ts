@@ -1,4 +1,4 @@
-import { getBalanceNative, InvalidParameterError, isNodeEvm } from '@paraspell/sdk';
+import { getBalanceNative, InvalidParameterError, isChainEvm } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
 import { FEE_BUFFER } from '../consts';
@@ -18,38 +18,38 @@ export const executeRouterPlan = async (
     onStatusChange,
   }: TExecuteRouterPlanOptions,
 ): Promise<void> => {
-  for (const [currentStep, { api, tx, type, node, destinationNode }] of plan.entries()) {
+  for (const [currentStep, { api, tx, type, chain, destinationChain }] of plan.entries()) {
     onStatusChange?.({
-      node,
-      destinationNode,
+      chain,
+      destinationChain,
       type,
       currentStep: currentStep,
       routerPlan: plan,
     });
 
-    if (type === 'TRANSFER' && destination === destinationNode) {
-      const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama';
+    if (type === 'TRANSFER' && destination === destinationChain) {
+      const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
       if (isBifrost) {
-        const fee = await calculateTxFeeDryRun(api, node, tx, senderAddress);
+        const fee = await calculateTxFeeDryRun(api, chain, tx, senderAddress);
         const nativeBalance = await getBalanceNative({
           api,
           address: senderAddress,
-          node,
+          chain,
         });
         const nativeBalanceBN = BigNumber(nativeBalance.toString());
         const feeBN = BigNumber(fee.toString()).multipliedBy(FEE_BUFFER);
         if (nativeBalanceBN.isLessThan(feeBN)) {
           throw new InvalidParameterError(
-            `Insufficient balance to cover fees for transfer from ${node} to ${destinationNode}`,
+            `Insufficient balance to cover fees for transfer from ${chain} to ${destinationChain}`,
           );
         }
       }
     }
 
-    if (isNodeEvm(node)) {
+    if (isChainEvm(chain)) {
       if (!evmSigner || !evmSenderAddress) {
         throw new InvalidParameterError(
-          'EVM signer and sender address must be provided for EVM nodes.',
+          'EVM signer and sender address must be provided for EVM chains.',
         );
       }
 

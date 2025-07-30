@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import { type TForeignAsset } from '../src'
+import { type TForeignAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
 import { createPublicClient, http } from 'viem'
@@ -70,7 +70,7 @@ export const fetchMoonbeamForeignAssets = async (
         : http('https://rpc.api.moonriver.moonbeam.network/')
   })
 
-  const evmAssets: TForeignAsset[] = await Promise.all(
+  const evmAssets: TForeignAssetInfo[] = await Promise.all(
     evmEntries.map(
       async ([
         {

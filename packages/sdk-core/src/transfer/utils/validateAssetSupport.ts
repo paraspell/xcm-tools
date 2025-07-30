@@ -31,7 +31,7 @@ export const validateAssetSupport = <TApi, TRes>(
     !allowedChainsToAh.includes(origin) &&
     asset?.symbol === 'DOT'
   ) {
-    throw new TransferToAhNotSupported(`Node ${origin} does not support DOT transfer to AssetHub`)
+    throw new TransferToAhNotSupported(`Chain ${origin} does not support DOT transfer to AssetHub`)
   }
 
   const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
@@ -47,7 +47,7 @@ export const validateAssetSupport = <TApi, TRes>(
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
+      `Destination chain ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
   }
 

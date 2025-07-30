@@ -1,11 +1,11 @@
-import { isRelayChain, type TNodeWithRelayChains, Version } from '@paraspell/sdk-common'
+import { isRelayChain, type TChain, Version } from '@paraspell/sdk-common'
 
-import { getNode } from '../getNode'
+import { getChain } from '../getChain'
 
-export const getChainVersion = <TApi, TRes>(chain: TNodeWithRelayChains): Version => {
+export const getChainVersion = <TApi, TRes>(chain: TChain): Version => {
   if (isRelayChain(chain) || chain === 'Ethereum') {
     return Version.V5
   }
 
-  return getNode<TApi, TRes, typeof chain>(chain).version
+  return getChain<TApi, TRes, typeof chain>(chain).version
 }

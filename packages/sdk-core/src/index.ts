@@ -3,6 +3,8 @@
 export * from './address'
 export * from './api'
 export * from './builder'
+export * from './chains/config'
+export * from './chains/getTChain'
 export {
   DRY_RUN_CLIENT_TIMEOUT_MS,
   ETH_CHAIN_ID,
@@ -10,8 +12,6 @@ export {
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'
-export * from './nodes/config'
-export * from './nodes/getTNode'
 export * from './pallets/assets'
 export * from './transfer'
 export * from './types'

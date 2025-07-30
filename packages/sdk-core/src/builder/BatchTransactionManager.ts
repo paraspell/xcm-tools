@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
@@ -20,7 +20,7 @@ class BatchTransactionManager<TApi, TRes> {
 
   async buildBatch(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNodeDotKsmWithRelayChains,
+    from: TSubstrateChain,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {
     await api.init(from, TX_CLIENT_TIMEOUT_MS)

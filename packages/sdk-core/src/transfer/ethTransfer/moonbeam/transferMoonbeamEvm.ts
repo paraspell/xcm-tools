@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TForeignAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   getNativeAssetSymbol,
@@ -7,17 +6,17 @@ import {
   isForeignAsset,
   isOverrideLocationSpecifier
 } from '@paraspell/assets'
-import { type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { type TSubstrateChain } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { InvalidParameterError } from '../../../errors'
 import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
+import { assertIsForeign } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
-import { assertIsForeign } from '../../../utils'
 
 const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
@@ -65,7 +64,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     asset = formatAssetIdToERC20(foundAsset.assetId)
   }
 
-  const destLocation = getDestinationLocation(api, address, to as TNodeDotKsmWithRelayChains)
+  const destLocation = getDestinationLocation(api, address, to as TSubstrateChain)
 
   const weight = U_64_MAX
 

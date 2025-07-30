@@ -1,8 +1,8 @@
 import type {
+  TAsset,
   TAssetInfo,
   TAssetWithFee,
-  TLocationValueWithOverride,
-  TAsset
+  TLocationValueWithOverride
 } from '@paraspell/assets'
 import {
   findAssetInfo,
@@ -16,9 +16,9 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type AssetHubPolkadot from '../../nodes/supported/AssetHubPolkadot'
+import type AssetHubPolkadot from '../../chains/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../../types'
-import { getNode } from '../../utils'
+import { getChain } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
@@ -28,7 +28,7 @@ vi.mock('../../utils/asset', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  getNode: vi.fn()
+  getChain: vi.fn()
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
@@ -52,7 +52,10 @@ vi.mock('./validateAssetSupport', () => ({
 }))
 
 describe('resolveOverriddenAsset', () => {
-  const mockOriginNode = { version: 'testVersion' } as unknown as AssetHubPolkadot<unknown, unknown>
+  const mockOriginChain = { version: 'testVersion' } as unknown as AssetHubPolkadot<
+    unknown,
+    unknown
+  >
   const mockOrigin = 'Acala'
   const mockDestination = {} as TLocation
 
@@ -67,7 +70,7 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTAsset).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getNode).mockReturnValue(mockOriginNode)
+    vi.mocked(getChain).mockReturnValue(mockOriginChain)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(createAsset).mockReturnValue({} as TAsset)
     vi.mocked(findAssetInfo).mockReturnValue({

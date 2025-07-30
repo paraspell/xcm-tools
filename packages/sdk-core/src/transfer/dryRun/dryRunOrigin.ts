@@ -1,23 +1,23 @@
 import { getNativeAssetSymbol } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import type { TDryRunCallOptions, TDryRunNodeResult } from '../../types'
+import type { TDryRunCallOptions, TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'
 
 export const dryRunOrigin = async <TApi, TRes>(
   options: TDryRunCallOptions<TApi, TRes>
-): Promise<TDryRunNodeResult> => {
-  const { api, node, address } = options
+): Promise<TDryRunChainResult> => {
+  const { api, chain, address } = options
 
-  validateAddress(address, node, false)
+  validateAddress(address, chain, false)
 
-  await api.init(node, DRY_RUN_CLIENT_TIMEOUT_MS)
+  await api.init(chain, DRY_RUN_CLIENT_TIMEOUT_MS)
   try {
     const result = await api.getDryRunCall(options)
     if (result.success) {
       return {
         ...result,
-        currency: getNativeAssetSymbol(node)
+        currency: getNativeAssetSymbol(chain)
       }
     } else {
       return result

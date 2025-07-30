@@ -1,4 +1,4 @@
-import type { TAssetInfo, TNodePolkadotKusama, TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TAssetInfo, TPapiApi, TPapiTransaction, TParachain } from '@paraspell/sdk';
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -20,10 +20,10 @@ describe('canBuildToExchangeTx', () => {
   const mockTx = 'mocked_tx' as unknown as TPapiTransaction;
   const mockAssetFromOrigin: TAssetInfo = { assetId: '1', symbol: 'DOT', decimals: 10 };
   const defaultOptions = {
-    from: 'Polkadot' as TNodePolkadotKusama,
+    from: 'Polkadot' as TParachain,
     amount: '10000000000',
   } as TGetBestAmountOutOptions;
-  const exchangeNode: TNodePolkadotKusama = 'AssetHubPolkadot';
+  const exchangeChain: TParachain = 'AssetHubPolkadot';
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -34,7 +34,7 @@ describe('canBuildToExchangeTx', () => {
 
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -47,18 +47,18 @@ describe('canBuildToExchangeTx', () => {
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,
-        node: defaultOptions.from,
+        chain: defaultOptions.from,
         assetFrom: mockAssetFromOrigin,
       },
-      exchange: { baseNode: exchangeNode },
+      exchange: { baseChain: exchangeChain },
     });
   });
 
   it('should return { success: true } if "from" is undefined, without calling buildToExchangeExtrinsic', async () => {
-    const options = { ...defaultOptions, from: undefined as unknown as TNodePolkadotKusama };
+    const options = { ...defaultOptions, from: undefined as unknown as TParachain };
     const result = await canBuildToExchangeTx(
       options,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -67,11 +67,11 @@ describe('canBuildToExchangeTx', () => {
     expect(buildToExchangeExtrinsic).not.toHaveBeenCalled();
   });
 
-  it('should return { success: true } if "from" is the same as "exchangeNode", without calling buildToExchangeExtrinsic', async () => {
-    const options = { ...defaultOptions, from: exchangeNode };
+  it('should return { success: true } if "from" is the same as "exchangeChain", without calling buildToExchangeExtrinsic', async () => {
+    const options = { ...defaultOptions, from: exchangeChain };
     const result = await canBuildToExchangeTx(
       options,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -83,7 +83,7 @@ describe('canBuildToExchangeTx', () => {
   it('should return { success: true } if "originApi" is undefined, without calling buildToExchangeExtrinsic', async () => {
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       undefined,
       mockAssetFromOrigin,
     );
@@ -93,7 +93,7 @@ describe('canBuildToExchangeTx', () => {
   });
 
   it('should return { success: true } if "assetFromOrigin" is null, without calling buildToExchangeExtrinsic', async () => {
-    const result = await canBuildToExchangeTx(defaultOptions, exchangeNode, mockOriginApi, null);
+    const result = await canBuildToExchangeTx(defaultOptions, exchangeChain, mockOriginApi, null);
 
     expect(result).toEqual({ success: true });
     expect(buildToExchangeExtrinsic).not.toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe('canBuildToExchangeTx', () => {
   it('should return { success: true } if "assetFromOrigin" is undefined, without calling buildToExchangeExtrinsic', async () => {
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       undefined,
     );
@@ -117,7 +117,7 @@ describe('canBuildToExchangeTx', () => {
 
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -132,7 +132,7 @@ describe('canBuildToExchangeTx', () => {
 
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -147,7 +147,7 @@ describe('canBuildToExchangeTx', () => {
 
     const result = await canBuildToExchangeTx(
       defaultOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -159,16 +159,16 @@ describe('canBuildToExchangeTx', () => {
   it('should handle TGetBestAmountOutOptions type for options input', async () => {
     vi.mocked(buildToExchangeExtrinsic).mockResolvedValue(mockTx);
     const getBestAmountOutOptions = {
-      from: 'Moonbeam' as TNodePolkadotKusama,
+      from: 'Moonbeam' as TParachain,
       amount: '5000000000000000000',
       currencyFrom: { symbol: 'GLMR' },
       currencyTo: { symbol: 'DOT' },
-      to: 'Polkadot' as TNodePolkadotKusama,
+      to: 'Polkadot' as TParachain,
     } as TGetBestAmountOutOptions;
 
     const result = await canBuildToExchangeTx(
       getBestAmountOutOptions,
-      exchangeNode,
+      exchangeChain,
       mockOriginApi,
       mockAssetFromOrigin,
     );
@@ -181,10 +181,10 @@ describe('canBuildToExchangeTx', () => {
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,
-        node: getBestAmountOutOptions.from,
+        chain: getBestAmountOutOptions.from,
         assetFrom: mockAssetFromOrigin,
       },
-      exchange: { baseNode: exchangeNode },
+      exchange: { baseChain: exchangeChain },
     });
   });
 });

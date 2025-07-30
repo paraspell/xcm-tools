@@ -2,32 +2,30 @@ import { expect, Page } from '@playwright/test';
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
 import {
   getRelayChainSymbol,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  TNode,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  TChain,
   getRelayChainOf,
 } from '@paraspell/sdk';
 
 const performTransferInfoTest = async (
   page: Page,
-  fromNode: string,
-  destinationNode: string,
+  fromChain: string,
+  destChain: string,
   useApi: boolean,
 ) => {
   await page.getByTestId('select-origin').click();
-  await page.getByRole('option', { name: fromNode, exact: true }).click();
+  await page.getByRole('option', { name: fromChain, exact: true }).click();
 
   await page.getByTestId('select-destination').click();
-  await page
-    .getByRole('option', { name: destinationNode, exact: true })
-    .click();
+  await page.getByRole('option', { name: destChain, exact: true }).click();
 
   const isNotParaToPara =
-    fromNode === 'Polkadot' ||
-    fromNode === 'Kusama' ||
-    destinationNode === 'Polkadot' ||
-    destinationNode === 'Kusama';
+    fromChain === 'Polkadot' ||
+    fromChain === 'Kusama' ||
+    destChain === 'Polkadot' ||
+    destChain === 'Kusama';
   if (!isNotParaToPara) {
-    const randomCurrencySymbol = getRelayChainSymbol(fromNode as TNode);
+    const randomCurrencySymbol = getRelayChainSymbol(fromChain as TChain);
     await page.getByTestId('input-currency').fill(randomCurrencySymbol ?? '');
   }
 
@@ -63,20 +61,15 @@ basePjsTest.describe('XCM SDK - Transfer Info', () => {
     await appPage.getByTestId('tab-transfer-info').click();
   });
 
-  NODES_WITH_RELAY_CHAINS_DOT_KSM.slice(0.5).map((fromNode) => {
-    const destinationNode =
-      getRelayChainOf(fromNode) === 'Polkadot' ? 'Astar' : 'Basilisk';
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM.slice(0.5).map((fromChain) => {
+    const destChain =
+      getRelayChainOf(fromChain) === 'Polkadot' ? 'Astar' : 'Basilisk';
     [false, true].map((useApi) => {
       const apiLabel = useApi ? ' - API' : '';
       basePjsTest(
-        `Should succeed for transfer info from ${fromNode} to ${destinationNode}${apiLabel}`,
+        `Should succeed for transfer info from ${fromChain} to ${destChain}${apiLabel}`,
         async () => {
-          await performTransferInfoTest(
-            appPage,
-            fromNode,
-            destinationNode,
-            useApi,
-          );
+          await performTransferInfoTest(appPage, fromChain, destChain, useApi);
         },
       );
     });

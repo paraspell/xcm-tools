@@ -4,7 +4,7 @@ import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getTNode } from '../../nodes/getTNode'
+import { getTChain } from '../../chains/getTChain'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
 import { createTypeAndThenCallContext } from './createContext'
@@ -13,8 +13,8 @@ vi.mock('@paraspell/sdk-common', () => ({
   isRelayChain: vi.fn()
 }))
 
-vi.mock('../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -31,7 +31,7 @@ describe('createTypeAndThenCallContext', () => {
   const mockAsset = {
     amount: 1000n,
     symbol: 'DOT',
-    multiLocation: { parents: 1, interior: { X1: { Parachain: 2000 } } }
+    location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
   } as TAssetWithLocation
 
   const mockClonedApi = {
@@ -46,14 +46,14 @@ describe('createTypeAndThenCallContext', () => {
   const mockOptions = {
     api: mockApi,
     paraIdTo: 2000,
-    asset: mockAsset
+    assetInfo: mockAsset
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTNode).mockReturnValue(mockDestChain)
+    vi.mocked(getTChain).mockReturnValue(mockDestChain)
     vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
@@ -61,7 +61,7 @@ describe('createTypeAndThenCallContext', () => {
 
   it('should create context with relay chain as destination', async () => {
     const relayDestChain = 'Polkadot' as TNodePolkadotKusama
-    vi.mocked(getTNode).mockReturnValue(relayDestChain)
+    vi.mocked(getTChain).mockReturnValue(relayDestChain)
     vi.mocked(isRelayChain).mockReturnValue(true)
 
     const result = await createTypeAndThenCallContext(mockChain, mockOptions)
@@ -74,7 +74,7 @@ describe('createTypeAndThenCallContext', () => {
       origin: { api: mockApi, chain: mockChain },
       dest: { api: mockClonedApi, chain: relayDestChain },
       reserve: { api: mockClonedApi, chain: relayDestChain },
-      asset: mockAsset,
+      assetInfo: mockAsset,
       options: mockOptions
     })
   })
@@ -82,7 +82,7 @@ describe('createTypeAndThenCallContext', () => {
   it('should create context with non-relay chain as destination', async () => {
     const result = await createTypeAndThenCallContext(mockChain, mockOptions)
 
-    expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockChain, mockAsset.multiLocation)
+    expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockChain, mockAsset.location)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(1, mockDestChain)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(2, mockReserveChain)
 
@@ -90,7 +90,7 @@ describe('createTypeAndThenCallContext', () => {
       origin: { api: mockApi, chain: mockChain },
       dest: { api: mockClonedApi, chain: mockDestChain },
       reserve: { api: mockClonedApi, chain: mockReserveChain },
-      asset: mockAsset,
+      assetInfo: mockAsset,
       options: mockOptions
     })
   })
@@ -117,7 +117,7 @@ describe('createTypeAndThenCallContext', () => {
   it('should throw if asset has no location', async () => {
     const invalidOptions = {
       ...mockOptions,
-      asset: { amount: 1000n }
+      assetInfo: { amount: 1000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(assertHasLocation).mockImplementation(() => {

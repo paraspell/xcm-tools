@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
@@ -13,7 +13,7 @@ import { findBestMatches } from './findBestMatches'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
 export const findAssetInfoBySymbol = (
-  destination: TNodeWithRelayChains | null,
+  destination: TChain | null,
   otherAssets: TForeignAssetInfo[],
   nativeAssets: TNativeAssetInfo[],
   symbol: TCurrencySymbolValue

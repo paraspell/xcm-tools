@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
@@ -24,9 +24,9 @@ describe('selectBestExchangeAmountOut', () => {
       createApiInstance: vi.fn().mockResolvedValue('fakeApi'),
       createApiInstancePapi: vi.fn().mockResolvedValue('fakePapiApi'),
       getAmountOut: vi.fn().mockResolvedValue('300'),
-      node: 'dummyDex',
-      exchangeNode: 'dummyExchange',
-    } as unknown as ExchangeNode;
+      chain: 'dummyDex',
+      exchangeChain: 'dummyExchange',
+    } as unknown as ExchangeChain;
 
     const mockedSelectBestExchangeCommon = vi.mocked(selectBestExchangeCommon);
     mockedSelectBestExchangeCommon.mockImplementation(

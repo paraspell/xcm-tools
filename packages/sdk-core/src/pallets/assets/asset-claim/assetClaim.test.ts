@@ -29,12 +29,12 @@ describe('claimAssets', () => {
     getApi: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const nodeMock = 'Acala'
+  const mockChain = 'Acala'
 
   it('should return extrinsic call', async () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
-      node: nodeMock,
+      chain: mockChain,
       assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
@@ -56,13 +56,13 @@ describe('claimAssets', () => {
       parameters: argsMock
     })
 
-    expect(validateAddress).toHaveBeenCalledWith(options.address, nodeMock)
+    expect(validateAddress).toHaveBeenCalledWith(options.address, mockChain)
   })
 
   it('should create an API instance if api is not provided', async () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
-      node: nodeMock,
+      chain: mockChain,
       assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
@@ -89,10 +89,10 @@ describe('claimAssets', () => {
     })
   })
 
-  it('should use xcmPallet module when node is on the relay chain', async () => {
+  it('should use xcmPallet module when chain is on the relay chain', async () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
-      node: nodeMock,
+      chain: mockChain,
       assets: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4

@@ -8,14 +8,14 @@ import {
   getNativeAssetSymbol,
   hasDryRunSupport
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import type {
   HopProcessParams,
   TDryRunChain,
-  TDryRunNodeResult,
-  TDryRunNodeResultInternal,
+  TDryRunChainResult,
+  TDryRunChainResultInternal,
   THopInfo
 } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
@@ -25,7 +25,7 @@ import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 const getFailureInfo = (
-  results: Partial<Record<TDryRunChain, TDryRunNodeResultInternal | undefined>>,
+  results: Partial<Record<TDryRunChain, TDryRunChainResultInternal | undefined>>,
   hops: THopInfo[]
 ): { failureReason?: string; failureChain?: TDryRunChain } => {
   // Check standard chains first for backwards compatibility
@@ -58,7 +58,7 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const originDryRun = await api.getDryRunCall({
     tx,
-    node: origin,
+    chain: origin,
     address: senderAddress,
     feeAsset: resolvedFeeAsset
   })
@@ -74,7 +74,7 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryRun
 
-  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TDryRunNodeResult> => {
+  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TDryRunChainResult> => {
     const {
       api: hopApi,
       currentChain,
@@ -88,7 +88,7 @@ export const dryRunInternal = async <TApi, TRes>(
     if (!hasDryRunSupport(currentChain)) {
       return {
         success: false,
-        failureReason: `DryRunApi is not available on node ${currentChain}`
+        failureReason: `DryRunApi is not available on chain ${currentChain}`
       }
     }
 
@@ -98,7 +98,7 @@ export const dryRunInternal = async <TApi, TRes>(
         Version.V4
       ),
       xcm: forwardedXcms[1][0],
-      node: currentChain,
+      chain: currentChain,
       origin: currentOrigin,
       asset: currentAsset,
       feeAsset: resolvedFeeAsset,
@@ -150,10 +150,10 @@ export const dryRunInternal = async <TApi, TRes>(
   })
 
   // Process Ethereum bridge fees
-  const assetHubNode = `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
-  const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
+  const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
   const processedBridgeHub = traversalResult.bridgeHub?.success
-    ? await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubNode)
+    ? await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
     : traversalResult.bridgeHub
 
   // Update bridge hub in hops if needed
@@ -164,7 +164,7 @@ export const dryRunInternal = async <TApi, TRes>(
     traversalResult.bridgeHub.success &&
     processedBridgeHub.fee !== traversalResult.bridgeHub.fee
   ) {
-    const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubNode)
+    const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1 && traversalResult.hops[bridgeHubHopIndex].result.success) {
       traversalResult.hops[bridgeHubHopIndex].result = {
         ...traversalResult.hops[bridgeHubHopIndex].result,
@@ -183,12 +183,12 @@ export const dryRunInternal = async <TApi, TRes>(
   const assetHubWithCurrency = traversalResult.assetHub?.success
     ? {
         ...traversalResult.assetHub,
-        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubNode)
+        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubChain)
       }
     : traversalResult.assetHub
 
   const bridgeHubWithCurrency = processedBridgeHub?.success
-    ? { ...processedBridgeHub, currency: getNativeAssetSymbol(bridgeHubNode) }
+    ? { ...processedBridgeHub, currency: getNativeAssetSymbol(bridgeHubChain) }
     : processedBridgeHub
 
   const destinationWithCurrency = traversalResult.destination?.success

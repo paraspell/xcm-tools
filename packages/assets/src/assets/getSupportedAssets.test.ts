@@ -34,7 +34,7 @@ vi.mock('./filterEthCompatibleAssets', () => ({
 describe('getSupportedAssets', () => {
   it('should return Ethereum assets when either origin or destination is Ethereum', () => {
     const ethAssets = [{ symbol: 'ETH', assetId: '1' }]
-    vi.mocked(getOtherAssets).mockImplementation(node => (node === 'Ethereum' ? ethAssets : []))
+    vi.mocked(getOtherAssets).mockImplementation(chain => (chain === 'Ethereum' ? ethAssets : []))
 
     vi.mocked(filterEthCompatibleAssets).mockReturnValue([])
 
@@ -56,9 +56,9 @@ describe('getSupportedAssets', () => {
 
     const ethCompatible = [{ symbol: 'ETH', assetId: '1' }]
 
-    vi.mocked(getOtherAssets).mockImplementation(node => {
-      if (node === 'Moonbeam') return moonbeamAssets
-      if (node === 'Ethereum') return [{ symbol: 'WETH', assetId: '999' }]
+    vi.mocked(getOtherAssets).mockImplementation(chain => {
+      if (chain === 'Moonbeam') return moonbeamAssets
+      if (chain === 'Ethereum') return [{ symbol: 'WETH', assetId: '999' }]
       return []
     })
 
@@ -85,9 +85,9 @@ describe('getSupportedAssets', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('MYTH')
     vi.mocked(isSymbolMatch).mockImplementation((symbol1, symbol2) => symbol1 === symbol2)
 
-    vi.mocked(getOtherAssets).mockImplementation(node => {
-      if (node === 'Ethereum') return ethereumAssets
-      if (node === 'Mythos') return []
+    vi.mocked(getOtherAssets).mockImplementation(chain => {
+      if (chain === 'Ethereum') return ethereumAssets
+      if (chain === 'Mythos') return []
       return []
     })
 
@@ -104,7 +104,7 @@ describe('getSupportedAssets', () => {
   it('should return DOT and KSM assets when origin and destination are AssetHubPolkadot and AssetHubKusama', () => {
     const mockDOTAsset = { symbol: 'DOT', assetId: '100' }
     const mockKSMAsset = { symbol: 'KSM', assetId: '200' }
-    vi.mocked(getAssets).mockImplementation(_node => {
+    vi.mocked(getAssets).mockImplementation(_chain => {
       return [mockDOTAsset, mockKSMAsset]
     })
 
@@ -121,9 +121,9 @@ describe('getSupportedAssets', () => {
       { symbol: 'DOT', assetId: '100' }
     ]
     const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400' }]
-    vi.mocked(getAssets).mockImplementation(node => {
-      if (node === 'Phala') return mockOriginAssets
-      if (node === 'Polkadot') return mockDestinationAssets
+    vi.mocked(getAssets).mockImplementation(chain => {
+      if (chain === 'Phala') return mockOriginAssets
+      if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
 
@@ -134,9 +134,9 @@ describe('getSupportedAssets', () => {
   it('should return empty array if no common assets between origin and destination', () => {
     const mockOriginAssets = [{ symbol: 'PHA', assetId: '300' }]
     const mockDestinationAssets = [{ symbol: 'DOT', assetId: '100' }]
-    vi.mocked(getAssets).mockImplementation(node => {
-      if (node === 'Phala') return mockOriginAssets
-      if (node === 'Polkadot') return mockDestinationAssets
+    vi.mocked(getAssets).mockImplementation(chain => {
+      if (chain === 'Phala') return mockOriginAssets
+      if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
 
@@ -148,9 +148,9 @@ describe('getSupportedAssets', () => {
     const mockOriginAssets = [{ symbol: 'PHA', assetId: '300' }]
     const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400' }]
     const mockWETHAsset = { symbol: 'WETH', assetId: '500' }
-    vi.mocked(getAssets).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return mockOriginAssets
-      if (node === 'BifrostPolkadot') return mockDestinationAssets
+    vi.mocked(getAssets).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return mockOriginAssets
+      if (chain === 'BifrostPolkadot') return mockDestinationAssets
       return []
     })
     vi.mocked(getOtherAssets).mockReturnValue([mockWETHAsset])

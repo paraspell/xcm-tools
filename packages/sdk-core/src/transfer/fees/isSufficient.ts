@@ -4,15 +4,15 @@ import {
   getNativeAssetSymbol,
   isSymbolMatch
 } from '@paraspell/assets'
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets'
 
 export const isSufficientOrigin = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  origin: TNodeWithRelayChains,
-  destination: TNodeWithRelayChains,
+  origin: TSubstrateChain,
+  destination: TChain,
   senderAddress: string,
   feeNative: bigint,
   currency: WithComplexAmount<TCurrencyCore>,
@@ -27,7 +27,7 @@ export const isSufficientOrigin = async <TApi, TRes>(
 
   const balanceNative = await getBalanceNativeInternal({
     api,
-    node: origin,
+    chain: origin,
     address: senderAddress
   })
 
@@ -43,7 +43,7 @@ export const isSufficientOrigin = async <TApi, TRes>(
 
     const balanceAsset = await getAssetBalance({
       api,
-      node: origin,
+      chain: origin,
       address: senderAddress,
       currency
     })
@@ -60,7 +60,7 @@ export const isSufficientOrigin = async <TApi, TRes>(
 
 export const isSufficientDestination = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  destination: TNodeWithRelayChains,
+  destination: TChain,
   address: string,
   amount: bigint,
   asset: TAssetInfo,
@@ -76,7 +76,7 @@ export const isSufficientDestination = async <TApi, TRes>(
 
   const nativeBalance = await getBalanceNativeInternal({
     api,
-    node: destination,
+    chain: destination,
     address: address
   })
 

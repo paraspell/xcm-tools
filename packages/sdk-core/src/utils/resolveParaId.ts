@@ -1,6 +1,6 @@
 import { isTLocation } from '@paraspell/sdk-common'
 
-import { getParaId } from '../nodes/config'
+import { getParaId } from '../chains/config'
 import type { TDestination } from '../types'
 
 export const resolveParaId = (paraId: number | undefined, destination: TDestination) => {

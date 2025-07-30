@@ -16,34 +16,34 @@ import { getAssetBalanceInternal } from './balance/getAssetBalance'
 export const getTransferableAmountInternal = async <TApi, TRes>({
   api,
   senderAddress,
-  origin: node,
+  origin: chain,
   destination,
   currency,
   builder,
   feeAsset
 }: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
-  validateAddress(senderAddress, node, false)
+  validateAddress(senderAddress, chain, false)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, node, destination, currency)
+    ? resolveFeeAsset(feeAsset, chain, destination, currency)
     : undefined
 
-  const asset = findAssetInfoOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(chain, currency, null)
 
   const balance = await getAssetBalanceInternal({
     api,
     address: senderAddress,
-    node,
+    chain: chain,
     currency
   })
 
-  const ed = getExistentialDepositOrThrow(node, currency)
+  const ed = getExistentialDepositOrThrow(chain, currency)
 
-  const isNativeAsset = getNativeAssetSymbol(node) === asset.symbol
+  const isNativeAsset = getNativeAssetSymbol(chain) === asset.symbol
 
   const shouldSubstractFee =
     isNativeAsset ||
-    (node === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+    (chain === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
 
   let feeToSubtract = 0n
 
@@ -51,8 +51,8 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     const { fee } = await attemptDryRunFee({
       api,
       builder,
-      origin: node,
-      destination: node,
+      origin: chain,
+      destination: chain,
       senderAddress,
       feeAsset,
       currency,
@@ -61,7 +61,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
 
     if (fee === undefined) {
       throw new InvalidParameterError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${node}.`
+        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${chain}.`
       )
     }
     feeToSubtract = fee

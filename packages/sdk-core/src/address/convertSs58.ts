@@ -1,6 +1,6 @@
 import { blake2b } from '@noble/hashes/blake2'
-import { getAssetsObject, isNodeEvm } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { getAssetsObject, isChainEvm } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
 import { isAddress } from 'viem'
 
@@ -61,11 +61,11 @@ export const encodeSs58 = (payload: Uint8Array, network: number): string => {
 export const convertSs58 = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: string,
-  node: TNodeDotKsmWithRelayChains
+  chain: TSubstrateChain
 ) => {
   const isEvmAddress = isAddress(address)
 
-  if (isEvmAddress && isNodeEvm(node)) {
+  if (isEvmAddress && isChainEvm(chain)) {
     return address
   }
 
@@ -73,11 +73,11 @@ export const convertSs58 = <TApi, TRes>(
     throw new InvalidParameterError(`Cannot convert EVM address to SS58.`)
   }
 
-  if (isNodeEvm(node)) {
+  if (isChainEvm(chain)) {
     throw new InvalidParameterError(`Cannot convert SS58 address to EVM.`)
   }
 
-  const { ss58Prefix } = getAssetsObject(node)
+  const { ss58Prefix } = getAssetsObject(chain)
   const publicKey = api.accountToUint8a(address)
   return encodeSs58(deriveAccountId(publicKey), ss58Prefix)
 }

@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TLocation, TNode } from '@paraspell/sdk';
+import type { TLocation, TChain } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
@@ -28,19 +28,19 @@ const mockApi = {
 const serializedExtrinsics = [
   {
     api: mockApi,
-    node: 'Astar',
+    chain: 'Astar',
     tx: tx,
     type: 'TRANSFER',
   },
   {
     api: mockApi,
-    node: 'Acala',
+    chain: 'Acala',
     tx: tx,
     type: 'SWAP',
   },
   {
     api: mockApi,
-    node: 'Moonbeam',
+    chain: 'Moonbeam',
     tx: tx,
     type: 'TRANSFER',
   },
@@ -98,7 +98,7 @@ describe('RouterService', () => {
     recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
   };
 
-  const invalidNode = 'Astarr';
+  const invalidChain = 'Astarr';
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -122,7 +122,7 @@ describe('RouterService', () => {
       const result = await service.generateExtrinsics(options);
 
       result.forEach((transaction, index) => {
-        expect(transaction.node).toBe(serializedExtrinsics[index].node);
+        expect(transaction.chain).toBe(serializedExtrinsics[index].chain);
         expect(transaction.tx).toBe(mockHex);
         expect(transaction.type).toBe(serializedExtrinsics[index].type);
       });
@@ -145,7 +145,7 @@ describe('RouterService', () => {
       const result = await service.generateExtrinsics(modifiedOptions);
 
       result.forEach((transaction, index) => {
-        expect(transaction.node).toBe(serializedExtrinsics[index].node);
+        expect(transaction.chain).toBe(serializedExtrinsics[index].chain);
         expect(transaction.tx).toBe(mockHex);
         expect(transaction.type).toBe(serializedExtrinsics[index].type);
       });
@@ -155,10 +155,10 @@ describe('RouterService', () => {
       expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
     });
 
-    it('should throw BadRequestException for invalid from node', async () => {
+    it('should throw BadRequestException for invalid from chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        from: invalidNode as TNode,
+        from: invalidChain as TChain,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -168,10 +168,10 @@ describe('RouterService', () => {
       expect(builderMock.from).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid to node', async () => {
+    it('should throw BadRequestException for invalid to chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        to: invalidNode as TNode,
+        to: invalidChain as TChain,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -180,10 +180,10 @@ describe('RouterService', () => {
       expect(builderMock.from).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid exchange node', async () => {
+    it('should throw BadRequestException for invalid exchange chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        exchange: invalidNode as TNode,
+        exchange: invalidChain as TChain,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -195,7 +195,7 @@ describe('RouterService', () => {
     it('should throw BadRequestException for invalid injector address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        senderAddress: invalidNode,
+        senderAddress: invalidChain,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -208,7 +208,7 @@ describe('RouterService', () => {
     it('should throw BadRequestException for invalid recipient address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        recipientAddress: invalidNode,
+        recipientAddress: invalidChain,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -267,10 +267,10 @@ describe('RouterService', () => {
       expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
     });
 
-    it('should throw BadRequestException for invalid from node', async () => {
+    it('should throw BadRequestException for invalid from chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        from: invalidNode as TNode,
+        from: invalidChain as TChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
@@ -280,10 +280,10 @@ describe('RouterService', () => {
       expect(builderMock.from).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid to node', async () => {
+    it('should throw BadRequestException for invalid to chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        to: invalidNode as TNode,
+        to: invalidChain as TChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
@@ -292,10 +292,10 @@ describe('RouterService', () => {
       expect(builderMock.from).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid exchange node', async () => {
+    it('should throw BadRequestException for invalid exchange chain', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        exchange: invalidNode as TNode,
+        exchange: invalidChain as TChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
@@ -307,7 +307,7 @@ describe('RouterService', () => {
     it('should throw BadRequestException for invalid injector address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        senderAddress: invalidNode,
+        senderAddress: invalidChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
@@ -320,7 +320,7 @@ describe('RouterService', () => {
     it('should throw BadRequestException for invalid recipient address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        recipientAddress: invalidNode,
+        recipientAddress: invalidChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(

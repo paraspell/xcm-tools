@@ -83,7 +83,7 @@ const AssetClaim = () => {
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
-        api = await Sdk.createApiInstanceForNode(from);
+        api = await Sdk.createChainClient(from);
         tx = await getTxFromApi(
           {
             from,

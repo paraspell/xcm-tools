@@ -1,10 +1,10 @@
 import { MIN_FEE, RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { createBeneficiaryLocation, createMultiAsset, localizeLocation } from '../../utils'
+import { createAsset, createBeneficiaryLocation, localizeLocation } from '../../utils'
 
 export const createCustomXcm = <TApi, TRes>(
-  { origin, dest, reserve, asset, options }: TTypeAndThenCallContext<TApi, TRes>,
+  { origin, dest, reserve, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
   isDotAsset: boolean,
   fees: TTypeAndThenFees = {
     reserveFee: MIN_FEE,
@@ -15,12 +15,12 @@ export const createCustomXcm = <TApi, TRes>(
   const { destination, version, address, paraIdTo } = options
   const { reserveFee, refundFee, destFee } = fees
 
-  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : asset.multiLocation
+  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
-  const multiAsset = createMultiAsset(
+  const asset = createAsset(
     version,
-    asset.amount,
-    localizeLocation(dest.chain, asset.multiLocation)
+    assetInfo.amount,
+    localizeLocation(dest.chain, assetInfo.location)
   )
 
   const depositInstruction = {
@@ -28,7 +28,7 @@ export const createCustomXcm = <TApi, TRes>(
       assets: {
         Wild: {
           AllOf: {
-            id: multiAsset.id,
+            id: asset.id,
             fun: 'Fungible'
           }
         }
@@ -45,15 +45,11 @@ export const createCustomXcm = <TApi, TRes>(
 
   if (!isDotAsset)
     assetsFilter.push(
-      createMultiAsset(
-        version,
-        reserveFee + destFee,
-        localizeLocation(reserve.chain, RELAY_LOCATION)
-      )
+      createAsset(version, reserveFee + destFee, localizeLocation(reserve.chain, RELAY_LOCATION))
     )
 
   assetsFilter.push(
-    createMultiAsset(version, asset.amount, localizeLocation(reserve.chain, asset.multiLocation))
+    createAsset(version, assetInfo.amount, localizeLocation(reserve.chain, assetInfo.location))
   )
 
   return origin.chain !== reserve.chain && dest.chain !== reserve.chain
@@ -69,9 +65,9 @@ export const createCustomXcm = <TApi, TRes>(
           xcm: [
             {
               BuyExecution: {
-                fees: createMultiAsset(
+                fees: createAsset(
                   version,
-                  !isDotAsset ? destFee : asset.amount - reserveFee - refundFee,
+                  !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee,
                   feeAssetLocation
                 ),
                 weight_limit: 'Unlimited'

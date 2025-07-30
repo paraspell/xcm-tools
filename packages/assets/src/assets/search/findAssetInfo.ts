@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
 import { isOverrideLocationSpecifier } from '../../guards'
 import type { TAssetInfo, TCurrencyInput, TForeignAssetInfo } from '../../types'
@@ -9,9 +9,9 @@ import { findAssetInfoByLoc } from './findAssetInfoByLoc'
 import { findAssetInfoBySymbol } from './findAssetInfoBySymbol'
 
 export const findAssetInfo = (
-  node: TNodeWithRelayChains,
+  chain: TChain,
   currency: TCurrencyInput,
-  destination: TNodeWithRelayChains | null
+  destination: TChain | null
 ): TAssetInfo | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
@@ -20,7 +20,7 @@ export const findAssetInfo = (
     return null
   }
 
-  const { otherAssets, nativeAssets } = getAssetsObject(node)
+  const { otherAssets, nativeAssets } = getAssetsObject(chain)
 
   const isEthereumDestination = destination === 'Ethereum'
 

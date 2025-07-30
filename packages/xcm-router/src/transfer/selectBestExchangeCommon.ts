@@ -3,15 +3,15 @@ import {
   getRelayChainOf,
   hasSupportForAsset,
   InvalidParameterError,
-  type TNode,
+  type TChain,
 } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
-import { EXCHANGE_NODES } from '../consts';
-import type ExchangeNode from '../dexNodes/DexNode';
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import { EXCHANGE_CHAINS } from '../consts';
+import type ExchangeChain from '../exchanges/ExchangeChain';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
 import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 import { type TCommonTransferOptions } from '../types';
@@ -23,12 +23,12 @@ export const selectBestExchangeCommon = async <
   options: T,
   originApi: PolkadotClient | undefined,
   computeAmountOut: (
-    dex: ExchangeNode,
+    dex: ExchangeChain,
     assetFromExchange: TRouterAsset,
     assetTo: TRouterAsset,
     options: T,
   ) => Promise<BigNumber>,
-): Promise<ExchangeNode> => {
+): Promise<ExchangeChain> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
 
   const assetFromOrigin = from ? findAssetInfo(from, currencyFrom, null) : undefined;
@@ -49,28 +49,28 @@ export const selectBestExchangeCommon = async <
     `Selecting best exchange for asset pair ${assetFromOrigin?.symbol} -> ${JSON.stringify('symbol' in currencyTo ? currencyTo.symbol : '')}`,
   );
 
-  const filteredExchangeNodes = Array.isArray(exchange) ? exchange : EXCHANGE_NODES;
+  const filteredExchangeChains = Array.isArray(exchange) ? exchange : EXCHANGE_CHAINS;
 
-  let bestExchange: ExchangeNode | undefined;
+  let bestExchange: ExchangeChain | undefined;
   let maxAmountOut: BigNumber = new BigNumber(0);
-  const errors = new Map<TNode, Error>();
+  const errors = new Map<TChain, Error>();
   let triedAnyExchange = false;
-  for (const exchangeNode of filteredExchangeNodes) {
-    const dex = createDexNodeInstance(exchangeNode);
+  for (const exchangeChain of filteredExchangeChains) {
+    const dex = createExchangeInstance(exchangeChain);
 
-    const originSpecified = from && from !== dex.node;
-    const destinationSpecified = to && to !== dex.node;
+    const originSpecified = from && from !== dex.chain;
+    const destinationSpecified = to && to !== dex.chain;
 
     const assetFromExchange =
       originSpecified && assetFromOrigin
-        ? getExchangeAssetByOriginAsset(dex.node, dex.exchangeNode, assetFromOrigin)
-        : getExchangeAsset(dex.exchangeNode, currencyFrom);
+        ? getExchangeAssetByOriginAsset(dex.chain, dex.exchangeChain, assetFromOrigin)
+        : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
     if (!assetFromExchange) {
       continue;
     }
 
-    const assetTo = getExchangeAsset(dex.exchangeNode, currencyTo, true);
+    const assetTo = getExchangeAsset(dex.exchangeChain, currencyTo, true);
 
     if (!assetTo) {
       continue;
@@ -80,17 +80,17 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
-    if (from && getRelayChainOf(from) !== getRelayChainOf(dex.node)) {
+    if (from && getRelayChainOf(from) !== getRelayChainOf(dex.chain)) {
       continue;
     }
 
     triedAnyExchange = true;
 
-    Logger.log(`Checking ${exchangeNode}...`);
+    Logger.log(`Checking ${exchangeChain}...`);
 
-    const res = await canBuildToExchangeTx(options, dex.node, originApi, assetFromOrigin);
+    const res = await canBuildToExchangeTx(options, dex.chain, originApi, assetFromOrigin);
     if (!res.success) {
-      errors.set(dex.node, res.error);
+      errors.set(dex.chain, res.error);
       continue;
     }
 
@@ -102,7 +102,7 @@ export const selectBestExchangeCommon = async <
       }
     } catch (e) {
       if (e instanceof Error) {
-        errors.set(dex.node, e);
+        errors.set(dex.chain, e);
       }
       continue;
     }
@@ -123,6 +123,6 @@ export const selectBestExchangeCommon = async <
         .join('\n\n')}`,
     );
   }
-  Logger.log(`Selected exchange: ${bestExchange.node}`);
+  Logger.log(`Selected exchange: ${bestExchange.chain}`);
   return bestExchange;
 };

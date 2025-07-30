@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
-import type { TDryRunNodeResultInternal, TGetFeeForDestNodeOptions } from '../../types'
+import type { TDryRunChainResultInternal, TGetFeeForDestChainOptions } from '../../types'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
@@ -23,7 +23,7 @@ vi.mock('./isSufficient', () => ({
   isSufficientDestination: vi.fn()
 }))
 
-const createApi = (dryRunRes?: TDryRunNodeResultInternal) =>
+const createApi = (dryRunRes?: TDryRunChainResultInternal) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
   }) as unknown as IPolkadotApi<unknown, unknown>
@@ -51,7 +51,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestNodeOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -89,7 +89,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestNodeOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -128,7 +128,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'FOO', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestNodeOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -149,7 +149,7 @@ describe('getDestXcmFee', () => {
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const dryRunObj: TDryRunNodeResultInternal = {
+    const dryRunObj: TDryRunChainResultInternal = {
       success: true,
       fee: 200n,
       forwardedXcms: [[{ x: 1 }]],
@@ -161,13 +161,13 @@ describe('getDestXcmFee', () => {
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
-      prevNode: 'Moonbeam',
+      prevChain: 'Moonbeam',
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
-    } as TGetFeeForDestNodeOptions<unknown, unknown>)
+    } as TGetFeeForDestChainOptions<unknown, unknown>)
 
     expect(res).toEqual({
       fee: 200n,
@@ -189,13 +189,13 @@ describe('getDestXcmFee', () => {
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
-      prevNode: 'Moonbeam',
+      prevChain: 'Moonbeam',
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
-    } as TGetFeeForDestNodeOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -216,13 +216,13 @@ describe('getDestXcmFee', () => {
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
-      prevNode: 'Moonbeam',
+      prevChain: 'Moonbeam',
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: true
-    } as TGetFeeForDestNodeOptions<unknown, unknown>)
+    } as TGetFeeForDestChainOptions<unknown, unknown>)
 
     expect(res).toEqual({ dryRunError: 'boom' })
     expect('fee' in res).toBe(false)

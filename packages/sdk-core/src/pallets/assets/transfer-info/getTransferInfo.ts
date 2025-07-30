@@ -3,9 +3,9 @@ import {
   getExistentialDepositOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
-  isNodeEvm
+  isChainEvm
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
@@ -28,7 +28,7 @@ export const getTransferInfo = async <TApi, TRes>({
   currency,
   feeAsset
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
-  if (isNodeEvm(origin) && !ahAddress) {
+  if (isChainEvm(origin) && !ahAddress) {
     throw new InvalidParameterError(`ahAddress is required for EVM origin ${origin}.`)
   }
 
@@ -47,19 +47,19 @@ export const getTransferInfo = async <TApi, TRes>({
         ? await getAssetBalanceInternal({
             api,
             address: senderAddress,
-            node: origin,
+            chain: origin,
             currency: feeAsset
           })
         : await getBalanceNativeInternal({
             api,
             address: senderAddress,
-            node: origin
+            chain: origin
           })
 
     const originBalance = await getAssetBalanceInternal({
       api,
       address: senderAddress,
-      node: origin,
+      chain: origin,
       currency
     })
 
@@ -85,7 +85,7 @@ export const getTransferInfo = async <TApi, TRes>({
 
     if (originFee === undefined) {
       throw new InvalidParameterError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${origin}.`
+        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${origin}.`
       )
     }
 
@@ -108,9 +108,9 @@ export const getTransferInfo = async <TApi, TRes>({
     if (assetHubFeeResult) {
       assetHub = await buildHopInfo({
         api,
-        node: `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains,
+        chain: `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain,
         feeData: assetHubFeeResult as { fee: bigint; currency: string },
-        originNode: origin,
+        originChain: origin,
         currency,
         senderAddress,
         ahAddress
@@ -119,12 +119,12 @@ export const getTransferInfo = async <TApi, TRes>({
 
     let bridgeHub
     if (bridgeHubFeeResult) {
-      const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+      const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
       bridgeHub = await buildHopInfo({
         api,
-        node: bridgeHubNode,
+        chain: bridgeHubChain,
         feeData: bridgeHubFeeResult as { fee: bigint; currency: string },
-        originNode: origin,
+        originChain: origin,
         currency,
         senderAddress,
         ahAddress
@@ -138,9 +138,9 @@ export const getTransferInfo = async <TApi, TRes>({
         hops.map(async hop => {
           const result = await buildHopInfo({
             api,
-            node: hop.chain as TNodeDotKsmWithRelayChains,
+            chain: hop.chain as TSubstrateChain,
             feeData: hop.result as { fee: bigint; currency: string },
-            originNode: origin,
+            originChain: origin,
             currency,
             senderAddress,
             ahAddress

@@ -1,11 +1,11 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from '@paraspell/assets'
 
-import { getParaId } from '../../../nodes/config'
+import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
-import { localizeLocation } from '../../location'
 import { createAsset } from '../../asset'
+import { localizeLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
@@ -151,7 +151,7 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
 
   const finalXcm = chain
     ? createBaseExecuteXcm({
-        chain: chain,
+        chain,
         destChain: exchangeChain,
         assetInfo: assetInfoFrom,
         paraIdTo: getParaId(exchangeChain),

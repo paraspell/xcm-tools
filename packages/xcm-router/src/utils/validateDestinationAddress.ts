@@ -1,16 +1,16 @@
-import { InvalidAddressError, isNodeEvm, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
-export const validateDestinationAddress = (address: string, destination: TNodeWithRelayChains) => {
+export const validateDestinationAddress = (address: string, destination: TChain) => {
   if (typeof address === 'string') {
-    const isDestinationEvm = isNodeEvm(destination);
+    const isDestinationEvm = isChainEvm(destination);
 
     const isEthereumAddress = ethers.isAddress(address);
 
     if (isDestinationEvm) {
       if (!isEthereumAddress) {
         throw new InvalidAddressError(
-          'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.',
+          'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.',
         );
       }
     } else {

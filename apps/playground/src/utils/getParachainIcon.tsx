@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TChain } from '@paraspell/sdk';
 import { getParaId, getRelayChainOf } from '@paraspell/sdk';
 import {
   prodRelayKusama,
@@ -7,33 +7,33 @@ import {
   testRelayWestend,
 } from '@polkadot/apps-config/endpoints';
 
-export const getParachainIcon = (node?: TNodeWithRelayChains) => {
-  if (!node) {
+export const getParachainIcon = (chain?: TChain) => {
+  if (!chain) {
     return null;
   }
 
-  if (node === 'Polkadot') {
+  if (chain === 'Polkadot') {
     return prodRelayPolkadot.ui.logo;
   }
 
-  if (node === 'Kusama') {
+  if (chain === 'Kusama') {
     return prodRelayKusama.ui.logo;
   }
 
-  if (node === 'Westend') {
+  if (chain === 'Westend') {
     return testRelayWestend.ui.logo;
   }
 
-  if (node === 'Paseo') {
+  if (chain === 'Paseo') {
     return testRelayPaseo.ui.logo;
   }
 
-  if (node === 'Ethereum') {
+  if (chain === 'Ethereum') {
     return '/ethereum.svg';
   }
 
-  const paraId = getParaId(node);
-  const ecosystem = getRelayChainOf(node);
+  const paraId = getParaId(chain);
+  const ecosystem = getRelayChainOf(chain);
 
   let relay;
   switch (ecosystem) {

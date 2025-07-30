@@ -1,15 +1,15 @@
 import { getAssetsObject } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
-import { getNodeConfig } from '../../../nodes/config'
+import { getChainConfig } from '../../../chains/config'
 
 // Partially inspired by Moonbeam XCM-SDK
 // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/builder/src/contract/contracts/Xtokens/Xtokens.ts#L126
 export const getDestinationLocation = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: string,
-  destination: TNodeDotKsmWithRelayChains
+  destination: TSubstrateChain
 ) => {
   const { isEVM } = getAssetsObject(destination)
   const accountType = isEVM ? '03' : '01'
@@ -18,7 +18,7 @@ export const getDestinationLocation = <TApi, TRes>(
 
   const acc = `0x${accountType}${addressHex}00`
 
-  const { paraId } = getNodeConfig(destination)
+  const { paraId } = getChainConfig(destination)
 
   return [1, paraId ? [`0x0000000${paraId.toString(16)}`, acc] : [acc]]
 }

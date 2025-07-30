@@ -1,6 +1,6 @@
-import { hasJunction, Parents, TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, Parents, TLocation } from '@paraspell/sdk-common'
 
-export const transformLocation = (location: TMultiLocation, paraId: number): TMultiLocation => {
+export const transformLocation = (location: TLocation, paraId: number): TLocation => {
   if (
     location.parents !== 0 ||
     hasJunction(location, 'Parachain') ||

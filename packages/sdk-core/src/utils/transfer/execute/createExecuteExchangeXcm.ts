@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../../constants'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
@@ -9,7 +9,7 @@ import { createBeneficiaryLocation, localizeLocation } from '../../location'
 
 export const createExecuteExchangeXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TSubstrateChain,
   weight: TWeight,
   originExecutionFee: bigint,
   destExecutionFee: bigint
