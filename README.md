@@ -63,6 +63,14 @@ packages | - XCM SDK
 
 **These commands will be run on all packages in the monorepo.**
 
+Make sure to run the following two commands first (from repository root), before running any others below:
+
+- Install necessary node modules using `pnpm install`
+
+- Build all packages and apps using `pnpm build`
+
+Afterwards, you should be able to use any of the following commands (from repository root):
+
 - Run compilation using ```pnpm compile```
 
 - Run formatter using `pnpm format:check`
@@ -76,8 +84,6 @@ packages | - XCM SDK
 - Run integration tests using `pnpm test:integration`
 
 - Run end-to-end tests using `pnpm test:e2e`
-  
-- Build all packages and apps using `pnpm build`
 
 - Launch the XCM Tools Playground from the root using `pnpm run:playground`
 
