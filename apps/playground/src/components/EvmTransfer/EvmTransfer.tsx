@@ -8,7 +8,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TNode } from '@paraspell/sdk';
+import type { TChain } from '@paraspell/sdk';
 import { EvmBuilder } from '@paraspell/sdk';
 import {
   approveToken,
@@ -165,14 +165,14 @@ const EvmTransfer = () => {
       throw new Error('Provider not initialized');
     }
 
-    const getChain = (node: TNode) => {
-      if (node === 'Moonbeam') {
+    const getChain = (chain: TChain) => {
+      if (chain === 'Moonbeam') {
         return moonbeam;
       }
-      if (node === 'Moonriver') {
+      if (chain === 'Moonriver') {
         return moonriver;
       }
-      if (node === 'Darwinia') {
+      if (chain === 'Darwinia') {
         return darwinia;
       }
       return mainnet;

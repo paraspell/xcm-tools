@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { NODE_NAMES } from '../constants'
-import type { TNodeWithRelayChains } from '../types'
+import { CHAIN_NAMES } from '../constants'
+import type { TChainWithRelayChains } from '../types'
 import { isRelayChain, isSystemChain } from './chain'
 
 describe('isRelayChain', () => {
@@ -15,16 +15,16 @@ describe('isRelayChain', () => {
     expect(result).toBe(true)
   })
 
-  NODE_NAMES.forEach(node => {
-    it(`should return false for ${node}`, () => {
-      const result = isRelayChain(node)
+  CHAIN_NAMES.forEach(chain => {
+    it(`should return false for ${chain}`, () => {
+      const result = isRelayChain(chain)
       expect(result).toBe(false)
     })
   })
 })
 
 describe('isSystemChain', () => {
-  const systemChains: TNodeWithRelayChains[] = [
+  const systemChains: TChainWithRelayChains[] = [
     'AssetHubPolkadot',
     'AssetHubKusama',
     'AssetHubWestend',
@@ -63,10 +63,10 @@ describe('isSystemChain', () => {
     expect(result).toBe(true)
   })
 
-  NODE_NAMES.forEach(node => {
-    if (!systemChains.includes(node)) {
-      it(`should return false for ${node}`, () => {
-        const result = isSystemChain(node)
+  CHAIN_NAMES.forEach(chain => {
+    if (!systemChains.includes(chain)) {
+      it(`should return false for ${chain}`, () => {
+        const result = isSystemChain(chain)
         expect(result).toBe(false)
       })
     }

@@ -1,10 +1,10 @@
 import { isAssetEqual, type TAsset } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
-import { localizeLocation } from '../../location'
 import { createAsset } from '../../asset'
+import { localizeLocation } from '../../location'
 import { getAssetReserveChain } from './getAssetReserveChain'
 
 export type TExecuteContext = {
@@ -15,7 +15,7 @@ export type TExecuteContext = {
   assetLocalizedToReserve: TAsset
   feeAsset?: TAsset
   feeAssetLocalized?: TAsset
-  reserveChain: TNodeDotKsmWithRelayChains
+  reserveChain: TChainDotKsmWithRelayChains
 }
 
 export const prepareExecuteContext = ({

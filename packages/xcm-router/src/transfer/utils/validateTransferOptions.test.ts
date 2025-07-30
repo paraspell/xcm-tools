@@ -23,7 +23,7 @@ describe('validateTransferOptions', () => {
     } as TTransferOptions;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'Cannot use automatic exchange selection without specifying the origin node',
+      'Cannot use automatic exchange selection without specifying the origin chain',
     );
   });
 
@@ -37,7 +37,7 @@ describe('validateTransferOptions', () => {
     } as TTransferOptions;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'Recipient address is required when destination node is specified',
+      'Recipient address is required when destination chain is specified',
     );
   });
 

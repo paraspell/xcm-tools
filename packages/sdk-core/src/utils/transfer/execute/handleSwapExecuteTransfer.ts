@@ -1,14 +1,14 @@
 import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
 import {
-  type TLocation,
-  type TNodeDotKsmWithRelayChains,
-  type TNodePolkadotKusama,
-  type TNodeWithRelayChains
+  type TChainDotKsmWithRelayChains,
+  type TChainPolkadotKusama,
+  type TChainWithRelayChains,
+  type TLocation
 } from '@paraspell/sdk-common'
 
+import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import { getParaId } from '../../../nodes/config'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
 import type {
@@ -46,10 +46,10 @@ const executeDryRun = async <TApi, TRes>(params: TDryRunOptions<TApi, TRes>) => 
 }
 
 const findExchangeHopIndex = (
-  chain: TNodeDotKsmWithRelayChains | undefined,
+  chain: TChainDotKsmWithRelayChains | undefined,
   hops: THopInfo[],
-  exchangeChain: TNodePolkadotKusama,
-  destChain?: TNodeWithRelayChains
+  exchangeChain: TChainPolkadotKusama,
+  destChain?: TChainWithRelayChains
 ): number => {
   // If destChain is undefined, exchange chain is the final destination
   if (!destChain) {
@@ -71,10 +71,10 @@ const findExchangeHopIndex = (
 }
 
 const extractFeesFromDryRun = (
-  chain: TNodeDotKsmWithRelayChains | undefined,
+  chain: TChainDotKsmWithRelayChains | undefined,
   dryRunResult: TDryRunResult,
   exchangeHopIndex: number,
-  destChain?: TNodeWithRelayChains,
+  destChain?: TChainWithRelayChains,
   requireHopsSuccess: boolean = false
 ): TSwapFeeEstimates => {
   const fees: TSwapFeeEstimates = {

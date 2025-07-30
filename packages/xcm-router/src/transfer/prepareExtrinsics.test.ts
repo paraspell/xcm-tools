@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/sdk';
 import { handleSwapExecuteTransfer, type TPapiApi, type TPapiTransaction } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TDestinationInfo, TOriginInfo } from '../types';
 import * as createSwapTxModule from './createSwapTx';
 import { prepareExtrinsics } from './prepareExtrinsics';
@@ -26,19 +26,19 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 const originApi = {} as TPapiApi;
-const dexNode = { node: 'Acala' } as ExchangeNode;
+const dexChain = { chain: 'Acala' } as ExchangeChain;
 
 const baseOptions = {
   origin: {
     api: originApi,
-    node: 'BifrostPolkadot',
+    chain: 'BifrostPolkadot',
   },
   exchange: {
-    baseNode: 'Acala',
+    baseChain: 'Acala',
   },
   destination: {
     address: 'dest',
-    node: 'Crust',
+    chain: 'Crust',
   },
 } as unknown as TBuildTransactionsOptionsModified;
 
@@ -53,10 +53,10 @@ describe('prepareExtrinsics', () => {
   });
 
   test('returns only swap extrinsic when origin & destination match exchange', async () => {
-    const res = await prepareExtrinsics(dexNode, {
+    const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, node: 'Acala' } as TOriginInfo,
-      destination: { ...baseOptions.destination, node: 'Acala' } as TDestinationInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
+      destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });
 
     expect(res).toEqual({
@@ -68,7 +68,7 @@ describe('prepareExtrinsics', () => {
 
     expect(utils.buildToExchangeExtrinsic).not.toHaveBeenCalled();
     expect(utils.buildFromExchangeExtrinsic).not.toHaveBeenCalled();
-    expect(createSwapTxModule.createSwapTx).toHaveBeenCalledWith(dexNode, expect.any(Object));
+    expect(createSwapTxModule.createSwapTx).toHaveBeenCalledWith(dexChain, expect.any(Object));
   });
 
   test('creates transfer-to-exchange when origin differs', async () => {
@@ -76,9 +76,9 @@ describe('prepareExtrinsics', () => {
       'toExchangeTx' as unknown as TPapiTransaction,
     );
 
-    const res = await prepareExtrinsics(dexNode, {
+    const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
-      destination: { ...baseOptions.destination, node: 'Acala' } as TDestinationInfo,
+      destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });
 
     expect(res).toEqual({
@@ -98,9 +98,9 @@ describe('prepareExtrinsics', () => {
       'toDestTx' as unknown as TPapiTransaction,
     );
 
-    const res = await prepareExtrinsics(dexNode, {
+    const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, node: 'Acala' } as TOriginInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
     });
 
     expect(res).toEqual({
@@ -123,7 +123,7 @@ describe('prepareExtrinsics', () => {
       'toDestTx' as unknown as TPapiTransaction,
     );
 
-    const res = await prepareExtrinsics(dexNode, baseOptions);
+    const res = await prepareExtrinsics(dexChain, baseOptions);
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
@@ -138,10 +138,10 @@ describe('prepareExtrinsics', () => {
       'handleSwapExecuteTransferTx' as unknown as TPapiTransaction,
     );
 
-    const assetHubDexNode = {
-      node: 'AssetHubPolkadot',
+    const assetHubDexChain = {
+      chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockReturnValue(500n),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     const optionsWithAssetHub = {
       ...baseOptions,
@@ -150,14 +150,14 @@ describe('prepareExtrinsics', () => {
       recipientAddress: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseNode: 'AssetHubPolkadot',
+        baseChain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
       },
     } as TBuildTransactionsOptionsModified;
 
-    const res = await prepareExtrinsics(assetHubDexNode, optionsWithAssetHub);
+    const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 
     expect(res).toEqual({
       swapTxs: ['handleSwapExecuteTransferTx'],
@@ -166,9 +166,9 @@ describe('prepareExtrinsics', () => {
     });
 
     expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({
-      chain: optionsWithAssetHub.origin?.node,
-      exchangeChain: optionsWithAssetHub.exchange.baseNode,
-      destChain: optionsWithAssetHub.destination?.node,
+      chain: optionsWithAssetHub.origin?.chain,
+      exchangeChain: optionsWithAssetHub.exchange.baseChain,
+      destChain: optionsWithAssetHub.destination?.chain,
       assetInfoFrom: {
         ...optionsWithAssetHub.exchange.assetFrom,
         amount: BigInt(optionsWithAssetHub.amount),
@@ -186,10 +186,10 @@ describe('prepareExtrinsics', () => {
   // Add these test cases to your existing describe block
 
   test('throws error when handleSwapExecuteTransfer fails with non-DryRunFailedError', async () => {
-    const assetHubDexNode = {
-      node: 'AssetHubPolkadot',
+    const assetHubDexChain = {
+      chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockReturnValue(500n),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     const optionsWithAssetHub = {
       ...baseOptions,
@@ -198,7 +198,7 @@ describe('prepareExtrinsics', () => {
       recipientAddress: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseNode: 'AssetHubPolkadot',
+        baseChain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
@@ -208,7 +208,7 @@ describe('prepareExtrinsics', () => {
     const customError = new Error('Network error');
     vi.mocked(handleSwapExecuteTransfer).mockRejectedValue(customError);
 
-    await expect(prepareExtrinsics(assetHubDexNode, optionsWithAssetHub)).rejects.toThrow(
+    await expect(prepareExtrinsics(assetHubDexChain, optionsWithAssetHub)).rejects.toThrow(
       'Network error',
     );
   });
@@ -216,10 +216,10 @@ describe('prepareExtrinsics', () => {
   test('falls back to default swap execution and tests calculateMinAmountOut function', async () => {
     const { DryRunFailedError } = await import('@paraspell/sdk');
 
-    const assetHubDexNode = {
-      node: 'AssetHubPolkadot',
+    const assetHubDexChain = {
+      chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockReturnValueOnce(500n).mockReturnValue(250n),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     const optionsWithAssetHub = {
       ...baseOptions,
@@ -228,7 +228,7 @@ describe('prepareExtrinsics', () => {
       recipientAddress: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseNode: 'AssetHubPolkadot',
+        baseChain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
@@ -251,7 +251,7 @@ describe('prepareExtrinsics', () => {
       'toDestTx' as unknown as TPapiTransaction,
     );
 
-    const res = await prepareExtrinsics(assetHubDexNode, optionsWithAssetHub);
+    const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
@@ -260,7 +260,7 @@ describe('prepareExtrinsics', () => {
       amountOut: 1000n,
     });
     expect(createSwapTxModule.createSwapTx).toHaveBeenCalledWith(
-      assetHubDexNode,
+      assetHubDexChain,
       expect.any(Object),
     );
 

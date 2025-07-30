@@ -12,26 +12,27 @@ import type {
   IPolkadotApi,
   TAssetInfo,
   TBuilderOptions,
+  TChainDotKsmWithRelayChains,
+  TChainPolkadotKusama,
+  TChainWithRelayChains,
   TDryRunCallBaseOptions,
-  TDryRunNodeResultInternal,
+  TDryRunChainResultInternal,
   TDryRunXcmBaseOptions,
   TLocation,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   assertHasLocation,
   BatchMode,
+  ChainNotSupportedError,
   computeFeeFromDryRun,
-  createApiInstanceForNode,
+  createChainClient,
   findAssetInfo,
   getAssetsObject,
+  getChain,
+  getChainProviders,
   getNativeAssetSymbol,
-  getNode,
-  getNodeProviders,
   hasXcmPaymentApiSupport,
   InvalidParameterError,
   isAssetEqual,
@@ -41,7 +42,6 @@ import {
   localizeLocation,
   MissingChainApiError,
   Native,
-  NodeNotSupportedError,
   padFeeBy,
   Parents,
   Version
@@ -114,7 +114,7 @@ const releasePolkadotClient = (ws: string | string[]) => {
   }
 }
 
-const unsupportedNodes = [
+const unsupportedChains = [
   'ComposableFinance',
   'Interlay',
   'CrustShadow',
@@ -122,7 +122,7 @@ const unsupportedNodes = [
   'RobonomicsKusama',
   'Pendulum',
   'Subsocial'
-] as TNodeWithRelayChains[]
+] as TChainWithRelayChains[]
 
 const isHex = (str: string) => {
   return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
@@ -134,7 +134,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private _ttlMs = DEFAULT_TTL_MS
   private initialized = false
   private disconnectAllowed = true
-  private _node: TNodeDotKsmWithRelayChains
+  private _chain: TChainDotKsmWithRelayChains
 
   constructor(config?: TBuilderOptions<TPapiApiOrUrl>) {
     this._config = config
@@ -148,17 +148,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api
   }
 
-  async init(chain: TNodeWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
+  async init(chain: TChainWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
     if (this.initialized || chain === 'Ethereum') {
       return
     }
 
-    if (unsupportedNodes.includes(chain)) {
-      throw new NodeNotSupportedError(`The node ${chain} is not yet supported by the Polkadot API.`)
+    if (unsupportedChains.includes(chain)) {
+      throw new ChainNotSupportedError(
+        `The chain ${chain} is not yet supported by the Polkadot API.`
+      )
     }
 
     this._ttlMs = clientTtlMs
-    this._node = chain
+    this._chain = chain
 
     const apiConfig = this.getApiConfigForChain(chain)
 
@@ -172,7 +174,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     this.initialized = true
   }
 
-  private getApiConfigForChain(chain: TNodeWithRelayChains): TPapiApiOrUrl | undefined {
+  private getApiConfigForChain(chain: TChainWithRelayChains): TPapiApiOrUrl | undefined {
     if (isConfig(this._config)) {
       return this._config.apiOverrides?.[chain]
     }
@@ -181,10 +183,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   private async resolveApi(
     apiConfig: TPapiApiOrUrl | undefined,
-    chain: TNodeDotKsmWithRelayChains
+    chain: TChainDotKsmWithRelayChains
   ): Promise<TPapiApi> {
     if (!apiConfig) {
-      return createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, chain)
+      return createChainClient<TPapiApi, TPapiTransaction>(this, chain)
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
@@ -320,7 +322,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
-    const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
+    const currencySelection = getChain('BifrostPolkadot').getCurrencySelection(asset)
 
     const transformedParameters = transform(currencySelection)
 
@@ -343,10 +345,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
-  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAssetInfo) {
+  async getBalanceForeignXTokens(chain: TChainPolkadotKusama, address: string, asset: TAssetInfo) {
     let pallet = 'Tokens'
 
-    if (node === 'Centrifuge' || node === 'Altair') {
+    if (chain === 'Centrifuge' || chain === 'Altair') {
       pallet = 'OrmlTokens'
     }
 
@@ -390,22 +392,22 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return new PapiApi(isConfig(this._config) ? this._config : undefined)
   }
 
-  async createApiForNode(node: TNodeDotKsmWithRelayChains) {
+  async createApiForChain(chain: TChainDotKsmWithRelayChains) {
     const api = new PapiApi()
-    await api.init(node)
+    await api.init(chain)
     return api
   }
 
   async getDryRunCall({
     tx,
     address,
-    node,
+    chain,
     feeAsset
-  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunNodeResultInternal> {
-    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunChainResultInternal> {
+    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
     }
 
     const DEFAULT_XCM_VERSION = 3
@@ -492,20 +494,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const executionFee = await this.calculateTransactionFee(tx, address)
 
-    const nativeAsset = findAssetInfo(node, { symbol: Native(getNativeAssetSymbol(node)) }, null)
+    const nativeAsset = findAssetInfo(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
 
     const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
     if (
-      hasXcmPaymentApiSupport(node) &&
+      hasXcmPaymentApiSupport(chain) &&
       result.value.local_xcm &&
       hasLocation &&
       nativeAsset &&
-      node !== 'AssetHubPolkadot' &&
-      node !== 'Kusama'
+      chain !== 'AssetHubPolkadot' &&
+      chain !== 'Kusama'
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
-        node,
+        chain,
         result.value.local_xcm,
         feeAsset ?? nativeAsset
       )
@@ -521,7 +523,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const fee = computeFeeFromDryRun(result, node, executionFee, !!feeAsset)
+    const fee = computeFeeFromDryRun(result, chain, executionFee, !!feeAsset)
 
     return Promise.resolve({
       success: true,
@@ -546,7 +548,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async getXcmPaymentApiFee(
-    node: TNodeDotKsmWithRelayChains,
+    chain: TChainDotKsmWithRelayChains,
     xcm: any,
     asset: TAssetInfo
   ): Promise<bigint> {
@@ -555,8 +557,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     assertHasLocation(asset)
 
     const transformedLocation =
-      node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
-        ? localizeLocation(node, asset.location)
+      chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama' || isRelayChain(chain)
+        ? localizeLocation(chain, asset.location)
         : asset.location
 
     const transformedPapiLocation = transform(transformedLocation)
@@ -574,17 +576,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getDryRunXcm({
     originLocation,
     xcm,
-    node,
+    chain,
     origin,
     asset,
     feeAsset,
     originFee,
     amount
-  }: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal> {
-    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal> {
+    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
     }
 
     const transformedOriginLocation = transform(originLocation)
@@ -616,12 +618,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           : forwardedXcms[0].value.interior.value.value
 
     if (
-      hasXcmPaymentApiSupport(node) &&
+      hasXcmPaymentApiSupport(chain) &&
       asset &&
-      node !== 'AssetHubPolkadot' &&
-      node !== 'Polkadot'
+      chain !== 'AssetHubPolkadot' &&
+      chain !== 'Polkadot'
     ) {
-      const fee = await this.getXcmPaymentApiFee(node, xcm, asset)
+      const fee = await this.getXcmPaymentApiFee(chain, xcm, asset)
 
       if (typeof fee === 'bigint') {
         return {
@@ -657,7 +659,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         : undefined)
 
     const processedAssetsAmount =
-      node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
+      chain === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
         ? processAssetsDepositedEvents(emitted, amount, 'Assets', 'Deposited', true)
         : (processAssetsDepositedEvents(emitted, amount, 'Balances', 'Minted', false) ??
           processAssetsDepositedEvents(emitted, amount, 'Balances', 'Issued', false))
@@ -675,11 +677,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           }
         : undefined) ??
       //
-      (node === 'Mythos'
+      (chain === 'Mythos'
         ? reversedEvents.find(event => event.type === 'Balances' && event.value.type === 'Issued')
         : undefined) ??
       //
-      (origin === 'Mythos' || (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
+      (origin === 'Mythos' || (chain === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )
@@ -713,7 +715,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     const processedFee =
-      (isRelayChain(node) || node.includes('AssetHub')) && asset?.symbol === 'DOT'
+      (isRelayChain(chain) || chain.includes('AssetHub')) && asset?.symbol === 'DOT'
         ? padFeeBy(fee, 30)
         : fee
 
@@ -745,7 +747,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
-    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._node] : this._config
+    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
 
     // Own client provided, destroy only if force true
     if (force && typeof api === 'object') {
@@ -757,7 +759,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       if (force) {
         this.api.destroy()
       } else {
-        const key = api === undefined ? getNodeProviders(this._node) : api
+        const key = api === undefined ? getChainProviders(this._chain) : api
         releasePolkadotClient(key)
       }
     }

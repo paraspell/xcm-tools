@@ -9,8 +9,8 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TAssetInfo, TNodeWithRelayChains } from '@paraspell/sdk';
-import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { TAssetInfo, TChainWithRelayChains } from '@paraspell/sdk';
+import { CHAINS_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import { getTokenBalance } from '@paraspell/sdk-pjs';
 import { type BrowserProvider, ethers, formatEther } from 'ethers';
 import { type FC, type FormEvent, useEffect, useState } from 'react';
@@ -27,7 +27,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   from: 'Ethereum' | 'Moonbeam';
-  to: TNodeWithRelayChains;
+  to: TChainWithRelayChains;
   currencyOptionId: string;
   address: string;
   ahAddress: string;
@@ -163,7 +163,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           <ParachainSelect
             label="To"
             placeholder="Pick value"
-            data={NODES_WITH_RELAY_CHAINS}
+            data={CHAINS_WITH_RELAY_CHAINS}
             data-testid="select-destination"
             {...form.getInputProps('to')}
           />

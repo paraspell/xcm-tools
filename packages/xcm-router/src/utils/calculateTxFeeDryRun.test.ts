@@ -1,6 +1,6 @@
 import {
   dryRunOrigin,
-  type TDryRunNodeResult,
+  type TDryRunChainResult,
   type TPapiApi,
   type TPapiTransaction,
 } from '@paraspell/sdk';
@@ -20,7 +20,7 @@ vi.mock('@paraspell/sdk', async () => {
 
 describe('calculateTxFeeDryRun', () => {
   const api = {} as unknown as TPapiApi;
-  const node = 'BifrostPolkadot';
+  const chain = 'BifrostPolkadot';
   const tx = {} as unknown as TPapiTransaction;
   const address = 'test-address';
 
@@ -34,13 +34,13 @@ describe('calculateTxFeeDryRun', () => {
       success: true,
       fee,
       failureReason: '',
-    } as unknown as TDryRunNodeResult;
+    } as unknown as TDryRunChainResult;
     const getDryRunSpy = vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
     const expectedFee = new BigNumber(fee.toString()).multipliedBy(DRY_RUN_FEE_BUFFER);
-    const result = await calculateTxFeeDryRun(api, node, tx, address);
+    const result = await calculateTxFeeDryRun(api, chain, tx, address);
     expect(getDryRunSpy).toHaveBeenCalledWith({
       api,
-      node,
+      chain,
       tx,
       address,
     });
@@ -49,10 +49,10 @@ describe('calculateTxFeeDryRun', () => {
 
   it('should throw an error when dry run fails', async () => {
     const failureReason = 'some error';
-    const resultFromDryRun = { success: false, fee: 0, failureReason } as TDryRunNodeResult;
+    const resultFromDryRun = { success: false, fee: 0, failureReason } as TDryRunChainResult;
     vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
-    await expect(calculateTxFeeDryRun(api, node, tx, address)).rejects.toThrow(
-      `Failed to calculate fee using dry run. Node: ${node} Error: ${failureReason}`,
+    await expect(calculateTxFeeDryRun(api, chain, tx, address)).rejects.toThrow(
+      `Failed to calculate fee using dry run. Chain: ${chain} Error: ${failureReason}`,
     );
   });
 });

@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainWithRelayChains } from '@paraspell/sdk-common'
 import { Parents, type TJunction, type TLocation } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../types'
@@ -18,7 +18,7 @@ export const DOT_LOCATION: TLocation = {
   interior: 'Here'
 }
 
-export const CHAINS_DOT_RESERVE_AH = new Set<TNodeWithRelayChains>([
+export const CHAINS_DOT_RESERVE_AH = new Set<TChainWithRelayChains>([
   'Polimec',
   'Moonbeam',
   'AssetHubPolkadot',

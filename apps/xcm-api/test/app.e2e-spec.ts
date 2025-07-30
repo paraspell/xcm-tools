@@ -6,15 +6,15 @@ import {
   BatchMode,
   Builder,
   Foreign,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  NODE_NAMES_DOT_KSM,
+  CHAINS_WITH_RELAY_CHAINS,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  CHAIN_NAMES_DOT_KSM,
   Native,
   Override,
   TCurrencyInputWithAmount,
   TAsset,
   TLocation,
-  TNode,
+  TChain,
   Version,
   getAllAssetsSymbols,
   getAssetsObject,
@@ -34,9 +34,9 @@ import { XTransferDto } from '../src/x-transfer/dto/XTransferDto';
 
 describe('XCM API (e2e)', () => {
   let app: INestApplication;
-  const mockNode: TNode = 'Basilisk';
+  const mockChain: TChain = 'Basilisk';
   const mockSymbol = 'DOT';
-  const unknownNode = 'UnknownNode';
+  const unknownChain = 'UnknownChain';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -52,19 +52,19 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('Pallets controller', () => {
-    NODE_NAMES_DOT_KSM.forEach((node) => {
-      const supoortedPalletsUrl = `/pallets/${node}`;
+    CHAIN_NAMES_DOT_KSM.forEach((chain) => {
+      const supoortedPalletsUrl = `/pallets/${chain}`;
       it(`Supported pallets - ${supoortedPalletsUrl} (GET)`, () => {
-        const pallets = getSupportedPallets(node);
+        const pallets = getSupportedPallets(chain);
         return request(app.getHttpServer())
           .get(supoortedPalletsUrl)
           .expect(200)
           .expect(pallets);
       });
 
-      const defaultPalletUrl = `/pallets/${node}/default`;
+      const defaultPalletUrl = `/pallets/${chain}/default`;
       it(`Default pallet - ${defaultPalletUrl} (GET)`, () => {
-        const pallet = getDefaultPallet(node);
+        const pallet = getDefaultPallet(chain);
         return request(app.getHttpServer())
           .get(defaultPalletUrl)
           .expect(200)
@@ -72,37 +72,37 @@ describe('XCM API (e2e)', () => {
       });
     });
 
-    const supportedPalletsUnknownNodeUrl = `/pallets/${unknownNode}`;
-    it(`Supported pallets - ${supportedPalletsUnknownNodeUrl} (GET)`, () => {
+    const supportedPalletsUnknownChainUrl = `/pallets/${unknownChain}`;
+    it(`Supported pallets - ${supportedPalletsUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(supportedPalletsUnknownNodeUrl)
+        .get(supportedPalletsUnknownChainUrl)
         .expect(400);
     });
 
-    const defaultPalletUnknownNodeUrl = `/pallets/${unknownNode}/default`;
-    it(`Default pallet - ${defaultPalletUnknownNodeUrl} (GET)`, () => {
+    const defaultPalletUnknownChainUrl = `/pallets/${unknownChain}/default`;
+    it(`Default pallet - ${defaultPalletUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(defaultPalletUnknownNodeUrl)
+        .get(defaultPalletUnknownChainUrl)
         .expect(400);
     });
   });
 
-  describe('Node configs controller', () => {
-    const nodeNamesUrl = '/nodes';
-    it(`Get node names - ${nodeNamesUrl} (GET)`, () => {
+  describe('Chain configs controller', () => {
+    const chainNamesUrl = '/chains';
+    it(`Get chain names - ${chainNamesUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(nodeNamesUrl)
+        .get(chainNamesUrl)
         .expect(200)
-        .expect(NODES_WITH_RELAY_CHAINS);
+        .expect(CHAINS_WITH_RELAY_CHAINS);
     });
 
-    NODES_WITH_RELAY_CHAINS_DOT_KSM.filter(
-      // These nodes do not have ws endpoints
-      (node) => node !== 'Peaq',
-    ).forEach((node) => {
-      it(`should return ws endpoints for all nodes - ${node}`, async () => {
+    CHAINS_WITH_RELAY_CHAINS_DOT_KSM.filter(
+      // These chains do not have ws endpoints
+      (chain) => chain !== 'Peaq',
+    ).forEach((chain) => {
+      it(`should return ws endpoints for all chains - ${chain}`, async () => {
         return request(app.getHttpServer())
-          .get(`/nodes/${node}/ws-endpoints`)
+          .get(`/chains/${chain}/ws-endpoints`)
           .expect(200)
           .expect((res) => {
             expect(res.body).toBeDefined();
@@ -114,18 +114,18 @@ describe('XCM API (e2e)', () => {
   describe('Assets controller', () => {
     const unknownSymbol = 'UnknownSymbol';
 
-    NODE_NAMES_DOT_KSM.forEach((node) => {
-      if (node === 'Polimec') return;
-      const assetsObjectUrl = `/assets/${node}`;
+    CHAIN_NAMES_DOT_KSM.forEach((chain) => {
+      if (chain === 'Polimec') return;
+      const assetsObjectUrl = `/assets/${chain}`;
       it(`Get assets object - ${assetsObjectUrl} (GET)`, () => {
-        const assetsObject = getAssetsObject(node);
+        const assetsObject = getAssetsObject(chain);
         return request(app.getHttpServer())
           .get(assetsObjectUrl)
           .expect(200)
           .expect(assetsObject);
       });
 
-      const otherAssets = getOtherAssets(node);
+      const otherAssets = getOtherAssets(chain);
       if (otherAssets.length > 1) {
         const { symbol, decimals } =
           otherAssets[0].assetId !== undefined
@@ -133,7 +133,7 @@ describe('XCM API (e2e)', () => {
             : otherAssets[1];
 
         if (symbol) {
-          const assetDecimalsUrl = `/assets/${node}/decimals`;
+          const assetDecimalsUrl = `/assets/${chain}/decimals`;
           it(`Get asset decimals - ${assetDecimalsUrl} symbol=${symbol} (GET)`, () => {
             return request(app.getHttpServer())
               .get(assetDecimalsUrl)
@@ -142,9 +142,9 @@ describe('XCM API (e2e)', () => {
               .expect((res) => expect(Number(res.text)).toEqual(decimals));
           });
 
-          const hasSupportUrl = `/assets/${node}/has-support`;
+          const hasSupportUrl = `/assets/${chain}/has-support`;
           it(`Has support for asset - ${hasSupportUrl} (GET)`, () => {
-            const hasSupport = hasSupportForAsset(node, symbol);
+            const hasSupport = hasSupportForAsset(chain, symbol);
             return request(app.getHttpServer())
               .get(hasSupportUrl)
               .query({ symbol })
@@ -154,45 +154,45 @@ describe('XCM API (e2e)', () => {
         }
       }
 
-      const relayChainSymbolUrl = `/assets/${node}/relay-chain-symbol`;
+      const relayChainSymbolUrl = `/assets/${chain}/relay-chain-symbol`;
       it(`Get relaychain symbol - ${relayChainSymbolUrl} (GET)`, () => {
-        const relayChainSymbol = getRelayChainSymbol(node);
+        const relayChainSymbol = getRelayChainSymbol(chain);
         return request(app.getHttpServer())
           .get(relayChainSymbolUrl)
           .expect(200)
           .expect(JSON.stringify(relayChainSymbol));
       });
 
-      const nativeAssetsUrl = `/assets/${node}/native`;
+      const nativeAssetsUrl = `/assets/${chain}/native`;
       it(`Get native assets - ${nativeAssetsUrl} (GET)`, () => {
-        const nativeAssets = getNativeAssets(node);
+        const nativeAssets = getNativeAssets(chain);
         return request(app.getHttpServer())
           .get(nativeAssetsUrl)
           .expect(200)
           .expect(nativeAssets);
       });
 
-      const otherAssetsUrl = `/assets/${node}/other`;
+      const otherAssetsUrl = `/assets/${chain}/other`;
       it(`Get other assets - ${otherAssetsUrl} (GET)`, () => {
-        const otherAssets = getOtherAssets(node);
+        const otherAssets = getOtherAssets(chain);
         return request(app.getHttpServer())
           .get(otherAssetsUrl)
           .expect(200)
           .expect(otherAssets);
       });
 
-      const allAssetsSymbolsUrl = `/assets/${node}/all-symbols`;
+      const allAssetsSymbolsUrl = `/assets/${chain}/all-symbols`;
       it(`Get all assets symbols - ${allAssetsSymbolsUrl} (GET)`, () => {
-        const symbols = getAllAssetsSymbols(node);
+        const symbols = getAllAssetsSymbols(chain);
         return request(app.getHttpServer())
           .get(allAssetsSymbolsUrl)
           .expect(200)
           .expect(symbols);
       });
 
-      const parachainIdUrl = `/nodes/${node}/para-id`;
+      const parachainIdUrl = `/chains/${chain}/para-id`;
       it(`Get parachain id - ${parachainIdUrl} (GET)`, () => {
-        const paraId = getParaId(node);
+        const paraId = getParaId(chain);
         return request(app.getHttpServer())
           .get(parachainIdUrl)
           .expect(200)
@@ -200,22 +200,22 @@ describe('XCM API (e2e)', () => {
       });
     });
 
-    const assetsObjectUknownNodeUrl = `/assets/${unknownNode}`;
-    it(`Get assets object - ${assetsObjectUknownNodeUrl} (GET)`, () => {
+    const assetsObjectUknownChainUrl = `/assets/${unknownChain}`;
+    it(`Get assets object - ${assetsObjectUknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(assetsObjectUknownNodeUrl)
+        .get(assetsObjectUknownChainUrl)
         .expect(400);
     });
 
-    const assetIdUknownNodeUrl = `/assets/${unknownNode}/id`;
-    it(`Get asset id - ${assetIdUknownNodeUrl} (GET)`, () => {
+    const assetIdUknownChainUrl = `/assets/${unknownChain}/id`;
+    it(`Get asset id - ${assetIdUknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(assetIdUknownNodeUrl)
+        .get(assetIdUknownChainUrl)
         .query({ symbol: mockSymbol })
         .expect(400);
     });
 
-    const assetIdUnknownSymbolUrl = `/assets/${mockNode}/id`;
+    const assetIdUnknownSymbolUrl = `/assets/${mockChain}/id`;
     it(`Get asset id - non existent symbol - ${assetIdUnknownSymbolUrl} (GET)`, () => {
       return request(app.getHttpServer())
         .get(assetIdUnknownSymbolUrl)
@@ -233,22 +233,22 @@ describe('XCM API (e2e)', () => {
         })
         .expect(201));
 
-    const relayChainSymbolUknownNodeUrl = `/assets/${unknownNode}/relay-chain-symbol`;
-    it(`Get relaychain symbol - ${relayChainSymbolUknownNodeUrl} (GET)`, () => {
+    const relayChainSymbolUknownChainUrl = `/assets/${unknownChain}/relay-chain-symbol`;
+    it(`Get relaychain symbol - ${relayChainSymbolUknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(relayChainSymbolUknownNodeUrl)
+        .get(relayChainSymbolUknownChainUrl)
         .expect(400);
     });
 
-    const assetDecimalsUknownNodeUrl = `/assets/${unknownNode}/decimals`;
-    it(`Get asset decimals - ${assetDecimalsUknownNodeUrl} (GET)`, () => {
+    const assetDecimalsUknownChainUrl = `/assets/${unknownChain}/decimals`;
+    it(`Get asset decimals - ${assetDecimalsUknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(assetDecimalsUknownNodeUrl)
+        .get(assetDecimalsUknownChainUrl)
         .query({ symbol: mockSymbol })
         .expect(400);
     });
 
-    const assetDecimalsUnknownSymbolUrl = `/assets/${mockNode}/decimals`;
+    const assetDecimalsUnknownSymbolUrl = `/assets/${mockChain}/decimals`;
     it(`Get asset decimals - non existent symbol - ${assetDecimalsUnknownSymbolUrl} (GET)`, () => {
       return request(app.getHttpServer())
         .get(assetDecimalsUnknownSymbolUrl)
@@ -256,18 +256,18 @@ describe('XCM API (e2e)', () => {
         .expect(404);
     });
 
-    const hasSupportUnknownNodeUrl = `/assets/${unknownNode}/has-support`;
-    it(`Has support for asset - ${hasSupportUnknownNodeUrl} (GET)`, () => {
+    const hasSupportUnknownChainUrl = `/assets/${unknownChain}/has-support`;
+    it(`Has support for asset - ${hasSupportUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(hasSupportUnknownNodeUrl)
+        .get(hasSupportUnknownChainUrl)
         .query({ symbol: mockSymbol })
         .expect(400);
     });
 
-    const parachainIdUnknownNodeUrl = `/nodes/${unknownNode}/para-id `;
-    it(`Get parachain id - ${parachainIdUnknownNodeUrl} (GET)`, () => {
+    const parachainIdUnknownChainUrl = `/chains/${unknownChain}/para-id `;
+    it(`Get parachain id - ${parachainIdUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
-        .get(parachainIdUnknownNodeUrl)
+        .get(parachainIdUnknownChainUrl)
         .expect(400);
     });
 
@@ -291,7 +291,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Node123/native')
+        .post('/balance/Chain123/native')
         .send(invalidRequest)
         .expect(400);
     });
@@ -322,7 +322,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Node123/foreign')
+        .post('/balance/Chain123/foreign')
         .send(invalidRequest)
         .expect(400);
     });
@@ -356,7 +356,7 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          from: unknownNode,
+          from: unknownChain,
           address,
         })
         .expect(400);
@@ -366,7 +366,7 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          to: unknownNode,
+          to: unknownChain,
           address,
         })
         .expect(400);
@@ -396,8 +396,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain Native() selector - ${xTransferUrl}`, async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Astar';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Astar';
       const currency = { symbol: Native('DOT'), amount };
       const tx = await Builder()
         .from(from)
@@ -418,8 +418,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl}`, async () => {
-      const from: TNode = 'Astar';
-      const to: TNode = 'Acala';
+      const from: TChain = 'Astar';
+      const to: TChain = 'Acala';
       const currency = { symbol: Foreign('HDX'), amount };
       const tx = await Builder()
         .from(from)
@@ -440,8 +440,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { symbol: 'KSM', amount };
       return request(app.getHttpServer())
         .post(xTransferUrl)
@@ -455,9 +455,9 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to1: TNode = 'Basilisk';
-      const to2: TNode = 'Moonriver';
+      const from: TChain = 'AssetHubKusama';
+      const to1: TChain = 'Basilisk';
+      const to2: TChain = 'Moonriver';
       const currency = { id: 11, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
@@ -502,8 +502,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const invalidCurrency = { symbol: 'INVALID', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
@@ -528,10 +528,10 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Different 'from' Nodes - ${xTransferBatchUrl}`, async () => {
-      const from1: TNode = 'AssetHubKusama';
-      const from2: TNode = 'Moonriver';
-      const to: TNode = 'Basilisk';
+    it(`Generate Batch XCM call - Different 'from' Chains - ${xTransferBatchUrl}`, async () => {
+      const from1: TChain = 'AssetHubKusama';
+      const from2: TChain = 'Moonriver';
+      const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
@@ -546,7 +546,7 @@ describe('XCM API (e2e)', () => {
               currency,
             },
             {
-              from: from2, // Different 'from' node
+              from: from2, // Different 'from' chain
               to,
               address,
               currency,
@@ -556,7 +556,7 @@ describe('XCM API (e2e)', () => {
             mode: BatchMode.BATCH_ALL,
           },
         })
-        .expect(400) // Expect Bad Request due to different 'from' nodes
+        .expect(400) // Expect Bad Request due to different 'from' chains
         .expect((res) => {
           expect(res.body.message).toContain(
             'All transactions in the batch must have the same origin.',
@@ -565,8 +565,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Invalid Addresses - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount };
       const invalidAddress = 'InvalidAddress123';
 
@@ -643,8 +643,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Invalid Batch Mode - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const invalidBatchMode = 'INVALID_MODE';
@@ -668,7 +668,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Missing Required Fields - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
+      const from: TChain = 'AssetHubKusama';
       const currency = { symbol: 'USDT' };
 
       return request(app.getHttpServer())
@@ -689,8 +689,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Zero or Negative Amounts - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount: '-1000' }; // Negative amount
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
@@ -713,9 +713,9 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to1: TNode = 'Basilisk';
-      const to2: TNode = 'Moonriver';
+      const from: TChain = 'AssetHubKusama';
+      const to1: TChain = 'Basilisk';
+      const to2: TChain = 'Moonriver';
       const currency = { id: 11, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
@@ -760,8 +760,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { id: 11, amount };
 
       const builder = Builder()
@@ -793,8 +793,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { id: 11, amount };
       const xcmVersion = Version.V3;
 
@@ -829,7 +829,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl}`, async () => {
-      const from: TNode = 'Acala';
+      const from: TChain = 'Acala';
 
       const currency = {
         symbol: 'DOT',
@@ -865,7 +865,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl}`, async () => {
-      const to: TNode = 'Basilisk';
+      const to: TChain = 'Basilisk';
 
       const currency = {
         symbol: 'KSM',
@@ -901,8 +901,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const currency = { id: 11, amount };
 
       const tx = await Builder()
@@ -924,8 +924,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubPolkadot';
-      const to: TNode = 'Hydration';
+      const from: TChain = 'AssetHubPolkadot';
+      const to: TChain = 'Hydration';
       const currency: TLocation = {
         parents: 0,
         interior: {
@@ -953,8 +953,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain custom xcm execute call - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubPolkadot';
-      const to: TNode = 'Polimec';
+      const from: TChain = 'AssetHubPolkadot';
+      const to: TChain = 'Polimec';
       const currency: TCurrencyInputWithAmount = {
         symbol: 'USDC',
         amount: '1000000000',
@@ -972,8 +972,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'Basilisk';
       const createCurrency = (fungible: string): TAsset<string>[] => [
         {
           id: {
@@ -1125,7 +1125,7 @@ describe('XCM API (e2e)', () => {
         .expect((await tx.getEncodedData()).asHex());
     });
 
-    it(`Generate XCM call - Dry run unsupported node - should throw error 400 - ${xTransferUrl}`, async () => {
+    it(`Generate XCM call - Dry run unsupported chain - should throw error 400 - ${xTransferUrl}`, async () => {
       return request(app.getHttpServer())
         .post('/dry-run')
         .send({
@@ -1142,7 +1142,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
+      const from: TChain = 'AssetHubKusama';
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
@@ -1159,7 +1159,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to relaychain override pallet and method - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
+      const from: TChain = 'AssetHubKusama';
       const currency = {
         symbol: { type: 'Native', value: 'KSM' },
         amount,
@@ -1213,7 +1213,7 @@ describe('XCM API (e2e)', () => {
           expect(data).toHaveLength(2);
           data.forEach((txInfo: any) => {
             expect(txInfo).toHaveProperty('tx');
-            expect(txInfo).toHaveProperty('node');
+            expect(txInfo).toHaveProperty('chain');
             expect(txInfo).toHaveProperty('type');
             expect(txInfo.tx).toBeTypeOf('string');
           });
@@ -1236,7 +1236,7 @@ describe('XCM API (e2e)', () => {
           expect(data).toHaveLength(2);
           data.forEach((txInfo: any) => {
             expect(txInfo).toHaveProperty('tx');
-            expect(txInfo).toHaveProperty('node');
+            expect(txInfo).toHaveProperty('chain');
             expect(txInfo).toHaveProperty('type');
             expect(txInfo.tx).toBeTypeOf('string');
           });
@@ -1275,7 +1275,7 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post('/asset-claim')
         .send({
-          from: unknownNode,
+          from: unknownChain,
           address,
         })
         .expect(400);
@@ -1285,14 +1285,14 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post('/asset-claim')
         .send({
-          from: mockNode,
+          from: mockChain,
           address: 'InvalidWalletAddress',
         })
         .expect(400);
     });
 
     it('Generate asset claim call - all valid - /asset-claim', async () => {
-      const from: TNode = 'AssetHubKusama';
+      const from: TChain = 'AssetHubKusama';
       const fungible = [
         {
           id: {
@@ -1339,7 +1339,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          from: unknownNode,
+          from: unknownChain,
         })
         .expect(400);
     });
@@ -1349,7 +1349,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          to: unknownNode,
+          to: unknownChain,
         })
         .expect(400);
     });

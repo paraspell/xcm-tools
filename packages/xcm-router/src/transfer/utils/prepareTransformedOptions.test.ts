@@ -3,15 +3,15 @@ import { findAssetInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import * as assets from '../../assets';
-import type ExchangeNode from '../../dexNodes/DexNode';
-import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
+import type ExchangeChain from '../../exchanges/ExchangeChain';
+import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
 import type { TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import { determineFeeCalcAddress } from './utils';
 
-vi.mock('../../dexNodes/DexNodeFactory', () => ({
-  createDexNodeInstance: vi.fn(),
+vi.mock('../../exchanges/ExchangeChainFactory', () => ({
+  createExchangeInstance: vi.fn(),
 }));
 
 vi.mock('../selectBestExchange', () => ({
@@ -33,7 +33,7 @@ vi.mock('@paraspell/sdk', async (importOriginal) => {
   return {
     ...mod,
     hasSupportForAsset: vi.fn(),
-    createApiInstanceForNode: vi.fn(),
+    createChainClient: vi.fn(),
     findAssetInfo: vi.fn(),
   };
 });
@@ -51,14 +51,14 @@ describe('prepareTransformedOptions', () => {
       currencyTo: { symbol: 'ASTR' },
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
       createApiInstance: vi.fn(),
       createApiInstancePapi: vi.fn(),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
-    vi.mocked(selectBestExchange).mockResolvedValue(mockDexNode);
+    vi.mocked(selectBestExchange).mockResolvedValue(mockDexChain);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow();
@@ -75,12 +75,12 @@ describe('prepareTransformedOptions', () => {
       exchange: 'AcalaDex',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
-    } as ExchangeNode;
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
+    } as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue(null);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
@@ -98,18 +98,18 @@ describe('prepareTransformedOptions', () => {
       exchange: 'AcalaDex',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
-    } as ExchangeNode;
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
+    } as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(undefined);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
-      `Currency from ${JSON.stringify(mockOptions.currencyFrom)} not found in ${mockDexNode.exchangeNode}.`,
+      `Currency from ${JSON.stringify(mockOptions.currencyFrom)} not found in ${mockDexChain.exchangeChain}.`,
     );
   });
 
@@ -122,19 +122,19 @@ describe('prepareTransformedOptions', () => {
       exchange: 'AcalaDex',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
-    } as ExchangeNode;
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
+    } as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue(null);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
-      `Currency to ${JSON.stringify(mockOptions.currencyTo)} not found in ${mockDexNode.exchangeNode}.`,
+      `Currency to ${JSON.stringify(mockOptions.currencyTo)} not found in ${mockDexChain.exchangeChain}.`,
     );
   });
 
@@ -147,12 +147,12 @@ describe('prepareTransformedOptions', () => {
       exchange: 'AcalaDex',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
-    } as ExchangeNode;
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
+    } as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR' });
@@ -175,38 +175,38 @@ describe('prepareTransformedOptions', () => {
       recipientAddress: 'recipientAddr',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
       createApiInstance: vi.fn().mockResolvedValue({}),
       createApiInstancePapi: vi.fn().mockResolvedValue({}),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     const mockOriginAsset = { symbol: 'ACA' } as sdkPapi.TAssetInfo;
     const mockExchangeAssetFrom = { symbol: 'EXCHANGE_ACA' };
     const mockExchangeAssetTo = { symbol: 'ASTR' };
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue(mockOriginAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(mockExchangeAssetFrom);
     vi.mocked(assets.getExchangeAsset).mockReturnValue(mockExchangeAssetTo);
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(true);
-    vi.mocked(sdkPapi.createApiInstanceForNode).mockResolvedValue({} as sdkPapi.TPapiApi);
+    vi.mocked(sdkPapi.createChainClient).mockResolvedValue({} as sdkPapi.TPapiApi);
     vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
 
     const result = await prepareTransformedOptions(mockOptions);
 
-    expect(result.dex).toBe(mockDexNode);
+    expect(result.dex).toBe(mockDexChain);
     expect(result.options.origin).toEqual({
       api: expect.any(Object),
-      node: mockOptions.from,
+      chain: mockOptions.from,
       assetFrom: mockOriginAsset,
     });
     expect(result.options.exchange).toEqual({
       api: expect.any(Object),
       apiPapi: expect.any(Object),
-      baseNode: mockDexNode.node,
-      exchangeNode: mockDexNode.exchangeNode,
+      baseChain: mockDexChain.chain,
+      exchangeChain: mockDexChain.exchangeChain,
       assetFrom: mockExchangeAssetFrom,
       assetTo: mockExchangeAssetTo,
     });
@@ -222,12 +222,12 @@ describe('prepareTransformedOptions', () => {
       exchange: 'AcalaDex',
     } as TTransferOptions;
 
-    const mockDexNode = {
-      node: 'Acala',
-      exchangeNode: 'AcalaDex',
-    } as ExchangeNode;
+    const mockDexChain = {
+      chain: 'Acala',
+      exchangeChain: 'AcalaDex',
+    } as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({
       symbol: 'EXCHANGE_ACA',
@@ -237,7 +237,7 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(assets.supportsExchangePair).mockReturnValue(false);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
-      `Exchange ${mockDexNode.node} does not support the pair ASTR -> ASTR`,
+      `Exchange ${mockDexChain.chain} does not support the pair ASTR -> ASTR`,
     );
   });
 });

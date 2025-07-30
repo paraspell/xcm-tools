@@ -1,8 +1,8 @@
 import { isOverrideLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
-import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isRelayChain, type TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 export const shouldPerformAssetCheck = (
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TChainDotKsmWithRelayChains,
   currency: TCurrencyInput
 ): boolean => {
   if (isRelayChain(origin)) return true

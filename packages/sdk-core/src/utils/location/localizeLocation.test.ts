@@ -1,15 +1,15 @@
 import {
   isRelayChain,
   Parents,
-  type TLocation,
-  type TNodeWithRelayChains
+  type TChainWithRelayChains,
+  type TLocation
 } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getParaId } from '../../nodes/config'
+import { getParaId } from '../../chains/config'
 import { localizeLocation } from './localizeLocation'
 
-vi.mock('../../nodes/config')
+vi.mock('../../chains/config')
 vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')
   return {
@@ -19,33 +19,33 @@ vi.mock('@paraspell/sdk-common', async () => {
 })
 
 describe('localizeLocation', () => {
-  const relayChainNode: TNodeWithRelayChains = 'Polkadot'
-  const parachainNode: TNodeWithRelayChains = 'Acala'
+  const relaychain: TChainWithRelayChains = 'Polkadot'
+  const parachain: TChainWithRelayChains = 'Acala'
 
   beforeEach(() => {
     vi.clearAllMocks()
 
-    vi.mocked(isRelayChain).mockImplementation(node => node === 'Polkadot' || node === 'Kusama')
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
 
-    vi.mocked(getParaId).mockImplementation(node => {
-      if (node === 'Acala') return 2000
-      if (node === 'Moonbeam') return 2004
-      if (node === 'AssetHubPolkadot') return 1000
+    vi.mocked(getParaId).mockImplementation(chain => {
+      if (chain === 'Acala') return 2000
+      if (chain === 'Moonbeam') return 2004
+      if (chain === 'AssetHubPolkadot') return 1000
       return 0
     })
   })
 
   describe('interior "Here" handling', () => {
-    it('should return interior as "Here" and set parents to 0 if input interior is "Here" and node is relay chain', () => {
+    it('should return interior as "Here" and set parents to 0 if input interior is "Here" and chain is relay chain', () => {
       const input = { parents: 5, interior: 'Here' } as const
-      const result = localizeLocation(relayChainNode, input)
+      const result = localizeLocation(relaychain, input)
       expect(result.interior).toBe('Here')
       expect(result.parents).toBe(Parents.ZERO)
     })
 
-    it('should keep parents unchanged if input interior is "Here" and node is not relay chain', () => {
+    it('should keep parents unchanged if input interior is "Here" and chain is not relay chain', () => {
       const input = { parents: 5, interior: 'Here' } as const
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.interior).toBe('Here')
       expect(result.parents).toBe(5)
     })
@@ -59,7 +59,7 @@ describe('localizeLocation', () => {
           X3: [{ Parachain: 2000 }, { PalletInstance: 50 }, { GeneralIndex: 50000028 }]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(Parents.ZERO)
       expect(result.interior).toEqual({
         X2: [{ PalletInstance: 50 }, { GeneralIndex: 50000028 }]
@@ -73,7 +73,7 @@ describe('localizeLocation', () => {
           X3: [{ Parachain: 3000 }, { PalletInstance: 50 }, { GeneralIndex: 50000028 }]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(1)
       expect(result.interior).toEqual(input.interior)
     })
@@ -85,7 +85,7 @@ describe('localizeLocation', () => {
           X1: [{ Parachain: 2000 }]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(Parents.ZERO)
       expect(result.interior).toBe('Here')
     })
@@ -99,7 +99,7 @@ describe('localizeLocation', () => {
           X2: [{ PalletInstance: 99 }, { GeneralKey: { length: 3, data: 'abc' } }]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(3)
       expect(result.interior).toEqual(input.interior)
     })
@@ -117,7 +117,7 @@ describe('localizeLocation', () => {
           ]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(1)
       expect(result.interior).toEqual(input.interior)
     })
@@ -131,7 +131,7 @@ describe('localizeLocation', () => {
           X2: [{ Parachain: 1000 }, { GeneralIndex: 1 }]
         }
       }
-      const result = localizeLocation(relayChainNode, input)
+      const result = localizeLocation(relaychain, input)
       expect(result.parents).toBe(0)
       expect(result.interior).toEqual(input.interior)
     })
@@ -145,7 +145,7 @@ describe('localizeLocation', () => {
           X1: [{ Parachain: 1000 }]
         }
       }
-      const result = localizeLocation(relayChainNode, input)
+      const result = localizeLocation(relaychain, input)
       expect(result.parents).toBe(Parents.ZERO)
       expect(result.interior).toBe('Here')
     })
@@ -159,7 +159,7 @@ describe('localizeLocation', () => {
           X1: [{ AccountId32: { id: '0xabc', network: null } }]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(2)
       expect(result.interior).toEqual(input.interior)
     })
@@ -180,7 +180,7 @@ describe('localizeLocation', () => {
           ]
         }
       }
-      const result = localizeLocation(parachainNode, input)
+      const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(Parents.ZERO)
       expect(result.interior).toEqual({
         X7: [
@@ -195,7 +195,7 @@ describe('localizeLocation', () => {
       })
     })
 
-    it('should handle different node types correctly', () => {
+    it('should handle different chain types correctly', () => {
       // Test with AssetHubPolkadot (paraId 1000)
       const input: TLocation = {
         parents: 1,
@@ -218,7 +218,7 @@ describe('localizeLocation', () => {
       ]
 
       testCases.forEach(input => {
-        const result = localizeLocation(parachainNode, input)
+        const result = localizeLocation(parachain, input)
         expect(result.parents).toBe(input.parents)
       })
     })

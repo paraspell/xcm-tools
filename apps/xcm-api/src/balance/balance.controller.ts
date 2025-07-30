@@ -24,55 +24,55 @@ export class BalanceController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Post(':node/native')
+  @Post(':chain/native')
   getBalanceNative(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(BalanceNativeDtoSchema))
     params: BalanceNativeDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_BALANCE_NATIVE, req, {
-      node,
+      chain,
     });
-    return this.balanceService.getBalanceNative(node, params);
+    return this.balanceService.getBalanceNative(chain, params);
   }
 
-  @Post(':node/foreign')
+  @Post(':chain/foreign')
   getBalanceForeign(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
     params: BalanceForeignDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_BALANCE_FOREIGN, req, {
-      node,
+      chain,
     });
-    return this.balanceService.getBalanceForeign(node, params);
+    return this.balanceService.getBalanceForeign(chain, params);
   }
 
-  @Post(':node/asset')
+  @Post(':chain/asset')
   getAssetBalance(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
     params: BalanceForeignDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_ASSET_BALANCE, req, {
-      node,
+      chain,
     });
-    return this.balanceService.getAssetBalance(node, params);
+    return this.balanceService.getAssetBalance(chain, params);
   }
 
-  @Post(':node/existential-deposit')
+  @Post(':chain/existential-deposit')
   getExistentialDeposit(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(ExistentialDepositDtoSchema))
     params: ExistentialDepositDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_EXISTENTIAL_DEPOSIT, req, {
-      node,
+      chain,
     });
-    return this.balanceService.getExistentialDeposit(node, params);
+    return this.balanceService.getExistentialDeposit(chain, params);
   }
 }

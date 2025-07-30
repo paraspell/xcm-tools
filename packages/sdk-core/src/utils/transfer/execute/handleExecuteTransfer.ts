@@ -1,10 +1,10 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TChainPolkadotKusama, TEcosystemType } from '@paraspell/sdk-common'
 
+import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import { getTNode } from '../../../nodes/getTNode'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
@@ -37,7 +37,7 @@ const MIN_FEE = 1000n
 const FEE_PADDING_PERCENTAGE = 40
 
 export const handleExecuteTransfer = async <TApi, TRes>(
-  chain: TNodePolkadotKusama,
+  chain: TChainPolkadotKusama,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> => {
   const {
@@ -63,7 +63,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
       ? await getAssetBalanceInternal({
           api,
           address: senderAddress,
-          node: chain,
+          chain,
           currency: feeCurrency as TCurrencyCore
         })
       : undefined
@@ -78,10 +78,10 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   checkAmount(MIN_FEE)
 
-  const destChain = getTNode(
+  const destChain = getTChain(
     paraIdTo as number,
     getRelayChainOf(chain).toLowerCase() as TEcosystemType
-  ) as TNodePolkadotKusama
+  ) as TChainPolkadotKusama
 
   const internalOptions = {
     api,

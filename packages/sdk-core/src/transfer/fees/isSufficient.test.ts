@@ -32,9 +32,9 @@ describe('isSufficientOrigin', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'Acala') return 'ACA'
-      if (node === 'Astar') return 'ASTR'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'Acala') return 'ACA'
+      if (chain === 'Astar') return 'ASTR'
       return 'DOT'
     })
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(50n)
@@ -75,7 +75,7 @@ describe('isSufficientOrigin', () => {
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(origin)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockApi,
-      node: origin,
+      chain: origin,
       address: senderAddress
     })
     expect(result).toBe(true)
@@ -119,7 +119,7 @@ describe('isSufficientOrigin', () => {
 
     expect(getAssetBalance).toHaveBeenCalledWith({
       api: mockApi,
-      node: origin,
+      chain: origin,
       address: senderAddress,
       currency
     })
@@ -238,7 +238,7 @@ describe('isSufficientDestination', () => {
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(destination)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockApi,
-      node: destination,
+      chain: destination,
       address: address
     })
     // 200 + 100 - 30 - 50 = 220 > 0

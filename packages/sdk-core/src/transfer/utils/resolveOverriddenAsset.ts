@@ -9,11 +9,11 @@ import {
   type TAssetInfo,
   type TAssetWithFee
 } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TChainPolkadotKusama } from '@paraspell/sdk-common'
 import { deepEqual, isTLocation, replaceBigInt, type TLocation } from '@paraspell/sdk-common'
 
 import type { TSendOptions } from '../../types'
-import { getNode } from '../../utils'
+import { getChain } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { validateAssetSupport } from './validateAssetSupport'
 
@@ -72,7 +72,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
       if (!asset) {
         throw new InvalidCurrencyError(
-          `Origin node ${origin} does not support currency ${JSON.stringify(currency)}`
+          `Origin chain ${origin} does not support currency ${JSON.stringify(currency)}`
         )
       }
 
@@ -82,11 +82,11 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
       validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-      const originTyped = origin as TNodePolkadotKusama
-      const originNode = getNode<TApi, TRes, typeof originTyped>(originTyped)
+      const originTyped = origin as TChainPolkadotKusama
+      const originChain = getChain<TApi, TRes, typeof originTyped>(originTyped)
       return {
         isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
-        ...createAsset(originNode.version, BigInt(currency.amount), asset.location as TLocation)
+        ...createAsset(originChain.version, BigInt(currency.amount), asset.location as TLocation)
       }
     })
 

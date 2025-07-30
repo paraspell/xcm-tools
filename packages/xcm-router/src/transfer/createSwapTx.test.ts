@@ -4,7 +4,7 @@ import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TTransferOptionsModified } from '../types';
 import { calculateTxFee, isPjsExtrinsic } from '../utils';
 import { createSwapTx } from './createSwapTx';
@@ -23,7 +23,7 @@ vi.mock('../utils', () => ({
 
 describe('createSwapTx', () => {
   const swapApi = {} as ApiPromise;
-  let exchangeNode: ExchangeNode;
+  let exchangeChain: ExchangeChain;
   let options: TTransferOptionsModified;
   let dummyExtrinsic: Extrinsic;
   let dummyTxPapi: TPapiTransaction;
@@ -31,10 +31,10 @@ describe('createSwapTx', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    exchangeNode = {
+    exchangeChain = {
       swapCurrency: vi.fn(),
       handleMultiSwap: vi.fn(),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     options = {
       amount: '1000',
@@ -43,11 +43,11 @@ describe('createSwapTx', () => {
         api: swapApi,
       },
       origin: {
-        node: 'Acala',
+        chain: 'Acala',
       },
       to: 'Astar',
       destination: {
-        node: 'Astar',
+        chain: 'Astar',
       },
     } as TTransferOptionsModified;
 
@@ -60,7 +60,7 @@ describe('createSwapTx', () => {
 
     vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyTxPapi);
     vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
-    vi.spyOn(exchangeNode, 'handleMultiSwap').mockResolvedValue({
+    vi.spyOn(exchangeChain, 'handleMultiSwap').mockResolvedValue({
       amountOut: '900',
       txs: [dummyExtrinsic],
     });
@@ -70,9 +70,9 @@ describe('createSwapTx', () => {
   });
 
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {
-    const spy = vi.spyOn(exchangeNode, 'handleMultiSwap');
+    const spy = vi.spyOn(exchangeChain, 'handleMultiSwap');
 
-    const result = await createSwapTx(exchangeNode, options);
+    const result = await createSwapTx(exchangeChain, options);
 
     expect(buildFromExchangeExtrinsic).toHaveBeenCalledOnce();
     expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith({
@@ -94,8 +94,8 @@ describe('createSwapTx', () => {
   });
 
   it('should propagate errors if swapCurrency fails', async () => {
-    vi.spyOn(exchangeNode, 'handleMultiSwap').mockRejectedValue(new Error('swapCurrency failed'));
+    vi.spyOn(exchangeChain, 'handleMultiSwap').mockRejectedValue(new Error('swapCurrency failed'));
 
-    await expect(createSwapTx(exchangeNode, options)).rejects.toThrowError('swapCurrency failed');
+    await expect(createSwapTx(exchangeChain, options)).rejects.toThrowError('swapCurrency failed');
   });
 });

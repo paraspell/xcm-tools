@@ -1,12 +1,12 @@
 import type { TXcmFeeDetail } from '@paraspell/sdk';
 import { getOriginXcmFee } from '@paraspell/sdk';
 
-import type ExchangeNode from '../../dexNodes/DexNode';
+import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 
 export const getSwapFee = async (
-  exchange: ExchangeNode,
+  exchange: ExchangeChain,
   options: TBuildTransactionsOptionsModified,
 ) => {
   const {
@@ -29,8 +29,8 @@ export const getSwapFee = async (
   const result = await getOriginXcmFee({
     api: options.exchange.apiPapi,
     tx: txs[0],
-    origin: exchange.node,
-    destination: exchange.node,
+    origin: exchange.chain,
+    destination: exchange.chain,
     senderAddress: senderAddress,
     currency,
     disableFallback: false,

@@ -23,7 +23,7 @@ vi.mock('@paraspell/sdk', () => ({
 }));
 
 vi.mock('../consts', () => ({
-  EXCHANGE_NODES: ['HydrationDex', 'AssetHubPolkadotDex'],
+  EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
 }));
 
 const mockConfigs = {
@@ -68,7 +68,7 @@ describe('getExchangePairs', () => {
     expect(pairs).toHaveLength(2);
   });
 
-  it('uses EXCHANGE_NODES when input is undefined', () => {
+  it('uses EXCHANGE_CHAINS when input is undefined', () => {
     const pairs = getExchangePairs(undefined);
     expect(pairs).toHaveLength(2);
   });

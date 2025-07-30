@@ -25,7 +25,6 @@ import {
   Override,
   replaceBigInt,
   type TLocation,
-  type TNodePolkadotKusama,
 } from '@paraspell/sdk';
 import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
@@ -121,7 +120,7 @@ const XcmUtils = () => {
     } else if (currency) {
       const hasDuplicateIds = isRelayChain(from)
         ? false
-        : getOtherAssets(from as TNodePolkadotKusama).filter(
+        : getOtherAssets(from).filter(
             (asset) =>
               isForeignAsset(asset) &&
               isForeignAsset(currency) &&

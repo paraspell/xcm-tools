@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TAdditionalTransferOptions, TBuildTransactionsOptions, TRouterPlan } from '../types';
 import { buildApiTransactions } from './buildApiTransactions';
 import { buildTransactions } from './buildTransactions';
@@ -8,7 +8,7 @@ import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
-  createApiInstanceForNode: vi.fn(),
+  createChainClient: vi.fn(),
 }));
 
 vi.mock('./utils/validateTransferOptions', () => ({
@@ -41,14 +41,14 @@ describe('buildApiTransactions', () => {
         ...initialOptions,
         slippagePct: '1',
         origin: {
-          node: 'Acala',
+          chain: 'Acala',
           assetFrom: { symbol: 'ACA' },
         },
         exchange: {},
       } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
       dex: {
-        node: 'Acala',
-      } as unknown as ExchangeNode,
+        chain: 'Acala',
+      } as unknown as ExchangeChain,
     });
 
     vi.mocked(buildTransactions).mockResolvedValue(mockTransactions);

@@ -13,8 +13,11 @@ export class AddressController {
   ) {}
 
   @Get('convert-ss58')
-  convertSs58(@Query() { address, node }: ConvertSs58Dto, @Req() req: Request) {
-    this.analyticsService.track(EventName.CONVERT_SS58, req, { node });
-    return this.addressService.convertSs58(address, node);
+  convertSs58(
+    @Query() { address, chain }: ConvertSs58Dto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.CONVERT_SS58, req, { chain });
+    return this.addressService.convertSs58(address, chain);
   }
 }

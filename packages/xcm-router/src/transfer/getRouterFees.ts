@@ -1,13 +1,13 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/sdk';
 import { DryRunFailedError, getXcmFee, handleSwapExecuteTransfer } from '@paraspell/sdk';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TRouterXcmFeeResult } from '../types';
 import { getSwapFee } from './fees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
 export const getRouterFees = async (
-  dex: ExchangeNode,
+  dex: ExchangeChain,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TRouterXcmFeeResult> => {
   const {
@@ -22,7 +22,7 @@ export const getRouterFees = async (
     senderAddress,
   } = options;
 
-  if ((origin || destination) && (dex.node.includes('AssetHub') || dex.node === 'Hydration')) {
+  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
       const amountOut = await dex.getAmountOut(exchange.api, {
         ...options,
@@ -32,9 +32,9 @@ export const getRouterFees = async (
       });
 
       const tx = await handleSwapExecuteTransfer({
-        chain: origin?.node,
-        exchangeChain: exchange.baseNode,
-        destChain: destination?.node,
+        chain: origin?.chain,
+        exchangeChain: exchange.baseChain,
+        destChain: destination?.chain,
         assetInfoFrom: {
           ...(origin?.assetFrom ?? exchange.assetFrom),
           amount: BigInt(amount),
@@ -56,20 +56,20 @@ export const getRouterFees = async (
 
       const executeResult = await getXcmFee({
         tx,
-        origin: origin?.node ?? exchange.baseNode,
-        destination: destination?.node ?? exchange.baseNode,
+        origin: origin?.chain ?? exchange.baseChain,
+        destination: destination?.chain ?? exchange.baseChain,
         senderAddress: evmSenderAddress ?? senderAddress,
         address: recipientAddress ?? senderAddress,
         currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
         disableFallback: false,
         swapConfig: {
           currencyTo: currencyTo as TCurrencyCore,
-          exchangeChain: exchange.baseNode,
+          exchangeChain: exchange.baseChain,
         },
       });
 
       const transformedHops = executeResult.hops.map((hop) => {
-        if (hop.chain === exchange.baseNode) {
+        if (hop.chain === exchange.baseChain) {
           return {
             ...hop,
             isExchange: true,
@@ -106,7 +106,7 @@ export const getRouterFees = async (
 
   // 1. Get fees for origin -> exchange (optional)
   const sendingChain =
-    origin && origin.node !== exchange.baseNode
+    origin && origin.chain !== exchange.baseChain
       ? await getToExchangeFee({ ...options, origin })
       : undefined;
 
@@ -115,7 +115,7 @@ export const getRouterFees = async (
 
   // 3. Get fees for exchange -> destination (optional)
   const receivingChain =
-    destination && destination.node !== exchange.baseNode
+    destination && destination.chain !== exchange.baseChain
       ? await getFromExchangeFee({
           exchange,
           destination,
@@ -128,11 +128,11 @@ export const getRouterFees = async (
     // Hops from sending chain (origin -> exchange)
     ...(sendingChain?.hops ?? []),
 
-    // Add the swap operation as a hop on the exchange node
+    // Add the swap operation as a hop on the exchange chain
     ...(sendingChain && receivingChain
       ? [
           {
-            chain: exchange.baseNode,
+            chain: exchange.baseChain,
             result: {
               ...swapChain,
               fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),

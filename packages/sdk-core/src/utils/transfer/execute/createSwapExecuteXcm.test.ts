@@ -5,7 +5,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getParaId } from '../../../nodes/config'
+import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
@@ -17,7 +17,7 @@ import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
 vi.mock('@paraspell/assets')
-vi.mock('../../../nodes/config')
+vi.mock('../../../chains/config')
 vi.mock('../../addXcmVersionHeader')
 vi.mock('../../assertions')
 vi.mock('../../location')

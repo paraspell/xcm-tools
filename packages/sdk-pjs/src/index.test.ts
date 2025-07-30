@@ -21,7 +21,7 @@ describe('Index Exports', () => {
           'GeneralBuilder',
           'EvmBuilder',
           'IFinalBuilderWithOptions',
-          'createApiInstanceForNode',
+          'createChainClient',
           'convertSs58'
         ].includes(key)
     )
@@ -62,6 +62,6 @@ describe('Index Exports', () => {
   })
 
   it('should export the utility function', () => {
-    expect(moduleExports.createApiInstanceForNode).toBeDefined()
+    expect(moduleExports.createChainClient).toBeDefined()
   })
 })

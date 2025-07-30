@@ -58,7 +58,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   const balance = await getAssetBalanceInternal({
     address,
-    node: destination,
+    chain: destination,
     api: destApi,
     currency: destCurrency
   })
@@ -84,7 +84,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   if (destFee === undefined) {
     throw new InvalidParameterError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${destination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${destination}.`
     )
   }
 

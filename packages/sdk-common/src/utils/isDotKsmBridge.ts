@@ -1,8 +1,8 @@
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
+import type { TChainDotKsmWithRelayChains, TChainWithRelayChains } from '../types'
 
 export const isDotKsmBridge = (
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TNodeWithRelayChains
+  origin: TChainDotKsmWithRelayChains,
+  destination: TChainWithRelayChains
 ) =>
   (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
   (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')

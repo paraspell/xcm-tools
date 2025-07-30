@@ -1,7 +1,7 @@
 /**
- * Supported nodes excluding relay chains and Ethereum.
+ * Supported chains excluding relay chains and Ethereum.
  */
-export const NODE_NAMES_DOT_KSM = [
+export const CHAIN_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
   'Acala',
   'Ajuna',
@@ -77,9 +77,9 @@ export const NODE_NAMES_DOT_KSM = [
 ] as const
 
 /**
- * Supported nodes including Ethereum.
+ * Supported chains including Ethereum.
  */
-export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
+export const CHAIN_NAMES = [...CHAIN_NAMES_DOT_KSM, 'Ethereum'] as const
 
 /**
  * Relay chains.
@@ -87,11 +87,11 @@ export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
 export const RELAY_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'Paseo'] as const
 
 /**
- * Supported nodes including relay chains and Ethereum.
+ * Supported chains including relay chains and Ethereum.
  */
-export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, ...RELAY_CHAINS] as const
+export const CHAINS_WITH_RELAY_CHAINS = [...CHAIN_NAMES, ...RELAY_CHAINS] as const
 
 /**
- * Supported nodes including relay chains and excluding Ethereum.
+ * Supported chains including relay chains and excluding Ethereum.
  */
-export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [...NODE_NAMES_DOT_KSM, ...RELAY_CHAINS] as const
+export const CHAINS_WITH_RELAY_CHAINS_DOT_KSM = [...CHAIN_NAMES_DOT_KSM, ...RELAY_CHAINS] as const

@@ -48,25 +48,25 @@ const PalletsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = ({ func, node, pallet }: FormValues) => {
+  const submitUsingSdk = ({ func, chain, pallet }: FormValues) => {
     switch (func) {
       case 'ALL_PALLETS':
-        return getSupportedPallets(node);
+        return getSupportedPallets(chain);
       case 'DEFAULT_PALLET':
-        return getDefaultPallet(node);
+        return getDefaultPallet(chain);
       case 'PALLET_INDEX':
-        return getPalletIndex(node, pallet as TPallet);
+        return getPalletIndex(chain, pallet as TPallet);
     }
   };
 
-  const getEndpoint = ({ func, node }: FormValues) => {
+  const getEndpoint = ({ func, chain }: FormValues) => {
     switch (func) {
       case 'ALL_PALLETS':
-        return `${node}`;
+        return `${chain}`;
       case 'DEFAULT_PALLET':
-        return `${node}/default`;
+        return `${chain}/default`;
       case 'PALLET_INDEX':
-        return `${node}/index`;
+        return `${chain}/index`;
     }
   };
 
@@ -132,7 +132,7 @@ const PalletsQueries = () => {
             ta="center"
           >
             Query the supported pallets and the default pallet for transfers for
-            a given node.
+            a given chain.
           </Text>
         </Box>
         <PalletsQueriesForm onSubmit={onSubmit} loading={loading} />

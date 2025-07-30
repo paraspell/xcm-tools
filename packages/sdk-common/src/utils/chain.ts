@@ -1,23 +1,23 @@
 import { RELAY_CHAINS } from '../constants'
-import type { TNodeWithRelayChains, TRelayChain } from '../types'
+import type { TChainWithRelayChains, TRelayChain } from '../types'
 
 /**
- * Determines whether a given node is a relay chain (Polkadot or Kusama).
+ * Determines whether a given chain is a relay chain (Polkadot or Kusama).
  *
- * @param node - The node to check.
- * @returns True if the node is 'Polkadot' or 'Kusama'; otherwise, false.
+ * @param chain - The chain to check.
+ * @returns True if the chain is 'Polkadot' or 'Kusama'; otherwise, false.
  */
-export const isRelayChain = (node: TNodeWithRelayChains): node is TRelayChain =>
-  RELAY_CHAINS.includes(node as TRelayChain)
+export const isRelayChain = (chain: TChainWithRelayChains): chain is TRelayChain =>
+  RELAY_CHAINS.includes(chain as TRelayChain)
 
 /**
- * Checks if a given node is a system chain.
+ * Checks if a given chain is a system chain.
  *
- * @param node - The node to check.
- * @returns True if the node is a system chain; otherwise, false.
+ * @param chain - The chain to check.
+ * @returns True if the chain is a system chain; otherwise, false.
  */
-export const isSystemChain = (node: TNodeWithRelayChains): boolean => {
-  const systemChains: TNodeWithRelayChains[] = [
+export const isSystemChain = (chain: TChainWithRelayChains): boolean => {
+  const systemChains: TChainWithRelayChains[] = [
     'AssetHubPolkadot',
     'AssetHubKusama',
     'AssetHubWestend',
@@ -39,5 +39,5 @@ export const isSystemChain = (node: TNodeWithRelayChains): boolean => {
     'Mythos'
   ]
 
-  return systemChains.includes(node) || isRelayChain(node)
+  return systemChains.includes(chain) || isRelayChain(chain)
 }

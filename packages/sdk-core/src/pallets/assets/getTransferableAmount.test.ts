@@ -132,7 +132,7 @@ describe('getTransferableAmount', () => {
         builder: mockBuilder
       })
     ).rejects.toThrow(
-      'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on node Astar.'
+      'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on chain Astar.'
     )
   })
 

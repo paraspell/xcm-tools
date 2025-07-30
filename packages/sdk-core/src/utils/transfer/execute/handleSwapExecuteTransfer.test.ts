@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import {
   replaceBigInt,
-  type TNodeDotKsmWithRelayChains,
-  type TNodePolkadotKusama
+  type TChainDotKsmWithRelayChains,
+  type TChainPolkadotKusama
 } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -34,7 +34,7 @@ vi.mock('./isMultiHopSwap', () => ({
   isMultiHopSwap: () => true
 }))
 
-vi.mock('../../../nodes/config', () => ({
+vi.mock('../../../chains/config', () => ({
   getParaId: vi.fn()
 }))
 
@@ -50,9 +50,9 @@ const mockApi = {
 
 const baseOptions = {
   api: mockApi,
-  chain: 'A' as TNodeDotKsmWithRelayChains,
-  exchangeChain: 'B' as TNodePolkadotKusama,
-  destChain: 'C' as TNodeDotKsmWithRelayChains,
+  chain: 'A' as TChainDotKsmWithRelayChains,
+  exchangeChain: 'B' as TChainPolkadotKusama,
+  destChain: 'C' as TChainDotKsmWithRelayChains,
   assetInfoFrom: {
     amount: '2000',
     location: {}
@@ -135,7 +135,7 @@ describe('handleSwapExecuteTransfer', () => {
 
     const options = {
       ...baseOptions,
-      exchangeChain: 'B' as TNodePolkadotKusama
+      exchangeChain: 'B' as TChainPolkadotKusama
     }
 
     await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(InvalidParameterError)
@@ -395,8 +395,8 @@ describe('handleSwapExecuteTransfer', () => {
   it('handles case when origin chain is same as exchange chain', async () => {
     const optionsSameChain = {
       ...baseOptions,
-      chain: 'B' as TNodeDotKsmWithRelayChains,
-      exchangeChain: 'B' as TNodePolkadotKusama
+      chain: 'B' as TChainDotKsmWithRelayChains,
+      exchangeChain: 'B' as TChainPolkadotKusama
     }
 
     const mockDryRunSameChain = {
@@ -437,7 +437,7 @@ describe('handleSwapExecuteTransfer', () => {
 
     const optionsDirectToExchange = {
       ...baseOptions,
-      chain: 'A' as TNodeDotKsmWithRelayChains
+      chain: 'A' as TChainDotKsmWithRelayChains
     }
 
     await expect(handleSwapExecuteTransfer(optionsDirectToExchange)).rejects.toThrow(

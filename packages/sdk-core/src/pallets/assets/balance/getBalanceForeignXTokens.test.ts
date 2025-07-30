@@ -18,7 +18,7 @@ describe('getBalanceForeignXTokens', () => {
     vi.clearAllMocks()
   })
 
-  it('calls getBalanceForeignMoonbeam when node is Astar', async () => {
+  it('calls getBalanceForeignMoonbeam when chain is Astar', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(1000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
@@ -27,7 +27,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(1000n)
   })
 
-  it('calls getBalanceForeignAssetsAccount when node is Shiden', async () => {
+  it('calls getBalanceForeignAssetsAccount when chain is Shiden', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(2000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Shiden', address, asset)
@@ -36,7 +36,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(2000n)
   })
 
-  it('calls getBalanceForeignXTokens for any other node', async () => {
+  it('calls getBalanceForeignXTokens for any other chain', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(3000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceAssetsPallet')
     const balance = await getBalanceForeignXTokens(mockApi, 'Acala', address, asset)
@@ -45,7 +45,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(3000n)
   })
 
-  it('calls getBalanceForeignBifrost when node is BifrostPolkadot', async () => {
+  it('calls getBalanceForeignBifrost when chain is BifrostPolkadot', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignBifrost').mockResolvedValue(4000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'BifrostPolkadot', address, asset)

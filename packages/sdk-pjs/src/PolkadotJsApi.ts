@@ -5,36 +5,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
+  IPolkadotApi,
   TAssetInfo,
   TBalanceResponse,
   TBridgeStatus,
   TBuilderOptions,
+  TChainDotKsmWithRelayChains,
+  TChainPolkadotKusama,
+  TChainWithRelayChains,
   TDryRunCallBaseOptions,
-  TDryRunNodeResultInternal,
+  TDryRunChainResultInternal,
   TDryRunXcmBaseOptions,
   TLocation,
   TModuleError,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   BatchMode,
+  ChainNotSupportedError,
+  computeFeeFromDryRunPjs,
+  createChainClient,
+  getAssetsObject,
+  getChain,
   InvalidParameterError,
   isConfig,
-  MissingChainApiError,
-  NodeNotSupportedError
-} from '@paraspell/sdk-core'
-import {
-  computeFeeFromDryRunPjs,
-  createApiInstanceForNode,
-  getAssetsObject,
-  getNode,
-  type IPolkadotApi,
   isForeignAsset,
-  resolveModuleError,
-  type TNodeDotKsmWithRelayChains
+  MissingChainApiError,
+  resolveModuleError
 } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { StorageKey } from '@polkadot/types'
@@ -58,7 +56,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   private api: TPjsApi
   private initialized = false
   private disconnectAllowed = true
-  private _node: TNodeDotKsmWithRelayChains
+  private _chain: TChainDotKsmWithRelayChains
 
   constructor(config?: TBuilderOptions<TPjsApiOrUrl>) {
     this._config = config
@@ -72,12 +70,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api
   }
 
-  async init(chain: TNodeWithRelayChains, _clientTtlMs?: number) {
+  async init(chain: TChainWithRelayChains, _clientTtlMs?: number) {
     if (this.initialized || chain === 'Ethereum') {
       return
     }
 
-    this._node = chain
+    this._chain = chain
 
     const apiConfig = this.getApiConfigForChain(chain)
 
@@ -89,7 +87,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     this.initialized = true
   }
 
-  private getApiConfigForChain(chain: TNodeWithRelayChains): TPjsApiOrUrl | undefined {
+  private getApiConfigForChain(chain: TChainWithRelayChains): TPjsApiOrUrl | undefined {
     if (isConfig(this._config)) {
       return this._config.apiOverrides?.[chain]
     }
@@ -98,10 +96,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   private async resolveApi(
     apiConfig: TPjsApiOrUrl | undefined,
-    chain: TNodeDotKsmWithRelayChains
+    chain: TChainDotKsmWithRelayChains
   ): Promise<TPjsApi> {
     if (!apiConfig) {
-      return createApiInstanceForNode<TPjsApi, Extrinsic>(this, chain)
+      return createChainClient<TPjsApi, Extrinsic>(this, chain)
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
@@ -198,7 +196,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
-    const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
+    const currencySelection = getChain('BifrostPolkadot').getCurrencySelection(asset)
 
     const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
 
@@ -215,10 +213,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
-  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAssetInfo) {
+  async getBalanceForeignXTokens(chain: TChainPolkadotKusama, address: string, asset: TAssetInfo) {
     let pallet = 'tokens'
 
-    if (node === 'Centrifuge' || node === 'Altair') {
+    if (chain === 'Centrifuge' || chain === 'Altair') {
       pallet = 'ormlTokens'
     }
 
@@ -278,24 +276,24 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
   }
 
-  async createApiForNode(node: TNodeDotKsmWithRelayChains) {
+  async createApiForChain(chain: TChainDotKsmWithRelayChains) {
     const api = new PolkadotJsApi()
-    await api.init(node)
+    await api.init(chain)
     return api
   }
 
   async getDryRunCall({
     tx,
     address,
-    node
-  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunNodeResultInternal> {
-    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+    chain
+  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResultInternal> {
+    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
     }
 
-    const nodesRequiringVersionParam: TNodeWithRelayChains[] = [
+    const chainsRequiringVersionParam: TChainWithRelayChains[] = [
       'BifrostPolkadot',
       'BifrostKusama',
       'AssetHubKusama',
@@ -306,7 +304,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       'Astar'
     ]
 
-    const needsVersionParam = nodesRequiringVersionParam.includes(node)
+    const needsVersionParam = chainsRequiringVersionParam.includes(chain)
 
     const DEFAULT_XCM_VERSION = 3
 
@@ -327,12 +325,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     if (!isSuccess) {
       const moduleError = result.Ok.executionResult.Err.error.Module
-      const failureReason = resolveModuleError(node, moduleError as TModuleError)
+      const failureReason = resolveModuleError(chain, moduleError as TModuleError)
       return { success: false, failureReason }
     }
 
     const executionFee = await this.calculateTransactionFee(tx, address)
-    const fee = computeFeeFromDryRunPjs(result, node, executionFee)
+    const fee = computeFeeFromDryRunPjs(result, chain, executionFee)
 
     const actualWeight = resultJson.ok.executionResult.ok.actualWeight
 
@@ -365,13 +363,13 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getDryRunXcm({
     originLocation,
     xcm,
-    node,
+    chain,
     origin
-  }: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal> {
-    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal> {
+    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
     }
 
     const response = await this.api.call.dryRunApi.dryRunXcm(originLocation, xcm)
@@ -462,7 +460,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return
 
-    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._node] : this._config
+    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
 
     // Disconnect api only if it was created automatically
     if (force || typeof api === 'string' || api === undefined) {

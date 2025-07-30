@@ -4,12 +4,12 @@ import {
   getBalanceForeign,
   getBalanceNative,
   getExistentialDeposit,
-  NODE_NAMES_DOT_KSM,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
+  CHAIN_NAMES_DOT_KSM,
+  CHAINS_WITH_RELAY_CHAINS,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  TChainDotKsmWithRelayChains,
+  TChainPolkadotKusama,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
 
 import { handleXcmApiError } from '../utils/error-handler.js';
@@ -19,29 +19,29 @@ import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 @Injectable()
 export class BalanceService {
-  getBalanceNative(node: string, { address, currency }: BalanceNativeDto) {
-    const nodeTyped = node as TNodeDotKsmWithRelayChains;
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(nodeTyped)) {
+  getBalanceNative(chain: string, { address, currency }: BalanceNativeDto) {
+    const chainTyped = chain as TChainDotKsmWithRelayChains;
+    if (!CHAINS_WITH_RELAY_CHAINS_DOT_KSM.includes(chainTyped)) {
       throw new BadRequestException(
-        `Node ${node} is not valid. Check docs for valid nodes.`,
+        `Chain ${chain} is not valid. Check docs for valid chains.`,
       );
     }
 
     return getBalanceNative({
       address,
-      node: nodeTyped,
+      chain: chainTyped,
       currency,
     });
   }
 
   async getBalanceForeign(
-    node: string,
+    chain: string,
     { address, currency }: BalanceForeignDto,
   ) {
-    const nodeTyped = node as TNodePolkadotKusama;
-    if (!NODE_NAMES_DOT_KSM.includes(nodeTyped)) {
+    const chainTyped = chain as TChainPolkadotKusama;
+    if (!CHAIN_NAMES_DOT_KSM.includes(chainTyped)) {
       throw new BadRequestException(
-        `Node ${node} is not valid. Check docs for valid nodes.`,
+        `Chain ${chain} is not valid. Check docs for valid chains.`,
       );
     }
 
@@ -49,7 +49,7 @@ export class BalanceService {
       const balance = await getBalanceForeign({
         address,
         currency,
-        node: nodeTyped,
+        chain: chainTyped,
       });
       return balance === null ? 'null' : balance.toString();
     } catch (e) {
@@ -58,32 +58,32 @@ export class BalanceService {
   }
 
   async getAssetBalance(
-    node: string,
+    chain: string,
     { address, currency }: BalanceForeignDto,
   ) {
-    const nodeTyped = node as TNodePolkadotKusama;
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(nodeTyped)) {
+    const chainTyped = chain as TChainPolkadotKusama;
+    if (!CHAINS_WITH_RELAY_CHAINS_DOT_KSM.includes(chainTyped)) {
       throw new BadRequestException(
-        `Node ${node} is not valid. Check docs for valid nodes.`,
+        `Chain ${chain} is not valid. Check docs for valid chains.`,
       );
     }
 
     const balance = await getAssetBalance({
       address,
       currency,
-      node: nodeTyped,
+      chain: chainTyped,
     });
     return balance === null ? 'null' : balance.toString();
   }
 
-  getExistentialDeposit(node: string, { currency }: ExistentialDepositDto) {
-    const nodeTyped = node as TNodeWithRelayChains;
-    if (!NODES_WITH_RELAY_CHAINS.includes(nodeTyped)) {
+  getExistentialDeposit(chain: string, { currency }: ExistentialDepositDto) {
+    const chainTyped = chain as TChainWithRelayChains;
+    if (!CHAINS_WITH_RELAY_CHAINS.includes(chainTyped)) {
       throw new BadRequestException(
-        `Node ${node} is not valid. Check docs for valid nodes.`,
+        `Chain ${chain} is not valid. Check docs for valid chains.`,
       );
     }
 
-    return getExistentialDeposit(nodeTyped, currency);
+    return getExistentialDeposit(chainTyped, currency);
   }
 }

@@ -1,16 +1,16 @@
-import { NODES_WITH_RELAY_CHAINS, type TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { CHAINS_WITH_RELAY_CHAINS, type TChainWithRelayChains } from '@paraspell/sdk-common'
 
 import { DuplicateAssetError, InvalidCurrencyError } from '../errors'
 import type { TCurrencyCore } from '../types'
 import { findAssetInfoOnDest, findAssetInfoOrThrow } from './search'
 
 export const getSupportedDestinations = (
-  origin: TNodeWithRelayChains,
+  origin: TChainWithRelayChains,
   currency: TCurrencyCore
-): TNodeWithRelayChains[] => {
+): TChainWithRelayChains[] => {
   findAssetInfoOrThrow(origin, currency, null)
 
-  return NODES_WITH_RELAY_CHAINS.filter(destination => {
+  return CHAINS_WITH_RELAY_CHAINS.filter(destination => {
     if (destination === origin) return false
 
     // Check if we still can find asset if we specify destination

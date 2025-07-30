@@ -1,13 +1,13 @@
-import type { TLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TLocation, TChainWithRelayChains } from '@paraspell/sdk-common'
 
 import { findAssetInfo } from '../assets/search'
 import type { TCurrencyInput } from '../types/TCurrency'
 
 export const getAssetLocation = (
-  node: TNodeWithRelayChains,
+  chain: TChainWithRelayChains,
   currency: TCurrencyInput
 ): TLocation | null => {
-  const asset = findAssetInfo(node, currency, null)
+  const asset = findAssetInfo(chain, currency, null)
   if (!asset || !asset.location) {
     return null
   }

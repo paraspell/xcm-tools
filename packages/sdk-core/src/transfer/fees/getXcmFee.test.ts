@@ -26,8 +26,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
-vi.mock('../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({

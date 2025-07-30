@@ -6,22 +6,22 @@ import { getEthErc20Balance } from './getEthErc20Balance'
 
 export const getBalanceNativeInternal = async <TApi, TRes>({
   address,
-  node,
+  chain,
   api,
   currency
 }: TGetBalanceNativeOptions<TApi, TRes>): Promise<bigint> => {
-  await api.init(node)
+  await api.init(chain)
 
-  const resolvedCurrency = { symbol: currency ? currency.symbol : getNativeAssetSymbol(node) }
+  const resolvedCurrency = { symbol: currency ? currency.symbol : getNativeAssetSymbol(chain) }
 
-  if (node === 'Ethereum') {
+  if (chain === 'Ethereum') {
     return getEthErc20Balance(resolvedCurrency, address)
   }
 
-  if (node === 'Interlay' || node === 'Kintsugi') {
+  if (chain === 'Interlay' || chain === 'Kintsugi') {
     return getBalanceForeignInternal({
       address,
-      node,
+      chain,
       api,
       currency: resolvedCurrency
     })
@@ -29,8 +29,8 @@ export const getBalanceNativeInternal = async <TApi, TRes>({
 
   if (
     currency &&
-    currency.symbol !== getNativeAssetSymbol(node) &&
-    (node === 'Acala' || node === 'Karura')
+    currency.symbol !== getNativeAssetSymbol(chain) &&
+    (chain === 'Acala' || chain === 'Karura')
   ) {
     const symbol = currency.symbol === 'aSEED' ? 'AUSD' : currency.symbol
     if (symbol.toLowerCase() === 'lcdot') {

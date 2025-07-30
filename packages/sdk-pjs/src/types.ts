@@ -1,8 +1,8 @@
 import type {
   TApiOrUrl,
+  TChainWithRelayChains,
   TCurrencyInputWithAmount,
-  TEvmNodeFrom,
-  TNodeWithRelayChains,
+  TEvmChainFrom,
   WithApi
 } from '@paraspell/sdk-core'
 import type { ApiPromise } from '@polkadot/api'
@@ -17,13 +17,13 @@ export type Extrinsic = SubmittableExtrinsic<'promise'>
 
 type TEvmBuilderOptionsBase = {
   /**
-   * The source node. Can be either 'Ethereum', 'Moonbeam', 'Moonriver', or 'Darwinia'.
+   * The source chain. Can be either 'Ethereum', 'Moonbeam', 'Moonriver', or 'Darwinia'.
    */
-  from: TEvmNodeFrom
+  from: TEvmChainFrom
   /**
-   * The destination node on Polkadot network.
+   * The destination chain on Polkadot network.
    */
-  to: TNodeWithRelayChains
+  to: TChainWithRelayChains
   /**
    * The currency to transfer. Symbol or ID.
    */

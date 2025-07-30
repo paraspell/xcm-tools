@@ -18,7 +18,7 @@ vi.mock('@paraspell/sdk', () => ({
 }));
 
 vi.mock('../consts', () => ({
-  EXCHANGE_NODES: ['AcalaDex', 'BifrostPolkadotDex'],
+  EXCHANGE_CHAINS: ['AcalaDex', 'BifrostPolkadotDex'],
 }));
 
 const mockConfigs = {
@@ -59,7 +59,7 @@ describe('supportsExchangePair', () => {
     expect(supportsExchangePair(['AssetHubKusamaDex', 'AcalaDex'], assetA, assetB)).toBe(true);
   });
 
-  it('falls back to EXCHANGE_NODES when exchange arg is undefined', () => {
+  it('falls back to EXCHANGE_CHAINS when exchange arg is undefined', () => {
     expect(supportsExchangePair(undefined, assetA, assetB)).toBe(true);
   });
 

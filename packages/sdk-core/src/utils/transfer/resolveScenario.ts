@@ -1,10 +1,10 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { TDestination, TScenario } from '../../types'
 
 export const resolveScenario = (
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TChainDotKsmWithRelayChains,
   destination: TDestination
 ): TScenario => {
   if (isRelayChain(origin)) return 'RelayToPara'

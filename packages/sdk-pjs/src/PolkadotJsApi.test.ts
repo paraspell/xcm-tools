@@ -1,10 +1,10 @@
 import type { TAssetInfo, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
 import {
   BatchMode,
+  ChainNotSupportedError,
   computeFeeFromDryRunPjs,
-  createApiInstanceForNode,
+  createChainClient,
   MissingChainApiError,
-  NodeNotSupportedError,
   type TLocation,
   type TSerializedApiCall
 } from '@paraspell/sdk-core'
@@ -21,7 +21,7 @@ import type { Extrinsic, TPjsApi } from './types'
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
-  createApiInstanceForNode: vi.fn().mockResolvedValue({} as ApiPromise),
+  createChainClient: vi.fn().mockResolvedValue({} as ApiPromise),
   resolveModuleError: vi.fn().mockReturnValue('ModuleError')
 }))
 
@@ -127,24 +127,22 @@ describe('PolkadotJsApi', () => {
 
     it('should create api instance when _api is undefined', async () => {
       const polkadotApi = new PolkadotJsApi()
-      const mockCreateApiInstanceForNode = vi
-        .mocked(createApiInstanceForNode)
-        .mockResolvedValue(mockApiPromise)
+      const mockCreateChainClient = vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(mockCreateApiInstanceForNode).toHaveBeenCalledWith(polkadotApi, 'Acala')
+      expect(mockCreateChainClient).toHaveBeenCalledWith(polkadotApi, 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
 
-      mockCreateApiInstanceForNode.mockRestore()
+      mockCreateChainClient.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
-      vi.mocked(createApiInstanceForNode)
+      vi.mocked(createChainClient)
 
       await polkadotApi.init('Moonbeam')
 
-      expect(createApiInstanceForNode).not.toHaveBeenCalled()
+      expect(createChainClient).not.toHaveBeenCalled()
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
     })
 
@@ -157,7 +155,7 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init('Moonbeam')
 
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
-      expect(vi.mocked(createApiInstanceForNode)).not.toHaveBeenCalled()
+      expect(vi.mocked(createChainClient)).not.toHaveBeenCalled()
     })
 
     it('should throw MissingChainApiError in development mode when no override provided', async () => {
@@ -176,11 +174,11 @@ describe('PolkadotJsApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       const polkadotApi = new PolkadotJsApi()
-      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiPromise)
+      vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(polkadotApi, 'Acala')
+      expect(createChainClient).toHaveBeenCalledWith(polkadotApi, 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
     })
   })
@@ -596,19 +594,17 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('createApiForNode', () => {
-    it('should create a new PolkadotJsApi instance and call init with the provided node', async () => {
-      const node = 'Acala'
-      const mockCreateApiInstanceForNode = vi
-        .mocked(createApiInstanceForNode)
-        .mockResolvedValue(mockApiPromise)
+  describe('createApiForChain', () => {
+    it('should create a new PolkadotJsApi instance and call init with the provided chain', async () => {
+      const chain = 'Acala'
+      const mockCreateChainClient = vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
 
-      const newApi = await polkadotApi.createApiForNode(node)
+      const newApi = await polkadotApi.createApiForChain(chain)
 
       expect(newApi).toBeInstanceOf(PolkadotJsApi)
       expect(newApi.getApi()).toBe(mockApiPromise)
 
-      mockCreateApiInstanceForNode.mockRestore()
+      mockCreateChainClient.mockRestore()
     })
   })
 
@@ -626,7 +622,7 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should disconnect the api when _api is not provided', async () => {
-      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiPromise)
+      vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
 
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect')
 
@@ -694,7 +690,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Extrinsic
 
       const address = 'some_address'
-      const node = 'Astar'
+      const chain = 'Astar'
 
       const mockResponse = {
         toHuman: vi.fn().mockReturnValue({
@@ -724,7 +720,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        node
+        chain
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -750,7 +746,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Extrinsic
 
       const address = 'some_address'
-      const node = 'Astar'
+      const chain = 'Astar'
 
       const mockResponse = {
         toHuman: vi.fn().mockReturnValue({
@@ -773,7 +769,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        node
+        chain
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -788,16 +784,16 @@ describe('PolkadotJsApi', () => {
       })
     })
 
-    it('should throw error for unsupported node', async () => {
+    it('should throw error for unsupported chain', async () => {
       const mockTransaction = {} as unknown as Extrinsic
 
       await expect(
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
-          node: 'Acala'
+          chain: 'Acala'
         })
-      ).rejects.toThrow(NodeNotSupportedError)
+      ).rejects.toThrow(ChainNotSupportedError)
     })
   })
 
@@ -869,7 +865,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'Astar',
+        chain: 'Astar',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
 
@@ -906,7 +902,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'Astar',
+        chain: 'Astar',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
 
@@ -916,15 +912,15 @@ describe('PolkadotJsApi', () => {
       })
     })
 
-    it('should throw NodeNotSupportedError for unsupported node', async () => {
+    it('should throw ChainNotSupportedError for unsupported chain', async () => {
       await expect(
         polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'Acala',
+          chain: 'Acala',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(NodeNotSupportedError)
+      ).rejects.toThrow(ChainNotSupportedError)
     })
 
     it('should throw error if no issued event found', async () => {
@@ -950,7 +946,7 @@ describe('PolkadotJsApi', () => {
         await polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'AssetHubPolkadot',
+          chain: 'AssetHubPolkadot',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
       ).toEqual({

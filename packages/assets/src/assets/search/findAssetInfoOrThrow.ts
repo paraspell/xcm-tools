@@ -1,13 +1,13 @@
-import { replaceBigInt, type TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { replaceBigInt, type TChainWithRelayChains } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput } from '../../types'
 import { findAssetInfo } from './findAssetInfo'
 
 export const findAssetInfoOrThrow = (
-  chain: TNodeWithRelayChains,
+  chain: TChainWithRelayChains,
   currency: TCurrencyInput,
-  destination: TNodeWithRelayChains | null
+  destination: TChainWithRelayChains | null
 ): TAssetInfo => {
   const asset =
     findAssetInfo(chain, currency, destination) ??

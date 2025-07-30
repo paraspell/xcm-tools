@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TRouterAsset } from '../types';
 import { getSdkAssetByRouterAsset } from './getSdkAssetByRouterAsset';
 
-const exchangeBaseNode = 'Acala';
+const exchangeBaseChain = 'Acala';
 
 vi.mock('@paraspell/sdk', () => ({
   getAssets: vi.fn(),
@@ -30,7 +30,7 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(getAssets).mockReturnValue([{ symbol: 'ABC', assetId: '1' }]);
     vi.mocked(findBestMatches).mockReturnValue([]);
     const routerAsset: TRouterAsset = { symbol: 'XYZ' };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toBeUndefined();
   });
 
@@ -39,7 +39,7 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(getAssets).mockReturnValue([candidate]);
     vi.mocked(findBestMatches).mockReturnValue([candidate]);
     const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1' };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual(candidate);
   });
 
@@ -49,7 +49,7 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     const routerAsset: TRouterAsset = { symbol: 'ABC' };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toBeUndefined();
   });
 
@@ -62,14 +62,14 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(isForeignAsset).mockImplementation((asset: TAssetInfo) =>
       Boolean((asset as TForeignAssetInfo).assetId),
     );
-    vi.mocked(findAssetInfo).mockImplementation((_node, currency: TCurrencyInput) => {
+    vi.mocked(findAssetInfo).mockImplementation((_chain, currency: TCurrencyInput) => {
       if ('location' in currency && deepEqual(currency.location, candidate1.location)) {
         return candidate1;
       }
       return null;
     });
     const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', location };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual({ ...candidate1, location });
   });
 
@@ -81,12 +81,12 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(isForeignAsset).mockImplementation(
       (asset: TAssetInfo) => (asset as TForeignAssetInfo).assetId === '2',
     );
-    vi.mocked(findAssetInfo).mockImplementation((_node, currency: TCurrencyInput) => {
+    vi.mocked(findAssetInfo).mockImplementation((_chain, currency: TCurrencyInput) => {
       if ('id' in currency && currency.id === candidate2.assetId) return candidate2;
       return null;
     });
     const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '2' };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual(candidate2);
   });
 
@@ -110,7 +110,7 @@ describe('getSdkAssetByRouterAsset', () => {
       assetId: '1',
       location: candidate1.location,
     };
-    const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
+    const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toBeUndefined();
   });
 });

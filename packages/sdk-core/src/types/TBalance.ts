@@ -5,10 +5,10 @@ import type {
   WithComplexAmount
 } from '@paraspell/assets'
 import type {
-  TNode,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
+  TChain,
+  TChainDotKsmWithRelayChains,
+  TChainPolkadotKusama,
+  TChainWithRelayChains
 } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
@@ -21,7 +21,7 @@ export type TBalanceResponse = {
 }
 
 /**
- * Retrieves the native asset balance for a given account on a specified node.
+ * Retrieves the native asset balance for a given account on a specified chain.
  */
 export type TGetBalanceNativeOptionsBase = {
   /**
@@ -29,9 +29,9 @@ export type TGetBalanceNativeOptionsBase = {
    */
   address: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  node: TNodeWithRelayChains
+  chain: TChainWithRelayChains
   /**
    * The native currency to query.
    */
@@ -43,7 +43,7 @@ export type TGetBalanceNativeOptionsBase = {
 export type TGetBalanceNativeOptions<TApi, TRes> = WithApi<TGetBalanceNativeOptionsBase, TApi, TRes>
 
 /**
- * Retrieves the balance of a foreign asset for a given account on a specified node.
+ * Retrieves the balance of a foreign asset for a given account on a specified chain.
  */
 export type TGetBalanceForeignOptionsBase = {
   /*
@@ -51,9 +51,9 @@ export type TGetBalanceForeignOptionsBase = {
    */
   address: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  node: TNode
+  chain: TChain
   /**
    * The currency to query.
    */
@@ -67,7 +67,7 @@ export type TGetBalanceForeignOptions<TApi, TRes> = WithApi<
 >
 
 /**
- * Retrieves the asset balance for a given account on a specified node.
+ * Retrieves the asset balance for a given account on a specified chain.
  */
 export type TGetAssetBalanceOptionsBase = {
   /**
@@ -75,9 +75,9 @@ export type TGetAssetBalanceOptionsBase = {
    */
   address: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  node: TNodeWithRelayChains
+  chain: TChainWithRelayChains
   /**
    * The currency to query.
    */
@@ -88,13 +88,13 @@ export type TGetAssetBalanceOptions<TApi, TRes> = WithApi<TGetAssetBalanceOption
 
 export type TGetOriginFeeDetailsOptionsBase = {
   /**
-   * The origin node.
+   * The origin chain.
    */
-  origin: TNodeDotKsmWithRelayChains
+  origin: TChainDotKsmWithRelayChains
   /**
-   * The destination node.
+   * The destination chain.
    */
-  destination: TNodeWithRelayChains
+  destination: TChainWithRelayChains
   /**
    * The currency to transfer.
    */
@@ -129,9 +129,9 @@ export type TGetMaxNativeTransferableAmountOptionsBase = {
    */
   address: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  node: TNodeDotKsmWithRelayChains
+  chain: TChainDotKsmWithRelayChains
   /**
    * The currency to query.
    */
@@ -152,9 +152,9 @@ export type TGetMaxForeignTransferableAmountOptionsBase = {
    */
   address: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  node: TNodePolkadotKusama
+  chain: TChainPolkadotKusama
   /**
    * The currency to query.
    */
@@ -173,13 +173,13 @@ export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
    */
   senderAddress: string
   /**
-   * The node on which to query the balance.
+   * The chain on which to query the balance.
    */
-  origin: TNodeDotKsmWithRelayChains
+  origin: TChainDotKsmWithRelayChains
   /**
-   * The destination node.
+   * The destination chain.
    */
-  destination: TNodeWithRelayChains
+  destination: TChainWithRelayChains
   /**
    * The currency to query.
    */
@@ -199,13 +199,13 @@ export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
 
 export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
-   * The origin node.
+   * The origin chain.
    */
-  origin: TNodeDotKsmWithRelayChains
+  origin: TChainDotKsmWithRelayChains
   /**
-   * The destination node.
+   * The destination chain.
    */
-  destination: TNodeWithRelayChains
+  destination: TChainWithRelayChains
   /**
    * The address of the account.
    */

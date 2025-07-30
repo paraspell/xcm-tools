@@ -25,8 +25,8 @@ import {
   isRelayChain,
   Native,
   Override,
+  type TChainPolkadotKusama,
   type TLocation,
-  type TNodePolkadotKusama,
   type TPapiTransaction,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
@@ -146,7 +146,7 @@ const XcmTransfer = () => {
     } else if (currency) {
       const hasDuplicateIds = isRelayChain(from)
         ? false
-        : getOtherAssets(from as TNodePolkadotKusama).filter(
+        : getOtherAssets(from as TChainPolkadotKusama).filter(
             (asset) =>
               isForeignAsset(asset) &&
               isForeignAsset(currency) &&
@@ -250,7 +250,7 @@ const XcmTransfer = () => {
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (firstItem.useApi) {
-        api = await Sdk.createApiInstanceForNode(firstItem.from);
+        api = await Sdk.createChainClient(firstItem.from);
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
@@ -558,7 +558,7 @@ const XcmTransfer = () => {
 
       let tx: Extrinsic | TPapiTransaction | undefined;
       if (useApi) {
-        api = await Sdk.createApiInstanceForNode(from);
+        api = await Sdk.createChainClient(from);
         tx = await getTxFromApi(
           {
             ...formValues,

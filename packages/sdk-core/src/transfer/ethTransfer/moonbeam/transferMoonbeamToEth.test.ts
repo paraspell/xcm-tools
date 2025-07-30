@@ -11,7 +11,7 @@ import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BridgeHaltedError } from '../../../errors'
-import { getParaId } from '../../../nodes/config'
+import { getParaId } from '../../../chains/config'
 import type { TEvmBuilderOptions } from '../../../types'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
@@ -30,7 +30,7 @@ vi.mock('../../getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
-vi.mock('../../../nodes/config', () => ({
+vi.mock('../../../chains/config', () => ({
   getParaId: vi.fn(() => 1000)
 }))
 
@@ -81,7 +81,7 @@ describe('transferMoonbeamToEth', () => {
     hexToUint8a: vi.fn().mockReturnValue(new Uint8Array([13, 14, 15])),
     blake2AsHex: vi.fn().mockReturnValue('0xmockedHash'),
     objectToHex: vi.fn().mockReturnValue('0xmockedXcm'),
-    createApiForNode: vi.fn(() => ({
+    createApiForChain: vi.fn(() => ({
       getApi: vi.fn(() => ({
         createType: vi.fn(() => ({
           toHex: () => '0xmockedXcm',

@@ -1,7 +1,7 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
-import { type TNode, Version } from '@paraspell/sdk-common'
+import { type TChain, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -42,8 +42,8 @@ vi.mock('../utils', () => ({
   assertAddressIsString: vi.fn()
 }))
 
-const NODE: TNode = 'Acala'
-const NODE_2: TNode = 'Hydration'
+const CHAIN: TChain = 'Acala'
+const CHAIN_2: TChain = 'Hydration'
 const AMOUNT = 1000
 const CURRENCY = { symbol: 'ACA', amount: AMOUNT }
 const CURRENCY_ID = -1n
@@ -86,49 +86,49 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
-      await Builder(mockApi).from(NODE).to(NODE_2).currency(CURRENCY).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).address(ADDRESS).build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: CURRENCY,
         address: ADDRESS,
-        to: NODE_2
+        to: CHAIN_2
       })
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
       const tx = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: CURRENCY,
         address: ADDRESS,
-        to: NODE_2
+        to: CHAIN_2
       })
       expect(tx).toEqual(mockExtrinsic)
     })
 
     it('should initiate a para to para transfer with custom paraId', async () => {
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
+        .from(CHAIN)
+        .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
         .address(ADDRESS)
         .build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: CURRENCY,
         address: ADDRESS,
-        to: NODE_2,
+        to: CHAIN_2,
         paraIdTo: PARA_ID_TO
       })
     })
@@ -136,8 +136,8 @@ describe('Builder', () => {
     it('should initiate a transfer with assetHub address', async () => {
       const ASSET_HUB_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
+        .from(CHAIN)
+        .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
         .address(ADDRESS)
         .ahAddress(ASSET_HUB_ADDRESS)
@@ -145,11 +145,11 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: CURRENCY,
         address: ADDRESS,
         ahAddress: ASSET_HUB_ADDRESS,
-        to: NODE_2,
+        to: CHAIN_2,
         paraIdTo: PARA_ID_TO
       })
     })
@@ -157,8 +157,8 @@ describe('Builder', () => {
     it('should initiate a para to para transfer with specified asset ID', async () => {
       const ASSET_ID = 1
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
+        .from(CHAIN)
+        .to(CHAIN_2, PARA_ID_TO)
         .currency({
           id: ASSET_ID,
           amount: AMOUNT
@@ -168,13 +168,13 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: {
           id: ASSET_ID,
           amount: AMOUNT
         },
         address: ADDRESS,
-        to: NODE_2,
+        to: CHAIN_2,
         paraIdTo: PARA_ID_TO
       })
     })
@@ -183,8 +183,8 @@ describe('Builder', () => {
       const version = Version.V4
 
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
+        .from(CHAIN)
+        .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
         .address(ADDRESS)
         .xcmVersion(version)
@@ -192,10 +192,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: CURRENCY,
         address: ADDRESS,
-        to: NODE_2,
+        to: CHAIN_2,
         paraIdTo: PARA_ID_TO,
         version
       })
@@ -203,18 +203,18 @@ describe('Builder', () => {
 
     it('should initiate a para to para transfer with currency id', async () => {
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency({ id: CURRENCY_ID, amount: AMOUNT })
         .address(ADDRESS)
         .build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency: { id: CURRENCY_ID, amount: AMOUNT },
         address: ADDRESS,
-        to: NODE_2
+        to: CHAIN_2
       })
     })
 
@@ -225,14 +225,14 @@ describe('Builder', () => {
           { symbol: 'USDT', amount: 10000 }
         ]
       }
-      await Builder(mockApi).from(NODE).to(NODE_2).currency(currency).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency,
         address: ADDRESS,
-        to: NODE_2
+        to: CHAIN_2
       })
     })
 
@@ -278,22 +278,22 @@ describe('Builder', () => {
         ]
       }
 
-      await Builder(mockApi).from(NODE).to(NODE_2).currency(currency).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         currency,
         address: ADDRESS,
-        to: NODE_2
+        to: CHAIN_2
       })
     })
 
     it('should initiate a para to relay transfer with currency symbol', async () => {
-      const currency = getRelayChainSymbol(NODE)
+      const currency = getRelayChainSymbol(CHAIN)
 
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
@@ -301,7 +301,7 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: {
           symbol: currency,
@@ -313,7 +313,7 @@ describe('Builder', () => {
 
     it('should initiate a para to relay transfer', async () => {
       const tx = await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
@@ -321,10 +321,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: {
-          symbol: getRelayChainSymbol(NODE),
+          symbol: getRelayChainSymbol(CHAIN),
           amount: AMOUNT
         },
         address: ADDRESS
@@ -333,10 +333,10 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to relay transfer with currency symbol', async () => {
-      const currency = getRelayChainSymbol(NODE)
+      const currency = getRelayChainSymbol(CHAIN)
 
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
@@ -344,7 +344,7 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: {
           symbol: currency,
@@ -366,7 +366,7 @@ describe('Builder', () => {
       }
 
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency(currency)
         .feeAsset(feeAsset)
@@ -375,7 +375,7 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency,
         feeAsset,
@@ -384,11 +384,11 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to relay transfer with overriden version', async () => {
-      const currency = getRelayChainSymbol(NODE)
+      const currency = getRelayChainSymbol(CHAIN)
       const version = Version.V4
 
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
@@ -397,7 +397,7 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: {
           symbol: currency,
@@ -421,7 +421,7 @@ describe('Builder', () => {
       }
 
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency(currency)
         .feeAsset(feeAsset)
@@ -431,7 +431,7 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: currency,
         feeAsset,
@@ -442,8 +442,8 @@ describe('Builder', () => {
 
     it('should request a para to para transfer api call with currency id', async () => {
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .build()
@@ -453,12 +453,12 @@ describe('Builder', () => {
 
     it('should initiate a para to relay transfer using batching', async () => {
       await Builder(mockApi)
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .addToBatch()
-        .from(NODE)
+        .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
@@ -467,10 +467,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
+        from: CHAIN,
         to: 'Polkadot',
         currency: {
-          symbol: getRelayChainSymbol(NODE),
+          symbol: getRelayChainSymbol(CHAIN),
           amount: AMOUNT
         },
         address: ADDRESS
@@ -481,8 +481,8 @@ describe('Builder', () => {
 
     it('should initiate a para to para transfer using batching', async () => {
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .addToBatch()
@@ -490,8 +490,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
-        to: NODE_2,
+        from: CHAIN,
+        to: CHAIN_2,
         currency: CURRENCY,
         address: ADDRESS
       })
@@ -499,13 +499,13 @@ describe('Builder', () => {
 
     it('should initiate a double para to para transfer using batching', async () => {
       await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .addToBatch()
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .addToBatch()
@@ -513,8 +513,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        from: NODE,
-        to: NODE_2,
+        from: CHAIN,
+        to: CHAIN_2,
         currency: CURRENCY,
         address: ADDRESS
       })
@@ -525,13 +525,13 @@ describe('Builder', () => {
     it('should throw if trying to build when transactions are batched', async () => {
       await expect(
         Builder(mockApi)
-          .from(NODE)
-          .to(NODE_2)
+          .from(CHAIN)
+          .to(CHAIN_2)
           .currency(CURRENCY)
           .address(ADDRESS)
           .addToBatch()
-          .from(NODE)
-          .to(NODE_2)
+          .from(CHAIN)
+          .to(CHAIN_2)
           .currency(CURRENCY)
           .address(ADDRESS)
           .build()
@@ -543,7 +543,7 @@ describe('Builder', () => {
     it('should initiate a relay to para transfer', async () => {
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE)
+        .to(CHAIN)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .build()
@@ -551,7 +551,7 @@ describe('Builder', () => {
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
-        to: NODE,
+        to: CHAIN,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS
       })
@@ -560,7 +560,7 @@ describe('Builder', () => {
     it('should initiate a relay to para transfer with custom paraId', async () => {
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE, PARA_ID_TO)
+        .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .build()
@@ -568,7 +568,7 @@ describe('Builder', () => {
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
-        to: NODE,
+        to: CHAIN,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO
@@ -580,7 +580,7 @@ describe('Builder', () => {
 
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE, PARA_ID_TO)
+        .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .xcmVersion(version)
@@ -589,7 +589,7 @@ describe('Builder', () => {
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
-        to: NODE,
+        to: CHAIN,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
@@ -602,7 +602,7 @@ describe('Builder', () => {
 
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE, PARA_ID_TO)
+        .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .xcmVersion(version)
@@ -611,7 +611,7 @@ describe('Builder', () => {
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
-        to: NODE,
+        to: CHAIN,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
@@ -633,7 +633,7 @@ describe('Builder', () => {
     it('should request a relay to para transfer api call', async () => {
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE_2)
+        .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .build()
@@ -644,12 +644,12 @@ describe('Builder', () => {
     it('should initiate a double relay to para transfer using batching', async () => {
       await Builder(mockApi)
         .from('Polkadot')
-        .to(NODE_2)
+        .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .addToBatch()
         .from('Polkadot')
-        .to(NODE_2)
+        .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
         .addToBatch()
@@ -658,7 +658,7 @@ describe('Builder', () => {
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
-        to: NODE_2,
+        to: CHAIN_2,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS
       })
@@ -672,7 +672,7 @@ describe('Builder', () => {
 
       const builder = Builder(mockApi)
         .from('Polkadot')
-        .to(NODE_2)
+        .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
 
@@ -689,11 +689,11 @@ describe('Builder', () => {
   describe('Claim asset', () => {
     it('should create a normal claim asset tx', async () => {
       const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue(mockExtrinsic)
-      await Builder(mockApi).claimFrom(NODE).fungible([]).account(ADDRESS).build()
+      await Builder(mockApi).claimFrom(CHAIN).fungible([]).account(ADDRESS).build()
       expect(spy).toHaveBeenCalledTimes(1)
       expect(spy).toHaveBeenCalledWith({
         api: mockApi,
-        node: NODE,
+        chain: CHAIN,
         assets: [],
         address: ADDRESS
       })
@@ -705,7 +705,7 @@ describe('Builder', () => {
         args: []
       })
       const tx = await Builder(mockApi)
-        .claimFrom(NODE)
+        .claimFrom(CHAIN)
         .fungible([])
         .account(ADDRESS)
         .xcmVersion(Version.V3)
@@ -725,7 +725,7 @@ describe('Builder', () => {
       const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
       const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
-      const builder = Builder(mockApi).claimFrom(NODE).fungible([]).account(ADDRESS)
+      const builder = Builder(mockApi).claimFrom(CHAIN).fungible([]).account(ADDRESS)
 
       const tx = await builder.build()
       expect(tx).toBeDefined()
@@ -742,7 +742,7 @@ describe('Builder', () => {
     it('should throw when destination is a location (dryRun)', async () => {
       await expect(
         Builder(mockApi)
-          .from(NODE)
+          .from(CHAIN)
           .to(DOT_LOCATION)
           .currency(CURRENCY)
           .address(ADDRESS)
@@ -754,8 +754,8 @@ describe('Builder', () => {
     it('should throw when address is a location (dryRun)', async () => {
       await expect(
         Builder(mockApi)
-          .from(NODE)
-          .to(NODE_2)
+          .from(CHAIN)
+          .to(CHAIN_2)
           .currency(CURRENCY)
           .address(DOT_LOCATION)
           .senderAddress('alice')
@@ -778,8 +778,8 @@ describe('Builder', () => {
       const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER_ADDRESS)
@@ -806,8 +806,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -815,7 +815,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
@@ -825,8 +825,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -834,7 +834,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
     it('should fetch XCM fee estimate', async () => {
@@ -845,8 +845,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -854,7 +854,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
@@ -866,8 +866,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -875,7 +875,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
     it('should fetch transferable amount', async () => {
@@ -886,8 +886,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -905,8 +905,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -915,7 +915,7 @@ describe('Builder', () => {
       expect(result).toEqual(mockResult)
       expect(spy).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
     it('should fetch tansfer info', async () => {
@@ -924,8 +924,8 @@ describe('Builder', () => {
       const SENDER = 'sender-address'
 
       const result = await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2)
+        .from(CHAIN)
+        .to(CHAIN_2)
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
@@ -934,7 +934,7 @@ describe('Builder', () => {
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
   })
 })

@@ -21,7 +21,7 @@ describe('buildClaimAssetsInput', () => {
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
       assets: multiAssets,
       address
@@ -43,7 +43,7 @@ describe('buildClaimAssetsInput', () => {
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
       assets: multiAssets,
       address,
@@ -66,7 +66,7 @@ describe('buildClaimAssetsInput', () => {
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
       assets: multiAssets,
       address

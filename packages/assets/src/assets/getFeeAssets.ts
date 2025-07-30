@@ -1,13 +1,13 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TNativeAssetInfo } from '../types'
 import { getAssetsObject } from './assets'
 
 export const getFeeAssets = (
-  node: TNodeDotKsmWithRelayChains
+  chain: TChainDotKsmWithRelayChains
 ): Omit<TAssetInfo, 'isFeeAsset'>[] => {
-  const assetsObject = getAssetsObject(node)
+  const assetsObject = getAssetsObject(chain)
 
   const allAssets = [...assetsObject.nativeAssets, ...assetsObject.otherAssets]
 
@@ -20,7 +20,7 @@ export const getFeeAssets = (
   )
 
   if (!mainNativeAsset) {
-    throw new InvalidCurrencyError(`No main native asset found for node ${node}`)
+    throw new InvalidCurrencyError(`No main native asset found for chain ${chain}`)
   }
 
   if (feeAssets.length === 0) {

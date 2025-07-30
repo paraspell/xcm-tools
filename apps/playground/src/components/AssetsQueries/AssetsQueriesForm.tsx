@@ -9,14 +9,14 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type {
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  TChainDotKsmWithRelayChains,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
 import {
+  CHAIN_NAMES,
+  CHAINS_WITH_RELAY_CHAINS,
   getRelayChainSymbol,
   isRelayChain,
-  NODE_NAMES,
-  NODES_WITH_RELAY_CHAINS,
 } from '@paraspell/sdk';
 import { type FC, useEffect, useRef } from 'react';
 
@@ -28,8 +28,8 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   func: TAssetsQuery;
-  node: TNodeDotKsmWithRelayChains;
-  destination: TNodeWithRelayChains;
+  chain: TChainDotKsmWithRelayChains;
+  destination: TChainWithRelayChains;
   currency: string;
   amount: string;
   address: string;
@@ -51,7 +51,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       func: 'ASSETS_OBJECT',
-      node: 'Acala',
+      chain: 'Acala',
       destination: 'Astar',
       currency: '',
       address: '',
@@ -63,7 +63,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   useAutoFillWalletAddress(form, 'address');
 
-  const { func, node, currencyType, useApi } = form.getValues();
+  const { func, chain, currencyType, useApi } = form.getValues();
 
   const { setIsUseXcmApiSelected } = useWallet();
 
@@ -104,16 +104,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const optionalCurrency = func === 'EXISTENTIAL_DEPOSIT';
 
-  const shouldHideNode =
+  const shouldHideChain =
     func === 'ETHEREUM_BRIDGE_STATUS' || func === 'PARA_ETH_FEES';
 
-  const nodeList = supportsRelayChains ? NODES_WITH_RELAY_CHAINS : NODE_NAMES;
+  const chainList = supportsRelayChains
+    ? CHAINS_WITH_RELAY_CHAINS
+    : CHAIN_NAMES;
 
   useEffect(() => {
-    if (!nodeList.includes(node as (typeof nodeList)[0])) {
-      form.setFieldValue('node', 'Acala');
+    if (!chainList.includes(chain as (typeof chainList)[0])) {
+      form.setFieldValue('chain', 'Acala');
     }
-  }, [nodeList, node]);
+  }, [chainList, chain]);
 
   useEffect(() => {
     if (showSymbolInput) {
@@ -126,24 +128,24 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     form.setFieldValue('currency', '');
   };
 
-  const isRelay = isRelayChain(node);
+  const isRelay = isRelayChain(chain);
 
-  const previousNodeRef = useRef<TNodeDotKsmWithRelayChains>(node);
+  const previousChainRef = useRef<TChainDotKsmWithRelayChains>(chain);
 
   useEffect(() => {
-    const prevNode = previousNodeRef.current;
-    const wasRelay = isRelayChain(prevNode);
+    const prevChain = previousChainRef.current;
+    const wasRelay = isRelayChain(prevChain);
 
-    const isNowRelay = isRelayChain(node);
+    const isNowRelay = isRelayChain(chain);
 
     if (isNowRelay) {
-      form.setFieldValue('currency', getRelayChainSymbol(node));
+      form.setFieldValue('currency', getRelayChainSymbol(chain));
     } else if (wasRelay && !isNowRelay) {
       form.setFieldValue('currency', '');
     }
 
-    previousNodeRef.current = node;
-  }, [node, func]);
+    previousChainRef.current = chain;
+  }, [chain, func]);
 
   const symbolSpecifierOptions = [
     { label: 'Auto', value: 'auto' },
@@ -171,14 +173,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             {...form.getInputProps('func')}
           />
 
-          {!shouldHideNode && (
+          {!shouldHideChain && (
             <ParachainSelect
-              label={'Node'}
+              label={'Chain'}
               placeholder="Pick value"
-              data={nodeList}
+              data={chainList}
               required
-              data-testid="select-node"
-              {...form.getInputProps('node')}
+              data-testid="select-chain"
+              {...form.getInputProps('chain')}
             />
           )}
 
@@ -186,7 +188,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             <ParachainSelect
               label={'Destination'}
               placeholder="Pick value"
-              data={NODES_WITH_RELAY_CHAINS}
+              data={CHAINS_WITH_RELAY_CHAINS}
               required
               data-testid="select-destination"
               {...form.getInputProps('destination')}

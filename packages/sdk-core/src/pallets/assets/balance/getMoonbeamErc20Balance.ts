@@ -14,12 +14,12 @@ const ERC20_ABI = [
 ] as const
 
 export const getMoonbeamErc20Balance = async (
-  node: 'Moonbeam' | 'Moonriver',
+  chain: 'Moonbeam' | 'Moonriver',
   assetId: string,
   address: string
 ): Promise<bigint> => {
   const client = createPublicClient({
-    chain: node === 'Moonbeam' ? moonbeam : moonriver,
+    chain: chain === 'Moonbeam' ? moonbeam : moonriver,
     transport: http()
   })
 

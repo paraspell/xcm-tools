@@ -13,12 +13,12 @@ import {
   getSupportedAssets,
   getSupportedDestinations,
   hasSupportForAsset,
-  TNode,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  TChain,
+  TChainDotKsmWithRelayChains,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
 
-import { validateNode } from '../utils.js';
+import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetLocationDto } from './dto/AssetLocationDto.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
@@ -26,79 +26,79 @@ import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 
 @Injectable()
 export class AssetsService {
-  getAssetsObject(node: string) {
-    validateNode(node);
-    return getAssetsObject(node as TNode);
+  getAssetsObject(chain: string) {
+    validateChain(chain);
+    return getAssetsObject(chain as TChain);
   }
 
-  getAssetId(node: string, symbol: string) {
-    validateNode(node);
-    const id = getAssetId(node as TNode, symbol);
+  getAssetId(chain: string, symbol: string) {
+    validateChain(chain);
+    const id = getAssetId(chain as TChain, symbol);
     if (!id) {
       throw new NotFoundException(`Asset id for symbol ${symbol} not found.`);
     }
     return id;
   }
 
-  getAssetLocation(node: string, { currency }: AssetLocationDto) {
-    validateNode(node, { withRelayChains: true });
+  getAssetLocation(chain: string, { currency }: AssetLocationDto) {
+    validateChain(chain, { withRelayChains: true });
     return JSON.stringify(
-      getAssetLocation(node as TNodeWithRelayChains, currency),
+      getAssetLocation(chain as TChainWithRelayChains, currency),
     );
   }
 
-  getRelayChainSymbol(node: string) {
-    validateNode(node);
-    return JSON.stringify(getRelayChainSymbol(node as TNode));
+  getRelayChainSymbol(chain: string) {
+    validateChain(chain);
+    return JSON.stringify(getRelayChainSymbol(chain as TChain));
   }
 
-  getNativeAssets(node: string) {
-    validateNode(node);
-    return getNativeAssets(node as TNode);
+  getNativeAssets(chain: string) {
+    validateChain(chain);
+    return getNativeAssets(chain as TChain);
   }
 
-  getOtherAssets(node: string) {
-    validateNode(node);
-    return getOtherAssets(node as TNode);
+  getOtherAssets(chain: string) {
+    validateChain(chain);
+    return getOtherAssets(chain as TChain);
   }
 
-  getAllAssetsSymbols(node: string) {
-    validateNode(node);
-    return getAllAssetsSymbols(node as TNode);
+  getAllAssetsSymbols(chain: string) {
+    validateChain(chain);
+    return getAllAssetsSymbols(chain as TChain);
   }
 
-  getDecimals(node: string, symbol: string) {
-    validateNode(node);
-    const decimals = getAssetDecimals(node as TNode, symbol);
+  getDecimals(chain: string, symbol: string) {
+    validateChain(chain);
+    const decimals = getAssetDecimals(chain as TChain, symbol);
     if (decimals === null) {
       throw new NotFoundException(`Decimals for currency ${symbol} not found.`);
     }
     return decimals;
   }
 
-  getFeeAssets(node: string) {
-    validateNode(node, { excludeEthereum: true, withRelayChains: true });
-    return getFeeAssets(node as TNodeDotKsmWithRelayChains);
+  getFeeAssets(chain: string) {
+    validateChain(chain, { excludeEthereum: true, withRelayChains: true });
+    return getFeeAssets(chain as TChainDotKsmWithRelayChains);
   }
 
-  hasSupportForAsset(node: string, symbol: string) {
-    validateNode(node);
-    return hasSupportForAsset(node as TNode, symbol);
+  hasSupportForAsset(chain: string, symbol: string) {
+    validateChain(chain);
+    return hasSupportForAsset(chain as TChain, symbol);
   }
 
-  getSupportedAssets(nodeOrigin: string, nodeDestination: string) {
-    validateNode(nodeOrigin, { withRelayChains: true });
-    validateNode(nodeDestination, { withRelayChains: true });
-    return getSupportedAssets(nodeOrigin as TNode, nodeDestination as TNode);
+  getSupportedAssets(originChain: string, destChain: string) {
+    validateChain(originChain, { withRelayChains: true });
+    validateChain(destChain, { withRelayChains: true });
+    return getSupportedAssets(originChain as TChain, destChain as TChain);
   }
 
-  getSupportedDestinations(node: string, params: SupportedDestinationsDto) {
+  getSupportedDestinations(chain: string, params: SupportedDestinationsDto) {
     const { currency } = params;
-    validateNode(node, { withRelayChains: true });
+    validateChain(chain, { withRelayChains: true });
 
     try {
       return getSupportedDestinations(
-        node as TNodeDotKsmWithRelayChains,
+        chain as TChainDotKsmWithRelayChains,
         currency,
       );
     } catch (e) {
@@ -108,14 +108,14 @@ export class AssetsService {
 
   async getOriginFeeDetails(params: OriginFeeDetailsDto) {
     const { origin, destination } = params;
-    validateNode(origin, { withRelayChains: true, excludeEthereum: true });
-    validateNode(destination, { withRelayChains: true });
+    validateChain(origin, { withRelayChains: true, excludeEthereum: true });
+    validateChain(destination, { withRelayChains: true });
 
     try {
       return await getOriginFeeDetails({
         ...params,
-        origin: origin as TNodeDotKsmWithRelayChains,
-        destination: destination as TNodeDotKsmWithRelayChains,
+        origin: origin as TChainDotKsmWithRelayChains,
+        destination: destination as TChainDotKsmWithRelayChains,
       });
     } catch (e) {
       return handleXcmApiError(e);

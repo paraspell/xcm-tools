@@ -12,30 +12,32 @@ export class PalletsController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Get(':node/default')
-  getDefaultPallet(@Param('node') node: string, @Req() req: Request) {
-    this.analyticsService.track(EventName.GET_DEFAULT_PALLET, req, { node });
-    return Promise.resolve(this.palletsService.getDefaultPallet(node));
+  @Get(':chain/default')
+  getDefaultPallet(@Param('chain') chain: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.GET_DEFAULT_PALLET, req, { chain });
+    return Promise.resolve(this.palletsService.getDefaultPallet(chain));
   }
 
-  @Get(':node')
-  getPallets(@Param('node') node: string, @Req() req: Request) {
-    this.analyticsService.track(EventName.GET_SUPPORTED_PALLETS, req, { node });
-    return Promise.resolve(this.palletsService.getPallets(node));
+  @Get(':chain')
+  getPallets(@Param('chain') chain: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.GET_SUPPORTED_PALLETS, req, {
+      chain,
+    });
+    return Promise.resolve(this.palletsService.getPallets(chain));
   }
 
-  @Get(':node/index')
+  @Get(':chain/index')
   getPalletIndex(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Query() { pallet }: PalletIndexDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_PALLET_INDEX, req, {
-      node,
+      chain,
       pallet,
     });
     return Promise.resolve(
-      JSON.stringify(this.palletsService.getPalletIndex(node, pallet)),
+      JSON.stringify(this.palletsService.getPalletIndex(chain, pallet)),
     );
   }
 }

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import type { TDryRunNodeResult } from '../../types'
+import type { TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'
 import { dryRunOrigin } from './dryRunOrigin'
 
@@ -19,9 +19,9 @@ describe('getDryRunOrigin', () => {
 
   it('returns the dry run result', async () => {
     const address = '0x123'
-    const node = 'Polkadot'
+    const chain = 'Polkadot'
 
-    const mockResult: TDryRunNodeResult = {
+    const mockResult: TDryRunChainResult = {
       success: true,
       fee: 1000n,
       forwardedXcms: [],
@@ -36,14 +36,14 @@ describe('getDryRunOrigin', () => {
 
     const result = await dryRunOrigin({
       api: apiMock,
-      node,
+      chain,
       address,
       tx: {}
     })
 
-    expect(validateAddress).toHaveBeenCalledWith(address, node, false)
+    expect(validateAddress).toHaveBeenCalledWith(address, chain, false)
     expect(result).toEqual(mockResult)
-    expect(initSpy).toHaveBeenCalledWith(node, DRY_RUN_CLIENT_TIMEOUT_MS)
+    expect(initSpy).toHaveBeenCalledWith(chain, DRY_RUN_CLIENT_TIMEOUT_MS)
     expect(disconnectSpy).toHaveBeenCalled()
   })
 })

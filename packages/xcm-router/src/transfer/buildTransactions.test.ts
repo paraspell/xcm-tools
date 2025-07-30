@@ -2,7 +2,7 @@ import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TDestinationInfo, TOriginInfo } from '../types';
 import { buildTransactions } from './buildTransactions';
 import * as prepareExtrinsicsModule from './prepareExtrinsics';
@@ -27,17 +27,17 @@ vi.mock('./prepareExtrinsics', () => ({
 const baseOptions = {
   origin: {
     api: originApi,
-    node: 'BifrostPolkadot',
+    chain: 'BifrostPolkadot',
     assetFrom: { symbol: 'ACA' },
   },
   exchange: {
-    baseNode: 'Acala',
+    baseChain: 'Acala',
     api: swapApi,
     apiPapi: swapApiPapi,
   },
   destination: {
     address: 'someAddress',
-    node: 'Crust',
+    chain: 'Crust',
   },
 } as TBuildTransactionsOptionsModified;
 
@@ -53,18 +53,18 @@ describe('buildTransactions', () => {
     });
   });
 
-  test('returns only swap tx when origin & destination are the exchange node', async () => {
-    const res = await buildTransactions({ node: 'Acala' } as ExchangeNode, {
+  test('returns only swap tx when origin & destination are the exchange chain', async () => {
+    const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, node: 'Acala' } as TOriginInfo,
-      exchange: { ...baseOptions.exchange, baseNode: 'Acala', exchangeNode: 'AcalaDex' },
-      destination: { ...baseOptions.destination, node: 'Acala' } as TDestinationInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
+      exchange: { ...baseOptions.exchange, baseChain: 'Acala', exchangeChain: 'AcalaDex' },
+      destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });
 
     expect(res).toEqual([
       {
         api: swapApiPapi,
-        node: 'Acala',
+        chain: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
         amountOut: 1000n,
@@ -80,19 +80,19 @@ describe('buildTransactions', () => {
       amountOut: 1000n,
     });
 
-    const res = await buildTransactions({ node: 'Acala' } as ExchangeNode, baseOptions);
+    const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, baseOptions);
 
     expect(res).toEqual([
       {
         api: originApi,
-        node: 'BifrostPolkadot',
-        destinationNode: 'Acala',
+        chain: 'BifrostPolkadot',
+        destinationChain: 'Acala',
         tx: 'toExchangeTx',
         type: 'TRANSFER',
       },
       {
         api: swapApiPapi,
-        node: 'Acala',
+        chain: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
         amountOut: 1000n,
@@ -108,17 +108,17 @@ describe('buildTransactions', () => {
       amountOut: 1000n,
     });
 
-    const res = await buildTransactions({ node: 'Acala' } as ExchangeNode, {
+    const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
       origin: undefined,
-      exchange: { ...baseOptions.exchange, baseNode: 'Acala' },
+      exchange: { ...baseOptions.exchange, baseChain: 'Acala' },
     });
 
     expect(res).toEqual([
       {
         api: swapApiPapi,
-        node: 'Acala',
-        destinationNode: 'Crust',
+        chain: 'Acala',
+        destinationChain: 'Crust',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
       },
@@ -133,23 +133,23 @@ describe('buildTransactions', () => {
       amountOut: 1000n,
     });
 
-    const res = await buildTransactions({ node: 'Acala' } as ExchangeNode, {
+    const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
-      destination: { address: 'someAddress', node: 'Crust' },
+      destination: { address: 'someAddress', chain: 'Crust' },
     });
 
     expect(res).toEqual([
       {
         api: originApi,
-        node: 'BifrostPolkadot',
-        destinationNode: 'Acala',
+        chain: 'BifrostPolkadot',
+        destinationChain: 'Acala',
         tx: 'toExchangeTx',
         type: 'TRANSFER',
       },
       {
         api: swapApiPapi,
-        node: 'Acala',
-        destinationNode: 'Crust',
+        chain: 'Acala',
+        destinationChain: 'Crust',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
       },

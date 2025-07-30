@@ -10,8 +10,8 @@ export {
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'
-export * from './nodes/config'
-export * from './nodes/getTNode'
+export * from './chains/config'
+export * from './chains/getTChain'
 export * from './pallets/assets'
 export * from './transfer'
 export * from './types'
