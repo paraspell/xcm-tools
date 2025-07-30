@@ -58,7 +58,9 @@ basePjsTest.describe("XCM SDK - Asset claim", () => {
     });
 
     basePjsTest(`Should succeed for ${node} asset claim - API`, async () => {
-      await performAssetClaim(appPage, extensionPage, node, { useApi: true });
+      await performAssetClaim(appPage, extensionPage, node, { 
+        useApi: true,
+       });
     });
   });
 });

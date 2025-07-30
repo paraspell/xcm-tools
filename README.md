@@ -75,7 +75,7 @@ Afterwards, you should be able to use any of the following commands (from reposi
 
 - Run formatter using `pnpm format:check`
 
-- Run formatter with write permissions using `pnpm format:wríte`
+- Run formatter with write permissions using `pnpm format:write`
 
 - Run linter using `pnpm lint:check`
 
