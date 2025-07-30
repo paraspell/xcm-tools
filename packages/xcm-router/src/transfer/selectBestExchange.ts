@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import { type TCommonTransferOptions, type TCommonTransferOptionsModified } from '../types';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
@@ -10,15 +10,15 @@ import { determineFeeCalcAddress } from './utils';
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
   originApi: PolkadotClient | undefined,
-): Promise<ExchangeNode> =>
+): Promise<ExchangeChain> =>
   selectBestExchangeCommon(options, originApi, async (dex, assetFromExchange, assetTo, options) => {
     const modifiedOptions: TCommonTransferOptionsModified = {
       ...options,
       exchange: {
         api: await dex.createApiInstance(),
         apiPapi: await dex.createApiInstancePapi(),
-        baseNode: dex.node,
-        exchangeNode: dex.exchangeNode,
+        baseChain: dex.chain,
+        exchangeChain: dex.exchangeChain,
         assetFrom: assetFromExchange,
         assetTo,
       },

@@ -1,8 +1,8 @@
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidParameterError } from '../errors'
-import { resolveTNodeFromLocation } from '../pallets/xcmPallet/utils'
+import { resolveTChainFromLocation } from '../pallets/xcmPallet/utils'
 import type { TRelayToParaOptions } from '../types'
-import { getNode } from '../utils'
+import { getChain } from '../utils'
 
 export const transferRelayToPara = async <TApi, TRes>(
   options: TRelayToParaOptions<TApi, TRes>
@@ -26,8 +26,8 @@ export const transferRelayToPara = async <TApi, TRes>(
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
-  const serializedApiCall = getNode(
-    isLocationDestination ? resolveTNodeFromLocation(origin, destination) : destination
+  const serializedApiCall = getChain(
+    isLocationDestination ? resolveTChainFromLocation(origin, destination) : destination
   ).transferRelayToPara({
     api,
     origin,

@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
-import { localizeLocation } from '../../location'
 import { createAsset } from '../../asset'
+import { localizeLocation } from '../../location'
 import { getAssetReserveChain } from './getAssetReserveChain'
 import { prepareExecuteContext } from './prepareExecuteContext'
 

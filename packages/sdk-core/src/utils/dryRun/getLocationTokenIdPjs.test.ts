@@ -1,6 +1,6 @@
 import type { TForeignAssetInfo } from '@paraspell/assets'
 import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import { Parents, type TLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { Parents, type TLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getLocationTokenIdPjs } from './getLocationTokenIdPjs'
@@ -11,16 +11,16 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 describe('getLocationTokenIdPjs', () => {
-  const mockNode: TNodeDotKsmWithRelayChains = {} as TNodeDotKsmWithRelayChains
+  const mockChain = {} as TSubstrateChain
 
   it('should return the native asset symbol when location.interior is "Here"', () => {
     const location: TLocation = { parents: Parents.ONE, interior: 'Here' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
-    const result = getLocationTokenIdPjs(location, mockNode)
+    const result = getLocationTokenIdPjs(location, mockChain)
 
     expect(result).toBe('DOT')
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
   })
 
   it('should return the symbol of a valid foreign asset', () => {
@@ -38,10 +38,10 @@ describe('getLocationTokenIdPjs', () => {
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenIdPjs(location, mockNode)
+    const result = getLocationTokenIdPjs(location, mockChain)
 
     expect(result).toBe('USDT')
-    expect(getOtherAssets).toHaveBeenCalledWith(mockNode)
+    expect(getOtherAssets).toHaveBeenCalledWith(mockChain)
   })
 
   it('should return null if foreign asset is not found', () => {
@@ -59,7 +59,7 @@ describe('getLocationTokenIdPjs', () => {
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenIdPjs(location, mockNode)
+    const result = getLocationTokenIdPjs(location, mockChain)
 
     expect(result).toBeNull()
   })
@@ -72,7 +72,7 @@ describe('getLocationTokenIdPjs', () => {
       }
     }
 
-    const result = getLocationTokenIdPjs(location, mockNode)
+    const result = getLocationTokenIdPjs(location, mockChain)
 
     expect(result).toBeNull()
   })
@@ -85,7 +85,7 @@ describe('getLocationTokenIdPjs', () => {
       }
     }
 
-    const result = getLocationTokenIdPjs(location, mockNode)
+    const result = getLocationTokenIdPjs(location, mockChain)
 
     expect(result).toBeNull()
   })

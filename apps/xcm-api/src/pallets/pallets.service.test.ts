@@ -1,10 +1,11 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNode, TPallet } from '@paraspell/sdk';
+import type { TChain, TPallet } from '@paraspell/sdk';
 import {
   getDefaultPallet,
   getPalletIndex,
   getSupportedPallets,
+  SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,7 +33,7 @@ vi.mock('./utils/index.js', () => ({
 
 describe('PalletsService', () => {
   let service: PalletsService;
-  let validateNodeSpy: MockInstance;
+  let validateChainSpy: MockInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,7 +41,7 @@ describe('PalletsService', () => {
     }).compile();
 
     service = module.get<PalletsService>(PalletsService);
-    validateNodeSpy = vi.spyOn(utils, 'validateNode');
+    validateChainSpy = vi.spyOn(utils, 'validateChain');
   });
 
   afterEach(() => {
@@ -53,39 +54,48 @@ describe('PalletsService', () => {
 
   describe('getDefaultPallet', () => {
     it('should return the default pallet as string', () => {
-      const mockNode: TNode = 'Acala';
+      const mockChain: TChain = 'Acala';
 
-      const result = service.getDefaultPallet(mockNode);
+      const result = service.getDefaultPallet(mockChain);
 
-      expect(validateNodeSpy).toHaveBeenCalledWith(mockNode);
-      expect(getDefaultPallet).toHaveBeenCalledWith(mockNode);
+      expect(validateChainSpy).toHaveBeenCalledWith(
+        mockChain,
+        SUBSTRATE_CHAINS,
+      );
+      expect(getDefaultPallet).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(JSON.stringify(mockPallet));
     });
   });
 
   describe('getPallets', () => {
     it('should return supported pallets array', () => {
-      const mockNode: TNode = 'Acala';
+      const mockChain: TChain = 'Acala';
 
-      const result = service.getPallets(mockNode);
+      const result = service.getPallets(mockChain);
 
-      expect(validateNodeSpy).toHaveBeenCalledWith(mockNode);
-      expect(getSupportedPallets).toHaveBeenCalledWith(mockNode);
+      expect(validateChainSpy).toHaveBeenCalledWith(
+        mockChain,
+        SUBSTRATE_CHAINS,
+      );
+      expect(getSupportedPallets).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(mockPallets);
     });
   });
 
   describe('getPalletIndex', () => {
     it('should return the index of the given pallet', () => {
-      const mockNode: TNode = 'Acala';
+      const mockChain: TChain = 'Acala';
       const mockPallet = 'XTokens';
       const expectedIndex = 0;
 
-      const result = service.getPalletIndex(mockNode, mockPallet);
+      const result = service.getPalletIndex(mockChain, mockPallet);
 
-      expect(validateNodeSpy).toHaveBeenCalledWith(mockNode);
+      expect(validateChainSpy).toHaveBeenCalledWith(
+        mockChain,
+        SUBSTRATE_CHAINS,
+      );
       expect(validatePallet).toHaveBeenCalledWith(mockPallet);
-      expect(getPalletIndex).toHaveBeenCalledWith(mockNode, mockPallet);
+      expect(getPalletIndex).toHaveBeenCalledWith(mockChain, mockPallet);
       expect(result).toEqual(expectedIndex);
     });
   });

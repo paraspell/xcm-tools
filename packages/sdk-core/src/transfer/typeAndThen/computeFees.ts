@@ -1,7 +1,7 @@
-import { hasXcmPaymentApiSupport, type TAsset } from '@paraspell/assets'
+import { hasXcmPaymentApiSupport, type TAssetInfo } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { padFeeBy } from '../fees'
@@ -20,7 +20,7 @@ const computeInstructionFee = async <TApi, TRes>(
     await api.getXcmPaymentApiFee(
       chain,
       addXcmVersionHeader(xcm, version),
-      { multiLocation: DOT_MULTILOCATION } as TAsset,
+      { location: DOT_LOCATION } as TAssetInfo,
       true
     ),
     chain === 'Hydration' ? FEE_PADDING_HYDRATION : FEE_PADDING_PERCENTAGE

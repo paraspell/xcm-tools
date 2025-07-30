@@ -1,6 +1,6 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import { type TNodeDotKsmWithRelayChains, type TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -72,8 +72,8 @@ describe('buildDestInfo', () => {
 
     baseOptions = {
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'Moonbeam' as TNodeWithRelayChains,
+      origin: 'AssetHubPolkadot' as TSubstrateChain,
+      destination: 'Moonbeam' as TChain,
       address: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
       originFee: 50000000n,
@@ -83,11 +83,11 @@ describe('buildDestInfo', () => {
       bridgeFee: undefined
     }
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return 'DOT'
-      if (node === 'AssetHubKusama') return 'KSM'
-      if (node === 'Moonbeam') return 'GLMR'
-      if (node === 'Ethereum') return 'ETH'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return 'DOT'
+      if (chain === 'AssetHubKusama') return 'KSM'
+      if (chain === 'Moonbeam') return 'GLMR'
+      if (chain === 'Ethereum') return 'ETH'
       return 'NATIVE'
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
@@ -113,7 +113,7 @@ describe('buildDestInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockClonedApi,
       address: options.address,
-      node: options.destination,
+      chain: options.destination,
       currency: { location: LOCATION }
     })
 
@@ -169,8 +169,8 @@ describe('buildDestInfo', () => {
     const ahToAhBase = {
       ...baseOptions,
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubKusama' as TNodeWithRelayChains
+      origin: 'AssetHubPolkadot' as TSubstrateChain,
+      destination: 'AssetHubKusama' as TChain
     }
 
     it('calculates receivedAmount for native asset transfer with bridgeFee', async () => {
@@ -181,8 +181,8 @@ describe('buildDestInfo', () => {
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
       } as TAssetInfo)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -207,8 +207,8 @@ describe('buildDestInfo', () => {
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
       } as TAssetInfo)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -234,8 +234,8 @@ describe('buildDestInfo', () => {
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
       } as TAssetInfo)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -330,8 +330,8 @@ describe('buildDestInfo', () => {
       destFeeDetail: { fee: DEFAULT_FEE, currency: 'SOME_OTHER_FEE_TOKEN' } as TXcmFeeDetail
     }
     const nativeBalanceForFee = 70000000000n
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
-      node === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>
+      chain === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
     )
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(nativeBalanceForFee)
 

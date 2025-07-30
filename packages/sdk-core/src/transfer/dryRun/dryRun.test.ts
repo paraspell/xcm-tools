@@ -24,7 +24,7 @@ describe('dryRun', () => {
 
   it('returns the dry run result', async () => {
     const address = '0x123'
-    const node = 'Polkadot'
+    const chain = 'Polkadot'
 
     const mockResult: TDryRunResult = {
       origin: {
@@ -44,17 +44,17 @@ describe('dryRun', () => {
 
     const result = await dryRun({
       api: apiMock,
-      origin: node,
-      destination: node,
+      origin: chain,
+      destination: chain,
       senderAddress: address,
       currency: {} as TCurrencyInputWithAmount,
       address,
       tx: {}
     })
 
-    expect(validateAddress).toHaveBeenCalledWith(address, node, false)
+    expect(validateAddress).toHaveBeenCalledWith(address, chain, false)
     expect(result).toEqual(mockResult)
-    expect(initSpy).toHaveBeenCalledWith(node, DRY_RUN_CLIENT_TIMEOUT_MS)
+    expect(initSpy).toHaveBeenCalledWith(chain, DRY_RUN_CLIENT_TIMEOUT_MS)
     expect(disconnectSpy).toHaveBeenCalled()
   })
 })

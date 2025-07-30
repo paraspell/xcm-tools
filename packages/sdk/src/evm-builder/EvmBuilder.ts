@@ -1,13 +1,13 @@
 import type {
   IPolkadotApi,
+  TChain,
   TCurrencyInputWithAmount,
-  TEvmBuilderOptions,
-  TNodeWithRelayChains
+  TEvmBuilderOptions
 } from '@paraspell/sdk-core'
 import { transferMoonbeamEvm, transferMoonbeamToEth, validateAddress } from '@paraspell/sdk-core'
 import type { WalletClient } from 'viem'
 
-import type { TEvmNodeFromPapi } from '../types'
+import type { TEvmChainFromPapi } from '../types'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
@@ -23,18 +23,18 @@ export class EvmBuilderCore<
     this._options = options
   }
 
-  from(node: TEvmNodeFromPapi): EvmBuilderCore<TApi, TRes, T & { from: TEvmNodeFromPapi }> {
-    return new EvmBuilderCore({ ...this._options, from: node })
+  from(chain: TEvmChainFromPapi): EvmBuilderCore<TApi, TRes, T & { from: TEvmChainFromPapi }> {
+    return new EvmBuilderCore({ ...this._options, from: chain })
   }
 
   /**
-   * Specifies the destination node on Polkadot.
+   * Specifies the destination chain on Polkadot.
    *
-   * @param node - The Polkadot node to which the transfer will be made.
+   * @param chain - The Polkadot chain to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(node: TNodeWithRelayChains): EvmBuilderCore<TApi, TRes, T & { to: TNodeWithRelayChains }> {
-    return new EvmBuilderCore({ ...this._options, to: node })
+  to(chain: TChain): EvmBuilderCore<TApi, TRes, T & { to: TChain }> {
+    return new EvmBuilderCore({ ...this._options, to: chain })
   }
 
   /**

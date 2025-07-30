@@ -1,0 +1,153 @@
+import Acala from '../chains/supported/Acala'
+import Ajuna from '../chains/supported/Ajuna'
+import AjunaPaseo from '../chains/supported/AjunaPaseo'
+import Altair from '../chains/supported/Altair'
+import Amplitude from '../chains/supported/Amplitude'
+import AssetHubKusama from '../chains/supported/AssetHubKusama'
+import AssetHubPaseo from '../chains/supported/AssetHubPaseo'
+import AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
+import AssetHubWestend from '../chains/supported/AssetHubWestend'
+import Astar from '../chains/supported/Astar'
+import Basilisk from '../chains/supported/Basilisk'
+import BifrostKusama from '../chains/supported/BifrostKusama'
+import BifrostPaseo from '../chains/supported/BifrostPaseo'
+import BifrostPolkadot from '../chains/supported/BifrostPolkadot'
+import BridgeHubKusama from '../chains/supported/BridgeHubKusama'
+import BridgeHubPaseo from '../chains/supported/BridgeHubPaseo'
+import BridgeHubPolkadot from '../chains/supported/BridgeHubPolkadot'
+import BridgeHubWestend from '../chains/supported/BridgeHubWestend'
+import Centrifuge from '../chains/supported/Centrifuge'
+import Collectives from '../chains/supported/Collectives'
+import CollectivesWestend from '../chains/supported/CollectivesWestend'
+import ComposableFinance from '../chains/supported/ComposableFinance'
+import CoretimeKusama from '../chains/supported/CoretimeKusama'
+import CoretimePaseo from '../chains/supported/CoretimePaseo'
+import CoretimePolkadot from '../chains/supported/CoretimePolkadot'
+import CoretimeWestend from '../chains/supported/CoretimeWestend'
+import Crab from '../chains/supported/Crab'
+import Crust from '../chains/supported/Crust'
+import CrustShadow from '../chains/supported/CrustShadow'
+import Curio from '../chains/supported/Curio'
+import Darwinia from '../chains/supported/Darwinia'
+import Encointer from '../chains/supported/Encointer'
+import EnergyWebX from '../chains/supported/EnergyWebX'
+import EnergyWebXPaseo from '../chains/supported/EnergyWebXPaseo'
+import Heima from '../chains/supported/Heima'
+import HeimaPaseo from '../chains/supported/HeimaPaseo'
+import Hydration from '../chains/supported/Hydration'
+import HydrationPaseo from '../chains/supported/HydrationPaseo'
+import IntegriteeKusama from '../chains/supported/IntegriteeKusama'
+import IntegriteePaseo from '../chains/supported/IntegriteePaseo'
+import Interlay from '../chains/supported/Interlay'
+import Jamton from '../chains/supported/Jamton'
+import Karura from '../chains/supported/Karura'
+import KiltPaseo from '../chains/supported/KiltPaseo'
+import KiltSpiritnet from '../chains/supported/KiltSpiritnet'
+import Kintsugi from '../chains/supported/Kintsugi'
+import Laos from '../chains/supported/Laos'
+import LaosPaseo from '../chains/supported/LaosPaseo'
+import Manta from '../chains/supported/Manta'
+import Moonbeam from '../chains/supported/Moonbeam'
+import Moonriver from '../chains/supported/Moonriver'
+import Mythos from '../chains/supported/Mythos'
+import NeuroWeb from '../chains/supported/NeuroWeb'
+import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
+import Nodle from '../chains/supported/Nodle'
+import NodlePaseo from '../chains/supported/NodlePaseo'
+import PAssetHub from '../chains/supported/PAssetHub'
+import Peaq from '../chains/supported/Peaq'
+import Pendulum from '../chains/supported/Pendulum'
+import Penpal from '../chains/supported/Penpal'
+import PeopleKusama from '../chains/supported/PeopleKusama'
+import PeoplePaseo from '../chains/supported/PeoplePaseo'
+import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
+import PeopleWestend from '../chains/supported/PeopleWestend'
+import Phala from '../chains/supported/Phala'
+import Polimec from '../chains/supported/Polimec'
+import Quartz from '../chains/supported/Quartz'
+import RobonomicsKusama from '../chains/supported/RobonomicsKusama'
+import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
+import Shiden from '../chains/supported/Shiden'
+import Subsocial from '../chains/supported/Subsocial'
+import Unique from '../chains/supported/Unique'
+import Zeitgeist from '../chains/supported/Zeitgeist'
+import ZeitgeistPaseo from '../chains/supported/ZeitgeistPaseo'
+
+export const chains = <TApi, TRes>() => ({
+  AssetHubPolkadot: new AssetHubPolkadot<TApi, TRes>(),
+  Acala: new Acala<TApi, TRes>(),
+  Ajuna: new Ajuna<TApi, TRes>(),
+  Astar: new Astar<TApi, TRes>(),
+  Unique: new Unique<TApi, TRes>(),
+  Crust: new Crust<TApi, TRes>(),
+  BifrostPolkadot: new BifrostPolkadot<TApi, TRes>(),
+  BridgeHubPolkadot: new BridgeHubPolkadot<TApi, TRes>(),
+  BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
+  Centrifuge: new Centrifuge<TApi, TRes>(),
+  ComposableFinance: new ComposableFinance<TApi, TRes>(),
+  Darwinia: new Darwinia<TApi, TRes>(),
+  EnergyWebX: new EnergyWebX<TApi, TRes>(),
+  Hydration: new Hydration<TApi, TRes>(),
+  IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
+  Interlay: new Interlay<TApi, TRes>(),
+  Heima: new Heima<TApi, TRes>(),
+  Jamton: new Jamton<TApi, TRes>(),
+  Moonbeam: new Moonbeam<TApi, TRes>(),
+  AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
+  CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
+  CoretimePolkadot: new CoretimePolkadot<TApi, TRes>(),
+  Encointer: new Encointer<TApi, TRes>(),
+  Altair: new Altair<TApi, TRes>(),
+  Amplitude: new Amplitude<TApi, TRes>(),
+  Basilisk: new Basilisk<TApi, TRes>(),
+  BifrostKusama: new BifrostKusama<TApi, TRes>(),
+  CrustShadow: new CrustShadow<TApi, TRes>(),
+  Crab: new Crab<TApi, TRes>(),
+  Karura: new Karura<TApi, TRes>(),
+  Kintsugi: new Kintsugi<TApi, TRes>(),
+  Moonriver: new Moonriver<TApi, TRes>(),
+  Laos: new Laos<TApi, TRes>(),
+  Quartz: new Quartz<TApi, TRes>(),
+  RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
+  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),
+  PeoplePolkadot: new PeoplePolkadot<TApi, TRes>(),
+  PeopleKusama: new PeopleKusama<TApi, TRes>(),
+  Shiden: new Shiden<TApi, TRes>(),
+  Manta: new Manta<TApi, TRes>(),
+  Nodle: new Nodle<TApi, TRes>(),
+  NeuroWeb: new NeuroWeb<TApi, TRes>(),
+  Pendulum: new Pendulum<TApi, TRes>(),
+  Zeitgeist: new Zeitgeist<TApi, TRes>(),
+  Collectives: new Collectives<TApi, TRes>(),
+  Phala: new Phala<TApi, TRes>(),
+  Subsocial: new Subsocial<TApi, TRes>(),
+  KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),
+  Curio: new Curio<TApi, TRes>(),
+  Mythos: new Mythos<TApi, TRes>(),
+  Peaq: new Peaq<TApi, TRes>(),
+  Polimec: new Polimec<TApi, TRes>(),
+  // Westend chains
+  AssetHubWestend: new AssetHubWestend<TApi, TRes>(),
+  BridgeHubWestend: new BridgeHubWestend<TApi, TRes>(),
+  CollectivesWestend: new CollectivesWestend<TApi, TRes>(),
+  CoretimeWestend: new CoretimeWestend<TApi, TRes>(),
+  PeopleWestend: new PeopleWestend<TApi, TRes>(),
+  Penpal: new Penpal<TApi, TRes>(),
+  // Paseo chains
+  AssetHubPaseo: new AssetHubPaseo<TApi, TRes>(),
+  BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),
+  CoretimePaseo: new CoretimePaseo<TApi, TRes>(),
+  EnergyWebXPaseo: new EnergyWebXPaseo<TApi, TRes>(),
+  IntegriteePaseo: new IntegriteePaseo<TApi, TRes>(),
+  KiltPaseo: new KiltPaseo<TApi, TRes>(),
+  PAssetHub: new PAssetHub<TApi, TRes>(),
+  PeoplePaseo: new PeoplePaseo<TApi, TRes>(),
+  AjunaPaseo: new AjunaPaseo<TApi, TRes>(),
+  BifrostPaseo: new BifrostPaseo<TApi, TRes>(),
+  HeimaPaseo: new HeimaPaseo<TApi, TRes>(),
+  HydrationPaseo: new HydrationPaseo<TApi, TRes>(),
+  LaosPaseo: new LaosPaseo<TApi, TRes>(),
+  NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes>(),
+  NodlePaseo: new NodlePaseo<TApi, TRes>(),
+  ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes>()
+})

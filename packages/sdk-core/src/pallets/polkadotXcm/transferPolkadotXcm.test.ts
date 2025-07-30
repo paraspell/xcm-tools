@@ -1,4 +1,4 @@
-import type { TAssetInfo, TAsset, WithAmount } from '@paraspell/assets'
+import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 

@@ -35,7 +35,7 @@ import { validateTransferOptions } from './utils/validateTransferOptions';
  */
 export const transfer = async (initialOptions: TTransferOptions): Promise<void> => {
   const {
-    exchange: exchangeNode,
+    exchange: exchangeChain,
     signer,
     evmSigner,
     senderAddress,
@@ -53,7 +53,7 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
     throw new InvalidParameterError('evmSigner is required when evmSenderAddress is provided');
   }
 
-  if (exchangeNode === undefined) {
+  if (exchangeChain === undefined) {
     onStatusChange?.({
       type: 'SELECTING_EXCHANGE',
     });
@@ -66,7 +66,7 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
   await executeRouterPlan(routerPlan, {
     signer,
     senderAddress,
-    destination: options.destination?.node,
+    destination: options.destination?.chain,
     evmSigner,
     evmSenderAddress,
     onStatusChange,

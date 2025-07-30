@@ -1,30 +1,30 @@
 import {
   isRelayChain,
   type TEcosystemType,
-  type TNodeDotKsmWithRelayChains,
-  type TNodePolkadotKusama
+  type TParachain,
+  type TSubstrateChain
 } from '@paraspell/sdk-common'
 
-import { getTNode } from '../../nodes/getTNode'
+import { getTChain } from '../../chains/getTChain'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
 import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(
-  chain: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
-  const { api, paraIdTo, asset } = options
+  const { api, paraIdTo, assetInfo } = options
 
-  assertHasLocation(asset)
+  assertHasLocation(assetInfo)
 
-  const destChain = getTNode(
+  const destChain = getTChain(
     paraIdTo as number,
     getRelayChainOf(chain).toLowerCase() as TEcosystemType
-  ) as TNodePolkadotKusama
+  ) as TParachain
 
   const reserveChain = isRelayChain(destChain)
     ? destChain
-    : getAssetReserveChain(chain, chain, asset.multiLocation)
+    : getAssetReserveChain(chain, chain, assetInfo.location)
 
   const destApi = api.clone()
   await destApi.init(destChain)
@@ -45,7 +45,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
       api: reserveApi,
       chain: reserveChain
     },
-    asset,
+    assetInfo,
     options
   }
 }

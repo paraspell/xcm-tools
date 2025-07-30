@@ -13,7 +13,7 @@ export type TTypeAndThenCallContext<TApi, TRes> = {
   origin: TChainWithApi<TApi, TRes>
   dest: TChainWithApi<TApi, TRes>
   reserve: TChainWithApi<TApi, TRes, TNodeDotKsmWithRelayChains>
-  asset: WithAmount<TAssetWithLocation>
+  assetInfo: WithAmount<TAssetWithLocation>
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 }
 

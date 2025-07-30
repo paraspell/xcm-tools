@@ -1,8 +1,8 @@
 // Unit tests for transfer utils
 
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import { createApiInstanceForNode, type TNodeWithRelayChains } from '@paraspell/sdk';
-import { createApiInstanceForNode as createApiInstanceForNodePjs } from '@paraspell/sdk-pjs';
+import type { TPapiApi, TPapiTransaction, TSubstrateChain } from '@paraspell/sdk';
+import { createChainClient } from '@paraspell/sdk';
+import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -31,7 +31,7 @@ vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
+    createChainClient: vi.fn().mockResolvedValue(undefined),
     Builder: vi.fn().mockImplementation(() => builderMock),
   };
 });
@@ -40,7 +40,7 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
+    createChainClient: vi.fn().mockResolvedValue(undefined),
   };
 });
 
@@ -50,9 +50,9 @@ describe('transfer utils', () => {
   let relaychainApi: TPapiApi;
 
   beforeAll(async () => {
-    parachainApi = await createApiInstanceForNodePjs('Acala');
-    parachainPapiApi = await createApiInstanceForNode('Acala');
-    relaychainApi = await createApiInstanceForNode('Polkadot');
+    parachainApi = await createChainClientPjs('Acala');
+    parachainPapiApi = await createChainClient('Acala');
+    relaychainApi = await createChainClient('Polkadot');
   });
 
   afterAll(() => {
@@ -65,11 +65,11 @@ describe('transfer utils', () => {
         ...transferParams,
         origin: {
           api: relaychainApi,
-          node: 'Polkadot',
+          chain: 'Polkadot',
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
         },
         exchange: {
-          baseNode: 'Acala',
+          baseChain: 'Acala',
         } as TExchangeInfo,
       };
 
@@ -78,16 +78,16 @@ describe('transfer utils', () => {
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama origin', () => {
-      const from: TNodeWithRelayChains = 'Astar';
+      const from: TSubstrateChain = 'Astar';
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
         origin: {
           api: parachainPapiApi,
-          node: from,
+          chain: from,
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
         },
         exchange: {
-          baseNode: 'Acala',
+          baseChain: 'Acala',
         } as TExchangeInfo,
       };
 
@@ -103,11 +103,11 @@ describe('transfer utils', () => {
         senderAddress: customSenderAddress,
         origin: {
           api: parachainPapiApi,
-          node: 'Acala',
+          chain: 'Acala',
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
         },
         exchange: {
-          baseNode: 'Acala',
+          baseChain: 'Acala',
         } as TExchangeInfo,
         amount: customAmount,
       };
@@ -127,11 +127,11 @@ describe('transfer utils', () => {
         ...transferParams,
         origin: {
           api: parachainPapiApi,
-          node: 'Acala',
+          chain: 'Acala',
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
         },
         exchange: {
-          baseNode: 'Acala',
+          baseChain: 'Acala',
         } as TExchangeInfo,
       };
 
@@ -149,14 +149,14 @@ describe('transfer utils', () => {
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
         destination: {
-          node: 'Polkadot',
+          chain: 'Polkadot',
           address: 'MOCK_ADDRESS',
         },
         exchange: {
           api: parachainApi,
           apiPapi: parachainPapiApi,
-          baseNode: 'Acala',
-          exchangeNode: 'AcalaDex',
+          baseChain: 'Acala',
+          exchangeChain: 'AcalaDex',
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
           assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         },
@@ -169,14 +169,14 @@ describe('transfer utils', () => {
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
         destination: {
-          node: 'Astar',
+          chain: 'Astar',
           address: 'MOCK_ADDRESS',
         },
         exchange: {
           apiPapi: parachainPapiApi,
           api: parachainApi,
-          baseNode: 'Acala',
-          exchangeNode: 'AcalaDex',
+          baseChain: 'Acala',
+          exchangeChain: 'AcalaDex',
           assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
           assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         },

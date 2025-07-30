@@ -1,10 +1,10 @@
-import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getTChain } from '../../../chains/getTChain'
 import { InvalidParameterError } from '../../../errors'
-import { getTNode } from '../../../nodes/getTNode'
 import { getRelayChainOf } from '../..'
 import { getAssetReserveChain } from './getAssetReserveChain'
 
@@ -19,8 +19,8 @@ vi.mock('@paraspell/sdk-common', async () => {
   }
 })
 
-vi.mock('../../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../..', () => ({
@@ -28,8 +28,8 @@ vi.mock('../..', () => ({
 }))
 
 describe('getAssetReserveChain', () => {
-  const mockOrigin = 'Acala' as TNodeDotKsmWithRelayChains
-  const mockDest = 'Moonbeam' as TNodeDotKsmWithRelayChains
+  const mockOrigin = 'Acala' as TSubstrateChain
+  const mockDest = 'Moonbeam' as TChain
   const mockAssetLocation: TLocation = {
     parents: 1,
     interior: { X1: { Parachain: 1000 } }
@@ -43,11 +43,11 @@ describe('getAssetReserveChain', () => {
     vi.mocked(hasJunction).mockReturnValue(false)
     vi.mocked(getJunctionValue).mockReturnValue(1000)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTNode).mockReturnValue('Moonbeam')
+    vi.mocked(getTChain).mockReturnValue('Moonbeam')
 
     const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
-    expect(getTNode).toHaveBeenCalledWith(1000, 'polkadot')
+    expect(getTChain).toHaveBeenCalledWith(1000, 'polkadot')
     expect(result).toBe('Moonbeam')
   })
 
@@ -55,18 +55,18 @@ describe('getAssetReserveChain', () => {
     vi.mocked(hasJunction).mockReturnValue(false)
     vi.mocked(getJunctionValue).mockReturnValue(2000)
     vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
-    vi.mocked(getTNode).mockReturnValue('Karura')
+    vi.mocked(getTChain).mockReturnValue('Karura')
 
     getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
-    expect(getTNode).toHaveBeenCalledWith(2000, 'kusama')
+    expect(getTChain).toHaveBeenCalledWith(2000, 'kusama')
   })
 
   it('throws error when parachain not found', () => {
     vi.mocked(hasJunction).mockReturnValue(false)
     vi.mocked(getJunctionValue).mockReturnValue(9999)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTNode).mockReturnValue(null)
+    vi.mocked(getTChain).mockReturnValue(null)
 
     expect(() => getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)).toThrow(
       new InvalidParameterError('Chain with paraId 9999 not found')

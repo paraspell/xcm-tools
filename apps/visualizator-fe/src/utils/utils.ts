@@ -19,7 +19,7 @@ export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosyste
 
 export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedParachain | null => {
   if (id === 0) return ecosystem === Ecosystem.POLKADOT ? 'Polkadot' : 'Kusama';
-  const parachain = getFilteredEndpointOptions(ecosystem)?.find(node => node.paraId === id)?.text;
+  const parachain = getFilteredEndpointOptions(ecosystem)?.find(chain => chain.paraId === id)?.text;
   if (!parachain) return null;
   return parachain;
 };
@@ -33,14 +33,14 @@ export const getParachainLogo = (
   parachain: SelectedParachain,
   ecosystem: Ecosystem
 ): string | undefined => {
-  return getFilteredEndpointOptions(ecosystem)?.find(node => node.text === parachain)?.ui.logo;
+  return getFilteredEndpointOptions(ecosystem)?.find(chain => chain.text === parachain)?.ui.logo;
 };
 
-export const getNodesByEcosystem = (ecosystem: Ecosystem) =>
+export const getChainsByEcosystem = (ecosystem: Ecosystem) =>
   getFilteredEndpointOptions(ecosystem)?.map(option => option.text) ?? [];
 
 const findEndpointOption = (ecosystem: Ecosystem, parachain: SelectedParachain) => {
-  return getFilteredEndpointOptions(ecosystem)?.find(node => node.text === parachain);
+  return getFilteredEndpointOptions(ecosystem)?.find(chain => chain.text === parachain);
 };
 
 export const getFilteredEndpointOptions = (ecosystem: Ecosystem) => {

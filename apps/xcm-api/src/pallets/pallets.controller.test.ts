@@ -1,6 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNode, TPallet } from '@paraspell/sdk';
+import type { TChain, TPallet } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -12,7 +12,7 @@ import { PalletsService } from './pallets.service.js';
 describe('PalletsController', () => {
   let controller: PalletsController;
   let palletsService: PalletsService;
-  const node: TNode = 'Acala';
+  const chain: TChain = 'Acala';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,35 +35,38 @@ describe('PalletsController', () => {
   });
 
   describe('getDefaultPallet', () => {
-    it('should return the default pallet for the given node', async () => {
+    it('should return the default pallet for the given chain', async () => {
       const defaultPallet: TPallet = 'OrmlXTokens';
       const spy = vi
         .spyOn(palletsService, 'getDefaultPallet')
         .mockResolvedValue(defaultPallet);
 
-      const result = await controller.getDefaultPallet(node, mockRequestObject);
+      const result = await controller.getDefaultPallet(
+        chain,
+        mockRequestObject,
+      );
 
       expect(result).toBe(defaultPallet);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getPallets', () => {
-    it('should return the list of pallets for the given node', async () => {
+    it('should return the list of pallets for the given chain', async () => {
       const pallets: TPallet[] = ['OrmlXTokens', 'PolkadotXcm'];
       const spy = vi
         .spyOn(palletsService, 'getPallets')
         .mockResolvedValue(pallets);
 
-      const result = await controller.getPallets(node, mockRequestObject);
+      const result = await controller.getPallets(chain, mockRequestObject);
 
       expect(result).toBe(pallets);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getPalletIndex', () => {
-    it('should return the index of the given pallet for the given node', async () => {
+    it('should return the index of the given pallet for the given chain', async () => {
       const pallet = 'XTokens';
       const index = 0;
       const spy = vi
@@ -71,13 +74,13 @@ describe('PalletsController', () => {
         .mockReturnValue(index);
 
       const result = await controller.getPalletIndex(
-        node,
+        chain,
         { pallet },
         mockRequestObject,
       );
 
       expect(result).toBe(index.toString());
-      expect(spy).toHaveBeenCalledWith(node, pallet);
+      expect(spy).toHaveBeenCalledWith(chain, pallet);
     });
   });
 });

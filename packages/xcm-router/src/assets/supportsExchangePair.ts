@@ -1,12 +1,12 @@
 import { deepEqual, normalizeSymbol } from '@paraspell/sdk';
 
-import { EXCHANGE_NODES } from '../consts';
+import { EXCHANGE_CHAINS } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 import { getExchangePairs } from './getExchangePairs';
 
 const asArray = (ex: TExchangeInput) =>
-  ex === undefined ? EXCHANGE_NODES : Array.isArray(ex) ? ex : [ex];
+  ex === undefined ? EXCHANGE_CHAINS : Array.isArray(ex) ? ex : [ex];
 
 export const supportsExchangePair = (
   exchange: TExchangeInput,

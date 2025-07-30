@@ -1,7 +1,7 @@
 // Contains tests for different Asset queries used in XCM call creation
 
 import type { TLocation } from '@paraspell/sdk-common'
-import { NODE_NAMES } from '@paraspell/sdk-common'
+import { CHAINS } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { isForeignAsset } from '../../guards'
@@ -18,15 +18,15 @@ describe('findAssetInfo', () => {
   })
 
   it('should return assetId and symbol for every foreign asset', () => {
-    NODE_NAMES.forEach(node => {
-      const { otherAssets } = getAssetsObject(node)
+    CHAINS.forEach(chain => {
+      const { otherAssets } = getAssetsObject(chain)
       otherAssets.forEach(other => {
         if (other.symbol !== undefined) {
           const otherAssetsMatches = otherAssets.filter(
             ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === other.symbol?.toLowerCase()
           )
           if (otherAssetsMatches.length < 2) {
-            const asset = findAssetInfo(node, { symbol: Foreign(other.symbol) }, null)
+            const asset = findAssetInfo(chain, { symbol: Foreign(other.symbol) }, null)
             expect(asset).toHaveProperty('symbol')
             expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
             expect(asset).toSatisfy(obj => 'assetId' in obj || 'location' in obj)
@@ -36,7 +36,7 @@ describe('findAssetInfo', () => {
             ({ assetId }) => assetId === other.assetId
           )
           if (otherAssetsMatchesById.length > 1 && other.assetId) {
-            expect(() => findAssetInfo(node, { id: other.assetId as string }, null)).toThrow()
+            expect(() => findAssetInfo(chain, { id: other.assetId as string }, null)).toThrow()
           }
         }
       })
@@ -44,10 +44,10 @@ describe('findAssetInfo', () => {
   })
 
   it('should return symbol for every native asset', () => {
-    NODE_NAMES.forEach(node => {
-      const { nativeAssets } = getAssetsObject(node)
+    CHAINS.forEach(chain => {
+      const { nativeAssets } = getAssetsObject(chain)
       nativeAssets.forEach(other => {
-        const asset = findAssetInfo(node, { symbol: Native(other.symbol) }, null)
+        const asset = findAssetInfo(chain, { symbol: Native(other.symbol) }, null)
         expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
         expect(asset).toHaveProperty('symbol')
       })
@@ -55,8 +55,8 @@ describe('findAssetInfo', () => {
   })
 
   it('should return assetId and symbol for every foreign asset id', () => {
-    NODE_NAMES.forEach(node => {
-      const { otherAssets } = getAssetsObject(node)
+    CHAINS.forEach(chain => {
+      const { otherAssets } = getAssetsObject(chain)
 
       otherAssets.forEach(other => {
         if (other.assetId === undefined) {
@@ -65,7 +65,7 @@ describe('findAssetInfo', () => {
         const hasDuplicateIds =
           otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
         if (!hasDuplicateIds) {
-          const asset = findAssetInfo(node, { id: other.assetId ?? '' }, null)
+          const asset = findAssetInfo(chain, { id: other.assetId ?? '' }, null)
 
           expect(asset).not.toBeNull()
           expect(isForeignAsset(asset as TAssetInfo)).toBe(true)
@@ -77,11 +77,11 @@ describe('findAssetInfo', () => {
   })
 
   it('should return symbol for every native asset', () => {
-    NODE_NAMES.forEach(node => {
-      const { nativeAssets } = getAssetsObject(node)
+    CHAINS.forEach(chain => {
+      const { nativeAssets } = getAssetsObject(chain)
       nativeAssets.forEach(nativeAsset => {
         if (nativeAsset.symbol) {
-          const asset = findAssetInfo(node, { symbol: Native(nativeAsset.symbol) }, null)
+          const asset = findAssetInfo(chain, { symbol: Native(nativeAsset.symbol) }, null)
           expect(asset).toHaveProperty('symbol')
         }
       })
@@ -173,8 +173,8 @@ describe('findAssetInfo', () => {
   })
 
   it('should find asset without .e to match e', () => {
-    vi.spyOn(assetFunctions, 'getOtherAssets').mockImplementation(node =>
-      node === 'Ethereum'
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockImplementation(chain =>
+      chain === 'Ethereum'
         ? []
         : [
             {
@@ -239,11 +239,11 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot with duplicates', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(node => {
-      return node === 'Ethereum'
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(chain => {
+      return chain === 'Ethereum'
         ? {
             nativeAssetSymbol: 'ETH',
-            relayChainAssetSymbol: 'DOT',
+            relaychainSymbol: 'DOT',
             isEVM: false,
             ss58Prefix: 42,
             supportsDryRunApi: false,
@@ -253,7 +253,7 @@ describe('findAssetInfo', () => {
           }
         : {
             nativeAssetSymbol: 'DOT',
-            relayChainAssetSymbol: 'DOT',
+            relaychainSymbol: 'DOT',
             isEVM: false,
             ss58Prefix: 42,
             supportsDryRunApi: false,
@@ -277,15 +277,15 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot ', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(node => {
-      return node === 'Ethereum'
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(chain => {
+      return chain === 'Ethereum'
         ? {
             nativeAssetSymbol: 'ETH',
             isEVM: false,
             ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
-            relayChainAssetSymbol: 'DOT',
+            relaychainSymbol: 'DOT',
             otherAssets: [],
             nativeAssets: []
           }
@@ -295,7 +295,7 @@ describe('findAssetInfo', () => {
             ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
-            relayChainAssetSymbol: 'DOT',
+            relaychainSymbol: 'DOT',
             otherAssets: [
               {
                 assetId: '1',
@@ -317,7 +317,7 @@ describe('findAssetInfo', () => {
   it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -346,7 +346,7 @@ describe('findAssetInfo', () => {
   it('Should throw error when duplicate dot asset on Hydration', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -369,7 +369,7 @@ describe('findAssetInfo', () => {
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -392,7 +392,7 @@ describe('findAssetInfo', () => {
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -415,7 +415,7 @@ describe('findAssetInfo', () => {
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -438,7 +438,7 @@ describe('findAssetInfo', () => {
   it('should find asset with xc prefix on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -465,7 +465,7 @@ describe('findAssetInfo', () => {
   it('should find native asset on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -487,7 +487,7 @@ describe('findAssetInfo', () => {
   it('should find foreign abstract asset on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -514,7 +514,7 @@ describe('findAssetInfo', () => {
   it('should throw error when multiple matches in native and foreign assets', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -545,7 +545,7 @@ describe('findAssetInfo', () => {
   it('should find asset with lowercase matching', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -567,7 +567,7 @@ describe('findAssetInfo', () => {
   it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -600,7 +600,7 @@ describe('findAssetInfo', () => {
   it('should return asset when passing a location currency that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -658,7 +658,7 @@ describe('findAssetInfo', () => {
   it('should return asset when passing a location currency that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,
@@ -716,7 +716,7 @@ describe('findAssetInfo', () => {
   it('should return asset when passing a location currency with commas that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
-      relayChainAssetSymbol: 'DOT',
+      relaychainSymbol: 'DOT',
       isEVM: false,
       ss58Prefix: 42,
       supportsDryRunApi: false,

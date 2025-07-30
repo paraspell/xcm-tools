@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { TForeignAsset, TNodeAssets } from '../src'
+import type { TForeignAssetInfo, TChainAssetsInfo } from '../src'
 import axios from 'axios'
 import { Project, SyntaxKind } from 'ts-morph'
 
-export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
+export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
   const url =
     'https://raw.githubusercontent.com/Snowfork/snowbridge/refs/heads/main/web/packages/api/src/environment.ts'
 
@@ -35,7 +35,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     SyntaxKind.ArrayLiteralExpression
   )
 
-  const assets: TForeignAsset[] = [
+  const assets: TForeignAssetInfo[] = [
     {
       symbol: 'ETH',
       assetId: '0x0000000000000000000000000000000000000000',
@@ -206,7 +206,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     ss58Prefix: 42,
     supportsDryRunApi: false,
     supportsXcmPaymentApi: false,
-    relayChainAssetSymbol: 'DOT',
+    relaychainSymbol: 'DOT',
     nativeAssetSymbol: 'ETH',
     nativeAssets: [],
     otherAssets: assets

@@ -5,5 +5,5 @@ export class ConvertSs58Dto {
   address: string;
 
   @IsNotEmpty()
-  node: string;
+  chain: string;
 }

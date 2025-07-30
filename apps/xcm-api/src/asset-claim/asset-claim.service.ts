@@ -2,12 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   AssetClaimBuilder,
   Builder,
-  NODES_WITH_RELAY_CHAINS,
+  SUBSTRATE_CHAINS,
   TAssetClaimOptionsBase,
-  TAsset,
-  TNodeDotKsmWithRelayChains,
   TPapiApi,
   TPapiTransaction,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { isValidWalletAddress } from '../utils.js';
@@ -17,15 +16,15 @@ import { AssetClaimDto } from './dto/asset-claim.dto.js';
 @Injectable()
 export class AssetClaimService {
   async claimAssets({ from, fungible, address, options }: AssetClaimDto) {
-    const fromNode = from as TNodeDotKsmWithRelayChains | undefined;
+    const fromChain = from as TSubstrateChain | undefined;
 
-    if (!fromNode) {
+    if (!fromChain) {
       throw new BadRequestException("You need to provide a 'from' parameter");
     }
 
-    if (fromNode && !NODES_WITH_RELAY_CHAINS.includes(fromNode)) {
+    if (fromChain && !SUBSTRATE_CHAINS.includes(fromChain)) {
       throw new BadRequestException(
-        `Node ${from} is not valid. Check docs for valid nodes.`,
+        `Chain ${from} is not valid. Check docs for valid chains.`,
       );
     }
 
@@ -40,7 +39,7 @@ export class AssetClaimService {
       | undefined;
     try {
       builder = Builder(hasOptions ? options : undefined)
-        .claimFrom(fromNode)
+        .claimFrom(fromChain)
         .fungible(fungible)
         .account(address);
 

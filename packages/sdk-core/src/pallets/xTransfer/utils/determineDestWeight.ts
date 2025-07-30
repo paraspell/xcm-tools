@@ -1,16 +1,16 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
-import { NodeNotSupportedError } from '../../../errors'
+import { ChainNotSupportedError } from '../../../errors'
 import type { TDestWeight } from '../../../types'
 
-export const determineDestWeight = (destNode: TNodeWithRelayChains): TDestWeight | never => {
-  if (destNode === 'Astar') {
+export const determineDestWeight = (destChain: TChain): TDestWeight | never => {
+  if (destChain === 'Astar') {
     return { ref_time: 6000000000n, proof_size: 1000000n }
   }
 
-  if (destNode === 'Moonbeam' || destNode === 'Hydration') {
+  if (destChain === 'Moonbeam' || destChain === 'Hydration') {
     return { ref_time: 5000000000n, proof_size: 0n }
   }
 
-  throw new NodeNotSupportedError(`Pallet XTransfer does not support transfering to ${destNode}.`)
+  throw new ChainNotSupportedError(`Pallet XTransfer does not support transfering to ${destChain}.`)
 }

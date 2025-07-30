@@ -1,7 +1,7 @@
-import type { TNode } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { NodeNotSupportedError } from '../../../errors'
+import { ChainNotSupportedError } from '../../../errors'
 import { determineDestWeight } from './determineDestWeight'
 
 describe('determineDestWeight', () => {
@@ -20,9 +20,9 @@ describe('determineDestWeight', () => {
     expect(result).toEqual({ ref_time: 5000000000n, proof_size: 0n })
   })
 
-  it('throws an error for unsupported nodes', () => {
-    const dest: TNode = 'Altair'
-    expect(() => determineDestWeight(dest)).toThrow(NodeNotSupportedError)
+  it('throws an error for unsupported chain', () => {
+    const dest: TChain = 'Altair'
+    expect(() => determineDestWeight(dest)).toThrow(ChainNotSupportedError)
     expect(() => determineDestWeight(dest)).toThrow(
       `Pallet XTransfer does not support transfering to ${dest}.`
     )

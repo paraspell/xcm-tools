@@ -4,8 +4,8 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
+import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
-import { getTNode } from '../../../nodes/getTNode'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
@@ -27,8 +27,8 @@ vi.mock('./createExecuteCall', () => ({
   createExecuteCall: vi.fn()
 }))
 
-vi.mock('../../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../../../pallets/assets', () => ({
@@ -82,7 +82,7 @@ describe('handleExecuteTransfer', () => {
     vi.clearAllMocks()
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTNode).mockReturnValue(mockDestChain)
+    vi.mocked(getTChain).mockReturnValue(mockDestChain)
     vi.mocked(padFeeBy).mockImplementation(
       (fee, percentage) => fee + (fee * BigInt(percentage)) / 100n
     )
@@ -351,7 +351,7 @@ describe('handleExecuteTransfer', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       address: '0xvalid',
-      node: mockChain,
+      chain: mockChain,
       currency: { symbol: 'USDT' }
     })
 

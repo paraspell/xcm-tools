@@ -1,8 +1,8 @@
 import type { TAsset } from '@paraspell/assets'
 
 import type { TCreateTransferXcmOptions } from '../../../types'
-import { createBeneficiaryLocation } from '../../location'
 import { sortAssets } from '../../asset'
+import { createBeneficiaryLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 

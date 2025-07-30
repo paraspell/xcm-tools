@@ -38,13 +38,13 @@ describe('validateDestinationAddress', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(validateAddress).mockImplementation(() => {
       throw new InvalidAddressError(
-        'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.'
+        'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.'
       )
     })
 
     expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError)
     expect(() => validateDestinationAddress(address, destination)).toThrow(
-      'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.'
+      'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.'
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
@@ -58,13 +58,13 @@ describe('validateDestinationAddress', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(validateAddress).mockImplementation(() => {
       throw new InvalidAddressError(
-        'EVM address provided but destination node is not an EVM chain.'
+        'EVM address provided but destination chain is not an EVM chain.'
       )
     })
 
     expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError)
     expect(() => validateDestinationAddress(address, destination)).toThrow(
-      'EVM address provided but destination node is not an EVM chain.'
+      'EVM address provided but destination chain is not an EVM chain.'
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)

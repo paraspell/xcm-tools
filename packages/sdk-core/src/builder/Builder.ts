@@ -2,13 +2,8 @@
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
-import type { Version } from '@paraspell/sdk-common'
-import {
-  isRelayChain,
-  isTLocation,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { InvalidParameterError } from '../errors'
@@ -50,46 +45,44 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
-   * Specifies the origin node for the transaction.
+   * Specifies the origin chain for the transaction.
    *
-   * @param node - The node from which the transaction originates.
+   * @param chain - The chain from which the transaction originates.
    * @returns An instance of Builder
    */
-  from(
-    node: TNodeDotKsmWithRelayChains
-  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
-    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: node })
+  from(chain: TSubstrateChain): GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }> {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: chain })
   }
 
   /**
-   * Specifies the destination node for the transaction.
+   * Specifies the destination chain for the transaction.
    *
-   * @param node - The node to which the transaction is sent.
-   * @param paraIdTo - (Optional) The parachain ID of the destination node.
+   * @param chain - The chain to which the transaction is sent.
+   * @param paraIdTo - (Optional) The parachain ID of the destination chain.
    * @returns An instance of Builder
    */
-  to(node: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
-    if (this._options.from && isRelayChain(this._options.from) && node === 'Ethereum') {
+  to(chain: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
+    if (this._options.from && isRelayChain(this._options.from) && chain === 'Ethereum') {
       throw new InvalidParameterError(
         'Transfers from Relay chain to Ethereum are not yet supported.'
       )
     }
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      to: node,
+      to: chain,
       paraIdTo
     })
   }
 
   /**
-   * Initiates the process to claim assets from a specified node.
+   * Initiates the process to claim assets from a specified chain.
    *
-   * @param node - The node from which to claim assets.
+   * @param chain - The chain from which to claim assets.
    * @returns An instance of Builder
    */
-  claimFrom(node: TNodeWithRelayChains) {
-    return new AssetClaimBuilder<TApi, TRes, { node: TNodeWithRelayChains }>(this.api, {
-      node
+  claimFrom(chain: TSubstrateChain) {
+    return new AssetClaimBuilder<TApi, TRes, { chain: TSubstrateChain }>(this.api, {
+      chain
     })
   }
 
@@ -181,14 +174,14 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   addToBatch(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptions>
-  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
+  ): GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }> {
     this.batchManager.addTransaction({ api: this.api, ...this._options })
-    return new GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }>(
+    return new GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }>(
       this.api,
       this.batchManager,
       {
         from: this._options.from
-      } as T & { from: TNodeDotKsmWithRelayChains }
+      } as T & { from: TSubstrateChain }
     )
   }
 

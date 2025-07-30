@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
-import { getAllAssetsSymbols, type TForeignAsset } from '../src'
-import { getParaId, NODES_WITH_RELAY_CHAINS, TLocation } from '../../sdk-core/src'
+import { getAllAssetsSymbols, type TForeignAssetInfo } from '../src'
+import { getParaId, CHAINS, TLocation } from '../../sdk-core/src'
 import { capitalizeLocation } from './utils'
 
 const buildEthereumLocation = (address: string): TLocation => ({
@@ -29,14 +29,14 @@ const STATIC_FOREIGN_ASSETS = [
 export const fetchAssetHubAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
 
-  const otherNodes = NODES_WITH_RELAY_CHAINS.filter(node => !node.includes('AssetHub'))
+  const otherChains = CHAINS.filter(chain => !chain.includes('AssetHub'))
 
   const allSymbols = new Set<string>()
-  otherNodes.forEach(node => {
-    const symbols = getAllAssetsSymbols(node)
+  otherChains.forEach(chain => {
+    const symbols = getAllAssetsSymbols(chain)
     symbols.forEach(symbol => {
       allSymbols.add(symbol.toLowerCase())
     })

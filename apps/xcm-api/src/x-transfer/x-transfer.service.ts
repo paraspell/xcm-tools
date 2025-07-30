@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   Builder,
+  CHAINS,
   GeneralBuilder,
   getBridgeStatus,
   getParaEthTransferFees,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  SUBSTRATE_CHAINS,
+  TChain,
   TSendBaseOptions,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { isValidWalletAddress } from '../utils.js';
@@ -49,21 +49,18 @@ export class XTransferService {
   private validateTransfer(transfer: XTransferDto) {
     const { from, to, address, pallet, method, senderAddress } = transfer;
 
-    const fromNode = from as TNodeDotKsmWithRelayChains;
-    const toNode = to as TNodeWithRelayChains;
+    const fromChain = from as TSubstrateChain;
+    const toChain = to as TChain;
 
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
+    if (!SUBSTRATE_CHAINS.includes(fromChain)) {
       throw new BadRequestException(
-        `Node ${fromNode} is not valid. Check docs for valid nodes.`,
+        `Chain ${fromChain} is not valid. Check docs for valid chains.`,
       );
     }
 
-    if (
-      typeof toNode === 'string' &&
-      !NODES_WITH_RELAY_CHAINS.includes(toNode)
-    ) {
+    if (typeof toChain === 'string' && !CHAINS.includes(toChain)) {
       throw new BadRequestException(
-        `Node ${toNode} is not valid. Check docs for valid nodes.`,
+        `Chain ${toChain} is not valid. Check docs for valid chains.`,
       );
     }
 
@@ -71,7 +68,7 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    if (fromNode === 'Hydration' && toNode === 'Ethereum' && !senderAddress) {
+    if (fromChain === 'Hydration' && toChain === 'Ethereum' && !senderAddress) {
       throw new BadRequestException(
         'Sender address is required when transferring to Ethereum.',
       );
@@ -100,8 +97,8 @@ export class XTransferService {
     } = transfer;
 
     let finalBuilder = builder
-      .from(from as TNodeDotKsmWithRelayChains)
-      .to(to as TNodeWithRelayChains)
+      .from(from as TSubstrateChain)
+      .to(to as TChain)
       .currency(currency)
       .feeAsset(feeAsset)
       .address(address)
@@ -180,25 +177,25 @@ export class XTransferService {
       throw new BadRequestException('Transfers array cannot be empty.');
     }
 
-    const fromNode = transfers[0].from as TNodeDotKsmWithRelayChains;
-    const toNode = transfers[0].to as TNodeDotKsmWithRelayChains;
+    const fromChain = transfers[0].from as TSubstrateChain;
+    const toChain = transfers[0].to as TChain;
 
-    const sameFrom = transfers.every((transfer) => transfer.from === fromNode);
+    const sameFrom = transfers.every((transfer) => transfer.from === fromChain);
     if (!sameFrom) {
       throw new BadRequestException(
         'All transactions in the batch must have the same origin.',
       );
     }
 
-    // Validate only the first fromNode because all transactions have the same origin
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
+    // Validate only the first fromChain because all transactions have the same origin
+    if (!SUBSTRATE_CHAINS.includes(fromChain)) {
       throw new BadRequestException(
-        `Node ${fromNode} is not valid. Check docs for valid nodes.`,
+        `Chain ${fromChain} is not valid. Check docs for valid chains.`,
       );
     }
-    if (!NODES_WITH_RELAY_CHAINS.includes(toNode)) {
+    if (!CHAINS.includes(toChain)) {
       throw new BadRequestException(
-        `Node ${toNode} is not valid. Check docs for valid nodes.`,
+        `Chain ${toChain} is not valid. Check docs for valid chains.`,
       );
     }
 

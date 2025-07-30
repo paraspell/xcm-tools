@@ -44,7 +44,7 @@ describe('BalanceController', () => {
 
   describe('getBalanceNative', () => {
     it('should track analytics and call BalanceService for native balance', async () => {
-      const node = 'Acala';
+      const chain = 'Acala';
       const params: BalanceNativeDto = {
         address: '0x1234567890',
       };
@@ -56,21 +56,21 @@ describe('BalanceController', () => {
         .mockResolvedValue(balanceNativeMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await controller.getBalanceNative(node, params, req);
+      const result = await controller.getBalanceNative(chain, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_BALANCE_NATIVE,
         req,
-        { node },
+        { chain },
       );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(balanceServiceSpy).toHaveBeenCalledWith(chain, params);
       expect(result).toEqual(balanceNativeMock);
     });
   });
 
   describe('getBalanceForeign', () => {
     it('should track analytics and call BalanceService for foreign balance', async () => {
-      const node = 'Acala';
+      const chain = 'Acala';
       const params: BalanceForeignDto = {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
@@ -83,21 +83,21 @@ describe('BalanceController', () => {
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await controller.getBalanceForeign(node, params, req);
+      const result = await controller.getBalanceForeign(chain, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_BALANCE_FOREIGN,
         req,
-        { node },
+        { chain },
       );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(balanceServiceSpy).toHaveBeenCalledWith(chain, params);
       expect(result).toEqual(balanceForeignMock);
     });
   });
 
   describe('getAssetBalance', () => {
     it('should track analytics and call BalanceService for asset balance', async () => {
-      const node = 'Acala';
+      const chain = 'Acala';
       const params: BalanceForeignDto = {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
@@ -110,21 +110,21 @@ describe('BalanceController', () => {
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await controller.getAssetBalance(node, params, req);
+      const result = await controller.getAssetBalance(chain, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_ASSET_BALANCE,
         req,
-        { node },
+        { chain },
       );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(balanceServiceSpy).toHaveBeenCalledWith(chain, params);
       expect(result).toEqual(balanceForeignMock);
     });
   });
 
   describe('getExistentialDeposit', () => {
     it('should track analytics and call BalanceService for existential deposit', () => {
-      const node = 'Acala';
+      const chain = 'Acala';
       const params: ExistentialDepositDto = {
         currency: { symbol: 'DOT' },
       };
@@ -136,14 +136,14 @@ describe('BalanceController', () => {
         .mockReturnValue(edMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = controller.getExistentialDeposit(node, params, req);
+      const result = controller.getExistentialDeposit(chain, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_EXISTENTIAL_DEPOSIT,
         req,
-        { node },
+        { chain },
       );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(balanceServiceSpy).toHaveBeenCalledWith(chain, params);
       expect(result).toEqual(edMock);
     });
   });

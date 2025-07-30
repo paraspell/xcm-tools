@@ -1,12 +1,12 @@
-import { InvalidAddressError, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { isNodeEvm } from '@paraspell/sdk-pjs';
+import { InvalidAddressError, type TChain } from '@paraspell/sdk-pjs';
+import { isChainEvm } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { validateDestinationAddress } from './validateDestinationAddress';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
-  isNodeEvm: vi.fn(),
+  isChainEvm: vi.fn(),
   InvalidAddressError: class InvalidAddressError extends Error {},
 }));
 
@@ -23,55 +23,55 @@ describe('validateDestinationAddress', () => {
 
   it('should not throw an error when destination is EVM and address is a valid Ethereum address', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678';
-    const destination: TNodeWithRelayChains = 'Moonbeam';
+    const destination: TChain = 'Moonbeam';
 
-    vi.mocked(isNodeEvm).mockReturnValue(true);
+    vi.mocked(isChainEvm).mockReturnValue(true);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(true);
 
     expect(() => validateDestinationAddress(address, destination)).not.toThrow();
-    expect(isNodeEvm).toHaveBeenCalledWith(destination);
+    expect(isChainEvm).toHaveBeenCalledWith(destination);
     expect(ethers.isAddress).toHaveBeenCalledWith(address);
   });
 
   it('should throw an error when destination is EVM and address is not a valid Ethereum address', () => {
     const address = 'invalid-address';
-    const destination: TNodeWithRelayChains = 'Moonbeam';
+    const destination: TChain = 'Moonbeam';
 
-    vi.mocked(isNodeEvm).mockReturnValue(true);
+    vi.mocked(isChainEvm).mockReturnValue(true);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(false);
 
     expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError);
     expect(() => validateDestinationAddress(address, destination)).toThrow(
-      'Destination node is an EVM chain, but the address provided is not a valid Ethereum address.',
+      'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.',
     );
-    expect(isNodeEvm).toHaveBeenCalledWith(destination);
+    expect(isChainEvm).toHaveBeenCalledWith(destination);
     expect(ethers.isAddress).toHaveBeenCalledWith(address);
   });
 
   it('should throw an error when destination is not EVM and address is a valid Ethereum address', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678';
-    const destination: TNodeWithRelayChains = 'Acala';
+    const destination: TChain = 'Acala';
 
-    vi.mocked(isNodeEvm).mockReturnValue(false);
+    vi.mocked(isChainEvm).mockReturnValue(false);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(true);
 
     expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError);
     expect(() => validateDestinationAddress(address, destination)).toThrow(
       'EVM address provided but destination is not an EVM chain.',
     );
-    expect(isNodeEvm).toHaveBeenCalledWith(destination);
+    expect(isChainEvm).toHaveBeenCalledWith(destination);
     expect(ethers.isAddress).toHaveBeenCalledWith(address);
   });
 
   it('should not throw an error when destination is not EVM and address is not a valid Ethereum address', () => {
     const address = 'some-non-ethereum-address';
-    const destination: TNodeWithRelayChains = 'Acala';
+    const destination: TChain = 'Acala';
 
-    vi.mocked(isNodeEvm).mockReturnValue(false);
+    vi.mocked(isChainEvm).mockReturnValue(false);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(false);
 
     expect(() => validateDestinationAddress(address, destination)).not.toThrow();
-    expect(isNodeEvm).toHaveBeenCalledWith(destination);
+    expect(isChainEvm).toHaveBeenCalledWith(destination);
     expect(ethers.isAddress).toHaveBeenCalledWith(address);
   });
 });

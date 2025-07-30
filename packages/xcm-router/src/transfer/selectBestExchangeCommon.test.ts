@@ -1,13 +1,13 @@
-import type { TAssetInfo, TNodePolkadotKusama } from '@paraspell/sdk';
+import type { TAssetInfo, TParachain } from '@paraspell/sdk';
 import { findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
-import type ExchangeNode from '../dexNodes/DexNode';
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import type ExchangeChain from '../exchanges/ExchangeChain';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TCommonTransferOptions, TExchangeNode } from '../types';
+import type { TCommonTransferOptions, TExchangeChain } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 vi.mock('@paraspell/sdk', () => ({
@@ -22,8 +22,8 @@ vi.mock('../assets', () => ({
   getExchangeAssetByOriginAsset: vi.fn(),
 }));
 
-vi.mock('../dexNodes/DexNodeFactory', () => ({
-  createDexNodeInstance: vi.fn(),
+vi.mock('../exchanges/ExchangeChainFactory', () => ({
+  createExchangeInstance: vi.fn(),
 }));
 
 vi.mock('./canBuildToExchangeTx', () => ({
@@ -69,16 +69,16 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex1 = { node: 'ex1', exchangeNode: 'ex1Ex' } as unknown as ExchangeNode;
-    const fakeDex2 = { node: 'ex2', exchangeNode: 'ex2Ex' } as unknown as ExchangeNode;
+    const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    const fakeDex2 = { chain: 'ex2', exchangeChain: 'ex2Ex' } as unknown as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockImplementation((exchangeNode) => {
-      return exchangeNode === ('ex1' as TExchangeNode) ? fakeDex1 : fakeDex2;
+    vi.mocked(createExchangeInstance).mockImplementation((exchangeChain) => {
+      return exchangeChain === ('ex1' as TExchangeChain) ? fakeDex1 : fakeDex2;
     });
 
-    const computeAmountOut = (dex: ExchangeNode) => {
-      if (dex.node === ('ex1' as TNodePolkadotKusama)) return Promise.resolve(BigNumber(100));
-      if (dex.node === ('ex2' as TNodePolkadotKusama)) return Promise.resolve(BigNumber(200));
+    const computeAmountOut = (dex: ExchangeChain) => {
+      if (dex.chain === ('ex1' as TParachain)) return Promise.resolve(BigNumber(100));
+      if (dex.chain === ('ex2' as TParachain)) return Promise.resolve(BigNumber(200));
       return Promise.resolve(BigNumber(0));
     };
 
@@ -93,8 +93,8 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(undefined);
     vi.mocked(getExchangeAsset).mockReturnValue(null);
 
-    const fakeDex = { node: 'ex1', exchangeNode: 'ex1Ex' } as unknown as ExchangeNode;
-    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
+    const fakeDex = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     await expect(
       selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(BigNumber(0))),
@@ -107,18 +107,18 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex1 = { node: 'ex1', exchangeNode: 'ex1Ex' } as unknown as ExchangeNode;
-    const fakeDex2 = { node: 'ex2', exchangeNode: 'ex2Ex' } as unknown as ExchangeNode;
+    const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    const fakeDex2 = { chain: 'ex2', exchangeChain: 'ex2Ex' } as unknown as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockImplementation((exchangeNode) => {
-      return exchangeNode === ('ex1' as TExchangeNode) ? fakeDex1 : fakeDex2;
+    vi.mocked(createExchangeInstance).mockImplementation((exchangeChain) => {
+      return exchangeChain === ('ex1' as TExchangeChain) ? fakeDex1 : fakeDex2;
     });
 
     const error1 = new Error('Error from ex1');
     const error2 = new Error('Error from ex2');
-    const computeAmountOut = (dex: ExchangeNode) => {
-      if (dex.node === ('ex1' as TNodePolkadotKusama)) throw error1;
-      if (dex.node === ('ex2' as TNodePolkadotKusama)) throw error2;
+    const computeAmountOut = (dex: ExchangeChain) => {
+      if (dex.chain === ('ex1' as TParachain)) throw error1;
+      if (dex.chain === ('ex2' as TParachain)) throw error2;
       return Promise.resolve(new BigNumber(0));
     };
 
@@ -138,8 +138,8 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { node: 'Acala', exchangeNode: 'AcalaDex' } as unknown as ExchangeNode;
-    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
+    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
 
@@ -153,8 +153,8 @@ describe('selectBestExchangeCommon', () => {
     expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithoutFrom.currencyFrom);
   });
 
-  it('uses getExchangeAsset when from equals dex.node', async () => {
-    const optionsWithSameNode = {
+  it('uses getExchangeAsset when from equals dex.chain', async () => {
+    const optionsWithSameChain = {
       ...baseOptions,
       from: 'Acala',
       exchange: ['AcalaDex'],
@@ -165,18 +165,18 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { node: 'Acala', exchangeNode: 'AcalaDex' } as unknown as ExchangeNode;
-    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
+    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
 
     const bestExchange = await selectBestExchangeCommon(
-      optionsWithSameNode,
+      optionsWithSameChain,
       undefined,
       computeAmountOut,
     );
 
     expect(bestExchange).toBe(fakeDex);
-    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithSameNode.currencyFrom);
+    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithSameChain.currencyFrom);
   });
 });

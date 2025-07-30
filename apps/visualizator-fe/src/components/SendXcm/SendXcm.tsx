@@ -1,6 +1,6 @@
 import { Box, Button, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Builder, createApiInstanceForNode } from '@paraspell/sdk';
+import { Builder, createChainClient } from '@paraspell/sdk';
 import type { PolkadotClient } from 'polkadot-api';
 import type { InjectedExtension, PolkadotSigner } from 'polkadot-api/pjs-signer';
 import { connectInjectedExtension, getInjectedExtensions } from 'polkadot-api/pjs-signer';
@@ -62,7 +62,7 @@ const SendXcm = () => {
   };
 
   const submitUsingSdk = async (formValues: FormValues, signer: PolkadotSigner) => {
-    const api = await createApiInstanceForNode(formValues.from);
+    const api = await createChainClient(formValues.from);
     const tx = await createTransferTx(formValues, api);
     await submitTransaction(tx, signer);
   };

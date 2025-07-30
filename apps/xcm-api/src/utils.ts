@@ -1,28 +1,15 @@
 import { BadRequestException } from '@nestjs/common';
-import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import {
-  NODE_NAMES,
-  NODE_NAMES_DOT_KSM,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-} from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
 
-export const validateNode = (
-  node: string,
-  options: { excludeEthereum?: boolean; withRelayChains?: boolean } = {},
+export const validateChain = <T extends readonly string[]>(
+  chain: string,
+  list: T,
 ) => {
-  const { excludeEthereum = false, withRelayChains = false } = options;
-  const nodeList = excludeEthereum ? NODE_NAMES_DOT_KSM : NODE_NAMES;
-  const withRelaysNodeList = excludeEthereum
-    ? NODES_WITH_RELAY_CHAINS_DOT_KSM
-    : NODES_WITH_RELAY_CHAINS;
-  const usedNodeList = withRelayChains ? withRelaysNodeList : nodeList;
-  if (!usedNodeList.includes(node as TNodePolkadotKusama)) {
+  if (!list.includes(chain as T[number])) {
     throw new BadRequestException(
-      `Node ${node} is not valid. Check docs for valid nodes.`,
+      `Chain ${chain} is not valid. Check docs for valid chains.`,
     );
   }
 };

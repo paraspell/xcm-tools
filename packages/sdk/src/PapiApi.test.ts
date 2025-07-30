@@ -1,19 +1,19 @@
-import type { TAssetInfo, TDryRunXcmBaseOptions, TChainAssetsInfo } from '@paraspell/sdk-core'
+import type { TAssetInfo, TChainAssetsInfo, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
 import {
   BatchMode,
+  ChainNotSupportedError,
   computeFeeFromDryRun,
-  createApiInstanceForNode,
+  createChainClient,
   getAssetsObject,
-  getNodeProviders,
+  getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
   MissingChainApiError,
-  NodeNotSupportedError,
   type TLocation,
-  type TNodeDotKsmWithRelayChains,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TSubstrateChain
 } from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
@@ -58,18 +58,18 @@ vi.mock('../utils/dryRun/computeFeeFromDryRun', () => ({
   computeFeeFromDryRun: vi.fn()
 }))
 
-vi.mock('../utils/createApiInstanceForNode', () => ({
-  createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
+vi.mock('../utils/createChainClient', () => ({
+  createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient)
 }))
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRun: vi.fn(),
-  createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
+  createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient),
   getAssetsObject: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
-  getNodeProviders: vi.fn()
+  getChainProviders: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -216,47 +216,47 @@ describe('PapiApi', () => {
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
-      await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
+      await papiApi.init('SomeChain' as TSubstrateChain)
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
 
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
-      const mockCreateApiInstanceForNode = vi
-        .mocked(createApiInstanceForNode)
+      const mockCreateChainClient = vi
+        .mocked(createChainClient)
         .mockResolvedValue(mockPolkadotClient)
 
-      await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
+      await papiApi.init('SomeChain' as TSubstrateChain)
 
-      expect(mockCreateApiInstanceForNode).toHaveBeenCalledWith(papiApi, 'SomeNode')
+      expect(mockCreateChainClient).toHaveBeenCalledWith(papiApi, 'SomeChain')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
 
-      mockCreateApiInstanceForNode.mockRestore()
+      mockCreateChainClient.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
       await papiApi.init('Acala')
 
-      vi.mocked(createApiInstanceForNode)
+      vi.mocked(createChainClient)
 
       await papiApi.init('Moonbeam')
 
-      expect(createApiInstanceForNode).not.toHaveBeenCalled()
+      expect(createChainClient).not.toHaveBeenCalled()
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
 
-    it('should throw NodeNotSupportedError for unsupported nodes', async () => {
+    it('should throw ChainNotSupportedError for unsupported chains', async () => {
       papiApi = new PapiApi()
 
       await expect(papiApi.init('ComposableFinance')).rejects.toThrow(
-        new NodeNotSupportedError(
-          'The node ComposableFinance is not yet supported by the Polkadot API.'
+        new ChainNotSupportedError(
+          'The chain ComposableFinance is not yet supported by the Polkadot API.'
         )
       )
 
-      await expect(papiApi.init('Interlay')).rejects.toThrow(NodeNotSupportedError)
-      await expect(papiApi.init('Kintsugi')).rejects.toThrow(NodeNotSupportedError)
+      await expect(papiApi.init('Interlay')).rejects.toThrow(ChainNotSupportedError)
+      await expect(papiApi.init('Kintsugi')).rejects.toThrow(ChainNotSupportedError)
     })
 
     it('should use apiOverrides when provided in config', async () => {
@@ -274,7 +274,7 @@ describe('PapiApi', () => {
       await papiApi.init('Moonbeam')
 
       expect(papiApi.getApi()).toBe(customClient)
-      expect(vi.mocked(createApiInstanceForNode)).not.toHaveBeenCalled()
+      expect(vi.mocked(createChainClient)).not.toHaveBeenCalled()
     })
 
     it('should throw MissingChainApiError in development mode when no override provided', async () => {
@@ -291,11 +291,11 @@ describe('PapiApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       papiApi = new PapiApi()
-      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockPolkadotClient)
+      vi.mocked(createChainClient).mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('Acala')
 
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(papiApi, 'Acala')
+      expect(createChainClient).toHaveBeenCalledWith(papiApi, 'Acala')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
   })
@@ -402,7 +402,7 @@ describe('PapiApi', () => {
       const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
         symbol: 'aUSDC',
         assetId: '1003'
-      } as TAsset)
+      } as TAssetInfo)
 
       expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith('1003', 'some_address')
       expect(balance).toBe(2000n)
@@ -415,7 +415,7 @@ describe('PapiApi', () => {
       const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
         symbol: 'aUSDT',
         assetId: '1002'
-      } as TAsset)
+      } as TAssetInfo)
 
       expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith('1002', 'some_address')
       expect(balance).toBe(0n)
@@ -648,9 +648,9 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('createApiInstanceForNode', () => {
-    it('should create a PolkadotClient instance for the provided node', async () => {
-      const apiInstance = await papiApi.createApiForNode('Acala')
+  describe('createChainClient', () => {
+    it('should create a PolkadotClient instance for the provided chain', async () => {
+      const apiInstance = await papiApi.createApiForChain('Acala')
 
       expect(apiInstance).toBeDefined()
     })
@@ -673,7 +673,7 @@ describe('PapiApi', () => {
       papiApi = new PapiApi()
       await papiApi.init(mockChain)
 
-      const providersSpy = vi.mocked(getNodeProviders).mockReturnValue(['ws://dummy:9944'])
+      const providersSpy = vi.mocked(getChainProviders).mockReturnValue(['ws://dummy:9944'])
 
       const destroySpy = spyDestroy()
 
@@ -826,8 +826,7 @@ describe('PapiApi', () => {
 
     beforeEach(() => {
       vi.mocked(getAssetsObject).mockImplementation(
-        (node: TNodeDotKsmWithRelayChains) =>
-          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TChainAssetsInfo
+        chain => ({ supportsDryRunApi: chain === 'Acala' ? false : true }) as TChainAssetsInfo
       )
 
       dryRunApiCallMock = vi.fn()
@@ -853,7 +852,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -905,7 +904,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'AssetHubPolkadot'
+        chain: 'AssetHubPolkadot'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -956,7 +955,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Kusama'
+        chain: 'Kusama'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -989,7 +988,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1013,7 +1012,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -1032,7 +1031,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -1041,14 +1040,14 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should throw NodeNotSupportedError for an unsupported node', async () => {
+    it('should throw ChainNotSupportedError for an unsupported chain', async () => {
       await expect(
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: testAddress,
-          node: 'Acala'
+          chain: 'Acala'
         })
-      ).rejects.toThrow(NodeNotSupportedError)
+      ).rejects.toThrow(ChainNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
     })
 
@@ -1080,7 +1079,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1130,7 +1129,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam'
+        chain: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1221,7 +1220,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'USDT', location: {} } as TAssetInfo
       } as TDryRunXcmBaseOptions)
@@ -1258,22 +1257,22 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
 
       expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
     })
 
-    it('should throw error for unsupported node', async () => {
+    it('should throw error for unsupported chain', async () => {
       await expect(
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'Acala',
+          chain: 'Acala',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(NodeNotSupportedError)
+      ).rejects.toThrow(ChainNotSupportedError)
     })
 
     it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
@@ -1285,7 +1284,7 @@ describe('PapiApi', () => {
       const baseOptions: TDryRunXcmBaseOptions = {
         originLocation: { parents: 0, interior: { Here: null } } as TLocation,
         xcm: { some: 'xcm-payload' },
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'AssetHubPolkadot',
         asset: mockAssetDetails,
         feeAsset: mockAssetDetails,
@@ -1361,8 +1360,7 @@ describe('PapiApi', () => {
 
     beforeEach(() => {
       vi.mocked(getAssetsObject).mockImplementation(
-        (node: TNodeDotKsmWithRelayChains) =>
-          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TChainAssetsInfo
+        chain => ({ supportsDryRunApi: chain === 'Acala' ? false : true }) as TChainAssetsInfo
       )
     })
 
@@ -1395,7 +1393,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Acala',
         asset: { symbol: 'AUSD' }
       } as TDryRunXcmBaseOptions)
@@ -1431,7 +1429,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Acala'
       } as TDryRunXcmBaseOptions)
 
@@ -1495,7 +1493,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'USDT' },
         amount: testAmount
@@ -1572,7 +1570,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
-        node: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'DOT' },
         amount: testAmount
@@ -1592,15 +1590,15 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should throw error for unsupported node', async () => {
+    it('should throw error for unsupported chain', async () => {
       await expect(
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'Acala',
+          chain: 'Acala',
           origin: 'Acala'
         } as TDryRunXcmBaseOptions)
-      ).rejects.toThrow(NodeNotSupportedError)
+      ).rejects.toThrow(ChainNotSupportedError)
     })
 
     it('should throw error if no issued event found', async () => {
@@ -1625,7 +1623,7 @@ describe('PapiApi', () => {
         await papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'AssetHubPolkadot',
+          chain: 'AssetHubPolkadot',
           origin: 'Mythos'
         } as TDryRunXcmBaseOptions)
       ).toEqual({
@@ -1634,7 +1632,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should get fee from XcmPaymentApi if node is Moonbeam', () => {
+    it('should get fee from XcmPaymentApi if chain is Moonbeam', () => {
       const weight = { ref_time: 11n, proof_size: 22n }
 
       const mockApiResponse = {
@@ -1664,7 +1662,7 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'Moonbeam',
+          chain: 'Moonbeam',
           origin: 'Acala',
           asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } }
         } as TDryRunXcmBaseOptions)
@@ -1676,7 +1674,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should fail to get fee from XcmPaymentApi if node is Moonbeam and asset has no ML', () => {
+    it('should fail to get fee from XcmPaymentApi if chain is Moonbeam and asset has no ML', () => {
       const mockApiResponse = {
         success: true,
         value: {
@@ -1700,7 +1698,7 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          node: 'Moonbeam',
+          chain: 'Moonbeam',
           origin: 'Acala',
           asset: { symbol: 'AUSD' }
         } as TDryRunXcmBaseOptions)

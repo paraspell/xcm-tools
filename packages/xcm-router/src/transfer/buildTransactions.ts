@@ -1,9 +1,9 @@
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TRouterPlan } from '../types';
 import { prepareExtrinsics } from './prepareExtrinsics';
 
 export const buildTransactions = async (
-  dex: ExchangeNode,
+  dex: ExchangeChain,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TRouterPlan> => {
   const { origin, exchange, destination } = options;
@@ -18,8 +18,8 @@ export const buildTransactions = async (
   if (origin && toExchangeTx) {
     transactions.push({
       api: origin.api,
-      node: origin.node,
-      destinationNode: exchange.baseNode,
+      chain: origin.chain,
+      destinationChain: exchange.baseChain,
       tx: toExchangeTx,
       type: 'TRANSFER',
     });
@@ -32,8 +32,8 @@ export const buildTransactions = async (
 
     transactions.push({
       api: exchange.apiPapi,
-      node: dex.node,
-      destinationNode: destination?.node,
+      chain: dex.chain,
+      destinationChain: destination?.chain,
       tx: batchedTx,
       type: 'SWAP_AND_TRANSFER',
     });
@@ -41,7 +41,7 @@ export const buildTransactions = async (
     if (swapTxs.length === 1) {
       transactions.push({
         api: exchange.apiPapi,
-        node: isExecute ? (origin?.node ?? dex.node) : dex.node,
+        chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
         tx: swapTxs[0],
         amountOut: BigInt(amountOut),
         type: 'SWAP',
@@ -53,7 +53,7 @@ export const buildTransactions = async (
 
       transactions.push({
         api: exchange.apiPapi,
-        node: dex.node,
+        chain: dex.chain,
         tx: batchedSwapTx,
         amountOut: BigInt(amountOut),
         type: 'SWAP',

@@ -1,11 +1,11 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
 
 export type THopTransferInfo = {
-  chain: TNodeWithRelayChains
+  chain: TChain
   result: {
     xcmFee: TXcmFeeBase
     balance?: bigint
@@ -21,7 +21,7 @@ export type TXcmFeeBase = {
 }
 
 export type TTransferInfo = {
-  chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }
+  chain: { origin: TChain; destination: TChain; ecosystem: string }
   origin: {
     selectedCurrency: {
       sufficient: boolean
@@ -68,8 +68,8 @@ export type TOriginFeeDetails = {
 
 export type TGetTransferInfoOptionsBase<TRes> = {
   tx: TRes
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+  origin: TSubstrateChain
+  destination: TChain
   senderAddress: string
   ahAddress?: string
   address: string

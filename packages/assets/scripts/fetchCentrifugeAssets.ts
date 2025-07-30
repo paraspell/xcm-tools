@@ -5,17 +5,25 @@
 
 import type { ApiPromise } from '@polkadot/api'
 import { capitalizeLocation } from './utils'
+import { TAssetInfo, TNativeAssetInfo } from '../src'
+import { TForeignAssetInfo } from '../dist'
 
-export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
+const fetchCentrifugeAssetsBase = async (
+  api: ApiPromise,
+  query: string,
+  filterFn: (era: any) => boolean,
+  transformFn?: (asset: TForeignAssetInfo) => TAssetInfo
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
+
   return res
     .filter(
       ([
         {
           args: [era]
         }
-      ]) => era.toHuman() !== 'Native'
+      ]) => filterFn(era)
     )
     .map(
       ([
@@ -24,9 +32,9 @@ export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
+        const eraHuman = era.toHuman()
         const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         const eraObj = era as any
-
         const locationJson = value.toJSON() as any
 
         const location =
@@ -34,16 +42,37 @@ export const fetchCentrifugeAssets = async (api: ApiPromise, query: string) => {
             ? capitalizeLocation(locationJson.location.v3 ?? locationJson.location.v4)
             : undefined
 
-        return {
+        const asset: TAssetInfo = {
           assetId:
             eraObj.type === 'Tranche'
-              ? Object.values(era.toHuman() ?? {})[0][0].replaceAll(',', '')
-              : Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
+              ? Object.values(eraHuman ?? {})[0][0].replaceAll(',', '')
+              : Object.values(eraHuman ?? {})[0].replaceAll(',', ''),
           symbol,
           decimals: +decimals,
           location,
-          existentialDeposit: existentialDeposit
+          existentialDeposit
         }
+
+        return transformFn ? transformFn(asset) : asset
       }
     )
 }
+
+export const fetchCentrifugeAssets = (api: ApiPromise, query: string) =>
+  fetchCentrifugeAssetsBase(api, query, era => era.toHuman() !== 'Native') as Promise<
+    TForeignAssetInfo[]
+  >
+
+export const fetchCentrifugeNativeAssets = (api: ApiPromise, query: string) =>
+  fetchCentrifugeAssetsBase(
+    api,
+    query,
+    era => era.toHuman() === 'Native',
+    asset => {
+      const { assetId, ...rest } = asset
+      return {
+        ...rest,
+        isNative: true
+      } as TNativeAssetInfo
+    }
+  ) as Promise<TNativeAssetInfo[]>

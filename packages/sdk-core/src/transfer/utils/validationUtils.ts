@@ -9,10 +9,10 @@ import {
   isDotKsmBridge,
   isRelayChain,
   isTLocation,
-  type TNodeDotKsmWithRelayChains
+  type TSubstrateChain
 } from '@paraspell/sdk-common'
 
-import { IncompatibleNodesError } from '../../errors'
+import { IncompatibleChainsError } from '../../errors'
 import type { TDestination } from '../../types'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
@@ -37,17 +37,14 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
   }
 }
 
-export const validateDestination = (
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TDestination
-) => {
+export const validateDestination = (origin: TSubstrateChain, destination: TDestination) => {
   if (
     isRelayChain(origin) &&
     !isTLocation(destination) &&
     isRelayChain(destination) &&
     origin !== destination
   ) {
-    throw new IncompatibleNodesError(
+    throw new IncompatibleChainsError(
       'Direct relay chain to relay chain transfers are not supported. Please use Polkadot <-> Kusama bridge through AssetHub.'
     )
   }
@@ -61,7 +58,7 @@ export const validateDestination = (
   ]
 
   if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
-    throw new IncompatibleNodesError(
+    throw new IncompatibleChainsError(
       `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
     )
   }
@@ -74,7 +71,7 @@ export const validateDestination = (
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
     if (!isBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
-      throw new IncompatibleNodesError()
+      throw new IncompatibleChainsError()
     }
   }
 }

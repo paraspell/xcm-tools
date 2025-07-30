@@ -1,7 +1,7 @@
 import { Button, Paper, Select, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '@paraspell/sdk';
+import type { TSubstrateChain } from '@paraspell/sdk';
+import { SUBSTRATE_CHAINS, SUPPORTED_PALLETS } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
@@ -12,7 +12,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   func: TPalletsQuery;
-  node: TNodePolkadotKusama;
+  chain: TSubstrateChain;
   pallet: string;
   useApi: boolean;
 };
@@ -26,7 +26,7 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       func: 'ALL_PALLETS',
-      node: 'Acala',
+      chain: 'Acala',
       pallet: 'XTokens',
       useApi: false,
     },
@@ -56,11 +56,11 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
           />
 
           <ParachainSelect
-            label="Node"
+            label="Chain"
             placeholder="Pick value"
-            data={NODE_NAMES_DOT_KSM}
-            data-testid="select-node"
-            {...form.getInputProps('node')}
+            data={SUBSTRATE_CHAINS}
+            data-testid="select-chain"
+            {...form.getInputProps('chain')}
           />
 
           {func === 'PALLET_INDEX' && (

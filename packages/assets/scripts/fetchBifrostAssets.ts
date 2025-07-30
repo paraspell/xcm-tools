@@ -2,22 +2,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset, TNativeAsset } from '../src'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { capitalizeLocation } from './utils'
+import { TForeignAssetInfo, TNativeAssetInfo } from '../src'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TNativeAsset[]> => {
+): Promise<TNativeAssetInfo[]> => {
   return fetchBifrostAssets(api, query).then(({ nativeAssets }) => nativeAssets)
 }
 
 export const fetchBifrostForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   return fetchBifrostAssets(api, query).then(({ otherAssets }) => otherAssets)
 }
 
@@ -25,8 +25,8 @@ const fetchBifrostAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<{
-  nativeAssets: TNativeAsset[]
-  otherAssets: TForeignAsset[]
+  nativeAssets: TNativeAssetInfo[]
+  otherAssets: TForeignAssetInfo[]
 }> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
@@ -79,12 +79,12 @@ const fetchBifrostAssets = async (
   const nativeAssets = (await mapAssets(
     filterAssets(['token', 'vtoken', 'native']),
     true
-  )) as TNativeAsset[]
+  )) as TNativeAssetInfo[]
 
   const otherAssets = (await mapAssets(
     filterAssets(['token2', 'vtoken2', 'vstoken2']),
     false
-  )) as TForeignAsset[]
+  )) as TForeignAssetInfo[]
 
   return {
     nativeAssets,

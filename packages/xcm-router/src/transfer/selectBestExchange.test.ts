@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TCommonTransferOptions } from '../types';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee } from './createSwapTx';
@@ -16,14 +16,14 @@ vi.mock('./selectBestExchangeCommon', () => ({
   selectBestExchangeCommon: vi.fn(),
 }));
 
-const dummyDex = (): ExchangeNode =>
+const dummyDex = (): ExchangeChain =>
   ({
-    node: 'Acala',
-    exchangeNode: 'AcalaDex',
+    chain: 'Acala',
+    exchangeChain: 'AcalaDex',
     createApiInstance: vi.fn().mockResolvedValue({}),
     createApiInstancePapi: vi.fn().mockResolvedValue({}),
     swapCurrency: vi.fn().mockResolvedValue({ amountOut: '123' }),
-  }) as unknown as ExchangeNode;
+  }) as unknown as ExchangeChain;
 
 const fee = new BigNumber(10);
 

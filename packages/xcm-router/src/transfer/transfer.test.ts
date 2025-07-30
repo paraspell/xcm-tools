@@ -1,7 +1,7 @@
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
@@ -17,7 +17,7 @@ import { validateTransferOptions } from './utils/validateTransferOptions';
 
 vi.mock('@paraspell/sdk-pjs', () => {
   return {
-    createApiInstanceForNode: vi.fn(),
+    createChainClient: vi.fn(),
   };
 });
 
@@ -57,7 +57,7 @@ describe('transfer', () => {
       options: {
         slippagePct: '1',
         origin: {
-          node: 'Acala',
+          chain: 'Acala',
           api: mockOriginApi,
           assetFrom: { symbol: 'ACA' },
         },
@@ -66,9 +66,9 @@ describe('transfer', () => {
         },
       } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
       dex: {
-        node: 'Acala',
+        chain: 'Acala',
         createApiInstance: vi.fn().mockResolvedValue(mockSwapApi),
-      } as unknown as ExchangeNode,
+      } as unknown as ExchangeChain,
     });
     vi.mocked(buildTransactions).mockResolvedValue([] as TRouterPlan);
     vi.mocked(executeRouterPlan).mockResolvedValue(undefined);

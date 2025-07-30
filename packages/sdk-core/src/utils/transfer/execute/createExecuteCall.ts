@@ -1,9 +1,9 @@
-import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
 
 export const createExecuteCall = (
-  chain: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xcm: TXcmVersioned<any>,
   maxWeight: TWeight

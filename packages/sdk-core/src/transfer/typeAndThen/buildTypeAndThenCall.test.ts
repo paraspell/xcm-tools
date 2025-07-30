@@ -1,15 +1,15 @@
-import type { TMultiAsset } from '@paraspell/assets'
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TAsset } from '@paraspell/assets'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { getParaId } from '../../nodes/config'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createMultiAsset } from '../../utils'
+import { addXcmVersionHeader, createAsset } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
-vi.mock('../../nodes/config', () => ({
+vi.mock('../../chains/config', () => ({
   getParaId: vi.fn()
 }))
 
@@ -19,36 +19,36 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 
 vi.mock('../../utils', () => ({
   addXcmVersionHeader: vi.fn(value => ({ versioned: value })),
-  createMultiAsset: vi.fn()
+  createAsset: vi.fn()
 }))
 
 describe('buildTypeAndThenCall', () => {
   const mockVersion = Version.V5
 
-  const asset = {
-    multiLocation: { parents: 1, interior: 'Here' }
+  const assetInfo = {
+    location: { parents: 1, interior: 'Here' }
   }
 
   const mockContext = {
     origin: { chain: 'Polkadot' } as TChainWithApi<unknown, unknown>,
     reserve: { chain: 'Polkadot' } as TChainWithApi<unknown, unknown>,
     dest: { chain: 'Kusama' } as TChainWithApi<unknown, unknown>,
-    asset: asset,
+    assetInfo,
     options: {
       version: mockVersion
     }
   } as TTypeAndThenCallContext<unknown, unknown>
 
-  const mockAssets = [{ id: 'asset1' }] as unknown as TMultiAsset[]
+  const mockAssets = [{ id: 'asset1' }] as unknown as TAsset[]
   const mockCustomXcm = ['xcm1', 'xcm2']
-  const mockDestination = {} as TMultiLocation
+  const mockDestination = {} as TLocation
   const mockParaId = 1000
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getParaId).mockReturnValue(mockParaId)
     vi.mocked(createDestination).mockReturnValue(mockDestination)
-    vi.mocked(createMultiAsset).mockImplementation((_version, amount, location) => ({
+    vi.mocked(createAsset).mockImplementation((_version, amount, location) => ({
       id: location,
       fun: { Fungible: amount }
     }))
@@ -108,7 +108,7 @@ describe('buildTypeAndThenCall', () => {
         dest: { versioned: mockDestination },
         assets: { versioned: mockAssets },
         assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: { versioned: asset.multiLocation },
+        remote_fees_id: { versioned: assetInfo.location },
         fees_transfer_type: 'DestinationReserve',
         custom_xcm_on_dest: { versioned: mockCustomXcm },
         weight_limit: 'Unlimited'
@@ -154,12 +154,12 @@ describe('buildTypeAndThenCall', () => {
     expect(result.parameters.fees_transfer_type).toBe('DestinationReserve')
   })
 
-  it('should use asset multiLocation as feeAssetLocation when asset location equals RELAY_LOCATION', () => {
+  it('should use asset location as feeAssetLocation when asset location equals RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, true, mockCustomXcm, mockAssets)
 
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(asset.multiLocation, mockVersion)
+    expect(addXcmVersionHeader).toHaveBeenCalledWith(assetInfo.location, mockVersion)
     expect(result.parameters.remote_fees_id).toEqual({
-      versioned: asset.multiLocation
+      versioned: assetInfo.location
     })
   })
 

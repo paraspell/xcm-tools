@@ -35,96 +35,96 @@ export class AssetsController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Get('assets/:node')
-  getAssetsObject(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain')
+  getAssetsObject(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_ASSETS_OBJECT, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getAssetsObject(node);
+    return this.assetsService.getAssetsObject(chain);
   }
 
-  @Get('assets/:node/id')
+  @Get('assets/:chain/id')
   getAssetId(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_ASSET_ID, req, {
-      node,
+      chain,
       symbol,
     });
-    return this.assetsService.getAssetId(node, symbol);
+    return this.assetsService.getAssetId(chain, symbol);
   }
 
-  @Post('assets/:node/location')
+  @Post('assets/:chain/location')
   getAssetLocation(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(AssetLocationDtoSchema))
     params: AssetLocationDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_ASSET_LOCATION, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getAssetLocation(node, params);
+    return this.assetsService.getAssetLocation(chain, params);
   }
 
-  @Get('assets/:node/relay-chain-symbol')
-  getRelayChainSymbol(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain/relay-chain-symbol')
+  getRelayChainSymbol(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_RELAYCHAIN_SYMBOL, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getRelayChainSymbol(node);
+    return this.assetsService.getRelayChainSymbol(chain);
   }
 
-  @Get('assets/:node/native')
-  getNativeAssets(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain/native')
+  getNativeAssets(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_NATIVE_ASSETS, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getNativeAssets(node);
+    return this.assetsService.getNativeAssets(chain);
   }
 
-  @Get('assets/:node/other')
-  getOtherAssets(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain/other')
+  getOtherAssets(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_OTHER_ASSETS, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getOtherAssets(node);
+    return this.assetsService.getOtherAssets(chain);
   }
 
-  @Get('assets/:node/all-symbols')
-  getAllAssetsSymbol(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain/all-symbols')
+  getAllAssetsSymbol(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_ALL_ASSETS_SYMBOLS, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getAllAssetsSymbols(node);
+    return this.assetsService.getAllAssetsSymbols(chain);
   }
 
-  @Get('assets/:node/decimals')
+  @Get('assets/:chain/decimals')
   getDecimals(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_DECIMALS, req, {
-      node,
+      chain,
       symbol,
     });
-    return this.assetsService.getDecimals(node, symbol);
+    return this.assetsService.getDecimals(chain, symbol);
   }
 
-  @Get('assets/:node/has-support')
+  @Get('assets/:chain/has-support')
   hasSupportForAsset(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.HAS_SUPPORT_FOR_ASSET, req, {
-      node,
+      chain,
       symbol,
     });
-    return this.assetsService.hasSupportForAsset(node, symbol);
+    return this.assetsService.hasSupportForAsset(chain, symbol);
   }
 
   @Get('supported-assets')
@@ -138,19 +138,19 @@ export class AssetsController {
     return this.assetsService.getSupportedAssets(origin, destination);
   }
 
-  @Post('assets/:node/supported-destinations')
+  @Post('assets/:chain/supported-destinations')
   getSupportedDestinations(
-    @Param('node') node: string,
+    @Param('chain') chain: string,
     @Body(new ZodValidationPipe(SupportedDestinationsSchema))
     params: SupportedDestinationsDto,
     @Req() req: Request,
   ) {
     const { currency } = params;
     this.analyticsService.track(EventName.GET_SUPPORTED_DESTINATIONS, req, {
-      node,
+      chain,
       currency: JSON.stringify(currency),
     });
-    return this.assetsService.getSupportedDestinations(node, params);
+    return this.assetsService.getSupportedDestinations(chain, params);
   }
 
   @Post('origin-fee-details')
@@ -168,11 +168,11 @@ export class AssetsController {
     return this.assetsService.getOriginFeeDetails(params);
   }
 
-  @Get('assets/:node/fee-assets')
-  getFeeAssets(@Param('node') node: string, @Req() req: Request) {
+  @Get('assets/:chain/fee-assets')
+  getFeeAssets(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_FEE_ASSETS, req, {
-      node,
+      chain,
     });
-    return this.assetsService.getFeeAssets(node);
+    return this.assetsService.getFeeAssets(chain);
   }
 }

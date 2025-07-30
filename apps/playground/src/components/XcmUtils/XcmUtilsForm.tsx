@@ -10,16 +10,8 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type {
-  TAssetInfo,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-} from '@paraspell/sdk';
-import {
-  isNodeEvm,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-} from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
+import { CHAINS, isChainEvm, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import {
   IconArrowsExchange,
   IconChecks,
@@ -62,8 +54,8 @@ export type TCurrencyEntry = {
 };
 
 export type FormValues = {
-  from: TNodeDotKsmWithRelayChains;
-  to: TNodeWithRelayChains;
+  from: TSubstrateChain;
+  to: TChain;
   currencies: TCurrencyEntry[];
   feeAsset: Omit<TCurrencyEntry, 'amount'>;
   address: string;
@@ -287,7 +279,7 @@ const XcmUtilsForm: FC<Props> = ({
   const onSwap = () => {
     const { from: currentFrom, to: currentTo } = form.getValues();
     if (currentTo !== 'Ethereum') {
-      form.setFieldValue('from', currentTo as TNodeDotKsmWithRelayChains);
+      form.setFieldValue('from', currentTo);
       form.setFieldValue('to', currentFrom);
     }
   };
@@ -309,7 +301,7 @@ const XcmUtilsForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress = isNodeEvm(from) && isNodeEvm(to);
+  const showAhAddress = isChainEvm(from) && isChainEvm(to);
 
   if (!isVisible) {
     return null;
@@ -323,7 +315,7 @@ const XcmUtilsForm: FC<Props> = ({
             label="Origin"
             placeholder="Pick value"
             description="Select the origin chain"
-            data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+            data={SUBSTRATE_CHAINS}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />
@@ -340,7 +332,7 @@ const XcmUtilsForm: FC<Props> = ({
             label="Destination"
             placeholder="Pick value"
             description="Select the destination chain"
-            data={NODES_WITH_RELAY_CHAINS}
+            data={CHAINS}
             data-testid="select-destination"
             {...form.getInputProps('to')}
           />

@@ -4,7 +4,8 @@ import {
   getExistentialDepositOrThrow,
   normalizeSymbol
 } from '@paraspell/assets'
-import { replaceBigInt, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
+import { replaceBigInt, type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -41,8 +42,8 @@ describe('verifyEdOnDestinationInternal', () => {
     })
   } as unknown as IPolkadotApi<unknown, unknown>
   const mockTx = {} as unknown
-  const mockOrigin = 'OriginNode' as TNodeDotKsmWithRelayChains
-  const mockDestination = 'DestinationNode' as TNodeDotKsmWithRelayChains
+  const mockOrigin = 'OriginChain' as TSubstrateChain
+  const mockDestination = 'DestinationChain' as TChain
   const mockAddress = 'destinationAddress'
   const mockSenderAddress = 'senderAddress'
   const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }
@@ -129,7 +130,7 @@ describe('verifyEdOnDestinationInternal', () => {
     })
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       address: mockAddress,
-      node: mockDestination,
+      chain: mockDestination,
       api: expect.any(Object),
       currency: {
         symbol: mockCurrency.symbol
@@ -196,7 +197,7 @@ describe('verifyEdOnDestinationInternal', () => {
       destination: { fee: undefined, currency: 'DOT' }
     } as TGetXcmFeeResult)
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrowError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency, replaceBigInt)} on node ${mockDestination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency, replaceBigInt)} on chain ${mockDestination}.`
     )
   })
 
@@ -224,7 +225,7 @@ describe('verifyEdOnDestinationInternal', () => {
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(validationError)
   })
 
-  it('should re-throw error from findAssetForNodeOrThrow', async () => {
+  it('should re-throw error from findAssetOnDestOrThrow', async () => {
     const findAssetError = new Error('Asset not found')
     vi.mocked(findAssetOnDestOrThrow).mockImplementation(() => {
       throw findAssetError

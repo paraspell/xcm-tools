@@ -24,5 +24,5 @@ export {
   handleSwapExecuteTransfer
 } from './transfer'
 export * from './types'
-export { createApiInstanceForNode } from './utils'
+export { createChainClient } from './utils'
 export * from './PapiXcmTransformer'

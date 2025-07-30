@@ -6,7 +6,7 @@ import { isDotKsmBridge, isRelayChain, isTLocation } from '@paraspell/sdk-common
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
-import { getNode, validateAddress } from '../utils'
+import { getChain, validateAddress } from '../utils'
 import { getChainVersion } from '../utils/chain'
 import { transferRelayToPara } from './transferRelayToPara'
 import {
@@ -138,9 +138,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       }
     : finalAsset
 
-  return getNode<TApi, TRes, typeof origin>(origin).transfer({
+  return getChain<TApi, TRes, typeof origin>(origin).transfer({
     api,
-    asset: normalizedAsset,
+    assetInfo: normalizedAsset,
     currency,
     feeAsset: resolvedFeeAsset,
     feeCurrency: feeAsset,

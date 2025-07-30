@@ -51,7 +51,7 @@ describe('validateAssetSupport', () => {
       TransferToAhNotSupported
     )
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      'Node Acala does not support DOT transfer to AssetHub'
+      'Chain Acala does not support DOT transfer to AssetHub'
     )
   })
 
@@ -141,7 +141,7 @@ describe('validateAssetSupport', () => {
       InvalidCurrencyError
     )
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      'Destination node Astar does not support currency {"symbol":"UNSUPPORTED"}.'
+      'Destination chain Astar does not support currency {"symbol":"UNSUPPORTED"}.'
     )
   })
 

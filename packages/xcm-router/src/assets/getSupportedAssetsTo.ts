@@ -1,25 +1,25 @@
-import { getAssets, type TNodeWithRelayChains } from '@paraspell/sdk';
+import { getAssets, type TChain } from '@paraspell/sdk';
 
-import { EXCHANGE_NODES } from '../consts';
+import { EXCHANGE_CHAINS } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 import { isRouterAssetEqual } from './isRouterAssetEqual';
 
 /**
- * Retrieves the list of assets supported for transfer to the destination node.
+ * Retrieves the list of assets supported for transfer to the destination chain.
  *
- * @param origin - The origin node.
- * @param exchange - The exchange node or 'Auto select'.
- * @param to - The destination node.
+ * @param origin - The origin chain.
+ * @param exchange - The exchange chain or 'Auto select'.
+ * @param to - The destination chain.
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsTo = (
   exchange: TExchangeInput,
-  to: TNodeWithRelayChains | undefined,
+  to: TChain | undefined,
 ): TRouterAsset[] => {
   if (exchange === undefined) {
-    let allExchangeAssets = EXCHANGE_NODES.map((exchangeNode) =>
-      getExchangeAssets(exchangeNode),
+    let allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
+      getExchangeAssets(exchangeChain),
     ).flat();
     if (to) {
       const toAssets = getAssets(to);

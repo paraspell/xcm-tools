@@ -1,6 +1,6 @@
-import type { TNodeDotKsmWithRelayChains, TRelayChain } from '@paraspell/sdk-common'
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getNode } from '../getNode'
+import { getChain } from '../getChain'
 
 /**
  * Gets the relay chain (Polkadot, Kusama, Westend, or Paseo) of a given chain.
@@ -8,13 +8,13 @@ import { getNode } from '../getNode'
  * @param chain - The chain to evaluate.
  * @returns The corresponding relay chain.
  */
-export const getRelayChainOf = (chain: TNodeDotKsmWithRelayChains): TRelayChain => {
+export const getRelayChainOf = (chain: TSubstrateChain): TRelaychain => {
   if (chain === 'Polkadot') return 'Polkadot'
   if (chain === 'Kusama') return 'Kusama'
   if (chain === 'Westend') return 'Westend'
   if (chain === 'Paseo') return 'Paseo'
 
-  const ecosystem = getNode(chain).type
+  const ecosystem = getChain(chain).type
 
   switch (ecosystem) {
     case 'kusama':

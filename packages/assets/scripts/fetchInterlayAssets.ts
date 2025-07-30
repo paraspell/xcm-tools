@@ -1,11 +1,11 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset } from '../src'
+import type { TForeignAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
   const assets = await api.query[module][method].entries()
 

@@ -1,5 +1,5 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TParachain } from '@paraspell/sdk-common'
 
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
@@ -7,25 +7,25 @@ import { getBalanceNativeInternal } from './getBalanceNative'
 
 export const getAssetBalanceInternal = async <TApi, TRes>({
   address,
-  node,
+  chain,
   currency,
   api
 }: TGetAssetBalanceOptions<TApi, TRes>): Promise<bigint> => {
-  await api.init(node)
+  await api.init(chain)
 
-  const asset = findAssetInfoOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(chain, currency, null)
 
-  const isNativeSymbol = asset.symbol === getNativeAssetSymbol(node)
+  const isNativeSymbol = asset.symbol === getNativeAssetSymbol(chain)
 
-  return isNativeSymbol && node !== 'Interlay' && node !== 'Kintsugi'
+  return isNativeSymbol && chain !== 'Interlay' && chain !== 'Kintsugi'
     ? await getBalanceNativeInternal({
         address,
-        node,
+        chain,
         api
       })
     : ((await getBalanceForeignInternal({
         address,
-        node: node as TNodePolkadotKusama,
+        chain: chain as TParachain,
         api,
         currency
       })) ?? 0n)

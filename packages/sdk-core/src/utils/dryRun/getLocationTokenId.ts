@@ -2,18 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-export const getLocationTokenId = (
-  location: any,
-  node: TNodeDotKsmWithRelayChains
-): string | null => {
+export const getLocationTokenId = (location: any, chain: TSubstrateChain): string | null => {
   if (location.interior.type === 'Here') {
     // native token
-    return getNativeAssetSymbol(node)
+    return getNativeAssetSymbol(chain)
   }
 
-  const foreignAssets = getOtherAssets(node)
+  const foreignAssets = getOtherAssets(chain)
 
   if (location.interior.type === 'X2') {
     if (

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset } from '../src/types'
+import type { TForeignAssetInfo } from '../src/types'
 import { capitalizeLocation } from './utils'
 import { getParaId, TJunctionGeneralIndex, TJunctionParachain, TLocation } from '../../sdk-core/src'
 import { findAssetInfo } from '../src'
-import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk-common'
+import { CHAINS } from '@paraspell/sdk-common'
 
 const findSimilarAsset = (location: TLocation) => {
   if (location.interior !== 'Here' && location.interior.X3) {
@@ -18,8 +18,8 @@ const findSimilarAsset = (location: TLocation) => {
     }
   }
 
-  for (const node of NODES_WITH_RELAY_CHAINS) {
-    const asset = findAssetInfo(node, { location }, null)
+  for (const chain of CHAINS) {
+    const asset = findAssetInfo(chain, { location }, null)
     if (asset) return asset
   }
   return null
@@ -28,7 +28,7 @@ const findSimilarAsset = (location: TLocation) => {
 export const fetchUniqueForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 

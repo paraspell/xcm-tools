@@ -1,19 +1,19 @@
 import type {
   TAssetInfo,
+  TChain,
   TCurrencyInput,
   TLocation,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
   TPapiApi,
   TPapiTransaction,
+  TParachain,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import type { EXCHANGE_NODES } from '../consts';
+import type { EXCHANGE_CHAINS } from '../consts';
 
-export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
+export type TExchangeChain = (typeof EXCHANGE_CHAINS)[number];
 
 export type TSwapOptions = {
   papiApi: TPapiApi;
@@ -62,13 +62,13 @@ export type TRouterEvent = {
    */
   routerPlan?: TRouterPlan;
   /**
-   * Current transaction's origin node
+   * Current transaction's origin chain
    */
-  node?: TNodeDotKsmWithRelayChains;
+  chain?: TSubstrateChain;
   /**
-   * Current transaction's destination node
+   * Current transaction's destination chain
    */
-  destinationNode?: TNodeWithRelayChains;
+  destinationChain?: TChain;
   /**
    * 0-based step index of current operation
    */
@@ -82,17 +82,17 @@ export type TStatusChangeCallback = (info: TRouterEvent) => void;
  */
 export type TTransferOptions = {
   /**
-   * The origin node to transfer from.
+   * The origin chain to transfer from.
    */
-  from?: TNodeDotKsmWithRelayChains;
+  from?: TSubstrateChain;
   /**
-   * The exchange node to use for the transfer.
+   * The exchange chain to use for the transfer.
    */
   exchange?: TExchangeInput;
   /**
-   * The destination node to transfer to.
+   * The destination chain to transfer to.
    */
-  to?: TNodeWithRelayChains;
+  to?: TChain;
   /**
    * The origin currency.
    */
@@ -111,7 +111,7 @@ export type TTransferOptions = {
    */
   senderAddress: string;
   /**
-   * The EVM injector address. Used when dealing with EVM nodes.
+   * The EVM injector address. Used when dealing with EVM chains.
    */
   evmSenderAddress?: string;
   /**
@@ -149,7 +149,7 @@ export type TGetBestAmountOutOptions = Omit<
 >;
 
 export type TGetBestAmountOutResult = {
-  exchange: TExchangeNode;
+  exchange: TExchangeChain;
   amountOut: bigint;
 };
 
@@ -163,21 +163,21 @@ export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 
 
 export type TOriginInfo = {
   api: TPapiApi;
-  node: TNodeDotKsmWithRelayChains;
+  chain: TSubstrateChain;
   assetFrom: TAssetInfo;
 };
 
 export type TExchangeInfo = {
   api: TPjsApi;
   apiPapi: TPapiApi;
-  baseNode: TNodePolkadotKusama;
-  exchangeNode: TExchangeNode;
+  baseChain: TParachain;
+  exchangeChain: TExchangeChain;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
 };
 
 export type TDestinationInfo = {
-  node: TNodeWithRelayChains;
+  chain: TChain;
   address: string;
 };
 
@@ -210,19 +210,19 @@ export type TDexConfig = {
   pairs: TPairs;
 };
 
-export type TAssetsRecord = Record<TExchangeNode, TDexConfig>;
+export type TAssetsRecord = Record<TExchangeChain, TDexConfig>;
 
 export type TExchangeInput =
-  | TExchangeNode
-  | [TExchangeNode, TExchangeNode, ...TExchangeNode[]]
+  | TExchangeChain
+  | [TExchangeChain, TExchangeChain, ...TExchangeChain[]]
   | undefined;
 
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
 type TBaseTransaction = {
   api: TPapiApi;
-  node: TNodeDotKsmWithRelayChains;
-  destinationNode?: TNodeWithRelayChains;
+  chain: TSubstrateChain;
+  destinationChain?: TChain;
   tx: TPapiTransaction;
 };
 
@@ -242,7 +242,7 @@ export type TRouterPlan = TTransaction[];
 export type TExecuteRouterPlanOptions = {
   signer: PolkadotSigner;
   senderAddress: string;
-  destination?: TNodeWithRelayChains;
+  destination?: TChain;
   evmSigner?: PolkadotSigner;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback;

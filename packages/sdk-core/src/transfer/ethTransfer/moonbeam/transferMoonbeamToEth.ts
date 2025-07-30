@@ -13,9 +13,9 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
+import { getParaId } from '../../../chains/config'
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
-import { getParaId } from '../../../nodes/config'
 import { type TEvmBuilderOptions } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
@@ -118,7 +118,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   const customXcmOnDest = await api.objectToHex(customXcm, 'XcmVersionedXcm')
 
-  const assetHubApi = await api.createApiForNode('AssetHubPolkadot')
+  const assetHubApi = await api.createApiForChain('AssetHubPolkadot')
 
   const [bridgeFee, executionFee] = await getParaEthTransferFees(assetHubApi)
 

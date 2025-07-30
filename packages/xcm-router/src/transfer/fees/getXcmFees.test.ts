@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../../dexNodes/DexNode';
+import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
@@ -23,7 +23,7 @@ vi.mock('../utils', () => ({
 describe('getXcmFees', () => {
   const initialOptions = { foo: 'bar' } as unknown as TBuildTransactionsOptions;
   const transformed = {
-    dex: {} as ExchangeNode,
+    dex: {} as ExchangeChain,
     options: { baz: 'qux' } as unknown as (TTransferOptions | TBuildTransactionsOptions) &
       TAdditionalTransferOptions,
   };

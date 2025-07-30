@@ -1,7 +1,7 @@
 import type { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
 import { computeAllFees } from './computeFees'
 
@@ -82,7 +82,7 @@ describe('computeAllFees', () => {
     expect(spy).toHaveBeenCalledWith(
       'Polkadot',
       mockXcmWithHeader,
-      { multiLocation: DOT_MULTILOCATION },
+      { location: DOT_LOCATION },
       true
     )
 
@@ -131,7 +131,7 @@ describe('computeAllFees', () => {
       2,
       'Polkadot',
       mockXcmWithHeader,
-      { multiLocation: DOT_MULTILOCATION },
+      { location: DOT_LOCATION },
       true
     )
   })
@@ -143,12 +143,7 @@ describe('computeAllFees', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
 
-    expect(spy).toHaveBeenCalledWith(
-      'Acala',
-      mockXcmWithHeader,
-      { multiLocation: DOT_MULTILOCATION },
-      true
-    )
+    expect(spy).toHaveBeenCalledWith('Acala', mockXcmWithHeader, { location: DOT_LOCATION }, true)
 
     expect(result).toEqual({
       reserveFee: 0n,

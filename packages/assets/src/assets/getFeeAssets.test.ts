@@ -1,8 +1,8 @@
-import type { TLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../errors'
-import type { TAssetInfo, TForeignAssetInfo, TNativeAssetInfo, TChainAssetsInfo } from '../types'
+import type { TAssetInfo, TChainAssetsInfo, TForeignAssetInfo, TNativeAssetInfo } from '../types'
 import { getAssetsObject } from './assets'
 import { getFeeAssets } from './getFeeAssets'
 
@@ -18,7 +18,7 @@ const createAsset = (symbol: string, opts: Partial<TAssetInfo> = {}): TForeignAs
   ...opts
 })
 
-const NODE = 'TestNode' as TNodeDotKsmWithRelayChains
+const mockChain = 'TestChain' as TChain
 
 describe('getFeeAssets', () => {
   afterEach(() => {
@@ -37,7 +37,7 @@ describe('getFeeAssets', () => {
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 
-    const result = getFeeAssets(NODE)
+    const result = getFeeAssets(mockChain)
 
     const { isFeeAsset: _flag, ...feeAssetWithoutFlag } = feeAsset
 
@@ -55,7 +55,7 @@ describe('getFeeAssets', () => {
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 
-    const result = getFeeAssets(NODE)
+    const result = getFeeAssets(mockChain)
 
     expect(result).toEqual([mainNative])
   })
@@ -71,6 +71,6 @@ describe('getFeeAssets', () => {
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
 
-    expect(() => getFeeAssets(NODE)).toThrow(InvalidCurrencyError)
+    expect(() => getFeeAssets(mockChain)).toThrow(InvalidCurrencyError)
   })
 })

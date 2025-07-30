@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,8 +17,8 @@ describe('resolveScenario', () => {
 
   describe('RelayToPara scenario', () => {
     it('should return "RelayToPara" when origin is a relay chain', () => {
-      const origin = 'Polkadot' as TNodeDotKsmWithRelayChains
-      const destination = 'Acala' as TDestination
+      const origin: TSubstrateChain = 'Polkadot'
+      const destination: TDestination = 'Acala'
 
       vi.mocked(isRelayChain).mockReturnValue(true)
 
@@ -31,8 +31,8 @@ describe('resolveScenario', () => {
     })
 
     it('should return "RelayToPara" when origin is relay chain regardless of destination type', () => {
-      const origin = 'Kusama' as TNodeDotKsmWithRelayChains
-      const destination = { parents: 1, interior: 'Here' } as TDestination
+      const origin: TSubstrateChain = 'Kusama'
+      const destination: TDestination = { parents: 1, interior: 'Here' }
 
       vi.mocked(isRelayChain).mockReturnValue(true)
 
@@ -45,8 +45,8 @@ describe('resolveScenario', () => {
 
   describe('ParaToRelay scenario', () => {
     it('should return "ParaToRelay" when origin is not relay chain, destination is not TLocation and destination is relay chain', () => {
-      const origin = 'Acala' as TNodeDotKsmWithRelayChains
-      const destination = 'Polkadot' as TDestination
+      const origin: TSubstrateChain = 'Acala'
+      const destination: TDestination = 'Polkadot'
 
       vi.mocked(isRelayChain).mockReturnValueOnce(false).mockReturnValueOnce(true)
       vi.mocked(isTLocation).mockReturnValue(false)
@@ -61,8 +61,8 @@ describe('resolveScenario', () => {
     })
 
     it('should return "ParaToRelay" when origin is parachain and destination is Kusama relay', () => {
-      const origin = 'Karura' as TNodeDotKsmWithRelayChains
-      const destination = 'Kusama' as TDestination
+      const origin: TSubstrateChain = 'Karura'
+      const destination: TDestination = 'Kusama'
 
       vi.mocked(isRelayChain).mockReturnValueOnce(false).mockReturnValueOnce(true)
       vi.mocked(isTLocation).mockReturnValue(false)
@@ -75,8 +75,8 @@ describe('resolveScenario', () => {
 
   describe('ParaToPara scenario', () => {
     it('should return "ParaToPara" when origin is not relay chain and destination is TLocation', () => {
-      const origin = 'Acala' as TNodeDotKsmWithRelayChains
-      const destination = { parents: 1, interior: { X1: { Parachain: 2000 } } } as TDestination
+      const origin: TSubstrateChain = 'Acala'
+      const destination: TDestination = { parents: 1, interior: { X1: { Parachain: 2000 } } }
 
       vi.mocked(isRelayChain).mockReturnValue(false)
       vi.mocked(isTLocation).mockReturnValue(true)
@@ -90,8 +90,8 @@ describe('resolveScenario', () => {
     })
 
     it('should return "ParaToPara" when origin is not relay chain, destination is not TLocation but also not relay chain', () => {
-      const origin = 'Acala' as TNodeDotKsmWithRelayChains
-      const destination = 'Moonbeam' as TDestination
+      const origin: TSubstrateChain = 'Acala'
+      const destination: TDestination = 'Moonbeam'
 
       vi.mocked(isRelayChain).mockReturnValueOnce(false).mockReturnValueOnce(false)
       vi.mocked(isTLocation).mockReturnValue(false)
@@ -106,8 +106,8 @@ describe('resolveScenario', () => {
     })
 
     it('should return "ParaToPara" when both origin and destination are parachains', () => {
-      const origin = 'Karura' as TNodeDotKsmWithRelayChains
-      const destination = 'Moonriver' as TDestination
+      const origin: TSubstrateChain = 'Karura'
+      const destination: TDestination = 'Moonriver'
 
       vi.mocked(isRelayChain).mockReturnValue(false)
       vi.mocked(isTLocation).mockReturnValue(false)
@@ -120,8 +120,8 @@ describe('resolveScenario', () => {
 
   describe('edge cases', () => {
     it('should handle when destination is TLocation but origin check fails first', () => {
-      const origin = 'SomeParachain' as TNodeDotKsmWithRelayChains
-      const destination = { parents: 0, interior: 'Here' } as TDestination
+      const origin: TSubstrateChain = 'Acala'
+      const destination: TDestination = { parents: 0, interior: 'Here' }
 
       vi.mocked(isRelayChain).mockReturnValue(false)
       vi.mocked(isTLocation).mockReturnValue(true)
@@ -134,8 +134,8 @@ describe('resolveScenario', () => {
     })
 
     it('should prioritize origin relay chain check over destination checks', () => {
-      const origin = 'Polkadot' as TNodeDotKsmWithRelayChains
-      const destination = { parents: 1, interior: { X1: [] } } as TDestination
+      const origin: TSubstrateChain = 'Polkadot'
+      const destination: TDestination = { parents: 1, interior: { X1: [] } }
 
       vi.mocked(isRelayChain).mockReturnValue(true)
       vi.mocked(isTLocation).mockReturnValue(true)

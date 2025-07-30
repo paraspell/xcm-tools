@@ -9,24 +9,24 @@ import { getEthErc20Balance } from './getEthErc20Balance'
 
 export const getBalanceForeignInternal = async <TApi, TRes>({
   address,
-  node,
+  chain,
   currency,
   api
 }: TGetBalanceForeignOptions<TApi, TRes>): Promise<bigint> => {
-  await api.init(node)
+  await api.init(chain)
 
-  const asset = findAssetInfoOrThrow(node, currency, null)
+  const asset = findAssetInfoOrThrow(chain, currency, null)
 
-  if (node === 'Ethereum') {
+  if (chain === 'Ethereum') {
     return getEthErc20Balance(currency, address)
   }
 
-  const defaultPallet = getDefaultPallet(node)
+  const defaultPallet = getDefaultPallet(chain)
 
   if (defaultPallet === 'XTokens') {
-    return getBalanceForeignXTokens(api, node, address, asset)
+    return getBalanceForeignXTokens(api, chain, address, asset)
   } else if (defaultPallet === 'PolkadotXcm') {
-    return getBalanceForeignPolkadotXcm(api, node, address, asset)
+    return getBalanceForeignPolkadotXcm(api, chain, address, asset)
   }
 
   throw new InvalidParameterError('Unsupported pallet')

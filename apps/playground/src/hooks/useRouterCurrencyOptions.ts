@@ -1,4 +1,4 @@
-import { type TAssetInfo, type TNodeWithRelayChains } from '@paraspell/sdk';
+import { type TAssetInfo, type TChain } from '@paraspell/sdk';
 import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
 import { getExchangePairs } from '@paraspell/xcm-router';
 import {
@@ -21,20 +21,20 @@ const assetKeys = (
 };
 
 export const useRouterCurrencyOptions = (
-  from: TNodeWithRelayChains | undefined,
-  exchangeNode: TExchangeInput,
-  to: TNodeWithRelayChains | undefined,
+  from: TChain | undefined,
+  exchangeChain: TExchangeInput,
+  to: TChain | undefined,
   selectedFrom?: string,
   selectedTo?: string,
 ) => {
   const supportedAssetsFrom = useMemo(
-    () => getSupportedAssetsFrom(from, exchangeNode),
-    [from, exchangeNode],
+    () => getSupportedAssetsFrom(from, exchangeChain),
+    [from, exchangeChain],
   );
 
   const supportedAssetsTo = useMemo(
-    () => getSupportedAssetsTo(exchangeNode, to),
-    [exchangeNode, to],
+    () => getSupportedAssetsTo(exchangeChain, to),
+    [exchangeChain, to],
   );
 
   const currencyFromMap = useMemo(
@@ -60,7 +60,7 @@ export const useRouterCurrencyOptions = (
   const adjacency = useMemo(() => {
     const map = new Map<string, Set<string>>();
 
-    getExchangePairs(exchangeNode).forEach(([a, b]) => {
+    getExchangePairs(exchangeChain).forEach(([a, b]) => {
       const keysA = assetKeys(a);
       const keysB = assetKeys(b);
 
@@ -76,7 +76,7 @@ export const useRouterCurrencyOptions = (
     });
 
     return map;
-  }, [exchangeNode]);
+  }, [exchangeChain]);
 
   const currencyFromOptions = useMemo(() => {
     return Object.keys(currencyFromMap).flatMap((key) => {

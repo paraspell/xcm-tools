@@ -24,7 +24,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     vi.resetAllMocks()
   })
 
-  it('should return balance for Mythos node', async () => {
+  it('should return balance for Mythos', async () => {
     const mockApi = {
       getMythosForeignBalance: vi.fn().mockResolvedValue(1000n)
     } as unknown as IPolkadotApi<unknown, unknown>
@@ -37,7 +37,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     expect(result).toBe(1000n)
   })
 
-  it('should return balance for Polimec node', async () => {
+  it('should return balance for Polimec', async () => {
     const mockApi = {
       getBalanceForeignAssetsPallet: vi.fn().mockResolvedValue(200n)
     } as unknown as IPolkadotApi<unknown, unknown>
@@ -81,7 +81,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('should return balance for Moonriver node', async () => {
+  it('should return balance for Moonriver', async () => {
     const MOONBEAM_BAL = 555n
     vi.mocked(getMoonbeamErc20Balance).mockResolvedValue(MOONBEAM_BAL)
 

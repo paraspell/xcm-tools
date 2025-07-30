@@ -1,25 +1,25 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 
+import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { getParaId } from '../../nodes/config'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createMultiAsset } from '../../utils'
+import { addXcmVersionHeader, createAsset } from '../../utils'
 
 export const buildTypeAndThenCall = <TApi, TRes>(
-  { origin, reserve, dest, asset, options: { version } }: TTypeAndThenCallContext<TApi, TRes>,
+  { origin, reserve, dest, assetInfo, options: { version } }: TTypeAndThenCallContext<TApi, TRes>,
   isDotAsset: boolean,
   customXcm: unknown[],
-  assets: TMultiAsset[]
+  assets: TAsset[]
 ): TSerializedApiCall => {
-  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : asset.multiLocation
+  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
   const finalDest = origin.chain === reserve.chain ? dest.chain : reserve.chain
   const destLocation = createDestination(version, origin.chain, finalDest, getParaId(finalDest))
 
   const reserveType = origin.chain === reserve.chain ? 'LocalReserve' : 'DestinationReserve'
 
-  const feeMultiAsset = createMultiAsset(version, asset.amount, feeAssetLocation)
+  const feeMultiAsset = createAsset(version, assetInfo.amount, feeAssetLocation)
 
   return {
     module: 'PolkadotXcm',

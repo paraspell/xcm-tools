@@ -3,14 +3,14 @@ import * as palletsModule from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { createApiInstanceForNode } from '../../../utils'
+import { createChainClient } from '../../../utils'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 import { getEthErc20Balance } from './getEthErc20Balance'
 
 vi.mock('../../../utils', () => ({
-  createApiInstanceForNode: vi.fn()
+  createChainClient: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -39,18 +39,18 @@ describe('getBalanceForeign', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApi)
+    vi.mocked(createChainClient).mockResolvedValue(mockApi)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
   })
 
-  it('should return Ethereum ERC20 balance if node is Ethereum', async () => {
+  it('should return Ethereum ERC20 balance if chain is Ethereum', async () => {
     const mockBalance = 500n
     const mockCurrency = { symbol: 'ETH' }
     const mockAddress = '0x123'
     vi.mocked(getEthErc20Balance).mockResolvedValue(mockBalance)
     const result = await getBalanceForeign({
       address: mockAddress,
-      node: 'Ethereum',
+      chain: 'Ethereum',
       currency: mockCurrency,
       api: mockApi
     })
@@ -62,11 +62,11 @@ describe('getBalanceForeign', () => {
     vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(1000n)
     await getBalanceForeign({
       address: 'address',
-      node: 'Acala',
+      chain: 'Acala',
       currency: { symbol: 'ACA' },
       api: mockApi
     })
-    expect(createApiInstanceForNode).not.toHaveBeenCalled()
+    expect(createChainClient).not.toHaveBeenCalled()
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
   })
 
@@ -74,7 +74,7 @@ describe('getBalanceForeign', () => {
     const spy = vi.spyOn(mockApi, 'init')
     await getBalanceForeign({
       address: 'address',
-      node: 'Acala',
+      chain: 'Acala',
       currency: { symbol: 'DOT' },
       api: mockApi
     })
@@ -85,7 +85,7 @@ describe('getBalanceForeign', () => {
     vi.mocked(getBalanceForeignXTokens).mockResolvedValue(1000n)
     const result = await getBalanceForeign({
       address: 'address',
-      node: 'Acala',
+      chain: 'Acala',
       currency: { symbol: 'DOT' },
       api: mockApi
     })
@@ -97,7 +97,7 @@ describe('getBalanceForeign', () => {
     vi.mocked(getBalanceForeignPolkadotXcm).mockResolvedValue(2000n)
     const result = await getBalanceForeign({
       address: 'address',
-      node: 'Subsocial',
+      chain: 'Subsocial',
       currency: { symbol: 'DOT' },
       api: mockApi
     })
@@ -110,7 +110,7 @@ describe('getBalanceForeign', () => {
     await expect(
       getBalanceForeign({
         address: 'address',
-        node: 'Acala',
+        chain: 'Acala',
         currency: { symbol: 'DOT' },
         api: mockApi
       })

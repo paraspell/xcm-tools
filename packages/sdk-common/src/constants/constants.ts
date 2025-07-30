@@ -1,7 +1,7 @@
 /**
- * Supported nodes excluding relay chains and Ethereum.
+ * Supported Polkadot / Kusama / Westend / Paseo parachains.
  */
-export const NODE_NAMES_DOT_KSM = [
+export const PARACHAINS = [
   'AssetHubPolkadot',
   'Acala',
   'Ajuna',
@@ -81,21 +81,21 @@ export const NODE_NAMES_DOT_KSM = [
 ] as const
 
 /**
- * Supported nodes including Ethereum.
+ * Relaychains.
  */
-export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
+export const RELAYCHAINS = ['Polkadot', 'Kusama', 'Westend', 'Paseo'] as const
 
 /**
- * Relay chains.
+ * All Substrate chains (parachains + relaychains).
  */
-export const RELAY_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'Paseo'] as const
+export const SUBSTRATE_CHAINS = [...PARACHAINS, ...RELAYCHAINS] as const
 
 /**
- * Supported nodes including relay chains and Ethereum.
+ * External chains (non-Substrate/Polkadot ecosystem chains).
  */
-export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, ...RELAY_CHAINS] as const
+export const EXTERNAL_CHAINS = ['Ethereum'] as const
 
 /**
- * Supported nodes including relay chains and excluding Ethereum.
+ * All supported chains.
  */
-export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [...NODE_NAMES_DOT_KSM, ...RELAY_CHAINS] as const
+export const CHAINS = [...PARACHAINS, ...RELAYCHAINS, ...EXTERNAL_CHAINS] as const

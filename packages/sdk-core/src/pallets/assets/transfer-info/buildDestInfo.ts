@@ -4,11 +4,7 @@ import {
   type TCurrencyCore,
   type WithAmount
 } from '@paraspell/assets'
-import {
-  replaceBigInt,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import { replaceBigInt, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError, UnableToComputeError } from '../../../errors'
@@ -17,8 +13,8 @@ import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 
 export type TBuildDestInfoOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+  origin: TSubstrateChain
+  destination: TChain
   address: string
   currency: WithAmount<TCurrencyCore>
   originFee: bigint
@@ -65,7 +61,7 @@ export const buildDestInfo = async <TApi, TRes>({
   const destBalance = await getAssetBalanceInternal({
     api: destApi,
     address,
-    node: destination,
+    chain: destination,
     currency: destCurrency
   })
 
@@ -140,7 +136,7 @@ export const buildDestInfo = async <TApi, TRes>({
   if (isDestFeeInNativeCurrency) {
     const destRecipientNativeBalance = await getBalanceNativeInternal({
       address: address,
-      node: destination,
+      chain: destination,
       api: destApi
     })
     destXcmFeeBalance = destRecipientNativeBalance

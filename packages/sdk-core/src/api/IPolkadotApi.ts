@@ -1,17 +1,12 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import type {
-  TLocation,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type {
   BatchMode,
   TBridgeStatus,
   TBuilderOptions,
   TDryRunCallBaseOptions,
-  TDryRunNodeResultInternal,
+  TDryRunChainResultInternal,
   TDryRunXcmBaseOptions,
   TSerializedApiCall,
   TWeight
@@ -21,7 +16,7 @@ import type { TApiOrUrl } from '../types/TApi'
 export interface IPolkadotApi<TApi, TRes> {
   getConfig(): TBuilderOptions<TApiOrUrl<TApi>> | undefined
   getApi(): TApi
-  init(node: TNodeWithRelayChains, clientTtlMs?: number): Promise<void>
+  init(chain: TChain, clientTtlMs?: number): Promise<void>
   createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   accountToUint8a(address: string): Uint8Array
@@ -41,7 +36,7 @@ export interface IPolkadotApi<TApi, TRes> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getXcmWeight(xcm: any): Promise<TWeight>
   getXcmPaymentApiFee(
-    chain: TNodeDotKsmWithRelayChains,
+    chain: TSubstrateChain,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     xcm: any,
     asset: TAssetInfo,
@@ -54,7 +49,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getBalanceForeignAssetsPallet(address: string, location: TLocation): Promise<bigint>
   getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>
   getBalanceForeignXTokens(
-    node: TNodePolkadotKusama,
+    chain: TSubstrateChain,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint>
@@ -63,9 +58,9 @@ export interface IPolkadotApi<TApi, TRes> {
   getFromRpc(module: string, method: string, key: string): Promise<string>
   blake2AsHex(data: Uint8Array): string
   clone(): IPolkadotApi<TApi, TRes>
-  createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TApi, TRes>>
-  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunNodeResultInternal>
-  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal>
+  createApiForChain(chain: TSubstrateChain): Promise<IPolkadotApi<TApi, TRes>>
+  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResultInternal>
+  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal>
   getBridgeStatus(): Promise<TBridgeStatus>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean

@@ -4,11 +4,7 @@ import type {
   TCurrencyInput,
   TCurrencyInputWithAmount
 } from '@paraspell/assets'
-import type {
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
 import type { WithApi } from './TApi'
@@ -16,8 +12,8 @@ import type { TWeight } from './TTransfer'
 
 export type TDryRunBaseOptions<TRes> = {
   tx: TRes
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+  origin: TSubstrateChain
+  destination: TChain
   senderAddress: string
   address: string
   currency: TCurrencyInputWithAmount
@@ -25,7 +21,7 @@ export type TDryRunBaseOptions<TRes> = {
   // Used when there is an asset swap on some hop
   swapConfig?: {
     currencyTo: TCurrencyCore
-    exchangeChain: TNodePolkadotKusama
+    exchangeChain: TParachain
   }
 }
 
@@ -37,9 +33,9 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   tx: TRes
   /**
-   * The node to dry-run on
+   * The chain to dry-run on
    */
-  node: TNodeDotKsmWithRelayChains
+  chain: TSubstrateChain
   /**
    * The address to dry-run with
    */
@@ -58,13 +54,13 @@ export type TDryRunXcmBaseOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xcm: any
   /**
-   * The node to dry-run on
+   * The chain to dry-run on
    */
-  node: TNodeDotKsmWithRelayChains
+  chain: TSubstrateChain
   /**
-   * The origin node
+   * The origin chain
    */
-  origin: TNodeDotKsmWithRelayChains
+  origin: TSubstrateChain
   asset: TAssetInfo | null
   feeAsset?: TAssetInfo
   amount: bigint
@@ -73,7 +69,7 @@ export type TDryRunXcmBaseOptions = {
 
 export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>
 
-export type TDryRunNodeSuccess = {
+export type TDryRunChainSuccess = {
   success: true
   fee: bigint
   weight?: TWeight
@@ -82,34 +78,29 @@ export type TDryRunNodeSuccess = {
   destParaId?: number
 }
 
-export type TDryRunNodeFailure = {
+export type TDryRunChainFailure = {
   success: false
   failureReason: string
 }
 
-export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
+export type TDryRunChainResultInternal = TDryRunChainSuccess | TDryRunChainFailure
 
-export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
+export type TDryRunChainResult = (TDryRunChainSuccess & { currency: string }) | TDryRunChainFailure
 
 export type THopInfo = {
-  chain: TNodeWithRelayChains
-  result: TDryRunNodeResultInternal & { currency?: string }
+  chain: TChain
+  result: TDryRunChainResultInternal & { currency?: string }
 }
 
-export type TDryRunChain =
-  | 'origin'
-  | 'destination'
-  | 'assetHub'
-  | 'bridgeHub'
-  | TNodeWithRelayChains
+export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub' | TChain
 
 export type TDryRunResult = {
   failureReason?: string
   failureChain?: TDryRunChain
-  origin: TDryRunNodeResult
-  destination?: TDryRunNodeResult
-  assetHub?: TDryRunNodeResult
-  bridgeHub?: TDryRunNodeResult
+  origin: TDryRunChainResult
+  destination?: TDryRunChainResult
+  assetHub?: TDryRunChainResult
+  bridgeHub?: TDryRunChainResult
   hops: THopInfo[]
 }
 
@@ -117,8 +108,8 @@ export type TDryRunResult = {
 
 export type HopProcessParams<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  currentChain: TNodeDotKsmWithRelayChains
-  currentOrigin: TNodeDotKsmWithRelayChains
+  currentChain: TSubstrateChain
+  currentOrigin: TSubstrateChain
   currentAsset: TAssetInfo
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   forwardedXcms: any
@@ -130,14 +121,14 @@ export type HopProcessParams<TApi, TRes> = {
 
 export type HopTraversalConfig<TApi, TRes, THopResult> = {
   api: IPolkadotApi<TApi, TRes>
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+  origin: TSubstrateChain
+  destination: TChain
   currency: TCurrencyCore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialForwardedXcms: any
   initialDestParaId: number | undefined
   swapConfig?: {
-    exchangeChain: TNodeDotKsmWithRelayChains
+    exchangeChain: TParachain
     currencyTo: TCurrencyCore
   }
   processHop: (params: HopProcessParams<TApi, TRes>) => Promise<THopResult>
@@ -151,13 +142,13 @@ export type HopTraversalConfig<TApi, TRes, THopResult> = {
 
 export type HopTraversalResult<THopResult> = {
   hops: Array<{
-    chain: TNodeDotKsmWithRelayChains
+    chain: TSubstrateChain
     result: THopResult
   }>
   assetHub?: THopResult
   bridgeHub?: THopResult
   destination?: THopResult
-  lastProcessedChain?: TNodeDotKsmWithRelayChains
+  lastProcessedChain?: TSubstrateChain
 }
 
 export enum XTokensError {

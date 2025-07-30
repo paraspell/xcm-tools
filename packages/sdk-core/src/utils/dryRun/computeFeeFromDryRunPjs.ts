@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getLocationTokenIdPjs } from './getLocationTokenIdPjs'
 
 export const computeFeeFromDryRunPjs = (
   dryRun: any,
-  node: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   executionFee: bigint
 ): bigint => {
   // Extract delivery fees from emitted events
@@ -23,13 +23,13 @@ export const computeFeeFromDryRunPjs = (
       for (const feeItem of e.data.fees) {
         if (feeItem.fun.NonFungible) continue
         const plancks = BigInt(feeItem.fun.Fungible.replace(/,/g, ''))
-        const tokenSymbol = getLocationTokenIdPjs(feeItem.id, node)
+        const tokenSymbol = getLocationTokenIdPjs(feeItem.id, chain)
         if (!tokenSymbol || !plancks) continue
         deliveryFees.push({ plancks, tokenSymbol })
       }
     }
   }
-  const nativeAssetSymbol = getNativeAssetSymbol(node)
+  const nativeAssetSymbol = getNativeAssetSymbol(chain)
 
   // Sum the fees that match the feeToken
   const totalDeliveryFees = deliveryFees

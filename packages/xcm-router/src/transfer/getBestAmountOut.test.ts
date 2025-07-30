@@ -1,15 +1,15 @@
 import type { TAssetInfo } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type ExchangeNode from '../dexNodes/DexNode';
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import type ExchangeChain from '../exchanges/ExchangeChain';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 import { getBestAmountOut } from './getBestAmountOut';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { resolveAssets } from './utils/resolveAssets';
 
-vi.mock('../dexNodes/DexNodeFactory', () => ({
-  createDexNodeInstance: vi.fn(),
+vi.mock('../exchanges/ExchangeChainFactory', () => ({
+  createExchangeInstance: vi.fn(),
 }));
 
 vi.mock('./selectBestExchangeAmountOut', () => ({
@@ -25,7 +25,7 @@ describe('getBestAmountOut', () => {
     vi.clearAllMocks();
   });
 
-  it('should use createDexNodeInstance when exchange is provided', async () => {
+  it('should use createExchangeInstance when exchange is provided', async () => {
     const options = {
       exchange: 'EXCHANGE_A',
       amount: 100,
@@ -36,14 +36,14 @@ describe('getBestAmountOut', () => {
     } as unknown as TGetBestAmountOutOptions;
 
     const fakeDex = {
-      exchangeNode: 'EXCHANGE_A_NODE',
+      exchangeChain: 'EXCHANGE_A_CHAIN',
       createApiInstance: vi.fn().mockResolvedValue('api_instance'),
       createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi'),
       getAmountOut: vi.fn().mockResolvedValue(200),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
-    vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
-    vi.mocked(selectBestExchangeAmountOut).mockResolvedValue({} as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
+    vi.mocked(selectBestExchangeAmountOut).mockResolvedValue({} as ExchangeChain);
 
     const fakeAssets = {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
@@ -57,7 +57,7 @@ describe('getBestAmountOut', () => {
 
     const result = await getBestAmountOut(options);
 
-    expect(createDexNodeInstance).toHaveBeenCalledWith('EXCHANGE_A');
+    expect(createExchangeInstance).toHaveBeenCalledWith('EXCHANGE_A');
     expect(selectBestExchangeAmountOut).not.toHaveBeenCalled();
     expect(resolveAssets).toHaveBeenCalledWith(fakeDex, options);
     expect(createApiSpy).toHaveBeenCalled();
@@ -68,7 +68,7 @@ describe('getBestAmountOut', () => {
       papiApi: 'api_instance_papi',
     });
     expect(result).toEqual({
-      exchange: fakeDex.exchangeNode,
+      exchange: fakeDex.exchangeChain,
       amountOut: 200,
     });
   });
@@ -84,14 +84,14 @@ describe('getBestAmountOut', () => {
     } as unknown as TGetBestAmountOutOptions;
 
     const fakeDex = {
-      exchangeNode: 'EXCHANGE_NODE_B',
+      exchangeChain: 'EXCHANGE_CHAIN_B',
       createApiInstance: vi.fn().mockResolvedValue('api_instance_b'),
       createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi_b'),
       getAmountOut: vi.fn().mockResolvedValue(75),
-    } as unknown as ExchangeNode;
+    } as unknown as ExchangeChain;
 
     vi.mocked(selectBestExchangeAmountOut).mockResolvedValue(fakeDex);
-    vi.mocked(createDexNodeInstance).mockReturnValue({} as ExchangeNode);
+    vi.mocked(createExchangeInstance).mockReturnValue({} as ExchangeChain);
 
     const fakeAssets = {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
@@ -106,7 +106,7 @@ describe('getBestAmountOut', () => {
     const result = await getBestAmountOut(options);
 
     expect(selectBestExchangeAmountOut).toHaveBeenCalledWith(options, undefined);
-    expect(createDexNodeInstance).not.toHaveBeenCalled();
+    expect(createExchangeInstance).not.toHaveBeenCalled();
     expect(resolveAssets).toHaveBeenCalledWith(fakeDex, options);
     expect(createApiSpy).toHaveBeenCalled();
     expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance_b', {
@@ -116,7 +116,7 @@ describe('getBestAmountOut', () => {
       papiApi: 'api_instance_papi_b',
     });
     expect(result).toEqual({
-      exchange: fakeDex.exchangeNode,
+      exchange: fakeDex.exchangeChain,
       amountOut: 75,
     });
   });

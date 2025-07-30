@@ -11,7 +11,7 @@ vi.mock('./search', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  NODES_WITH_RELAY_CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Moonbeam', 'Astar']
+  CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Moonbeam', 'Astar']
 }))
 
 describe('getSupportedDestinations', () => {
@@ -48,7 +48,7 @@ describe('getSupportedDestinations', () => {
     expect(result).toEqual(['Acala', 'Moonbeam'])
   })
 
-  it('should exclude origin node from results', () => {
+  it('should exclude origin chain from results', () => {
     const origin = 'Polkadot'
     const currency = { symbol: 'DOT' }
     const originAsset = {
@@ -85,7 +85,7 @@ describe('getSupportedDestinations', () => {
     expect(result).toEqual(['Kusama', 'Acala'])
   })
 
-  it('should exclude destination when InvalidCurrencyError is thrown from findAssetForNodeOrThrow', () => {
+  it('should exclude destination when InvalidCurrencyError is thrown from findAssetInfoOrThrow', () => {
     const origin = 'Polkadot'
     const currency = { symbol: 'DOT' }
     const originAsset = {
@@ -111,7 +111,7 @@ describe('getSupportedDestinations', () => {
     expect(result).toEqual(['Acala', 'Moonbeam', 'Astar'])
   })
 
-  it('should re-throw non-InvalidCurrencyError errors from findAssetForNodeOrThrow', () => {
+  it('should re-throw non-InvalidCurrencyError errors from findAssetInfoOrThrow', () => {
     const origin = 'Polkadot'
     const currency = { symbol: 'DOT' }
     const originAsset = {
@@ -142,7 +142,7 @@ describe('getSupportedDestinations', () => {
     expect(() => getSupportedDestinations(origin, currency)).toThrow('Some other error')
   })
 
-  it('should propagate errors from initial findAssetForNodeOrThrow call', () => {
+  it('should propagate errors from initial findAssetInfoOrThrow call', () => {
     const origin = 'Polkadot'
     const currency = { symbol: 'DOT' }
 

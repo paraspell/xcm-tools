@@ -1,15 +1,15 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 export type TProviderEntry = {
   name: string
   endpoint: string
 }
 
-export type TNodeConfig = {
+export type TChainConfig = {
   name: string
   info: string
   paraId: number
   providers: TProviderEntry[]
 }
 
-export type TNodeConfigMap = Record<TNodeDotKsmWithRelayChains, TNodeConfig>
+export type TChainConfigMap = Record<TSubstrateChain, TChainConfig>

@@ -1,6 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNode } from '@paraspell/sdk';
+import type { TChain } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -11,7 +11,7 @@ import { AddressService } from './address.service.js';
 describe('AddressController', () => {
   let controller: AddressController;
   let service: AddressService;
-  const mockNode: TNode = 'Acala';
+  const mockChain: TChain = 'Acala';
   const mockAddress = '5GrwvaEF...';
   const mockOutputAddress = '5GrwvaEF...';
 
@@ -36,7 +36,7 @@ describe('AddressController', () => {
   });
 
   describe('convertSs58', () => {
-    it('should return assets object for a valid node', () => {
+    it('should return assets object for a valid chain', () => {
       const spy = vi
         .spyOn(service, 'convertSs58')
         .mockReturnValue(mockOutputAddress);
@@ -44,13 +44,13 @@ describe('AddressController', () => {
       const result = controller.convertSs58(
         {
           address: mockAddress,
-          node: mockNode,
+          chain: mockChain,
         },
         mockRequestObject,
       );
 
       expect(result).toBe(mockOutputAddress);
-      expect(spy).toHaveBeenCalledWith(mockAddress, mockNode);
+      expect(spy).toHaveBeenCalledWith(mockAddress, mockChain);
     });
   });
 });

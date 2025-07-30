@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getLocationTokenId } from './getLocationTokenId'
 
 export const computeFeeFromDryRun = (
   dryRun: any,
-  node: TNodeDotKsmWithRelayChains,
+  chain: TSubstrateChain,
   executionFee: bigint,
   isFeeAsset = false
 ): bigint => {
@@ -25,7 +25,7 @@ export const computeFeeFromDryRun = (
       for (const feeItem of e.value.value.fees) {
         if (feeItem.fun.type === 'NonFungible') continue
         const plancks = feeItem.fun.value
-        const tokenSymbol = getLocationTokenId(feeItem.id, node)
+        const tokenSymbol = getLocationTokenId(feeItem.id, chain)
         if (!tokenSymbol || !plancks) continue
         deliveryFees.push({ plancks, tokenSymbol })
       }
@@ -46,7 +46,7 @@ export const computeFeeFromDryRun = (
   if (isFeeAsset && assetConversionFee > 0n) {
     return assetConversionFee
   } else {
-    const nativeAssetSymbol = getNativeAssetSymbol(node)
+    const nativeAssetSymbol = getNativeAssetSymbol(chain)
     const totalDeliveryFees = deliveryFees
       .filter(df => df.tokenSymbol === nativeAssetSymbol)
       .reduce((acc, df) => acc + df.plancks, 0n)

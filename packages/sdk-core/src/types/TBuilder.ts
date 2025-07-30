@@ -1,23 +1,23 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
-import type { TNode, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 
 import type { WithApi } from './TApi'
 
-export type TEvmNodeFrom = Extract<TNode, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
+export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
 
 /**
  * The options for the Ethereum to Polkadot transfer builder.
  */
 export type TEvmBuilderOptionsBase = {
   /**
-   * The source node. Can be either 'Ethereum', 'Moonbeam', 'Moonriver', or 'Darwinia'.
+   * The source chain. Can be either 'Ethereum', 'Moonbeam', 'Moonriver', or 'Darwinia'.
    */
-  from: TEvmNodeFrom
+  from: TEvmChainFrom
   /**
-   * The destination node on Polkadot network.
+   * The destination chain on Polkadot network.
    */
-  to: TNodeWithRelayChains
+  to: TChain
   /**
    * The currency to transfer. Symbol or ID.
    */
@@ -79,6 +79,6 @@ export type TBatchOptions = {
 export type TBuilderOptions<TApi> = TApi | TBuilderConfig<TApi>
 
 export type TBuilderConfig<TApi> = {
-  apiOverrides?: Partial<Record<TNodeWithRelayChains, TApi>>
+  apiOverrides?: Partial<Record<TChain, TApi>>
   development?: boolean
 }

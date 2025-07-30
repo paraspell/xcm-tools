@@ -1,6 +1,6 @@
 import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type { TSubstrateChain } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { DEFAULT_ADDRESS } from '../../constants';
@@ -9,7 +9,7 @@ import { isValidWalletAddress } from '../../utils';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
-const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [
+const SUPPORTED_CHAINS: TSubstrateChain[] = [
   'Polkadot',
   'Kusama',
   'AssetHubPolkadot',
@@ -17,7 +17,7 @@ const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [
 ];
 
 export type FormValues = {
-  from: TNodeDotKsmWithRelayChains;
+  from: TSubstrateChain;
   address: string;
   amount: string;
   useApi: boolean;
@@ -69,9 +69,9 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
           <ParachainSelect
-            label="Node"
+            label="Chain"
             placeholder="Pick value"
-            data={SUPPORTED_NODES}
+            data={SUPPORTED_CHAINS}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />

@@ -1,15 +1,15 @@
-import type { TAssetInfo, TForeignAssetInfo, TNodePolkadotKusama } from '@paraspell/sdk';
+import type { TAssetInfo, TForeignAssetInfo, TParachain } from '@paraspell/sdk';
 import { findAssetInfo, findBestMatches, getAssets, isForeignAsset } from '@paraspell/sdk';
 
 import type { TRouterAsset } from '../types';
 
 export const getSdkAssetByRouterAsset = (
-  exchangeBaseNode: TNodePolkadotKusama,
+  exchangeBaseChain: TParachain,
   routerAsset: TRouterAsset,
 ): TAssetInfo | undefined => {
   // Try searching by symbol fist, if duplicates are found, search by multi-location
 
-  const assets = getAssets(exchangeBaseNode);
+  const assets = getAssets(exchangeBaseChain);
 
   const candidates = findBestMatches(assets, routerAsset.symbol);
 
@@ -36,7 +36,7 @@ export const getSdkAssetByRouterAsset = (
 
     if (asset.location) {
       sdkAsset = findAssetInfo(
-        exchangeBaseNode,
+        exchangeBaseChain,
         { location: asset.location },
         null,
       ) as TForeignAssetInfo;
@@ -45,7 +45,7 @@ export const getSdkAssetByRouterAsset = (
     }
 
     if (asset.assetId) {
-      sdkAsset = findAssetInfo(exchangeBaseNode, { id: asset.assetId }, null) as TForeignAssetInfo;
+      sdkAsset = findAssetInfo(exchangeBaseChain, { id: asset.assetId }, null) as TForeignAssetInfo;
 
       if (sdkAsset) return true;
     }

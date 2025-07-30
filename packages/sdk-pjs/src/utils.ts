@@ -1,14 +1,14 @@
-import type { IPolkadotApi, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
-import { createApiInstanceForNode as createApiInstanceForNodeInternal } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TSubstrateChain } from '@paraspell/sdk-core'
+import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 import type { Contract, Signer } from 'ethers'
 import type { Abi, GetContractReturnType, WalletClient } from 'viem'
 
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 
-export const createApiInstanceForNode = (node: TNodeDotKsmWithRelayChains) => {
+export const createChainClient = (chain: TSubstrateChain) => {
   const pjsApi = new PolkadotJsApi()
-  return createApiInstanceForNodeInternal<TPjsApi, Extrinsic>(pjsApi, node)
+  return createChainClientInternal<TPjsApi, Extrinsic>(pjsApi, chain)
 }
 
 export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, TResult>(

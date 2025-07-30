@@ -4,8 +4,8 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TDryRunResult, TGetXcmFeeResult, TNode } from '@paraspell/sdk';
-import { IncompatibleNodesError, InvalidCurrencyError } from '@paraspell/sdk';
+import type { TDryRunResult, TGetXcmFeeResult, TChain } from '@paraspell/sdk';
+import { IncompatibleChainsError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -92,7 +92,7 @@ describe('XTransferService', () => {
   const address = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const senderAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const currency = { symbol: 'DOT', amount: 100 };
-  const invalidNode = 'InvalidNode';
+  const invalidChain = 'InvalidChain';
 
   const xTransferDto: XTransferDtoWSenderAddress = {
     from: 'Acala',
@@ -189,10 +189,10 @@ describe('XTransferService', () => {
       expect(builderMock.build).toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid from node', async () => {
+    it('should throw BadRequestException for invalid from chain', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        from: invalidNode,
+        from: invalidChain,
       };
 
       await expect(service.generateXcmCall(options)).rejects.toThrow(
@@ -200,10 +200,10 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid to node', async () => {
+    it('should throw BadRequestException for invalid to chain', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        to: invalidNode,
+        to: invalidChain,
       };
 
       await expect(service.generateXcmCall(options)).rejects.toThrow(
@@ -211,7 +211,7 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw IncompatibleNodesError for incompatible from and to nodes', async () => {
+    it('should throw IncompatibleChainsError for incompatible from and to chains', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
         from: 'Acala',
@@ -221,7 +221,7 @@ describe('XTransferService', () => {
       const builderMockWithError = {
         ...builderMock,
         build: vi.fn().mockImplementation(() => {
-          throw new IncompatibleNodesError('Incompatible nodes');
+          throw new IncompatibleChainsError('Incompatible chains');
         }),
       };
 
@@ -412,9 +412,9 @@ describe('XTransferService', () => {
 
   describe('generateBatchXcmCall', () => {
     it('should generate batch XCM call for valid transfers', async () => {
-      const from: TNode = 'Acala';
-      const to1: TNode = 'Basilisk';
-      const to2: TNode = 'Moonriver';
+      const from: TChain = 'Acala';
+      const to1: TChain = 'Basilisk';
+      const to2: TChain = 'Moonriver';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -450,9 +450,9 @@ describe('XTransferService', () => {
     });
 
     it('should generate batch XCM call for valid transfers', async () => {
-      const from: TNode = 'Acala';
-      const to1: TNode = 'Basilisk';
-      const to2: TNode = 'Moonriver';
+      const from: TChain = 'Acala';
+      const to1: TChain = 'Basilisk';
+      const to2: TChain = 'Moonriver';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -526,10 +526,10 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException when transfers have different from nodes', async () => {
-      const from1: TNode = 'Acala';
-      const from2: TNode = 'Basilisk';
-      const to: TNode = 'Moonriver';
+    it('should throw BadRequestException when transfers have different from chains', async () => {
+      const from1: TChain = 'Acala';
+      const from2: TChain = 'Basilisk';
+      const to: TChain = 'Moonriver';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -553,13 +553,13 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid from node', async () => {
-      const to: TNode = 'Basilisk';
+    it('should throw BadRequestException for invalid from chain', async () => {
+      const to: TChain = 'Basilisk';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
           {
-            from: invalidNode,
+            from: invalidChain,
             to,
             address,
             currency,
@@ -572,14 +572,14 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid to node', async () => {
-      const from: TNode = 'Acala';
+    it('should throw BadRequestException for invalid to chain', async () => {
+      const from: TChain = 'Acala';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
-            to: invalidNode,
+            to: invalidChain,
             address,
             currency,
           },
@@ -592,8 +592,8 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException for invalid wallet address', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -612,8 +612,8 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException for invalid currency', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
       const invalidCurrency = { symbol: 'UNKNOWN', amount: 100 };
 
       const builderMockWithError = {
@@ -646,8 +646,8 @@ describe('XTransferService', () => {
     });
 
     it('should handle unknown errors from SDK', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
 
       const builderMockWithError = {
         ...builderMock,
@@ -678,15 +678,15 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException when toNode is an object', async () => {
-      const from: TNode = 'Acala';
-      const toNode = { some: 'object' }; // Invalid toNode
+    it('should throw BadRequestException when toChain is an object', async () => {
+      const from: TChain = 'Acala';
+      const toChain = { some: 'object' }; // Invalid toChain
 
       const batchDto = {
         transfers: [
           {
             from,
-            to: toNode,
+            to: toChain,
             address,
             currency,
           },
@@ -698,9 +698,9 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid transferToNode in transfers', async () => {
-      const from: TNode = 'Acala';
-      const invalidToNode = 'InvalidNode';
+    it('should throw BadRequestException for invalid transferToChain in transfers', async () => {
+      const from: TChain = 'Acala';
+      const invalidToChain = 'InvalidChain';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -712,7 +712,7 @@ describe('XTransferService', () => {
           },
           {
             from,
-            to: invalidToNode, // Invalid to node
+            to: invalidToChain,
             address,
             currency,
           },
@@ -724,8 +724,8 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should generate batch XCM call for transfers with only fromNode (parachain to relaychain)', async () => {
-      const from: TNode = 'Acala';
+    it('should generate batch XCM call for transfers with only fromChain (parachain to relaychain)', async () => {
+      const from: TChain = 'Acala';
 
       const batchDto = {
         transfers: [
@@ -751,8 +751,8 @@ describe('XTransferService', () => {
     });
 
     it('should apply xcmVersion if provided in transfer', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -775,8 +775,8 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException when pallet or method not provided', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -796,8 +796,8 @@ describe('XTransferService', () => {
     });
 
     it('should succeed when pallet and method are provided', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
 
       const batchDto: BatchXTransferDto = {
         transfers: [

@@ -4,9 +4,9 @@ import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
   getNativeAssetSymbol,
-  isNodeEvm
+  isChainEvm
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -22,7 +22,7 @@ vi.mock('@paraspell/assets', async () => {
     findAssetOnDestOrThrow: vi.fn(),
     getExistentialDeposit: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
-    isNodeEvm: vi.fn()
+    isChainEvm: vi.fn()
   }
 })
 
@@ -65,22 +65,22 @@ describe('buildHopInfo', () => {
 
     baseOptions = {
       api: mockApi,
-      node: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      chain: 'AssetHubPolkadot' as TSubstrateChain,
       feeData: {
         fee: DEFAULT_HOP_FEE,
         currency: 'DOT'
       },
-      originNode: 'Polkadot' as TNodeDotKsmWithRelayChains,
+      originChain: 'Polkadot' as TSubstrateChain,
       currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
       senderAddress: 'senderAlice',
       ahAddress: 'ahBobForEvm'
     }
 
-    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(DEFAULT_NATIVE_BALANCE)
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node.includes('Polkadot')) return 'DOT'
-      if (node.includes('Kusama')) return 'KSM'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain.includes('Polkadot')) return 'DOT'
+      if (chain.includes('Kusama')) return 'KSM'
       return 'HOPNATIVE'
     })
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
@@ -96,34 +96,34 @@ describe('buildHopInfo', () => {
     vi.mocked(getExistentialDeposit).mockReturnValue(DEFAULT_ED)
   })
 
-  it('should successfully build info for an AssetHub-like hop node (non-EVM origin)', async () => {
+  it('should successfully build info for an AssetHub-like hop chain (non-EVM origin)', async () => {
     const options = { ...baseOptions }
     const result = await buildHopInfo(options)
 
     expect(mockApi.clone).toHaveBeenCalledTimes(1)
-    expect(mockHopApi.init).toHaveBeenCalledWith(options.node)
+    expect(mockHopApi.init).toHaveBeenCalledWith(options.chain)
     expect(mockHopApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
-    expect(isNodeEvm).toHaveBeenCalledWith(options.originNode)
+    expect(isChainEvm).toHaveBeenCalledWith(options.originChain)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockHopApi,
       address: options.senderAddress,
-      node: options.node
+      chain: options.chain
     })
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(options.node)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(options.chain)
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
-      options.originNode,
-      options.node,
+      options.originChain,
+      options.chain,
       options.currency
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockHopApi,
       address: options.senderAddress,
-      node: options.node,
+      chain: options.chain,
       currency: {
         location: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo).location
       }
     })
-    expect(getExistentialDeposit).toHaveBeenCalledWith(options.node, {
+    expect(getExistentialDeposit).toHaveBeenCalledWith(options.chain, {
       location: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo).location
     })
 
@@ -142,8 +142,8 @@ describe('buildHopInfo', () => {
   })
 
   it('should use ahAddress for EVM origin if provided', async () => {
-    vi.mocked(isNodeEvm).mockReturnValue(true)
-    const options = { ...baseOptions, originNode: 'Moonbeam' as TNodeDotKsmWithRelayChains }
+    vi.mocked(isChainEvm).mockReturnValue(true)
+    const options = { ...baseOptions, originChain: 'Moonbeam' as TSubstrateChain }
     await buildHopInfo(options)
 
     expect(getBalanceNativeInternal).toHaveBeenCalledWith(
@@ -155,10 +155,10 @@ describe('buildHopInfo', () => {
   })
 
   it('should use senderAddress for EVM origin if ahAddress is NOT provided', async () => {
-    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(true)
     const options = {
       ...baseOptions,
-      originNode: 'Moonbeam' as TNodeDotKsmWithRelayChains,
+      originChain: 'Moonbeam' as TSubstrateChain,
       ahAddress: undefined
     }
     await buildHopInfo(options)
@@ -171,18 +171,18 @@ describe('buildHopInfo', () => {
     )
   })
 
-  it('should correctly build info for a BridgeHub hop node', async () => {
-    const bridgeHubNode = 'BridgeHubPolkadot' as TNodeDotKsmWithRelayChains
-    const options = { ...baseOptions, node: bridgeHubNode }
+  it('should correctly build info for a BridgeHub hop chain', async () => {
+    const chain: TSubstrateChain = 'BridgeHubPolkadot'
+    const options = { ...baseOptions, chain }
     const result = await buildHopInfo(options)
 
-    expect(mockHopApi.init).toHaveBeenCalledWith(bridgeHubNode)
+    expect(mockHopApi.init).toHaveBeenCalledWith(chain)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockHopApi,
       address: options.senderAddress,
-      node: bridgeHubNode
+      chain
     })
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(bridgeHubNode)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
     expect(findAssetOnDestOrThrow).not.toHaveBeenCalled()
     expect(getAssetBalanceInternal).not.toHaveBeenCalled()
     expect(getExistentialDeposit).not.toHaveBeenCalled()
@@ -199,7 +199,7 @@ describe('buildHopInfo', () => {
     expect(mockHopApi.disconnect).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw InvalidParameterError if ED is not found for AssetHub-like node', async () => {
+  it('should throw InvalidParameterError if ED is not found for AssetHub-like chain', async () => {
     vi.mocked(getExistentialDeposit).mockReturnValue(null)
     const options = { ...baseOptions }
 
@@ -209,7 +209,7 @@ describe('buildHopInfo', () => {
       ? { location: hopAsset.location }
       : { symbol: hopAsset.symbol }
     await expect(buildHopInfo(options)).rejects.toThrow(
-      `Existential deposit not found for node ${options.node} with currency ${JSON.stringify(expectedPayload)}`
+      `Existential deposit not found for chain ${options.chain} with currency ${JSON.stringify(expectedPayload)}`
     )
 
     expect(mockHopApi.setDisconnectAllowed).toHaveBeenCalledTimes(4)
@@ -230,7 +230,7 @@ describe('buildHopInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith(
       expect.objectContaining({ currency: expectedCurrencyPayload })
     )
-    expect(getExistentialDeposit).toHaveBeenCalledWith(options.node, expectedCurrencyPayload)
+    expect(getExistentialDeposit).toHaveBeenCalledWith(options.chain, expectedCurrencyPayload)
   })
 
   it('should call finally block (disconnect) even if an earlier async call fails', async () => {

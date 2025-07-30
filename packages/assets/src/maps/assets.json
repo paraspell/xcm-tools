@@ -1,6 +1,6 @@
 {
   "Polkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -23,7 +23,7 @@
     "otherAssets": []
   },
   "Kusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -46,7 +46,7 @@
     "otherAssets": []
   },
   "Westend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -69,7 +69,7 @@
     "otherAssets": []
   },
   "Paseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -92,7 +92,7 @@
     "otherAssets": []
   },
   "Polimec": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "PLMC",
     "isEVM": false,
     "ss58Prefix": 41,
@@ -176,7 +176,7 @@
     ]
   },
   "Acala": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "ACA",
     "isEVM": false,
     "ss58Prefix": 10,
@@ -734,7 +734,7 @@
     ]
   },
   "Ajuna": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "AJUN",
     "isEVM": false,
     "ss58Prefix": 1328,
@@ -824,7 +824,7 @@
     ]
   },
   "BridgeHubPolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -848,7 +848,7 @@
     "otherAssets": []
   },
   "BridgeHubKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -872,7 +872,7 @@
     "otherAssets": []
   },
   "Astar": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "ASTR",
     "isEVM": false,
     "ss58Prefix": 5,
@@ -1679,7 +1679,7 @@
     ]
   },
   "BifrostPolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -2224,7 +2224,7 @@
     ]
   },
   "Centrifuge": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "CFG",
     "isEVM": false,
     "ss58Prefix": 36,
@@ -2233,9 +2233,7 @@
     "nativeAssets": [
       {
         "symbol": "CFG",
-        "isNative": true,
         "decimals": 18,
-        "existentialDeposit": "1000000000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -2251,7 +2249,9 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000",
+        "isNative": true
       }
     ],
     "otherAssets": [
@@ -2685,7 +2685,7 @@
     ]
   },
   "Subsocial": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "SUB",
     "isEVM": false,
     "ss58Prefix": 28,
@@ -2712,7 +2712,7 @@
     "otherAssets": []
   },
   "ComposableFinance": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "LAYR",
     "isEVM": false,
     "ss58Prefix": 50,
@@ -2892,7 +2892,7 @@
     ]
   },
   "Darwinia": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "RING",
     "isEVM": true,
     "ss58Prefix": 18,
@@ -2988,7 +2988,7 @@
     ]
   },
   "EnergyWebX": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "EWT",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -3015,7 +3015,7 @@
     "otherAssets": []
   },
   "Hydration": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "HDX",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -4754,7 +4754,7 @@
     ]
   },
   "IntegriteeKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "TEER",
     "isEVM": false,
     "ss58Prefix": 13,
@@ -4794,7 +4794,7 @@
     ]
   },
   "Interlay": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "INTR",
     "isEVM": false,
     "ss58Prefix": 2032,
@@ -5203,7 +5203,7 @@
     ]
   },
   "Heima": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "HEI",
     "isEVM": false,
     "ss58Prefix": 31,
@@ -5220,7 +5220,7 @@
     "otherAssets": []
   },
   "Moonbeam": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "GLMR",
     "isEVM": true,
     "ss58Prefix": 1284,
@@ -6612,7 +6612,7 @@
     ]
   },
   "AssetHubPolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -7866,7 +7866,7 @@
     ]
   },
   "Altair": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "AIR",
     "isEVM": false,
     "ss58Prefix": 136,
@@ -7950,7 +7950,7 @@
     ]
   },
   "Amplitude": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "AMPE",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -7996,7 +7996,7 @@
     ]
   },
   "Basilisk": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
     "isEVM": false,
     "ss58Prefix": 10041,
@@ -8341,7 +8341,7 @@
     ]
   },
   "BifrostKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -8669,7 +8669,7 @@
     ]
   },
   "Crab": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "CRAB",
     "isEVM": true,
     "ss58Prefix": 42,
@@ -8706,7 +8706,7 @@
     ]
   },
   "CrustShadow": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "CSM",
     "isEVM": false,
     "ss58Prefix": 66,
@@ -8776,7 +8776,7 @@
     ]
   },
   "Laos": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "LAOS",
     "isEVM": true,
     "ss58Prefix": 42,
@@ -8803,7 +8803,7 @@
     "otherAssets": []
   },
   "Encointer": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -8827,7 +8827,7 @@
     "otherAssets": []
   },
   "KiltSpiritnet": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "KILT",
     "isEVM": false,
     "ss58Prefix": 38,
@@ -8866,7 +8866,7 @@
     ]
   },
   "Curio": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "CGT",
     "isEVM": false,
     "ss58Prefix": 777,
@@ -8930,7 +8930,7 @@
     ]
   },
   "Karura": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KAR",
     "isEVM": false,
     "ss58Prefix": 8,
@@ -9502,7 +9502,7 @@
     ]
   },
   "Kintsugi": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KINT",
     "isEVM": false,
     "ss58Prefix": 2092,
@@ -9701,7 +9701,7 @@
     ]
   },
   "Litmus": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "LIT",
     "nativeAssets": [
       {
@@ -9713,7 +9713,7 @@
     "otherAssets": []
   },
   "Moonriver": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "MOVR",
     "isEVM": true,
     "ss58Prefix": 1285,
@@ -10233,7 +10233,7 @@
     ]
   },
   "Quartz": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "QTZ",
     "isEVM": false,
     "ss58Prefix": 255,
@@ -10260,7 +10260,7 @@
     "otherAssets": []
   },
   "Jamton": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOTON",
     "isEVM": false,
     "ss58Prefix": 5589,
@@ -10385,7 +10385,7 @@
     ]
   },
   "RobonomicsKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
     "ss58Prefix": 32,
@@ -10425,7 +10425,7 @@
     ]
   },
   "RobonomicsPolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
     "ss58Prefix": 32,
@@ -10459,7 +10459,7 @@
     ]
   },
   "PeopleKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -10483,7 +10483,7 @@
     "otherAssets": []
   },
   "PeoplePolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -10507,7 +10507,7 @@
     "otherAssets": []
   },
   "Shiden": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "SDN",
     "isEVM": false,
     "ss58Prefix": 5,
@@ -10922,7 +10922,7 @@
     ]
   },
   "AssetHubKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -11697,7 +11697,7 @@
     ]
   },
   "CoretimeKusama": {
-    "relayChainAssetSymbol": "KSM",
+    "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "ss58Prefix": 2,
@@ -11721,7 +11721,7 @@
     "otherAssets": []
   },
   "CoretimePolkadot": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -11745,7 +11745,7 @@
     "otherAssets": []
   },
   "Unique": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "UNQ",
     "isEVM": false,
     "ss58Prefix": 7391,
@@ -11848,7 +11848,7 @@
     ]
   },
   "Crust": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "CRU",
     "isEVM": false,
     "ss58Prefix": 88,
@@ -11888,7 +11888,7 @@
     ]
   },
   "Manta": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "MANTA",
     "isEVM": false,
     "ss58Prefix": 77,
@@ -12558,7 +12558,7 @@
     ]
   },
   "Nodle": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "NODL",
     "isEVM": false,
     "ss58Prefix": 37,
@@ -12588,7 +12588,7 @@
     "otherAssets": []
   },
   "NeuroWeb": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
     "ss58Prefix": 101,
@@ -12625,7 +12625,7 @@
     ]
   },
   "Pendulum": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "PEN",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -12923,7 +12923,7 @@
     ]
   },
   "Zeitgeist": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "ZTG",
     "isEVM": false,
     "ss58Prefix": 73,
@@ -13216,7 +13216,7 @@
     ]
   },
   "Collectives": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -13240,7 +13240,7 @@
     "otherAssets": []
   },
   "Phala": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "PHA",
     "isEVM": false,
     "ss58Prefix": 30,
@@ -13577,7 +13577,7 @@
     "ss58Prefix": 42,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "ETH",
     "nativeAssets": [],
     "otherAssets": [
@@ -14010,7 +14010,7 @@
     ]
   },
   "Mythos": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "MYTH",
     "isEVM": true,
     "ss58Prefix": 29972,
@@ -14037,7 +14037,7 @@
     "otherAssets": []
   },
   "Peaq": {
-    "relayChainAssetSymbol": "DOT",
+    "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "PEAQ",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14107,7 +14107,7 @@
     ]
   },
   "AssetHubWestend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14210,7 +14210,7 @@
     ]
   },
   "BridgeHubWestend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14234,7 +14234,7 @@
     "otherAssets": []
   },
   "CollectivesWestend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14258,7 +14258,7 @@
     "otherAssets": []
   },
   "CoretimeWestend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14282,7 +14282,7 @@
     "otherAssets": []
   },
   "PeopleWestend": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "WND",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14306,7 +14306,7 @@
     "otherAssets": []
   },
   "Penpal": {
-    "relayChainAssetSymbol": "WND",
+    "relaychainSymbol": "WND",
     "nativeAssetSymbol": "UNIT",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14367,7 +14367,7 @@
     ]
   },
   "AssetHubPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -14501,7 +14501,7 @@
     ]
   },
   "BridgeHubPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -14525,7 +14525,7 @@
     "otherAssets": []
   },
   "CoretimePaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -14549,7 +14549,7 @@
     "otherAssets": []
   },
   "PAssetHub": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14573,7 +14573,7 @@
     "otherAssets": []
   },
   "PeoplePaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -14597,7 +14597,7 @@
     "otherAssets": []
   },
   "AjunaPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "AJUN",
     "isEVM": false,
     "ss58Prefix": 1328,
@@ -14643,7 +14643,7 @@
     ]
   },
   "BifrostPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -14818,7 +14818,7 @@
     ]
   },
   "HeimaPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "HEI",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14858,7 +14858,7 @@
     ]
   },
   "EnergyWebXPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "EWT",
     "isEVM": false,
     "ss58Prefix": 42,
@@ -14885,7 +14885,7 @@
     "otherAssets": []
   },
   "HydrationPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "HDX",
     "isEVM": false,
     "ss58Prefix": 0,
@@ -16404,7 +16404,7 @@
     ]
   },
   "IntegriteePaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "TEER",
     "isEVM": false,
     "ss58Prefix": 13,
@@ -16438,7 +16438,7 @@
     ]
   },
   "KiltPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PILT",
     "isEVM": false,
     "ss58Prefix": 38,
@@ -16502,7 +16502,7 @@
     ]
   },
   "LaosPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "SIGMA",
     "isEVM": true,
     "ss58Prefix": 42,
@@ -16529,7 +16529,7 @@
     "otherAssets": []
   },
   "NeuroWebPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
     "ss58Prefix": 101,
@@ -16563,7 +16563,7 @@
     ]
   },
   "NodlePaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "notNodl",
     "isEVM": false,
     "ss58Prefix": 37,
@@ -16590,7 +16590,7 @@
     "otherAssets": []
   },
   "ZeitgeistPaseo": {
-    "relayChainAssetSymbol": "PAS",
+    "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "ZBS",
     "isEVM": false,
     "ss58Prefix": 73,

@@ -1,13 +1,13 @@
 import { writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
-import { EXCHANGE_NODES } from '../src/consts';
-import { createDexNodeInstance } from '../src/dexNodes/DexNodeFactory';
-import type { TDexConfig, TAssetsRecord, TExchangeNode } from '../src/types';
+import { EXCHANGE_CHAINS } from '../src/consts';
+import { createExchangeInstance } from '../src/exchanges/ExchangeChainFactory';
+import type { TDexConfig, TAssetsRecord, TExchangeChain } from '../src/types';
 import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
 const fetchWithTimeout = async (
-  exchangeNode: TExchangeNode,
+  exchangeChain: TExchangeChain,
   timeoutMs: number = 60000,
 ): Promise<TDexConfig> => {
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -15,7 +15,7 @@ const fetchWithTimeout = async (
   });
 
   const fetchPromise = (async (): Promise<TDexConfig> => {
-    const dex = createDexNodeInstance(exchangeNode);
+    const dex = createExchangeInstance(exchangeChain);
     const api = await dex.createApiInstance();
     return await dex.getDexConfig(api);
   })();
@@ -24,10 +24,10 @@ const fetchWithTimeout = async (
     return await Promise.race([fetchPromise, timeoutPromise]);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.warn(`Failed to fetch ${exchangeNode} assets: ${errorMessage}`);
-    if (assetsMap[exchangeNode]) {
-      console.log(`Using existing config for ${exchangeNode}`);
-      return assetsMap[exchangeNode];
+    console.warn(`Failed to fetch ${exchangeChain} assets: ${errorMessage}`);
+    if (assetsMap[exchangeChain]) {
+      console.log(`Using existing config for ${exchangeChain}`);
+      return assetsMap[exchangeChain];
     }
     throw error;
   }
@@ -36,18 +36,18 @@ const fetchWithTimeout = async (
 void (async () => {
   const record: Record<string, TDexConfig> = {};
 
-  for (const exchangeNode of EXCHANGE_NODES) {
-    console.log(`Fetching ${exchangeNode} assets...`);
+  for (const exchangeChain of EXCHANGE_CHAINS) {
+    console.log(`Fetching ${exchangeChain} assets...`);
 
     try {
-      const dexConfig = await fetchWithTimeout(exchangeNode, 60000);
-      record[exchangeNode] = dexConfig;
-      console.log(`✓ Successfully fetched ${exchangeNode} assets`);
+      const dexConfig = await fetchWithTimeout(exchangeChain, 60000);
+      record[exchangeChain] = dexConfig;
+      console.log(`✓ Successfully fetched ${exchangeChain} assets`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`✗ Failed to fetch ${exchangeNode} assets:`, errorMessage);
-      if (!assetsMap[exchangeNode]) {
-        console.error(`No existing config found for ${exchangeNode}, skipping...`);
+      console.error(`✗ Failed to fetch ${exchangeChain} assets:`, errorMessage);
+      if (!assetsMap[exchangeChain]) {
+        console.error(`No existing config found for ${exchangeChain}, skipping...`);
         continue;
       }
     }
