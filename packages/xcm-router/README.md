@@ -241,13 +241,13 @@ const pairs = getExchangePairs(exchange) // exchange can be also array of exchan
 
 ## 💻 Testing
 
-- Run compilation using `yarn compile`
+- Run compilation using `pnpm compile`
 
-- Run linting test using `yarn lint`
+- Run linting test using `pnpm lint`
 
-- Run unit tests using `yarn test`
+- Run unit tests using `pnpm test`
 
-- Run integration tests using `yarn test:integration`
+- Run integration tests using `pnpm test:integration`
 
 XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
 
