@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.10.11...sdk-common-v10.11.0) (2025-07-31)
+
+
+### Documentation
+
+* Add bug bounty into docs🪲 ([085ad79](https://github.com/paraspell/xcm-tools/commit/085ad799f18edb6c088bfe4271cde3c8d9d87a16))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.10.10...sdk-common-v10.10.11) (2025-07-22)
 
 

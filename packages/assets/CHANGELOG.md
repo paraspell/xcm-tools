@@ -1,5 +1,23 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.11...assets-v10.11.0) (2025-07-31)
+
+
+### Bug Fixes
+
+* **assets:** Fix snowbridge asset symbol matching 🔧 ([f9b57ad](https://github.com/paraspell/xcm-tools/commit/f9b57ada587210e4ba20fe0af70681fb64f03b7f))
+* **assets:** Remove XCM GAR from assets scripts 🔧 ([5a47369](https://github.com/paraspell/xcm-tools/commit/5a47369cca1d142955cd4bb5412d4d601be0725f))
+
+
+### Documentation
+
+* Add bug bounty into docs🪲 ([085ad79](https://github.com/paraspell/xcm-tools/commit/085ad799f18edb6c088bfe4271cde3c8d9d87a16))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/assets-v10.10.10...assets-v10.10.11) (2025-07-22)
 
 

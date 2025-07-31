@@ -1,5 +1,33 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.11...xcm-router-v10.11.0) (2025-07-31)
+
+
+### Features
+
+* **sdk-core:** Update chains to XCM v5 🪄 ([738de6d](https://github.com/paraspell/xcm-tools/commit/738de6d32f4d636017ca26e32d8a0009c3ad2c0d))
+
+
+### Bug Fixes
+
+* **assets:** Remove XCM GAR from assets scripts 🔧 ([5a47369](https://github.com/paraspell/xcm-tools/commit/5a47369cca1d142955cd4bb5412d4d601be0725f))
+
+
+### Documentation
+
+* Add bug bounty into docs🪲 ([085ad79](https://github.com/paraspell/xcm-tools/commit/085ad799f18edb6c088bfe4271cde3c8d9d87a16))
+* Update Router to pnpm for testing guide ([1e7850f](https://github.com/paraspell/xcm-tools/commit/1e7850fd86eb74f0c1e02123cf567138bad9276b))
+
+
+### Tests
+
+* **sdk:** Add snapshot tests 🧪 ([6e34e92](https://github.com/paraspell/xcm-tools/commit/6e34e920e190e5ae447c964ac905ee546f83b9f9))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.10...xcm-router-v10.10.11) (2025-07-22)
 
 
