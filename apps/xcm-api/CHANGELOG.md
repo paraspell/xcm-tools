@@ -1,5 +1,28 @@
 # Changelog
 
+## [10.11.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.11...xcm-api-v10.11.0) (2025-07-31)
+
+
+### Features
+
+* Enhance localhost UX 🪄 ([cb411b4](https://github.com/paraspell/xcm-tools/commit/cb411b4beef70fd55ce1fe55bad5d6dc9bdbc1a8))
+
+
+### Bug Fixes
+
+* **assets:** Remove XCM GAR from assets scripts 🔧 ([5a47369](https://github.com/paraspell/xcm-tools/commit/5a47369cca1d142955cd4bb5412d4d601be0725f))
+
+
+### Documentation
+
+* Add bug bounty into docs🪲 ([085ad79](https://github.com/paraspell/xcm-tools/commit/085ad799f18edb6c088bfe4271cde3c8d9d87a16))
+* Add localhost feature ([1a79737](https://github.com/paraspell/xcm-tools/commit/1a79737af79144662771d6ffd316379af3c888bc))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+
 ## [10.10.11](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.10...xcm-api-v10.10.11) (2025-07-22)
 
 
