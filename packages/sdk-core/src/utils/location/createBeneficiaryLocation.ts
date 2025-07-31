@@ -1,5 +1,5 @@
-import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
-import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
+import type { TJunction, TLocation } from '@paraspell/sdk-common'
+import { isTLocation, Parents } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
@@ -22,8 +22,8 @@ export const createBeneficiaryLocXTokens = <TApi, TRes>({
   destination,
   version,
   paraId
-}: TCreateBeneficiaryXTokensOptions<TApi, TRes>): TMultiLocation => {
-  if (isTMultiLocation(recipientAddress)) {
+}: TCreateBeneficiaryXTokensOptions<TApi, TRes>): TLocation => {
+  if (isTLocation(recipientAddress)) {
     return recipientAddress
   }
 
@@ -59,8 +59,8 @@ export const createBeneficiaryLocation = <TApi, TRes>({
   api,
   address: recipientAddress,
   version
-}: TCreateBeneficiaryOptions<TApi, TRes>): TMultiLocation => {
-  if (isTMultiLocation(recipientAddress)) return recipientAddress
+}: TCreateBeneficiaryOptions<TApi, TRes>): TLocation => {
+  if (isTLocation(recipientAddress)) return recipientAddress
 
   const accountPayload = createAccountPayload(api, recipientAddress)
 

@@ -12,7 +12,7 @@ import type {
   JunctionParachain,
   JunctionPlurality,
   JunctionSchema,
-  MultiLocationSchema,
+  LocationSchema,
 } from './schema';
 
 export type JunctionType =
@@ -38,5 +38,5 @@ export type TJunctionOnlyChild = z.infer<typeof JunctionOnlyChild>;
 export type TJunctionPlurality = z.infer<typeof JunctionPlurality>;
 export type TJunctionGlobalConsensus = z.infer<typeof JunctionGlobalConsensus>;
 
-export type MultiLocation = z.infer<typeof MultiLocationSchema>;
+export type Location = z.infer<typeof LocationSchema>;
 export type Junction = z.infer<typeof JunctionSchema>;

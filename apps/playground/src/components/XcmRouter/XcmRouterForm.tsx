@@ -15,13 +15,13 @@ import {
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import type {
-  TAsset,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  TAssetInfo,
+  TChainDotKsmWithRelayChains,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
-import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
-import type { TExchangeInput, TExchangeNode } from '@paraspell/xcm-router';
-import { EXCHANGE_NODES } from '@paraspell/xcm-router';
+import { CHAINS_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { TExchangeChain, TExchangeInput } from '@paraspell/xcm-router';
+import { EXCHANGE_CHAINS } from '@paraspell/xcm-router';
 import {
   Icon123,
   IconChevronDown,
@@ -53,9 +53,9 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
 
 export type TRouterFormValues = {
-  from?: TNodeDotKsmWithRelayChains;
-  exchange?: TExchangeNode[];
-  to?: TNodeWithRelayChains;
+  from?: TChainDotKsmWithRelayChains;
+  exchange?: TExchangeChain[];
+  to?: TChainWithRelayChains;
   currencyFromOptionId: string;
   currencyToOptionId: string;
   recipientAddress: string;
@@ -70,9 +70,9 @@ export type TRouterFormValuesTransformed = Omit<
   TRouterFormValues,
   'exchange'
 > & {
-  exchange: TExchangeNode;
-  currencyFrom: TAsset;
-  currencyTo: TAsset;
+  exchange: TExchangeChain;
+  currencyFrom: TAssetInfo;
+  currencyTo: TAssetInfo;
 };
 
 type Props = {
@@ -217,7 +217,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     void selectProvider(walletName);
   };
 
-  const getExchange = (exchange: TExchangeNode[] | undefined) => {
+  const getExchange = (exchange: TExchangeChain[] | undefined) => {
     if (Array.isArray(exchange)) {
       if (exchange.length === 1) {
         return exchange[0];
@@ -249,8 +249,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToOptionId,
   );
 
-  const pairKey = (asset?: { multiLocation?: object; symbol?: string }) =>
-    asset?.multiLocation ? JSON.stringify(asset.multiLocation) : asset?.symbol;
+  const pairKey = (asset?: { location?: object; symbol?: string }) =>
+    asset?.location ? JSON.stringify(asset.location) : asset?.symbol;
 
   useEffect(() => {
     if (!currencyFromOptionId || !currencyToOptionId) return;
@@ -303,9 +303,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
     const transformedValues = {
       ...values,
-      exchange: getExchange(values.exchange) as TExchangeNode,
+      exchange: getExchange(values.exchange) as TExchangeChain,
       currencyFrom,
-      currencyTo: currencyTo as TAsset,
+      currencyTo: currencyTo as TAssetInfo,
     };
 
     onSubmit(transformedValues, submitType);
@@ -401,7 +401,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             label="Origin"
             placeholder="Pick value"
             description="Select the chain you're sending from"
-            data={NODES_WITH_RELAY_CHAINS}
+            data={CHAINS_WITH_RELAY_CHAINS}
             allowDeselect={true}
             required={false}
             clearable
@@ -412,7 +412,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           <MultiSelect
             label="Exchange"
             placeholder={exchange?.length ? 'Pick value' : 'Auto select'}
-            data={EXCHANGE_NODES}
+            data={EXCHANGE_CHAINS}
             searchable
             clearable
             required
@@ -425,7 +425,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           <ParachainSelect
             label="Destination"
             placeholder="Pick value"
-            data={[...NODES_WITH_RELAY_CHAINS]}
+            data={[...CHAINS_WITH_RELAY_CHAINS]}
             data-testid="select-to"
             description="Select the chain that will receive the swapped assets"
             allowDeselect={true}

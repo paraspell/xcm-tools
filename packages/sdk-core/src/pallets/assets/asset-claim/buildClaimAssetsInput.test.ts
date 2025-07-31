@@ -1,4 +1,4 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -15,15 +15,15 @@ describe('buildClaimAssetsInput', () => {
   const apiMock = {} as unknown as IPolkadotApi<unknown, unknown>
 
   it('should build claim assets input with default version (V3)', () => {
-    const multiAssets = ['asset1', 'asset2'] as unknown as TMultiAsset[]
+    const multiAssets = ['asset1', 'asset2'] as unknown as TAsset[]
     const address = 'somePolkadotAddress'
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
-      multiAssets,
+      assets: multiAssets,
       address
     }
 
@@ -37,15 +37,15 @@ describe('buildClaimAssetsInput', () => {
   })
 
   it('should build claim assets input with a specified version', () => {
-    const multiAssets = ['asset1', 'asset2'] as unknown as TMultiAsset[]
+    const multiAssets = ['asset1', 'asset2'] as unknown as TAsset[]
     const address = 'anotherAddress'
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
-      multiAssets,
+      assets: multiAssets,
       address,
       version: Version.V4
     }
@@ -60,15 +60,15 @@ describe('buildClaimAssetsInput', () => {
   })
 
   it('should build claim assets input with empty multiAssets', () => {
-    const multiAssets: TMultiAsset[] = []
+    const multiAssets: TAsset[] = []
     const address = 'yetAnotherAddress'
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
     const options: TAssetClaimOptions<unknown, unknown> = {
-      node: 'Acala',
+      chain: 'Acala',
       api: apiMock,
-      multiAssets,
+      assets: multiAssets,
       address
     }
 

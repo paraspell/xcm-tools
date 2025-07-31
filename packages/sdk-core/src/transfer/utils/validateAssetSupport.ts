@@ -1,5 +1,5 @@
-import { hasSupportForAsset, InvalidCurrencyError, type TAsset } from '@paraspell/assets'
-import { isRelayChain, isTMultiLocation, replaceBigInt } from '@paraspell/sdk-common'
+import { hasSupportForAsset, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
+import { isRelayChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
 import { TransferToAhNotSupported } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
@@ -9,7 +9,7 @@ export const validateAssetSupport = <TApi, TRes>(
   { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
-  asset: TAsset | null
+  asset: TAssetInfo | null
 ) => {
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
@@ -31,23 +31,23 @@ export const validateAssetSupport = <TApi, TRes>(
     !allowedChainsToAh.includes(origin) &&
     asset?.symbol === 'DOT'
   ) {
-    throw new TransferToAhNotSupported(`Node ${origin} does not support DOT transfer to AssetHub`)
+    throw new TransferToAhNotSupported(`Chain ${origin} does not support DOT transfer to AssetHub`)
   }
 
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-  const isMultiLocationDestination = typeof destination === 'object'
+  const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
+  const isLocationDestination = typeof destination === 'object'
 
   if (
     !isBridge &&
     !isRelayDestination &&
-    !isMultiLocationDestination &&
+    !isLocationDestination &&
     asset?.symbol !== undefined &&
     assetCheckEnabled &&
     !('id' in currency) &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
+      `Destination chain ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
   }
 

@@ -5,9 +5,9 @@ import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/a
 import type { Version } from '@paraspell/sdk-common'
 import {
   isRelayChain,
-  isTMultiLocation,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains
+  isTLocation,
+  type TChainDotKsmWithRelayChains,
+  type TChainWithRelayChains
 } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -50,51 +50,51 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
-   * Specifies the origin node for the transaction.
+   * Specifies the origin chain for the transaction.
    *
-   * @param node - The node from which the transaction originates.
+   * @param chain - The chain from which the transaction originates.
    * @returns An instance of Builder
    */
   from(
-    node: TNodeDotKsmWithRelayChains
-  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
-    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: node })
+    chain: TChainDotKsmWithRelayChains
+  ): GeneralBuilder<TApi, TRes, T & { from: TChainDotKsmWithRelayChains }> {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: chain })
   }
 
   /**
-   * Specifies the destination node for the transaction.
+   * Specifies the destination chain for the transaction.
    *
-   * @param node - The node to which the transaction is sent.
-   * @param paraIdTo - (Optional) The parachain ID of the destination node.
+   * @param chain - The chain to which the transaction is sent.
+   * @param paraIdTo - (Optional) The parachain ID of the destination chain.
    * @returns An instance of Builder
    */
-  to(node: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
-    if (this._options.from && isRelayChain(this._options.from) && node === 'Ethereum') {
+  to(chain: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
+    if (this._options.from && isRelayChain(this._options.from) && chain === 'Ethereum') {
       throw new InvalidParameterError(
         'Transfers from Relay chain to Ethereum are not yet supported.'
       )
     }
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      to: node,
+      to: chain,
       paraIdTo
     })
   }
 
   /**
-   * Initiates the process to claim assets from a specified node.
+   * Initiates the process to claim assets from a specified chain.
    *
-   * @param node - The node from which to claim assets.
+   * @param chain - The chain from which to claim assets.
    * @returns An instance of Builder
    */
-  claimFrom(node: TNodeWithRelayChains) {
-    return new AssetClaimBuilder<TApi, TRes, { node: TNodeWithRelayChains }>(this.api, {
-      node
+  claimFrom(chain: TChainWithRelayChains) {
+    return new AssetClaimBuilder<TApi, TRes, { chain: TChainWithRelayChains }>(this.api, {
+      chain
     })
   }
 
   /**
-   * Specifies the currency to be used in the transaction. Symbol, ID, multi-location or multi-asset.
+   * Specifies the currency to be used in the transaction. Symbol, ID, location or multi-asset.
    *
    * @param currency - The currency to be transferred.
    * @returns An instance of Builder
@@ -181,14 +181,14 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   addToBatch(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptions>
-  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
+  ): GeneralBuilder<TApi, TRes, T & { from: TChainDotKsmWithRelayChains }> {
     this.batchManager.addTransaction({ api: this.api, ...this._options })
-    return new GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }>(
+    return new GeneralBuilder<TApi, TRes, T & { from: TChainDotKsmWithRelayChains }>(
       this.api,
       this.batchManager,
       {
         from: this._options.from
-      } as T & { from: TNodeDotKsmWithRelayChains }
+      } as T & { from: TChainDotKsmWithRelayChains }
     )
   }
 
@@ -216,7 +216,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     const { from, to } = this._options
 
-    if (!isTMultiLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
+    if (!isTLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
       throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
@@ -228,13 +228,13 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     const tx = await this.build()
 
-    if (isTMultiLocation(to)) {
+    if (isTLocation(to)) {
       throw new InvalidParameterError(
         'Multi-Location destination is not supported for XCM fee calculation.'
       )
     }
 
-    if (isTMultiLocation(address)) {
+    if (isTLocation(address)) {
       throw new InvalidParameterError(
         'Multi-Location address is not supported for XCM fee calculation.'
       )

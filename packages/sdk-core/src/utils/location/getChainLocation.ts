@@ -1,16 +1,16 @@
 import {
   isRelayChain,
   Parents,
-  type TMultiLocation,
-  type TNodeWithRelayChains
+  type TChainWithRelayChains,
+  type TLocation
 } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../nodes/config'
+import { getParaId } from '../../chains/config'
 
 export const getChainLocation = (
-  chain: TNodeWithRelayChains,
-  destChain: TNodeWithRelayChains
-): TMultiLocation => {
+  chain: TChainWithRelayChains,
+  destChain: TChainWithRelayChains
+): TLocation => {
   const fromRelay = isRelayChain(chain)
   const toRelay = isRelayChain(destChain)
 

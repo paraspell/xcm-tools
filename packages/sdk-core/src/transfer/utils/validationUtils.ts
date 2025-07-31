@@ -2,52 +2,52 @@ import {
   getRelayChainSymbol,
   InvalidCurrencyError,
   isSymbolSpecifier,
-  isTMultiAsset,
+  isTAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
   isDotKsmBridge,
   isRelayChain,
-  isTMultiLocation,
-  type TNodeDotKsmWithRelayChains
+  isTLocation,
+  type TChainDotKsmWithRelayChains
 } from '@paraspell/sdk-common'
 
-import { IncompatibleNodesError } from '../../errors'
+import { IncompatibleChainsError } from '../../errors'
 import type { TDestination } from '../../types'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if ('multiasset' in currency) {
     if (currency.multiasset.length === 0) {
-      throw new InvalidCurrencyError('Overridden multi assets cannot be empty')
+      throw new InvalidCurrencyError('Overridden assets cannot be empty')
     }
 
     if (currency.multiasset.length === 1) {
-      throw new InvalidCurrencyError('Please provide more than one multi asset')
+      throw new InvalidCurrencyError('Please provide more than one asset')
     }
 
     if (
       currency.multiasset.length > 1 &&
-      !currency.multiasset.every(asset => isTMultiAsset(asset)) &&
+      !currency.multiasset.every(asset => isTAsset(asset)) &&
       !feeAsset
     ) {
       throw new InvalidCurrencyError(
-        'Overridden multi assets cannot be used without specifying fee asset'
+        'Overridden assets cannot be used without specifying fee asset'
       )
     }
   }
 }
 
 export const validateDestination = (
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TChainDotKsmWithRelayChains,
   destination: TDestination
 ) => {
   if (
     isRelayChain(origin) &&
-    !isTMultiLocation(destination) &&
+    !isTLocation(destination) &&
     isRelayChain(destination) &&
     origin !== destination
   ) {
-    throw new IncompatibleNodesError(
+    throw new IncompatibleChainsError(
       'Direct relay chain to relay chain transfers are not supported. Please use Polkadot <-> Kusama bridge through AssetHub.'
     )
   }
@@ -61,20 +61,20 @@ export const validateDestination = (
   ]
 
   if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
-    throw new IncompatibleNodesError(
+    throw new IncompatibleChainsError(
       `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
     )
   }
 
-  const isMultiLocationDestination = typeof destination === 'object'
-  const isBridge = !isTMultiLocation(destination) && isDotKsmBridge(origin, destination)
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
+  const isLocationDestination = typeof destination === 'object'
+  const isBridge = !isTLocation(destination) && isDotKsmBridge(origin, destination)
+  const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
 
-  if (!isRelayDestination && !isMultiLocationDestination) {
+  if (!isRelayDestination && !isLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
     if (!isBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
-      throw new IncompatibleNodesError()
+      throw new IncompatibleChainsError()
     }
   }
 }

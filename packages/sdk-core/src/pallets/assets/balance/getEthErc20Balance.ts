@@ -1,5 +1,5 @@
 import type { TCurrencyCore } from '@paraspell/assets'
-import { findAssetForNodeOrThrow } from '@paraspell/assets'
+import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
@@ -24,7 +24,7 @@ export const getEthErc20Balance = async (
     transport: http('https://ethereum.publicnode.com/')
   })
 
-  const asset = findAssetForNodeOrThrow('Ethereum', currency, null)
+  const asset = findAssetInfoOrThrow('Ethereum', currency, null)
 
   assertHasId(asset)
 

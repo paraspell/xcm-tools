@@ -3,7 +3,7 @@
 
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 
 export const fetchMantaOtherAssets = async (
   api: ApiPromise,
@@ -27,19 +27,18 @@ export const fetchMantaOtherAssets = async (
         const assetDetails = await api.query[module].asset(era)
         const existentialDeposit = (assetDetails.toHuman() as any).minBalance
 
-        const multiLocationVersioned = await api.query.assetManager.assetIdLocation(era)
+        const locationVersioned = await api.query.assetManager.assetIdLocation(era)
 
-        const multiLocationJson = multiLocationVersioned.toJSON() as any
+        const locationJson = locationVersioned.toJSON() as any
 
-        const multiLocation =
-          multiLocationJson !== null ? capitalizeMultiLocation(multiLocationJson.v3) : undefined
+        const location = locationJson !== null ? capitalizeLocation(locationJson.v3) : undefined
 
         return {
           assetId: numberAssetId,
           symbol,
           decimals: +decimals,
           existentialDeposit,
-          multiLocation
+          location
         }
       }
     )

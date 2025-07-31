@@ -1,0 +1,64 @@
+import { Version } from '@paraspell/sdk-common'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { ScenarioNotSupportedError } from '../../errors'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions } from '../../types'
+import { getChain } from '../../utils'
+import type BridgeHubPolkadot from './BridgeHubPolkadot'
+
+vi.mock('../../pallets/polkadotXcm', () => ({
+  transferPolkadotXcm: vi.fn()
+}))
+
+describe('BridgeHubPolkadot', () => {
+  let chain: BridgeHubPolkadot<unknown, unknown>
+  const mockInput = {
+    scenario: 'RelayToPara',
+    assetInfo: { symbol: 'DOT', amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+  beforeEach(() => {
+    chain = getChain<unknown, unknown, 'BridgeHubPolkadot'>('BridgeHubPolkadot')
+  })
+
+  it('should initialize with correct values', () => {
+    expect(chain.chain).toBe('BridgeHubPolkadot')
+    expect(chain.info).toBe('polkadotBridgeHub')
+    expect(chain.type).toBe('polkadot')
+    expect(chain.version).toBe(Version.V5)
+  })
+
+  it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
+    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown
+    >
+
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrowError(
+      new ScenarioNotSupportedError(
+        chain.chain,
+        'ParaToPara',
+        'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
+      )
+    )
+  })
+
+  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_teleport_assets',
+      'Unlimited'
+    )
+  })
+
+  it('should call getRelayToParaOverrides with the correct parameters', () => {
+    const result = chain.getRelayToParaOverrides()
+
+    expect(result).toEqual({
+      method: 'limited_teleport_assets',
+      includeFee: true
+    })
+  })
+})

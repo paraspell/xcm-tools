@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
-  getNodeProviders,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  TNodeDotKsmWithRelayChains,
+  getChainProviders,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  TChainDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import {
-  EXCHANGE_NODES,
+  EXCHANGE_CHAINS,
   getExchangePairs,
   RouterBuilder,
   TExchangeInput,
-  TExchangeNode,
+  TExchangeChain,
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
@@ -20,42 +20,46 @@ import {
   RouterDto,
 } from './dto/RouterDto.js';
 
-const validateNodesAndExchange = (
+const validateChainsAndExchange = (
   from: string,
   exchange: RouterDto['exchange'],
   to: string,
 ): {
-  fromNode: TNodeDotKsmWithRelayChains;
-  exchangeNode?: TExchangeNode | TExchangeNode[];
-  toNode: TNodeDotKsmWithRelayChains;
+  fromChain: TChainDotKsmWithRelayChains;
+  exchangeChain?: TExchangeChain | TExchangeChain[];
+  toChain: TChainDotKsmWithRelayChains;
 } => {
-  const fromNode = from as TNodeDotKsmWithRelayChains;
-  const exchangeNode = exchange as TExchangeNode | TExchangeNode[];
-  const toNode = to as TNodeDotKsmWithRelayChains;
+  const fromChain = from as TChainDotKsmWithRelayChains;
+  const exchangeChain = exchange as TExchangeChain | TExchangeChain[];
+  const toChain = to as TChainDotKsmWithRelayChains;
 
-  if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
+  if (!CHAINS_WITH_RELAY_CHAINS_DOT_KSM.includes(fromChain)) {
     throw new BadRequestException(
-      `Node ${from} is not valid. Check docs for valid nodes.`,
+      `Chain ${from} is not valid. Check docs for valid chains.`,
     );
   }
 
-  const exchanges = exchangeNode
-    ? ([] as TExchangeNode[]).concat(exchangeNode)
+  const exchanges = exchangeChain
+    ? ([] as TExchangeChain[]).concat(exchangeChain)
     : undefined;
 
-  if (exchanges?.some((x) => !EXCHANGE_NODES.includes(x))) {
+  if (exchanges?.some((x) => !EXCHANGE_CHAINS.includes(x))) {
     throw new BadRequestException(
       `Exchange ${exchanges.toString()} is not valid. Check docs for valid exchanges.`,
     );
   }
 
-  if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(toNode)) {
+  if (!CHAINS_WITH_RELAY_CHAINS_DOT_KSM.includes(toChain)) {
     throw new BadRequestException(
-      `Node ${to} is not valid. Check docs for valid nodes.`,
+      `Chain ${to} is not valid. Check docs for valid chains.`,
     );
   }
 
-  return { fromNode, exchangeNode, toNode };
+  return {
+    fromChain: fromChain,
+    exchangeChain: exchangeChain,
+    toChain: toChain,
+  };
 };
 
 @Injectable()
@@ -74,11 +78,11 @@ export class RouterService {
       slippagePct = '1',
     } = options;
 
-    const fromNode = from as TNodeDotKsmWithRelayChains;
-    const exchangeNode = exchange as TExchangeNode;
-    const toNode = to as TNodeDotKsmWithRelayChains;
+    const fromChain = from as TChainDotKsmWithRelayChains;
+    const exchangeChain = exchange as TExchangeChain;
+    const toChain = to as TChainDotKsmWithRelayChains;
 
-    validateNodesAndExchange(from, exchange, to);
+    validateChainsAndExchange(from, exchange, to);
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -94,9 +98,9 @@ export class RouterService {
 
     try {
       const transactions = await RouterBuilder()
-        .from(fromNode)
-        .exchange(exchangeNode)
-        .to(toNode)
+        .from(fromChain)
+        .exchange(exchangeChain)
+        .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount.toString())
@@ -112,14 +116,14 @@ export class RouterService {
           const txHash = txData.asHex();
 
           const resultForThisTransaction = {
-            node: transaction.node,
-            destinationNode: transaction.destinationNode,
+            chain: transaction.chain,
+            destinationChain: transaction.destinationChain,
             type: transaction.type,
             tx: txHash,
             ...(transaction.type === 'SWAP' && {
               amountOut: transaction.amountOut,
             }),
-            wsProviders: getNodeProviders(transaction.node),
+            wsProviders: getChainProviders(transaction.chain),
           };
           return resultForThisTransaction;
         }),
@@ -145,11 +149,11 @@ export class RouterService {
       slippagePct = '1',
     } = options;
 
-    const fromNode = from as TNodeDotKsmWithRelayChains;
-    const exchangeNode = exchange as TExchangeNode;
-    const toNode = to as TNodeDotKsmWithRelayChains;
+    const fromChain = from as TChainDotKsmWithRelayChains;
+    const exchangeChain = exchange as TExchangeChain;
+    const toChain = to as TChainDotKsmWithRelayChains;
 
-    validateNodesAndExchange(from, exchange, to);
+    validateChainsAndExchange(from, exchange, to);
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -165,9 +169,9 @@ export class RouterService {
 
     try {
       return await RouterBuilder()
-        .from(fromNode)
-        .exchange(exchangeNode)
-        .to(toNode)
+        .from(fromChain)
+        .exchange(exchangeChain)
+        .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount.toString())
@@ -184,17 +188,17 @@ export class RouterService {
   async getBestAmountOut(options: RouterBestAmountOutDto) {
     const { from, exchange, to, currencyFrom, currencyTo, amount } = options;
 
-    const fromNode = from as TNodeDotKsmWithRelayChains;
-    const exchangeNode = exchange as TExchangeNode;
-    const toNode = to as TNodeDotKsmWithRelayChains;
+    const fromChain = from as TChainDotKsmWithRelayChains;
+    const exchangeChain = exchange as TExchangeChain;
+    const toChain = to as TChainDotKsmWithRelayChains;
 
-    validateNodesAndExchange(from, exchange, to);
+    validateChainsAndExchange(from, exchange, to);
 
     try {
       return await RouterBuilder()
-        .from(fromNode)
-        .exchange(exchangeNode)
-        .to(toNode)
+        .from(fromChain)
+        .exchange(exchangeChain)
+        .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount.toString())

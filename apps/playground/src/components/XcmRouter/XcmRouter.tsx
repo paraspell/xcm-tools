@@ -16,17 +16,17 @@ import {
   getOtherAssets,
   isForeignAsset,
   replaceBigInt,
-  type TAsset,
+  type TAssetInfo,
+  type TChainDotKsmWithRelayChains,
   type TCurrencyInput,
-  type TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import type {
+  TExchangeChain,
   TExchangeInput,
-  TExchangeNode,
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
-import { createDexNodeInstance, RouterBuilder } from '@paraspell/xcm-router';
+import { createExchangeInstance, RouterBuilder } from '@paraspell/xcm-router';
 import axios, { AxiosError } from 'axios';
 import { ethers } from 'ethers';
 import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
@@ -97,15 +97,15 @@ export const XcmRouter = () => {
   };
 
   const determineCurrency = (
-    node: TNodeDotKsmWithRelayChains | undefined,
-    asset: TAsset,
+    chain: TChainDotKsmWithRelayChains | undefined,
+    asset: TAssetInfo,
     isAutoExchange = false,
   ): TCurrencyInput => {
     if (!isForeignAsset(asset)) {
       return { symbol: asset.symbol };
     }
 
-    if (asset.assetId === undefined && asset.multiLocation === undefined) {
+    if (asset.assetId === undefined && asset.location === undefined) {
       return { symbol: asset.symbol };
     }
 
@@ -114,14 +114,14 @@ export const XcmRouter = () => {
     }
 
     if (isAutoExchange) {
-      return asset.multiLocation
-        ? { multilocation: asset.multiLocation }
+      return asset.location
+        ? { location: asset.location }
         : { symbol: asset.symbol };
     }
 
     const hasDuplicateIds =
-      node &&
-      getOtherAssets(node).filter(
+      chain &&
+      getOtherAssets(chain).filter(
         (other) =>
           other.assetId !== undefined && other.assetId === asset.assetId,
       ).length > 1;
@@ -130,7 +130,7 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    if (asset.multiLocation) return { multilocation: asset.multiLocation };
+    if (asset.location) return { location: asset.location };
 
     if (asset.assetId) return { id: asset.assetId };
 
@@ -164,7 +164,7 @@ export const XcmRouter = () => {
           from
             ? from
             : exchange && !Array.isArray(exchange)
-              ? createDexNodeInstance(exchange).node
+              ? createExchangeInstance(exchange).chain
               : undefined,
           currencyFrom,
         ),
@@ -172,7 +172,7 @@ export const XcmRouter = () => {
       .currencyTo(
         determineCurrency(
           exchange && !Array.isArray(exchange)
-            ? createDexNodeInstance(exchange).node
+            ? createExchangeInstance(exchange).chain
             : undefined,
           currencyTo,
           exchange === undefined || Array.isArray(exchange),
@@ -191,7 +191,7 @@ export const XcmRouter = () => {
 
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeNode | TExchangeNode[] | undefined,
+    exchange: TExchangeChain | TExchangeChain[] | undefined,
     senderAddress: string,
     signer: PolkadotSigner,
   ) => {
@@ -217,10 +217,10 @@ export const XcmRouter = () => {
 
       for (const [
         index,
-        { node, type, wsProviders, tx },
+        { chain, type, wsProviders, tx },
       ] of transactions.entries()) {
         onStatusChange({
-          node,
+          chain,
           type,
           currentStep: index,
           routerPlan: transactions,
@@ -243,7 +243,7 @@ export const XcmRouter = () => {
 
       onStatusChange({
         type: 'COMPLETED',
-        node: transactions[transactions.length - 1].node,
+        chain: transactions[transactions.length - 1].chain,
         currentStep: transactions.length - 1,
         routerPlan: transactions,
       });
@@ -274,7 +274,7 @@ export const XcmRouter = () => {
 
   const submitGetXcmFee = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeNode | undefined,
+    exchange: TExchangeChain | undefined,
     senderAddress: string,
   ) => {
     const {
@@ -310,7 +310,7 @@ export const XcmRouter = () => {
               from
                 ? from
                 : exchange && !Array.isArray(exchange)
-                  ? createDexNodeInstance(exchange).node
+                  ? createExchangeInstance(exchange).chain
                   : undefined,
               currencyFrom,
             ),
@@ -318,7 +318,7 @@ export const XcmRouter = () => {
           .currencyTo(
             determineCurrency(
               exchange && !Array.isArray(exchange)
-                ? createDexNodeInstance(exchange).node
+                ? createExchangeInstance(exchange).chain
                 : undefined,
               currencyTo,
               exchange === undefined || Array.isArray(exchange),
@@ -351,7 +351,7 @@ export const XcmRouter = () => {
 
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeNode | undefined,
+    exchange: TExchangeChain | undefined,
   ) => {
     const { useApi, from, to, currencyFrom, currencyTo } = formValues;
 
@@ -376,7 +376,7 @@ export const XcmRouter = () => {
               from
                 ? from
                 : exchange && !Array.isArray(exchange)
-                  ? createDexNodeInstance(exchange).node
+                  ? createExchangeInstance(exchange).chain
                   : undefined,
               currencyFrom,
             ),
@@ -384,7 +384,7 @@ export const XcmRouter = () => {
           .currencyTo(
             determineCurrency(
               exchange && !Array.isArray(exchange)
-                ? createDexNodeInstance(exchange).node
+                ? createExchangeInstance(exchange).chain
                 : undefined,
               currencyTo,
               exchange === undefined || Array.isArray(exchange),
@@ -426,7 +426,7 @@ export const XcmRouter = () => {
       formValues.exchange && formValues.exchange?.length > 1
         ? formValues.exchange
         : formValues.exchange?.[0]
-    ) as TExchangeNode | undefined;
+    ) as TExchangeChain | undefined;
 
     if (submitType === 'getBestAmountOut') {
       await submitGetBestAmountOut(formValues, exchange);

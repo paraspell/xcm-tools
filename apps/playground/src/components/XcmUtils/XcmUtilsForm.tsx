@@ -11,14 +11,14 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type {
-  TAsset,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  TAssetInfo,
+  TChainDotKsmWithRelayChains,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
 import {
-  isNodeEvm,
-  NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  CHAINS_WITH_RELAY_CHAINS,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  isChainEvm,
 } from '@paraspell/sdk';
 import {
   IconArrowsExchange,
@@ -53,11 +53,7 @@ export type TCurrencyEntry = {
   customCurrency: string;
   amount: string;
   isCustomCurrency: boolean;
-  customCurrencyType?:
-    | 'id'
-    | 'symbol'
-    | 'multilocation'
-    | 'overridenMultilocation';
+  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
   customCurrencySymbolSpecifier?:
     | 'auto'
     | 'native'
@@ -66,8 +62,8 @@ export type TCurrencyEntry = {
 };
 
 export type FormValues = {
-  from: TNodeDotKsmWithRelayChains;
-  to: TNodeWithRelayChains;
+  from: TChainDotKsmWithRelayChains;
+  to: TChainWithRelayChains;
   currencies: TCurrencyEntry[];
   feeAsset: Omit<TCurrencyEntry, 'amount'>;
   address: string;
@@ -75,7 +71,9 @@ export type FormValues = {
   useApi: boolean;
 };
 
-export type TCurrencyEntryTransformed = TCurrencyEntry & { currency?: TAsset };
+export type TCurrencyEntryTransformed = TCurrencyEntry & {
+  currency?: TAssetInfo;
+};
 
 export type FormValuesTransformed = FormValues & {
   currencies: TCurrencyEntryTransformed[];
@@ -171,7 +169,7 @@ const XcmUtilsForm: FC<Props> = ({
 
   const transformCurrency = (
     entry: TCurrencyEntry,
-    currencyMap: Record<string, TAsset>,
+    currencyMap: Record<string, TAssetInfo>,
   ) => {
     if (entry.isCustomCurrency) {
       // Custom currency doesn't map to currencyMap
@@ -286,7 +284,7 @@ const XcmUtilsForm: FC<Props> = ({
   const onSwap = () => {
     const { from: currentFrom, to: currentTo } = form.getValues();
     if (currentTo !== 'Ethereum') {
-      form.setFieldValue('from', currentTo as TNodeDotKsmWithRelayChains);
+      form.setFieldValue('from', currentTo);
       form.setFieldValue('to', currentFrom);
     }
   };
@@ -308,7 +306,7 @@ const XcmUtilsForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress = isNodeEvm(from) && isNodeEvm(to);
+  const showAhAddress = isChainEvm(from) && isChainEvm(to);
 
   if (!isVisible) {
     return null;
@@ -322,7 +320,7 @@ const XcmUtilsForm: FC<Props> = ({
             label="Origin"
             placeholder="Pick value"
             description="Select the origin chain"
-            data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+            data={CHAINS_WITH_RELAY_CHAINS_DOT_KSM}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />
@@ -339,7 +337,7 @@ const XcmUtilsForm: FC<Props> = ({
             label="Destination"
             placeholder="Pick value"
             description="Select the destination chain"
-            data={NODES_WITH_RELAY_CHAINS}
+            data={CHAINS_WITH_RELAY_CHAINS}
             data-testid="select-destination"
             {...form.getInputProps('to')}
           />

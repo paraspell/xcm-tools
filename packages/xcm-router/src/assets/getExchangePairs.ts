@@ -1,25 +1,25 @@
-import type { TMultiLocation } from '@paraspell/sdk';
-import { deepEqual, reverseTransformMultiLocation } from '@paraspell/sdk';
+import type { TLocation } from '@paraspell/sdk';
+import { deepEqual, reverseTransformLocation } from '@paraspell/sdk';
 
-import { EXCHANGE_NODES } from '../consts';
-import type { TExchangeInput, TExchangeNode, TRouterAsset } from '../types';
+import { EXCHANGE_CHAINS } from '../consts';
+import type { TExchangeInput, TExchangeChain, TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 
 const resolveRouterAsset = (
-  exchange: TExchangeNode,
+  exchange: TExchangeChain,
   pairKey: string | object,
 ): TRouterAsset | undefined => {
   const exchangeAssets = getExchangeConfig(exchange).assets;
   const isAh = exchange === 'AssetHubPolkadotDex' || exchange === 'AssetHubKusamaDex';
 
   if (typeof pairKey === 'object') {
-    const candidates = exchangeAssets.filter((a) => a.multiLocation);
+    const candidates = exchangeAssets.filter((a) => a.location);
 
-    let found = candidates.find((a) => deepEqual(pairKey, a.multiLocation!));
+    let found = candidates.find((a) => deepEqual(pairKey, a.location!));
 
     if (!found && isAh) {
-      const keyXfm = reverseTransformMultiLocation(pairKey as TMultiLocation);
-      found = candidates.find((a) => deepEqual(keyXfm, a.multiLocation!));
+      const keyXfm = reverseTransformLocation(pairKey as TLocation);
+      found = candidates.find((a) => deepEqual(keyXfm, a.location!));
     }
     return found;
   }
@@ -31,7 +31,7 @@ const resolveRouterAsset = (
 };
 
 const asArray = (ex: TExchangeInput) =>
-  ex === undefined ? EXCHANGE_NODES : Array.isArray(ex) ? ex : [ex];
+  ex === undefined ? EXCHANGE_CHAINS : Array.isArray(ex) ? ex : [ex];
 
 export const getExchangePairs = (exchange: TExchangeInput): [TRouterAsset, TRouterAsset][] =>
   asArray(exchange).flatMap((ex) => {

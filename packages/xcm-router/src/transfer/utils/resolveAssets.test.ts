@@ -1,13 +1,18 @@
-import { findAsset, hasSupportForAsset, type TAsset, type TCurrencyInput } from '@paraspell/sdk';
+import {
+  findAssetInfo,
+  hasSupportForAsset,
+  type TAssetInfo,
+  type TCurrencyInput,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
-import type ExchangeNode from '../../dexNodes/DexNode';
-import type { TExchangeNode, TTransferOptions } from '../../types';
+import type ExchangeChain from '../../exchanges/ExchangeChain';
+import type { TExchangeChain, TTransferOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
 vi.mock('@paraspell/sdk', () => ({
-  findAsset: vi.fn(),
+  findAssetInfo: vi.fn(),
   hasSupportForAsset: vi.fn(),
 }));
 
@@ -17,9 +22,9 @@ vi.mock('../../assets', () => ({
 }));
 
 const dex = {
-  node: 'NODE_A',
-  exchangeNode: 'EXCHANGE_NODE_B',
-} as unknown as ExchangeNode;
+  chain: 'CHAIN_A',
+  exchangeChain: 'EXCHANGE_CHAIN_B',
+} as unknown as ExchangeChain;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -38,7 +43,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -55,20 +60,20 @@ describe('resolveAssets', () => {
 
   it('returns correct assets when origin is specified and found', () => {
     const options = {
-      from: 'CUSTOM_NODE',
+      from: 'CUSTOM_CHAIN',
       to: undefined,
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAsset;
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
     const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
-    vi.mocked(findAsset).mockReturnValueOnce(mockAssetFromOrigin);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
       },
@@ -84,26 +89,26 @@ describe('resolveAssets', () => {
 
   it('throws error when origin is specified but asset from origin is not found', () => {
     const options = {
-      from: 'CUSTOM_NODE',
+      from: 'CUSTOM_CHAIN',
       to: undefined,
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    vi.mocked(findAsset).mockReturnValueOnce(null);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(null);
     expect(() => resolveAssets(dex, options)).toThrowError();
   });
 
   it('throws error when asset from exchange is not found (origin specified)', () => {
     const options = {
-      from: 'CUSTOM_NODE',
+      from: 'CUSTOM_CHAIN',
       to: undefined,
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAsset;
-    vi.mocked(findAsset).mockReturnValueOnce(mockAssetFromOrigin);
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(undefined);
 
     expect(() => resolveAssets(dex, options)).toThrowError();
@@ -118,7 +123,7 @@ describe('resolveAssets', () => {
     } as unknown as TTransferOptions;
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return null;
         if ('symbol' in currency && currency.symbol === 'ETH') return { symbol: 'ETH_EXCHANGE' };
         return null;
@@ -137,7 +142,7 @@ describe('resolveAssets', () => {
     } as unknown as TTransferOptions;
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return { symbol: 'BTC_EXCHANGE' };
         if ('symbol' in currency && currency.symbol === 'ETH') return null;
         return null;
@@ -159,7 +164,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -182,7 +187,7 @@ describe('resolveAssets', () => {
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
@@ -206,14 +211,14 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAsset;
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
     const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
     const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
 
-    vi.mocked(findAsset).mockReturnValueOnce(mockAssetFromOrigin);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
     vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeNode: TExchangeNode, currency: TCurrencyInput) => {
+      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
         return null;
       },

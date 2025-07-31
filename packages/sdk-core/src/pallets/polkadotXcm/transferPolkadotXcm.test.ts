@@ -1,5 +1,5 @@
-import type { TAsset, TMultiAsset, WithAmount } from '@paraspell/assets'
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import type { TAssetInfo, TAsset, WithAmount } from '@paraspell/assets'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -10,26 +10,26 @@ const mockApi = {
   callTxMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
-const mockMultiLocation: TMultiLocation = {
+const mockLocation: TLocation = {
   parents: 0,
   interior: {
     Here: null
   }
 }
 
-const mockMultiAsset: TMultiAsset = {
-  id: mockMultiLocation,
+const mockAsset: TAsset = {
+  id: mockLocation,
   fun: {
     Fungible: 123n
   }
 }
 
-const mockVersionedMultiLocation: TXcmVersioned<TMultiLocation> = {
-  [Version.V4]: mockMultiLocation
+const mockVersionedLocation: TXcmVersioned<TLocation> = {
+  [Version.V4]: mockLocation
 }
 
-const mockVersionedMultiAssets: TXcmVersioned<TMultiAsset[]> = {
-  [Version.V4]: [mockMultiAsset]
+const mockVersionedAssets: TXcmVersioned<TAsset[]> = {
+  [Version.V4]: [mockAsset]
 }
 
 const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
@@ -37,10 +37,10 @@ const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
 describe('transferPolkadotXcm', () => {
   const baseOptions = {
     api: mockApi,
-    destLocation: mockMultiLocation,
-    beneficiaryLocation: mockMultiLocation,
-    multiAsset: mockMultiAsset,
-    asset: { amount: 123n } as WithAmount<TAsset>,
+    destLocation: mockLocation,
+    beneficiaryLocation: mockLocation,
+    asset: mockAsset,
+    assetInfo: { amount: 123n } as WithAmount<TAssetInfo>,
     version: Version.V4
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -53,9 +53,9 @@ describe('transferPolkadotXcm', () => {
       module: 'PolkadotXcm',
       method: mockMethod,
       parameters: {
-        assets: mockVersionedMultiAssets,
-        beneficiary: mockVersionedMultiLocation,
-        dest: mockVersionedMultiLocation,
+        assets: mockVersionedAssets,
+        beneficiary: mockVersionedLocation,
+        dest: mockVersionedLocation,
         fee_asset_item: 0
       }
     })
@@ -70,9 +70,9 @@ describe('transferPolkadotXcm', () => {
       module: 'PolkadotXcm',
       method: mockMethod,
       parameters: {
-        assets: mockVersionedMultiAssets,
-        beneficiary: mockVersionedMultiLocation,
-        dest: mockVersionedMultiLocation,
+        assets: mockVersionedAssets,
+        beneficiary: mockVersionedLocation,
+        dest: mockVersionedLocation,
         fee_asset_item: 0,
         weight_limit: 'Unlimited'
       }
@@ -88,9 +88,9 @@ describe('transferPolkadotXcm', () => {
       module: 'PolkadotXcm',
       method: mockMethod,
       parameters: {
-        assets: mockVersionedMultiAssets,
-        beneficiary: mockVersionedMultiLocation,
-        dest: mockVersionedMultiLocation,
+        assets: mockVersionedAssets,
+        beneficiary: mockVersionedLocation,
+        dest: mockVersionedLocation,
         fee_asset_item: 0,
         weight_limit: { Limited: '1000' }
       }

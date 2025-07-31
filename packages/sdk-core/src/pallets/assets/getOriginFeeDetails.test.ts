@@ -1,6 +1,6 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import * as assetsModule from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -18,18 +18,18 @@ const apiMock = {
 
 describe('getOriginFeeDetails', () => {
   it('should return correct origin fee details', async () => {
-    const originNode = {} as TNodeDotKsmWithRelayChains
-    const destinationNode = {} as TNodeDotKsmWithRelayChains
+    const originChain = {} as TChainDotKsmWithRelayChains
+    const destinationChain = {} as TChainDotKsmWithRelayChains
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
-    vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({})
+    vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 
     const mockTx = {
       paymentInfo: vi.fn().mockResolvedValue({
@@ -55,8 +55,8 @@ describe('getOriginFeeDetails', () => {
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const result = await getOriginFeeDetails({
-      origin: originNode,
-      destination: destinationNode,
+      origin: originChain,
+      destination: destinationChain,
       currency,
       account,
       accountDestination: account,
@@ -70,18 +70,18 @@ describe('getOriginFeeDetails', () => {
   })
 
   it('should return correct origin fee details when origin is a relay chain', async () => {
-    const originNode = 'Polkadot' as TNodeDotKsmWithRelayChains
-    const destinationNode = {} as TNodeDotKsmWithRelayChains
+    const originChain = 'Polkadot' as TChainDotKsmWithRelayChains
+    const destinationChain = {} as TChainDotKsmWithRelayChains
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
-    vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({})
+    vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 
     const mockTx = {
       paymentInfo: vi.fn().mockResolvedValue({
@@ -107,8 +107,8 @@ describe('getOriginFeeDetails', () => {
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const result = await getOriginFeeDetails<unknown, unknown>({
-      origin: originNode,
-      destination: destinationNode,
+      origin: originChain,
+      destination: destinationChain,
       currency,
       account,
       accountDestination: account,
@@ -122,18 +122,18 @@ describe('getOriginFeeDetails', () => {
   })
 
   it('should return correct origin fee details when destination is a relay chain', async () => {
-    const originNode = {} as TNodeDotKsmWithRelayChains
-    const destinationNode = 'Polkadot' as TNodeDotKsmWithRelayChains
+    const originChain = {} as TChainDotKsmWithRelayChains
+    const destinationChain = 'Polkadot' as TChainDotKsmWithRelayChains
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = 1000000000000000n
-    const ed = '1000000000000'
+    const ed = 1000000000000n
     const xcmFee = '1000000000'
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
-    vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({})
+    vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 
     const mockTx = {
       paymentInfo: vi.fn().mockResolvedValue({
@@ -159,8 +159,8 @@ describe('getOriginFeeDetails', () => {
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const result = await getOriginFeeDetails({
-      origin: originNode,
-      destination: destinationNode,
+      origin: originChain,
+      destination: destinationChain,
       currency,
       account,
       accountDestination: account,

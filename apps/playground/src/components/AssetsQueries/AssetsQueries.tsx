@@ -13,7 +13,7 @@ import {
   Native,
   replaceBigInt,
   type TCurrencyCore,
-  type TMultiLocation,
+  type TLocation,
 } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
@@ -82,9 +82,9 @@ export const AssetsQueries = () => {
       }
     }
 
-    if (currencyType === 'multilocation') {
+    if (currencyType === 'location') {
       return {
-        multilocation: JSON.parse(currency) as TMultiLocation,
+        location: JSON.parse(currency) as TLocation,
       };
     } else if (currencyType === 'id') {
       return { id: currency };
@@ -94,23 +94,23 @@ export const AssetsQueries = () => {
   };
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi, node, destination, func, address } = formValues;
+    const { useApi, chain, destination, func, address } = formValues;
 
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
-      'ASSET_MULTILOCATION',
+      'ASSET_LOCATION',
       'EXISTENTIAL_DEPOSIT',
     ]);
 
     const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
-      const endpoint = getApiEndpoint(func, formValues.node);
+      const endpoint = getApiEndpoint(func, formValues.chain);
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(
         shouldUsePost
           ? {
-              node,
+              chain,
               destination,
               address,
               ...('symbol' in resolvedCurrency &&
@@ -120,7 +120,7 @@ export const AssetsQueries = () => {
                 : { currency: resolvedCurrency }),
             }
           : {
-              origin: node,
+              origin: chain,
               destination,
             },
         endpoint,

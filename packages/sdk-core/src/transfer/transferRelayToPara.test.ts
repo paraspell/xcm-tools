@@ -1,19 +1,19 @@
-import type { TAsset, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { getRelayChainSymbol } from '@paraspell/assets'
-import { type TMultiLocation, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
-import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
+import { resolveTChainFromLocation } from '../pallets/xcmPallet/utils'
 import { type TRelayToParaOptions } from '../types'
-import { getNode, getRelayChainOf } from '../utils'
+import { getChain, getRelayChainOf } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 
 vi.mock('../utils', () => ({
   getRelayChainOf: vi.fn(),
-  getNode: vi.fn()
+  getChain: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -21,16 +21,16 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
-  resolveTNodeFromMultiLocation: vi.fn()
+  resolveTChainFromLocation: vi.fn()
 }))
 
 describe('transferRelayToPara', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
-  let nodeMock: AssetHubPolkadot<unknown, unknown>
+  let chainMock: AssetHubPolkadot<unknown, unknown>
 
   const baseOptions = {
     origin: 'Polkadot',
-    asset: { symbol: 'DOT', amount: 100n } as WithAmount<TAsset>,
+    assetInfo: { symbol: 'DOT', amount: 100n } as WithAmount<TAssetInfo>,
     address: 'some-address',
     version: Version.V4
   } as Partial<TRelayToParaOptions<unknown, unknown>>
@@ -51,27 +51,27 @@ describe('transferRelayToPara', () => {
 
     baseOptions.api = apiMock
 
-    nodeMock = {
+    chainMock = {
       transferRelayToPara: vi.fn().mockReturnValue('serializedApiCall')
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
-    vi.mocked(getNode).mockReturnValue(nodeMock)
+    vi.mocked(getChain).mockReturnValue(chainMock)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
-    vi.mocked(resolveTNodeFromMultiLocation).mockReturnValue('Acala')
+    vi.mocked(resolveTChainFromLocation).mockReturnValue('Acala')
   })
 
-  it('should throw an error when destination is MultiLocation', async () => {
+  it('should throw an error when destination is location', async () => {
     const options = {
       ...baseOptions,
-      destination: {} as TMultiLocation
+      destination: {}
     } as TRelayToParaOptions<unknown, unknown>
 
     vi.spyOn(apiMock, 'getConfig').mockReturnValue(undefined)
     const spy = vi.spyOn(apiMock, 'init')
 
     await expect(transferRelayToPara(options)).rejects.toThrow(
-      'API is required when using MultiLocation as destination.'
+      'API is required when using location as destination.'
     )
     expect(spy).not.toHaveBeenCalled()
   })
@@ -89,35 +89,35 @@ describe('transferRelayToPara', () => {
     expect(spy).toHaveBeenCalledWith('Polkadot', TX_CLIENT_TIMEOUT_MS)
   })
 
-  it('should get the serialized api call correctly when destination is MultiLocation', async () => {
+  it('should get the serialized api call correctly when destination is location', async () => {
     const options = {
       ...baseOptions,
-      destination: {} as TMultiLocation
+      destination: {}
     } as TRelayToParaOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
+    const transferSpy = vi.spyOn(chainMock, 'transferRelayToPara')
     const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
 
     await transferRelayToPara(options)
 
-    expect(resolveTNodeFromMultiLocation).toHaveBeenCalledWith('Polkadot', {})
-    expect(getNode).toHaveBeenCalledWith('Acala')
+    expect(resolveTChainFromLocation).toHaveBeenCalledWith('Polkadot', {})
+    expect(getChain).toHaveBeenCalledWith('Acala')
     expect(transferSpy).toHaveBeenCalledWith(expect.objectContaining(options))
     expect(apiSpy).toHaveBeenCalledWith('serializedApiCall')
   })
 
-  it('should get the serialized api call correctly when destination is not MultiLocation', async () => {
+  it('should get the serialized api call correctly when destination is not location', async () => {
     const options = {
       ...baseOptions,
       destination: 'Astar'
     } as TRelayToParaOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
+    const transferSpy = vi.spyOn(chainMock, 'transferRelayToPara')
     const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
 
     await transferRelayToPara(options)
 
-    expect(getNode).toHaveBeenCalledWith(options.destination)
+    expect(getChain).toHaveBeenCalledWith(options.destination)
     expect(transferSpy).toHaveBeenCalledWith(expect.objectContaining(options))
     expect(apiSpy).toHaveBeenCalledWith('serializedApiCall')
   })
@@ -140,7 +140,7 @@ describe('transferRelayToPara', () => {
       paraIdTo: 2000
     } as TRelayToParaOptions<unknown, unknown>
 
-    const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
+    const transferSpy = vi.spyOn(chainMock, 'transferRelayToPara')
 
     await transferRelayToPara(options)
 

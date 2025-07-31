@@ -1,15 +1,15 @@
-import { TNodeDotKsmWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
-import { getNode } from '../../sdk-core/src'
+import { TChainDotKsmWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
+import { getChain } from '../../sdk-core/src'
 import { ApiPromise } from '@polkadot/api'
-import { normalizeMultiLocation } from '../src'
+import { normalizeLocation } from '../src'
 
-export const getRelayChainSymbolOf = (node: TNodeDotKsmWithRelayChains): TRelayChainSymbol => {
-  if (node === 'Polkadot') return 'DOT'
-  if (node === 'Kusama') return 'KSM'
-  if (node === 'Westend') return 'WND'
-  if (node === 'Paseo') return 'PAS'
+export const getRelayChainSymbolOf = (chain: TChainDotKsmWithRelayChains): TRelayChainSymbol => {
+  if (chain === 'Polkadot') return 'DOT'
+  if (chain === 'Kusama') return 'KSM'
+  if (chain === 'Westend') return 'WND'
+  if (chain === 'Paseo') return 'PAS'
 
-  const ecosystem = getNode(node).type
+  const ecosystem = getChain(chain).type
 
   switch (ecosystem) {
     case 'polkadot':
@@ -21,19 +21,19 @@ export const getRelayChainSymbolOf = (node: TNodeDotKsmWithRelayChains): TRelayC
     case 'paseo':
       return 'PAS'
     default:
-      throw new Error(`Unsupported ecosystem type for node: ${node}`)
+      throw new Error(`Unsupported ecosystem type for chain: ${chain}`)
   }
 }
 
-export const isNodeEvm = (api: ApiPromise) => {
+export const isChainEvm = (api: ApiPromise) => {
   const types = api.runtimeMetadata.asLatest.lookup.types
   const type = types[0]?.type.path.toJSON() as string[]
   return type.includes('AccountId20')
 }
 
-export const capitalizeMultiLocation = (obj: any) => {
+export const capitalizeLocation = (obj: any) => {
   obj.interior = capitalizeKeys(obj.interior)
-  return normalizeMultiLocation(obj)
+  return normalizeLocation(obj)
 }
 
 export const capitalizeKeys = (obj: any, depth: number = 1): any => {

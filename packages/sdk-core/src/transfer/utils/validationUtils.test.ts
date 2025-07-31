@@ -7,14 +7,14 @@ import {
 import {
   isDotKsmBridge,
   isRelayChain,
-  isTMultiLocation,
-  type TNodeDotKsmWithRelayChains,
-  type TNodePolkadotKusama
+  isTLocation,
+  type TChainDotKsmWithRelayChains,
+  type TChainPolkadotKusama
 } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { IncompatibleNodesError } from '../../errors'
+import { IncompatibleChainsError } from '../../errors'
 import type { TDestination } from '../../types'
 import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
 
@@ -23,7 +23,7 @@ vi.mock('@paraspell/pallets', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn(),
+  isTLocation: vi.fn(),
   isRelayChain: vi.fn(),
   isDotKsmBridge: vi.fn()
 }))
@@ -34,7 +34,7 @@ vi.mock('@paraspell/assets', () => ({
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isSymbolSpecifier: vi.fn(),
-  isTMultiAsset: vi.fn()
+  isTAsset: vi.fn()
 }))
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
@@ -57,14 +57,14 @@ describe('validateCurrency', () => {
     const currency = { multiasset: [] } as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency)).toThrow('Overridden multi assets cannot be empty')
+    expect(() => validateCurrency(currency)).toThrow('Overridden assets cannot be empty')
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is specified', () => {
     const currency = { multiasset: [{ symbol: 'DOT' }] } as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length >1 and feeAsset is undefined', () => {
@@ -72,7 +72,7 @@ describe('validateCurrency', () => {
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow(
-      'Overridden multi assets cannot be used without specifying fee asset'
+      'Overridden assets cannot be used without specifying fee asset'
     )
   })
 
@@ -85,23 +85,23 @@ describe('validateCurrency', () => {
   it('should throw when currency has multiasset with length 1 or less', () => {
     const currency = { multiasset: [{}] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })
 })
 
 describe('validateDestination', () => {
-  let origin: TNodeDotKsmWithRelayChains
+  let origin: TChainDotKsmWithRelayChains
   let destination: TDestination
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should throw IncompatibleNodesError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
+  it('should throw IncompatibleChainsError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
     origin = 'Acala'
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
+    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
   })
 
   it('should not throw when destination is Ethereum and origin is AssetHubPolkadot', () => {
@@ -125,21 +125,21 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should not throw when destination is a MultiLocation object', () => {
+  it('should not throw when destination is a Location object', () => {
     origin = 'AssetHubPolkadot'
     destination = {} as TDestination
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should throw IncompatibleNodesError when relay chain symbols do not match and not a bridge transfer', () => {
+  it('should throw IncompatibleChainsError when relay chain symbols do not match and not a bridge transfer', () => {
     origin = 'Acala'
     destination = 'Astar'
 
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
+    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
   })
 
   it('should not throw when relay chain symbols match and not a bridge transfer', () => {
@@ -162,7 +162,7 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should not throw when destination is a MultiLocation object and other conditions are met', () => {
+  it('should not throw when destination is a location object and other conditions are met', () => {
     origin = 'Acala'
     destination = {} as TDestination
 
@@ -173,11 +173,11 @@ describe('validateDestination', () => {
     expect(getRelayChainSymbol).not.toHaveBeenCalled()
   })
 
-  it('should throw IncompatibleNodesError when origin is undefined and destination is Ethereum', () => {
-    origin = undefined as unknown as TNodePolkadotKusama
+  it('should throw IncompatibleChainsError when origin is undefined and destination is Ethereum', () => {
+    origin = undefined as unknown as TChainPolkadotKusama
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
+    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
   })
 
   it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {
@@ -185,7 +185,7 @@ describe('validateDestination', () => {
     destination = 'Polkadot'
 
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockImplementation(node => node === destination)
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
     expect(getRelayChainSymbol).not.toHaveBeenCalled()
@@ -196,7 +196,7 @@ describe('validateDestination', () => {
     destination = 'Kusama'
 
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
 
     expect(() => validateDestination(origin, destination)).toThrow()
     expect(isRelayChain).toHaveBeenCalled()

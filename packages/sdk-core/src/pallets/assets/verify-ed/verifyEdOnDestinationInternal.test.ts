@@ -1,10 +1,10 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
   getExistentialDepositOrThrow,
   normalizeSymbol
 } from '@paraspell/assets'
-import { replaceBigInt, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { replaceBigInt, type TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -41,8 +41,8 @@ describe('verifyEdOnDestinationInternal', () => {
     })
   } as unknown as IPolkadotApi<unknown, unknown>
   const mockTx = {} as unknown
-  const mockOrigin = 'OriginNode' as TNodeDotKsmWithRelayChains
-  const mockDestination = 'DestinationNode' as TNodeDotKsmWithRelayChains
+  const mockOrigin = 'OriginChain' as TChainDotKsmWithRelayChains
+  const mockDestination = 'DestinationChain' as TChainDotKsmWithRelayChains
   const mockAddress = 'destinationAddress'
   const mockSenderAddress = 'senderAddress'
   const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }
@@ -60,7 +60,7 @@ describe('verifyEdOnDestinationInternal', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(validateAddress).mockImplementation(() => {})
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n) // 1 DOT
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n) // 5 DOT
     vi.mocked(getXcmFee).mockResolvedValue({
@@ -129,7 +129,7 @@ describe('verifyEdOnDestinationInternal', () => {
     })
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       address: mockAddress,
-      node: mockDestination,
+      chain: mockDestination,
       api: expect.any(Object),
       currency: {
         symbol: mockCurrency.symbol
@@ -196,12 +196,12 @@ describe('verifyEdOnDestinationInternal', () => {
       destination: { fee: undefined, currency: 'DOT' }
     } as TGetXcmFeeResult)
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrowError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency, replaceBigInt)} on node ${mockDestination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(mockCurrency, replaceBigInt)} on chain ${mockDestination}.`
     )
   })
 
   it('should throw InvalidParameterError if asset symbol does not match fee currency symbol', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAssetInfo)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
       destination: { fee: 1000000000n, currency: 'DOT' }
@@ -224,7 +224,7 @@ describe('verifyEdOnDestinationInternal', () => {
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(validationError)
   })
 
-  it('should re-throw error from findAssetForNodeOrThrow', async () => {
+  it('should re-throw error from findAssetOnDestOrThrow', async () => {
     const findAssetError = new Error('Asset not found')
     vi.mocked(findAssetOnDestOrThrow).mockImplementation(() => {
       throw findAssetError

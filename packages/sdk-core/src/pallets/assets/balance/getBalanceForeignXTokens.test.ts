@@ -1,4 +1,4 @@
-import { InvalidCurrencyError, type TAsset, type TNativeAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAssetInfo, type TNativeAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -12,13 +12,13 @@ const mockApi = {
 
 describe('getBalanceForeignXTokens', () => {
   const address = '5F3sa2TJAWMqDhXG6jhV4N8ko9NmoaMZP8F3sa2TJAWMqDh'
-  const asset: TAsset = { assetId: '1', symbol: 'AssetName' }
+  const asset: TAssetInfo = { assetId: '1', symbol: 'AssetName' }
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('calls getBalanceForeignMoonbeam when node is Astar', async () => {
+  it('calls getBalanceForeignMoonbeam when chain is Astar', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(1000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
@@ -27,7 +27,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(1000n)
   })
 
-  it('calls getBalanceForeignAssetsAccount when node is Shiden', async () => {
+  it('calls getBalanceForeignAssetsAccount when chain is Shiden', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(2000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Shiden', address, asset)
@@ -36,7 +36,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(2000n)
   })
 
-  it('calls getBalanceForeignXTokens for any other node', async () => {
+  it('calls getBalanceForeignXTokens for any other chain', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(3000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceAssetsPallet')
     const balance = await getBalanceForeignXTokens(mockApi, 'Acala', address, asset)
@@ -45,7 +45,7 @@ describe('getBalanceForeignXTokens', () => {
     expect(balance).toBe(3000n)
   })
 
-  it('calls getBalanceForeignBifrost when node is BifrostPolkadot', async () => {
+  it('calls getBalanceForeignBifrost when chain is BifrostPolkadot', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignBifrost').mockResolvedValue(4000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'BifrostPolkadot', address, asset)
@@ -70,7 +70,7 @@ describe('getBalanceForeignXTokens', () => {
     await expect(
       getBalanceForeignXTokens(mockApi, 'Astar', address, {
         symbol: 'AssetName'
-      } as TNativeAsset)
+      } as TNativeAssetInfo)
     ).rejects.toThrow(InvalidCurrencyError)
   })
 })

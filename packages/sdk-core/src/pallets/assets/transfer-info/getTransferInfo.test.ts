@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getExistentialDepositOrThrow } from '@paraspell/assets'
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
-  isNodeEvm
+  isChainEvm
 } from '@paraspell/assets'
 import {
   replaceBigInt,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains
+  type TChainDotKsmWithRelayChains,
+  type TChainWithRelayChains
 } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -34,11 +34,11 @@ vi.mock('@paraspell/assets', async importOriginal => {
   const actual = await importOriginal<typeof import('@paraspell/assets')>()
   return {
     ...actual,
-    findAssetForNodeOrThrow: vi.fn(),
+    findAssetInfoOrThrow: vi.fn(),
     getExistentialDepositOrThrow: vi.fn(),
     getRelayChainSymbol: vi.fn(),
     isAssetEqual: vi.fn(),
-    isNodeEvm: vi.fn()
+    isChainEvm: vi.fn()
   }
 })
 
@@ -92,8 +92,8 @@ describe('getTransferInfo', () => {
     mockTx = {}
 
     baseOptions = {
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainWithRelayChains,
       senderAddress: 'senderAlice',
       ahAddress: 'ahBob',
       address: 'receiverCharlie',
@@ -105,9 +105,9 @@ describe('getTransferInfo', () => {
       feeAsset: { symbol: 'DOT', type: 'NATIVE' } as TCurrencyCore
     }
 
-    vi.mocked(isNodeEvm).mockReturnValue(false)
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAsset)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'DOT',
       assetId: 'DOT',
       decimals: 10
@@ -159,7 +159,7 @@ describe('getTransferInfo', () => {
 
     expect(mockApi.init).toHaveBeenCalledWith(options.origin)
     expect(mockApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
-    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith(
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
       options.origin,
       options.currency,
       options.destination
@@ -234,9 +234,9 @@ describe('getTransferInfo', () => {
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
 
-    vi.mocked(buildHopInfo).mockImplementation(({ node }) => {
-      if (node === 'Hydration') return Promise.resolve(mockHydraHopInfo)
-      if (node === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
+    vi.mocked(buildHopInfo).mockImplementation(({ chain }) => {
+      if (chain === 'Hydration') return Promise.resolve(mockHydraHopInfo)
+      if (chain === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
       return Promise.resolve({} as TTransferInfo['assetHub'])
     })
 
@@ -248,13 +248,13 @@ describe('getTransferInfo', () => {
 
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        node: 'Hydration',
+        chain: 'Hydration',
         feeData: mockHopsFromFee[0].result
       })
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        node: 'Interlay',
+        chain: 'Interlay',
         feeData: mockHopsFromFee[1].result
       })
     )
@@ -277,13 +277,13 @@ describe('getTransferInfo', () => {
   })
 
   it('should throw InvalidParameterError if origin is EVM and ahAddress is not provided', async () => {
-    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(true)
     const options = {
       ...baseOptions,
       api: mockApi,
       tx: mockTx,
       ahAddress: undefined,
-      origin: 'Moonbeam' as TNodeDotKsmWithRelayChains
+      origin: 'Moonbeam' as TChainDotKsmWithRelayChains
     }
 
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
@@ -303,14 +303,14 @@ describe('getTransferInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       address: options.senderAddress,
-      node: options.origin,
+      chain: options.origin,
       currency: options.currency
     })
     expect(getBalanceNativeInternal).toHaveBeenCalledTimes(1)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockApi,
       address: options.senderAddress,
-      node: options.origin
+      chain: options.origin
     })
   })
 
@@ -326,26 +326,26 @@ describe('getTransferInfo', () => {
 
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
     await expect(getTransferInfo(options)).rejects.toThrow(
-      `Cannot get origin xcm fee for currency ${JSON.stringify(options.currency, replaceBigInt)} on node ${options.origin}.`
+      `Cannot get origin xcm fee for currency ${JSON.stringify(options.currency, replaceBigInt)} on chain ${options.origin}.`
     )
     expect(mockApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
     expect(mockApi.disconnect).toHaveBeenCalled()
   })
 
   it('should correctly calculate originBalanceFeeAfter when feeAsset is same as transfer currency on AssetHubPolkadot (isFeeAssetAh true)', async () => {
-    const ahOrigin = 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
+    const ahOrigin = 'AssetHubPolkadot' as TChainDotKsmWithRelayChains
     const sameCurrency = {
       symbol: 'USDT',
       amount: 50000000n
     } as WithAmount<TCurrencyCore>
-    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6
     })
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAsset)
+    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(getAssetBalanceInternal)
       .mockResolvedValueOnce(100000000n)
       .mockResolvedValueOnce(100000000n)
@@ -406,25 +406,25 @@ describe('getTransferInfo', () => {
     expect(buildHopInfo).toHaveBeenCalledTimes(1)
   })
 
-  it('should correctly determine Kusama hop nodes if origin is Kusama based', async () => {
+  it('should correctly determine Kusama hop chains if origin is Kusama based', async () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
     vi.mocked(getRelayChainSymbol).mockReturnValue('KSM')
     const options = {
       ...baseOptions,
       api: mockApi,
       tx: mockTx,
-      origin: 'Karura' as TNodeDotKsmWithRelayChains
+      origin: 'Karura' as TChainDotKsmWithRelayChains
     }
     await getTransferInfo(options)
 
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        node: 'AssetHubKusama'
+        chain: 'AssetHubKusama'
       })
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        node: 'BridgeHubKusama'
+        chain: 'BridgeHubKusama'
       })
     )
   })
@@ -442,13 +442,13 @@ describe('getTransferInfo', () => {
   })
 
   it('should call api.setDisconnectAllowed(true) and api.disconnect() in finally block even on error', async () => {
-    vi.mocked(findAssetForNodeOrThrow).mockImplementation(() => {
-      throw new Error('Simulated error in findAssetOnDestOrThrow')
+    vi.mocked(findAssetInfoOrThrow).mockImplementation(() => {
+      throw new Error('Simulated error in findAssetInfoOrThrow')
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
 
     await expect(getTransferInfo(options)).rejects.toThrow(
-      'Simulated error in findAssetOnDestOrThrow'
+      'Simulated error in findAssetInfoOrThrow'
     )
 
     expect(mockApi.setDisconnectAllowed).toHaveBeenCalledTimes(2)
@@ -458,12 +458,12 @@ describe('getTransferInfo', () => {
   })
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {
-    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(true)
     const options = {
       ...baseOptions,
       api: mockApi,
       tx: mockTx,
-      origin: 'Moonbeam' as TNodeDotKsmWithRelayChains,
+      origin: 'Moonbeam' as TChainDotKsmWithRelayChains,
       ahAddress: 'evmAhAddress'
     }
 

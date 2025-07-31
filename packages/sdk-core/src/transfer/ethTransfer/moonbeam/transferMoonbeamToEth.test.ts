@@ -1,28 +1,28 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
-  findAssetByMultiLocation,
-  findAssetForNodeOrThrow,
+  findAssetInfoByLoc,
+  findAssetInfoOrThrow,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier
+  isOverrideLocationSpecifier
 } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BridgeHaltedError } from '../../../errors'
-import { getParaId } from '../../../nodes/config'
+import { getParaId } from '../../../chains/config'
 import type { TEvmBuilderOptions } from '../../../types'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetByMultiLocation: vi.fn(),
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoByLoc: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }]),
   isForeignAsset: vi.fn(),
-  isOverrideMultiLocationSpecifier: vi.fn(),
+  isOverrideLocationSpecifier: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -30,7 +30,7 @@ vi.mock('../../getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
-vi.mock('../../../nodes/config', () => ({
+vi.mock('../../../chains/config', () => ({
   getParaId: vi.fn(() => 1000)
 }))
 
@@ -81,7 +81,7 @@ describe('transferMoonbeamToEth', () => {
     hexToUint8a: vi.fn().mockReturnValue(new Uint8Array([13, 14, 15])),
     blake2AsHex: vi.fn().mockReturnValue('0xmockedHash'),
     objectToHex: vi.fn().mockReturnValue('0xmockedXcm'),
-    createApiForNode: vi.fn(() => ({
+    createApiForChain: vi.fn(() => ({
       getApi: vi.fn(() => ({
         createType: vi.fn(() => ({
           toHex: () => '0xmockedXcm',
@@ -102,14 +102,14 @@ describe('transferMoonbeamToEth', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: '',
-      multiLocation: { valid: 'location' } as unknown as TMultiLocation,
+      location: { valid: 'location' } as unknown as TLocation,
       assetId: '0xmockedAssetId'
     })
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
   })
 
   it('should throw error for missing AssetHub address', async () => {
@@ -130,14 +130,14 @@ describe('transferMoonbeamToEth', () => {
     ).rejects.toThrow('Multiassets syntax is not supported')
   })
 
-  it('should throw error for override multilocation', async () => {
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+  it('should throw error for override location', async () => {
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        currency: { multilocation: { type: 'override' } } as unknown as TCurrencyInputWithAmount
+        currency: { location: { type: 'override' } } as unknown as TCurrencyInputWithAmount
       })
-    ).rejects.toThrow('Override multilocation is not supported')
+    ).rejects.toThrow('Override location is not supported')
   })
 
   it('should throw error for non-foreign asset', async () => {
@@ -148,7 +148,7 @@ describe('transferMoonbeamToEth', () => {
   })
 
   it('should throw error when Ethereum asset not found', async () => {
-    vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
+    vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(
       'Could not obtain Ethereum asset address'
     )

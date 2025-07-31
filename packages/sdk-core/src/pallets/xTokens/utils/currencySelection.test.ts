@@ -2,9 +2,9 @@ import { getOtherAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_MULTILOCATION } from '../../../constants'
+import { DOT_LOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
-import { createMultiAsset } from '../../../utils/multiAsset'
+import { createAsset } from '../../../utils/asset'
 import { getModifiedCurrencySelection } from './currencySelection'
 
 vi.mock('@paraspell/assets', () => ({
@@ -18,7 +18,7 @@ describe('getModifiedCurrencySelection', () => {
     vi.clearAllMocks()
   })
 
-  it('returns default DOT multiLocation when asset is non-foreign and destination is relay chain', () => {
+  it('returns default DOT location when asset is non-foreign and destination is relay chain', () => {
     const version = Version.V4
     const xTransferInput = {
       asset: { symbol: 'DOT', amount: 500n },
@@ -29,13 +29,13 @@ describe('getModifiedCurrencySelection', () => {
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
     const expected = {
-      [version]: createMultiAsset(version, xTransferInput.asset.amount, DOT_MULTILOCATION)
+      [version]: createAsset(version, xTransferInput.asset.amount, DOT_LOCATION)
     }
 
     expect(getModifiedCurrencySelection(xTransferInput)).toEqual(expected)
   })
 
-  it('returns assetHubAsset.multiLocation when non-foreign asset is found in AssetHub', () => {
+  it('returns assetHubAsset.location when non-foreign asset is found in AssetHub', () => {
     const version = Version.V4
     const xTransferInput = {
       asset: { symbol: 'DOT', amount: 1000n },
@@ -47,7 +47,7 @@ describe('getModifiedCurrencySelection', () => {
     vi.mocked(getOtherAssets).mockReturnValue([
       {
         symbol: 'DOT',
-        multiLocation: { parents: Parents.ONE, interior: 'Here' }
+        location: { parents: Parents.ONE, interior: 'Here' }
       }
     ])
 
@@ -80,11 +80,11 @@ describe('getModifiedCurrencySelection', () => {
     expect(() => getModifiedCurrencySelection(xTransferInput)).toThrow(InvalidCurrencyError)
   })
 
-  it('returns multiLocation from asset when asset is foreign and multiLocation defined and version is V3', () => {
+  it('returns location from asset when asset is foreign and location defined and version is V3', () => {
     const version = Version.V3
     const xTransferInput = {
       asset: {
-        multiLocation: { parents: Parents.ONE, interior: 'Here' },
+        location: { parents: Parents.ONE, interior: 'Here' },
         amount: 1500n
       },
       version
@@ -109,7 +109,7 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('builds default multiLocation for foreign asset when multiLocation is undefined', () => {
+  it('builds default location for foreign asset when location is undefined', () => {
     const version = Version.V4
     const currencyID = '123'
     const paraIdTo = 2000
@@ -143,7 +143,7 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('builds default multiLocation for foreign asset with Bifrost origin', () => {
+  it('builds default location for foreign asset with Bifrost origin', () => {
     const version = Version.V4
     const currencyID = '123'
     const paraIdTo = 2000

@@ -1,7 +1,7 @@
 import type {
   IPolkadotApi,
-  TCurrencyInputWithAmount,
-  TNodeWithRelayChains
+  TChainWithRelayChains,
+  TCurrencyInputWithAmount
 } from '@paraspell/sdk-core'
 import {
   InvalidParameterError,
@@ -9,7 +9,7 @@ import {
   transferMoonbeamToEth
 } from '@paraspell/sdk-core'
 import { validateAddress } from '@paraspell/sdk-core'
-import type { TEvmNodeFrom } from '@paraspell/sdk-core/src'
+import type { TEvmChainFrom } from '@paraspell/sdk-core/src'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
@@ -31,18 +31,18 @@ export class EvmBuilderCore<
     this._options = options
   }
 
-  from(node: TEvmNodeFrom): EvmBuilderCore<TApi, TRes, T & { from: TEvmNodeFrom }> {
-    return new EvmBuilderCore({ ...this._options, from: node })
+  from(chain: TEvmChainFrom): EvmBuilderCore<TApi, TRes, T & { from: TEvmChainFrom }> {
+    return new EvmBuilderCore({ ...this._options, from: chain })
   }
 
   /**
-   * Specifies the destination node on Polkadot.
+   * Specifies the destination chain on Polkadot.
    *
-   * @param node - The Polkadot node to which the transfer will be made.
+   * @param chain - The Polkadot chain to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(node: TNodeWithRelayChains): EvmBuilderCore<TApi, TRes, T & { to: TNodeWithRelayChains }> {
-    return new EvmBuilderCore({ ...this._options, to: node })
+  to(chain: TChainWithRelayChains): EvmBuilderCore<TApi, TRes, T & { to: TChainWithRelayChains }> {
+    return new EvmBuilderCore({ ...this._options, to: chain })
   }
 
   /**

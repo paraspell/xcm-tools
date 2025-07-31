@@ -1,3 +1,3 @@
-export * from './TAssets'
+export * from './TAssetInfo'
 export * from './TCurrency'
-export * from './TMultiAsset'
+export * from './TAsset'

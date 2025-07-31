@@ -30,7 +30,7 @@ describe('handleToAhTeleport', () => {
     destination: 'Astar',
     address: '5FakeAddress',
     senderAddress: 'FakeSender',
-    asset: { symbol: 'DOT', amount: 1000n },
+    assetInfo: { symbol: 'DOT', amount: 1000n },
     currency: { symbol: 'DOT' }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -72,7 +72,7 @@ describe('handleToAhTeleport', () => {
     expect(getXcmFee).toHaveBeenCalled()
   })
 
-  it('throws error if destination is a MultiLocation', async () => {
+  it('throws error if destination is a location', async () => {
     const input = {
       ...mockInput,
       destination: { parents: 1, interior: 'Here' }
@@ -83,7 +83,7 @@ describe('handleToAhTeleport', () => {
     )
   })
 
-  it('throws error if address is a MultiLocation', async () => {
+  it('throws error if address is a location', async () => {
     const input = {
       ...mockInput,
       address: { parents: 1, interior: 'Here' }

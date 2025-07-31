@@ -1,11 +1,11 @@
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset,
-  isNodeEvm
+  isChainEvm,
+  isForeignAsset
 } from '@paraspell/assets'
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainWithRelayChains } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
@@ -18,12 +18,12 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   {
     api,
     address,
-    asset,
+    assetInfo: asset,
     senderAddress,
     ahAddress,
     version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  origin: TNodeWithRelayChains,
+  origin: TChainWithRelayChains,
   messageId: string
 ) => {
   if (!isForeignAsset(asset)) {
@@ -38,11 +38,11 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     throw new InvalidParameterError(`Please provide senderAddress`)
   }
 
-  if (isNodeEvm(origin) && !ahAddress) {
+  if (isChainEvm(origin) && !ahAddress) {
     throw new InvalidParameterError(`Please provide ahAddress`)
   }
 
-  const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+  const ethAsset = findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
   if (!ethAsset) {
     throw new InvalidCurrencyError(
@@ -67,7 +67,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                     assets: { Wild: 'All' },
                     beneficiary: createBeneficiaryLocation({
                       api,
-                      address: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
+                      address: isChainEvm(origin) ? (ahAddress as string) : senderAddress,
                       version
                     })
                   }
@@ -78,7 +78,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
         InitiateReserveWithdraw: {
           assets: {
             Wild: {
-              AllOf: { id: asset.multiLocation, fun: 'Fungible' }
+              AllOf: { id: asset.location, fun: 'Fungible' }
             }
           },
           reserve: {

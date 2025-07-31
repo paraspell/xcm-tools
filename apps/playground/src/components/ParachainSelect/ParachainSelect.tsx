@@ -1,6 +1,6 @@
 import type { SelectProps } from '@mantine/core';
 import { Group, Image, Select } from '@mantine/core';
-import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import type { TChainPolkadotKusama } from '@paraspell/sdk-pjs';
 import { IconCheck } from '@tabler/icons-react';
 import type { FC } from 'react';
 
@@ -17,7 +17,7 @@ const renderSelectOption: SelectProps['renderOption'] = ({
   option,
   checked,
 }) => {
-  const icon = getParachainIcon(option.value as TNodePolkadotKusama);
+  const icon = getParachainIcon(option.value as TChainPolkadotKusama);
   return (
     <Group flex="1" gap="xs">
       <Image
@@ -41,7 +41,7 @@ type Props = SelectProps;
 
 export const ParachainSelect: FC<Props> = (props) => {
   const { value } = props;
-  const icon = getParachainIcon(value as TNodePolkadotKusama);
+  const icon = getParachainIcon(value as TChainPolkadotKusama);
   return (
     <Select
       placeholder="Pick value"

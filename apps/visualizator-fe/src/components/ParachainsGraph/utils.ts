@@ -1,11 +1,11 @@
 import { Vector3 } from 'three';
 
 import type { Ecosystem } from '../../types/types';
-import { getNodesByEcosystem } from '../../utils/utils';
+import { getChainsByEcosystem } from '../../utils/utils';
 
 export const getParachainPosition = (index: number, ecosystem: Ecosystem) => {
   const radius = 6;
-  const totalParachains = getNodesByEcosystem(ecosystem).length;
+  const totalParachains = getChainsByEcosystem(ecosystem).length;
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians
 
   const phi = goldenAngle * index; // This spreads out the points along the longitude

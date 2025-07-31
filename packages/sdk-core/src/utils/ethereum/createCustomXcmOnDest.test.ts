@@ -1,10 +1,10 @@
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   InvalidCurrencyError,
-  isForeignAsset,
-  isNodeEvm
+  isChainEvm,
+  isForeignAsset
 } from '@paraspell/assets'
-import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TChainWithRelayChains, TLocation } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -14,10 +14,10 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { createCustomXcmOnDest } from './createCustomXcmOnDest'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetByMultiLocation: vi.fn(),
+  findAssetInfoByLoc: vi.fn(),
   getOtherAssets: vi.fn(() => ['mockEthereumAsset']),
   isForeignAsset: vi.fn(),
-  isNodeEvm: vi.fn(),
+  isChainEvm: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -55,15 +55,15 @@ describe('createCustomXcmOnDest', () => {
     blake2AsHex
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const mockNode: TNodeWithRelayChains = 'Acala'
+  const mockChain: TChainWithRelayChains = 'Acala'
   const version = Version.V4
   const messageId = 'test-message-id'
 
-  const mockMultiLocation = { parents: Parents.ZERO, interior: { Here: null } } as TMultiLocation
-  const mockHeader = mockMultiLocation
-  const mockBeneficiary = mockMultiLocation
-  const mockMultiAsset = { id: mockMultiLocation, fun: { Fungible: 1n } }
-  const defaultDestination = { parents: Parents.ONE, interior: { Here: null } } as TMultiLocation
+  const mockLocation = { parents: Parents.ZERO, interior: { Here: null } } as TLocation
+  const mockHeader = mockLocation
+  const mockBeneficiary = mockLocation
+  const mockAsset = { id: mockLocation, fun: { Fungible: 1n } }
+  const defaultDestination = { parents: Parents.ONE, interior: { Here: null } } as TLocation
   const baseOptions = {
     api,
     address: '0xRecipient',
@@ -71,77 +71,81 @@ describe('createCustomXcmOnDest', () => {
     senderAddress: '0xSender',
     destLocation: mockHeader,
     beneficiaryLocation: mockBeneficiary,
-    multiAsset: mockMultiAsset,
+    asset: mockAsset,
     destination: defaultDestination,
     version
   } as Partial<TPolkadotXCMTransferOptions<unknown, unknown>>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isChainEvm).mockReturnValue(false)
   })
 
   it('should throw an error if the asset is not a foreign asset', () => {
     const options = {
       ...baseOptions,
-      asset: {
+      assetInfo: {
         symbol: 'DOT',
-        multiLocation: {} as TMultiLocation,
+        location: {},
         amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(InvalidCurrencyError)
   })
 
   it('should throw an error if senderAddress is missing', () => {
     const options = {
       ...baseOptions,
       senderAddress: undefined,
-      asset: {
+      assetInfo: {
         symbol: 'ETH',
-        multiLocation: mockMultiLocation,
+        location: mockLocation,
         amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidParameterError)
+    expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(
+      InvalidParameterError
+    )
   })
 
-  it('should throw an error if node is EVM and ahAddress is missing', () => {
+  it('should throw an error if chain is EVM and ahAddress is missing', () => {
     const options = {
       ...baseOptions,
-      asset: {
+      assetInfo: {
         symbol: 'ETH',
-        multiLocation: mockMultiLocation,
+        location: mockLocation,
         amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidParameterError)
+    expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(
+      InvalidParameterError
+    )
   })
 
   it('should throw an error if Ethereum asset is not found', () => {
     const options = {
       ...baseOptions,
-      asset: {
+      assetInfo: {
         symbol: 'ETH',
-        multiLocation: mockMultiLocation,
+        location: mockLocation,
         amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
+    vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(InvalidCurrencyError)
   })
 
   it('should return a valid XCM message structure', () => {
@@ -152,17 +156,17 @@ describe('createCustomXcmOnDest', () => {
 
     const options = {
       ...baseOptions,
-      asset: {
+      assetInfo: {
         symbol: 'ETH',
-        multiLocation: mockMultiLocation,
+        location: mockLocation,
         amount: 1000000n
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(findAssetByMultiLocation).mockReturnValue(mockEthAsset)
+    vi.mocked(findAssetInfoByLoc).mockReturnValue(mockEthAsset)
 
-    const result = createCustomXcmOnDest(options, mockNode, messageId)
+    const result = createCustomXcmOnDest(options, mockChain, messageId)
 
     expect(result).toBeDefined()
     const xcmV4 = result[version]
@@ -185,7 +189,7 @@ describe('createCustomXcmOnDest', () => {
         assets: {
           Wild: {
             AllOf: {
-              id: mockMultiLocation,
+              id: mockLocation,
               fun: 'Fungible'
             }
           }
@@ -206,7 +210,7 @@ describe('createCustomXcmOnDest', () => {
           {
             BuyExecution: {
               fees: {
-                id: mockMultiLocation,
+                id: mockLocation,
                 fun: { Fungible: 1n }
               },
               weight_limit: 'Unlimited'

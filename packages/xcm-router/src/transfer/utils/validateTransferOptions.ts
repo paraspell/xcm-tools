@@ -9,13 +9,13 @@ export const validateTransferOptions = (options: TBuildTransactionsOptions) => {
 
   if (exchange === undefined && from === undefined) {
     throw new InvalidParameterError(
-      'Cannot use automatic exchange selection without specifying the origin node',
+      'Cannot use automatic exchange selection without specifying the origin chain',
     );
   }
 
   if (to && !recipientAddress) {
     throw new InvalidParameterError(
-      'Recipient address is required when destination node is specified',
+      'Recipient address is required when destination chain is specified',
     );
   }
 

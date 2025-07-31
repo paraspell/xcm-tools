@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import { type TForeignAsset } from '../src'
-import { capitalizeMultiLocation } from './utils'
+import { type TForeignAssetInfo } from '../src'
+import { capitalizeLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
@@ -28,18 +28,18 @@ const ERC20_ABI = [
 export const fetchMoonbeamForeignAssets = async (
   api: ApiPromise,
   query: string,
-  node: 'Moonbeam' | 'Moonriver'
-): Promise<TForeignAsset[]> => {
+  chain: 'Moonbeam' | 'Moonriver'
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
 
   const evmEntries = await api.query[module][method].entries()
 
   const client = createPublicClient({
-    chain: node === 'Moonbeam' ? moonbeam : moonriver,
-    transport: node === 'Moonbeam' ? http() : http('https://moonriver.api.onfinality.io/public')
+    chain: chain === 'Moonbeam' ? moonbeam : moonriver,
+    transport: chain === 'Moonbeam' ? http() : http('https://moonriver.api.onfinality.io/public')
   })
 
-  const evmAssets: TForeignAsset[] = await Promise.all(
+  const evmAssets: TForeignAssetInfo[] = await Promise.all(
     evmEntries.map(
       async ([
         {
@@ -49,7 +49,7 @@ export const fetchMoonbeamForeignAssets = async (
       ]) => {
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
-        const multiLocation = capitalizeMultiLocation(value.toJSON() as any)
+        const location = capitalizeLocation(value.toJSON() as any)
 
         const tokenAddress = formatAssetIdToERC20(numberAssetId)
 
@@ -70,11 +70,11 @@ export const fetchMoonbeamForeignAssets = async (
           decimals: decimals as number,
           existentialDeposit: '1',
           assetId: numberAssetId,
-          multiLocation
+          location
         }
       }
     )
   )
 
-  return evmAssets.filter((a): a is TForeignAsset => a !== null)
+  return evmAssets.filter((a): a is TForeignAssetInfo => a !== null)
 }

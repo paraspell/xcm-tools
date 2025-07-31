@@ -1,34 +1,31 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { getJunctionValue, isRelayChain, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import type { TChainWithRelayChains } from '@paraspell/sdk-common'
+import { getJunctionValue, isRelayChain, Parents, type TLocation } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../nodes/config'
+import { getParaId } from '../../chains/config'
 
 /**
- * This function localizes a multiLocation by removing the `Parachain` junction
+ * This function localizes a location by removing the `Parachain` junction
  * if it exists. The `parents` field is set to `0` either if a `Parachain` was removed
- * or if the resulting interior is `'Here'` and the node is a relay chain.
+ * or if the resulting interior is `'Here'` and the chain is a relay chain.
  *
- * @param node - The current node
- * @param multiLocation - The multiLocation to localize
- * @returns The localized multiLocation
+ * @param chain - The current chain
+ * @param location - The location to localize
+ * @returns The localized location
  */
-export const localizeLocation = (
-  node: TNodeWithRelayChains,
-  multiLocation: TMultiLocation
-): TMultiLocation => {
-  let newInterior: TMultiLocation['interior'] = multiLocation.interior
+export const localizeLocation = (chain: TChainWithRelayChains, location: TLocation): TLocation => {
+  let newInterior: TLocation['interior'] = location.interior
   let parachainRemoved = false
 
-  if (multiLocation.interior !== 'Here') {
-    const paraId = getParaId(node)
+  if (location.interior !== 'Here') {
+    const paraId = getParaId(chain)
 
-    const junctions = Object.values(multiLocation.interior)
+    const junctions = Object.values(location.interior)
       .flat()
       .filter(junction => typeof junction === 'object' && junction !== null)
 
     const filteredJunctions = junctions.filter(junction => {
       if ('Parachain' in junction) {
-        const paraJunctionId = getJunctionValue<number>(multiLocation, 'Parachain')
+        const paraJunctionId = getJunctionValue<number>(location, 'Parachain')
         if (paraJunctionId === paraId) {
           parachainRemoved = true
           return false
@@ -44,10 +41,10 @@ export const localizeLocation = (
     }
   }
 
-  const shouldSetParentsToZero = parachainRemoved || (newInterior === 'Here' && isRelayChain(node))
+  const shouldSetParentsToZero = parachainRemoved || (newInterior === 'Here' && isRelayChain(chain))
 
   return {
-    parents: shouldSetParentsToZero ? Parents.ZERO : multiLocation.parents,
+    parents: shouldSetParentsToZero ? Parents.ZERO : location.parents,
     interior: newInterior
   }
 }

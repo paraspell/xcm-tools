@@ -1,6 +1,6 @@
 // Contains tests for different Asset operation functions
 
-import { NODE_NAMES } from '@paraspell/sdk-common'
+import { CHAIN_NAMES } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -17,9 +17,9 @@ import {
 } from './assets'
 
 describe('getAssetsObject', () => {
-  it('should return assets object for all nodes', () => {
-    NODE_NAMES.forEach(node => {
-      const assets = getAssetsObject(node)
+  it('should return assets object for all chains', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assets = getAssetsObject(chain)
       expect(assets).toEqual(
         expect.objectContaining({
           relayChainAssetSymbol: expect.any(String),
@@ -52,19 +52,19 @@ describe('getRelayChainSymbol', () => {
     const assetId = getRelayChainSymbol('AssetHubPolkadot')
     expect(assetId).toEqual('DOT')
   })
-  it('should return relay chain currency symbol for all nodes', () => {
-    NODE_NAMES.forEach(node => {
-      const assetId = getRelayChainSymbol(node)
+  it('should return relay chain currency symbol for all chains', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assetId = getRelayChainSymbol(chain)
       expect(assetId).toBeTypeOf('string')
     })
   })
 })
 
 describe('getNativeAssets', () => {
-  it('should return native assets for all nodes', () => {
-    NODE_NAMES.forEach(node => {
-      const assets = getNativeAssets(node)
-      if (node !== 'Ethereum') expect(assets.length).toBeGreaterThan(0)
+  it('should return native assets for all chains', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assets = getNativeAssets(chain)
+      if (chain !== 'Ethereum') expect(assets.length).toBeGreaterThan(0)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
         expect(asset).toHaveProperty('symbol')
@@ -75,22 +75,22 @@ describe('getNativeAssets', () => {
 })
 
 describe('getOtherAssets', () => {
-  it('should return other assets or empty array for all nodes', () => {
-    NODE_NAMES.forEach(node => {
-      const assets = getOtherAssets(node)
+  it('should return other assets or empty array for all chains', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assets = getOtherAssets(chain)
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
-        if (!asset.multiLocation) expect(asset).toHaveProperty('assetId')
+        if (!asset.location) expect(asset).toHaveProperty('assetId')
       })
     })
   })
 })
 
 describe('getAllAssetsSymbols', () => {
-  it('should return all assets symbols for node or empty array', () => {
-    NODE_NAMES.forEach(node => {
-      const assetsSymbols = getAllAssetsSymbols(node)
+  it('should return all assets symbols for chain or empty array', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assetsSymbols = getAllAssetsSymbols(chain)
       expect(assetsSymbols).toBeInstanceOf(Array)
       assetsSymbols.forEach(assetSymbol => {
         expect(assetSymbol).toBeTypeOf('string')
@@ -101,13 +101,13 @@ describe('getAllAssetsSymbols', () => {
 
 describe('getAssetDecimals', () => {
   it('should return valid decimals for all available assets', () => {
-    NODE_NAMES.forEach(node => {
+    CHAIN_NAMES.forEach(chain => {
       // Ethereum assets do not have asset decimals available
-      if (node === 'Ethereum') return
-      const obj = getAssetsObject(node)
+      if (chain === 'Ethereum') return
+      const obj = getAssetsObject(chain)
       expect(obj).not.toBeNull()
       ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
-        const decimals = getAssetDecimals(node, asset.symbol)
+        const decimals = getAssetDecimals(chain, asset.symbol)
         expect(decimals).toBeTypeOf('number')
         expect(decimals).toBeGreaterThanOrEqual(0)
       })
@@ -116,9 +116,9 @@ describe('getAssetDecimals', () => {
 })
 
 describe('getSupportedAssets', () => {
-  it('should return supported assets for all nodes', () => {
-    NODE_NAMES.forEach(node => {
-      const assets = getAssetsObject(node)
+  it('should return supported assets for all chains', () => {
+    CHAIN_NAMES.forEach(chain => {
+      const assets = getAssetsObject(chain)
       expect(assets).toEqual(
         expect.objectContaining({
           relayChainAssetSymbol: expect.any(String),
@@ -138,24 +138,24 @@ describe('hasSupportForAsset', () => {
 })
 
 describe('hasDryRunSupport', () => {
-  it('should return true for nodes with dry run support', () => {
+  it('should return true for chains with dry run support', () => {
     const hasSupport = hasDryRunSupport('Polkadot')
     expect(hasSupport).toBe(true)
   })
 
-  it('should return false for nodes without dry run support', () => {
+  it('should return false for chains without dry run support', () => {
     const hasSupport = hasDryRunSupport('Peaq')
     expect(hasSupport).toBe(false)
   })
 })
 
 describe('hasXcmPaymentApiSupport', () => {
-  it('should return true for nodes with XCM payment API support', () => {
+  it('should return true for chains with XCM payment API support', () => {
     const hasSupport = hasXcmPaymentApiSupport('Polkadot')
     expect(hasSupport).toBe(true)
   })
 
-  it('should return false for nodes without XCM payment API support', () => {
+  it('should return false for chains without XCM payment API support', () => {
     const hasSupport = hasXcmPaymentApiSupport('Peaq')
     expect(hasSupport).toBe(false)
   })

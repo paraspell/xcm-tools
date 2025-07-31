@@ -1,39 +1,39 @@
-import { Builder, isForeignAsset, isNodeEvm } from '@paraspell/sdk';
-import type { TAsset, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
+import { Builder, isChainEvm, isForeignAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TChainDotKsmWithRelayChains, TCurrencyInput } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
 
 export const getCurrencySelection = (
-  node: TNodeDotKsmWithRelayChains,
-  asset: TAsset,
+  chain: TChainDotKsmWithRelayChains,
+  asset: TAssetInfo,
 ): TCurrencyInput => {
-  const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama';
+  const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
   if (isForeignAsset(asset) && !isBifrost) {
     if (asset.assetId) return { id: asset.assetId };
-    if (asset.multiLocation) return { multilocation: asset.multiLocation };
+    if (asset.location) return { location: asset.location };
   }
 
   return { symbol: asset.symbol };
 };
 
 const createToExchangeBuilder = ({
-  origin: { api, node: from, assetFrom },
-  exchange: { baseNode },
+  origin: { api, chain: from, assetFrom },
+  exchange: { baseChain },
   senderAddress,
   evmSenderAddress,
   amount,
 }: TBuildToExchangeTxOptions) =>
   Builder(api)
     .from(from)
-    .to(baseNode)
+    .to(baseChain)
     .currency({
       ...getCurrencySelection(from, assetFrom),
       amount,
     })
     .address(senderAddress)
-    .senderAddress(isNodeEvm(from) ? (evmSenderAddress as string) : senderAddress);
+    .senderAddress(isChainEvm(from) ? (evmSenderAddress as string) : senderAddress);
 
 export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
   createToExchangeBuilder(options).build();
@@ -42,16 +42,16 @@ export const getToExchangeFee = (options: TBuildToExchangeTxOptions) =>
   createToExchangeBuilder(options).getXcmFee();
 
 export const createFromExchangeBuilder = ({
-  exchange: { apiPapi, baseNode, assetTo },
-  destination: { node, address },
+  exchange: { apiPapi, baseChain, assetTo },
+  destination: { chain, address },
   amount,
   senderAddress,
 }: TBuildFromExchangeTxOptions) =>
   Builder(apiPapi)
-    .from(baseNode)
-    .to(node)
+    .from(baseChain)
+    .to(chain)
     .currency({
-      ...getCurrencySelection(baseNode, assetTo as TAsset),
+      ...getCurrencySelection(baseChain, assetTo as TAssetInfo),
       amount,
     })
     .address(address)

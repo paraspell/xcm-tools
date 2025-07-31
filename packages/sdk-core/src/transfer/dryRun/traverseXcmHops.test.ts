@@ -1,23 +1,23 @@
-import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getTChain } from '../../chains/getTChain'
 import { InvalidParameterError } from '../../errors'
-import { getTNode } from '../../nodes/getTNode'
 import type { HopTraversalConfig } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetForNodeOrThrow: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   findAssetOnDestOrThrow: vi.fn()
 }))
 
-vi.mock('../../nodes/getTNode', () => ({
-  getTNode: vi.fn()
+vi.mock('../../chains/getTChain', () => ({
+  getTChain: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -55,15 +55,15 @@ describe('traverseXcmHops', () => {
     mockExtractNextHopData = vi.fn()
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ assetId: 'asset1' } as TAsset)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAsset)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ assetId: 'asset1' } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAssetInfo)
   })
 
   it('should process a single hop successfully', async () => {
     const forwardedXcms = [[], [{ value: ['some-data'] }]]
     const destParaId = 1000
 
-    vi.mocked(getTNode).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
 
     mockProcessHop.mockResolvedValue({
       fee: 1000n,
@@ -77,8 +77,8 @@ describe('traverseXcmHops', () => {
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: destParaId,
@@ -116,7 +116,7 @@ describe('traverseXcmHops', () => {
     const forwardedXcms2 = [[], [{ value: ['data2'] }]]
     const forwardedXcms3 = [[], [{ value: ['data3'] }]]
 
-    vi.mocked(getTNode)
+    vi.mocked(getTChain)
       .mockReturnValueOnce('BridgeHubPolkadot')
       .mockReturnValueOnce('Hydration')
       .mockReturnValueOnce('AssetHubPolkadot')
@@ -137,13 +137,13 @@ describe('traverseXcmHops', () => {
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms1,
       initialDestParaId: 1000,
       swapConfig: {
-        exchangeChain: 'Hydration' as TNodeDotKsmWithRelayChains,
+        exchangeChain: 'Hydration' as TChainDotKsmWithRelayChains,
         currencyTo: { id: 'USDT' }
       },
       processHop: mockProcessHop,
@@ -170,15 +170,15 @@ describe('traverseXcmHops', () => {
     expect(mockProcessHop.mock.calls[2][0].hasPassedExchange).toBe(true)
   })
 
-  it('should throw error when getTNode returns null', async () => {
+  it('should throw error when getTChain returns null', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTNode).mockReturnValue(null)
+    vi.mocked(getTChain).mockReturnValue(null)
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000,
@@ -188,21 +188,21 @@ describe('traverseXcmHops', () => {
     }
 
     await expect(traverseXcmHops(config)).rejects.toThrow(
-      new InvalidParameterError('Unable to find TNode for paraId 1000')
+      new InvalidParameterError('Unable to find TChain for paraId 1000')
     )
   })
 
   it('should stop processing when shouldContinue returns false', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTNode).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
     mockProcessHop.mockResolvedValue({ fee: 1000n })
     mockShouldContinue.mockReturnValue(false)
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'Acala' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'Acala' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000,
@@ -220,8 +220,8 @@ describe('traverseXcmHops', () => {
   it('should handle empty forwardedXcms', async () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: [[], []],
       initialDestParaId: 1000,
@@ -242,13 +242,13 @@ describe('traverseXcmHops', () => {
   it('should always disconnect api after processing', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTNode).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
     mockProcessHop.mockRejectedValue(new Error('Processing failed'))
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       api: mockApi,
-      origin: 'Polkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+      origin: 'Polkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000,
@@ -292,7 +292,7 @@ describe('addEthereumBridgeFees', () => {
       mockApi,
       bridgeHubResult,
       'Ethereum',
-      'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
+      'AssetHubPolkadot' as TChainDotKsmWithRelayChains
     )
 
     expect(result).toEqual({
@@ -312,7 +312,7 @@ describe('addEthereumBridgeFees', () => {
       mockApi,
       bridgeHubResult,
       'Acala',
-      'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
+      'AssetHubPolkadot' as TChainDotKsmWithRelayChains
     )
 
     expect(result).toBe(bridgeHubResult)
@@ -326,7 +326,7 @@ describe('addEthereumBridgeFees', () => {
       mockApi,
       undefined,
       'Ethereum',
-      'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
+      'AssetHubPolkadot' as TChainDotKsmWithRelayChains
     )
 
     expect(result).toBeUndefined()

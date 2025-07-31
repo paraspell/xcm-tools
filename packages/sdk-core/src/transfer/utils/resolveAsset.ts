@@ -1,15 +1,15 @@
-import { findAsset, type TAsset, type TCurrencyInput } from '@paraspell/assets'
-import { isTMultiLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { findAssetInfo, type TAssetInfo, type TCurrencyInput } from '@paraspell/assets'
+import { isTLocation, type TChainDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { TDestination } from '../../types'
 
 export const resolveAsset = (
   currency: TCurrencyInput,
-  origin: TNodeDotKsmWithRelayChains,
+  origin: TChainDotKsmWithRelayChains,
   destination: TDestination,
   assetCheckEnabled: boolean
-): TAsset | null => {
+): TAssetInfo | null => {
   return assetCheckEnabled
-    ? findAsset(origin, currency, !isTMultiLocation(destination) ? destination : null)
+    ? findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
     : null
 }

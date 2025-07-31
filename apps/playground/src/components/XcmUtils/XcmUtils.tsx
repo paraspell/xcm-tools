@@ -24,8 +24,7 @@ import {
   Native,
   Override,
   replaceBigInt,
-  type TMultiLocation,
-  type TNodePolkadotKusama,
+  type TLocation,
 } from '@paraspell/sdk';
 import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
@@ -109,19 +108,19 @@ const XcmUtils = () => {
         return {
           symbol: customCurrency,
         };
-      } else if (customCurrencyType === 'overridenMultilocation') {
+      } else if (customCurrencyType === 'overridenLocation') {
         return {
-          multilocation: Override(JSON.parse(customCurrency) as TMultiLocation),
+          location: Override(JSON.parse(customCurrency) as TLocation),
         };
       } else {
         return {
-          multilocation: JSON.parse(customCurrency) as TMultiLocation,
+          location: JSON.parse(customCurrency) as TLocation,
         };
       }
     } else if (currency) {
       const hasDuplicateIds = isRelayChain(from)
         ? false
-        : getOtherAssets(from as TNodePolkadotKusama).filter(
+        : getOtherAssets(from).filter(
             (asset) =>
               isForeignAsset(asset) &&
               isForeignAsset(currency) &&
@@ -134,9 +133,9 @@ const XcmUtils = () => {
         };
       }
 
-      if (currency.multiLocation) {
+      if (currency.location) {
         return {
-          multilocation: currency.multiLocation,
+          location: currency.location,
         };
       }
 

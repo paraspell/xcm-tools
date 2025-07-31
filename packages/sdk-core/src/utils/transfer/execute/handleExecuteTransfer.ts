@@ -1,10 +1,10 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TChainPolkadotKusama, TEcosystemType } from '@paraspell/sdk-common'
 
+import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import { getTNode } from '../../../nodes/getTNode'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
@@ -37,11 +37,20 @@ const MIN_FEE = 1000n
 const FEE_PADDING_PERCENTAGE = 40
 
 export const handleExecuteTransfer = async <TApi, TRes>(
-  chain: TNodePolkadotKusama,
+  chain: TChainPolkadotKusama,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> => {
-  const { api, senderAddress, paraIdTo, asset, currency, feeCurrency, address, feeAsset, version } =
-    options
+  const {
+    api,
+    senderAddress,
+    paraIdTo,
+    assetInfo,
+    currency,
+    feeCurrency,
+    address,
+    feeAssetInfo,
+    version
+  } = options
 
   if (!senderAddress) {
     throw new InvalidParameterError('Please provide senderAddress')
@@ -50,17 +59,17 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   assertAddressIsString(address)
 
   const feeAssetBalance =
-    feeCurrency && feeAsset && !isAssetEqual(asset, feeAsset)
+    feeCurrency && feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
       ? await getAssetBalanceInternal({
           api,
           address: senderAddress,
-          node: chain,
+          chain,
           currency: feeCurrency as TCurrencyCore
         })
       : undefined
 
   const checkAmount = (fee: bigint) => {
-    if (BigInt(asset.amount) <= fee) {
+    if (BigInt(assetInfo.amount) <= fee) {
       throw new InvalidParameterError(
         `Asset amount is too low, please increase the amount or use a different fee asset.`
       )
@@ -69,19 +78,19 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   checkAmount(MIN_FEE)
 
-  const destChain = getTNode(
+  const destChain = getTChain(
     paraIdTo as number,
     getRelayChainOf(chain).toLowerCase() as TEcosystemType
-  ) as TNodePolkadotKusama
+  ) as TChainPolkadotKusama
 
   const internalOptions = {
     api,
     chain,
     destChain,
     address,
-    asset,
+    assetInfo,
     currency,
-    feeAsset,
+    feeAssetInfo,
     feeCurrency,
     recipientAddress: address,
     senderAddress,
@@ -124,7 +133,9 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
   const reserveFee = padFeeBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
 
-  checkAmount(feeAsset && !isAssetEqual(asset, feeAsset) ? reserveFee : originFee + reserveFee)
+  checkAmount(
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee
+  )
 
   const xcm = createDirectExecuteXcm({
     ...internalOptions,

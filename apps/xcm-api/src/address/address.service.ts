@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { convertSs58, TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import { convertSs58, TChainDotKsmWithRelayChains } from '@paraspell/sdk';
 
-import { validateNode } from '../utils.js';
+import { validateChain } from '../utils.js';
 
 @Injectable()
 export class AddressService {
-  convertSs58(address: string, node: string) {
-    validateNode(node, {
+  convertSs58(address: string, chain: string) {
+    validateChain(chain, {
       excludeEthereum: true,
       withRelayChains: true,
     });
-    return convertSs58(address, node as TNodeDotKsmWithRelayChains);
+    return convertSs58(address, chain as TChainDotKsmWithRelayChains);
   }
 }

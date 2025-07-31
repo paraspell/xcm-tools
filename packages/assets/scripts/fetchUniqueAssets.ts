@@ -1,30 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset } from '../src/types'
-import { capitalizeMultiLocation } from './utils'
-import {
-  getParaId,
-  TJunctionGeneralIndex,
-  TJunctionParachain,
-  TMultiLocation
-} from '../../sdk-core/src'
-import { findAsset } from '../src'
-import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk-common'
+import type { TForeignAssetInfo } from '../src/types'
+import { capitalizeLocation } from './utils'
+import { getParaId, TJunctionGeneralIndex, TJunctionParachain, TLocation } from '../../sdk-core/src'
+import { findAssetInfo } from '../src'
+import { CHAINS_WITH_RELAY_CHAINS } from '@paraspell/sdk-common'
 
-const findSimilarAsset = (multilocation: TMultiLocation) => {
-  if (multilocation.interior !== 'Here' && multilocation.interior.X3) {
-    const paraId = (multilocation.interior.X3[0] as TJunctionParachain)['Parachain']
+const findSimilarAsset = (location: TLocation) => {
+  if (location.interior !== 'Here' && location.interior.X3) {
+    const paraId = (location.interior.X3[0] as TJunctionParachain)['Parachain']
 
     if (paraId === getParaId('AssetHubPolkadot')) {
-      const id = (multilocation.interior.X3[2] as TJunctionGeneralIndex)['GeneralIndex']
-      const asset = findAsset('AssetHubPolkadot', { id }, null)
+      const id = (location.interior.X3[2] as TJunctionGeneralIndex)['GeneralIndex']
+      const asset = findAssetInfo('AssetHubPolkadot', { id }, null)
       if (asset) return asset
     }
   }
 
-  for (const node of NODES_WITH_RELAY_CHAINS) {
-    const asset = findAsset(node, { multilocation }, null)
+  for (const chain of CHAINS_WITH_RELAY_CHAINS) {
+    const asset = findAssetInfo(chain, { location }, null)
     if (asset) return asset
   }
   return null
@@ -33,7 +28,7 @@ const findSimilarAsset = (multilocation: TMultiLocation) => {
 export const fetchUniqueForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -45,16 +40,16 @@ export const fetchUniqueForeignAssets = async (
       value
     ]) => {
       const { concrete } = value.toJSON() as any
-      const multiLocation = capitalizeMultiLocation(concrete) as TMultiLocation
-      const asset = findSimilarAsset(multiLocation)
+      const location = capitalizeLocation(concrete) as TLocation
+      const asset = findSimilarAsset(location)
       if (!asset) {
-        throw new Error(`Asset not found for multiLocation: ${JSON.stringify(multiLocation)}`)
+        throw new Error(`Asset not found for location: ${JSON.stringify(location)}`)
       }
       return {
         assetId: era.toHuman() as string,
         symbol: asset.symbol,
         decimals: asset.decimals,
-        multiLocation,
+        location,
         existentialDeposit: '0'
       }
     }

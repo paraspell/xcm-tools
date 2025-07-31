@@ -1,11 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TMultiAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../../errors'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
+
+import { isSystemChain, Version } from '@paraspell/sdk-common'
+
+import { createDestination } from '../../../pallets/xcmPallet/utils'
+import { getChainLocation } from '../../location/getChainLocation'
+import { createAssetsFilter } from './createAssetsFilter'
+import type { TExecuteContext } from './prepareExecuteContext'
+import { prepareExecuteContext } from './prepareExecuteContext'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
@@ -28,17 +36,8 @@ vi.mock('./prepareExecuteContext', () => ({
   prepareExecuteContext: vi.fn()
 }))
 
-// Import mocked functions
-import { isSystemChain, Version } from '@paraspell/sdk-common'
-
-import { createDestination } from '../../../pallets/xcmPallet/utils'
-import { getChainLocation } from '../../location/getChainLocation'
-import { createAssetsFilter } from './createAssetsFilter'
-import type { TExecuteContext } from './prepareExecuteContext'
-import { prepareExecuteContext } from './prepareExecuteContext'
-
 describe('createBaseExecuteXcm', () => {
-  const mockMultiAsset: TMultiAsset = {
+  const mockAsset: TAsset = {
     id: { Concrete: { parents: 0, interior: 'Here' } },
     fun: { Fungible: 1000n }
   }
@@ -56,9 +55,9 @@ describe('createBaseExecuteXcm', () => {
 
   const mockPrepareExecuteContext = {
     amount: 10000n,
-    multiAssetLocalized: mockMultiAsset,
-    multiAssetLocalizedToReserve: mockMultiAsset,
-    multiAssetLocalizedToDest: mockMultiAsset
+    assetLocalized: mockAsset,
+    assetLocalizedToReserve: mockAsset,
+    assetLocalizedToDest: mockAsset
   } as TExecuteContext
 
   const mockDestLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
@@ -91,7 +90,7 @@ describe('createBaseExecuteXcm', () => {
               {
                 BuyExecution: {
                   fees: {
-                    ...mockMultiAsset,
+                    ...mockAsset,
                     fun: { Fungible: 9900n } // amount - originFee
                   },
                   weight_limit: 'Unlimited'
@@ -110,7 +109,7 @@ describe('createBaseExecuteXcm', () => {
       vi.mocked(isSystemChain).mockReturnValue(true)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
-        feeMultiAsset: {} as TMultiAsset
+        feeAsset: {} as TAsset
       })
 
       const result = createBaseExecuteXcm(mockBaseOptions)
@@ -155,7 +154,7 @@ describe('createBaseExecuteXcm', () => {
               {
                 BuyExecution: {
                   fees: {
-                    ...mockMultiAsset,
+                    ...mockAsset,
                     fun: { Fungible: 9998n } // amount - 2n
                   },
                   weight_limit: 'Unlimited'
@@ -169,7 +168,7 @@ describe('createBaseExecuteXcm', () => {
                     {
                       BuyExecution: {
                         fees: {
-                          ...mockMultiAsset,
+                          ...mockAsset,
                           fun: { Fungible: 9850n } // amount - originFee - reserveFee
                         },
                         weight_limit: 'Unlimited'
@@ -209,7 +208,7 @@ describe('createBaseExecuteXcm', () => {
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'Acala',
-        feeMultiAsset: {} as TMultiAsset
+        feeAsset: {} as TAsset
       })
 
       const result = createBaseExecuteXcm(mockBaseOptions)
@@ -240,7 +239,7 @@ describe('createBaseExecuteXcm', () => {
               {
                 BuyExecution: {
                   fees: {
-                    ...mockMultiAsset,
+                    ...mockAsset,
                     fun: { Fungible: 9850n } // amount - originFee - reserveFee
                   },
                   weight_limit: 'Unlimited'
@@ -269,7 +268,7 @@ describe('createBaseExecuteXcm', () => {
               {
                 BuyExecution: {
                   fees: {
-                    ...mockMultiAsset,
+                    ...mockAsset,
                     fun: { Fungible: 9850n }
                   },
                   weight_limit: 'Unlimited'
@@ -350,7 +349,7 @@ describe('createBaseExecuteXcm', () => {
 
       createBaseExecuteXcm(mockBaseOptions)
 
-      expect(createAssetsFilter).toHaveBeenCalledWith(mockMultiAsset)
+      expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
     })
 
     it('should correctly call createDestination with all parameters', () => {

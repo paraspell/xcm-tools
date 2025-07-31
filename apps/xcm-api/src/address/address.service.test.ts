@@ -1,6 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type { TChainDotKsmWithRelayChains } from '@paraspell/sdk';
 import { convertSs58 } from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -20,7 +20,7 @@ vi.mock('@paraspell/sdk', async () => {
 
 describe('AddressService', () => {
   let service: AddressService;
-  let validateNodeSpy: MockInstance;
+  let validateChainSpy: MockInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,7 +28,7 @@ describe('AddressService', () => {
     }).compile();
 
     service = module.get<AddressService>(AddressService);
-    validateNodeSpy = vi.spyOn(utils, 'validateNode');
+    validateChainSpy = vi.spyOn(utils, 'validateChain');
   });
 
   afterEach(() => {
@@ -42,15 +42,15 @@ describe('AddressService', () => {
   describe('convertSs58', () => {
     it('should convert ss58 address', () => {
       const mockAddress = '5GrwvaEF...';
-      const mockNode: TNodeDotKsmWithRelayChains = 'Acala';
+      const mockChain: TChainDotKsmWithRelayChains = 'Acala';
 
-      const result = service.convertSs58(mockAddress, mockNode);
+      const result = service.convertSs58(mockAddress, mockChain);
 
-      expect(validateNodeSpy).toHaveBeenCalledWith(mockNode, {
+      expect(validateChainSpy).toHaveBeenCalledWith(mockChain, {
         excludeEthereum: true,
         withRelayChains: true,
       });
-      expect(convertSs58).toHaveBeenCalledWith(mockAddress, mockNode);
+      expect(convertSs58).toHaveBeenCalledWith(mockAddress, mockChain);
       expect(result).toEqual(mockOutputAddress);
     });
   });

@@ -1,11 +1,11 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
-  TAsset,
-  TNativeAsset,
-  TNode,
-  TNodeAssets,
-  TNodeWithRelayChains,
+  TAssetInfo,
+  TNativeAssetInfo,
+  TChain,
+  TChainAssetsInfo,
+  TChainWithRelayChains,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -19,7 +19,7 @@ import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 describe('AssetsController', () => {
   let controller: AssetsController;
   let assetsService: AssetsService;
-  const node: TNode = 'Acala';
+  const chain: TChain = 'Acala';
   const symbol = 'KSM';
   const decimals = 18;
 
@@ -54,186 +54,190 @@ describe('AssetsController', () => {
       nativeAssets: [{ symbol, decimals, isNative: true }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,
-    } as TNodeAssets;
-    it('should return assets object for a valid node', () => {
+    } as TChainAssetsInfo;
+    it('should return assets object for a valid chain', () => {
       const spy = vi
         .spyOn(assetsService, 'getAssetsObject')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetsObject(node, mockRequestObject);
+      const result = controller.getAssetsObject(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getAssetId', () => {
-    it('should return asset ID for a valid node and symbol', () => {
+    it('should return asset ID for a valid chain and symbol', () => {
       const symbol = 'DOT';
       const mockResult = '1';
       const spy = vi
         .spyOn(assetsService, 'getAssetId')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetId(node, { symbol }, mockRequestObject);
+      const result = controller.getAssetId(
+        chain,
+        { symbol },
+        mockRequestObject,
+      );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node, symbol);
+      expect(spy).toHaveBeenCalledWith(chain, symbol);
     });
   });
 
-  describe('getAssetMultiLocation', () => {
-    it('should return asset multi location for a valid node and symbol', () => {
+  describe('getAssetLocation', () => {
+    it('should return asset location for a valid chain and symbol', () => {
       const mockResult = JSON.stringify({ currency: { symbol } });
       const spy = vi
-        .spyOn(assetsService, 'getAssetMultiLocation')
+        .spyOn(assetsService, 'getAssetLocation')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetMultiLocation(
-        node,
+      const result = controller.getAssetLocation(
+        chain,
         { currency: { symbol } },
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node, { currency: { symbol } });
+      expect(spy).toHaveBeenCalledWith(chain, { currency: { symbol } });
     });
   });
 
   describe('getRelayChainSymbol', () => {
-    it('should return relay chain symbol for a valid node', () => {
+    it('should return relay chain symbol for a valid chain', () => {
       const mockResult = 'KSM';
       const spy = vi
         .spyOn(assetsService, 'getRelayChainSymbol')
         .mockReturnValue(mockResult);
 
-      const result = controller.getRelayChainSymbol(node, mockRequestObject);
+      const result = controller.getRelayChainSymbol(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getNativeAssets', () => {
-    it('should return native assets for a valid node', () => {
+    it('should return native assets for a valid chain', () => {
       const mockResult = [
         { symbol, decimals, isNative: true },
-      ] as TNativeAsset[];
+      ] as TNativeAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getNativeAssets')
         .mockReturnValue(mockResult);
 
-      const result = controller.getNativeAssets(node, mockRequestObject);
+      const result = controller.getNativeAssets(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getOtherAssets', () => {
-    it('should return other assets for a valid node', () => {
+    it('should return other assets for a valid chain', () => {
       const mockResult = [{ assetId: '234123123', symbol: 'FKK', decimals }];
       const spy = vi
         .spyOn(assetsService, 'getOtherAssets')
         .mockReturnValue(mockResult);
 
-      const result = controller.getOtherAssets(node, mockRequestObject);
+      const result = controller.getOtherAssets(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getAllAssetsSymbol', () => {
-    it('should return all assets symbols for a valid node', () => {
+    it('should return all assets symbols for a valid chain', () => {
       const mockResult = [symbol, 'DOT'];
       const spy = vi
         .spyOn(assetsService, 'getAllAssetsSymbols')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAllAssetsSymbol(node, mockRequestObject);
+      const result = controller.getAllAssetsSymbol(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 
   describe('getDecimals', () => {
-    it('should return decimals for a valid node and symbol', () => {
+    it('should return decimals for a valid chain and symbol', () => {
       const mockResult = 18;
       const spy = vi
         .spyOn(assetsService, 'getDecimals')
         .mockReturnValue(mockResult);
 
       const result = controller.getDecimals(
-        node,
+        chain,
         { symbol },
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node, symbol);
+      expect(spy).toHaveBeenCalledWith(chain, symbol);
     });
   });
 
   describe('hasSupportForAsset', () => {
-    it('should return true if asset is supported for a valid node and symbol', () => {
+    it('should return true if asset is supported for a valid chain and symbol', () => {
       const mockResult = true;
       const spy = vi
         .spyOn(assetsService, 'hasSupportForAsset')
         .mockReturnValue(mockResult);
 
       const result = controller.hasSupportForAsset(
-        node,
+        chain,
         { symbol },
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node, symbol);
+      expect(spy).toHaveBeenCalledWith(chain, symbol);
     });
   });
 
   describe('getSupportedAssets', () => {
-    it('should return supported assets for a valid node origin and destination', () => {
-      const nodeOrigin = 'Acala';
-      const nodeDestination = 'Karura';
+    it('should return supported assets for a valid chain origin and destination', () => {
+      const originChain = 'Acala';
+      const destChain = 'Karura';
       const mockResult = [
         {
           symbol: 'DOT',
           assetId: '1234',
         },
-      ] as TAsset[];
+      ] as TAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getSupportedAssets')
         .mockReturnValue(mockResult);
 
       const result = controller.getSupportedAssets(
-        { origin: nodeOrigin, destination: nodeDestination },
+        { origin: originChain, destination: destChain },
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(nodeOrigin, nodeDestination);
+      expect(spy).toHaveBeenCalledWith(originChain, destChain);
     });
   });
 
   describe('getSupportedDestinations', () => {
-    it('should return supported destinations for a valid node and parameters', () => {
-      const node: TNodeWithRelayChains = 'Acala';
+    it('should return supported destinations for a valid chain and parameters', () => {
+      const chain: TChainWithRelayChains = 'Acala';
       const params = { currency: { symbol: 'KSM' } };
-      const mockResult: TNodeWithRelayChains[] = ['Moonbeam', 'Hydration'];
+      const mockResult: TChainWithRelayChains[] = ['Moonbeam', 'Hydration'];
       const spy = vi
         .spyOn(assetsService, 'getSupportedDestinations')
         .mockReturnValue(mockResult);
       const result = controller.getSupportedDestinations(
-        node,
+        chain,
         params,
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node, params);
+      expect(spy).toHaveBeenCalledWith(chain, params);
     });
   });
 
@@ -260,18 +264,18 @@ describe('AssetsController', () => {
   });
 
   describe('getFeeAssets', () => {
-    it('should return fee assets for a valid node', () => {
+    it('should return fee assets for a valid chain', () => {
       const mockResult = [
         { symbol, decimals, isNative: true },
-      ] as TNativeAsset[];
+      ] as TNativeAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getFeeAssets')
         .mockReturnValue(mockResult);
 
-      const result = controller.getFeeAssets(node, mockRequestObject);
+      const result = controller.getFeeAssets(chain, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
+      expect(spy).toHaveBeenCalledWith(chain);
     });
   });
 });

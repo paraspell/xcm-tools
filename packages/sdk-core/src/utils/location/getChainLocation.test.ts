@@ -1,10 +1,10 @@
 import { Parents } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getParaId } from '../../nodes/config'
+import { getParaId } from '../../chains/config'
 import { getChainLocation } from './getChainLocation'
 
-vi.mock('../../nodes/config', () => ({
+vi.mock('../../chains/config', () => ({
   getParaId: vi.fn()
 }))
 

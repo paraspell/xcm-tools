@@ -1,8 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../src'
 import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
-import { getNodeProviders } from '../../sdk-core/src'
-import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk-common'
+import { getChainProviders } from '../../sdk-core/src'
+import { CHAINS_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk-common'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
   'XcmPallet',
@@ -35,26 +35,26 @@ const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
   }
 }
 
-export const fetchAllNodesPallets = async (assetsMapJson: unknown) => {
+export const fetchAllChainsPallets = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
-  for (const node of NODES_WITH_RELAY_CHAINS_DOT_KSM) {
-    console.log(`Fetching pallets for ${node}...`)
+  for (const chain of CHAINS_WITH_RELAY_CHAINS_DOT_KSM) {
+    console.log(`Fetching pallets for ${chain}...`)
 
-    const newData = await fetchTryMultipleProvidersWithTimeout(node, getNodeProviders, api =>
+    const newData = await fetchTryMultipleProvidersWithTimeout(chain, getChainProviders, api =>
       composePalletMapObject(api)
     )
     const isError = newData === null
-    const oldData = Object.prototype.hasOwnProperty.call(output, node) ? output[node] : null
+    const oldData = Object.prototype.hasOwnProperty.call(output, chain) ? output[chain] : null
 
-    // If we don't have newData and also oldData continue to another node
+    // If we don't have newData and also oldData continue to another chain
     // Error has to be solved manually by developer
     // Unit tests will fail
     if (!newData && !oldData) {
       continue
     }
 
-    // In case we cannot fetch data for some node. Keep existing
-    output[node] = isError && oldData ? oldData : (newData as TPalletMap)
+    // In case we cannot fetch data for some chain. Keep existing
+    output[chain] = isError && oldData ? oldData : (newData as TPalletMap)
   }
   return output
 }

@@ -1,23 +1,23 @@
-import { TNode } from '@paraspell/sdk-common'
+import { TChain } from '@paraspell/sdk-common'
 import { TAssetJsonMap, isForeignAsset } from '../src'
 
 const collectDuplicateSymbolsInChains = (
   assetsMap: TAssetJsonMap
 ): {
-  [node: string]: { [symbol: string]: string[] }
+  [chain: string]: { [symbol: string]: string[] }
 } => {
-  const chainDuplicates: { [node: string]: { [symbol: string]: string[] } } = {}
+  const chainDuplicates: { [chain: string]: { [symbol: string]: string[] } } = {}
 
-  for (const node in assetsMap) {
-    const nodeData = assetsMap[node as TNode]
+  for (const chain in assetsMap) {
+    const chainData = assetsMap[chain as TChain]
     const symbolToAssetKeys: { [symbol: string]: Set<string> } = {}
 
-    const allAssets = [...(nodeData.nativeAssets || []), ...(nodeData.otherAssets || [])]
+    const allAssets = [...(chainData.nativeAssets || []), ...(chainData.otherAssets || [])]
     for (const asset of allAssets) {
       const symbol = asset.symbol
       let assetKey = ''
       if (isForeignAsset(asset)) {
-        assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+        assetKey = asset.assetId ?? JSON.stringify(asset.location)
       }
       if (symbol && assetKey) {
         if (!symbolToAssetKeys[symbol]) {
@@ -36,7 +36,7 @@ const collectDuplicateSymbolsInChains = (
     }
 
     if (Object.keys(duplicates).length > 0) {
-      chainDuplicates[node] = duplicates
+      chainDuplicates[chain] = duplicates
     }
   }
 
@@ -57,18 +57,18 @@ function assignAliasNumbers(assetIds: string[]): { [assetId: string]: number } {
 export const addAliasesToDuplicateSymbols = (assetsMap: TAssetJsonMap): TAssetJsonMap => {
   const chainDuplicates = collectDuplicateSymbolsInChains(assetsMap)
 
-  for (const node in chainDuplicates) {
-    const duplicates = chainDuplicates[node]
+  for (const chain in chainDuplicates) {
+    const duplicates = chainDuplicates[chain]
     for (const symbol in duplicates) {
       const assetIds = duplicates[symbol]
       const aliasNumbers = assignAliasNumbers(assetIds)
 
-      const nodeData = assetsMap[node as TNode]
-      const allAssets = [...(nodeData.nativeAssets || []), ...(nodeData.otherAssets || [])]
+      const chainData = assetsMap[chain as TChain]
+      const allAssets = [...(chainData.nativeAssets || []), ...(chainData.otherAssets || [])]
 
       for (const asset of allAssets) {
         if (asset.symbol === symbol && isForeignAsset(asset)) {
-          const assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+          const assetKey = asset.assetId ?? JSON.stringify(asset.location)
           const aliasNumber = aliasNumbers[assetKey]
           if (aliasNumber !== undefined) {
             asset.alias = `${symbol}${aliasNumber}`

@@ -52,15 +52,13 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   const asset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const destCurrency = asset.multiLocation
-    ? { multilocation: asset.multiLocation }
-    : { symbol: asset.symbol }
+  const destCurrency = asset.location ? { location: asset.location } : { symbol: asset.symbol }
 
   const ed = getExistentialDepositOrThrow(destination, destCurrency)
 
   const balance = await getAssetBalanceInternal({
     address,
-    node: destination,
+    chain: destination,
     api: destApi,
     currency: destCurrency
   })
@@ -86,7 +84,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   if (destFee === undefined) {
     throw new InvalidParameterError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${destination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${destination}.`
     )
   }
 

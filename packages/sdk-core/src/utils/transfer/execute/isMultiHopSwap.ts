@@ -1,10 +1,10 @@
-import { getNativeAssetSymbol, type TAsset } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
+import type { TChainPolkadotKusama } from '@paraspell/sdk-common'
 
 export const isMultiHopSwap = (
-  exchangeChain: TNodePolkadotKusama,
-  assetFrom: TAsset,
-  assetTo: TAsset
+  exchangeChain: TChainPolkadotKusama,
+  assetFrom: TAssetInfo,
+  assetTo: TAssetInfo
 ): boolean => {
   const isAssetHub = exchangeChain.includes('AssetHub')
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)

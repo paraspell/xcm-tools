@@ -4,7 +4,7 @@
     "assets": [
       {
         "symbol": "DOT",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -14,7 +14,7 @@
       {
         "symbol": "USDC",
         "assetId": "1337",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -34,7 +34,7 @@
       {
         "symbol": "USDt",
         "assetId": "1984",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -54,7 +54,7 @@
       {
         "symbol": "PINK",
         "assetId": "23",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -74,7 +74,7 @@
       {
         "symbol": "DED",
         "assetId": "30",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -93,7 +93,7 @@
       },
       {
         "symbol": "WETH",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -116,7 +116,7 @@
       },
       {
         "symbol": "KSM",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X1": [
@@ -131,7 +131,7 @@
       },
       {
         "symbol": "TEER",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -144,7 +144,7 @@
       },
       {
         "symbol": "LAOS",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -157,7 +157,7 @@
       },
       {
         "symbol": "USDC",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -180,7 +180,7 @@
       },
       {
         "symbol": "GLMR",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -196,7 +196,7 @@
       },
       {
         "symbol": "MYTH",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -209,7 +209,7 @@
       },
       {
         "symbol": "ETH",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X1": [
@@ -226,7 +226,7 @@
       },
       {
         "symbol": "USDT",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -249,7 +249,7 @@
       },
       {
         "symbol": "AJUN",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -262,7 +262,7 @@
       },
       {
         "symbol": "wstETH",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -285,7 +285,7 @@
       },
       {
         "symbol": "tBTC",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -314,7 +314,7 @@
     "assets": [
       {
         "symbol": "KSM",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -324,7 +324,7 @@
       {
         "symbol": "USDt",
         "assetId": "1984",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -344,7 +344,7 @@
       {
         "symbol": "BILL",
         "assetId": "223",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -363,7 +363,7 @@
       },
       {
         "symbol": "DOT",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X1": [
@@ -378,7 +378,7 @@
       },
       {
         "symbol": "FREN",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -391,7 +391,7 @@
       },
       {
         "symbol": "TEER",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -411,7 +411,7 @@
       {
         "symbol": "USDC",
         "assetId": "22",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -431,7 +431,7 @@
       {
         "symbol": "aUSDC",
         "assetId": "1003",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -451,7 +451,7 @@
       {
         "symbol": "USDT",
         "assetId": "10",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -471,7 +471,7 @@
       {
         "symbol": "aUSDT",
         "assetId": "1002",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -491,7 +491,7 @@
       {
         "symbol": "WBTC",
         "assetId": "19",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -514,7 +514,7 @@
       {
         "symbol": "aWBTC",
         "assetId": "1004",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -534,7 +534,7 @@
       {
         "symbol": "DOT",
         "assetId": "5",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -544,7 +544,7 @@
       {
         "symbol": "aDOT",
         "assetId": "1001",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -564,7 +564,7 @@
       {
         "symbol": "vDOT",
         "assetId": "15",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -584,7 +584,7 @@
       {
         "symbol": "avDOT",
         "assetId": "1005",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -604,7 +604,7 @@
       {
         "symbol": "tBTC",
         "assetId": "1000765",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -628,7 +628,7 @@
       {
         "symbol": "atBTC",
         "assetId": "1006",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -651,7 +651,7 @@
       {
         "symbol": "GDOT",
         "assetId": "69",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -674,7 +674,7 @@
       {
         "symbol": "GETH",
         "assetId": "420",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -694,7 +694,7 @@
       {
         "symbol": "ETH",
         "assetId": "34",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X1": [
@@ -712,7 +712,7 @@
       {
         "symbol": "aETH",
         "assetId": "1007",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -731,7 +731,7 @@
       },
       {
         "symbol": "HDX",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -748,7 +748,7 @@
       {
         "symbol": "CRU",
         "assetId": "27",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -762,7 +762,7 @@
       {
         "symbol": "NODL",
         "assetId": "26",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -779,7 +779,7 @@
       {
         "symbol": "UNQ",
         "assetId": "25",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -793,7 +793,7 @@
       {
         "symbol": "MYTH",
         "assetId": "30",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -807,7 +807,7 @@
       {
         "symbol": "PEN",
         "assetId": "1000081",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -824,7 +824,7 @@
       {
         "symbol": "LAOS",
         "assetId": "3370",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -838,7 +838,7 @@
       {
         "symbol": "WUD",
         "assetId": "1000085",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -861,7 +861,7 @@
       {
         "symbol": "SUB",
         "assetId": "24",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -875,7 +875,7 @@
       {
         "symbol": "AJUN",
         "assetId": "32",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -895,7 +895,7 @@
       {
         "symbol": "EWT",
         "assetId": "252525",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -909,7 +909,7 @@
       {
         "symbol": "KSM",
         "assetId": "1000771",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X1": [
@@ -928,7 +928,7 @@
       {
         "symbol": "INTR",
         "assetId": "17",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -951,7 +951,7 @@
       {
         "symbol": "KILT",
         "assetId": "28",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -965,7 +965,7 @@
       {
         "symbol": "WETH",
         "assetId": "20",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -991,7 +991,7 @@
       {
         "symbol": "GLMR",
         "assetId": "16",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1008,7 +1008,7 @@
       {
         "symbol": "BNC",
         "assetId": "14",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1028,7 +1028,7 @@
       {
         "symbol": "SKY",
         "assetId": "1000795",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1052,7 +1052,7 @@
       {
         "symbol": "RING",
         "assetId": "31",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1069,7 +1069,7 @@
       {
         "symbol": "vASTR",
         "assetId": "33",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1089,7 +1089,7 @@
       {
         "symbol": "LINK",
         "assetId": "1000794",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1113,7 +1113,7 @@
       {
         "symbol": "CFG",
         "assetId": "13",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1136,7 +1136,7 @@
       {
         "symbol": "AAVE",
         "assetId": "1000624",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1160,7 +1160,7 @@
       {
         "symbol": "PHA",
         "assetId": "8",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -1174,7 +1174,7 @@
       {
         "symbol": "ZTG",
         "assetId": "12",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1194,7 +1194,7 @@
       {
         "symbol": "ASTR",
         "assetId": "9",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -1208,7 +1208,7 @@
       {
         "symbol": "SOL",
         "assetId": "1000752",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1234,7 +1234,7 @@
       {
         "symbol": "DAI",
         "assetId": "18",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1257,7 +1257,7 @@
       {
         "symbol": "USDC",
         "assetId": "21",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1280,7 +1280,7 @@
       {
         "symbol": "USDT",
         "assetId": "23",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1303,7 +1303,7 @@
       {
         "symbol": "iBTC",
         "assetId": "11",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1323,7 +1323,7 @@
       {
         "symbol": "USDC",
         "assetId": "1000766",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1347,7 +1347,7 @@
       {
         "symbol": "USDT",
         "assetId": "1000767",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1374,7 +1374,7 @@
       {
         "symbol": "wstETH",
         "assetId": "1000809",
-        "multiLocation": {
+        "location": {
           "parents": 2,
           "interior": {
             "X2": [
@@ -1403,7 +1403,7 @@
     "assets": [
       {
         "symbol": "KSM",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -1413,7 +1413,7 @@
       {
         "symbol": "RMRK",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1432,7 +1432,7 @@
       },
       {
         "symbol": "KAR",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1451,7 +1451,7 @@
       },
       {
         "symbol": "LKSM",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1470,7 +1470,7 @@
       },
       {
         "symbol": "aSEED",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1490,7 +1490,7 @@
       {
         "symbol": "QTZ",
         "assetId": "2",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -1507,7 +1507,7 @@
       {
         "symbol": "CSM",
         "assetId": "5",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -1521,7 +1521,7 @@
       {
         "symbol": "ARIS",
         "assetId": "1",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1540,7 +1540,7 @@
       },
       {
         "symbol": "KINT",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1563,7 +1563,7 @@
       {
         "symbol": "tKSM",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -1583,7 +1583,7 @@
       {
         "symbol": "AIR",
         "assetId": "12",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -1605,7 +1605,7 @@
       },
       {
         "symbol": "KBTC",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -3613,7 +3613,7 @@
     "assets": [
       {
         "symbol": "ACA",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -3632,7 +3632,7 @@
       },
       {
         "symbol": "aSEED",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -3651,7 +3651,7 @@
       },
       {
         "symbol": "LDOT",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -3671,7 +3671,7 @@
       {
         "symbol": "DAMN",
         "assetId": "19",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -3690,7 +3690,7 @@
       },
       {
         "symbol": "DOT",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -3700,7 +3700,7 @@
       {
         "symbol": "UNQ",
         "assetId": "10",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X1": [
@@ -3714,7 +3714,7 @@
       {
         "symbol": "USDT",
         "assetId": "12",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -3734,7 +3734,7 @@
       {
         "symbol": "LOTY",
         "assetId": "20",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -3754,7 +3754,7 @@
       {
         "symbol": "IBTC",
         "assetId": "3",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -3774,7 +3774,7 @@
       {
         "symbol": "lcDOT",
         "assetId": "13",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -3794,7 +3794,7 @@
       {
         "symbol": "LOVA",
         "assetId": "18",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -3814,7 +3814,7 @@
       {
         "symbol": "INTR",
         "assetId": "4",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5590,7 +5590,7 @@
     "assets": [
       {
         "symbol": "BNC",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5612,7 +5612,7 @@
       },
       {
         "symbol": "KSM",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -5621,7 +5621,7 @@
       },
       {
         "symbol": "ZLK",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5640,7 +5640,7 @@
       },
       {
         "symbol": "KAR",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5662,7 +5662,7 @@
       },
       {
         "symbol": "RMRK",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -5681,7 +5681,7 @@
       },
       {
         "symbol": "vKSM",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5701,7 +5701,7 @@
       {
         "symbol": "USDT",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X3": [
@@ -5721,7 +5721,7 @@
       {
         "symbol": "KBTC",
         "assetId": "2",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5740,7 +5740,7 @@
       },
       {
         "symbol": "vBNC",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5759,7 +5759,7 @@
       },
       {
         "symbol": "MOVR",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -5775,7 +5775,7 @@
       },
       {
         "symbol": "vMOVR",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6198,7 +6198,7 @@
     "assets": [
       {
         "symbol": "BNC",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6218,7 +6218,7 @@
       {
         "symbol": "vFIL",
         "assetId": "4",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6238,7 +6238,7 @@
       {
         "symbol": "GLMR",
         "assetId": "1",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6255,7 +6255,7 @@
       {
         "symbol": "vGLMR",
         "assetId": "1",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6275,7 +6275,7 @@
       {
         "symbol": "DOT",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "Here": null
@@ -6285,7 +6285,7 @@
       {
         "symbol": "vDOT",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6305,7 +6305,7 @@
       {
         "symbol": "vsDOT",
         "assetId": "0",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [
@@ -6325,7 +6325,7 @@
       {
         "symbol": "FIL",
         "assetId": "4",
-        "multiLocation": {
+        "location": {
           "parents": 1,
           "interior": {
             "X2": [

@@ -1,9 +1,9 @@
 import type { ApiPromise } from '@polkadot/api'
-import { getAllAssetsSymbols, type TForeignAsset } from '../src'
-import { getParaId, NODES_WITH_RELAY_CHAINS, TMultiLocation } from '../../sdk-core/src'
-import { capitalizeMultiLocation } from './utils'
+import { getAllAssetsSymbols, type TForeignAssetInfo } from '../src'
+import { getParaId, CHAINS_WITH_RELAY_CHAINS, TLocation } from '../../sdk-core/src'
+import { capitalizeLocation } from './utils'
 
-const buildEthereumMultiLocation = (address: string): TMultiLocation => ({
+const buildEthereumLocation = (address: string): TLocation => ({
   parents: 2,
   interior: {
     X2: [
@@ -29,14 +29,14 @@ const STATIC_FOREIGN_ASSETS = [
 export const fetchAssetHubAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
 
-  const otherNodes = NODES_WITH_RELAY_CHAINS.filter(node => !node.includes('AssetHub'))
+  const otherChains = CHAINS_WITH_RELAY_CHAINS.filter(chain => !chain.includes('AssetHub'))
 
   const allSymbols = new Set<string>()
-  otherNodes.forEach(node => {
-    const symbols = getAllAssetsSymbols(node)
+  otherChains.forEach(chain => {
+    const symbols = getAllAssetsSymbols(chain)
     symbols.forEach(symbol => {
       allSymbols.add(symbol.toLowerCase())
     })
@@ -65,7 +65,7 @@ export const fetchAssetHubAssets = async (
             assetId,
             symbol,
             decimals: +decimals,
-            multiLocation: {
+            location: {
               parents: 1,
               interior: {
                 X3: [
@@ -85,14 +85,14 @@ export const fetchAssetHubAssets = async (
   const parsedForeignAssets = await Promise.all(
     foreignAssets.map(async ([key, value]) => {
       const era = (key as any).args[0]
-      const multiLocation = era.toJSON() ?? {}
+      const location = era.toJSON() ?? {}
       const assetDetail = await api.query.foreignAssets.asset(era)
       const { symbol, decimals } = (value as any).toHuman()
 
       return {
         symbol,
         decimals: +decimals,
-        multiLocation: capitalizeMultiLocation(multiLocation),
+        location: capitalizeLocation(location),
         existentialDeposit: (assetDetail.toHuman() as any).minBalance.replace(/,/g, '')
       }
     })
@@ -100,14 +100,14 @@ export const fetchAssetHubAssets = async (
 
   const parsedStaticAssets = await Promise.all(
     STATIC_FOREIGN_ASSETS.map(async asset => {
-      const multiLocation = buildEthereumMultiLocation(asset.address)
-      const assetDetail = await api.query.foreignAssets.asset(multiLocation)
+      const location = buildEthereumLocation(asset.address)
+      const assetDetail = await api.query.foreignAssets.asset(location)
       const existentialDeposit = (assetDetail.toHuman() as any).minBalance.replace(/,/g, '')
 
       return {
         symbol: asset.symbol,
         decimals: asset.decimals,
-        multiLocation,
+        location,
         existentialDeposit
       }
     })

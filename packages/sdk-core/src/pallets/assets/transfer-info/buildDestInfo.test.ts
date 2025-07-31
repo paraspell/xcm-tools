@@ -1,6 +1,6 @@
-import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import { type TNodeDotKsmWithRelayChains, type TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { type TChainDotKsmWithRelayChains, type TChainWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -48,7 +48,7 @@ describe('buildDestInfo', () => {
   const DEFAULT_BALANCE = 50000000000n
   const DEFAULT_FEE = 100000000n
   const DEFAULT_AMOUNT = 20000000000n
-  const MULTILOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+  const LOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -66,14 +66,14 @@ describe('buildDestInfo', () => {
       symbol: 'GLMR',
       assetId: 'glmrid',
       decimals: 18,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
 
     baseOptions = {
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'Moonbeam' as TNodeWithRelayChains,
+      origin: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
+      destination: 'Moonbeam' as TChainWithRelayChains,
       address: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
       originFee: 50000000n,
@@ -83,11 +83,11 @@ describe('buildDestInfo', () => {
       bridgeFee: undefined
     }
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return 'DOT'
-      if (node === 'AssetHubKusama') return 'KSM'
-      if (node === 'Moonbeam') return 'GLMR'
-      if (node === 'Ethereum') return 'ETH'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return 'DOT'
+      if (chain === 'AssetHubKusama') return 'KSM'
+      if (chain === 'Moonbeam') return 'GLMR'
+      if (chain === 'Ethereum') return 'ETH'
       return 'NATIVE'
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
@@ -113,8 +113,8 @@ describe('buildDestInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockClonedApi,
       address: options.address,
-      node: options.destination,
-      currency: { multilocation: MULTILOCATION }
+      chain: options.destination,
+      currency: { location: LOCATION }
     })
 
     expect(result.receivedCurrency.currencySymbol).toBe('GLMR')
@@ -138,9 +138,9 @@ describe('buildDestInfo', () => {
       symbol: 'GLMR',
       assetId: 'glmrid',
       decimals: 18,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: undefined // No ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = { ...baseOptions, api: mockApi }
     await expect(buildDestInfo(options)).rejects.toThrow(InvalidParameterError)
   })
@@ -169,8 +169,8 @@ describe('buildDestInfo', () => {
     const ahToAhBase = {
       ...baseOptions,
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'AssetHubKusama' as TNodeWithRelayChains
+      origin: 'AssetHubPolkadot' as TChainDotKsmWithRelayChains,
+      destination: 'AssetHubKusama' as TChainWithRelayChains
     }
 
     it('calculates receivedAmount for native asset transfer with bridgeFee', async () => {
@@ -178,11 +178,11 @@ describe('buildDestInfo', () => {
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      } as TAssetInfo)
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -204,11 +204,11 @@ describe('buildDestInfo', () => {
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      } as TAssetInfo)
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -231,11 +231,11 @@ describe('buildDestInfo', () => {
         symbol: 'USDT',
         assetId: 'usdtAssetId',
         decimals: 6,
-        multiLocation: MULTILOCATION,
+        location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAsset)
-      vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-        if (node === ahToAhBase.origin) return 'DOT'
+      } as TAssetInfo)
+      vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+        if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
       })
       const options = {
@@ -258,9 +258,9 @@ describe('buildDestInfo', () => {
       symbol: 'USDT',
       assetId: 'usdtId',
       decimals: 6,
-      multiLocation: MULTILOCATION,
+      location: LOCATION,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = {
       ...baseOptions,
       api: mockApi,
@@ -289,13 +289,13 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.sufficient).toBe(expectedSufficient)
   })
 
-  it('should use destAsset.symbol if multiLocation is not present for getExistentialDeposit call', async () => {
+  it('should use destAsset.symbol if location is not present for getExistentialDeposit call', async () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'CFG',
       assetId: 'cfgId',
       decimals: 18,
       existentialDeposit: DEFAULT_ED
-    } as TAsset)
+    } as TAssetInfo)
     const options = {
       ...baseOptions,
       api: mockApi
@@ -330,8 +330,8 @@ describe('buildDestInfo', () => {
       destFeeDetail: { fee: DEFAULT_FEE, currency: 'SOME_OTHER_FEE_TOKEN' } as TXcmFeeDetail
     }
     const nativeBalanceForFee = 70000000000n
-    vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
-      node === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>
+      chain === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
     )
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(nativeBalanceForFee)
 

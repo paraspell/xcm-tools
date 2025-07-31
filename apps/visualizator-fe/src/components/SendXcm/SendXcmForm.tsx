@@ -1,13 +1,17 @@
 import { Button, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk';
-import { isRelayChain, NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { TChainDotKsmWithRelayChains, TChainWithRelayChains } from '@paraspell/sdk';
+import {
+  CHAINS_WITH_RELAY_CHAINS,
+  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
+  isRelayChain
+} from '@paraspell/sdk';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type FormValues = {
-  from: TNodeDotKsmWithRelayChains;
-  to: TNodeWithRelayChains;
+  from: TChainDotKsmWithRelayChains;
+  to: TChainWithRelayChains;
   currency: string;
   address: string;
   amount: string;
@@ -38,7 +42,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label={t('senderParachain')}
           placeholder={t('pickValue')}
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={[...CHAINS_WITH_RELAY_CHAINS_DOT_KSM]}
           searchable
           required
           {...form.getInputProps('from')}
@@ -47,7 +51,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label={t('recipientParachain')}
           placeholder={t('pickValue')}
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={[...CHAINS_WITH_RELAY_CHAINS]}
           searchable
           required
           {...form.getInputProps('to')}

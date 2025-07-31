@@ -12,22 +12,20 @@ import { XcmAnalyserDto } from './dto/xcm-analyser.dto.js';
 
 @Injectable()
 export class XcmAnalyserService {
-  getMultiLocationPaths({ multilocation, xcm }: XcmAnalyserDto) {
-    if (!multilocation && !xcm) {
-      throw new BadRequestException(
-        'Either multilocation or xcm must be provided',
-      );
+  getLocationPaths({ location, xcm }: XcmAnalyserDto) {
+    if (!location && !xcm) {
+      throw new BadRequestException('Either location or xcm must be provided');
     }
 
-    if (multilocation && xcm) {
+    if (location && xcm) {
       throw new BadRequestException(
-        'Only one of multilocation or xcm must be provided',
+        'Only one of location or xcm must be provided',
       );
     }
 
     try {
-      if (multilocation) {
-        return `"${convertMultilocationToUrl(multilocation)}"`;
+      if (location) {
+        return `"${convertMultilocationToUrl(location)}"`;
       } else {
         return convertXCMToUrls(xcm as unknown[]);
       }

@@ -1,4 +1,4 @@
-import type { TNode } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
 /**
  * Used to inform user, that Parachain they wish to use has not yet implemented full XCM Support
@@ -7,10 +7,10 @@ export class NoXCMSupportImplementedError extends Error {
   /**
    * Constructs a new NoXCMSupportImplementedError.
    *
-   * @param node - The node for which XCM support is not implemented.
+   * @param chain - The chain for which XCM support is not implemented.
    */
-  constructor(node: TNode) {
-    super(`No XCM support implemented for ${node} node yet.`)
+  constructor(chain: TChain) {
+    super(`No XCM support implemented for chain ${chain} yet.`)
     this.name = 'NoXCMSupportImplemented'
   }
 }

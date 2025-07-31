@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  TAsset,
+  TAssetInfo,
   TCurrencyCore,
   TCurrencyInput,
   WithAmount,
   WithComplexAmount
 } from '@paraspell/assets'
 import type {
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
+  TChainDotKsmWithRelayChains,
+  TChainPolkadotKusama,
+  TChainWithRelayChains
 } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
@@ -22,13 +22,13 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
    */
   tx: TRes
   /**
-   * The origin node
+   * The origin chain
    */
-  origin: TNodeDotKsmWithRelayChains
+  origin: TChainDotKsmWithRelayChains
   /**
-   * The destination node
+   * The destination chain
    */
-  destination: TNodeWithRelayChains
+  destination: TChainWithRelayChains
   /**
    * The sender address
    */
@@ -40,7 +40,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   // Used when there is an asset swap on some hop
   swapConfig?: {
     currencyTo: TCurrencyCore
-    exchangeChain: TNodePolkadotKusama
+    exchangeChain: TChainPolkadotKusama
   }
 }
 
@@ -66,8 +66,8 @@ export type TGetXcmFeeBuilderOptions = {
 
 export type TGetOriginXcmFeeBaseOptions<TRes> = {
   tx: TRes
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+  origin: TChainDotKsmWithRelayChains
+  destination: TChainWithRelayChains
   senderAddress: string
   currency: WithComplexAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
@@ -87,31 +87,31 @@ export type TAttemptDryRunFeeOptions<TApi, TRes> = Omit<
   builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
 }
 
-export type TGetFeeForDestNodeBaseOptions = {
-  prevNode: TNodeDotKsmWithRelayChains
-  origin: TNodeDotKsmWithRelayChains
-  destination: TNodeWithRelayChains
+export type TGetFeeForDestChainBaseOptions = {
+  prevChain: TChainDotKsmWithRelayChains
+  origin: TChainDotKsmWithRelayChains
+  destination: TChainWithRelayChains
   senderAddress: string
   address: string
   currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
-  asset: TAsset
+  asset: TAssetInfo
   originFee: bigint
   feeAsset?: TCurrencyInput
   disableFallback: boolean
 }
 
-export type TGetFeeForDestNodeOptions<TApi, TRes> = WithApi<
-  TGetFeeForDestNodeBaseOptions,
+export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<
+  TGetFeeForDestChainBaseOptions,
   TApi,
   TRes
 >
 
 export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
-  TGetFeeForDestNodeOptions<TApi, TRes>,
-  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee' | 'prevNode'
+  TGetFeeForDestChainOptions<TApi, TRes>,
+  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee' | 'prevChain'
 > & {
-  destination: TNodeDotKsmWithRelayChains
+  destination: TChainDotKsmWithRelayChains
 }
 
 export type THubKey = 'assetHub' | 'bridgeHub'
@@ -157,7 +157,7 @@ export type TDestXcmFeeDetail<TDisableFallback extends boolean> = Omit<
 }
 
 export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
-  chain: TNodeWithRelayChains
+  chain: TChainWithRelayChains
   result: TConditionalXcmFeeDetail<TDisableFallback>
 }
 
@@ -166,10 +166,10 @@ export type TXcmFeeChain =
   | 'destination'
   | 'assetHub'
   | 'bridgeHub'
-  | TNodeWithRelayChains
+  | TChainWithRelayChains
 
 export type TXcmFeeHopInfo = {
-  chain: TNodeWithRelayChains
+  chain: TChainWithRelayChains
   result: TXcmFeeDetail
 }
 

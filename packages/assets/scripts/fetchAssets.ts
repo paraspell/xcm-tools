@@ -5,18 +5,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import {
-  findAssetByMultiLocation,
+  findAssetInfoByLoc,
   getNativeAssetSymbol,
   type TAssetJsonMap,
-  type TForeignAsset,
-  type TNativeAsset,
-  type TNodeAssets
+  type TForeignAssetInfo,
+  type TNativeAssetInfo,
+  type TChainAssetsInfo
 } from '../src'
 import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
-import { nodeToQuery } from './nodeToQueryMap'
+import { chainToQuery } from './chainToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeLocation } from './utils'
 import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifrostAssets'
 import { fetchCentrifugeAssets } from './fetchCentrifugeAssets'
 import { fetchExistentialDeposit } from './fetchEd'
@@ -30,12 +30,12 @@ import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
 import {
   isRelayChain,
   TJunction,
-  TMultiLocation,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains
+  TLocation,
+  TChainPolkadotKusama,
+  TChainWithRelayChains
 } from '@paraspell/sdk-common'
-import { getNodeProviders, getParaId, reverseTransformMultiLocation } from '../../sdk-core/src'
-import { getRelayChainSymbolOf, isNodeEvm } from './utils'
+import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
+import { getRelayChainSymbolOf, isChainEvm } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
@@ -48,7 +48,7 @@ import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 
-const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
+const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAssetInfo[]> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
@@ -62,9 +62,9 @@ const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]
 }
 
 const resolveNativeAssets = async (
-  chain: TNodePolkadotKusama,
+  chain: TChainPolkadotKusama,
   api: ApiPromise
-): Promise<TNativeAsset[]> => {
+): Promise<TNativeAssetInfo[]> => {
   if (chain === 'Penpal') {
     return [
       {
@@ -79,31 +79,31 @@ const resolveNativeAssets = async (
 }
 
 const fetchNativeAssets = async (
-  node: TNodePolkadotKusama,
+  chain: TChainPolkadotKusama,
   api: ApiPromise,
   query: string
-): Promise<TNativeAsset[]> => {
-  let nativeAssets: TNativeAsset[] = []
+): Promise<TNativeAssetInfo[]> => {
+  let nativeAssets: TNativeAssetInfo[] = []
 
-  if (node === 'Curio') {
+  if (chain === 'Curio') {
     nativeAssets = await fetchNativeAssetsCurio(api, query)
   }
 
-  if (node.includes('Bifrost')) {
+  if (chain.includes('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
-  if (node === 'Jamton') {
+  if (chain === 'Jamton') {
     nativeAssets = await fetchZeitgeistNativeAssets(api, query, 'Native')
   }
 
-  if (node === 'Acala' || node === 'Karura') {
-    nativeAssets = await fetchAcalaNativeAssets(node, api, query)
+  if (chain === 'Acala' || chain === 'Karura') {
+    nativeAssets = await fetchAcalaNativeAssets(chain, api, query)
   }
 
-  const transformed = nativeAssets.length > 0 ? nativeAssets : await resolveNativeAssets(node, api)
+  const transformed = nativeAssets.length > 0 ? nativeAssets : await resolveNativeAssets(chain, api)
 
-  const nativeSymbol = getNativeAssetSymbol(node)
+  const nativeSymbol = getNativeAssetSymbol(chain)
 
   const reordered = transformed.sort((a, b) => {
     if (a.symbol === nativeSymbol) return -1
@@ -111,9 +111,9 @@ const fetchNativeAssets = async (
     return 0
   })
 
-  const paraId = getParaId(node)
+  const paraId = getParaId(chain)
 
-  const CUSTOM_NATIVE_JUNCTIONS: Partial<Record<TNodeWithRelayChains, TJunction>> = {
+  const CUSTOM_NATIVE_JUNCTIONS: Partial<Record<TChainWithRelayChains, TJunction>> = {
     Nodle: { PalletInstance: 2 },
     Crab: { PalletInstance: 5 },
     Darwinia: { PalletInstance: 5 },
@@ -142,13 +142,13 @@ const fetchNativeAssets = async (
     Hydration: { GeneralIndex: 0 }
   }
 
-  const getNativeLocation = (symbol: string): TMultiLocation | null => {
-    let interior: TMultiLocation['interior'] | null = null
+  const getNativeLocation = (symbol: string): TLocation | null => {
+    let interior: TLocation['interior'] | null = null
 
-    if (symbol === getRelayChainSymbolOf(node)) {
+    if (symbol === getRelayChainSymbolOf(chain)) {
       interior = { Here: null }
     } else if (symbol === nativeSymbol) {
-      const customJunction = CUSTOM_NATIVE_JUNCTIONS[node]
+      const customJunction = CUSTOM_NATIVE_JUNCTIONS[chain]
 
       interior = customJunction
         ? { X2: [{ Parachain: paraId }, customJunction] }
@@ -158,17 +158,16 @@ const fetchNativeAssets = async (
     return interior ? { parents: 1, interior } : null
   }
 
-  const cleanAsset = (asset: TNativeAsset): TNativeAsset => {
+  const cleanAsset = (asset: TNativeAssetInfo): TNativeAssetInfo => {
     const generatedLoc = getNativeLocation(asset.symbol)
 
-    const multiLocation =
-      asset.multiLocation ?? (generatedLoc ? capitalizeMultiLocation(generatedLoc) : null)
+    const location = asset.location ?? (generatedLoc ? capitalizeLocation(generatedLoc) : null)
 
     return {
       ...asset,
       isNative: true,
       existentialDeposit: asset.existentialDeposit?.replace(/,/g, ''),
-      ...(multiLocation && { multiLocation })
+      ...(location && { location })
     }
   }
 
@@ -178,7 +177,7 @@ const fetchNativeAssets = async (
 const fetchOtherAssetsDefault = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
+): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
 
   const res = await api.query[module][method].entries()
@@ -214,7 +213,10 @@ const fetchOtherAssetsDefault = async (
   return results.filter(asset => asset.symbol !== null)
 }
 
-const fetchNativeAssetsCurio = async (api: ApiPromise, query: string): Promise<TNativeAsset[]> => {
+const fetchNativeAssetsCurio = async (
+  api: ApiPromise,
+  query: string
+): Promise<TNativeAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
   return res
@@ -308,100 +310,103 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   return symbols[0]
 }
 
-const resolveNativeAsset = async (node: TNodePolkadotKusama, api: ApiPromise): Promise<string> => {
+const resolveNativeAsset = async (
+  chain: TChainPolkadotKusama,
+  api: ApiPromise
+): Promise<string> => {
   // Return hardcoded value for Penpal because query returns null
-  if (node === 'Penpal') return 'UNIT'
+  if (chain === 'Penpal') return 'UNIT'
   return fetchNativeAsset(api)
 }
 
 const fetchOtherAssets = async (
-  node: TNodePolkadotKusama,
+  chain: TChainPolkadotKusama,
   api: ApiPromise,
   query: string
-): Promise<TForeignAsset[]> => {
-  let otherAssets: TForeignAsset[] = []
+): Promise<TForeignAssetInfo[]> => {
+  let otherAssets: TForeignAssetInfo[] = []
 
-  if (node.includes('AssetHub')) {
+  if (chain.includes('AssetHub')) {
     otherAssets = await fetchAssetHubAssets(api, query)
   }
 
-  if (node.includes('Zeitgeist') || node === 'Jamton') {
+  if (chain.includes('Zeitgeist') || chain === 'Jamton') {
     otherAssets = await fetchZeitgeistForeignAssets(
       api,
       query,
-      node === 'Jamton' ? 'Native' : undefined
+      chain === 'Jamton' ? 'Native' : undefined
     )
   }
 
-  if (node === 'Acala' || node === 'Karura') {
+  if (chain === 'Acala' || chain === 'Karura') {
     otherAssets = await fetchAcalaForeignAssets(api, query)
   }
 
-  if (node === 'Amplitude') {
+  if (chain === 'Amplitude') {
     otherAssets = await fetchOtherAssetsAmplitude(api, query)
   }
 
-  if (node === 'Curio') {
+  if (chain === 'Curio') {
     otherAssets = await fetchOtherAssetsCurio(api, query)
   }
 
-  if (node === 'ComposableFinance') {
+  if (chain === 'ComposableFinance') {
     otherAssets = await fetchComposableAssets(api, query)
   }
 
-  if (node.includes('Bifrost')) {
+  if (chain.includes('Bifrost')) {
     otherAssets = await fetchBifrostForeignAssets(api, query)
   }
 
-  if (node === 'Centrifuge' || node === 'Altair') {
+  if (chain === 'Centrifuge' || chain === 'Altair') {
     otherAssets = await fetchCentrifugeAssets(api, query)
   }
 
-  if (node === 'Pendulum') {
+  if (chain === 'Pendulum') {
     otherAssets = await fetchPendulumForeignAssets(api, query)
   }
 
-  if (node === 'Moonbeam' || node === 'Moonriver') {
-    otherAssets = await fetchMoonbeamForeignAssets(api, query, node)
+  if (chain === 'Moonbeam' || chain === 'Moonriver') {
+    otherAssets = await fetchMoonbeamForeignAssets(api, query, chain)
   }
 
-  if (node === 'Unique' || node === 'Quartz') {
+  if (chain === 'Unique' || chain === 'Quartz') {
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (node === 'Polimec' || node.includes('Kilt') || node === 'Penpal') {
+  if (chain === 'Polimec' || chain.includes('Kilt') || chain === 'Penpal') {
     otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 
-  if (node.includes('Ajuna')) {
+  if (chain.includes('Ajuna')) {
     otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 
-  if (node === 'Manta') {
+  if (chain === 'Manta') {
     otherAssets = await fetchMantaOtherAssets(api, query)
   }
 
-  if (node === 'Phala') {
+  if (chain === 'Phala') {
     otherAssets = await fetchPhalaAssets(api, query)
   }
 
-  if (node === 'Astar' || node === 'Shiden') {
+  if (chain === 'Astar' || chain === 'Shiden') {
     otherAssets = await fetchAstarAssets(api, query)
   }
 
-  if (node === 'Darwinia') {
+  if (chain === 'Darwinia') {
     otherAssets = await fetchDarwiniaAssets(api, query)
   }
 
-  if (node === 'Interlay' || node === 'Kintsugi') {
+  if (chain === 'Interlay' || chain === 'Kintsugi') {
     otherAssets = await fetchInterlayAssets(api, query)
   }
 
-  if (node.includes('Hydration')) {
+  if (chain.includes('Hydration')) {
     otherAssets = await fetchHydrationAssets(api, query)
   }
 
-  if (node === 'Basilisk') {
+  if (chain === 'Basilisk') {
     otherAssets = await fetchBasiliskAssets(api, query)
   }
 
@@ -410,30 +415,30 @@ const fetchOtherAssets = async (
 
 const DEFAULT_SS58_PREFIX = 42
 
-const fetchNodeAssets = async (
-  node: TNodePolkadotKusama,
+const fetchChainAssets = async (
+  chain: TChainPolkadotKusama,
   api: ApiPromise,
   query: string[]
-): Promise<Partial<TNodeAssets>> => {
+): Promise<Partial<TChainAssetsInfo>> => {
   let ss58Prefix = DEFAULT_SS58_PREFIX
   try {
     ss58Prefix = +api.consts.system.ss58Prefix.toString()
   } catch (e) {
-    console.warn(`[${node}] ss58Prefix unavailable - using default 42`, e)
+    console.warn(`[${chain}] ss58Prefix unavailable - using default 42`, e)
   }
 
   const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
-  const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
+  const feeAssets: TLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
 
-  const nativeAssetSymbol = await resolveNativeAsset(node, api)
+  const nativeAssetSymbol = await resolveNativeAsset(chain, api)
 
   const queryPath = query[0]
 
-  let globalOtherAssets: TForeignAsset[] = []
-  let queryOtherAssets: TForeignAsset[] = []
+  let globalOtherAssets: TForeignAssetInfo[] = []
+  let queryOtherAssets: TForeignAssetInfo[] = []
 
   if (queryPath) {
-    queryOtherAssets = await fetchOtherAssets(node, api, queryPath)
+    queryOtherAssets = await fetchOtherAssets(chain, api, queryPath)
   }
 
   let mergedAssets = globalOtherAssets.map(globalAsset => {
@@ -458,17 +463,17 @@ const fetchNodeAssets = async (
     )
   }
 
-  const nativeAssets = (await fetchNativeAssets(node, api, queryPath)) ?? []
+  const nativeAssets = (await fetchNativeAssets(chain, api, queryPath)) ?? []
 
   mergedAssets = mergedAssets.filter(asset => asset.assetId !== 'Native')
 
   if (feeAssets.length > 0) {
-    const allAssets = [...nativeAssets, ...mergedAssets] as unknown as TForeignAsset[]
+    const allAssets = [...nativeAssets, ...mergedAssets] as unknown as TForeignAssetInfo[]
 
     feeAssets.forEach(loc => {
       const matched =
-        findAssetByMultiLocation(allAssets, loc) ||
-        findAssetByMultiLocation(allAssets, reverseTransformMultiLocation(loc))
+        findAssetInfoByLoc(allAssets, loc) ||
+        findAssetInfoByLoc(allAssets, reverseTransformLocation(loc))
       if (matched) {
         matched.isFeeAsset = true
       }
@@ -482,37 +487,37 @@ const fetchNodeAssets = async (
     otherAssets: mergedAssets,
     nativeAssetSymbol,
     ss58Prefix,
-    isEVM: isNodeEvm(api),
+    isEVM: isChainEvm(api),
     supportsDryRunApi: supportsRuntimeApi(api, 'dryRunApi'),
     supportsXcmPaymentApi
   }
 }
 
-export const fetchAllNodesAssets = async (assetsMapJson: any) => {
+export const fetchAllChainsAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
-  for (const [node, query] of Object.entries(nodeToQuery)) {
-    const nodeName = node as TNodeWithRelayChains
+  for (const [chain, query] of Object.entries(chainToQuery)) {
+    const chainName = chain as TChainWithRelayChains
 
-    console.log(`Fetching assets for ${nodeName}...`)
+    console.log(`Fetching assets for ${chainName}...`)
 
     let newData
 
-    if (nodeName === 'Ethereum') {
+    if (chainName === 'Ethereum') {
       newData = await fetchEthereumAssets()
-      output[nodeName] = newData
+      output[chainName] = newData
     } else {
       newData = await fetchTryMultipleProvidersWithTimeout(
-        nodeName as TNodePolkadotKusama,
-        getNodeProviders,
-        api => fetchNodeAssets(nodeName as TNodePolkadotKusama, api, query)
+        chainName as TChainPolkadotKusama,
+        getChainProviders,
+        api => fetchChainAssets(chainName as TChainPolkadotKusama, api, query)
       )
 
       const isError = newData === null
-      const oldData = output[nodeName] ?? null
+      const oldData = output[chainName] ?? null
 
       if (isError && oldData) {
         // If fetching new data fails, keep existing data
-        output[nodeName] = oldData
+        output[chainName] = oldData
       } else {
         // Append manually added assets from oldData to newData
         const manuallyAddedNativeAssets =
@@ -526,15 +531,15 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
         ]
         const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
 
-        output[nodeName] = {
-          relayChainAssetSymbol: getRelayChainSymbolOf(nodeName),
+        output[chainName] = {
+          relayChainAssetSymbol: getRelayChainSymbolOf(chainName),
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
           ss58Prefix: newData?.ss58Prefix ?? DEFAULT_SS58_PREFIX,
           supportsDryRunApi: newData?.supportsDryRunApi ?? false,
           supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
           nativeAssets: combinedNativeAssets,
-          otherAssets: isRelayChain(nodeName) ? [] : combinedOtherAssets
+          otherAssets: isRelayChain(chainName) ? [] : combinedOtherAssets
         }
       }
     }

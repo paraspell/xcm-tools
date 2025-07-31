@@ -7,8 +7,8 @@ import {
   type TXTransferTransferOptions
 } from '../../types'
 import { assertToIsString, createBeneficiaryLocXTokens } from '../../utils'
-import { createMultiAsset, maybeOverrideMultiAsset } from '../../utils/multiAsset'
-import { ERR_MULTILOCATION_DEST_NOT_SUPPORTED } from '../xTokens'
+import { createAsset, maybeOverrideAsset } from '../../utils/asset'
+import { ERR_LOCATION_DEST_NOT_SUPPORTED } from '../xTokens'
 import { determineDestWeight } from './utils/determineDestWeight'
 
 export const transferXTransfer = <TApi, TRes>(
@@ -26,23 +26,18 @@ export const transferXTransfer = <TApi, TRes>(
     paraIdTo
   } = input
 
-  assertToIsString(destination, ERR_MULTILOCATION_DEST_NOT_SUPPORTED)
+  assertToIsString(destination, ERR_LOCATION_DEST_NOT_SUPPORTED)
 
   // XTransfer pallet does not require version specification
   // but the XCM syntax matches the V3 format
   const version = Version.V3
 
-  const multiAsset = createMultiAsset(version, asset.amount, {
+  const multiAsset = createAsset(version, asset.amount, {
     parents: Parents.ZERO,
     interior: 'Here'
   })
 
-  const resolvedMultiAsset = maybeOverrideMultiAsset(
-    version,
-    asset.amount,
-    multiAsset,
-    overriddenAsset
-  )
+  const resolvedMultiAsset = maybeOverrideAsset(version, asset.amount, multiAsset, overriddenAsset)
 
   const dest = createBeneficiaryLocXTokens({
     api,

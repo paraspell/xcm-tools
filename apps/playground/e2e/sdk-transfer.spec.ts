@@ -2,59 +2,59 @@ import { expect, Page } from '@playwright/test';
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
 import { PolkadotjsExtensionPage } from './pom';
 import {
-  NODES_WITH_RELAY_CHAINS,
+  CHAINS_WITH_RELAY_CHAINS,
   getRelayChainSymbol,
-  TNodeWithRelayChains,
+  TChainWithRelayChains,
   getAllAssetsSymbols,
-  TNode,
-  NODE_NAMES_DOT_KSM,
+  TChain,
+  CHAIN_NAMES_DOT_KSM,
 } from '@paraspell/sdk';
 
-const excludedNodes = new Set(['Quartz', 'Bajun', 'CoretimeKusama']);
+const excludedChains = new Set(['Quartz', 'CoretimeKusama']);
 
-const nodes = NODES_WITH_RELAY_CHAINS.filter(
-  (node) => !excludedNodes.has(node),
+const chains = CHAINS_WITH_RELAY_CHAINS.filter(
+  (chain) => !excludedChains.has(chain),
 );
 
-function getRelayChainForNode(node: TNodeWithRelayChains): string {
-  return getRelayChainSymbol(node) === 'DOT' ? 'Polkadot' : 'Kusama';
+function getRelayChainForChain(chain: TChainWithRelayChains): string {
+  return getRelayChainSymbol(chain) === 'DOT' ? 'Polkadot' : 'Kusama';
 }
 
-const getAssetsForNode = (node: TNodeWithRelayChains): string[] => {
-  if (node === 'Pendulum') return ['PEN'];
-  if (node === 'Nodle') return ['NODL'];
-  if (node === 'Crust') return ['EQD'];
-  if (node === 'CrustShadow') return ['KAR'];
-  if (node === 'Phala') return ['PHA'];
-  if (node === 'Mythos') return ['MYTH'];
-  return getAllAssetsSymbols(node);
+const getAssetsForChain = (chain: TChainWithRelayChains): string[] => {
+  if (chain === 'Pendulum') return ['PEN'];
+  if (chain === 'Nodle') return ['NODL'];
+  if (chain === 'Crust') return ['EQD'];
+  if (chain === 'CrustShadow') return ['KAR'];
+  if (chain === 'Phala') return ['PHA'];
+  if (chain === 'Mythos') return ['MYTH'];
+  return getAllAssetsSymbols(chain);
 };
 
-const findTransferableNode = (
-  from: TNodeWithRelayChains,
-): TNode | undefined => {
-  const allFromAssets = getAssetsForNode(from);
+const findTransferableChain = (
+  from: TChainWithRelayChains,
+): TChain | undefined => {
+  const allFromAssets = getAssetsForChain(from);
 
-  const nodeTo = NODE_NAMES_DOT_KSM.filter(
-    (node) => getRelayChainSymbol(node) === getRelayChainSymbol(from),
-  ).find((node) => {
-    const nodeAssets = getAllAssetsSymbols(node);
-    const commonAsset = nodeAssets.filter((asset) =>
+  const chainTo = CHAIN_NAMES_DOT_KSM.filter(
+    (chain) => getRelayChainSymbol(chain) === getRelayChainSymbol(from),
+  ).find((chain) => {
+    const chainAssets = getAllAssetsSymbols(chain);
+    const commonAsset = chainAssets.filter((asset) =>
       allFromAssets.includes(asset),
     )[0];
     return commonAsset !== undefined;
   });
 
-  return nodeTo;
+  return chainTo;
 };
 
-nodes.forEach((node) => {
-  const relayChain = getRelayChainForNode(node);
+chains.forEach((chain) => {
+  const relayChain = getRelayChainForChain(chain);
   if (!relayChain) return;
-  const anotherParaNode = findTransferableNode(node);
-  if (!anotherParaNode) return;
+  const anotherParachain = findTransferableChain(chain);
+  if (!anotherParachain) return;
 
-  basePjsTest.describe(`XCM SDK - Transfer for node ${node}`, () => {
+  basePjsTest.describe(`XCM SDK - Transfer for chain ${chain}`, () => {
     let appPage: Page;
     let extensionPage: PolkadotjsExtensionPage;
 
@@ -68,14 +68,14 @@ nodes.forEach((node) => {
     });
 
     basePjsTest(
-      `Should succeed for ParaToPara transfer ${node} -> ${anotherParaNode}`,
+      `Should succeed for ParaToPara transfer ${chain} -> ${anotherParachain}`,
       async () => {
         await appPage.getByTestId('select-origin').click();
-        await appPage.getByRole('option', { name: node, exact: true }).click();
+        await appPage.getByRole('option', { name: chain, exact: true }).click();
 
         await appPage.getByTestId('select-destination').click();
         await appPage
-          .getByRole('option', { name: anotherParaNode, exact: true })
+          .getByRole('option', { name: anotherParachain, exact: true })
           .click();
 
         await appPage.getByTestId('select-currency').click();
@@ -96,13 +96,13 @@ nodes.forEach((node) => {
       },
     );
 
-    if (!['Crust', 'CrustShadow', 'Phala'].includes(node)) {
+    if (!['Crust', 'CrustShadow', 'Phala'].includes(chain)) {
       basePjsTest(
-        `Should succeed for ParaToRelay transfer ${node} -> ${relayChain}`,
+        `Should succeed for ParaToRelay transfer ${chain} -> ${relayChain}`,
         async () => {
           await appPage.getByTestId('select-origin').click();
           await appPage
-            .getByRole('option', { name: node, exact: true })
+            .getByRole('option', { name: chain, exact: true })
             .click();
 
           await appPage.getByTestId('select-destination').click();
@@ -127,7 +127,7 @@ nodes.forEach((node) => {
     }
 
     basePjsTest(
-      `Should succeed for RelayToPara transfer ${relayChain} -> ${node}`,
+      `Should succeed for RelayToPara transfer ${relayChain} -> ${chain}`,
       async () => {
         await appPage.getByTestId('select-origin').click();
         await appPage
@@ -135,7 +135,7 @@ nodes.forEach((node) => {
           .click();
 
         await appPage.getByTestId('select-destination').click();
-        await appPage.getByRole('option', { name: node, exact: true }).click();
+        await appPage.getByRole('option', { name: chain, exact: true }).click();
 
         await appPage.getByTestId('submit').click();
 

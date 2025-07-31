@@ -15,11 +15,8 @@ export class XcmAnalyserController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(XcmAnalyserSchema))
-  getMultiLocationPaths(
-    @Body() bodyParams: XcmAnalyserDto,
-    @Req() req: Request,
-  ) {
+  getLocationPaths(@Body() bodyParams: XcmAnalyserDto, @Req() req: Request) {
     this.analyticsService.track(EventName.XCM_ANALYSER, req);
-    return this.xcmAnalyserService.getMultiLocationPaths(bodyParams);
+    return this.xcmAnalyserService.getLocationPaths(bodyParams);
   }
 }

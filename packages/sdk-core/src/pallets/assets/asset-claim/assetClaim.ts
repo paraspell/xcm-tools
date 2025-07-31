@@ -9,15 +9,15 @@ import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 export const claimAssets = async <TApi, TRes>(
   options: TAssetClaimOptions<TApi, TRes>
 ): Promise<TRes> => {
-  const { api, node, address } = options
+  const { api, chain, address } = options
 
-  validateAddress(address, node)
+  validateAddress(address, chain)
 
-  await api.init(node, TX_CLIENT_TIMEOUT_MS)
+  await api.init(chain, TX_CLIENT_TIMEOUT_MS)
 
   const args = buildClaimAssetsInput<TApi, TRes>(options)
 
-  const module: TPallet = isRelayChain(node) ? 'XcmPallet' : 'PolkadotXcm'
+  const module: TPallet = isRelayChain(chain) ? 'XcmPallet' : 'PolkadotXcm'
 
   const call = {
     module,

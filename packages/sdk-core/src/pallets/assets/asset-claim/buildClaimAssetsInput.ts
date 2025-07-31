@@ -5,12 +5,12 @@ import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 
 export const buildClaimAssetsInput = <TApi, TRes>({
   api,
-  multiAssets,
+  assets,
   address,
   version = Version.V4
 }: TAssetClaimOptions<TApi, TRes>) => ({
   assets: {
-    [version]: multiAssets
+    [version]: assets
   },
   beneficiary: {
     [version]: buildBeneficiaryInput(api, address)

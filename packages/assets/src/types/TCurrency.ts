@@ -1,6 +1,6 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 
-import type { TMultiAsset } from './TMultiAsset'
+import type { TAsset } from './TAsset'
 
 export type TAmount = string | number | bigint
 
@@ -11,9 +11,9 @@ export type TSymbolSpecifier = {
   value: string
 }
 
-export type TOverrideMultiLocationSpecifier = {
+export type TOverrideLocationSpecifier = {
   type: 'Override'
-  value: TMultiLocation
+  value: TLocation
 }
 
 export type TCurrencySymbolValue = string | TSymbolSpecifier
@@ -28,26 +28,26 @@ export type TCurrencyCore =
       id: TCurrency
     }
   | {
-      multilocation: TMultiLocationValue
+      location: TLocationValue
     }
 
-export type TMultiAssetWithFee = TMultiAsset & { isFeeAsset?: boolean }
+export type TAssetWithFee = TAsset & { isFeeAsset?: boolean }
 
-export type TMultiLocationValue = string | TMultiLocation
+export type TLocationValue = string | TLocation
 
-export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier
+export type TLocationValueWithOverride = TLocationValue | TOverrideLocationSpecifier
 
 export type TCurrencyInputWithAmount =
   | WithComplexAmount<
-      TCurrencySymbol | { id: TCurrency } | { multilocation: TMultiLocationValueWithOverride }
+      TCurrencySymbol | { id: TCurrency } | { location: TLocationValueWithOverride }
     >
-  | { multiasset: TMultiAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
+  | { multiasset: TAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
 
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
-  | { multilocation: TMultiLocationValueWithOverride }
-  | { multiasset: TMultiAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
+  | { location: TLocationValueWithOverride }
+  | { multiasset: TAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
 
 export type WithAmount<TBase, T = bigint> = TBase & {
   amount: T

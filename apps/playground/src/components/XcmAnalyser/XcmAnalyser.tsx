@@ -50,7 +50,7 @@ export const XcmAnalyser = () => {
 
   const convertUsingApi = async (input: string) => {
     return fetchFromApi(
-      { multilocation: JSON.parse(input) as Record<string, unknown> },
+      { location: JSON.parse(input) as Record<string, unknown> },
       '/xcm-analyser',
       'POST',
       true,
