@@ -134,7 +134,7 @@ describe('Ajuna', () => {
 
       const opts = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        asset: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

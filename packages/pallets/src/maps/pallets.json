@@ -792,5 +792,49 @@
         "index": 99
       }
     ]
+  },
+  "EnergyWebX": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "EnergyWebXPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "IntegriteeKusama": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 34
+      }
+    ]
+  },
+  "IntegriteePaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 34
+      }
+    ]
   }
 }

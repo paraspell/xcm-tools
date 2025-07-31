@@ -12,8 +12,8 @@
         }
       },
       {
-        "symbol": "USDC",
-        "assetId": "1337",
+        "symbol": "BILL",
+        "assetId": "50000075",
         "multiLocation": {
           "parents": 1,
           "interior": {
@@ -25,7 +25,27 @@
                 "PalletInstance": 50
               },
               {
-                "GeneralIndex": 1337
+                "GeneralIndex": 50000075
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "DED",
+        "assetId": "30",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 30
               }
             ]
           }
@@ -52,6 +72,26 @@
         }
       },
       {
+        "symbol": "USDC",
+        "assetId": "1337",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "PINK",
         "assetId": "23",
         "multiLocation": {
@@ -66,26 +106,6 @@
               },
               {
                 "GeneralIndex": 23
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "DED",
-        "assetId": "30",
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 30
               }
             ]
           }
@@ -202,6 +222,25 @@
             "X1": [
               {
                 "Parachain": 3369
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "vDOT",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
@@ -362,6 +401,26 @@
         }
       },
       {
+        "symbol": "USDt",
+        "assetId": "19840",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 19840
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "DOT",
         "multiLocation": {
           "parents": 2,
@@ -432,12 +491,9 @@
         "symbol": "aUSDC",
         "assetId": "1003",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -472,12 +528,9 @@
         "symbol": "aUSDT",
         "assetId": "1002",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -515,12 +568,9 @@
         "symbol": "aWBTC",
         "assetId": "1004",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -545,12 +595,9 @@
         "symbol": "aDOT",
         "assetId": "1001",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -585,12 +632,9 @@
         "symbol": "avDOT",
         "assetId": "1005",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -629,12 +673,9 @@
         "symbol": "atBTC",
         "assetId": "1006",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -646,18 +687,16 @@
         }
       },
       {
-        "symbol": "2-Pool-GDOT"
+        "symbol": "2-Pool-GDOT",
+        "assetId": "690"
       },
       {
         "symbol": "GDOT",
         "assetId": "69",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -669,18 +708,16 @@
         }
       },
       {
-        "symbol": "2-Pool-GETH"
+        "symbol": "2-Pool-GETH",
+        "assetId": "4200"
       },
       {
         "symbol": "GETH",
         "assetId": "420",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -713,12 +750,9 @@
         "symbol": "aETH",
         "assetId": "1007",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
+            "X1": [
               {
                 "AccountKey20": {
                   "network": null,
@@ -730,20 +764,29 @@
         }
       },
       {
-        "symbol": "HDX",
+        "symbol": "3-Pool",
+        "assetId": "103"
+      },
+      {
+        "symbol": "a3-Pool",
+        "assetId": "1008",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
+            "X1": [
               {
-                "Parachain": 2034
-              },
-              {
-                "GeneralIndex": 0
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xc09cf2f85367f3c2ab66e094283de3a499cb9108"
+                }
               }
             ]
           }
         }
+      },
+      {
+        "symbol": "HDX",
+        "assetId": "0"
       },
       {
         "symbol": "CRU",
@@ -856,6 +899,23 @@
         }
       },
       {
+        "symbol": "NEURO",
+        "assetId": "36",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2043
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "HDXb"
       },
       {
@@ -946,21 +1006,8 @@
         }
       },
       {
-        "symbol": "4-Pool"
-      },
-      {
-        "symbol": "KILT",
-        "assetId": "28",
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2086
-              }
-            ]
-          }
-        }
+        "symbol": "4-Pool",
+        "assetId": "100"
       },
       {
         "symbol": "WETH",
@@ -986,7 +1033,8 @@
         }
       },
       {
-        "symbol": "2-Pool"
+        "symbol": "2-Pool",
+        "assetId": "101"
       },
       {
         "symbol": "GLMR",
@@ -1026,6 +1074,30 @@
         }
       },
       {
+        "symbol": "LDO",
+        "assetId": "1000796",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x5a98fcbea516cf06857215779fd812ca3bef1b32"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "SKY",
         "assetId": "1000795",
         "multiLocation": {
@@ -1043,6 +1115,30 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x56072c95faa701256059aa122697b133aded9279"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "TRAC",
+        "assetId": "35",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f"
                 }
               }
             ]
@@ -1111,27 +1207,8 @@
         }
       },
       {
-        "symbol": "CFG",
-        "assetId": "13",
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "2-Pool"
+        "symbol": "2-Pool",
+        "assetId": "102"
       },
       {
         "symbol": "AAVE",
@@ -1229,7 +1306,8 @@
         }
       },
       {
-        "symbol": "H2O"
+        "symbol": "H2O",
+        "assetId": "1"
       },
       {
         "symbol": "DAI",
@@ -1367,9 +1445,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "3-Pool"
       },
       {
         "symbol": "wstETH",
@@ -6199,12 +6274,9 @@
       {
         "symbol": "BNC",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6219,12 +6291,9 @@
         "symbol": "vFIL",
         "assetId": "4",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6256,12 +6325,9 @@
         "symbol": "vGLMR",
         "assetId": "1",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6286,12 +6352,9 @@
         "symbol": "vDOT",
         "assetId": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6326,12 +6389,9 @@
         "symbol": "FIL",
         "assetId": "4",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6346,12 +6406,9 @@
     "pairs": [
       [
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6362,12 +6419,9 @@
           }
         },
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6393,12 +6447,9 @@
           }
         },
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6411,12 +6462,9 @@
       ],
       [
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6427,12 +6475,9 @@
           }
         },
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6445,12 +6490,9 @@
       ],
       [
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6479,12 +6521,9 @@
       ],
       [
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6503,12 +6542,9 @@
       ],
       [
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6519,12 +6555,9 @@
           }
         },
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,
@@ -6543,12 +6576,9 @@
           }
         },
         {
-          "parents": 1,
+          "parents": 0,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
+            "X1": [
               {
                 "GeneralKey": {
                   "length": 2,

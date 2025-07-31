@@ -181,7 +181,7 @@ class Hydration<TApi, TRes>
       method: 'transfer_keep_alive',
       parameters: {
         dest: address,
-        value: BigInt(asset.amount)
+        value: asset.amount
       }
     })
   }
@@ -197,7 +197,7 @@ class Hydration<TApi, TRes>
       parameters: {
         dest: address,
         currency_id: Number(asset.assetId),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

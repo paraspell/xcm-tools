@@ -285,6 +285,28 @@
       }
     ]
   },
+  "EnergyWebX": {
+    "name": "Energy Web X",
+    "info": "ewx",
+    "paraId": 3345,
+    "providers": [
+      {
+        "name": "Energy Web",
+        "endpoint": "wss://public-rpc.mainnet.energywebx.com/"
+      }
+    ]
+  },
+  "EnergyWebXPaseo": {
+    "name": "PEX",
+    "info": "paseoEwx",
+    "paraId": 3345,
+    "providers": [
+      {
+        "name": "Energy Web",
+        "endpoint": "wss://public-rpc.testnet.energywebx.com/"
+      }
+    ]
+  },
   "Hydration": {
     "name": "Hydration",
     "info": "hydradx",
@@ -305,6 +327,32 @@
       {
         "name": "IBP2",
         "endpoint": "wss://hydration.dotters.network"
+      }
+    ]
+  },
+  "IntegriteeKusama": {
+    "name": "Integritee Network",
+    "info": "integritee",
+    "paraId": 2015,
+    "providers": [
+      {
+        "name": "Integritee",
+        "endpoint": "wss://kusama.api.integritee.network"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://integritee-kusama.api.onfinality.io/public-ws"
+      }
+    ]
+  },
+  "IntegriteePaseo": {
+    "name": "Integritee Network (Paseo)",
+    "info": "integritee",
+    "paraId": 2039,
+    "providers": [
+      {
+        "name": "Integritee",
+        "endpoint": "wss://paseo.api.integritee.network"
       }
     ]
   },
@@ -1143,14 +1191,6 @@
         "endpoint": "wss://westmint-rpc-tn.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/asset-hub-westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://asset-hub-westend.dotters.network"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-asset-hub-rpc.polkadot.io"
       },
@@ -1174,14 +1214,6 @@
         "endpoint": "wss://westend-bridge-hub-rpc-tn.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/bridgehub-westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bridge-hub-westend.dotters.network"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-bridge-hub-rpc.polkadot.io"
       }
@@ -1201,14 +1233,6 @@
         "endpoint": "wss://westend-collectives-rpc-tn.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/collectives-westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://collectives-westend.dotters.network"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-collectives-rpc.polkadot.io"
       }
@@ -1224,14 +1248,6 @@
         "endpoint": "wss://coretime-westend-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/coretime-westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://coretime-westend.dotters.network"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-coretime-rpc.polkadot.io"
       }
@@ -1245,14 +1261,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://people-westend-rpc.n.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-westend.dotters.network"
       },
       {
         "name": "Parity",
@@ -1336,6 +1344,10 @@
       {
         "name": "IBP1",
         "endpoint": "wss://passet-hub-paseo.ibp.network"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://passet-hub-paseo.dotters.network"
       },
       {
         "name": "Parity",
@@ -1511,6 +1523,10 @@
         "endpoint": "wss://polkadot.public.curie.radiumblock.co/ws"
       },
       {
+        "name": "Simply Staking",
+        "endpoint": "wss://spectrum-01.simplystaking.xyz/cG9sa2Fkb3QtMDEtOTFkMmYwZGYtcG9sa2Fkb3Q/uj77qtNEPueW1w/polkadot/mainnet/"
+      },
+      {
         "name": "Stakeworld",
         "endpoint": "wss://dot-rpc.stakeworld.io"
       },
@@ -1579,14 +1595,6 @@
       {
         "name": "Dwellir Tunisia",
         "endpoint": "wss://westend-rpc-tn.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://rpc.ibp.network/westend"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://westend.dotters.network"
       },
       {
         "name": "OnFinality",

@@ -3,28 +3,29 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
+    "@eslint/js": "^9.32.0",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^22.15.28",
-    "eslint": "^9.30.0",
-    "eslint-config-prettier": "^10.1.5",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-tsdoc": "^0.4.0",
-    "globals": "^16.2.0",
+    "globals": "^16.3.0",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.4",
+    "turbo": "^2.5.5",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.0",
+    "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=22"
   },
   "resolutions": {
-    "@polkadot/types-codec": "16.3.1",
-    "@polkadot/api": "16.3.1",
-    "@polkadot/types": "16.3.1",
+    "polkadot-api": "1.14.1",
+    "@polkadot/types-codec": "16.4.3",
+    "@polkadot/api": "16.4.3",
+    "@polkadot/types": "16.4.3",
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
   },
@@ -37,7 +38,6 @@
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",
     "test:watch": "turbo run test:watch",
-    "test:integration": "turbo run test:integration",
     "test:e2e": "turbo run test:e2e",
     "build": "turbo run build",
     "build:packages": "pnpm --filter \"./packages/*\" build",
@@ -50,5 +50,5 @@
     "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@10.12.4"
+  "packageManager": "pnpm@10.14.0"
 }

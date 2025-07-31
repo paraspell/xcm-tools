@@ -29,7 +29,7 @@ export const prepareExecuteContext = ({
   assertHasLocation(asset)
   if (feeAsset) assertHasLocation(feeAsset)
 
-  const amount = BigInt(asset.amount)
+  const amount = asset.amount
   const reserveChain = getAssetReserveChain(chain, destChain, asset.multiLocation)
 
   const multiAsset = createMultiAsset(version, amount, asset.multiLocation)

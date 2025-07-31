@@ -13,7 +13,6 @@
     "test:watch": {
       "cache": false
     },
-    "test:integration": {},
     "test:e2e": {},
     "build": {
       "cache": false,

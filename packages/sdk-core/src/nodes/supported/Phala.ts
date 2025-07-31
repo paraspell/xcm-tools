@@ -31,7 +31,7 @@ class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferT
       parameters: {
         id: BigInt(asset.assetId),
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

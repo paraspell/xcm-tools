@@ -13,7 +13,9 @@ const supportsOnlyNativeAsset: TNode[] = [
   'Phala',
   'Subsocial',
   'Ajuna',
-  'AjunaPaseo'
+  'AjunaPaseo',
+  'IntegriteeKusama',
+  'IntegriteePaseo'
 ]
 
 const assetIdRequired: TNode[] = [
@@ -31,7 +33,11 @@ export const doesNotSupportParaToRelay: TNode[] = [
   'Peaq',
   'Pendulum',
   'Ajuna',
-  'AjunaPaseo'
+  'AjunaPaseo',
+  'IntegriteeKusama',
+  'IntegriteePaseo',
+  'EnergyWebX',
+  'EnergyWebXPaseo'
 ]
 
 export const generateTransferScenarios = (originNode: TNode) => {

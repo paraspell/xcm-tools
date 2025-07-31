@@ -210,7 +210,7 @@ describe.sequential('E2E tests', () => {
             },
           },
         })
-        .currencyTo({ symbol: 'USDT' })
+        .currencyTo({ id: 1984 })
         .amount('5000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
@@ -232,7 +232,7 @@ describe.sequential('E2E tests', () => {
             },
           },
         })
-        .currencyTo({ symbol: 'USDt' })
+        .currencyTo({ id: 1984 })
         .amount('5000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)

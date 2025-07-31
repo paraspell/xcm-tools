@@ -41,7 +41,7 @@ class Kintsugi<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       parameters: {
         dest: address,
         currency_id: this.getCurrencySelection(asset),
-        value: BigInt(asset.amount)
+        value: asset.amount
       }
     })
   }

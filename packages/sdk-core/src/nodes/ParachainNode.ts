@@ -306,7 +306,7 @@ abstract class ParachainNode<TApi, TRes> {
       method: 'transfer_keep_alive',
       parameters: {
         dest: isNodeEvm(this.node) ? address : { Id: address },
-        value: BigInt(asset.amount)
+        value: asset.amount
       }
     })
   }
@@ -322,7 +322,7 @@ abstract class ParachainNode<TApi, TRes> {
       parameters: {
         dest: { Id: address },
         currency_id: BigInt(asset.assetId),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

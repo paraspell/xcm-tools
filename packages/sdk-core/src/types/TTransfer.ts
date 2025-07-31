@@ -221,14 +221,10 @@ export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_mult
 export type TPolkadotXcmMethod =
   | 'limited_teleport_assets'
   | 'limited_reserve_transfer_assets'
-  | 'reserve_transfer_assets'
   | 'reserve_withdraw_assets'
   | 'transfer_assets'
 
-export type TXcmPalletMethod =
-  | 'limited_teleport_assets'
-  | 'reserve_transfer_assets'
-  | 'limited_reserve_transfer_assets'
+export type TXcmPalletMethod = 'limited_teleport_assets' | 'limited_reserve_transfer_assets'
 
 export type TWeight = {
   refTime: bigint

@@ -78,7 +78,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
       parameters: {
         id: BigInt(asset.assetId),
         target: address,
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

@@ -254,7 +254,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
       parameters: {
         id: asset.multiLocation,
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

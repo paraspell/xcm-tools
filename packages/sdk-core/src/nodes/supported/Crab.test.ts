@@ -43,9 +43,13 @@ describe('Crab', () => {
     expect(() => crab.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })
 
-  it('should call transferPolkadotXCM with reserve_transfer_assets for non-ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM with limited_reserve_transfer_assets for non-ParaToPara scenario', async () => {
     await crab.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should throw NodeNotSupportedError when calling transferRelayToPara', () => {
@@ -57,9 +61,11 @@ describe('Crab', () => {
     expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
-        X1: {
-          PalletInstance: 5
-        }
+        X1: [
+          {
+            PalletInstance: 5
+          }
+        ]
       }
     })
   })
@@ -69,9 +75,11 @@ describe('Crab', () => {
     expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, 100n, {
       parents: Parents.ZERO,
       interior: {
-        X1: {
-          PalletInstance: 5
-        }
+        X1: [
+          {
+            PalletInstance: 5
+          }
+        ]
       }
     })
   })

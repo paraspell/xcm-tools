@@ -53,7 +53,7 @@ class Astar<TApi, TRes>
       parameters: {
         id: Number(asset.assetId),
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

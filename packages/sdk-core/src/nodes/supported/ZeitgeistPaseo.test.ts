@@ -16,6 +16,6 @@ describe('ZeitgeistPaseo', () => {
     expect(chain.node).toBe('ZeitgeistPaseo')
     expect(chain.info).toBe('ZeitgeistBatteryStation')
     expect(chain.type).toBe('paseo')
-    expect(chain.version).toBe(Version.V3)
+    expect(chain.version).toBe(Version.V4)
   })
 })

@@ -1,56 +1,40 @@
-// Contains detailed structure of XCM call construction for Ajuna Parachain on Polkadot
+// Contains detailed structure of XCM call construction for the IntegriteeKusama Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
-  TSerializedApiCall,
-  TTransferLocalOptions
-} from '../../types'
+import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
-class Ajuna<TApi, TRes>
-  extends ParachainNode<TApi, TRes>
-  implements IXTokensTransfer, IPolkadotXCMTransfer
-{
+class IntegriteeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor(
-    chain: TNodePolkadotKusama = 'Ajuna',
-    info: string = 'ajuna',
-    type: TEcosystemType = 'polkadot',
+    chain: TNodePolkadotKusama = 'IntegriteeKusama',
+    info: string = 'integritee',
+    type: TEcosystemType = 'kusama',
     version: Version = Version.V4
   ) {
     super(chain, info, type, version)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { scenario, asset } = input
+    const { asset, scenario } = input
 
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
     if (asset.symbol !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(`Asset ${asset.symbol} is not supported by node ${this.node}.`)
+      throw new InvalidCurrencyError(
+        `Asset ${asset.symbol} is not supported by chain ${this.node}.`
+      )
     }
 
-    return transferXTokens(input, this.getNativeAssetSymbol())
-  }
-
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return transferPolkadotXcm(input, 'transfer_assets', 'Unlimited')
-  }
-
-  protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
-    return !(asset.symbol === 'DOT' && destination === 'AssetHubPolkadot')
+    return transferXTokens(input, asset.symbol)
   }
 
   transferRelayToPara(): TSerializedApiCall {
@@ -74,4 +58,4 @@ class Ajuna<TApi, TRes>
   }
 }
 
-export default Ajuna
+export default IntegriteeKusama

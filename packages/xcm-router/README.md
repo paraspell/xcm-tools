@@ -247,8 +247,6 @@ const pairs = getExchangePairs(exchange) // exchange can be also array of exchan
 
 - Run unit tests using `pnpm test`
 
-- Run integration tests using `pnpm test:integration`
-
 XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
 
 ## Contribute to XCM Tools and earn rewards 💰

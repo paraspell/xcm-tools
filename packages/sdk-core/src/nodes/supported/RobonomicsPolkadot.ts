@@ -31,7 +31,7 @@ class RobonomicsPolkadot<TApi, TRes>
       parameters: {
         id: BigInt(asset.assetId),
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

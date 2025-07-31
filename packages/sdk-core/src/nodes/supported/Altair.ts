@@ -39,7 +39,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

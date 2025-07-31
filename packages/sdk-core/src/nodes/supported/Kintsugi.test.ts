@@ -86,7 +86,7 @@ describe('Kintsugi', () => {
 
       const mockOptions = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        asset: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

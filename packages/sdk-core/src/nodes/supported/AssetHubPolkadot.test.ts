@@ -696,7 +696,7 @@ describe('AssetHubPolkadot', () => {
 
       const mockInput = {
         api: mockApi,
-        asset: { symbol: 'USDC', assetId: '123', amount: '1000' },
+        asset: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
@@ -724,7 +724,7 @@ describe('AssetHubPolkadot', () => {
 
       const mockInput = {
         api: mockApi,
-        asset: { symbol: 'USDC', amount: '1000', multiLocation: {} },
+        asset: { symbol: 'USDC', amount: 1000n, multiLocation: {} },
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

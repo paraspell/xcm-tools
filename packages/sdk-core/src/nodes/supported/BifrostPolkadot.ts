@@ -119,7 +119,7 @@ class BifrostPolkadot<TApi, TRes>
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }
