@@ -81,15 +81,13 @@ Afterwards, you should be able to use any of the following commands (from reposi
 
 - Run unit tests using `pnpm test`
 
-- Run integration tests using `pnpm test:integration`
-
 - Run end-to-end tests using `pnpm test:e2e`
 
 - Launch the XCM Tools Playground from the root using `pnpm run:playground`
 
 - Launch XCM API from the root using `pnpm run:api`
 
-- Launch the landing page from the root using `pnpm run:landing-page`
+- Launch the landing page from the root using `pnpm run:paraspell-site`
 
 - Run asset update script for XCM SDK from the root using `pnpm run:updateAssets`
 

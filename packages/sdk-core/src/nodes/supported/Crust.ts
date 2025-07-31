@@ -47,7 +47,7 @@ class Crust<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
       parameters: {
         id: BigInt(asset.assetId),
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

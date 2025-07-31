@@ -465,7 +465,7 @@ class AssetHubPolkadot<TApi, TRes>
         parameters: {
           id: Number(asset.assetId),
           target: { Id: address },
-          amount: BigInt(asset.amount)
+          amount: asset.amount
         }
       })
     }
@@ -476,7 +476,7 @@ class AssetHubPolkadot<TApi, TRes>
       parameters: {
         id: asset.multiLocation,
         target: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

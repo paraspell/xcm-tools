@@ -2923,6 +2923,33 @@
       }
     ]
   },
+  "EnergyWebX": {
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "EWT",
+    "isEVM": false,
+    "ss58Prefix": 42,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
+    "nativeAssets": [
+      {
+        "symbol": "EWT",
+        "isNative": true,
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3345
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": []
+  },
   "Hydration": {
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HDX",
@@ -4623,6 +4650,46 @@
         },
         "isFeeAsset": true,
         "alias": "WETH1"
+      }
+    ]
+  },
+  "IntegriteeKusama": {
+    "relayChainAssetSymbol": "KSM",
+    "nativeAssetSymbol": "TEER",
+    "isEVM": false,
+    "ss58Prefix": 13,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
+    "nativeAssets": [
+      {
+        "symbol": "TEER",
+        "isNative": true,
+        "decimals": 12,
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2015
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "0",
+        "symbol": "KSM",
+        "decimals": 12,
+        "existentialDeposit": "3333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       }
     ]
   },
@@ -11047,6 +11114,7 @@
           }
         },
         "existentialDeposit": "100",
+        "isFeeAsset": true,
         "alias": "USDt2"
       },
       {
@@ -14490,6 +14558,33 @@
       }
     ]
   },
+  "EnergyWebXPaseo": {
+    "relayChainAssetSymbol": "PAS",
+    "nativeAssetSymbol": "EWT",
+    "isEVM": false,
+    "ss58Prefix": 42,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
+    "nativeAssets": [
+      {
+        "symbol": "EWT",
+        "isNative": true,
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3345
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": []
+  },
   "HydrationPaseo": {
     "relayChainAssetSymbol": "PAS",
     "nativeAssetSymbol": "HDX",
@@ -15991,6 +16086,40 @@
         },
         "isFeeAsset": true,
         "alias": "WETH1"
+      }
+    ]
+  },
+  "IntegriteePaseo": {
+    "relayChainAssetSymbol": "PAS",
+    "nativeAssetSymbol": "TEER",
+    "isEVM": false,
+    "ss58Prefix": 13,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
+    "nativeAssets": [
+      {
+        "symbol": "TEER",
+        "isNative": true,
+        "decimals": 12,
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2039
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "0",
+        "symbol": "PAS",
+        "decimals": 10,
+        "existentialDeposit": "100000000"
       }
     ]
   },

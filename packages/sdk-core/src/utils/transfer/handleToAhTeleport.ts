@@ -50,8 +50,8 @@ export const handleToAhTeleport = async <TApi, TRes>(
     origin,
     MAX_WEIGHT,
     // Enter dummy fee values just to get the dry run to pass
-    BigInt(asset.amount),
-    BigInt(asset.amount) / 2n
+    asset.amount,
+    asset.amount / 2n
   )
 
   const feeResult = await getXcmFee({

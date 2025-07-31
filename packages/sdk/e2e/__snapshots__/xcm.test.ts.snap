@@ -2409,6 +2409,36 @@ exports[`XCM - e2e > Local transfers (origin = destination) > should create loca
 }
 `;
 
+exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on IntegriteeKusama 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "parameters": {
+    "amount": 1000000000000n,
+    "id": 0,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on IntegriteePaseo 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "parameters": {
+    "amount": 1000000000000n,
+    "id": 0,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfers (origin = destination) > should create local transfer tx on Karura 1`] = `
 {
   "method": "transfer",
@@ -6920,6 +6950,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Altair > ParaToPara > should 
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Altair > ParaToPara > should create transfer tx from Altair to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 3,
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Altair > ParaToPara > should create transfer tx from Altair to Karura - (AIR) 1`] = `
 {
   "method": "transfer",
@@ -7589,6 +7664,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > shou
             {
               "type": "Parachain",
               "value": 1001,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "XCM",
+      "value": 0,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
             },
             {
               "type": "AccountId32",
@@ -11599,6 +11719,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > shoul
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 1,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Basilisk > ParaToPara > should create transfer tx from Basilisk to Karura - (KSM) 1`] = `
 {
   "method": "transfer",
@@ -12352,6 +12514,53 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > should create transfer tx from BifrostKusama to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "Token",
+      "value": {
+        "type": "KSM",
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > should create transfer tx from BifrostKusama to Karura - (BNC) 1`] = `
 {
   "method": "transfer",
@@ -12823,7 +13032,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPaseo > ParaToPara > s
       "value": 0,
     },
     "dest": {
-      "type": "V3",
+      "type": "V4",
       "value": {
         "interior": {
           "type": "X2",
@@ -15916,6 +16125,71 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara >
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara > should create transfer tx from CoretimeKusama to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2015,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin CoretimeKusama > ParaToPara > should create transfer tx from CoretimeKusama to Karura - (KSM) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -16555,6 +16829,71 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > 
           "value": {
             "type": "Parachain",
             "value": 1002,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin CoretimePaseo > ParaToPara > should create transfer tx from CoretimePaseo to IntegriteePaseo - (PAS) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2039,
           },
         },
         "parents": 1,
@@ -18659,7 +18998,7 @@ exports[`XCM - e2e > Transfer scenarios for origin CoretimeWestend > should crea
 
 exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should create transfer tx from Crab to CrustShadow - (CRAB) 1`] = `
 {
-  "method": "reserve_transfer_assets",
+  "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -18722,13 +19061,16 @@ exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should cr
       },
     },
     "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
   },
 }
 `;
 
 exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should create transfer tx from Crab to Karura - (CRAB) 1`] = `
 {
-  "method": "reserve_transfer_assets",
+  "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -18788,13 +19130,16 @@ exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should cr
       },
     },
     "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
   },
 }
 `;
 
 exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should create transfer tx from Crab to Moonriver - (CRAB) 1`] = `
 {
-  "method": "reserve_transfer_assets",
+  "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -18854,13 +19199,16 @@ exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should cr
       },
     },
     "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
   },
 }
 `;
 
 exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should create transfer tx from Crab to Shiden - (CRAB) 1`] = `
 {
-  "method": "reserve_transfer_assets",
+  "method": "limited_reserve_transfer_assets",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -18920,6 +19268,9 @@ exports[`XCM - e2e > Transfer scenarios for origin Crab > ParaToPara > should cr
       },
     },
     "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
   },
 }
 `;
@@ -19728,6 +20079,53 @@ exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should c
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should create transfer tx from Curio to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "Token",
+      "value": {
+        "type": "KSM",
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Curio > ParaToPara > should create transfer tx from Curio to Karura - (KSM) 1`] = `
 {
   "method": "transfer",
@@ -20100,6 +20498,142 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
       "value": {
         "interior": {
           "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Hydration - (EWT) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "Here",
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2034,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebXPaseo > ParaToPara > should create transfer tx from EnergyWebXPaseo to HydrationPaseo - (EWT) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "Here",
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2034,
+          },
         },
         "parents": 1,
       },
@@ -20576,6 +21110,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
               "type": "AccountKey20",
               "value": {
                 "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to EnergyWebX - (EWT) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 252525,
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
                   "asBytes": [Function],
                   "asHex": [Function],
                   "asOpaqueBytes": [Function],
@@ -21431,6 +22007,48 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara > should create transfer tx from HydrationPaseo to EnergyWebXPaseo - (EWT) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 252525,
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara > should create transfer tx from HydrationPaseo to KiltPaseo - (KILT) 1`] = `
 {
   "method": "transfer",
@@ -21481,7 +22099,7 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
     "amount": 1000000000000n,
     "currency_id": 5,
     "dest": {
-      "type": "V3",
+      "type": "V4",
       "value": {
         "interior": {
           "type": "X2",
@@ -21494,6 +22112,197 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
               "type": "AccountId32",
               "value": {
                 "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin IntegriteeKusama > ParaToPara > should create transfer tx from IntegriteeKusama to AssetHubKusama - (TEER) 1`] = `
+{
+  "method": "transfer_multiasset",
+  "module": "XTokens",
+  "parameters": {
+    "asset": {
+      "type": "V4",
+      "value": {
+        "fun": {
+          "type": "Fungible",
+          "value": 1000000000000n,
+        },
+        "id": {
+          "interior": {
+            "type": "X1",
+            "value": {
+              "type": "Parachain",
+              "value": 2015,
+            },
+          },
+          "parents": 1,
+        },
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin IntegriteeKusama > ParaToPara > should create transfer tx from IntegriteeKusama to Basilisk - (TEER) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "TEER",
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2090,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin IntegriteeKusama > ParaToPara > should create transfer tx from IntegriteeKusama to Karura - (TEER) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "TEER",
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2000,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin IntegriteeKusama > ParaToPara > should create transfer tx from IntegriteeKusama to Moonriver - (TEER) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "TEER",
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2023,
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
                   "asBytes": [Function],
                   "asHex": [Function],
                   "asOpaqueBytes": [Function],
@@ -22184,6 +22993,53 @@ exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should 
             {
               "type": "Parachain",
               "value": 1001,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should create transfer tx from Karura to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "Token",
+      "value": {
+        "type": "KSM",
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
             },
             {
               "type": "AccountId32",
@@ -26917,6 +27773,90 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > shou
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > should create transfer tx from Moonriver to IntegriteeKusama - (xcTEER) 1`] = `
+{
+  "method": "transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 2015,
+                },
+                {
+                  "type": "GeneralKey",
+                  "value": {
+                    "data": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "length": 4,
+                  },
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2015,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Moonriver > ParaToPara > should create transfer tx from Moonriver to Karura - (MOVR) 1`] = `
 {
   "method": "transfer_assets",
@@ -30080,6 +31020,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to IntegriteeKusama - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "parameters": {
+    "amount": 1000000000000n,
+    "currency_id": 340282366920938463463374607431768211455n,
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 2015,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Karura - (SDN) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -32618,7 +33600,7 @@ exports[`XCM - e2e > Transfer scenarios for origin ZeitgeistPaseo > ParaToPara >
       "value": 0,
     },
     "dest": {
-      "type": "V3",
+      "type": "V4",
       "value": {
         "interior": {
           "type": "X2",
@@ -32663,7 +33645,7 @@ exports[`XCM - e2e > Transfer scenarios for origin ZeitgeistPaseo > ParaToPara >
       "value": 0,
     },
     "dest": {
-      "type": "V3",
+      "type": "V4",
       "value": {
         "interior": {
           "type": "X2",

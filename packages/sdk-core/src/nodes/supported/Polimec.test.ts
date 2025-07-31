@@ -243,7 +243,7 @@ describe('Polimec', () => {
 
       const mockOptions = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100', assetId: '1', multiLocation: {} },
+        asset: { symbol: 'ACA', amount: 100n, assetId: '1', multiLocation: {} },
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 

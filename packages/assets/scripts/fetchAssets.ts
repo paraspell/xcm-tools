@@ -373,7 +373,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 
-  if (node.includes('Ajuna')) {
+  if (node.includes('Ajuna') || node.includes('Integritee')) {
     otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 

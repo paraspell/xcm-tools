@@ -30,10 +30,14 @@ import CrustShadow from '../nodes/supported/CrustShadow'
 import Curio from '../nodes/supported/Curio'
 import Darwinia from '../nodes/supported/Darwinia'
 import Encointer from '../nodes/supported/Encointer'
+import EnergyWebX from '../nodes/supported/EnergyWebX'
+import EnergyWebXPaseo from '../nodes/supported/EnergyWebXPaseo'
 import Heima from '../nodes/supported/Heima'
 import HeimaPaseo from '../nodes/supported/HeimaPaseo'
 import Hydration from '../nodes/supported/Hydration'
 import HydrationPaseo from '../nodes/supported/HydrationPaseo'
+import IntegriteeKusama from '../nodes/supported/IntegriteeKusama'
+import IntegriteePaseo from '../nodes/supported/IntegriteePaseo'
 import Interlay from '../nodes/supported/Interlay'
 import Jamton from '../nodes/supported/Jamton'
 import Karura from '../nodes/supported/Karura'
@@ -82,7 +86,9 @@ export const nodes = <TApi, TRes>() => ({
   Centrifuge: new Centrifuge<TApi, TRes>(),
   ComposableFinance: new ComposableFinance<TApi, TRes>(),
   Darwinia: new Darwinia<TApi, TRes>(),
+  EnergyWebX: new EnergyWebX<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
+  IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
   Jamton: new Jamton<TApi, TRes>(),
@@ -131,13 +137,15 @@ export const nodes = <TApi, TRes>() => ({
   AssetHubPaseo: new AssetHubPaseo<TApi, TRes>(),
   BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),
   CoretimePaseo: new CoretimePaseo<TApi, TRes>(),
+  EnergyWebXPaseo: new EnergyWebXPaseo<TApi, TRes>(),
+  IntegriteePaseo: new IntegriteePaseo<TApi, TRes>(),
+  KiltPaseo: new KiltPaseo<TApi, TRes>(),
   PAssetHub: new PAssetHub<TApi, TRes>(),
   PeoplePaseo: new PeoplePaseo<TApi, TRes>(),
   AjunaPaseo: new AjunaPaseo<TApi, TRes>(),
   BifrostPaseo: new BifrostPaseo<TApi, TRes>(),
   HeimaPaseo: new HeimaPaseo<TApi, TRes>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes>(),
-  KiltPaseo: new KiltPaseo<TApi, TRes>(),
   LaosPaseo: new LaosPaseo<TApi, TRes>(),
   NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes>(),
   NodlePaseo: new NodlePaseo<TApi, TRes>(),

@@ -60,7 +60,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
       : undefined
 
   const checkAmount = (fee: bigint) => {
-    if (BigInt(asset.amount) <= fee) {
+    if (asset.amount <= fee) {
       throw new InvalidParameterError(
         `Asset amount is too low, please increase the amount or use a different fee asset.`
       )

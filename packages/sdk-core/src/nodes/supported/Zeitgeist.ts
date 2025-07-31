@@ -50,7 +50,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }

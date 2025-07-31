@@ -39,7 +39,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
               {
                 id: transformedMultiLocation,
                 fun: {
-                  Fungible: BigInt(asset.amount)
+                  Fungible: asset.amount
                 }
               }
             ]

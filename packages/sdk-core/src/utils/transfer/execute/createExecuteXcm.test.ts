@@ -48,7 +48,7 @@ describe('createExecuteExchangeXcm', () => {
       version: Version.V4,
       asset: {
         multiLocation: { foo: 'bar' },
-        amount: '1000'
+        amount: 1000n
       },
       destination: 'dest',
       paraIdTo: 200,

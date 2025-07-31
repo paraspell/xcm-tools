@@ -37,7 +37,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
       method: 'transfer_native_currency',
       parameters: {
         dest: { Id: address },
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }
@@ -55,7 +55,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: BigInt(asset.amount)
+        amount: asset.amount
       }
     })
   }
