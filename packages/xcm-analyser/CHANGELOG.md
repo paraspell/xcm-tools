@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.8...xcm-analyser-v1.5.9) (2025-07-31)
+
+
+### Documentation
+
+* Add bug bounty into docs🪲 ([085ad79](https://github.com/paraspell/xcm-tools/commit/085ad799f18edb6c088bfe4271cde3c8d9d87a16))
+* Add contact options ([0709bb2](https://github.com/paraspell/xcm-tools/commit/0709bb26210a3c97b913e7518eba01f400a10cd8))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+
 ## [1.5.8](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.7...xcm-analyser-v1.5.8) (2025-06-30)
 
 
