@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.2](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.1...assets-v10.11.2) (2025-08-01)
+
+
+### Bug Fixes
+
+* **assets:** Create constant multilocations accross all chains ([9869d49](https://github.com/paraspell/xcm-tools/commit/9869d499fc4607c58572642413a2882b36822978))
+
 ## [10.11.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.0...assets-v10.11.1) (2025-08-01)
 
 
