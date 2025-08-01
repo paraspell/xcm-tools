@@ -352,8 +352,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               }
 
               const currency = getCurrency()
-              const resolvedAddress = isNodeEvm(destNode) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-              const resolvedSenderAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+              const senderAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+              const address = isNodeEvm(destNode) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               try {
                 const api = await createOrGetApiInstanceForNode(node)
                 const tx = await Builder(api)
@@ -363,8 +363,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     ...currency,
                     amount: MOCK_AMOUNT
                   })
-                  .address(resolvedAddress)
-                  .senderAddress(resolvedSenderAddress)
+                  .address(address)
+                  .senderAddress(senderAddress)
                   .build()
 
                 await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
@@ -400,10 +400,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               ? Native(getRelayChainSymbol(node))
               : getRelayChainSymbol(node)
             const api = await createOrGetApiInstanceForNode(node)
+            const senderAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
             const tx = await Builder(api)
               .from(node)
               .to(getRelayChainOf(node))
               .currency({ symbol, amount: MOCK_AMOUNT })
+              .senderAddress(senderAddress)
               .address(MOCK_ADDRESS)
               .build()
             await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
@@ -416,16 +418,15 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       NODES_WITH_RELAY_CHAINS_DOT_KSM.forEach(node => {
         it(`should create local transfer tx on ${node}`, async () => {
           const api = await createOrGetApiInstanceForNode(node)
-          const resolvedAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-
           const symbol = getRelayChainSymbol(node)
+          const address = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
 
           try {
             const tx = await Builder(api)
               .from(node)
               .to(node)
               .currency({ symbol, amount: MOCK_AMOUNT })
-              .address(resolvedAddress)
+              .address(address)
               .build()
             await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
           } catch (error) {

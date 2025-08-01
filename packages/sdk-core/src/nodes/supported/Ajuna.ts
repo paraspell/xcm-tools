@@ -5,8 +5,8 @@ import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
+import { createTypeAndThenTransfer } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -45,8 +45,11 @@ class Ajuna<TApi, TRes>
     return transferXTokens(input, this.getNativeAssetSymbol())
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return transferPolkadotXcm(input, 'transfer_assets', 'Unlimited')
+  async transferPolkadotXCM<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { api } = input
+    return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
   }
 
   protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {

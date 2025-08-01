@@ -39,7 +39,7 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
-    "polkadot-api": "1.14.1",
+    "polkadot-api": "^1.15.2",
     "react": "^19.1.1",
     "react-apollo-network-status": "^5.3.1",
     "react-dom": "^19.1.1",

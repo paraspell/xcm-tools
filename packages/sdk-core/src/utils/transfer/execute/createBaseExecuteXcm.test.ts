@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TMultiAsset } from '@paraspell/assets'
+import { isSystemChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../../errors'
+import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
+import { getChainLocation } from '../../location/getChainLocation'
+import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
+import type { TExecuteContext } from './prepareExecuteContext'
+import { prepareExecuteContext } from './prepareExecuteContext'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
@@ -27,15 +33,6 @@ vi.mock('./createAssetsFilter', () => ({
 vi.mock('./prepareExecuteContext', () => ({
   prepareExecuteContext: vi.fn()
 }))
-
-// Import mocked functions
-import { isSystemChain, Version } from '@paraspell/sdk-common'
-
-import { createDestination } from '../../../pallets/xcmPallet/utils'
-import { getChainLocation } from '../../location/getChainLocation'
-import { createAssetsFilter } from './createAssetsFilter'
-import type { TExecuteContext } from './prepareExecuteContext'
-import { prepareExecuteContext } from './prepareExecuteContext'
 
 describe('createBaseExecuteXcm', () => {
   const mockMultiAsset: TMultiAsset = {

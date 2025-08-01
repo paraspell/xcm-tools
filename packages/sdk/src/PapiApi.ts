@@ -23,6 +23,7 @@ import type {
   TWeight
 } from '@paraspell/sdk-core'
 import {
+  assertHasId,
   BatchMode,
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -114,7 +115,7 @@ const releasePolkadotClient = (ws: string | string[]) => {
   }
 }
 
-const unsupportedNodes = [
+const unsupportedNodes: TNodeWithRelayChains[] = [
   'ComposableFinance',
   'Interlay',
   'CrustShadow',
@@ -122,7 +123,7 @@ const unsupportedNodes = [
   'RobonomicsKusama',
   'Pendulum',
   'Subsocial'
-] as TNodeWithRelayChains[]
+]
 
 const isHex = (str: string) => {
   return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
@@ -355,32 +356,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       pallet = 'OrmlTokens'
     }
 
-    if (
-      node === 'Hydration' &&
-      (asset.symbol === 'aUSDT' ||
-        asset.symbol === 'aUSDC' ||
-        asset.symbol === 'aDOT' ||
-        asset.symbol === 'atBTC' ||
-        asset.symbol === 'avDOT' ||
-        asset.symbol === 'aETH' ||
-        asset.symbol === 'aWBTC')
-    ) {
-      const currencyId =
-        asset.symbol === 'aUSDT'
-          ? 1002
-          : asset.symbol === 'aUSDC'
-            ? 1003
-            : asset.symbol === 'aDOT'
-              ? 1001
-              : asset.symbol === 'atBTC'
-                ? 1006
-                : asset.symbol === 'avDOT'
-                  ? 1005
-                  : asset.symbol === 'aETH'
-                    ? 1007
-                    : 1004
-
-      const response = await this.api.getUnsafeApi().apis.CurrenciesApi.account(currencyId, address)
+    if (node === 'Hydration' && asset.symbol.startsWith('a')) {
+      assertHasId(asset)
+      const response = await this.api
+        .getUnsafeApi()
+        .apis.CurrenciesApi.account(asset.assetId, address)
       return response ? BigInt(response.free.toString()) : 0n
     }
 

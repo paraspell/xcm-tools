@@ -9400,7 +9400,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
 
 exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Moonbeam - (DOT) 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -9414,33 +9414,50 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
+              "value": null,
             },
             "parents": 1,
           },
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "All",
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -9455,7 +9472,19 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
         "parents": 1,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+          "value": null,
+        },
+        "parents": 1,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -9600,7 +9629,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
 
 exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Polimec - (DOT) 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -9614,33 +9643,50 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
+              "value": null,
             },
             "parents": 1,
           },
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "All",
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -9655,7 +9701,19 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
         "parents": 1,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+          "value": null,
+        },
+        "parents": 1,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -25295,72 +25353,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to BridgeHubPolkadot - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-              "value": null,
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1002,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Centrifuge - (GLMR) 1`] = `
 {
   "method": "transfer_assets",
@@ -25417,72 +25409,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           "value": {
             "type": "Parachain",
             "value": 2031,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Collectives - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-              "value": null,
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1001,
           },
         },
         "parents": 1,
@@ -25555,72 +25481,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           "value": {
             "type": "Parachain",
             "value": 2019,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to CoretimePolkadot - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-              "value": null,
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1005,
           },
         },
         "parents": 1,
@@ -26003,72 +25863,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           "value": {
             "type": "Parachain",
             "value": 3397,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to KiltSpiritnet - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-              "value": null,
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2086,
           },
         },
         "parents": 1,
@@ -26514,72 +26308,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to PeoplePolkadot - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-              "value": null,
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1004,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Phala - (GLMR) 1`] = `
 {
   "method": "transfer_assets",
@@ -26639,75 +26367,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           "value": {
             "type": "Parachain",
             "value": 2035,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to RobonomicsPolkadot - (xcDOT) 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-                "value": null,
-              },
-              "parents": 1,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 3388,
           },
         },
         "parents": 1,
@@ -26936,7 +26595,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
 
 exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create transfer tx - ParaToRelay DOT from Moonbeam to Relay 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "parameters": {
     "assets": {
@@ -26950,33 +26609,50 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
           "id": {
             "interior": {
               "type": "Here",
+              "value": null,
             },
             "parents": 1,
           },
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "All",
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -26987,7 +26663,19 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
         "parents": 1,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+          "value": null,
+        },
+        "parents": 1,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },

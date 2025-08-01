@@ -18,8 +18,10 @@ describe('Moonriver', () => {
   const api = {
     createAccountId: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
+
   const mockInput = {
     api,
+    version: Version.V5,
     asset: {
       symbol: 'MOVR',
       amount: 100n

@@ -5,12 +5,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import { createTypeAndThenTransfer } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Moonbeam from './Moonbeam'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
+}))
+
+vi.mock('../../transfer', () => ({
+  createTypeAndThenTransfer: vi.fn()
 }))
 
 type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
@@ -21,10 +26,14 @@ describe('Moonbeam', () => {
   let node: Moonbeam<unknown, unknown>
 
   const api = {
-    createAccountId: vi.fn()
+    createAccountId: vi.fn(),
+    callTxMethod: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
+
   const mockInput = {
     api,
+    version: Version.V5,
+    senderAddress: 'senderAddress',
     asset: {
       symbol: 'GLMR',
       amount: 100n
@@ -78,24 +87,12 @@ describe('Moonbeam', () => {
     const mockInputDot = {
       ...mockInput,
       scenario: 'ParaToRelay',
-      asset: { symbol: 'DOT', amount: 100n }
+      asset: { symbol: 'DOT', amount: 100n, multiLocation: DOT_MULTILOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await node.transferPolkadotXCM(mockInputDot)
 
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      {
-        ...mockInputDot,
-        multiAsset: {
-          fun: {
-            Fungible: mockInput.asset.amount
-          },
-          id: DOT_MULTILOCATION
-        }
-      },
-      'transfer_assets',
-      'Unlimited'
-    )
+    expect(createTypeAndThenTransfer).toHaveBeenCalledTimes(1)
   })
 
   it('should use correct multiLocation when transfering USDT', async () => {
