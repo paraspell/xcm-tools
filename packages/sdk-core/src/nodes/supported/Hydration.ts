@@ -93,7 +93,7 @@ class Hydration<TApi, TRes>
   }
 
   transferToPolimec<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { api, asset, version = this.version } = options
+    const { api, asset, version } = options
     const symbol = asset.symbol.toUpperCase()
 
     if (symbol === 'DOT') {

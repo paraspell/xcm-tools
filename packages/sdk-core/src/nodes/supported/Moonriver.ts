@@ -40,7 +40,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset, scenario, version = this.version } = input
+    const { asset, scenario, version } = input
     const multiLocation = this.getMultiLocation(asset, scenario)
     return transferPolkadotXcm(
       {

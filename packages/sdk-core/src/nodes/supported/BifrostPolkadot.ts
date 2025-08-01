@@ -2,17 +2,18 @@
 
 import {
   findAssetByMultiLocation,
-  getAssetId,
   getOtherAssets,
+  getRelayChainSymbol,
   isForeignAsset,
+  isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 
-import { ETHEREUM_JUNCTION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
+import { createTypeAndThenTransfer } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -20,6 +21,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { assertHasLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
@@ -66,26 +68,21 @@ class BifrostPolkadot<TApi, TRes>
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
-  transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset } = input
+  async transferToAssetHub<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { api, asset } = input
+
+    if (isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))) {
+      return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+    }
+
+    assertHasLocation(asset)
 
     return transferPolkadotXcm(
       {
         ...input,
-        multiAsset: createMultiAsset(this.version, asset.amount, {
-          parents: asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
-          interior:
-            asset.symbol === 'WETH'
-              ? {
-                  X2: [
-                    ETHEREUM_JUNCTION,
-                    {
-                      AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-                    }
-                  ]
-                }
-              : 'Here'
-        })
+        multiAsset: createMultiAsset(this.version, asset.amount, asset.multiLocation)
       },
       'transfer_assets',
       'Unlimited'

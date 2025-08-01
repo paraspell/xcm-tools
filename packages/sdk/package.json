@@ -41,7 +41,7 @@
     "viem": "^2.33.2"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.14.1 < 2"
+    "polkadot-api": ">= 1.15.2 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
