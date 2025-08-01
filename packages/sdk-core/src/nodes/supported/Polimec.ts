@@ -205,7 +205,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, version = this.version, asset, destination, scenario } = input
+    const { api, version, asset, destination, scenario } = input
 
     if (scenario === 'ParaToPara' && destination === 'Hydration' && asset.symbol === 'DOT') {
       const call = createTypeAndThenTransfer(input, version)
@@ -228,7 +228,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = this.version } = options
+    const { version } = options
 
     const call = createTypeAndThenTransfer(
       {

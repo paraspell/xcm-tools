@@ -2,9 +2,11 @@ import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../constants'
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
+import { createTypeAndThenTransfer } from '../../transfer'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -18,8 +20,8 @@ vi.mock('../../pallets/xTokens', () => ({
   transferXTokens: vi.fn()
 }))
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
+vi.mock('../../transfer', () => ({
+  createTypeAndThenTransfer: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -38,9 +40,15 @@ describe('Ajuna', () => {
     asset: { symbol: 'BNC', amount: '100' }
   } as unknown as TXTokensTransferOptions<unknown, unknown>
 
+  const api = {
+    callTxMethod: vi.fn()
+  } as unknown as IPolkadotApi<unknown, unknown>
+
   const basePolkadotXCMInput = {
+    api,
     scenario: 'ParaToRelay',
-    asset: { symbol: 'DOT', amount: '100' }
+    senderAddress: 'senderAddress',
+    asset: { symbol: 'DOT', amount: '100', multiLocation: DOT_MULTILOCATION }
   } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -85,11 +93,7 @@ describe('Ajuna', () => {
   describe('transferPolkadotXCM', () => {
     it('delegates unchanged input to PolkadotXCM implementation', async () => {
       await ajuna.transferPolkadotXCM(basePolkadotXCMInput)
-      expect(transferPolkadotXcm).toHaveBeenCalledWith(
-        basePolkadotXCMInput,
-        'transfer_assets',
-        'Unlimited'
-      )
+      expect(createTypeAndThenTransfer).toHaveBeenCalledTimes(1)
     })
   })
 

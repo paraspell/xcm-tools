@@ -5,6 +5,7 @@ import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
   getOtherAssets,
+  getRelayChainSymbol,
   InvalidCurrencyError,
   isForeignAsset,
   isSymbolMatch
@@ -31,6 +32,7 @@ import {
   createDestination,
   createVersionedDestination
 } from '../../pallets/xcmPallet/utils'
+import { createTypeAndThenTransfer } from '../../transfer'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
   TDestination,
@@ -91,7 +93,7 @@ class AssetHubPolkadot<TApi, TRes>
     const { api, asset, destination, address, version, paraIdTo } = input
     if (
       (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === this.getNativeAssetSymbol())
+      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
@@ -106,7 +108,7 @@ class AssetHubPolkadot<TApi, TRes>
       return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
     } else if (
       (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === this.getNativeAssetSymbol())
+      (targetChain === 'Kusama' && 'DOT')
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
@@ -307,7 +309,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { asset, destination, version = this.version } = input
+    const { asset, destination, version } = input
 
     if (
       (destination === 'Hydration' ||
@@ -415,6 +417,14 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     const method = this.getMethod(scenario, destination)
+
+    // Patch transfer_assets to use type_and_then transfer
+    if (
+      method === 'transfer_assets' &&
+      isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))
+    ) {
+      return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+    }
 
     const modifiedInput = this.patchInput(input)
 
