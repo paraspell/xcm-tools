@@ -116,6 +116,9 @@ describe('PapiApi', () => {
               .fn()
               .mockResolvedValue({ value: { ref_time: 100n, proof_size: 200n } }),
             query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
+          },
+          CurrenciesApi: {
+            account: vi.fn().mockResolvedValue(null)
           }
         },
         tx: {
@@ -388,6 +391,118 @@ describe('PapiApi', () => {
       expect(balance).toBe(2000n)
     })
   })
+  describe('getBalanceForeignXTokens for Hydration node', () => {
+    it('should return correct balance for aUSDT', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '1000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aUSDT'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1002, 'some_address')
+      expect(balance).toBe(1000n)
+    })
+
+    it('should return correct balance for aUSDC', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '2000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aUSDC'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1003, 'some_address')
+      expect(balance).toBe(2000n)
+    })
+
+    it('should return correct balance for aDOT', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '3000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aDOT'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1001, 'some_address')
+      expect(balance).toBe(3000n)
+    })
+
+    it('should return correct balance for atBTC', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '4000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'atBTC'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1006, 'some_address')
+      expect(balance).toBe(4000n)
+    })
+
+    it('should return correct balance for avDOT', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '5000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'avDOT'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1005, 'some_address')
+      expect(balance).toBe(5000n)
+    })
+
+    it('should return correct balance for aETH', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '6000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aETH'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1007, 'some_address')
+      expect(balance).toBe(6000n)
+    })
+
+    it('should return correct balance for aWBTC', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue({
+        free: { toString: () => '7000' }
+      })
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aWBTC'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1004, 'some_address')
+      expect(balance).toBe(7000n)
+    })
+
+    it('should return 0n when no balance is found', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.CurrenciesApi.account = vi.fn().mockResolvedValue(null)
+
+      const balance = await papiApi.getBalanceForeignXTokens('Hydration', 'some_address', {
+        symbol: 'aUSDT'
+      } as TAsset)
+
+      expect(unsafeApi.apis.CurrenciesApi.account).toHaveBeenCalledWith(1002, 'some_address')
+      expect(balance).toBe(0n)
+    })
+  })
+
 
   describe('getBalanceForeign', () => {
     it('should return the foreign balance as bigint when balance exists', async () => {
