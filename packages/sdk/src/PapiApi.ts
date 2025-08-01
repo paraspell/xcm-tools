@@ -355,6 +355,35 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       pallet = 'OrmlTokens'
     }
 
+    if (
+      node === 'Hydration' &&
+      (asset.symbol === 'aUSDT' ||
+        asset.symbol === 'aUSDC' ||
+        asset.symbol === 'aDOT' ||
+        asset.symbol === 'atBTC' ||
+        asset.symbol === 'avDOT' ||
+        asset.symbol === 'aETH' ||
+        asset.symbol === 'aWBTC')
+    ) {
+      const currencyId =
+        asset.symbol === 'aUSDT'
+          ? 1002
+          : asset.symbol === 'aUSDC'
+            ? 1003
+            : asset.symbol === 'aDOT'
+              ? 1001
+              : asset.symbol === 'atBTC'
+                ? 1006
+                : asset.symbol === 'avDOT'
+                  ? 1005
+                  : asset.symbol === 'aETH'
+                    ? 1007
+                    : 1004
+
+      const response = await this.api.getUnsafeApi().apis.CurrenciesApi.account(currencyId, address)
+      return response ? BigInt(response.free.toString()) : 0n
+    }
+
     const response = await this.api.getUnsafeApi().query[pallet].Accounts.getEntries(address)
 
     const entry = response.find(({ keyArgs }) => {
