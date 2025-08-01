@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.0...sdk-v10.11.1) (2025-08-01)
+
+
+### Bug Fixes
+
+* Run format ([8bf26eb](https://github.com/paraspell/xcm-tools/commit/8bf26ebbb7dcc507182f9ddfe067112a97822d5f))
+* **sdk:** Repair AAVE assets Hydration balance queiry ([4b6a829](https://github.com/paraspell/xcm-tools/commit/4b6a82926d226c350e898ae62054b9b6b674621f))
+* Update tests for PapiApi file. ([8ed08c3](https://github.com/paraspell/xcm-tools/commit/8ed08c3217073daa5f44b31ee47148d4dd8efbc8))
+
 ## [10.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.11...sdk-v10.11.0) (2025-07-31)
 
 
