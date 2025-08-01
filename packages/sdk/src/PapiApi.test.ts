@@ -503,7 +503,6 @@ describe('PapiApi', () => {
     })
   })
 
-
   describe('getBalanceForeign', () => {
     it('should return the foreign balance as bigint when balance exists', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
