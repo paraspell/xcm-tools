@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.11.2...xcm-api-v10.11.3) (2025-08-03)
+
+
+### Bug Fixes
+
+* **sdk-core:** Patch transfer_assets to type_and_then 🔧 ([c6718fb](https://github.com/paraspell/xcm-tools/commit/c6718fbf8c963103205ec112b63f5805384b72db))
+
 ## [10.11.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.11.1...xcm-api-v10.11.2) (2025-08-01)
 
 
