@@ -1,8 +1,11 @@
 import { TMultiLocation } from '@paraspell/sdk-common'
 import { ApiPromise } from '@polkadot/api'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeMultiLocation, transformLocation } from './utils'
 
-export const fetchFeeAssets = async (api: ApiPromise): Promise<TMultiLocation[]> => {
+export const fetchFeeAssets = async (
+  api: ApiPromise,
+  paraId: number
+): Promise<TMultiLocation[]> => {
   const xcmVersion = 4
   const result = await api.call.xcmPaymentApi.queryAcceptablePaymentAssets(xcmVersion)
 
@@ -12,7 +15,9 @@ export const fetchFeeAssets = async (api: ApiPromise): Promise<TMultiLocation[]>
     throw new Error('Failed to fetch fee assets')
   }
 
-  return resultJson.ok.map((asset: any) =>
+  const assets = resultJson.ok.map((asset: any) =>
     capitalizeMultiLocation(asset[`v${xcmVersion}`])
   ) as TMultiLocation[]
+
+  return assets.map(loc => transformLocation(loc, paraId))
 }

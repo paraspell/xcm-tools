@@ -16,7 +16,7 @@ import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/s
 import { nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
-import { capitalizeMultiLocation } from './utils'
+import { capitalizeMultiLocation, transformLocation } from './utils'
 import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifrostAssets'
 import { fetchCentrifugeAssets } from './fetchCentrifugeAssets'
 import { fetchExistentialDeposit } from './fetchEd'
@@ -168,7 +168,7 @@ const fetchNativeAssets = async (
       ...asset,
       isNative: true,
       existentialDeposit: asset.existentialDeposit?.replace(/,/g, ''),
-      ...(multiLocation && { multiLocation })
+      ...(multiLocation && { multiLocation: transformLocation(multiLocation, paraId) })
     }
   }
 
@@ -422,48 +422,41 @@ const fetchNodeAssets = async (
     console.warn(`[${node}] ss58Prefix unavailable - using default 42`, e)
   }
 
+  const paraId = getParaId(node)
+
   const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
-  const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
+  const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api, paraId) : []
 
   const nativeAssetSymbol = await resolveNativeAsset(node, api)
 
   const queryPath = query[0]
 
-  let globalOtherAssets: TForeignAsset[] = []
-  let queryOtherAssets: TForeignAsset[] = []
+  let otherAssets: TForeignAsset[] = []
 
   if (queryPath) {
-    queryOtherAssets = await fetchOtherAssets(node, api, queryPath)
+    otherAssets = await fetchOtherAssets(node, api, queryPath)
   }
 
-  let mergedAssets = globalOtherAssets.map(globalAsset => {
-    const matchingQueryAsset = queryOtherAssets.find(
-      queryAsset => queryAsset.assetId === globalAsset.assetId
-    )
+  otherAssets = otherAssets.map(asset => ({
+    ...asset,
+    existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+  }))
 
-    return matchingQueryAsset
+  otherAssets = otherAssets.map(asset =>
+    asset.multiLocation
       ? {
-          ...globalAsset,
-          existentialDeposit: matchingQueryAsset.existentialDeposit?.replace(/,/g, '')
+          ...asset,
+          multiLocation: transformLocation(asset.multiLocation, paraId)
         }
-      : globalAsset
-  })
-
-  if (mergedAssets.length === 0 && queryOtherAssets.length > 0) {
-    mergedAssets.push(
-      ...queryOtherAssets.map(asset => ({
-        ...asset,
-        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
-      }))
-    )
-  }
+      : asset
+  )
 
   const nativeAssets = (await fetchNativeAssets(node, api, queryPath)) ?? []
 
-  mergedAssets = mergedAssets.filter(asset => asset.assetId !== 'Native')
+  otherAssets = otherAssets.filter(asset => asset.assetId !== 'Native')
 
   if (feeAssets.length > 0) {
-    const allAssets = [...nativeAssets, ...mergedAssets] as unknown as TForeignAsset[]
+    const allAssets = [...nativeAssets, ...otherAssets] as unknown as TForeignAsset[]
 
     feeAssets.forEach(loc => {
       const matched =
@@ -479,7 +472,7 @@ const fetchNodeAssets = async (
 
   return {
     nativeAssets,
-    otherAssets: mergedAssets,
+    otherAssets,
     nativeAssetSymbol,
     ss58Prefix,
     isEVM: isNodeEvm(api),
