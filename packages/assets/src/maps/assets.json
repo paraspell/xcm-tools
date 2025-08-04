@@ -1691,7 +1691,7 @@
         "decimals": 12,
         "existentialDeposit": "10000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -1711,7 +1711,7 @@
         "decimals": 12,
         "existentialDeposit": "10000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -1930,7 +1930,7 @@
         "decimals": 18,
         "existentialDeposit": "1000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -1979,7 +1979,7 @@
         "decimals": 18,
         "existentialDeposit": "1000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -1999,7 +1999,7 @@
         "decimals": 12,
         "existentialDeposit": "10000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2048,7 +2048,7 @@
         "decimals": 18,
         "existentialDeposit": "1000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2068,7 +2068,7 @@
         "decimals": 18,
         "existentialDeposit": "10000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2088,7 +2088,7 @@
         "decimals": 12,
         "existentialDeposit": "100000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2105,7 +2105,7 @@
         "decimals": 18,
         "existentialDeposit": "10000000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2131,7 +2131,7 @@
         "decimals": 10,
         "existentialDeposit": "1000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -2224,7 +2224,7 @@
         "symbol": "LpArbUSDC",
         "decimals": 6,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2253,7 +2253,7 @@
         "symbol": "cfgIOU",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2304,7 +2304,7 @@
         "symbol": "USDS",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2333,7 +2333,7 @@
         "symbol": "LpFRAX",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2380,7 +2380,7 @@
         "symbol": "LpCeloUSDC",
         "decimals": 6,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2443,7 +2443,7 @@
         "symbol": "LpBaseUSDC",
         "decimals": 6,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2494,7 +2494,7 @@
         "symbol": "DAI",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2523,7 +2523,7 @@
         "symbol": "LpEthUSDC",
         "decimals": 6,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -2571,7 +2571,7 @@
         "symbol": "LpCeloWormUSDC ",
         "decimals": 6,
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X3": [
               {
@@ -3011,7 +3011,7 @@
         "decimals": 18,
         "existentialDeposit": "8202803876747",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -3061,7 +3061,7 @@
         "decimals": 10,
         "existentialDeposit": "54125333",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -3287,7 +3287,7 @@
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -3410,7 +3410,7 @@
         "decimals": 18,
         "existentialDeposit": "208779411374",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -3727,7 +3727,7 @@
         "decimals": 6,
         "existentialDeposit": "22409",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -3834,6 +3834,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "104",
+        "symbol": "2-Pool-WETH",
+        "decimals": 18,
+        "existentialDeposit": "2583311805735"
       },
       {
         "assetId": "29",
@@ -4019,7 +4025,7 @@
         "decimals": 6,
         "existentialDeposit": "22409",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -4097,7 +4103,7 @@
         "decimals": 10,
         "existentialDeposit": "36627790",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -4117,7 +4123,7 @@
         "decimals": 18,
         "existentialDeposit": "8202803876747",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -4249,7 +4255,7 @@
         "decimals": 8,
         "existentialDeposit": "40",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -4489,7 +4495,7 @@
         "decimals": 18,
         "existentialDeposit": "5290724013368937",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -7129,6 +7135,28 @@
         },
         "existentialDeposit": "1",
         "alias": "ETH2"
+      },
+      {
+        "assetId": "50000276",
+        "symbol": "ATOM",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000276
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000"
       },
       {
         "assetId": "20090107",
@@ -14672,7 +14700,7 @@
         "decimals": 10,
         "existentialDeposit": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -15239,7 +15267,7 @@
         "decimals": 6,
         "existentialDeposit": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -15531,7 +15559,7 @@
         "decimals": 6,
         "existentialDeposit": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -15603,7 +15631,7 @@
         "decimals": 10,
         "existentialDeposit": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
@@ -15735,7 +15763,7 @@
         "decimals": 8,
         "existentialDeposit": "0",
         "multiLocation": {
-          "parents": 1,
+          "parents": 0,
           "interior": {
             "X1": [
               {
