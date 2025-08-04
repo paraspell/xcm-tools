@@ -1693,7 +1693,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -1713,7 +1716,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -1932,7 +1938,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -1981,7 +1990,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2001,7 +2013,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2050,7 +2065,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2070,7 +2088,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2090,7 +2111,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "PalletInstance": 10
               }
@@ -2107,7 +2131,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2133,7 +2160,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2030
+              },
               {
                 "GeneralKey": {
                   "length": 2,
@@ -2226,7 +2256,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2255,7 +2288,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2306,7 +2342,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2335,7 +2374,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2382,7 +2424,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2445,7 +2490,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2496,7 +2544,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2525,7 +2576,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2573,7 +2627,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X4": [
+              {
+                "Parachain": 2031
+              },
               {
                 "PalletInstance": 103
               },
@@ -2853,7 +2910,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -3013,7 +3071,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -3063,7 +3124,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -3289,7 +3353,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -3412,7 +3479,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -3729,7 +3799,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -3834,6 +3907,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "104",
+        "symbol": "2-Pool-WETH",
+        "decimals": 18,
+        "existentialDeposit": "2583311805735"
       },
       {
         "assetId": "29",
@@ -4021,7 +4100,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -4099,7 +4181,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -4119,7 +4204,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -4251,7 +4339,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -4491,7 +4582,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -5144,7 +5238,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -7129,6 +7224,28 @@
         },
         "existentialDeposit": "1",
         "alias": "ETH2"
+      },
+      {
+        "assetId": "50000276",
+        "symbol": "ATOM",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000276
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000"
       },
       {
         "assetId": "20090107",
@@ -9439,7 +9556,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -14674,7 +14792,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -15241,7 +15362,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -15533,7 +15657,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -15605,7 +15732,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,
@@ -15737,7 +15867,10 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
+              {
+                "Parachain": 2034
+              },
               {
                 "AccountKey20": {
                   "network": null,

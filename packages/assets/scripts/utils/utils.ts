@@ -1,7 +1,6 @@
 import { TNodeDotKsmWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
-import { getNode } from '../../sdk-core/src'
+import { getNode, normalizeMultiLocation } from '../../../sdk-core/src'
 import { ApiPromise } from '@polkadot/api'
-import { normalizeMultiLocation } from '../src'
 
 export const getRelayChainSymbolOf = (node: TNodeDotKsmWithRelayChains): TRelayChainSymbol => {
   if (node === 'Polkadot') return 'DOT'
