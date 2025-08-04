@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.4](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.3...assets-v10.11.4) (2025-08-04)
+
+
+### Bug Fixes
+
+* **assets:** Transform parents 0 locations to 1 🔧 ([15d1ff9](https://github.com/paraspell/xcm-tools/commit/15d1ff98e9db5ee944c7f9785c97245ad4ef4ef5))
+
 ## [10.11.3](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.2...assets-v10.11.3) (2025-08-03)
 
 
