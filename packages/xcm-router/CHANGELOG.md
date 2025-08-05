@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.11.5](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.11.4...xcm-router-v10.11.5) (2025-08-05)
+
+
+### Bug Fixes
+
+* **xcm-router:** Run pnpm format ([d76540a](https://github.com/paraspell/xcm-tools/commit/d76540afd32741d3f8c10124eb1e085f8473b8dc))
+* **xcm-router:** Update asset map in XCM Router ([89833a0](https://github.com/paraspell/xcm-tools/commit/89833a0df42f1ebdeef211de93fd1f9be6fd0d48))
+
 ## [10.11.4](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.11.3...xcm-router-v10.11.4) (2025-08-04)
 
 
