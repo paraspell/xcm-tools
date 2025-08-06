@@ -6,7 +6,7 @@ import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -21,7 +21,7 @@ vi.mock('../../pallets/xTokens', () => ({
 }))
 
 vi.mock('../../transfer', () => ({
-  createTypeAndThenTransfer: vi.fn()
+  createTypeAndThenCall: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -93,7 +93,7 @@ describe('Ajuna', () => {
   describe('transferPolkadotXCM', () => {
     it('delegates unchanged input to PolkadotXCM implementation', async () => {
       await ajuna.transferPolkadotXCM(basePolkadotXCMInput)
-      expect(createTypeAndThenTransfer).toHaveBeenCalledTimes(1)
+      expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
     })
   })
 

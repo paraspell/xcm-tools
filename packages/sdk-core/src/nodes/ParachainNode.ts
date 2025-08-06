@@ -7,7 +7,6 @@ import {
   InvalidCurrencyError,
   isForeignAsset,
   isNodeEvm,
-  Native,
   type TAsset,
   type TMultiAsset
 } from '@paraspell/assets'
@@ -21,14 +20,8 @@ import {
   type TNodePolkadotKusama
 } from '@paraspell/sdk-common'
 
-import { Builder } from '../builder'
-import { ASSET_HUB_EXECUTION_FEE, DOT_MULTILOCATION } from '../constants'
-import {
-  BridgeHaltedError,
-  DryRunFailedError,
-  InvalidAddressError,
-  InvalidParameterError
-} from '../errors'
+import { DOT_MULTILOCATION } from '../constants'
+import { BridgeHaltedError, InvalidAddressError, InvalidParameterError } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
   constructRelayToParaParameters,
@@ -36,7 +29,7 @@ import {
   createVersionedDestination
 } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
-import { getParaEthTransferFees } from '../transfer'
+import { createTypeAndThenCall, getParaEthTransferFees } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
@@ -53,6 +46,7 @@ import type {
 } from '../types'
 import {
   addXcmVersionHeader,
+  assertAddressIsString,
   assertHasId,
   assertHasLocation,
   createBeneficiaryLocation
@@ -234,13 +228,14 @@ abstract class ParachainNode<TApi, TRes> {
       const isEthDest = destination === 'Ethereum'
 
       // Eth asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
-      if (isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset) {
-        return this.transferEthAssetViaAH(options)
-      }
+      const isEthAssetViaAh = isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset
 
       // Eth asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
-      if (isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset) {
-        return this.transferToEthereum(options, true)
+      const isEthAssetToAh = isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset
+
+      if (isEthAssetViaAh || isEthAssetToAh) {
+        const call = await createTypeAndThenCall(this.node, options)
+        return api.callTxMethod(call)
       }
 
       return this.transferPolkadotXCM(options)
@@ -327,129 +322,6 @@ abstract class ParachainNode<TApi, TRes> {
     })
   }
 
-  protected async transferEthAssetViaAH<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TRes> {
-    const { api, asset, version, destination, address, senderAddress, feeAsset, paraIdTo } = input
-
-    assertHasLocation(asset)
-
-    if (senderAddress === undefined) {
-      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
-    }
-
-    if (isTMultiLocation(address)) {
-      throw new InvalidParameterError(
-        'Multi-location address is not supported for Ethereum transfers'
-      )
-    }
-
-    const ethMultiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)
-
-    const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
-
-    // Pad by 25%
-    const AH_EXECUTION_FEE_PADDED = (ASSET_HUB_EXECUTION_FEE * 125n) / 100n
-
-    // Perform a dry run AH -> dest to calculate the BuyExecution amount
-    const dryRunResult = await Builder(api.clone())
-      .from('AssetHubPolkadot')
-      .to(destination)
-      .currency({
-        symbol: Native('DOT'),
-        amount: AH_EXECUTION_FEE_PADDED
-      })
-      .address(address)
-      .senderAddress(senderAddress)
-      .dryRun()
-
-    if (!dryRunResult.origin.success) {
-      throw new DryRunFailedError(dryRunResult.origin.failureReason)
-    }
-
-    // Pad fee by 50%
-    const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * 3n) / 2n
-
-    const dest = createDestination(version, this.node, destination, paraIdTo)
-
-    const call: TSerializedApiCall = {
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      parameters: {
-        dest: createVersionedDestination(
-          version,
-          this.node,
-          destination,
-          getParaId('AssetHubPolkadot')
-        ),
-        assets: addXcmVersionHeader(
-          [
-            ...(!feeAsset
-              ? [createMultiAsset(version, PARA_TO_PARA_FEE_DOT, DOT_MULTILOCATION)]
-              : []),
-            ethMultiAsset
-          ],
-          version
-        ),
-
-        assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: addXcmVersionHeader(feeAsset?.multiLocation ?? DOT_MULTILOCATION, version),
-        fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: addXcmVersionHeader(
-          [
-            {
-              SetAppendix: [
-                {
-                  DepositAsset: {
-                    assets: { Wild: 'All' },
-                    beneficiary: createBeneficiaryLocation({
-                      api,
-                      address: senderAddress,
-                      version
-                    })
-                  }
-                }
-              ]
-            },
-            {
-              DepositReserveAsset: {
-                assets: {
-                  Wild: 'All'
-                },
-                dest,
-                xcm: [
-                  {
-                    BuyExecution: {
-                      fees: {
-                        id: DOT_MULTILOCATION,
-                        fun: { Fungible: dryRunFeePadded }
-                      },
-                      weight_limit: 'Unlimited'
-                    }
-                  },
-                  {
-                    DepositAsset: {
-                      assets: { Wild: 'All' },
-                      beneficiary: createBeneficiaryLocation({
-                        api,
-                        address: address,
-                        version
-                      })
-                    }
-                  }
-                ]
-              }
-            }
-          ],
-          version
-        ),
-        weight_limit: 'Unlimited'
-      }
-    }
-
-    return api.callTxMethod(call)
-  }
-
   protected async transferToEthereum<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useOnlyDepositInstruction = false
@@ -463,15 +335,10 @@ abstract class ParachainNode<TApi, TRes> {
     }
 
     assertHasLocation(asset)
+    assertAddressIsString(address)
 
     if (senderAddress === undefined) {
       throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
-    }
-
-    if (isTMultiLocation(address)) {
-      throw new InvalidParameterError(
-        'Multi-location address is not supported for Ethereum transfers'
-      )
     }
 
     const ethMultiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)

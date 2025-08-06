@@ -3,7 +3,6 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
-import * as BuilderModule from '../builder'
 import { DOT_MULTILOCATION } from '../constants'
 import { BridgeHaltedError, InvalidAddressError, NoXCMSupportImplementedError } from '../errors'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
@@ -69,7 +68,8 @@ vi.mock('./config', () => ({
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
-vi.mock('../transfer/ethTransfer', () => ({
+vi.mock('../transfer', () => ({
+  createTypeAndThenCall: vi.fn(),
   getParaEthTransferFees: vi.fn().mockReturnValue('fee')
 }))
 
@@ -111,10 +111,6 @@ class TestParachainNode extends ParachainNode<unknown, unknown> {
     useOnlyDepositAsset = false
   ) {
     return this.transferToEthereum(options, useOnlyDepositAsset)
-  }
-
-  public exposeTransferEthAssetViaAH(options: TPolkadotXCMTransferOptions<unknown, unknown>) {
-    return this.transferEthAssetViaAH(options)
   }
 }
 
@@ -380,34 +376,8 @@ describe('ParachainNode', () => {
       address: DOT_MULTILOCATION
     } as TPolkadotXCMTransferOptions<unknown, unknown>
     await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(
-      'Multi-location address is not supported for Ethereum transfers'
+      'Multi-Location address is not supported for this transfer type.'
     )
-  })
-
-  it('should perform eth asset transfer with deposit asset only instruction', async () => {
-    const options = {
-      api: {
-        accountToHex: vi.fn(),
-        createApiForNode: vi.fn(),
-        callTxMethod: vi.fn(),
-        getFromRpc: vi.fn(),
-        clone: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
-      senderAddress: '0x456'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    const spy = vi.spyOn(options.api, 'callTxMethod')
-
-    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
-
-    await node.exposeTransferToEthereum(options, true)
-
-    expect(spy).toHaveBeenCalledWith({
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      parameters: expect.any(Object)
-    })
   })
 
   describe('transferLocal', () => {
@@ -568,113 +538,6 @@ describe('ParachainNode', () => {
           currency_id: 10n,
           amount: BigInt(options.asset.amount)
         }
-      })
-    })
-  })
-
-  describe('transferEthAssetViaAH', () => {
-    const options = {
-      api: {
-        accountToHex: vi.fn(),
-        createApiForNode: vi.fn(),
-        callTxMethod: vi.fn(),
-        getFromRpc: vi.fn(),
-        clone: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
-      senderAddress: '0x456'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    beforeEach(() => {
-      const mockBuilderInstance = {
-        from: vi.fn().mockReturnThis(),
-        to: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
-        address: vi.fn().mockReturnThis(),
-        senderAddress: vi.fn().mockReturnThis(),
-        currency: vi.fn().mockReturnThis(),
-        dryRun: vi.fn().mockResolvedValue({
-          origin: {
-            success: true,
-            fee: 1000n
-          }
-        })
-      } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
-
-      vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-    })
-
-    it('should throw an error if the asset has no multi-location', async () => {
-      await expect(
-        node.exposeTransferEthAssetViaAH({
-          ...options,
-          asset: { symbol: 'WETH', assetId: '', multiLocation: undefined, amount: 100n }
-        })
-      ).rejects.toThrowError(InvalidCurrencyError)
-    })
-
-    it('should throw an error if no sender address provided', async () => {
-      await expect(
-        node.exposeTransferEthAssetViaAH({
-          ...options,
-          senderAddress: undefined
-        })
-      ).rejects.toThrowError()
-    })
-
-    it('should throw an error if the address is multi-location', async () => {
-      await expect(
-        node.exposeTransferEthAssetViaAH({
-          ...options,
-          senderAddress: '0x123',
-          address: DOT_MULTILOCATION
-        })
-      ).rejects.toThrowError()
-    })
-
-    it('should throw an error if dry-run fails', async () => {
-      const mockBuilderInstance = {
-        from: vi.fn().mockReturnThis(),
-        to: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
-        address: vi.fn().mockReturnThis(),
-        currency: vi.fn().mockReturnThis(),
-        dryRun: vi.fn().mockResolvedValue({
-          origin: {
-            success: false,
-            failureReason: 'error'
-          }
-        })
-      } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
-
-      vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-
-      await expect(node.exposeTransferEthAssetViaAH(options)).rejects.toThrowError()
-    })
-
-    it('should perform eth asset transfer via AH', async () => {
-      const options = {
-        api: {
-          accountToHex: vi.fn(),
-          createApiForNode: vi.fn(),
-          callTxMethod: vi.fn(),
-          getFromRpc: vi.fn(),
-          clone: vi.fn()
-        } as unknown as IPolkadotApi<unknown, unknown>,
-        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: 100n },
-        senderAddress: '0x456'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const spy = vi.spyOn(options.api, 'callTxMethod')
-
-      vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
-
-      await node.exposeTransferEthAssetViaAH(options)
-
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
       })
     })
   })

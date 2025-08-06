@@ -1,83 +1,78 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
+import type { Version } from '@paraspell/sdk-common'
+import { deepEqual, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../nodes/config'
-import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
+import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import {
-  addXcmVersionHeader,
-  assertHasLocation,
-  createBeneficiaryLocation,
-  createMultiAsset
-} from '../../utils'
+import { createMultiAsset } from '../../utils'
+import { buildTypeAndThenCall } from './buildTypeAndThenCall'
+import { computeAllFees } from './computeFees'
+import { createTypeAndThenCallContext } from './createContext'
+import { createCustomXcm } from './createCustomXcm'
+import { createRefundInstruction } from './utils'
 
-export const createTypeAndThenCall = <TApi, TRes>(
-  chain: TNodeDotKsmWithRelayChains,
-  destChain: TNodeWithRelayChains,
-  reserveChain: TNodeDotKsmWithRelayChains,
-  input: TPolkadotXCMTransferOptions<TApi, TRes>,
-  reserveFee: bigint
-): TSerializedApiCall => {
-  const { api, destination, asset, version, address, paraIdTo } = input
+const buildAssets = (
+  asset: WithAmount<TAssetWithLocation>,
+  feeAmount: bigint,
+  isDotAsset: boolean,
+  version: Version
+) => {
+  const assets = []
 
-  assertHasLocation(asset)
-
-  const depositInstruction = {
-    DepositAsset: {
-      assets: { Wild: 'All' },
-      beneficiary: createBeneficiaryLocation({
-        api,
-        address,
-        version
-      })
-    }
+  if (!isDotAsset) {
+    assets.push(createMultiAsset(version, feeAmount, RELAY_LOCATION))
   }
 
-  const customXcm =
-    chain === reserveChain || destChain === reserveChain
-      ? [depositInstruction]
-      : [
+  assets.push(createMultiAsset(version, asset.amount, asset.multiLocation))
+
+  return assets
+}
+
+/**
+ * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
+ */
+export const createTypeAndThenCall = async <TApi, TRes>(
+  chain: TNodeDotKsmWithRelayChains,
+  options: TPolkadotXCMTransferOptions<TApi, TRes>
+): Promise<TSerializedApiCall> => {
+  const { api, senderAddress, version } = options
+
+  const context = await createTypeAndThenCallContext(chain, options)
+
+  const { asset } = context
+
+  const isDotAsset =
+    deepEqual(asset.multiLocation, RELAY_LOCATION) ||
+    deepEqual(asset.multiLocation, {
+      parents: 2,
+      interior: {
+        X1: [
           {
-            DepositReserveAsset: {
-              assets: {
-                Wild: 'All'
-              },
-              dest: createDestination(version, chain, destination, paraIdTo),
-              xcm: [
-                {
-                  BuyExecution: {
-                    fees: createMultiAsset(version, reserveFee, asset.multiLocation),
-                    weight_limit: 'Unlimited'
-                  }
-                },
-                depositInstruction
-              ]
+            GlobalConsensus: {
+              Kusama: null
             }
           }
         ]
+      }
+    })
 
-  const finalDest = chain === reserveChain ? destChain : reserveChain
+  const customXcm = createCustomXcm(context, isDotAsset)
 
-  const dest = createVersionedDestination(version, chain, finalDest, getParaId(finalDest))
-  const multiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)
-  const assets = addXcmVersionHeader([multiAsset], version)
-  const customXcmVersioned = addXcmVersionHeader(customXcm, version)
+  const refundInstruction = senderAddress
+    ? createRefundInstruction(api, senderAddress, version)
+    : null
 
-  const feesLocation = addXcmVersionHeader(multiAsset.id, version)
+  const fees = await computeAllFees(context, customXcm, isDotAsset, refundInstruction)
 
-  const reserve = chain === reserveChain ? 'LocalReserve' : 'DestinationReserve'
+  const finalCustomXcm = []
 
-  return {
-    module: 'PolkadotXcm',
-    method: 'transfer_assets_using_type_and_then',
-    parameters: {
-      dest: dest,
-      assets: assets,
-      assets_transfer_type: reserve,
-      remote_fees_id: feesLocation,
-      fees_transfer_type: reserve,
-      custom_xcm_on_dest: customXcmVersioned,
-      weight_limit: 'Unlimited'
-    }
-  }
+  if (refundInstruction) finalCustomXcm.push(refundInstruction)
+
+  finalCustomXcm.push(createCustomXcm(context, isDotAsset, fees))
+
+  const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
+
+  const assets = buildAssets(asset, totalFee, isDotAsset, version)
+
+  return buildTypeAndThenCall(context, isDotAsset, finalCustomXcm, assets)
 }

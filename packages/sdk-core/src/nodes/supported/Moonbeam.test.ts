@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Moonbeam from './Moonbeam'
@@ -15,7 +15,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 }))
 
 vi.mock('../../transfer', () => ({
-  createTypeAndThenTransfer: vi.fn()
+  createTypeAndThenCall: vi.fn()
 }))
 
 type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
@@ -92,7 +92,7 @@ describe('Moonbeam', () => {
 
     await node.transferPolkadotXCM(mockInputDot)
 
-    expect(createTypeAndThenTransfer).toHaveBeenCalledTimes(1)
+    expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
   })
 
   it('should use correct multiLocation when transfering USDT', async () => {

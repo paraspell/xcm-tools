@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAsset, TForeignAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import {
-  findAssetByMultiLocation,
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
@@ -24,7 +23,6 @@ import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createBeneficiaryLocation } from '../../utils'
 import { localizeLocation } from '../../utils/location'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import ParachainNode from '../ParachainNode'
@@ -38,6 +36,10 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
+}))
+
+vi.mock('../../transfer', () => ({
+  createTypeAndThenCall: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -378,89 +380,6 @@ describe('AssetHubPolkadot', () => {
       await assetHub.transferPolkadotXCM(mockInput)
 
       expect(handleMythosTransferSpy).toHaveBeenCalledWith(mockInput)
-    })
-
-    it('should call transferPolkadotXCM when destination is BifrostPolkadot and currency WETH.e', async () => {
-      mockInput.destination = 'BifrostPolkadot'
-      mockInput.asset = {
-        symbol: 'WETH',
-        assetId: '0x123',
-        amount: 1000n,
-        multiLocation: {} as TMultiLocation
-      }
-
-      vi.mocked(getOtherAssets).mockReturnValue([
-        { symbol: 'WETH', assetId: '0x123', multiLocation: mockInput.asset.multiLocation }
-      ])
-
-      vi.mocked(findAssetByMultiLocation).mockReturnValueOnce({
-        symbol: 'WETH',
-        multiLocation: {} as TMultiLocation
-      })
-
-      vi.mocked(createBeneficiaryLocation).mockReturnValue({} as TMultiLocation)
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-
-      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
-
-      await assetHub.transferPolkadotXCM(mockInput)
-
-      expect(handleLocalReserveTransferSpy).toHaveBeenCalled()
-    })
-
-    it('should call handleLocalReserveTransfer when feeAsset is KSM', async () => {
-      const inputWithFeeAssetKSM = {
-        ...mockInput,
-        asset: {
-          symbol: 'KSM'
-        },
-        feeAsset: {
-          symbol: 'KSM'
-        },
-        destination: 'Moonbeam',
-        api: mockApi
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-
-      const handleLocalReserveTransferSpy = vi
-        .spyOn(assetHub, 'handleLocalReserveTransfer')
-        .mockReturnValue({} as unknown)
-
-      await assetHub.transferPolkadotXCM(inputWithFeeAssetKSM)
-
-      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputWithFeeAssetKSM)
-      expect(handleLocalReserveTransferSpy.mock.calls[0][1]).toBeUndefined()
-    })
-
-    it('should call handleLocalReserveTransfer if asset is Ethereum asset ', async () => {
-      const ethAsset = {
-        symbol: 'USDC',
-        amount: '1000',
-        decimals: 6,
-        multiLocation: {
-          parents: 1,
-          interior: { X2: [{ Parachain: 1000 }, { GeneralKey: '0x...' }] }
-        }
-      } as TForeignAsset
-      const inputForEthereumAsset = {
-        ...mockInput,
-        asset: ethAsset,
-        destination: 'Acala',
-        api: mockApi
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      vi.mocked(getOtherAssets).mockReturnValue([
-        { symbol: 'USDC', multiLocation: ethAsset.multiLocation }
-      ] as TForeignAsset[])
-      vi.mocked(findAssetByMultiLocation).mockReturnValue(ethAsset)
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-
-      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
-
-      await assetHub.transferPolkadotXCM(inputForEthereumAsset)
-
-      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputForEthereumAsset, true)
     })
 
     it('should modify input for USDT currencySymbol', async () => {

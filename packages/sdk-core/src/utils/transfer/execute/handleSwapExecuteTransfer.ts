@@ -6,7 +6,7 @@ import {
   type TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 
-import { MAX_WEIGHT } from '../../../constants'
+import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
@@ -24,7 +24,6 @@ import { getChainVersion } from '../../chain'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
-const MIN_FEE = 1000n
 const FEE_PADDING_PERCENTAGE = 20
 
 const validateAmount = (amount: bigint, requiredFee: bigint): void => {

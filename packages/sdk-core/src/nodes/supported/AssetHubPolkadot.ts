@@ -32,7 +32,7 @@ import {
   createDestination,
   createVersionedDestination
 } from '../../pallets/xcmPallet/utils'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
   TDestination,
@@ -54,24 +54,6 @@ import { resolveParaId } from '../../utils/resolveParaId'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
-
-const createCustomXcmToBifrost = <TApi, TRes>(
-  { api, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  version: Version
-) => ({
-  [version]: [
-    {
-      DepositAsset: {
-        assets: { Wild: 'All' },
-        beneficiary: createBeneficiaryLocation({
-          api,
-          address: address,
-          version
-        })
-      }
-    }
-  ]
-})
 
 class AssetHubPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -266,46 +248,6 @@ class AssetHubPolkadot<TApi, TRes>
     return transferPolkadotXcm(modifiedInput, 'limited_teleport_assets', 'Unlimited')
   }
 
-  handleLocalReserveTransfer = <TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>,
-    useDOTAsFeeAsset = false
-  ): TRes => {
-    const { api, version, destination, asset, paraIdTo } = input
-
-    assertIsForeign(asset)
-    assertHasLocation(asset)
-
-    const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
-
-    const call: TSerializedApiCall = {
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      parameters: {
-        dest: createVersionedDestination(version, this.node, destination, paraIdTo),
-        assets: addXcmVersionHeader(
-          [
-            ...(useDOTAsFeeAsset
-              ? [createMultiAsset(version, PARA_TO_PARA_FEE_DOT, DOT_MULTILOCATION)]
-              : []),
-            createMultiAsset(version, asset.amount, asset.multiLocation)
-          ],
-          version
-        ),
-
-        assets_transfer_type: 'LocalReserve',
-        remote_fees_id: addXcmVersionHeader(
-          useDOTAsFeeAsset ? DOT_MULTILOCATION : asset.multiLocation,
-          version
-        ),
-        fees_transfer_type: 'LocalReserve',
-        custom_xcm_on_dest: createCustomXcmToBifrost(input, version),
-        weight_limit: 'Unlimited'
-      }
-    }
-
-    return api.callTxMethod(call)
-  }
-
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
@@ -336,9 +278,9 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+    options: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, scenario, asset, destination, feeAsset, overriddenAsset } = input
+    const { api, scenario, asset, destination, feeAsset, overriddenAsset } = options
 
     if (feeAsset) {
       if (overriddenAsset) {
@@ -346,39 +288,37 @@ class AssetHubPolkadot<TApi, TRes>
       }
 
       if (isSymbolMatch(asset.symbol, 'KSM')) {
-        return this.handleLocalReserveTransfer(input)
+        const call = await createTypeAndThenCall(this.node, options)
+        return api.callTxMethod(call)
       }
 
       const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
       const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.callTxMethod(await handleExecuteTransfer(this.node, input))
+        return api.callTxMethod(await handleExecuteTransfer(this.node, options))
       }
     }
 
     if (destination === 'AssetHubKusama') {
-      return this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama')
+      return this.handleBridgeTransfer<TApi, TRes>(options, 'Kusama')
     }
 
     if (destination === 'Ethereum') {
-      return this.handleEthBridgeTransfer<TApi, TRes>(input)
+      return this.handleEthBridgeTransfer<TApi, TRes>(options)
     }
 
     if (destination === 'Mythos') {
-      return this.handleMythosTransfer(input)
+      return this.handleMythosTransfer(options)
     }
 
     const isEthereumAsset =
       asset.multiLocation &&
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
-    if (destination === 'BifrostPolkadot' && isEthereumAsset) {
-      return this.handleLocalReserveTransfer(input)
-    }
-
     if (isEthereumAsset) {
-      return this.handleLocalReserveTransfer(input, true)
+      const call = await createTypeAndThenCall(this.node, options)
+      return api.callTxMethod(call)
     }
 
     const CHAINS_SUPPORT_DOT_TRANSFER = new Set<TNodeWithRelayChains>([
@@ -423,10 +363,10 @@ class AssetHubPolkadot<TApi, TRes>
       method === 'transfer_assets' &&
       isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))
     ) {
-      return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+      return api.callTxMethod(await createTypeAndThenCall(this.node, options))
     }
 
-    const modifiedInput = this.patchInput(input)
+    const modifiedInput = this.patchInput(options)
 
     return transferPolkadotXcm(modifiedInput, method, 'Unlimited')
   }

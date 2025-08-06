@@ -55,3 +55,4 @@ jobs:
           delete-branch: true
           add-paths: |
             packages/assets/src/maps/assets.json
+            packages/xcm-router/src/consts/assets.json
