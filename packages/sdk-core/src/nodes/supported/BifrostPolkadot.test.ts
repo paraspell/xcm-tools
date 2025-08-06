@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -25,7 +25,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 }))
 
 vi.mock('../../transfer', () => ({
-  createTypeAndThenTransfer: vi.fn()
+  createTypeAndThenCall: vi.fn()
 }))
 
 describe('BifrostPolkadot', () => {
@@ -96,7 +96,7 @@ describe('BifrostPolkadot', () => {
       asset
     })
 
-    expect(createTypeAndThenTransfer).toHaveBeenCalledTimes(1)
+    expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
   })
 
   describe('canUseXTokens', () => {

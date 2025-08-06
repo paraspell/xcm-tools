@@ -6,7 +6,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -49,7 +49,7 @@ class Ajuna<TApi, TRes>
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { api } = input
-    return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+    return api.callTxMethod(await createTypeAndThenCall(this.node, input))
   }
 
   protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {

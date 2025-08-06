@@ -1,6 +1,7 @@
 import type { TAsset } from '@paraspell/assets'
 import type {
   TMultiLocation,
+  TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
@@ -39,6 +40,13 @@ export interface IPolkadotApi<TApi, TRes> {
   ): Promise<bigint | undefined>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getXcmWeight(xcm: any): Promise<TWeight>
+  getXcmPaymentApiFee(
+    chain: TNodeDotKsmWithRelayChains,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    xcm: any,
+    asset: TAsset,
+    transformXcm: boolean
+  ): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>

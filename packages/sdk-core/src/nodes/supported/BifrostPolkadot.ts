@@ -13,7 +13,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -74,7 +74,7 @@ class BifrostPolkadot<TApi, TRes>
     const { api, asset } = input
 
     if (isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))) {
-      return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+      return api.callTxMethod(await createTypeAndThenCall(this.node, input))
     }
 
     assertHasLocation(asset)
