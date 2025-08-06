@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.6](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.5...sdk-v10.11.6) (2025-08-06)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Hydration balance query 🛠️ ([dd27640](https://github.com/paraspell/xcm-tools/commit/dd27640938990c06801deb9e333ab6f853824df1))
+
 ## [10.11.5](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.4...sdk-v10.11.5) (2025-08-05)
 
 
