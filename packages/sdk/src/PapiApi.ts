@@ -356,7 +356,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       pallet = 'OrmlTokens'
     }
 
-    if (node === 'Hydration' && asset.symbol.startsWith('a')) {
+    if (node === 'Hydration') {
       assertHasId(asset)
       const response = await this.api
         .getUnsafeApi()
