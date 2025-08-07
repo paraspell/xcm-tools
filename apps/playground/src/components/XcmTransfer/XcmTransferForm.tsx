@@ -120,8 +120,16 @@ const XcmTransferForm: FC<Props> = ({
     },
 
     validate: {
-      address: (value) =>
-        isValidWalletAddress(value) ? null : 'Invalid address',
+      address: (value, values) => {
+        if (!isValidWalletAddress(value)) {
+          return 'Invalid address';
+        }
+        // Prevent Transfer to the same address when origin and destination networks are the same
+        if (values.from === values.to && value === selectedAccount?.address) {
+          return 'Sender and receiver cannot be the same address when origin and destination networks are the same, please enter a different address for the receiver.';
+        }
+        return null;
+      },
       currencies: {
         currencyOptionId: (value, values, path) => {
           const index = Number(path.split('.')[1]);
