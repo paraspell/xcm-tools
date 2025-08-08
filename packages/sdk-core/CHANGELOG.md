@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.6...sdk-core-v10.11.7) (2025-08-08)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor transferEthAssetViaAh to use shared typeAndThen function 🧹 ([2225b1f](https://github.com/paraspell/xcm-tools/commit/2225b1fae9c64431e14d04d3971f3680b5a12642))
+
 ## [10.11.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.5...sdk-core-v10.11.6) (2025-08-06)
 
 

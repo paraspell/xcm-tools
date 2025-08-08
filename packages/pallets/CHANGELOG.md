@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.7](https://github.com/paraspell/xcm-tools/compare/pallets-v10.11.6...pallets-v10.11.7) (2025-08-08)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
 ## [10.11.6](https://github.com/paraspell/xcm-tools/compare/pallets-v10.11.5...pallets-v10.11.6) (2025-08-06)
 
 
