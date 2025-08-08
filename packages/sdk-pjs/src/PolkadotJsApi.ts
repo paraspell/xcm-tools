@@ -20,11 +20,16 @@ import type {
   TWeight
 } from '@paraspell/sdk-core'
 import {
+  addXcmVersionHeader,
+  assertHasLocation,
   BatchMode,
   InvalidParameterError,
   isConfig,
+  isRelayChain,
+  localizeLocation,
   MissingChainApiError,
-  NodeNotSupportedError
+  NodeNotSupportedError,
+  Version
 } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
@@ -359,6 +364,28 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           )
 
     return { success: true, fee, weight, forwardedXcms, destParaId }
+  }
+
+  async getXcmPaymentApiFee(
+    node: TNodeDotKsmWithRelayChains,
+    xcm: any,
+    asset: TAsset
+  ): Promise<bigint> {
+    const weight = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm)
+
+    assertHasLocation(asset)
+
+    const localizedLocation =
+      node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
+        ? localizeLocation(node, asset.multiLocation)
+        : asset.multiLocation
+
+    const feeResult = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
+      weight,
+      addXcmVersionHeader(localizedLocation, Version.V4)
+    )
+
+    return BigInt(feeResult.toString())
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {
