@@ -22,7 +22,7 @@ export const assertAddressIsString: (
 ) => asserts address is Exclude<TAddress, TMultiLocation> = address => {
   if (isTMultiLocation(address)) {
     throw new InvalidParameterError(
-      'Multi-Location address is not supported for XCM fee calculation.'
+      'Multi-Location address is not supported for this transfer type.'
     )
   }
 }

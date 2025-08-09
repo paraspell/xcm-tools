@@ -3,6 +3,8 @@ import { Parents, type TJunction, type TMultiLocation } from '@paraspell/sdk-com
 
 import type { TWeight } from '../types'
 
+export const MIN_FEE = 1000n
+
 export const DEFAULT_FEE_ASSET = 0
 
 export const ETH_PARA_ID = 1
@@ -16,6 +18,11 @@ export const DEFAULT_FEE = 'Unlimited'
 export const DOT_MULTILOCATION: TMultiLocation = {
   parents: Parents.ONE,
   interior: 'Here'
+}
+
+export const RELAY_LOCATION: TMultiLocation = {
+  parents: Parents.ONE,
+  interior: { Here: null }
 }
 
 export const CHAINS_DOT_RESERVE_AH = new Set<TNodeWithRelayChains>([

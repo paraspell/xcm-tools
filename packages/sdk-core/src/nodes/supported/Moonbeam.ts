@@ -6,7 +6,7 @@ import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createTypeAndThenTransfer } from '../../transfer'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -56,7 +56,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     }
 
     if (isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))) {
-      return api.callTxMethod(await createTypeAndThenTransfer(this.node, input))
+      return api.callTxMethod(await createTypeAndThenCall(this.node, input))
     }
 
     const multiLocation = this.getMultiLocation(asset, scenario)

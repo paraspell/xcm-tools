@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.7](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.11.6...sdk-pjs-v10.11.7) (2025-08-08)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Fix interface implementation 🔧 ([fda4c3c](https://github.com/paraspell/xcm-tools/commit/fda4c3c30b6d5559a1d6aebc3df85078b9f73638))
+
 ## [10.11.6](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.11.5...sdk-pjs-v10.11.6) (2025-08-06)
 
 

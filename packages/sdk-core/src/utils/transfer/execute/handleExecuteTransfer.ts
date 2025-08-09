@@ -2,7 +2,7 @@ import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 
-import { MAX_WEIGHT } from '../../../constants'
+import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { getTNode } from '../../../nodes/getTNode'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
@@ -33,7 +33,6 @@ const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
   return hops[0].result.fee
 }
 
-const MIN_FEE = 1000n
 const FEE_PADDING_PERCENTAGE = 40
 
 export const handleExecuteTransfer = async <TApi, TRes>(

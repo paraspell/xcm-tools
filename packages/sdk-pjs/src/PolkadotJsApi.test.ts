@@ -49,7 +49,8 @@ describe('PolkadotJsApi', () => {
           dryRunXcm: vi.fn()
         },
         xcmPaymentApi: {
-          queryXcmWeight: vi.fn()
+          queryXcmWeight: vi.fn(),
+          queryWeightToAssetFee: vi.fn()
         },
         assetConversionApi: {
           quotePriceExactTokensForTokens: vi.fn().mockResolvedValue({
@@ -599,6 +600,216 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.rpc.state.getStorage).toHaveBeenCalledWith(key)
 
       expect(result).toBe('0x1234567890abcdef')
+    })
+  })
+
+  describe('getXcmPaymentApiFee', () => {
+    it('should return the XCM payment fee for AssetHub nodes', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset: TAsset = {
+        symbol: 'DOT',
+        multiLocation: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: 1000
+            }
+          }
+        }
+      }
+
+      const mockWeight = {
+        refTime: '1000',
+        proofSize: '2000'
+      }
+
+      const mockFeeResult = {
+        toString: vi.fn().mockReturnValue('5000')
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue(
+        mockFeeResult
+      )
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        mockWeight,
+        expect.objectContaining({
+          V4: expect.any(Object)
+        })
+      )
+      expect(fee).toBe(5000n)
+    })
+
+    it('should return the XCM payment fee for regular nodes', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset: TAsset = {
+        symbol: 'KSM',
+        multiLocation: {
+          parents: 0,
+          interior: {
+            Here: null
+          }
+        }
+      }
+
+      const mockWeight = {
+        refTime: '2000',
+        proofSize: '3000'
+      }
+
+      const mockFeeResult = {
+        toString: vi.fn().mockReturnValue('10000')
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue(
+        mockFeeResult
+      )
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        mockWeight,
+        expect.objectContaining({
+          V4: asset.multiLocation
+        })
+      )
+      expect(fee).toBe(10000n)
+    })
+
+    it('should throw error when asset has no multiLocation', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset = {
+        symbol: 'DOT'
+        // No multiLocation
+      } as TAsset
+
+      await expect(
+        polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, asset)
+      ).rejects.toThrow()
+    })
+
+    it('should handle relay chain nodes', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset: TAsset = {
+        symbol: 'DOT',
+        multiLocation: {
+          parents: 0,
+          interior: {
+            X1: {
+              Parachain: 2000
+            }
+          }
+        }
+      }
+
+      const mockWeight = {
+        refTime: '1500',
+        proofSize: '2500'
+      }
+
+      const mockFeeResult = {
+        toString: vi.fn().mockReturnValue('7500')
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue(
+        mockFeeResult
+      )
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('Polkadot', xcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        mockWeight,
+        expect.objectContaining({
+          V4: expect.any(Object)
+        })
+      )
+      expect(fee).toBe(7500n)
+    })
+
+    it('should handle AssetHubKusama node', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset: TAsset = {
+        symbol: 'KSM',
+        multiLocation: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: 1000
+            }
+          }
+        }
+      }
+
+      const mockWeight = {
+        refTime: '3000',
+        proofSize: '4000'
+      }
+
+      const mockFeeResult = {
+        toString: vi.fn().mockReturnValue('15000')
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue(
+        mockFeeResult
+      )
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubKusama', xcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        mockWeight,
+        expect.objectContaining({
+          V4: expect.any(Object)
+        })
+      )
+      expect(fee).toBe(15000n)
+    })
+
+    it('should handle Kusama relay chain', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const asset: TAsset = {
+        symbol: 'KSM',
+        multiLocation: {
+          parents: 0,
+          interior: {
+            Here: null
+          }
+        }
+      }
+
+      const mockWeight = {
+        refTime: '2500',
+        proofSize: '3500'
+      }
+
+      const mockFeeResult = {
+        toString: vi.fn().mockReturnValue('12500')
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue(
+        mockFeeResult
+      )
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('Kusama', xcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        mockWeight,
+        expect.objectContaining({
+          V4: expect.any(Object)
+        })
+      )
+      expect(fee).toBe(12500n)
     })
   })
 

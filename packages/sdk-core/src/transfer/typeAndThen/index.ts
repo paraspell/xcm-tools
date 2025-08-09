@@ -1,1 +1,1 @@
-export * from './createTypeAndThenTransfer'
+export * from './createTypeAndThenCall'

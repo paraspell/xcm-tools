@@ -24,6 +24,7 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   assertHasId,
+  assertHasLocation,
   BatchMode,
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -33,7 +34,6 @@ import {
   getNode,
   getNodeProviders,
   hasXcmPaymentApiSupport,
-  InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
   isConfig,
@@ -564,28 +564,27 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getXcmPaymentApiFee(
     node: TNodeDotKsmWithRelayChains,
     xcm: any,
-    asset: TAsset
+    asset: TAsset,
+    transformXcm = false
   ): Promise<bigint> {
-    const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(xcm)
+    const weight = await this.api
+      .getUnsafeApi()
+      .apis.XcmPaymentApi.query_xcm_weight(transformXcm ? transform(xcm) : xcm)
 
-    if (!asset?.multiLocation) {
-      throw new InvalidCurrencyError(
-        'This asset does not have a multiLocation defined. Cannot determine destination fee.'
-      )
-    }
+    assertHasLocation(asset)
 
-    const transformedLocation =
+    const localizedLocation =
       node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
         ? localizeLocation(node, asset.multiLocation)
         : asset.multiLocation
 
-    const transformedPapiLocation = transform(transformedLocation)
+    const transformedLocation = transform(localizedLocation)
 
     const feeResult = await this.api
       .getUnsafeApi()
       .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
         type: Version.V4,
-        value: transformedPapiLocation
+        value: transformedLocation
       })
 
     return feeResult.value
