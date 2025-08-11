@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.8](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.11.7...xcm-api-v10.11.8) (2025-08-11)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix xcm-api zod schema 🔧 ([b8e7db0](https://github.com/paraspell/xcm-tools/commit/b8e7db0fb4ca8cf4b14b1b4a499a8a3d994aa526))
+
 ## [10.11.7](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.11.6...xcm-api-v10.11.7) (2025-08-08)
 
 

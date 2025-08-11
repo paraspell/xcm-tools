@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.8](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.7...assets-v10.11.8) (2025-08-11)
+
+
+### Bug Fixes
+
+* Update centrifuge native asset in asset registry ([e57bc20](https://github.com/paraspell/xcm-tools/commit/e57bc20e6a992d788fef921a620347cfac956ecc))
+
 ## [10.11.7](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.6...assets-v10.11.7) (2025-08-08)
 
 
