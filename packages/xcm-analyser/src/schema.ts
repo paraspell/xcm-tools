@@ -42,7 +42,17 @@ export const JunctionPlurality = z.object({
   Plurality: z.object({ id: BodyId, part: BodyPart }),
 });
 
-export const JunctionGlobalConsensus = z.object({ GlobalConsensus: NetworkId });
+export const GlobalConsensusNetworkSchema = z.union([
+  z.object({
+    Ethereum: z.object({
+      chainId: z.number(),
+    }),
+  }),
+  z.record(z.string(), z.any()),
+  z.string(),
+]);
+
+export const JunctionGlobalConsensus = z.object({ GlobalConsensus: GlobalConsensusNetworkSchema });
 
 export const JunctionSchema = z.union([
   JunctionParachain,
