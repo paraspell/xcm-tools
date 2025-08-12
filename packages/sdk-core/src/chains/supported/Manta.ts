@@ -13,7 +13,7 @@ class Manta<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   static readonly NATIVE_ASSET_ID = 1n
 
   constructor() {
-    super('Manta', 'manta', 'polkadot', Version.V3)
+    super('Manta', 'manta', 'Polkadot', Version.V3)
   }
 
   private getAssetId(asset: TAssetInfo) {

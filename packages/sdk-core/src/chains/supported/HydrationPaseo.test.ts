@@ -15,7 +15,7 @@ describe('HydrationPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('HydrationPaseo')
     expect(chain.info).toBe('rococoHydraDX')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V4)
   })
 })

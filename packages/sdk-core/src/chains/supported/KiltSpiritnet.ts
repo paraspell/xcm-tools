@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for KiltSpiritnet Parachain
 
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -16,10 +16,10 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
   constructor(
     chain: TParachain = 'KiltSpiritnet',
     info: string = 'kilt',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

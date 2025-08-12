@@ -186,7 +186,7 @@ describe('transferEthToPolkadot', () => {
     const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
       provider: {} as AbstractProvider,
-      currency: { multiasset: [] },
+      currency: [],
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
@@ -196,7 +196,7 @@ describe('transferEthToPolkadot', () => {
     }
 
     await expect(transferEthToPolkadot(options)).rejects.toThrow(
-      'Multiassets syntax is not supported for Evm transfers'
+      'Multi-assets are not yet supported for EVM transfers'
     )
   })
 
@@ -224,7 +224,7 @@ describe('transferEthToPolkadot', () => {
     }
 
     await expect(transferEthToPolkadot(options)).rejects.toThrow(
-      'Override location is not supported for Evm transfers'
+      'Override location is not supported for EVM transfers'
     )
   })
 

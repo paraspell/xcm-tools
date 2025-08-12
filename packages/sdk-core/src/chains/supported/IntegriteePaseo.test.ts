@@ -18,7 +18,7 @@ describe('IntegriteePaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('IntegriteePaseo')
     expect(chain.info).toBe('integritee')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V4)
   })
 })

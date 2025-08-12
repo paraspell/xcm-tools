@@ -4,7 +4,7 @@ import KiltSpiritnet from './KiltSpiritnet'
 
 class KiltPaseo<TApi, TRes> extends KiltSpiritnet<TApi, TRes> {
   constructor() {
-    super('KiltPaseo', 'kilt', 'paseo', Version.V4)
+    super('KiltPaseo', 'kilt', 'Paseo', Version.V4)
   }
 }
 

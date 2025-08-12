@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for the IntegriteeKusama Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -15,7 +15,7 @@ class IntegriteeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements 
   constructor(
     chain: TParachain = 'IntegriteeKusama',
     info: string = 'integritee',
-    type: TEcosystemType = 'kusama',
+    type: TRelaychain = 'Kusama',
     version: Version = Version.V4
   ) {
     super(chain, info, type, version)

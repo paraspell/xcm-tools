@@ -32,7 +32,7 @@ describe('Interlay', () => {
   it('should initialize with correct values', () => {
     expect(interlay.chain).toBe('Interlay')
     expect(interlay.info).toBe('interlay')
-    expect(interlay.type).toBe('polkadot')
+    expect(interlay.ecosystem).toBe('Polkadot')
     expect(interlay.version).toBe(Version.V3)
   })
 

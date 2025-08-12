@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class Subsocial<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Subsocial', 'subsocial', 'polkadot', Version.V3)
+    super('Subsocial', 'subsocial', 'Polkadot', Version.V3)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

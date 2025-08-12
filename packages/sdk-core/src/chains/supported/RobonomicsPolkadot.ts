@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class RobonomicsPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('RobonomicsPolkadot', 'robonomics', 'polkadot', Version.V3)
+    super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V3)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

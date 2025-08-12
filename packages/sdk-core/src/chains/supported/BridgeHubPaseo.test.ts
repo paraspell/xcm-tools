@@ -15,7 +15,7 @@ describe('BridgeHubPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('BridgeHubPaseo')
     expect(chain.info).toBe('PaseoBridgeHub')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V5)
   })
 })

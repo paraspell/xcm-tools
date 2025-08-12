@@ -46,12 +46,12 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new BridgeHaltedError()
   }
 
-  if ('multiasset' in currency) {
-    throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
+  if (Array.isArray(currency)) {
+    throw new InvalidParameterError('Multi-assets are not yet supported for EVM transfers')
   }
 
   if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new InvalidParameterError('Override location is not supported for Evm transfers')
+    throw new InvalidParameterError('Override location is not supported for EVM transfers')
   }
 
   const foundAsset = findAssetInfoOrThrow(from, currency, to)

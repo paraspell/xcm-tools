@@ -13,8 +13,7 @@ export const resolveFeeAsset = (
 ): TAssetInfo | undefined => {
   const asset = findAssetInfo(origin, feeAsset, !isTLocation(destination) ? destination : null)
 
-  const usesRawOverriddenMultiAssets =
-    'multiasset' in currency && currency.multiasset.every(isTAsset)
+  const usesRawOverriddenMultiAssets = Array.isArray(currency) && currency.every(isTAsset)
 
   if (!asset && !usesRawOverriddenMultiAssets) {
     throwUnsupportedCurrency(feeAsset, origin)

@@ -15,7 +15,7 @@ import Parachain from '../Parachain'
 
 class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Acala', 'acala', 'polkadot', Version.V4)
+    super('Acala', 'acala', 'Polkadot', Version.V4)
   }
 
   getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {

@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class Encointer<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Encointer', 'encointer', 'kusama', Version.V5)
+    super('Encointer', 'encointer', 'Kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

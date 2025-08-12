@@ -28,7 +28,7 @@ describe('KiltSpiritnet', () => {
   it('should initialize with correct values', () => {
     expect(kiltSpiritnet.chain).toBe('KiltSpiritnet')
     expect(kiltSpiritnet.info).toBe('kilt')
-    expect(kiltSpiritnet.type).toBe('polkadot')
+    expect(kiltSpiritnet.ecosystem).toBe('Polkadot')
     expect(kiltSpiritnet.version).toBe(Version.V4)
   })
 

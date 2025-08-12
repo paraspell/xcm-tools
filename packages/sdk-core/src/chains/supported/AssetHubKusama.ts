@@ -17,7 +17,7 @@ import Parachain from '../Parachain'
 
 class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('AssetHubKusama', 'KusamaAssetHub', 'kusama', Version.V5)
+    super('AssetHubKusama', 'KusamaAssetHub', 'Kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

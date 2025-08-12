@@ -85,19 +85,19 @@ describe('AssetsService', () => {
 
     it('should return chain by parachain ID', () => {
       getTChainSpy.mockReturnValue(chain);
-      const result = service.getChainByParaId(paraId, 'polkadot');
+      const result = service.getChainByParaId(paraId, 'Polkadot');
 
       expect(result).toEqual(JSON.stringify(chain));
-      expect(getTChainSpy).toHaveBeenCalledWith(paraId, 'polkadot');
+      expect(getTChainSpy).toHaveBeenCalledWith(paraId, 'Polkadot');
     });
 
     it('should throw NotFoundException for unknown parachain ID', () => {
       const unknownParaId = 999;
 
-      expect(() => service.getChainByParaId(unknownParaId, 'polkadot')).toThrow(
+      expect(() => service.getChainByParaId(unknownParaId, 'Polkadot')).toThrow(
         NotFoundException,
       );
-      expect(getTChainSpy).toHaveBeenCalledWith(unknownParaId, 'polkadot');
+      expect(getTChainSpy).toHaveBeenCalledWith(unknownParaId, 'Polkadot');
     });
 
     it('should throw BadRequestException for invalid ecosystem', () => {

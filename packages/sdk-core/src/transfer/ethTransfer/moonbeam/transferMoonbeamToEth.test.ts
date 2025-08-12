@@ -121,13 +121,13 @@ describe('transferMoonbeamToEth', () => {
     ).rejects.toThrow('AssetHub address is required')
   })
 
-  it('should throw error for multiasset currency', async () => {
+  it('should throw error for multiple currencies', async () => {
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        currency: { multiasset: 'invalid' } as unknown as TCurrencyInputWithAmount
+        currency: [] as unknown as TCurrencyInputWithAmount
       })
-    ).rejects.toThrow('Multiassets syntax is not supported')
+    ).rejects.toThrow('Multi-assets are not yet supported')
   })
 
   it('should throw error for override location', async () => {

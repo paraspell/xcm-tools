@@ -22,7 +22,7 @@ describe('EnergyWebX', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('EnergyWebX')
     expect(chain.info).toBe('ewx')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V3)
   })
 

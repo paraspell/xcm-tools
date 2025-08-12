@@ -1,6 +1,6 @@
 import {
   isRelayChain,
-  type TEcosystemType,
+  TRelaychain,
   type TParachain,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
@@ -19,7 +19,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
 
   const destChain = getTChain(
     paraIdTo as number,
-    getRelayChainOf(chain).toLowerCase() as TEcosystemType
+    getRelayChainOf(chain).toLowerCase() as TRelaychain
   ) as TParachain
 
   const reserveChain = isRelayChain(destChain)

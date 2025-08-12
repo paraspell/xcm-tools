@@ -11,7 +11,7 @@ import Parachain from '../Parachain'
 
 class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Centrifuge', 'centrifuge', 'polkadot', Version.V4)
+    super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
 
   private getCurrencySelection(asset: TAssetInfo) {

@@ -15,7 +15,7 @@ export const findAssetInfo = (
 ): TAssetInfo | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
-    'multiasset' in currency
+    Array.isArray(currency)
   ) {
     return null
   }

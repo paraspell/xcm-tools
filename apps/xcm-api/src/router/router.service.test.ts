@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TLocation, TChain } from '@paraspell/sdk';
+import type { TChain, TLocation } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';

@@ -4,7 +4,7 @@ import BridgeHubPolkadot from './BridgeHubPolkadot'
 
 class BridgeHubWestend<TApi, TRes> extends BridgeHubPolkadot<TApi, TRes> {
   constructor() {
-    super('BridgeHubWestend', 'westendBridgeHub', 'westend', Version.V5)
+    super('BridgeHubWestend', 'westendBridgeHub', 'Westend', Version.V5)
   }
 }
 

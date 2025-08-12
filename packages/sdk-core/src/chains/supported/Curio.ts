@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class Curio<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Curio', 'curio', 'kusama', Version.V3)
+    super('Curio', 'curio', 'Kusama', Version.V3)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

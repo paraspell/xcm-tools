@@ -15,7 +15,7 @@ import Parachain from '../Parachain'
 
 class Kintsugi<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Kintsugi', 'kintsugi', 'kusama', Version.V3)
+    super('Kintsugi', 'kintsugi', 'Kusama', Version.V3)
   }
 
   getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {

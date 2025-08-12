@@ -1,4 +1,4 @@
-import type { TChain, TLocation, TRelayChainSymbol } from '@paraspell/sdk-common'
+import type { TChain, TLocation } from '@paraspell/sdk-common'
 
 type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
@@ -36,7 +36,7 @@ export type TAssetWithLocation = TAssetInfo & {
 }
 
 export type TChainAssetsInfo = {
-  relaychainSymbol: TRelayChainSymbol
+  relaychainSymbol: string
   nativeAssetSymbol: string
   isEVM: boolean
   ss58Prefix: number

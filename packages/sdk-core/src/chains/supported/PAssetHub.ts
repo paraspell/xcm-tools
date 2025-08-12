@@ -4,7 +4,7 @@ import PeoplePolkadot from './PeoplePolkadot'
 
 class PAssetHub<TApi, TRes> extends PeoplePolkadot<TApi, TRes> {
   constructor() {
-    super('PAssetHub', 'PAssetHub - Contracts', 'paseo', Version.V5)
+    super('PAssetHub', 'PAssetHub - Contracts', 'Paseo', Version.V5)
   }
 }
 

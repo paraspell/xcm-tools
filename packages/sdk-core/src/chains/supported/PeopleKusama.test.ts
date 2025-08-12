@@ -22,7 +22,7 @@ describe('PeopleKusama', () => {
     expect(chain).toBeInstanceOf(PeopleKusama)
     expect(chain.chain).toBe('PeopleKusama')
     expect(chain.info).toBe('kusamaPeople')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V5)
   })
 

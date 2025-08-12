@@ -50,7 +50,7 @@ describe('BifrostPolkadot', () => {
   it('should initialize with correct values', () => {
     expect(bifrostPolkadot.chain).toBe('BifrostPolkadot')
     expect(bifrostPolkadot.info).toBe('bifrost')
-    expect(bifrostPolkadot.type).toBe('polkadot')
+    expect(bifrostPolkadot.ecosystem).toBe('Polkadot')
     expect(bifrostPolkadot.version).toBe(Version.V5)
   })
 

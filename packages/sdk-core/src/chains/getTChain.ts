@@ -1,5 +1,5 @@
-import type { TChain } from '@paraspell/sdk-common'
-import { PARACHAINS, type TEcosystemType } from '@paraspell/sdk-common'
+import type { TChain, TExternalChain, TRelaychain } from '@paraspell/sdk-common'
+import { PARACHAINS } from '@paraspell/sdk-common'
 
 import { getChain } from '../utils'
 import { getParaId } from './config'
@@ -10,18 +10,12 @@ import { getParaId } from './config'
  * @param paraId - The parachain ID.
  * @returns The chain name if found; otherwise, null.
  */
-export const getTChain = (paraId: number, ecosystem: TEcosystemType): TChain | null => {
+export const getTChain = (
+  paraId: number,
+  ecosystem: TRelaychain | TExternalChain
+): TChain | null => {
   if (paraId === 0) {
-    switch (ecosystem) {
-      case 'polkadot':
-        return 'Polkadot'
-      case 'kusama':
-        return 'Kusama'
-      case 'westend':
-        return 'Westend'
-      case 'paseo':
-        return 'Paseo'
-    }
+    return ecosystem
   }
 
   if (paraId === 1) {
@@ -29,7 +23,8 @@ export const getTChain = (paraId: number, ecosystem: TEcosystemType): TChain | n
   }
 
   return (
-    PARACHAINS.find(chain => getChain(chain).type === ecosystem && getParaId(chain) === paraId) ??
-    null
+    PARACHAINS.find(
+      chain => getChain(chain).ecosystem === ecosystem && getParaId(chain) === paraId
+    ) ?? null
   )
 }

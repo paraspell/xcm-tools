@@ -15,7 +15,7 @@ import Parachain from '../Parachain'
 
 class Crust<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Crust', 'crustParachain', 'polkadot', Version.V3)
+    super('Crust', 'crustParachain', 'Polkadot', Version.V3)
   }
 
   private getCurrencySelection(asset: TAssetInfo): TReserveAsset {

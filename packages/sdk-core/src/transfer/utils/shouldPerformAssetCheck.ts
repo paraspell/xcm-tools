@@ -7,9 +7,9 @@ export const shouldPerformAssetCheck = (
 ): boolean => {
   if (isRelayChain(origin)) return true
 
-  const hasMultiAsset = 'multiasset' in currency
+  const isMultipleAssets = Array.isArray(currency)
   const hasOverriddenLocation =
     'location' in currency && isOverrideLocationSpecifier(currency.location)
 
-  return !(hasMultiAsset || hasOverriddenLocation)
+  return !(isMultipleAssets || hasOverriddenLocation)
 }

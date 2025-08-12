@@ -219,12 +219,11 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to para transfer with fee asset', async () => {
-      const currency: TCurrencyInputWithAmount = {
-        multiasset: [
-          { id: CURRENCY_ID, amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000 }
-        ]
-      }
+      const currency: TCurrencyInputWithAmount = [
+        { id: CURRENCY_ID, amount: AMOUNT },
+        { symbol: 'USDT', amount: 10000 }
+      ]
+
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
       expect(sendSpy).toHaveBeenCalledWith({
@@ -237,46 +236,44 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to para transfer with two overriden multi asset', async () => {
-      const currency: TCurrencyInputWithAmount = {
-        multiasset: [
-          {
-            id: {
-              parents: 0,
-              interior: {
-                X2: [
-                  {
-                    PalletInstance: '50'
-                  },
-                  {
-                    Parachain: '30'
-                  }
-                ]
-              }
-            },
-            fun: {
-              Fungible: '102928'
+      const currency: TCurrencyInputWithAmount = [
+        {
+          id: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  Parachain: '30'
+                }
+              ]
             }
           },
-          {
-            id: {
-              parents: 0,
-              interior: {
-                X2: [
-                  {
-                    PalletInstance: '50'
-                  },
-                  {
-                    Parachain: '1337'
-                  }
-                ]
-              }
-            },
-            fun: {
-              Fungible: '38482'
-            }
+          fun: {
+            Fungible: '102928'
           }
-        ]
-      }
+        },
+        {
+          id: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  Parachain: '1337'
+                }
+              ]
+            }
+          },
+          fun: {
+            Fungible: '38482'
+          }
+        }
+      ]
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
@@ -355,12 +352,11 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to relay transfer with fee asset', async () => {
-      const currency: TCurrencyInputWithAmount = {
-        multiasset: [
-          { symbol: 'DOT', amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000 }
-        ]
-      }
+      const currency: TCurrencyInputWithAmount = [
+        { symbol: 'DOT', amount: AMOUNT },
+        { symbol: 'USDT', amount: 10000 }
+      ]
+
       const feeAsset = {
         symbol: 'USDT'
       }
@@ -409,12 +405,11 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to relay transfer with fee asset and overriden version', async () => {
-      const currency: TCurrencyInputWithAmount = {
-        multiasset: [
-          { symbol: 'DOT', amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000 }
-        ]
-      }
+      const currency: TCurrencyInputWithAmount = [
+        { symbol: 'DOT', amount: AMOUNT },
+        { symbol: 'USDT', amount: 10000 }
+      ]
+
       const version = Version.V4
       const feeAsset = {
         symbol: 'USDT'

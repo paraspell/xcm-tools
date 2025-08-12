@@ -32,7 +32,7 @@ describe('Darwinia', () => {
   it('should initialize with correct values', () => {
     expect(darwinia.chain).toBe('Darwinia')
     expect(darwinia.info).toBe('darwinia')
-    expect(darwinia.type).toBe('polkadot')
+    expect(darwinia.ecosystem).toBe('Polkadot')
     expect(darwinia.version).toBe(Version.V4)
   })
 

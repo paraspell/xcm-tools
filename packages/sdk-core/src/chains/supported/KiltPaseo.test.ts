@@ -15,7 +15,7 @@ describe('KiltPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('KiltPaseo')
     expect(chain.info).toBe('kilt')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V4)
   })
 })

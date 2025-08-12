@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for OriginTrail Parachain
 
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -11,10 +11,10 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   constructor(
     chain: TParachain = 'NeuroWeb',
     info: string = 'neuroweb',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

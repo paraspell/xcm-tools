@@ -1,4 +1,4 @@
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
+import { isRelayChain, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getChain } from '../getChain'
 
@@ -9,21 +9,6 @@ import { getChain } from '../getChain'
  * @returns The corresponding relay chain.
  */
 export const getRelayChainOf = (chain: TSubstrateChain): TRelaychain => {
-  if (chain === 'Polkadot') return 'Polkadot'
-  if (chain === 'Kusama') return 'Kusama'
-  if (chain === 'Westend') return 'Westend'
-  if (chain === 'Paseo') return 'Paseo'
-
-  const ecosystem = getChain(chain).type
-
-  switch (ecosystem) {
-    case 'kusama':
-      return 'Kusama'
-    case 'westend':
-      return 'Westend'
-    case 'paseo':
-      return 'Paseo'
-    default:
-      return 'Polkadot'
-  }
+  if (isRelayChain(chain)) return chain
+  return getChain(chain).ecosystem
 }

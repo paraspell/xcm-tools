@@ -15,7 +15,7 @@ describe('NeuroWebPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('NeuroWebPaseo')
     expect(chain.info).toBe('NeuroWeb')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V4)
   })
 })

@@ -24,7 +24,7 @@ describe('Manta', () => {
   it('should initialize with correct values', () => {
     expect(manta.chain).toBe('Manta')
     expect(manta.info).toBe('manta')
-    expect(manta.type).toBe('polkadot')
+    expect(manta.ecosystem).toBe('Polkadot')
     expect(manta.version).toBe(Version.V3)
   })
 

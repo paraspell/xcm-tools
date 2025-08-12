@@ -15,7 +15,7 @@ describe('PAssetHub', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('PAssetHub')
     expect(chain.info).toBe('PAssetHub - Contracts')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V5)
   })
 })

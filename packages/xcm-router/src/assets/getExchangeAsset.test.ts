@@ -52,7 +52,7 @@ describe('getExchangeAsset', () => {
   });
 
   test('should throw error for multiasset or override location currencies', () => {
-    const currency = { multiasset: 'some-asset' } as unknown as TCurrencyInput;
+    const currency = ['some-asset'] as unknown as TCurrencyInput;
     expect(() => getExchangeAsset(mockExchange, currency)).toThrowError(
       'XCM Router does not support location override or multi-asset currencies yet.',
     );

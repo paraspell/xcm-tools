@@ -28,7 +28,7 @@ describe('Curio', () => {
   it('should initialize with correct values', () => {
     expect(curio.chain).toBe('Curio')
     expect(curio.info).toBe('curio')
-    expect(curio.type).toBe('kusama')
+    expect(curio.ecosystem).toBe('Kusama')
     expect(curio.version).toBe(Version.V3)
   })
 

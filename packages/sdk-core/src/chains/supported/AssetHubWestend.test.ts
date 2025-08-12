@@ -15,7 +15,7 @@ describe('AssetHubWestend', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('AssetHubPolkadot')
     expect(chain.info).toBe('PolkadotAssetHub')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
   })
 })

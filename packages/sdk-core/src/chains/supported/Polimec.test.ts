@@ -41,7 +41,7 @@ describe('Polimec', () => {
   it('should initialize with correct values', () => {
     expect(polimec.chain).toBe('Polimec')
     expect(polimec.info).toBe('polimec')
-    expect(polimec.type).toBe('polkadot')
+    expect(polimec.ecosystem).toBe('Polkadot')
     expect(polimec.version).toBe(Version.V5)
   })
 

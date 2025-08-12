@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for the EnergyWebX Parachain
 
-import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -11,12 +11,12 @@ import ParachainNode from '../Parachain'
 
 class EnergyWebX<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
-    chain: TNodePolkadotKusama = 'EnergyWebX',
+    chain: TParachain = 'EnergyWebX',
     info: string = 'ewx',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V3
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

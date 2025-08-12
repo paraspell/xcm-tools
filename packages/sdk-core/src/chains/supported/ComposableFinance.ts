@@ -9,7 +9,7 @@ import Parachain from '../Parachain'
 
 class ComposableFinance<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('ComposableFinance', 'composable', 'polkadot', Version.V3)
+    super('ComposableFinance', 'composable', 'Polkadot', Version.V3)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

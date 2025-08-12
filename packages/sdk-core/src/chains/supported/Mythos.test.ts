@@ -58,7 +58,7 @@ describe('Mythos', () => {
   it('should initialize with correct values', () => {
     expect(mythos.chain).toBe('Mythos')
     expect(mythos.info).toBe('mythos')
-    expect(mythos.type).toBe('polkadot')
+    expect(mythos.ecosystem).toBe('Polkadot')
     expect(mythos.version).toBe(Version.V5)
   })
 

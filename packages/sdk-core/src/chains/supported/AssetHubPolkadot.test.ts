@@ -119,7 +119,7 @@ describe('AssetHubPolkadot', () => {
   it('should initialize with correct values', () => {
     expect(assetHub.chain).toBe('AssetHubPolkadot')
     expect(assetHub.info).toBe('PolkadotAssetHub')
-    expect(assetHub.type).toBe('polkadot')
+    expect(assetHub.ecosystem).toBe('Polkadot')
     expect(assetHub.version).toBe(Version.V5)
   })
 

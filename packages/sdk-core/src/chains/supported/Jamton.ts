@@ -17,7 +17,7 @@ class Jamton<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
   }
 
   constructor() {
-    super('Jamton', 'jamton', 'polkadot', Version.V4)
+    super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

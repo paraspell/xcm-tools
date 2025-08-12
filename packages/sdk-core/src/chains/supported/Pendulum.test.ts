@@ -39,7 +39,7 @@ describe('Pendulum', () => {
   it('should initialize with correct values', () => {
     expect(pendulum.chain).toBe('Pendulum')
     expect(pendulum.info).toBe('pendulum')
-    expect(pendulum.type).toBe('polkadot')
+    expect(pendulum.ecosystem).toBe('Polkadot')
     expect(pendulum.version).toBe(Version.V3)
   })
 

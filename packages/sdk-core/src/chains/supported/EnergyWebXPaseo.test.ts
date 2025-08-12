@@ -18,7 +18,7 @@ describe('EnergyWebXPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('EnergyWebXPaseo')
     expect(chain.info).toBe('paseoEwx')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V3)
   })
 })

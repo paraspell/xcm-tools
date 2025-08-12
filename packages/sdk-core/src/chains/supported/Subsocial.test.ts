@@ -6,6 +6,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import Subsocial from './Subsocial'
+import { Version } from '@paraspell/sdk-common'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
@@ -19,8 +20,11 @@ describe('Subsocial', () => {
       subsocial = getChain<unknown, unknown, 'Subsocial'>('Subsocial')
     })
 
-    it('should be instantiated correctly', () => {
-      expect(subsocial).toBeInstanceOf(Subsocial)
+    it('should initialize with correct values', () => {
+      expect(subsocial.chain).toBe('Subsocial')
+      expect(subsocial.info).toBe('subsocial')
+      expect(subsocial.ecosystem).toBe('Polkadot')
+      expect(subsocial.version).toBe(Version.V3)
     })
 
     it('should not suppoert ParaToRelay scenario', () => {

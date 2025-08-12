@@ -39,7 +39,7 @@ describe('Jamton', () => {
     it('should initialize with correct values', () => {
       expect(jamton.chain).toBe('Jamton')
       expect(jamton.info).toBe('jamton')
-      expect(jamton.type).toBe('polkadot')
+      expect(jamton.ecosystem).toBe('Polkadot')
       expect(jamton.version).toBe(Version.V4)
     })
   })

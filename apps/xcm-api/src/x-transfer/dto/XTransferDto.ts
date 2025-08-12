@@ -108,12 +108,8 @@ const CurrencyCoreWithMLOverride = z
 
 export const CurrencySchema = z.union([
   CurrencyCoreWithMLOverride,
-  z.object({
-    multiasset: z.union([
-      z.array(AssetSchema),
-      z.array(CurrencyCoreWithAmountSchema),
-    ]),
-  }),
+  z.array(AssetSchema),
+  z.array(CurrencyCoreWithAmountSchema),
 ]);
 
 const versionValues = Object.values(Version) as [Version, ...Version[]];

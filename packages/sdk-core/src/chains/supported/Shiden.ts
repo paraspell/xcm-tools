@@ -18,7 +18,7 @@ class Shiden<TApi, TRes>
   implements IPolkadotXCMTransfer, IXTokensTransfer
 {
   constructor() {
-    super('Shiden', 'shiden', 'kusama', Version.V5)
+    super('Shiden', 'shiden', 'Kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

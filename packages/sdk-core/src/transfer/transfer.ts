@@ -86,7 +86,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
         method: 'transfer_keep_alive',
         parameters: {
           dest: { Id: address },
-          value: 'multiasset' in currency ? 0n : BigInt(currency.amount)
+          value: Array.isArray(currency) ? 0n : BigInt(currency.amount)
         }
       })
     }
@@ -98,7 +98,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       address,
       assetInfo: {
         ...asset,
-        amount: 'multiasset' in currency ? 0n : BigInt(currency.amount)
+        amount: Array.isArray(currency) ? 0n : BigInt(currency.amount)
       },
       paraIdTo,
       version: resolvedVersion,
@@ -123,11 +123,10 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       symbol: 'symbol' in currency ? currency.symbol : undefined
     } as TNativeAssetInfo)
 
-  const finalAsset =
-    'multiasset' in currency
-      ? { ...resolvedAsset, amount: 0n, assetId: '1' }
-      : // Ensure amount is at least 2 to avoid Rust panic
-        { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount) }
+  const finalAsset = Array.isArray(currency)
+    ? { ...resolvedAsset, amount: 0n, assetId: '1' }
+    : // Ensure amount is at least 2 to avoid Rust panic
+      { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount) }
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)
 

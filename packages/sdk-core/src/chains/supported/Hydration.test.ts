@@ -1,5 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
-import { InvalidCurrencyError } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { findAssetInfoByLoc, findAssetInfoOrThrow, InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -13,9 +13,9 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
-import { getNode } from '../../utils'
+import { getChain } from '../../utils'
 import { getParaId } from '../config'
-import ParachainNode from '../ParachainNode'
+import Parachain from '../Parachain'
 import type Hydration from './Hydration'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
@@ -55,14 +55,14 @@ describe('Hydration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    hydration = getNode<unknown, unknown, 'Hydration'>('Hydration')
+    hydration = getChain<unknown, unknown, 'Hydration'>('Hydration')
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
 
   it('should initialize with correct values', () => {
     expect(hydration.chain).toBe('Hydration')
     expect(hydration.info).toBe('hydradx')
-    expect(hydration.type).toBe('polkadot')
+    expect(hydration.ecosystem).toBe('Polkadot')
     expect(hydration.version).toBe(Version.V4)
   })
 
@@ -262,7 +262,7 @@ describe('Hydration', () => {
         asset: {
           symbol: 'WORM',
           amount: 500n,
-          multiLocation: {
+          location: {
             parents: 1,
             interior: {
               X2: [{ Parachain: getParaId('Moonbeam') }, { PalletInstance: 110 }]
@@ -290,20 +290,19 @@ describe('Hydration', () => {
       const mockAsset = {
         symbol: 'WORM',
         amount: 500n,
-        multiLocation: {},
+        location: {},
         assetId: '123'
       }
 
       const mockGlmrAsset = {
         symbol: 'GLMR',
-        multiLocation: { parents: 1, interior: 'Here' }
-      } as TAsset
+        location: { parents: 1, interior: 'Here' }
+      } as WithAmount<TAssetInfo>
 
-      vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockGlmrAsset)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockGlmrAsset)
 
       const mockInput = {
-        asset: mockAsset,
-        version: hydration.version
+        asset: mockAsset
       } as TXTokensTransferOptions<unknown, unknown>
 
       hydration.transferMoonbeamWhAsset(mockInput)
@@ -319,7 +318,7 @@ describe('Hydration', () => {
 
   describe('canUseXTokens', () => {
     beforeEach(() => {
-      vi.spyOn(ParachainNode.prototype, 'canUseXTokens').mockReturnValue(true)
+      vi.spyOn(Parachain.prototype, 'canUseXTokens').mockReturnValue(true)
     })
 
     afterEach(() => {
@@ -351,11 +350,11 @@ describe('Hydration', () => {
     })
 
     it('should return false when super.canUseXTokens returns false', () => {
-      vi.spyOn(ParachainNode.prototype, 'canUseXTokens').mockReturnValue(false)
+      vi.spyOn(Parachain.prototype, 'canUseXTokens').mockReturnValue(false)
 
       const result = hydration['canUseXTokens']({
         to: 'Acala',
-        asset: { symbol: 'USDC', multiLocation: {} }
+        assetInfo: { symbol: 'USDC', location: {} }
       } as TSendInternalOptions<unknown, unknown>)
 
       expect(result).toBe(false)

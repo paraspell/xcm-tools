@@ -4,7 +4,7 @@ import CoretimePolkadot from './CoretimePolkadot'
 
 class CoretimeWestend<TApi, TRes> extends CoretimePolkadot<TApi, TRes> {
   constructor() {
-    super('CoretimeWestend', 'westendCoretime', 'westend', Version.V5)
+    super('CoretimeWestend', 'westendCoretime', 'Westend', Version.V5)
   }
 }
 

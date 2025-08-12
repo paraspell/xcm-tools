@@ -1,31 +1,28 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAsset,
-  findAssetByMultiLocation,
+  findAssetInfo,
+  findAssetInfoByLoc,
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
   isChainEvm,
   isForeignAsset,
-  isNodeEvm,
   isSymbolMatch,
-  type TAsset,
-  type TMultiAsset
+  type TAsset
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TNodeDotKsmWithRelayChains, Version } from '@paraspell/sdk-common'
+import type { TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   isDotKsmBridge,
-  isTMultiLocation,
+  isTLocation,
   Parents,
   replaceBigInt,
-  type TEcosystemType,
   type TParachain
 } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../constants'
+import { DOT_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   InvalidAddressError,
@@ -90,13 +87,13 @@ abstract class Parachain<TApi, TRes> {
   // These names can be found under object key 'info'
   private readonly _info: string
 
-  private readonly _type: TEcosystemType
+  private readonly _ecosystem: TRelaychain
 
   private readonly _version: Version
 
-  constructor(chain: TParachain, info: string, type: TEcosystemType, version: Version) {
+  constructor(chain: TParachain, info: string, ecosystem: TRelaychain, version: Version) {
     this._info = info
-    this._type = type
+    this._ecosystem = ecosystem
     this._chain = chain
     this._version = version
   }
@@ -105,8 +102,8 @@ abstract class Parachain<TApi, TRes> {
     return this._info
   }
 
-  get type(): TEcosystemType {
-    return this._type
+  get ecosystem(): TRelaychain {
+    return this._ecosystem
   }
 
   get chain(): TParachain {
@@ -120,7 +117,7 @@ abstract class Parachain<TApi, TRes> {
   canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
     const { assetInfo: asset } = options
     const isEthAsset =
-      asset.location && findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.location)
+      asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
 
     return !isEthAsset && !this.shouldUseNativeAssetTeleport(options)
   }
@@ -165,7 +162,7 @@ abstract class Parachain<TApi, TRes> {
       const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
       const isJamtonOrigin = this.chain === 'Jamton'
       const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-      const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
+      const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
 
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
@@ -181,7 +178,7 @@ abstract class Parachain<TApi, TRes> {
         method
       }
 
-      if (shouldUseMultiasset) {
+      if (useMultiAssets) {
         return transferXTokens(input, undefined)
       }
 
@@ -238,8 +235,8 @@ abstract class Parachain<TApi, TRes> {
         )
       }
 
-      const isAHPOrigin = this.node.includes('AssetHub')
-      const isAHPDest = !isTMultiLocation(destination) && destination.includes('AssetHub')
+      const isAHPOrigin = this.chain.includes('AssetHub')
+      const isAHPDest = !isTLocation(destination) && destination.includes('AssetHub')
 
       // Handle common cases
       const isEthAsset =
@@ -264,25 +261,28 @@ abstract class Parachain<TApi, TRes> {
     }
   }
 
-  shouldUseNativeAssetTeleport({ asset, to }: TSendInternalOptions<TApi, TRes>): boolean {
-    if (isTMultiLocation(to) || isDotKsmBridge(this.node, to) || to === 'Ethereum') return false
+  shouldUseNativeAssetTeleport({
+    assetInfo: asset,
+    to
+  }: TSendInternalOptions<TApi, TRes>): boolean {
+    if (isTLocation(to) || isDotKsmBridge(this.chain, to) || to === 'Ethereum') return false
 
-    const isAHPOrigin = this.node.includes('AssetHub')
-    const isAHPDest = !isTMultiLocation(to) && to.includes('AssetHub')
+    const isAHPOrigin = this.chain.includes('AssetHub')
+    const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
 
     const isNativeAsset =
-      !isTMultiLocation(to) &&
+      !isTLocation(to) &&
       ((isAHPOrigin &&
         isForeignAsset(asset) &&
         isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
         (isAHPDest &&
           !isForeignAsset(asset) &&
-          isSymbolMatch(asset.symbol, getNativeAssetSymbol(this.node))))
+          isSymbolMatch(asset.symbol, getNativeAssetSymbol(this.chain))))
 
-    const assetHubChain = `AssetHub${getRelayChainOf(this.node)}` as TNodeDotKsmWithRelayChains
+    const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
     const isRegisteredOnAh =
-      asset.multiLocation && findAsset(assetHubChain, { multilocation: asset.multiLocation }, null)
+      asset.location && findAssetInfo(assetHubChain, { location: asset.location }, null)
 
     return isNativeAsset && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }

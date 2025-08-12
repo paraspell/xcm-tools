@@ -10,7 +10,7 @@ import {
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
-import type { TChain, TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
   hasJunction,
   isSystemChain,
@@ -55,10 +55,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   constructor(
     chain: TParachain = 'AssetHubPolkadot',
     info: string = 'PolkadotAssetHub',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V5
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   public handleBridgeTransfer<TApi, TRes>(

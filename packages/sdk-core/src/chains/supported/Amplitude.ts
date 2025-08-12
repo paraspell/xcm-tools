@@ -9,7 +9,7 @@ import Parachain from '../Parachain'
 
 class Amplitude<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Amplitude', 'amplitude', 'kusama', Version.V3)
+    super('Amplitude', 'amplitude', 'Kusama', Version.V3)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

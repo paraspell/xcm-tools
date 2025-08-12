@@ -6,7 +6,7 @@ import EnergyWebX from './EnergyWebX'
 
 class EnergyWebXPaseo<TApi, TRes> extends EnergyWebX<TApi, TRes> {
   constructor() {
-    super('EnergyWebXPaseo', 'paseoEwx', 'paseo', Version.V3)
+    super('EnergyWebXPaseo', 'paseoEwx', 'Paseo', Version.V3)
   }
 }
 

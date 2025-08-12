@@ -183,7 +183,7 @@ describe('transferMoonbeamEvm', () => {
         to: 'AssetHubPolkadot',
         signer: mockSigner,
         address: mockAddress,
-        currency: { multiasset: [], amount: '1234' }
+        currency: []
       } as TEvmBuilderOptions<unknown, unknown>)
     ).rejects.toThrowError()
   })
