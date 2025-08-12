@@ -64,6 +64,9 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           : 'Invalid address',
       ahAddress: (value, values) =>
         values.from === 'Moonbeam' && values.to === 'Ethereum' && !value,
+       amount: (value) => {
+          return Number(value) > 0 ? null : 'Amount must be greater than 0';
+        },
     },
   });
 

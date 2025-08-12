@@ -134,6 +134,7 @@ const XcmUtilsForm: FC<Props> = ({
           } else {
             return value ? null : 'Currency selection is required';
           }
+          
         },
         customCurrency: (value, values, path) => {
           const index = Number(path.split('.')[1]);
@@ -141,6 +142,9 @@ const XcmUtilsForm: FC<Props> = ({
             return value ? null : 'Custom currency is required';
           }
           return null;
+        },
+         amount: (value) => {
+          return Number(value) > 0 ? null : 'Amount must be greater than 0';
         },
       },
       feeAsset(value, values) {

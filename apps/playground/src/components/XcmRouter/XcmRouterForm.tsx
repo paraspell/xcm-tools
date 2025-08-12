@@ -147,6 +147,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
         }
         return null;
       },
+       amount: (value) => {
+      return Number(value) > 0 ? null: 'Amount must be greater than 0';
+    },
     },
     validateInputOnChange: ['exchange'],
   });

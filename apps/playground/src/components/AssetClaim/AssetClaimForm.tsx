@@ -39,7 +39,12 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
 
     validate: {
       address: (value) =>
-        isValidWalletAddress(value) ? null : 'Invalid address',
+        isValidWalletAddress(value)
+       ? null 
+       : 'Invalid address',
+        amount: (value) => {
+      return Number(value) > 0 ? null : 'Amount must be greater than 0';
+    },
     },
   });
 
