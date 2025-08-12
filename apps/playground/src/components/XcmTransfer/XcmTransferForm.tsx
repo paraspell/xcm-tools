@@ -148,6 +148,9 @@ const XcmTransferForm: FC<Props> = ({
           }
           return null;
         },
+        amount: (value) => {
+          return Number(value) > 0 ? null : 'Amount must be greater than 0';
+        },
       },
       feeAsset(value, values) {
         return !value && values.currencies.length > 1
