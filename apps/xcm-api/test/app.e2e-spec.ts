@@ -6,9 +6,6 @@ import {
   BatchMode,
   Builder,
   Foreign,
-  CHAINS_WITH_RELAY_CHAINS,
-  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
-  CHAIN_NAMES_DOT_KSM,
   Native,
   Override,
   TCurrencyInputWithAmount,
@@ -26,6 +23,8 @@ import {
   getSupportedPallets,
   hasSupportForAsset,
   replaceBigInt,
+  SUBSTRATE_CHAINS,
+  CHAINS,
 } from '@paraspell/sdk';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
@@ -52,7 +51,7 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('Pallets controller', () => {
-    CHAIN_NAMES_DOT_KSM.forEach((chain) => {
+    SUBSTRATE_CHAINS.forEach((chain) => {
       const supoortedPalletsUrl = `/pallets/${chain}`;
       it(`Supported pallets - ${supoortedPalletsUrl} (GET)`, () => {
         const pallets = getSupportedPallets(chain);
@@ -93,10 +92,10 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .get(chainNamesUrl)
         .expect(200)
-        .expect(CHAINS_WITH_RELAY_CHAINS);
+        .expect(CHAINS);
     });
 
-    CHAINS_WITH_RELAY_CHAINS_DOT_KSM.filter(
+    SUBSTRATE_CHAINS.filter(
       // These chains do not have ws endpoints
       (chain) => chain !== 'Peaq',
     ).forEach((chain) => {
@@ -114,7 +113,7 @@ describe('XCM API (e2e)', () => {
   describe('Assets controller', () => {
     const unknownSymbol = 'UnknownSymbol';
 
-    CHAIN_NAMES_DOT_KSM.forEach((chain) => {
+    CHAINS.forEach((chain) => {
       if (chain === 'Polimec') return;
       const assetsObjectUrl = `/assets/${chain}`;
       it(`Get assets object - ${assetsObjectUrl} (GET)`, () => {
@@ -1031,7 +1030,7 @@ describe('XCM API (e2e)', () => {
       const tx = await Builder()
         .from(from)
         .to(to)
-        .currency({ multiasset: createCurrency('1000000000') })
+        .currency(createCurrency('1000000000'))
         .feeAsset({
           location: feeAsset,
         })
@@ -1043,7 +1042,7 @@ describe('XCM API (e2e)', () => {
           from,
           to,
           address,
-          currency: { multiasset: createCurrency('1000000000') },
+          currency: createCurrency('1000000000'),
           feeAsset: { location: feeAsset },
         })
         .expect(201)

@@ -4,7 +4,7 @@ import Moonbeam from './Moonbeam'
 
 class Penpal<TApi, TRes> extends Moonbeam<TApi, TRes> {
   constructor() {
-    super('Penpal', 'westendPenpal', 'westend', Version.V4)
+    super('Penpal', 'westendPenpal', 'Westend', Version.V4)
   }
 }
 

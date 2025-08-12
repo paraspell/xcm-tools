@@ -23,7 +23,7 @@ describe('ComposableFinance', () => {
   it('should initialize with correct values', () => {
     expect(composableFinance.chain).toBe('ComposableFinance')
     expect(composableFinance.info).toBe('composable')
-    expect(composableFinance.type).toBe('polkadot')
+    expect(composableFinance.ecosystem).toBe('Polkadot')
     expect(composableFinance.version).toBe(Version.V3)
   })
 

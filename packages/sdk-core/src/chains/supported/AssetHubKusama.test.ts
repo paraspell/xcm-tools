@@ -19,7 +19,7 @@ describe('transferPolkadotXCM', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('AssetHubKusama')
     expect(chain.info).toBe('KusamaAssetHub')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V5)
   })
 

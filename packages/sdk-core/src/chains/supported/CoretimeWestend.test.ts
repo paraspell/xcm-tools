@@ -15,7 +15,7 @@ describe('CoretimeWestend', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('CoretimeWestend')
     expect(chain.info).toBe('westendCoretime')
-    expect(chain.type).toBe('westend')
+    expect(chain.ecosystem).toBe('Westend')
     expect(chain.version).toBe(Version.V5)
   })
 })

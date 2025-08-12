@@ -8,7 +8,7 @@ import {
   isSymbolMatch,
   type TAssetInfo
 } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -32,10 +32,10 @@ class BifrostPolkadot<TApi, TRes>
   constructor(
     chain: TParachain = 'BifrostPolkadot',
     info: string = 'bifrost',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V5
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   getCurrencySelection(asset: TAssetInfo) {

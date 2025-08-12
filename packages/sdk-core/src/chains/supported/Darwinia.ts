@@ -17,7 +17,7 @@ import Parachain from '../Parachain'
 
 class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Darwinia', 'darwinia', 'polkadot', Version.V4)
+    super('Darwinia', 'darwinia', 'Polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

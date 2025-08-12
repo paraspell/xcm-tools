@@ -187,9 +187,7 @@ const XcmUtils = () => {
       ...formValues,
       senderAddress: selectedAccountAddress,
       currency:
-        currencyInputs.length === 1
-          ? currencyInputs[0]
-          : { multiasset: currencyInputs },
+        currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
       feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
     };
 
@@ -240,10 +238,7 @@ const XcmUtils = () => {
           .currency(
             currencyInputs.length === 1
               ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
-              : {
-                  multiasset:
-                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
-                },
+              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
           )
           .feeAsset(body.feeAsset as TCurrencyInput)
           .address(address)
@@ -306,9 +301,7 @@ const XcmUtils = () => {
       ...formValues,
       senderAddress: selectedAccountAddress,
       currency:
-        currencyInputs.length === 1
-          ? currencyInputs[0]
-          : { multiasset: currencyInputs },
+        currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
       feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
     };
 
@@ -355,10 +348,7 @@ const XcmUtils = () => {
           .currency(
             currencyInputs.length === 1
               ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
-              : {
-                  multiasset:
-                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
-                },
+              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
           )
           .feeAsset(body.feeAsset as TCurrencyInput)
           .address(address)

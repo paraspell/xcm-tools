@@ -25,7 +25,7 @@ describe('Encointer', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('Encointer')
     expect(chain.info).toBe('encointer')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V5)
   })
 

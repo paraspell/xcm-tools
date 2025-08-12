@@ -19,7 +19,7 @@ import Parachain from '../Parachain'
 
 class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Crab', 'crab', 'kusama', Version.V4)
+    super('Crab', 'crab', 'Kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
 import { getRelayChainSymbol, isSymbolMatch, type TAssetInfo } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../constants'
@@ -22,10 +22,10 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   constructor(
     chain: TParachain = 'Moonbeam',
     info: string = 'moonbeam',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V5
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   private getLocation(asset: TAssetInfo, scenario: TScenario): TLocation {

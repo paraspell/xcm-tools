@@ -1,6 +1,6 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
-import type { TChain, TRelayChainSymbol } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
 import type { TAssetInfo, TForeignAssetInfo } from '../types'
@@ -38,7 +38,7 @@ export const getAssetId = (chain: TChain, symbol: string): string | null => {
  * @param chain - The chain for which to get the relay chain symbol.
  * @returns The relay chain asset symbol.
  */
-export const getRelayChainSymbol = (chain: TChain): TRelayChainSymbol =>
+export const getRelayChainSymbol = (chain: TChain): string =>
   getAssetsObject(chain).relaychainSymbol
 
 /**

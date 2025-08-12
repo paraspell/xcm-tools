@@ -15,7 +15,7 @@ import Parachain from '../Parachain'
 
 class Interlay<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Interlay', 'interlay', 'polkadot', Version.V3)
+    super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }
 
   getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {

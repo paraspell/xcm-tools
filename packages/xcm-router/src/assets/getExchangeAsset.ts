@@ -24,7 +24,7 @@ export const getExchangeAsset = (
 ): TRouterAsset | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
-    'multiasset' in currency
+    Array.isArray(currency)
   ) {
     throw new InvalidParameterError(
       'XCM Router does not support location override or multi-asset currencies yet.',

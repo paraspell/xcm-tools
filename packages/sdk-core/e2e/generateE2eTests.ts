@@ -220,18 +220,16 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const tx = await Builder(api)
           .from('BifrostPolkadot')
           .to('AssetHubPolkadot')
-          .currency({
-            multiasset: [
-              {
-                symbol: 'USDT',
-                amount: '102928'
-              },
-              {
-                symbol: 'USDC',
-                amount: '38482'
-              }
-            ]
-          })
+          .currency([
+            {
+              symbol: 'USDT',
+              amount: '102928'
+            },
+            {
+              symbol: 'USDC',
+              amount: '38482'
+            }
+          ])
           .feeAsset({ symbol: 'USDC' })
           .address(MOCK_ADDRESS)
           .build()
@@ -244,25 +242,22 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const tx = await Builder(api)
           .from('Hydration')
           .to('AssetHubPolkadot')
-          .currency({
-            multiasset: [
-              {
-                id: {
-                  parents: 0,
-                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
-                },
-                fun: { Fungible: '102928' }
+          .currency([
+            {
+              id: {
+                parents: 0,
+                interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
               },
-              {
-                id: {
-                  parents: 0,
-                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
-                },
-                fun: { Fungible: '38482' }
-              }
-            ],
-            amount: MOCK_AMOUNT
-          })
+              fun: { Fungible: '102928' }
+            },
+            {
+              id: {
+                parents: 0,
+                interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
+              },
+              fun: { Fungible: '38482' }
+            }
+          ])
           .feeAsset({
             location: {
               parents: 0,

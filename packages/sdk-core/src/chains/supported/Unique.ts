@@ -13,7 +13,7 @@ class Unique<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
   private static NATIVE_ASSET_ID = 0
 
   constructor() {
-    super('Unique', 'unique', 'polkadot', Version.V5)
+    super('Unique', 'unique', 'Polkadot', Version.V5)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

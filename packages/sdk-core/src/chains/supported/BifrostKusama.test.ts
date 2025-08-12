@@ -24,7 +24,7 @@ describe('BifrostKusama', () => {
   it('should initialize with correct values', () => {
     expect(bifrostKusama.chain).toBe('BifrostKusama')
     expect(bifrostKusama.info).toBe('bifrost')
-    expect(bifrostKusama.type).toBe('kusama')
+    expect(bifrostKusama.ecosystem).toBe('Kusama')
     expect(bifrostKusama.version).toBe(Version.V5)
   })
 

@@ -245,7 +245,7 @@ describe('send', () => {
     const options = {
       api: apiMock,
       from: 'Acala',
-      currency: { multiasset: [] } as TCurrencyInput,
+      currency: [] as TCurrencyInput,
       feeAsset: { location: {} },
       address: 'some-address',
       to: 'Astar'
@@ -497,7 +497,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       to: 'Astar',
-      currency: { multiasset: [], amount: '0' } as TCurrencyInput,
+      currency: [] as TCurrencyInput,
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
 

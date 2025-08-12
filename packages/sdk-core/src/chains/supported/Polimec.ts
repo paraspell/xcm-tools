@@ -182,7 +182,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
 
 class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Polimec', 'polimec', 'polkadot', Version.V5)
+    super('Polimec', 'polimec', 'Polkadot', Version.V5)
   }
 
   async transferPolkadotXCM<TApi, TRes>(

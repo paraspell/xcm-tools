@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Ajuna Parachain on Polkadot
 
 import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -25,10 +25,10 @@ class Ajuna<TApi, TRes>
   constructor(
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

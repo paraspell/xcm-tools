@@ -30,7 +30,7 @@ describe('Crab', () => {
   it('should initialize with correct values', () => {
     expect(crab.chain).toBe('Crab')
     expect(crab.info).toBe('crab')
-    expect(crab.type).toBe('kusama')
+    expect(crab.ecosystem).toBe('Kusama')
     expect(crab.version).toBe(Version.V4)
   })
 

@@ -12,6 +12,8 @@ import {
   CHAINS,
   TChain,
   TSubstrateChain,
+  RELAYCHAINS,
+  TRelaychain,
 } from '@paraspell/sdk';
 
 import { validateChain } from '../utils.js';
@@ -28,12 +30,12 @@ export class ChainConfigsService {
   }
 
   getChainByParaId(paraId: number, ecosystem: string | undefined) {
-    if (ecosystem !== 'polkadot' && ecosystem !== 'kusama') {
+    if (!RELAYCHAINS.includes(ecosystem as TRelaychain)) {
       throw new BadRequestException(
         "Invalid ecosystem provided. Available options are 'polkadot' and 'kusama'.",
       );
     }
-    const chain = getTChain(paraId, ecosystem);
+    const chain = getTChain(paraId, ecosystem as TRelaychain);
     if (!chain) {
       throw new NotFoundException(
         `Chain with parachain id ${paraId} not found.`,

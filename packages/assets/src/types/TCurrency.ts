@@ -41,13 +41,15 @@ export type TCurrencyInputWithAmount =
   | WithComplexAmount<
       TCurrencySymbol | { id: TCurrency } | { location: TLocationValueWithOverride }
     >
-  | { multiasset: TAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
+  | TAsset<TAmount>[]
+  | WithComplexAmount<TCurrencyCore>[]
 
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
   | { location: TLocationValueWithOverride }
-  | { multiasset: TAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[] }
+  | TAsset<TAmount>[]
+  | WithComplexAmount<TCurrencyCore>[]
 
 export type WithAmount<TBase, T = bigint> = TBase & {
   amount: T

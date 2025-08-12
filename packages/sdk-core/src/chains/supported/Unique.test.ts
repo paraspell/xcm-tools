@@ -25,7 +25,7 @@ describe('Unique', () => {
   it('should initialize with correct values', () => {
     expect(unique.chain).toBe('Unique')
     expect(unique.info).toBe('unique')
-    expect(unique.type).toBe('polkadot')
+    expect(unique.ecosystem).toBe('Polkadot')
     expect(unique.version).toBe(Version.V5)
   })
 

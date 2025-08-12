@@ -9,7 +9,7 @@ import Parachain from '../Parachain'
 
 class Phala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTransferTransfer {
   constructor() {
-    super('Phala', 'phala', 'polkadot', Version.V3)
+    super('Phala', 'phala', 'Polkadot', Version.V3)
   }
 
   transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>) {

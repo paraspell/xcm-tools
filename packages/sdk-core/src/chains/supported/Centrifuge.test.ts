@@ -28,7 +28,7 @@ describe('Centrifuge', () => {
   it('should initialize with correct values', () => {
     expect(centrifuge.chain).toBe('Centrifuge')
     expect(centrifuge.info).toBe('centrifuge')
-    expect(centrifuge.type).toBe('polkadot')
+    expect(centrifuge.ecosystem).toBe('Polkadot')
     expect(centrifuge.version).toBe(Version.V4)
   })
 

@@ -4,7 +4,7 @@ import Nodle from './Nodle'
 
 class NodlePaseo<TApi, TRes> extends Nodle<TApi, TRes> {
   constructor() {
-    super('NodlePaseo', 'NodleParadis', 'paseo', Version.V4)
+    super('NodlePaseo', 'NodleParadis', 'Paseo', Version.V4)
   }
 }
 

@@ -23,7 +23,7 @@ describe('Amplitude', () => {
   it('should initialize with correct values', () => {
     expect(amplitude.chain).toBe('Amplitude')
     expect(amplitude.info).toBe('amplitude')
-    expect(amplitude.type).toBe('kusama')
+    expect(amplitude.ecosystem).toBe('Kusama')
     expect(amplitude.version).toBe(Version.V3)
   })
 

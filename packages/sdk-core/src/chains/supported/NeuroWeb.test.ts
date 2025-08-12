@@ -23,7 +23,7 @@ describe('NeuroWeb', () => {
   it('should initialize with correct values', () => {
     expect(neuroweb.chain).toBe('NeuroWeb')
     expect(neuroweb.info).toBe('neuroweb')
-    expect(neuroweb.type).toBe('polkadot')
+    expect(neuroweb.ecosystem).toBe('Polkadot')
     expect(neuroweb.version).toBe(Version.V4)
   })
 

@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class Pendulum<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Pendulum', 'pendulum', 'polkadot', Version.V3)
+    super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }
 
   private getCurrencySelection(asset: TAssetInfo): TXcmAsset {

@@ -9,7 +9,7 @@ import Parachain from '../Parachain'
 
 class Karura<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Karura', 'karura', 'kusama', Version.V4)
+    super('Karura', 'karura', 'Kusama', Version.V4)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {

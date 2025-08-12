@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class Basilisk<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Basilisk', 'basilisk', 'kusama', Version.V4)
+    super('Basilisk', 'basilisk', 'Kusama', Version.V4)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

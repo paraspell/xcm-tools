@@ -28,7 +28,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
     return currency.location.value
   }
 
-  if ('multiasset' in currency) {
+  if (Array.isArray(currency)) {
     if (!feeAsset) {
       throw new InvalidCurrencyError(
         'Overridden multi assets cannot be used without specifying fee asset'
@@ -39,7 +39,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
       throw new InvalidCurrencyError('Fee asset cannot be an overridden location specifier')
     }
 
-    if (currency.multiasset.every(asset => isTAsset<TAmount>(asset))) {
+    if (currency.every(asset => isTAsset<TAmount>(asset))) {
       if (!feeAsset) {
         throw new InvalidCurrencyError('Fee asset not provided')
       }
@@ -50,18 +50,18 @@ export const resolveOverriddenAsset = <TApi, TRes>(
         )
       }
 
-      return currency.multiasset.map(multiAsset => {
-        const ml = extractAssetLocation(multiAsset)
+      return currency.map(asset => {
+        const ml = extractAssetLocation(asset)
         return {
-          ...multiAsset,
-          fun: { Fungible: BigInt(multiAsset.fun.Fungible) },
+          ...asset,
+          fun: { Fungible: BigInt(asset.fun.Fungible) },
           isFeeAsset: deepEqual(ml, feeAsset.location)
         }
       })
     }
 
     // MultiAsset is an array of TCurrencyCore, search for assets
-    const assets = currency.multiasset.map(currency => {
+    const assets = currency.map(currency => {
       const asset = findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
 
       if (asset && !asset.location) {

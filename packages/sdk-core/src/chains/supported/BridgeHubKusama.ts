@@ -10,7 +10,7 @@ import Parachain from '../Parachain'
 
 class BridgeHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V5)
+    super('BridgeHubKusama', 'kusamaBridgeHub', 'Kusama', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

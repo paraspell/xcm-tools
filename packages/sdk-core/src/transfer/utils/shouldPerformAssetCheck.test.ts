@@ -29,7 +29,7 @@ describe('shouldPerformAssetCheck', () => {
 
   it('returns false if "multiasset" is in currency', () => {
     const origin = {} as TSubstrateChain
-    const currency = { multiasset: {} } as TCurrencyInput
+    const currency = [] as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
 

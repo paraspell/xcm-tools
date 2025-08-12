@@ -59,7 +59,7 @@ describe('Ajuna', () => {
   it('exposes the correct static metadata', () => {
     expect(ajuna.chain).toBe('Ajuna')
     expect(ajuna.info).toBe('ajuna')
-    expect(ajuna.type).toBe('polkadot')
+    expect(ajuna.ecosystem).toBe('Polkadot')
     expect(ajuna.version).toBe(Version.V4)
   })
 

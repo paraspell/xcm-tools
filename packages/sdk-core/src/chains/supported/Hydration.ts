@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
 import {
-  findAssetForNodeOrThrow,
+  findAssetInfoOrThrow,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isSymbolMatch
 } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../constants'
@@ -20,8 +20,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, createBeneficiaryLocation } from '../../utils'
-import { createMultiAsset } from '../../utils/multiAsset'
+import { assertHasId, assertHasLocation, createAsset, createBeneficiaryLocation } from '../../utils'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
@@ -54,10 +53,10 @@ class Hydration<TApi, TRes>
   constructor(
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
@@ -122,7 +121,7 @@ class Hydration<TApi, TRes>
 
     if (feeAsset) {
       if (overriddenAsset) {
-        throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
+        throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')
       }
 
       const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
@@ -145,8 +144,8 @@ class Hydration<TApi, TRes>
 
     assertHasLocation(asset)
 
-    const glmr = findAssetForNodeOrThrow(
-      this.node,
+    const glmr = findAssetInfoOrThrow(
+      this.chain,
       { symbol: getNativeAssetSymbol('Moonbeam') },
       null
     )
@@ -158,8 +157,8 @@ class Hydration<TApi, TRes>
       {
         ...input,
         overriddenAsset: [
-          { ...createMultiAsset(version, FEE_AMOUNT, glmr.multiLocation), isFeeAsset: true },
-          createMultiAsset(version, asset.amount, asset.multiLocation)
+          { ...createAsset(version, FEE_AMOUNT, glmr.location), isFeeAsset: true },
+          createAsset(version, asset.amount, asset.location)
         ]
       },
       Number(asset.assetId)
@@ -174,9 +173,9 @@ class Hydration<TApi, TRes>
     }
 
     const isMoonbeamWhAsset =
-      asset.multiLocation &&
-      hasJunction(asset.multiLocation, 'Parachain', getParaId('Moonbeam')) &&
-      hasJunction(asset.multiLocation, 'PalletInstance', 110)
+      asset.location &&
+      hasJunction(asset.location, 'Parachain', getParaId('Moonbeam')) &&
+      hasJunction(asset.location, 'PalletInstance', 110)
 
     if (isMoonbeamWhAsset && destination === 'Moonbeam') {
       return this.transferMoonbeamWhAsset(input)

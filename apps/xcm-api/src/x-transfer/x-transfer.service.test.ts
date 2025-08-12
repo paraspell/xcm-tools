@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TDryRunResult, TGetXcmFeeResult, TChain } from '@paraspell/sdk';
+import type { TChain, TDryRunResult, TGetXcmFeeResult } from '@paraspell/sdk';
 import { IncompatibleChainsError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

@@ -26,7 +26,7 @@ describe('Peaq', () => {
   it('should initialize with correct values', () => {
     expect(peaq.chain).toBe('Peaq')
     expect(peaq.info).toBe('peaq')
-    expect(peaq.type).toBe('polkadot')
+    expect(peaq.ecosystem).toBe('Polkadot')
     expect(peaq.version).toBe(Version.V4)
   })
 

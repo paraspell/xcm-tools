@@ -1,6 +1,5 @@
 import type { TAssetWithLocation } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { isRelayChain, TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -24,9 +23,9 @@ vi.mock('../../utils', () => ({
 }))
 
 describe('createTypeAndThenCallContext', () => {
-  const mockChain = 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
-  const mockDestChain = 'Acala' as TNodePolkadotKusama
-  const mockReserveChain = 'Polkadot' as TNodePolkadotKusama
+  const mockChain: TSubstrateChain = 'AssetHubPolkadot'
+  const mockDestChain: TChain = 'Acala'
+  const mockReserveChain: TSubstrateChain = 'Polkadot'
 
   const mockAsset = {
     amount: 1000n,
@@ -60,7 +59,7 @@ describe('createTypeAndThenCallContext', () => {
   })
 
   it('should create context with relay chain as destination', async () => {
-    const relayDestChain = 'Polkadot' as TNodePolkadotKusama
+    const relayDestChain: TSubstrateChain = 'Polkadot'
     vi.mocked(getTChain).mockReturnValue(relayDestChain)
     vi.mocked(isRelayChain).mockReturnValue(true)
 

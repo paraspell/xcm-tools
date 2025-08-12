@@ -24,7 +24,7 @@ describe('Altair', () => {
   it('should initialize with correct values', () => {
     expect(altair.chain).toBe('Altair')
     expect(altair.info).toBe('altair')
-    expect(altair.type).toBe('kusama')
+    expect(altair.ecosystem).toBe('Kusama')
     expect(altair.version).toBe(Version.V4)
   })
 

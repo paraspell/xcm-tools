@@ -4,7 +4,7 @@ import PeoplePolkadot from './PeoplePolkadot'
 
 class PeoplePaseo<TApi, TRes> extends PeoplePolkadot<TApi, TRes> {
   constructor() {
-    super('PeoplePaseo', 'PaseoPeopleChain', 'paseo', Version.V5)
+    super('PeoplePaseo', 'PaseoPeopleChain', 'Paseo', Version.V5)
   }
 }
 

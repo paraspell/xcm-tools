@@ -35,7 +35,7 @@ describe('Moonriver', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('Moonriver')
     expect(chain.info).toBe('moonriver')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V5)
   })
 

@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
 import { type TAssetInfo } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -19,10 +19,10 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
   constructor(
     chain: TParachain = 'Zeitgeist',
     info: string = 'zeitgeist',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V3
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   private getCurrencySelection(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {

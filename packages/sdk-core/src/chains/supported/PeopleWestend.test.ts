@@ -15,7 +15,7 @@ describe('PeopleWestend', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('PeopleWestend')
     expect(chain.info).toBe('westendPeople')
-    expect(chain.type).toBe('westend')
+    expect(chain.ecosystem).toBe('Westend')
     expect(chain.version).toBe(Version.V5)
   })
 })

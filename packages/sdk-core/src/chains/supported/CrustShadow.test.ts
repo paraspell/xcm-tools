@@ -28,7 +28,7 @@ describe('CrustShadow', () => {
   it('should initialize with correct values', () => {
     expect(crustShadow.chain).toBe('CrustShadow')
     expect(crustShadow.info).toBe('shadow')
-    expect(crustShadow.type).toBe('kusama')
+    expect(crustShadow.ecosystem).toBe('Kusama')
     expect(crustShadow.version).toBe(Version.V3)
   })
 

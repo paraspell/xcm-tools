@@ -23,7 +23,7 @@ describe('Quartz', () => {
   it('should initialize with correct values', () => {
     expect(quartz.chain).toBe('Quartz')
     expect(quartz.info).toBe('quartz')
-    expect(quartz.type).toBe('kusama')
+    expect(quartz.ecosystem).toBe('Kusama')
     expect(quartz.version).toBe(Version.V5)
   })
 

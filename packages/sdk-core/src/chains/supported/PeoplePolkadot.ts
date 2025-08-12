@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
 
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -13,10 +13,10 @@ class PeoplePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   constructor(
     chain: TParachain = 'PeoplePolkadot',
     info: string = 'polkadotPeople',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V5
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

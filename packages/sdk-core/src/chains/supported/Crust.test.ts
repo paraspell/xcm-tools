@@ -28,7 +28,7 @@ describe('Crust', () => {
   it('should initialize with correct values', () => {
     expect(crust.chain).toBe('Crust')
     expect(crust.info).toBe('crustParachain')
-    expect(crust.type).toBe('polkadot')
+    expect(crust.ecosystem).toBe('Polkadot')
     expect(crust.version).toBe(Version.V3)
   })
 

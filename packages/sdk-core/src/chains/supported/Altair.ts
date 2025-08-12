@@ -11,7 +11,7 @@ import Parachain from '../Parachain'
 
 class Altair<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Altair', 'altair', 'kusama', Version.V4)
+    super('Altair', 'altair', 'Kusama', Version.V4)
   }
 
   private getCurrencySelection(asset: TAssetInfo): TForeignOrNativeAsset {

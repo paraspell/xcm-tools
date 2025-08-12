@@ -1,28 +1,22 @@
-import { TSubstrateChain, TRelayChainSymbol } from '@paraspell/sdk-common'
+import { isRelayChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChain } from '../../../sdk-core/src'
 import { ApiPromise } from '@polkadot/api'
 import { normalizeLocation } from '../../src'
 
-export const getRelayChainSymbolOf = (chain: TSubstrateChain): TRelayChainSymbol => {
-  if (chain === 'Polkadot') return 'DOT'
-  if (chain === 'Kusama') return 'KSM'
-  if (chain === 'Westend') return 'WND'
-  if (chain === 'Paseo') return 'PAS'
-
-  const ecosystem = getChain(chain).type
-
-  switch (ecosystem) {
-    case 'polkadot':
-      return 'DOT'
-    case 'kusama':
-      return 'KSM'
-    case 'westend':
-      return 'WND'
-    case 'paseo':
-      return 'PAS'
-    default:
-      throw new Error(`Unsupported ecosystem type for chain: ${chain}`)
+export const getRelayChainSymbolOf = (chain: TSubstrateChain): string => {
+  const symbolMap: Record<TRelaychain, string> = {
+    Polkadot: 'DOT',
+    Kusama: 'KSM',
+    Westend: 'WND',
+    Paseo: 'PAS'
   }
+
+  // Check if chain itself is a relay chain
+  if (isRelayChain(chain)) return symbolMap[chain]
+
+  const ecosystem = getChain(chain).ecosystem
+
+  return symbolMap[ecosystem]
 }
 
 export const isChainEvm = (api: ApiPromise) => {
@@ -82,3 +76,6 @@ export const capitalizeKeys = (obj: any, depth: number = 1): any => {
   }
   return newObj
 }
+
+export const typedEntries = <T extends Record<string, any>>(obj: T): [keyof T, T[keyof T]][] =>
+  Object.entries(obj) as [keyof T, T[keyof T]][]

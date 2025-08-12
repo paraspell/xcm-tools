@@ -16,20 +16,16 @@ import { IncompatibleChainsError } from '../../errors'
 import type { TDestination } from '../../types'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
-  if ('multiasset' in currency) {
-    if (currency.multiasset.length === 0) {
+  if (Array.isArray(currency)) {
+    if (currency.length === 0) {
       throw new InvalidCurrencyError('Overridden assets cannot be empty')
     }
 
-    if (currency.multiasset.length === 1) {
+    if (currency.length === 1) {
       throw new InvalidCurrencyError('Please provide more than one asset')
     }
 
-    if (
-      currency.multiasset.length > 1 &&
-      !currency.multiasset.every(asset => isTAsset(asset)) &&
-      !feeAsset
-    ) {
+    if (currency.length > 1 && !currency.every(asset => isTAsset(asset)) && !feeAsset) {
       throw new InvalidCurrencyError(
         'Overridden assets cannot be used without specifying fee asset'
       )

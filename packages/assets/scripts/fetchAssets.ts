@@ -16,7 +16,7 @@ import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/s
 import { chainToQuery } from './chainToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
-import { capitalizeLocation, transformLocation } from './utils'
+import { capitalizeLocation, transformLocation, typedEntries } from './utils'
 import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifrostAssets'
 import { fetchCentrifugeAssets, fetchCentrifugeNativeAssets } from './fetchCentrifugeAssets'
 import { fetchExistentialDeposit } from './fetchEd'
@@ -41,6 +41,7 @@ import { fetchInterlayAssets } from './fetchInterlayAssets'
 import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
+import { DEFAULT_SS58_PREFIX } from './consts'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAssetInfo[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -408,8 +409,6 @@ const fetchOtherAssets = async (
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(api, query)
 }
 
-const DEFAULT_SS58_PREFIX = 42
-
 const fetchChainAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
@@ -483,50 +482,45 @@ const fetchChainAssets = async (
 
 export const fetchAllChainsAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
-  for (const [chain, query] of Object.entries(chainToQuery)) {
-    const chainName = chain as TChain
 
-    console.log(`Fetching assets for ${chainName}...`)
+  console.log(`Fetching assets for Ethereum...`)
+  const ethereumData = await fetchEthereumAssets()
+  output['Ethereum'] = ethereumData
+
+  for (const [chain, query] of typedEntries(chainToQuery)) {
+    console.log(`Fetching assets for ${chain}...`)
 
     let newData
 
-    if (chainName === 'Ethereum') {
-      newData = await fetchEthereumAssets()
-      output[chainName] = newData
+    newData = await fetchTryMultipleProvidersWithTimeout(chain, getChainProviders, api =>
+      fetchChainAssets(chain, api, query)
+    )
+
+    const isError = newData === null
+    const oldData = output[chain] ?? null
+
+    if (isError && oldData) {
+      // If fetching new data fails, keep existing data
+      output[chain] = oldData
     } else {
-      newData = await fetchTryMultipleProvidersWithTimeout(chainName, getChainProviders, api =>
-        fetchChainAssets(chainName, api, query)
-      )
+      // Append manually added assets from oldData to newData
+      const manuallyAddedNativeAssets =
+        oldData?.nativeAssets?.filter(asset => asset.manuallyAdded) ?? []
+      const manuallyAddedOtherAssets =
+        oldData?.otherAssets?.filter(asset => asset.manuallyAdded) ?? []
 
-      const isError = newData === null
-      const oldData = output[chainName] ?? null
+      const combinedNativeAssets = [...(newData?.nativeAssets ?? []), ...manuallyAddedNativeAssets]
+      const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
 
-      if (isError && oldData) {
-        // If fetching new data fails, keep existing data
-        output[chainName] = oldData
-      } else {
-        // Append manually added assets from oldData to newData
-        const manuallyAddedNativeAssets =
-          oldData?.nativeAssets?.filter(asset => asset.manuallyAdded) ?? []
-        const manuallyAddedOtherAssets =
-          oldData?.otherAssets?.filter(asset => asset.manuallyAdded) ?? []
-
-        const combinedNativeAssets = [
-          ...(newData?.nativeAssets ?? []),
-          ...manuallyAddedNativeAssets
-        ]
-        const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
-
-        output[chainName] = {
-          relaychainSymbol: getRelayChainSymbolOf(chainName),
-          nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
-          isEVM: newData?.isEVM ?? false,
-          ss58Prefix: newData?.ss58Prefix ?? DEFAULT_SS58_PREFIX,
-          supportsDryRunApi: newData?.supportsDryRunApi ?? false,
-          supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
-          nativeAssets: combinedNativeAssets,
-          otherAssets: isRelayChain(chainName) ? [] : combinedOtherAssets
-        }
+      output[chain] = {
+        relaychainSymbol: getRelayChainSymbolOf(chain),
+        nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
+        isEVM: newData?.isEVM ?? false,
+        ss58Prefix: newData?.ss58Prefix ?? DEFAULT_SS58_PREFIX,
+        supportsDryRunApi: newData?.supportsDryRunApi ?? false,
+        supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
+        nativeAssets: combinedNativeAssets,
+        otherAssets: isRelayChain(chain) ? [] : combinedOtherAssets
       }
     }
   }

@@ -25,7 +25,7 @@ describe('Collectives', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('Collectives')
     expect(chain.info).toBe('polkadotCollectives')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
   })
 

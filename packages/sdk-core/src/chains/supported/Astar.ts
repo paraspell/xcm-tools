@@ -21,7 +21,7 @@ class Astar<TApi, TRes>
   implements IPolkadotXCMTransfer, IXTokensTransfer
 {
   constructor() {
-    super('Astar', 'astar', 'polkadot', Version.V5)
+    super('Astar', 'astar', 'Polkadot', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

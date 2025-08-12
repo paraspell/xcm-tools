@@ -9,7 +9,7 @@ import Parachain from '../Parachain'
 
 class BifrostKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('BifrostKusama', 'bifrost', 'kusama', Version.V5)
+    super('BifrostKusama', 'bifrost', 'Kusama', Version.V5)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {

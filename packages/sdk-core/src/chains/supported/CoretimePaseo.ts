@@ -4,7 +4,7 @@ import CoretimePolkadot from './CoretimePolkadot'
 
 class CoretimePaseo<TApi, TRes> extends CoretimePolkadot<TApi, TRes> {
   constructor() {
-    super('CoretimePaseo', 'PaseoCoretime', 'paseo', Version.V5)
+    super('CoretimePaseo', 'PaseoCoretime', 'Paseo', Version.V5)
   }
 }
 

@@ -4,7 +4,7 @@ import BifrostPolkadot from './BifrostPolkadot'
 
 class BifrostPaseo<TApi, TRes> extends BifrostPolkadot<TApi, TRes> {
   constructor() {
-    super('BifrostPaseo', 'Bifrost(Paseo)', 'paseo', Version.V5)
+    super('BifrostPaseo', 'Bifrost(Paseo)', 'Paseo', Version.V5)
   }
 }
 

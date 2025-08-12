@@ -6,7 +6,7 @@ import IntegriteeKusama from './IntegriteeKusama'
 
 class IntegriteePaseo<TApi, TRes> extends IntegriteeKusama<TApi, TRes> {
   constructor() {
-    super('IntegriteePaseo', 'integritee', 'paseo', Version.V4)
+    super('IntegriteePaseo', 'integritee', 'Paseo', Version.V4)
   }
 }
 

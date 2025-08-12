@@ -21,7 +21,7 @@ describe('CoretimePolkadot', () => {
     expect(chain).toBeInstanceOf(CoretimePolkadot)
     expect(chain.chain).toBe('CoretimePolkadot')
     expect(chain.info).toBe('polkadotCoretime')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
   })
 

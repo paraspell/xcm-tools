@@ -27,7 +27,7 @@ describe('Acala', () => {
   it('should initialize with correct values', () => {
     expect(acala.chain).toBe('Acala')
     expect(acala.info).toBe('acala')
-    expect(acala.type).toBe('polkadot')
+    expect(acala.ecosystem).toBe('Polkadot')
     expect(acala.version).toBe(Version.V4)
   })
 

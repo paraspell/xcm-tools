@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Laos Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import {
@@ -21,10 +21,10 @@ class Laos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
   constructor(
     chain: TParachain = 'Laos',
     info: string = 'laos',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

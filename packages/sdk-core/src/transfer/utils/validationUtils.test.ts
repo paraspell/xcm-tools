@@ -53,22 +53,22 @@ describe('validateCurrency', () => {
     consoleWarnSpy.mockRestore()
   })
 
-  it('should throw InvalidCurrencyError when currency.multiasset is empty', () => {
-    const currency = { multiasset: [] } as TCurrencyInput
+  it('should throw InvalidCurrencyError when currencies is empty', () => {
+    const currency = [] as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow('Overridden assets cannot be empty')
   })
 
-  it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is specified', () => {
-    const currency = { multiasset: [{ symbol: 'DOT' }] } as TCurrencyInput
+  it('should throw InvalidCurrencyError when currencies has length 1 and feeAsset is specified', () => {
+    const currency = [{ symbol: 'DOT' }] as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })
 
-  it('should throw InvalidCurrencyError when currency.multiasset has length >1 and feeAsset is undefined', () => {
-    const currency = { multiasset: [{}, {}] } as TCurrencyInput
+  it('should throw InvalidCurrencyError when currencies has length >1 and feeAsset is undefined', () => {
+    const currency = [{}, {}] as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow(
@@ -77,13 +77,13 @@ describe('validateCurrency', () => {
   })
 
   it('should not throw when currency has multiasset with length >1 and valid feeAsset', () => {
-    const currency = { multiasset: [{}, {}] } as TCurrencyInput
+    const currency = [{}, {}] as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).not.toThrow()
   })
 
   it('should throw when currency has multiasset with length 1 or less', () => {
-    const currency = { multiasset: [{}] } as TCurrencyInput
+    const currency = [{}] as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
   })

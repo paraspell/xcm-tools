@@ -15,7 +15,7 @@ describe('ZeitgeistPaseo', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('ZeitgeistPaseo')
     expect(chain.info).toBe('ZeitgeistBatteryStation')
-    expect(chain.type).toBe('paseo')
+    expect(chain.ecosystem).toBe('Paseo')
     expect(chain.version).toBe(Version.V4)
   })
 })

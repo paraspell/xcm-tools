@@ -32,7 +32,7 @@ describe('Basilisk', () => {
   it('should initialize with correct values', () => {
     expect(basilisk.chain).toBe('Basilisk')
     expect(basilisk.info).toBe('basilisk')
-    expect(basilisk.type).toBe('kusama')
+    expect(basilisk.ecosystem).toBe('Kusama')
     expect(basilisk.version).toBe(Version.V4)
   })
 

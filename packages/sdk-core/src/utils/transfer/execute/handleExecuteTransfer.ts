@@ -1,6 +1,6 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -79,7 +79,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   const destChain = getTChain(
     paraIdTo as number,
-    getRelayChainOf(chain).toLowerCase() as TEcosystemType
+    getRelayChainOf(chain).toLowerCase() as TRelaychain
   ) as TParachain
 
   const internalOptions = {

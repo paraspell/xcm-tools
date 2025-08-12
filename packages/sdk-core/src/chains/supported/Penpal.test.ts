@@ -15,7 +15,7 @@ describe('Penpal', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('Penpal')
     expect(chain.info).toBe('westendPenpal')
-    expect(chain.type).toBe('westend')
+    expect(chain.ecosystem).toBe('Westend')
     expect(chain.version).toBe(Version.V4)
   })
 })

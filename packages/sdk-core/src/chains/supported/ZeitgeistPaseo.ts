@@ -4,7 +4,7 @@ import Zeitgeist from './Zeitgeist'
 
 class ZeitgeistPaseo<TApi, TRes> extends Zeitgeist<TApi, TRes> {
   constructor() {
-    super('ZeitgeistPaseo', 'ZeitgeistBatteryStation', 'paseo', Version.V4)
+    super('ZeitgeistPaseo', 'ZeitgeistBatteryStation', 'Paseo', Version.V4)
   }
 }
 

@@ -24,7 +24,7 @@ describe('Nodle', () => {
   it('should initialize with correct values', () => {
     expect(nodle.chain).toBe('Nodle')
     expect(nodle.info).toBe('nodle')
-    expect(nodle.type).toBe('polkadot')
+    expect(nodle.ecosystem).toBe('Polkadot')
     expect(nodle.version).toBe(Version.V4)
   })
 

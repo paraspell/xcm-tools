@@ -28,7 +28,7 @@ describe('CoretimeKusama', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('CoretimeKusama')
     expect(chain.info).toBe('kusamaCoretime')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V5)
   })
 

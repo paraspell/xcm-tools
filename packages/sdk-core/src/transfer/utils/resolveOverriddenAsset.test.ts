@@ -96,8 +96,8 @@ describe('resolveOverriddenAsset', () => {
     expect(result).toEqual({})
   })
 
-  it('returns multiasset if all items in currency.multiasset are already TAsset', () => {
-    const multiasset = [
+  it('returns multiple assets if all items in currency are already TAsset', () => {
+    const assets = [
       {
         fun: {
           Fungible: 1000n
@@ -111,24 +111,24 @@ describe('resolveOverriddenAsset', () => {
     ] as TAssetWithFee[]
     const options = {
       ...defaultOptions,
-      currency: { multiasset },
+      currency: assets,
       feeAsset: { location: {} }
     } as TSendOptions<unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
     const result = resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAssetInfo)
-    expect(result).toEqual(multiasset)
+    expect(result).toEqual(assets)
   })
 
-  it('resolves multiasset by fetching assets when not all items are TAsset', () => {
-    const multiasset = [
+  it('resolves multiple assets by fetching assets when not all items are TAsset', () => {
+    const assets = [
       { symbol: 'ASSET1', amount: 1000n },
       { symbol: 'ASSET2', amount: 2000n }
     ]
     const options = {
       ...defaultOptions,
-      currency: { multiasset },
+      currency: assets,
       feeAsset: { symbol: 'ASSET2' }
     }
 
@@ -139,8 +139,8 @@ describe('resolveOverriddenAsset', () => {
     const result = resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAssetInfo)
 
     expect(validateAssetSupport).toHaveBeenCalledTimes(2)
-    expect(findAssetInfo).toHaveBeenCalledTimes(multiasset.length)
-    expect(createAsset).toHaveBeenCalledTimes(multiasset.length)
+    expect(findAssetInfo).toHaveBeenCalledTimes(assets.length)
+    expect(createAsset).toHaveBeenCalledTimes(assets.length)
     expect(result).toEqual([
       {
         isFeeAsset: false
@@ -152,10 +152,10 @@ describe('resolveOverriddenAsset', () => {
   })
 
   it('throws an InvalidCurrencyError if fetched asset has no location', () => {
-    const asset = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
+    const assets = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
     const options = {
       ...defaultOptions,
-      currency: { multiasset: asset }
+      currency: assets
     }
 
     vi.mocked(isTAsset).mockImplementationOnce(() => false)
@@ -169,7 +169,7 @@ describe('resolveOverriddenAsset', () => {
   it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset is provided', () => {
     const options = {
       ...defaultOptions,
-      currency: { multiasset: [{}, {}] }
+      currency: [{}, {}]
     } as TSendOptions<unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
@@ -182,7 +182,7 @@ describe('resolveOverriddenAsset', () => {
   it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset by not multi-location', () => {
     const options = {
       ...defaultOptions,
-      currency: { multiasset: [{}, {}] },
+      currency: [{}, {}],
       feeAsset: { symbol: 'ASSET' }
     } as TSendOptions<unknown, unknown>
 
@@ -197,7 +197,7 @@ describe('resolveOverriddenAsset', () => {
   it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset uses override location', () => {
     const options = {
       ...defaultOptions,
-      currency: { multiasset: [{}, {}] },
+      currency: [{}, {}],
       feeAsset: {
         location: {
           type: 'Override',

@@ -38,7 +38,7 @@ describe('Astar', () => {
   it('should initialize with correct values', () => {
     expect(astar.chain).toBe('Astar')
     expect(astar.info).toBe('astar')
-    expect(astar.type).toBe('polkadot')
+    expect(astar.ecosystem).toBe('Polkadot')
     expect(astar.version).toBe(Version.V5)
   })
 

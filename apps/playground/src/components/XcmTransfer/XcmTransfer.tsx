@@ -262,7 +262,7 @@ const XcmTransfer = () => {
                 currency:
                   currencyInputs.length === 1
                     ? currencyInputs[0]
-                    : { multiasset: currencyInputs as TCurrencyCore[] },
+                    : (currencyInputs as TCurrencyCore[]),
               };
             }),
             options: { mode: batchMode },
@@ -300,10 +300,7 @@ const XcmTransfer = () => {
           .currency(
             currencyInputs.length === 1
               ? currencyInputs[0]
-              : {
-                  multiasset:
-                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
-                },
+              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
           )
           .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
           .address(address)
@@ -323,10 +320,7 @@ const XcmTransfer = () => {
             .currency(
               currencyInputs.length === 1
                 ? currencyInputs[0]
-                : {
-                    multiasset:
-                      currencyInputs as WithComplexAmount<TCurrencyCore>[],
-                  },
+                : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
             )
             .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
             .address(address)
@@ -412,9 +406,7 @@ const XcmTransfer = () => {
           ...formValues,
           senderAddress: selectedAccount.address,
           currency:
-            currencyInputs.length === 1
-              ? currencyInputs[0]
-              : { multiasset: currencyInputs },
+            currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
         },
         '/dry-run',
@@ -428,10 +420,7 @@ const XcmTransfer = () => {
         .currency(
           currencyInputs.length === 1
             ? currencyInputs[0]
-            : {
-                multiasset:
-                  currencyInputs as WithComplexAmount<TCurrencyCore>[],
-              },
+            : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
         )
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address)
@@ -563,11 +552,7 @@ const XcmTransfer = () => {
             ...formValues,
             feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
-              currencyInputs.length === 1
-                ? currencyInputs[0]
-                : {
-                    multiasset: currencyInputs,
-                  },
+              currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           },
           api,
           '/x-transfer',
@@ -583,10 +568,7 @@ const XcmTransfer = () => {
           .currency(
             currencyInputs.length === 1
               ? currencyInputs[0]
-              : {
-                  multiasset:
-                    currencyInputs as WithComplexAmount<TCurrencyCore>[],
-                },
+              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
           )
           .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
           .address(address)

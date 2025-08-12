@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Nodle Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TEcosystemType, TParachain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -14,10 +14,10 @@ class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
   constructor(
     chain: TParachain = 'Nodle',
     info: string = 'nodle',
-    type: TEcosystemType = 'polkadot',
+    ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V4
   ) {
-    super(chain, info, type, version)
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

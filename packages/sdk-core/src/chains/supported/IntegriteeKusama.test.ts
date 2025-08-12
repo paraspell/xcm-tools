@@ -29,7 +29,7 @@ describe('IntegriteeKusama', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('IntegriteeKusama')
     expect(chain.info).toBe('integritee')
-    expect(chain.type).toBe('kusama')
+    expect(chain.ecosystem).toBe('Kusama')
     expect(chain.version).toBe(Version.V4)
   })
 

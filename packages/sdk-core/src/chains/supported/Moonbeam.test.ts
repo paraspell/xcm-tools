@@ -48,7 +48,7 @@ describe('Moonbeam', () => {
   it('should initialize with correct values', () => {
     expect(chain.chain).toBe('Moonbeam')
     expect(chain.info).toBe('moonbeam')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
   })
 
