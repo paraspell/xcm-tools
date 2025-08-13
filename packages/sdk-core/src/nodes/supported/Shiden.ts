@@ -31,7 +31,7 @@ class Shiden<TApi, TRes>
     return getNode<TApi, TRes, 'Astar'>('Astar').transferXTokens(input)
   }
 
-  protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
     return asset.symbol !== this.getNativeAssetSymbol()
   }
 

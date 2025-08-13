@@ -1,18 +1,21 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
 import {
+  findAsset,
   findAssetByMultiLocation,
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
   isNodeEvm,
+  isSymbolMatch,
   type TAsset,
   type TMultiAsset
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { Version } from '@paraspell/sdk-common'
+import type { TNodeDotKsmWithRelayChains, Version } from '@paraspell/sdk-common'
 import {
+  isDotKsmBridge,
   isTMultiLocation,
   Parents,
   replaceBigInt,
@@ -21,7 +24,12 @@ import {
 } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../constants'
-import { BridgeHaltedError, InvalidAddressError, InvalidParameterError } from '../errors'
+import {
+  BridgeHaltedError,
+  InvalidAddressError,
+  InvalidParameterError,
+  TransferToAhNotSupported
+} from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
   constructRelayToParaParameters,
@@ -49,7 +57,8 @@ import {
   assertAddressIsString,
   assertHasId,
   assertHasLocation,
-  createBeneficiaryLocation
+  createBeneficiaryLocation,
+  getRelayChainOf
 } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
@@ -106,14 +115,16 @@ abstract class ParachainNode<TApi, TRes> {
     return this._version
   }
 
-  protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
+    const { asset } = options
     const isEthAsset =
       asset.multiLocation &&
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
-    return !isEthAsset
+
+    return !isEthAsset && !this.shouldUseNativeAssetTeleport(options)
   }
 
-  async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+  async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
     const {
       api,
       asset,
@@ -129,7 +140,7 @@ abstract class ParachainNode<TApi, TRes> {
       ahAddress,
       pallet,
       method
-    } = options
+    } = sendOptions
     const scenario = resolveScenario(this.node, destination)
     const paraId = resolveParaId(paraIdTo, destination)
 
@@ -146,10 +157,10 @@ abstract class ParachainNode<TApi, TRes> {
 
     const isLocalTransfer = this.node === destination
     if (isLocalTransfer) {
-      return this.transferLocal(options)
+      return this.transferLocal(sendOptions)
     }
 
-    if (supportsXTokens(this) && this.canUseXTokens(options)) {
+    if (supportsXTokens(this) && this.canUseXTokens(sendOptions)) {
       const isBifrostOrigin = this.node === 'BifrostPolkadot' || this.node === 'BifrostKusama'
       const isJamtonOrigin = this.node === 'Jamton'
       const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
@@ -218,13 +229,22 @@ abstract class ParachainNode<TApi, TRes> {
         method
       }
 
+      const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
+
+      if (shouldUseTeleport) {
+        throw new TransferToAhNotSupported(
+          'Native asset transfers to or from AssetHub are temporarily disabled'
+        )
+      }
+
+      const isAHPOrigin = this.node.includes('AssetHub')
+      const isAHPDest = !isTMultiLocation(destination) && destination.includes('AssetHub')
+
       // Handle common cases
       const isEthAsset =
         asset.multiLocation &&
         findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
-      const isAHPOrigin = this.node === 'AssetHubPolkadot' || this.node === 'AssetHubKusama'
-      const isAHPDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
       const isEthDest = destination === 'Ethereum'
 
       // Eth asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
@@ -242,6 +262,29 @@ abstract class ParachainNode<TApi, TRes> {
     } else {
       throw new NoXCMSupportImplementedError(this._node)
     }
+  }
+
+  shouldUseNativeAssetTeleport({ asset, to }: TSendInternalOptions<TApi, TRes>): boolean {
+    if (isTMultiLocation(to) || isDotKsmBridge(this.node, to) || to === 'Ethereum') return false
+
+    const isAHPOrigin = this.node.includes('AssetHub')
+    const isAHPDest = !isTMultiLocation(to) && to.includes('AssetHub')
+
+    const isNativeAsset =
+      !isTMultiLocation(to) &&
+      ((isAHPOrigin &&
+        isForeignAsset(asset) &&
+        isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
+        (isAHPDest &&
+          !isForeignAsset(asset) &&
+          isSymbolMatch(asset.symbol, getNativeAssetSymbol(this.node))))
+
+    const assetHubChain = `AssetHub${getRelayChainOf(this.node)}` as TNodeDotKsmWithRelayChains
+
+    const isRegisteredOnAh =
+      asset.multiLocation && findAsset(assetHubChain, { multilocation: asset.multiLocation }, null)
+
+    return isNativeAsset && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

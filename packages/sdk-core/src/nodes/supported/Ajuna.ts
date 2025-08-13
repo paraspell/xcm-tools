@@ -52,7 +52,7 @@ class Ajuna<TApi, TRes>
     return api.callTxMethod(await createTypeAndThenCall(this.node, input))
   }
 
-  protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
+  canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
     return !(asset.symbol === 'DOT' && destination === 'AssetHubPolkadot')
   }
 
