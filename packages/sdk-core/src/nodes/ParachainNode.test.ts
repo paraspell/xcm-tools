@@ -1,10 +1,20 @@
-import { findAssetByMultiLocation, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import {
+  findAssetByMultiLocation,
+  getNativeAssetSymbol,
+  InvalidCurrencyError,
+  isForeignAsset
+} from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { DOT_MULTILOCATION } from '../constants'
-import { BridgeHaltedError, InvalidAddressError, NoXCMSupportImplementedError } from '../errors'
+import {
+  BridgeHaltedError,
+  InvalidAddressError,
+  NoXCMSupportImplementedError,
+  TransferToAhNotSupported
+} from '../errors'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions, TTransferLocalOptions } from '../types'
 import {
@@ -31,7 +41,8 @@ vi.mock('../utils', async () => {
     getFees: vi.fn().mockReturnValue('fees'),
     verifyMultiLocation: vi.fn(),
     isTMultiLocation: vi.fn(),
-    createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
+    createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation'),
+    getRelayChainOf: vi.fn().mockReturnValue('Polkadot')
   }
 })
 
@@ -137,6 +148,7 @@ describe('ParachainNode', () => {
 
   beforeEach(() => {
     node = new TestParachainNode('Acala', 'TestNode', 'polkadot', Version.V4)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
   })
 
   it('should create an instance', () => {
@@ -160,9 +172,11 @@ describe('ParachainNode', () => {
   })
 
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
     const options = {
       api: {} as IPolkadotApi<unknown, unknown>,
-      asset: { symbol: 'DOT', amount: 100n },
+      to: 'Astar',
+      asset: { symbol: 'DO2T', amount: 100n },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
     expect(node.exposeCanUseXTokens(options)).toBe(true)
@@ -171,6 +185,7 @@ describe('ParachainNode', () => {
   it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
     const options = {
       api: {},
+      to: 'Astar',
       asset: { symbol: 'DOT', amount: 100n },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
@@ -183,10 +198,45 @@ describe('ParachainNode', () => {
     expect(result).toBe('transferXTokens called')
   })
 
+  it('should throw error when native asset transfer to AssetHub requires teleport', async () => {
+    class NativeTeleportNode extends ParachainNode<unknown, unknown> {
+      transferPolkadotXCM(
+        _options: TPolkadotXCMTransferOptions<unknown, unknown>,
+        _method: TPolkadotXcmMethod,
+        _fees: 'Unlimited' | { Limited: string } | undefined = undefined
+      ) {
+        return 'transferPolkadotXCM called'
+      }
+
+      shouldUseNativeAssetTeleport(_options: TSendInternalOptions<unknown, unknown>): boolean {
+        return true
+      }
+    }
+
+    const node = new NativeTeleportNode('Acala', 'TestNode', 'polkadot', Version.V4)
+
+    const options = {
+      api: {},
+      to: 'AssetHubPolkadot',
+      asset: {
+        symbol: 'DOT',
+        amount: 100n,
+        multiLocation: { parents: 1, interior: 'Here' }
+      },
+      address: 'destinationAddress'
+    } as TSendInternalOptions<unknown, unknown>
+
+    await expect(node.transfer(options)).rejects.toThrow(TransferToAhNotSupported)
+    await expect(node.transfer(options)).rejects.toThrow(
+      'Native asset transfers to or from AssetHub are temporarily disabled'
+    )
+  })
+
   it('should call transferXTransfer when supportsXTransfer returns true', async () => {
     const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
+      to: 'Astar',
       asset: { symbol: 'DOT', amount: 100n },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
@@ -216,6 +266,7 @@ describe('ParachainNode', () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
+      to: 'Astar',
       asset: { symbol: 'DOT', amount: 100n },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
@@ -232,6 +283,7 @@ describe('ParachainNode', () => {
     const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
+      to: 'Astar',
       asset: { symbol: 'DOT', amount: 100n },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
@@ -241,7 +293,7 @@ describe('ParachainNode', () => {
 
   it('should not call transferXTokens when canUseXTokens returns false', async () => {
     class TestNode extends TestParachainNode {
-      protected canUseXTokens(_: TSendInternalOptions<unknown, unknown>): boolean {
+      canUseXTokens(_: TSendInternalOptions<unknown, unknown>): boolean {
         return false
       }
     }
@@ -281,10 +333,9 @@ describe('ParachainNode', () => {
   it('should not throw error when destination is Polimec and node is AssetHubPolkadot', async () => {
     const node = new TestParachainNode('AssetHubPolkadot', 'TestNode', 'polkadot', Version.V4)
     node.transferXTokens = vi.fn().mockReturnValue('transferXTokens called')
-
     const options = {
       api: {},
-      asset: { symbol: 'DOT', amount: 100n },
+      asset: { symbol: 'PLMC', amount: 100n },
       address: 'destinationAddress',
       to: 'Polimec'
     } as TSendInternalOptions<unknown, unknown>
@@ -413,6 +464,7 @@ describe('ParachainNode', () => {
       } as TSendInternalOptions<unknown, unknown>
 
       vi.mocked(isForeignAsset).mockReturnValue(false)
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
       const transferLocalNativeSpy = vi.spyOn(node, 'transferLocalNativeAsset')
 

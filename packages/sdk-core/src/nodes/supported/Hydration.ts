@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
 import {
-  findAssetByMultiLocation,
-  getOtherAssets,
+  findAssetForNodeOrThrow,
+  getNativeAssetSymbol,
   InvalidCurrencyError,
   isSymbolMatch
 } from '@paraspell/assets'
@@ -20,7 +20,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId, createBeneficiaryLocation } from '../../utils'
+import { assertHasId, assertHasLocation, createBeneficiaryLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
@@ -144,11 +144,46 @@ class Hydration<TApi, TRes>
     return this.transferToAssetHub(input)
   }
 
+  transferMoonbeamWhAsset<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
+    const { asset, version } = input
+
+    assertHasLocation(asset)
+
+    const glmr = findAssetForNodeOrThrow(
+      this.node,
+      { symbol: getNativeAssetSymbol('Moonbeam') },
+      null
+    )
+    const FEE_AMOUNT = 80000000000000000n // 0.08 GLMR
+
+    assertHasLocation(glmr)
+
+    return transferXTokens(
+      {
+        ...input,
+        overriddenAsset: [
+          { ...createMultiAsset(version, FEE_AMOUNT, glmr.multiLocation), isFeeAsset: true },
+          createMultiAsset(version, asset.amount, asset.multiLocation)
+        ]
+      },
+      Number(asset.assetId)
+    )
+  }
+
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
+    const { asset, destination } = input
 
     if (asset.symbol === this.getNativeAssetSymbol()) {
       return transferXTokens(input, Hydration.NATIVE_ASSET_ID)
+    }
+
+    const isMoonbeamWhAsset =
+      asset.multiLocation &&
+      hasJunction(asset.multiLocation, 'Parachain', getParaId('Moonbeam')) &&
+      hasJunction(asset.multiLocation, 'PalletInstance', 110)
+
+    if (isMoonbeamWhAsset && destination === 'Moonbeam') {
+      return this.transferMoonbeamWhAsset(input)
     }
 
     assertHasId(asset)
@@ -156,19 +191,16 @@ class Hydration<TApi, TRes>
     return transferXTokens(input, Number(asset.assetId))
   }
 
-  protected canUseXTokens({
-    to: destination,
-    asset,
-    feeAsset
-  }: TSendInternalOptions<TApi, TRes>): boolean {
-    const isEthAsset =
-      asset.multiLocation &&
-      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+  canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
+    const { to: destination, asset, feeAsset } = options
+
+    const baseCanUseXTokens = super.canUseXTokens(options)
+
     return (
       destination !== 'Ethereum' &&
       destination !== 'Polimec' &&
       !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT') &&
-      !isEthAsset &&
+      baseCanUseXTokens &&
       !feeAsset
     )
   }

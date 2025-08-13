@@ -1,6 +1,11 @@
-import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
+import {
+  findAssetByMultiLocation,
+  findAssetForNodeOrThrow,
+  InvalidCurrencyError
+} from '@paraspell/assets'
 import { hasJunction, Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -13,6 +18,8 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
+import { getParaId } from '../config'
+import ParachainNode from '../ParachainNode'
 import type Hydration from './Hydration'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
@@ -41,7 +48,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 
 vi.mock('@paraspell/assets', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
-  findAssetByMultiLocation: vi.fn()
+  findAssetByMultiLocation: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn()
 }))
 
 describe('Hydration', () => {
@@ -50,6 +58,7 @@ describe('Hydration', () => {
   const mockExtrinsic = {} as unknown
 
   beforeEach(() => {
+    vi.clearAllMocks()
     hydration = getNode<unknown, unknown, 'Hydration'>('Hydration')
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
@@ -251,9 +260,76 @@ describe('Hydration', () => {
 
       hasJunctionSpy.mockRestore()
     })
+
+    it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', () => {
+      const mockInput = {
+        asset: {
+          symbol: 'WORM',
+          amount: 500n,
+          multiLocation: {
+            parents: 1,
+            interior: {
+              X2: [{ Parachain: getParaId('Moonbeam') }, { PalletInstance: 110 }]
+            }
+          },
+          assetId: '999'
+        },
+        destination: 'Moonbeam',
+        version: hydration.version
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      vi.mocked(hasJunction).mockReturnValueOnce(true).mockReturnValueOnce(true)
+
+      const transferMoonbeamWhAssetSpy = vi
+        .spyOn(hydration, 'transferMoonbeamWhAsset')
+        .mockReturnValue('moonbeam-wh-result')
+
+      const result = hydration.transferXTokens(mockInput)
+
+      expect(transferMoonbeamWhAssetSpy).toHaveBeenCalledWith(mockInput)
+      expect(result).toBe('moonbeam-wh-result')
+    })
+
+    it('transferMoonbeamWhAsset should call transferXTokens with overridden fee + asset', () => {
+      const mockAsset = {
+        symbol: 'WORM',
+        amount: 500n,
+        multiLocation: {},
+        assetId: '123'
+      }
+
+      const mockGlmrAsset = {
+        symbol: 'GLMR',
+        multiLocation: { parents: 1, interior: 'Here' }
+      } as TAsset
+
+      vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockGlmrAsset)
+
+      const mockInput = {
+        asset: mockAsset,
+        version: hydration.version
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      hydration.transferMoonbeamWhAsset(mockInput)
+
+      expect(transferXTokens).toHaveBeenCalledWith(
+        expect.objectContaining({
+          overriddenAsset: expect.arrayContaining([expect.anything(), expect.anything()])
+        }),
+        Number(mockAsset.assetId)
+      )
+    })
   })
 
   describe('canUseXTokens', () => {
+    beforeEach(() => {
+      vi.spyOn(ParachainNode.prototype, 'canUseXTokens').mockReturnValue(true)
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
     it('should return false when destination is Ethereum', () => {
       const result = hydration['canUseXTokens']({
         to: 'Ethereum',
@@ -275,6 +351,17 @@ describe('Hydration', () => {
         to: 'AssetHubPolkadot',
         asset: { symbol: 'DOT', multiLocation: {} }
       } as TSendInternalOptions<unknown, unknown>)
+      expect(result).toBe(false)
+    })
+
+    it('should return false when super.canUseXTokens returns false', () => {
+      vi.spyOn(ParachainNode.prototype, 'canUseXTokens').mockReturnValue(false)
+
+      const result = hydration['canUseXTokens']({
+        to: 'Acala',
+        asset: { symbol: 'USDC', multiLocation: {} }
+      } as TSendInternalOptions<unknown, unknown>)
+
       expect(result).toBe(false)
     })
   })

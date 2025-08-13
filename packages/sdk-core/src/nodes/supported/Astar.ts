@@ -38,7 +38,7 @@ class Astar<TApi, TRes>
     return transferXTokens(input, BigInt(asset.assetId))
   }
 
-  protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
     return asset.symbol !== this.getNativeAssetSymbol()
   }
 

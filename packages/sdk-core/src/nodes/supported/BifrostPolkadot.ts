@@ -98,7 +98,7 @@ class BifrostPolkadot<TApi, TRes>
     return this.transferToAssetHub(input)
   }
 
-  protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
+  canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
     const isEthAsset =
       asset.multiLocation &&
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
