@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.9](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.8...assets-v10.11.9) (2025-08-13)
+
+
+### Bug Fixes
+
+* Add missing Moonbeam wh assets 🔧 ([25d5cbc](https://github.com/paraspell/xcm-tools/commit/25d5cbc6a4e3a99f6e30c73c777ef59e560f0139))
+
 ## [10.11.8](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.7...assets-v10.11.8) (2025-08-11)
 
 
