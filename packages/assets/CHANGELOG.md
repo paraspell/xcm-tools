@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.10](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.9...assets-v10.11.10) (2025-08-14)
+
+
+### Bug Fixes
+
+* **assets:** Fix Moonbeam wormhole assets parents 🔧 ([79328b2](https://github.com/paraspell/xcm-tools/commit/79328b28730d4caece97bc14efa63300fa353080))
+
 ## [10.11.9](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.8...assets-v10.11.9) (2025-08-13)
 
 
