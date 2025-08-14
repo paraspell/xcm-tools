@@ -36,7 +36,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
       if (key.toLowerCase() === 'token') {
         const sdkAsset = getNativeAssets(chain).find((a) => a.symbol === symbol);
-        routerAsset = { symbol, location: sdkAsset?.location };
+        routerAsset = { symbol, location: sdkAsset?.location, decimals: sdkAsset?.decimals ?? 0 };
       } else {
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
@@ -44,6 +44,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
           if (!sdkAsset) throw new InvalidParameterError(`Asset not found: ${formatted}`);
           routerAsset = {
             symbol,
+            decimals: sdkAsset.decimals,
             assetId: sdkAsset.assetId,
             location: sdkAsset.location,
           };

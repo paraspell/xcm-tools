@@ -4,6 +4,7 @@
     "assets": [
       {
         "symbol": "DOT",
+        "decimals": 10,
         "location": {
           "parents": 1,
           "interior": {
@@ -13,6 +14,7 @@
       },
       {
         "symbol": "BILL",
+        "decimals": 12,
         "assetId": "50000075",
         "location": {
           "parents": 1,
@@ -33,6 +35,7 @@
       },
       {
         "symbol": "DED",
+        "decimals": 10,
         "assetId": "30",
         "location": {
           "parents": 1,
@@ -53,6 +56,7 @@
       },
       {
         "symbol": "USDt",
+        "decimals": 6,
         "assetId": "1984",
         "location": {
           "parents": 1,
@@ -73,6 +77,7 @@
       },
       {
         "symbol": "USDC",
+        "decimals": 6,
         "assetId": "1337",
         "location": {
           "parents": 1,
@@ -93,6 +98,7 @@
       },
       {
         "symbol": "PINK",
+        "decimals": 10,
         "assetId": "23",
         "location": {
           "parents": 1,
@@ -113,6 +119,7 @@
       },
       {
         "symbol": "WETH",
+        "decimals": 18,
         "location": {
           "parents": 2,
           "interior": {
@@ -136,6 +143,7 @@
       },
       {
         "symbol": "KSM",
+        "decimals": 12,
         "location": {
           "parents": 2,
           "interior": {
@@ -151,6 +159,7 @@
       },
       {
         "symbol": "TEER",
+        "decimals": 12,
         "location": {
           "parents": 1,
           "interior": {
@@ -164,6 +173,7 @@
       },
       {
         "symbol": "LAOS",
+        "decimals": 18,
         "location": {
           "parents": 1,
           "interior": {
@@ -177,6 +187,7 @@
       },
       {
         "symbol": "USDC",
+        "decimals": 6,
         "location": {
           "parents": 2,
           "interior": {
@@ -200,6 +211,7 @@
       },
       {
         "symbol": "GLMR",
+        "decimals": 18,
         "location": {
           "parents": 1,
           "interior": {
@@ -216,6 +228,7 @@
       },
       {
         "symbol": "MYTH",
+        "decimals": 18,
         "location": {
           "parents": 1,
           "interior": {
@@ -229,6 +242,7 @@
       },
       {
         "symbol": "vDOT",
+        "decimals": 10,
         "location": {
           "parents": 1,
           "interior": {
@@ -248,6 +262,7 @@
       },
       {
         "symbol": "ETH",
+        "decimals": 18,
         "location": {
           "parents": 2,
           "interior": {
@@ -265,6 +280,7 @@
       },
       {
         "symbol": "USDT",
+        "decimals": 6,
         "location": {
           "parents": 2,
           "interior": {
@@ -288,6 +304,7 @@
       },
       {
         "symbol": "AJUN",
+        "decimals": 12,
         "location": {
           "parents": 1,
           "interior": {
@@ -301,6 +318,7 @@
       },
       {
         "symbol": "wstETH",
+        "decimals": 18,
         "location": {
           "parents": 2,
           "interior": {
@@ -324,6 +342,7 @@
       },
       {
         "symbol": "tBTC",
+        "decimals": 18,
         "location": {
           "parents": 2,
           "interior": {
@@ -353,6 +372,7 @@
     "assets": [
       {
         "symbol": "KSM",
+        "decimals": 12,
         "location": {
           "parents": 1,
           "interior": {
@@ -362,6 +382,7 @@
       },
       {
         "symbol": "USDt",
+        "decimals": 6,
         "assetId": "1984",
         "location": {
           "parents": 1,
@@ -382,6 +403,7 @@
       },
       {
         "symbol": "BILL",
+        "decimals": 8,
         "assetId": "223",
         "location": {
           "parents": 1,
@@ -402,6 +424,7 @@
       },
       {
         "symbol": "USDt",
+        "decimals": 3,
         "assetId": "19840",
         "location": {
           "parents": 1,
@@ -422,6 +445,7 @@
       },
       {
         "symbol": "DOT",
+        "decimals": 10,
         "location": {
           "parents": 2,
           "interior": {
@@ -437,6 +461,7 @@
       },
       {
         "symbol": "FREN",
+        "decimals": 12,
         "location": {
           "parents": 1,
           "interior": {
@@ -450,6 +475,7 @@
       },
       {
         "symbol": "TEER",
+        "decimals": 12,
         "location": {
           "parents": 1,
           "interior": {
@@ -469,6 +495,7 @@
     "assets": [
       {
         "symbol": "USDC",
+        "decimals": 6,
         "assetId": "22",
         "location": {
           "parents": 1,
@@ -489,6 +516,7 @@
       },
       {
         "symbol": "aUSDC",
+        "decimals": 6,
         "assetId": "1003",
         "location": {
           "parents": 1,
@@ -509,6 +537,7 @@
       },
       {
         "symbol": "USDT",
+        "decimals": 6,
         "assetId": "10",
         "location": {
           "parents": 1,
@@ -529,6 +558,7 @@
       },
       {
         "symbol": "aUSDT",
+        "decimals": 6,
         "assetId": "1002",
         "location": {
           "parents": 1,
@@ -549,6 +579,7 @@
       },
       {
         "symbol": "WBTC",
+        "decimals": 8,
         "assetId": "19",
         "location": {
           "parents": 1,
@@ -572,6 +603,7 @@
       },
       {
         "symbol": "aWBTC",
+        "decimals": 8,
         "assetId": "1004",
         "location": {
           "parents": 1,
@@ -592,6 +624,7 @@
       },
       {
         "symbol": "DOT",
+        "decimals": 10,
         "assetId": "5",
         "location": {
           "parents": 1,
@@ -602,6 +635,7 @@
       },
       {
         "symbol": "aDOT",
+        "decimals": 10,
         "assetId": "1001",
         "location": {
           "parents": 1,
@@ -622,6 +656,7 @@
       },
       {
         "symbol": "vDOT",
+        "decimals": 10,
         "assetId": "15",
         "location": {
           "parents": 1,
@@ -642,6 +677,7 @@
       },
       {
         "symbol": "avDOT",
+        "decimals": 10,
         "assetId": "1005",
         "location": {
           "parents": 1,
@@ -662,6 +698,7 @@
       },
       {
         "symbol": "tBTC",
+        "decimals": 18,
         "assetId": "1000765",
         "location": {
           "parents": 2,
@@ -686,6 +723,7 @@
       },
       {
         "symbol": "atBTC",
+        "decimals": 18,
         "assetId": "1006",
         "location": {
           "parents": 1,
@@ -706,10 +744,12 @@
       },
       {
         "symbol": "2-Pool-GDOT",
+        "decimals": 18,
         "assetId": "690"
       },
       {
         "symbol": "GDOT",
+        "decimals": 18,
         "assetId": "69",
         "location": {
           "parents": 1,
@@ -730,10 +770,12 @@
       },
       {
         "symbol": "2-Pool-GETH",
+        "decimals": 18,
         "assetId": "4200"
       },
       {
         "symbol": "GETH",
+        "decimals": 18,
         "assetId": "420",
         "location": {
           "parents": 1,
@@ -754,6 +796,7 @@
       },
       {
         "symbol": "ETH",
+        "decimals": 18,
         "assetId": "34",
         "location": {
           "parents": 2,
@@ -772,6 +815,7 @@
       },
       {
         "symbol": "aETH",
+        "decimals": 18,
         "assetId": "1007",
         "location": {
           "parents": 1,
@@ -792,10 +836,12 @@
       },
       {
         "symbol": "3-Pool",
+        "decimals": 18,
         "assetId": "103"
       },
       {
         "symbol": "a3-Pool",
+        "decimals": 18,
         "assetId": "1008",
         "location": {
           "parents": 1,
@@ -816,10 +862,12 @@
       },
       {
         "symbol": "HDX",
+        "decimals": 12,
         "assetId": "0"
       },
       {
         "symbol": "CRU",
+        "decimals": 12,
         "assetId": "27",
         "location": {
           "parents": 1,
@@ -834,6 +882,7 @@
       },
       {
         "symbol": "NODL",
+        "decimals": 11,
         "assetId": "26",
         "location": {
           "parents": 1,
@@ -851,6 +900,7 @@
       },
       {
         "symbol": "UNQ",
+        "decimals": 18,
         "assetId": "25",
         "location": {
           "parents": 1,
@@ -865,6 +915,7 @@
       },
       {
         "symbol": "MYTH",
+        "decimals": 18,
         "assetId": "30",
         "location": {
           "parents": 1,
@@ -879,6 +930,7 @@
       },
       {
         "symbol": "PEN",
+        "decimals": 12,
         "assetId": "1000081",
         "location": {
           "parents": 1,
@@ -896,6 +948,7 @@
       },
       {
         "symbol": "LAOS",
+        "decimals": 18,
         "assetId": "3370",
         "location": {
           "parents": 1,
@@ -910,6 +963,7 @@
       },
       {
         "symbol": "WUD",
+        "decimals": 10,
         "assetId": "1000085",
         "location": {
           "parents": 1,
@@ -930,6 +984,7 @@
       },
       {
         "symbol": "NEURO",
+        "decimals": 12,
         "assetId": "36",
         "location": {
           "parents": 1,
@@ -946,10 +1001,12 @@
         }
       },
       {
-        "symbol": "HDXb"
+        "symbol": "HDXb",
+        "decimals": 12
       },
       {
         "symbol": "SUB",
+        "decimals": 10,
         "assetId": "24",
         "location": {
           "parents": 1,
@@ -964,6 +1021,7 @@
       },
       {
         "symbol": "AJUN",
+        "decimals": 12,
         "assetId": "32",
         "location": {
           "parents": 1,
@@ -984,6 +1042,7 @@
       },
       {
         "symbol": "EWT",
+        "decimals": 18,
         "assetId": "252525",
         "location": {
           "parents": 1,
@@ -998,6 +1057,7 @@
       },
       {
         "symbol": "KSM",
+        "decimals": 12,
         "assetId": "1000771",
         "location": {
           "parents": 2,
@@ -1013,10 +1073,12 @@
         }
       },
       {
-        "symbol": "HDXb"
+        "symbol": "HDXb",
+        "decimals": 12
       },
       {
         "symbol": "INTR",
+        "decimals": 10,
         "assetId": "17",
         "location": {
           "parents": 1,
@@ -1037,10 +1099,12 @@
       },
       {
         "symbol": "4-Pool",
+        "decimals": 18,
         "assetId": "100"
       },
       {
         "symbol": "WETH",
+        "decimals": 18,
         "assetId": "20",
         "location": {
           "parents": 1,
@@ -1064,10 +1128,12 @@
       },
       {
         "symbol": "2-Pool",
+        "decimals": 18,
         "assetId": "101"
       },
       {
         "symbol": "GLMR",
+        "decimals": 18,
         "assetId": "16",
         "location": {
           "parents": 1,
@@ -1085,6 +1151,7 @@
       },
       {
         "symbol": "BNC",
+        "decimals": 12,
         "assetId": "14",
         "location": {
           "parents": 1,
@@ -1105,6 +1172,7 @@
       },
       {
         "symbol": "LDO",
+        "decimals": 18,
         "assetId": "1000796",
         "location": {
           "parents": 2,
@@ -1129,6 +1197,7 @@
       },
       {
         "symbol": "SKY",
+        "decimals": 18,
         "assetId": "1000795",
         "location": {
           "parents": 2,
@@ -1153,6 +1222,7 @@
       },
       {
         "symbol": "TRAC",
+        "decimals": 18,
         "assetId": "35",
         "location": {
           "parents": 2,
@@ -1177,6 +1247,7 @@
       },
       {
         "symbol": "RING",
+        "decimals": 18,
         "assetId": "31",
         "location": {
           "parents": 1,
@@ -1194,6 +1265,7 @@
       },
       {
         "symbol": "vASTR",
+        "decimals": 18,
         "assetId": "33",
         "location": {
           "parents": 1,
@@ -1214,6 +1286,7 @@
       },
       {
         "symbol": "LINK",
+        "decimals": 18,
         "assetId": "1000794",
         "location": {
           "parents": 2,
@@ -1238,10 +1311,12 @@
       },
       {
         "symbol": "2-Pool",
+        "decimals": 18,
         "assetId": "102"
       },
       {
         "symbol": "AAVE",
+        "decimals": 18,
         "assetId": "1000624",
         "location": {
           "parents": 2,
@@ -1266,6 +1341,7 @@
       },
       {
         "symbol": "PHA",
+        "decimals": 12,
         "assetId": "8",
         "location": {
           "parents": 1,
@@ -1280,6 +1356,7 @@
       },
       {
         "symbol": "ZTG",
+        "decimals": 10,
         "assetId": "12",
         "location": {
           "parents": 1,
@@ -1300,6 +1377,7 @@
       },
       {
         "symbol": "ASTR",
+        "decimals": 18,
         "assetId": "9",
         "location": {
           "parents": 1,
@@ -1314,6 +1392,7 @@
       },
       {
         "symbol": "SOL",
+        "decimals": 9,
         "assetId": "1000752",
         "location": {
           "parents": 1,
@@ -1337,10 +1416,12 @@
       },
       {
         "symbol": "H2O",
+        "decimals": 12,
         "assetId": "1"
       },
       {
         "symbol": "DAI",
+        "decimals": 18,
         "assetId": "18",
         "location": {
           "parents": 1,
@@ -1364,6 +1445,7 @@
       },
       {
         "symbol": "USDC",
+        "decimals": 6,
         "assetId": "21",
         "location": {
           "parents": 1,
@@ -1387,6 +1469,7 @@
       },
       {
         "symbol": "USDT",
+        "decimals": 6,
         "assetId": "23",
         "location": {
           "parents": 1,
@@ -1410,6 +1493,7 @@
       },
       {
         "symbol": "iBTC",
+        "decimals": 8,
         "assetId": "11",
         "location": {
           "parents": 1,
@@ -1430,6 +1514,7 @@
       },
       {
         "symbol": "USDC",
+        "decimals": 6,
         "assetId": "1000766",
         "location": {
           "parents": 2,
@@ -1454,6 +1539,7 @@
       },
       {
         "symbol": "USDT",
+        "decimals": 6,
         "assetId": "1000767",
         "location": {
           "parents": 2,
@@ -1478,6 +1564,7 @@
       },
       {
         "symbol": "wstETH",
+        "decimals": 18,
         "assetId": "1000809",
         "location": {
           "parents": 2,
@@ -1502,6 +1589,7 @@
       },
       {
         "symbol": "2-Pool-WETH",
+        "decimals": 18,
         "assetId": "104"
       }
     ],
@@ -1517,10 +1605,12 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "RMRK",
+        "decimals": 10,
         "assetId": "0",
         "location": {
           "parents": 1,
@@ -1556,7 +1646,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "LKSM",
@@ -1575,7 +1666,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "aSEED",
@@ -1594,10 +1686,12 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "QTZ",
+        "decimals": 18,
         "assetId": "2",
         "location": {
           "parents": 1,
@@ -1611,10 +1705,12 @@
         }
       },
       {
-        "symbol": "BNC"
+        "symbol": "BNC",
+        "decimals": 12
       },
       {
         "symbol": "CSM",
+        "decimals": 12,
         "assetId": "5",
         "location": {
           "parents": 1,
@@ -1629,6 +1725,7 @@
       },
       {
         "symbol": "ARIS",
+        "decimals": 8,
         "assetId": "1",
         "location": {
           "parents": 1,
@@ -1664,13 +1761,16 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
-        "symbol": "TAI"
+        "symbol": "TAI",
+        "decimals": 12
       },
       {
         "symbol": "tKSM",
+        "decimals": 10,
         "assetId": "0",
         "location": {
           "parents": 1,
@@ -1691,6 +1791,7 @@
       },
       {
         "symbol": "AIR",
+        "decimals": 18,
         "assetId": "12",
         "location": {
           "parents": 1,
@@ -1710,7 +1811,8 @@
         }
       },
       {
-        "symbol": "PHA"
+        "symbol": "PHA",
+        "decimals": 12
       },
       {
         "symbol": "KBTC",
@@ -1729,7 +1831,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 8
       }
     ],
     "pairs": [
@@ -3737,7 +3840,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "aSEED",
@@ -3756,7 +3860,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "LDOT",
@@ -3775,10 +3880,12 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "DAMN",
+        "decimals": 12,
         "assetId": "19",
         "location": {
           "parents": 1,
@@ -3804,10 +3911,12 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "UNQ",
+        "decimals": 18,
         "assetId": "10",
         "location": {
           "parents": 1,
@@ -3822,6 +3931,7 @@
       },
       {
         "symbol": "USDT",
+        "decimals": 6,
         "assetId": "12",
         "location": {
           "parents": 1,
@@ -3842,6 +3952,7 @@
       },
       {
         "symbol": "LOTY",
+        "decimals": 12,
         "assetId": "20",
         "location": {
           "parents": 1,
@@ -3862,6 +3973,7 @@
       },
       {
         "symbol": "IBTC",
+        "decimals": 8,
         "assetId": "3",
         "location": {
           "parents": 1,
@@ -3882,6 +3994,7 @@
       },
       {
         "symbol": "lcDOT",
+        "decimals": 10,
         "assetId": "13",
         "location": {
           "parents": 1,
@@ -3902,6 +4015,7 @@
       },
       {
         "symbol": "LOVA",
+        "decimals": 12,
         "assetId": "18",
         "location": {
           "parents": 1,
@@ -3922,6 +4036,7 @@
       },
       {
         "symbol": "INTR",
+        "decimals": 10,
         "assetId": "4",
         "location": {
           "parents": 1,
@@ -5714,10 +5829,8 @@
               }
             ]
           }
-        }
-      },
-      {
-        "symbol": "aSEED"
+        },
+        "decimals": 12
       },
       {
         "symbol": "KSM",
@@ -5726,7 +5839,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "ZLK",
@@ -5745,7 +5859,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       },
       {
         "symbol": "KAR",
@@ -5764,10 +5879,8 @@
               }
             ]
           }
-        }
-      },
-      {
-        "symbol": "vsKSM"
+        },
+        "decimals": 12
       },
       {
         "symbol": "RMRK",
@@ -5786,7 +5899,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "vKSM",
@@ -5805,7 +5919,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "USDT",
@@ -5825,7 +5940,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 6
       },
       {
         "symbol": "KBTC",
@@ -5845,7 +5961,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 8
       },
       {
         "symbol": "vBNC",
@@ -5864,7 +5981,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "MOVR",
@@ -5880,7 +5998,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       },
       {
         "symbol": "vMOVR",
@@ -5899,7 +6018,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       }
     ],
     "pairs": [
@@ -6057,15 +6177,6 @@
         {
           "parents": 1,
           "interior": {
-            "Here": null
-          }
-        },
-        "aSEED"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
             "X2": [
               {
                 "Parachain": 2001
@@ -6174,15 +6285,6 @@
             ]
           }
         }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "vsKSM"
       ],
       [
         {
@@ -6322,7 +6424,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 12
       },
       {
         "symbol": "vFIL",
@@ -6342,7 +6445,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       },
       {
         "symbol": "GLMR",
@@ -6359,7 +6463,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       },
       {
         "symbol": "vGLMR",
@@ -6379,7 +6484,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       },
       {
         "symbol": "DOT",
@@ -6389,7 +6495,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "vDOT",
@@ -6409,7 +6516,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "vsDOT",
@@ -6429,7 +6537,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 10
       },
       {
         "symbol": "FIL",
@@ -6449,7 +6558,8 @@
               }
             ]
           }
-        }
+        },
+        "decimals": 18
       }
     ],
     "pairs": [

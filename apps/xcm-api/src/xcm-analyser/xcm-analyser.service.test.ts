@@ -5,7 +5,7 @@ import {
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import {
-  convertMultilocationToUrl,
+  convertLocationToUrl,
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { XcmAnalyserService } from './xcm-analyser.service.js';
 
 vi.mock('@paraspell/xcm-analyser', () => ({
-  convertMultilocationToUrl: vi.fn(),
+  convertLocationToUrl: vi.fn(),
   convertXCMToUrls: vi.fn(),
 }));
 
@@ -71,14 +71,14 @@ describe('XcmAnalyserService', () => {
       },
     };
     const expectedUrl = '../Parachain(1)';
-    vi.mocked(convertMultilocationToUrl).mockReturnValue(expectedUrl);
+    vi.mocked(convertLocationToUrl).mockReturnValue(expectedUrl);
 
     const result = service.getLocationPaths({
       location,
       xcm: undefined,
     });
 
-    expect(convertMultilocationToUrl).toHaveBeenCalledWith(location);
+    expect(convertLocationToUrl).toHaveBeenCalledWith(location);
     expect(result).toEqual(`"${expectedUrl}"`);
   });
 

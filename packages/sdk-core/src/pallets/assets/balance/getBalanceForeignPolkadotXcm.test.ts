@@ -31,6 +31,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Mythos', 'some-address', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '1'
     })
 
@@ -44,6 +45,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
       symbol: 'DOT',
+      decimals: 10,
       location: { foo: 'bar' } as unknown as TLocation
     })
 
@@ -54,7 +56,11 @@ describe('getBalanceForeignPolkadotXcm', () => {
     const api = {} as unknown as IPolkadotApi<unknown, unknown>
 
     await expect(
-      getBalanceForeignPolkadotXcm(api, 'Polimec', 'addr', { symbol: 'DOT', assetId: '1' })
+      getBalanceForeignPolkadotXcm(api, 'Polimec', 'addr', {
+        symbol: 'DOT',
+        decimals: 10,
+        assetId: '1'
+      })
     ).rejects.toThrow(InvalidCurrencyError)
   })
 
@@ -72,6 +78,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const res = await getBalanceForeignPolkadotXcm(api, 'Moonbeam', 'addr', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '1234',
       location: multiloc
     })
@@ -95,6 +102,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const res = await getBalanceForeignPolkadotXcm(api, 'Moonriver', 'addr', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '1234',
       location: multiloc
     })
@@ -108,16 +116,21 @@ describe('getBalanceForeignPolkadotXcm', () => {
     const api = {} as unknown as IPolkadotApi<unknown, unknown>
 
     await expect(
-      getBalanceForeignPolkadotXcm(api, 'Moonbeam', 'addr', { symbol: 'DOT', isNative: true })
+      getBalanceForeignPolkadotXcm(api, 'Moonbeam', 'addr', {
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: true
+      })
     ).rejects.toThrow(InvalidCurrencyError)
   })
 
-  it('Moonriver - should throw error if asset has no multi-location', async () => {
+  it('Moonriver - should throw error if asset has no location', async () => {
     const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
 
     await expect(
       getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
         symbol: 'DOT',
+        decimals: 10,
         isNative: true
       })
     ).rejects.toThrowError(InvalidCurrencyError)
@@ -134,6 +147,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const res = await getBalanceForeignPolkadotXcm(api, 'AssetHubPolkadot', 'addr', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '42'
     })
 
@@ -159,6 +173,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const res = await getBalanceForeignPolkadotXcm(api, 'AssetHubPolkadot', 'addr', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '4242',
       location: ml
     })
@@ -183,6 +198,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const res = await getBalanceForeignPolkadotXcm(api, 'AssetHubPolkadot', 'addr', {
       symbol: 'DOT',
+      decimals: 10,
       assetId: '7',
       location: ml
     })

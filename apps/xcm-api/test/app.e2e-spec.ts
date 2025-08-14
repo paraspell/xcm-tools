@@ -1292,7 +1292,7 @@ describe('XCM API (e2e)', () => {
 
     it('Generate asset claim call - all valid - /asset-claim', async () => {
       const from: TChain = 'AssetHubKusama';
-      const fungible = [
+      const currency = [
         {
           id: {
             parents: 0,
@@ -1309,14 +1309,14 @@ describe('XCM API (e2e)', () => {
       ];
       const tx = await Builder()
         .claimFrom(from)
-        .fungible(fungible)
-        .account(address)
+        .currency(currency)
+        .address(address)
         .build();
       return request(app.getHttpServer())
         .post('/asset-claim')
         .send({
           from,
-          fungible,
+          currency,
           address,
         })
         .expect(201)

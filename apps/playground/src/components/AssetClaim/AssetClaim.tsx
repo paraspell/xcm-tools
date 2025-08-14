@@ -9,11 +9,16 @@ import {
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import {
   type GeneralBuilder,
+  Parents,
   type TPapiApiOrUrl,
   type TPapiTransaction,
   validateAddress,
 } from '@paraspell/sdk';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type {
+  Extrinsic,
+  TBuilderOptions,
+  TPjsApiOrUrl,
+} from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
@@ -74,8 +79,10 @@ const AssetClaim = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      api?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((api?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     const signer = await getSigner();
 
@@ -88,15 +95,10 @@ const AssetClaim = () => {
           {
             from,
             address: formValues.address,
-            fungible: [
-              {
-                id: {
-                  parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                  interior: 'Here',
-                },
-                fun: { Fungible: amount },
-              },
-            ],
+            currency: {
+              location: { parents: Parents.ONE, interior: { Here: null } },
+              amount,
+            },
           },
           api,
           '/asset-claim',
@@ -106,21 +108,16 @@ const AssetClaim = () => {
           true,
         );
       } else {
-        const builder = Builder();
+        const builder = Builder({
+          abstractDecimals: true,
+        });
         tx = await builder
           .claimFrom(from)
-          .fungible([
-            {
-              id: {
-                parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                interior: {
-                  Here: null,
-                },
-              },
-              fun: { Fungible: amount },
-            },
-          ])
-          .account(address)
+          .currency({
+            location: { parents: Parents.ONE, interior: { Here: null } },
+            amount,
+          })
+          .address(address)
           .build();
         api = builder.getApi();
       }

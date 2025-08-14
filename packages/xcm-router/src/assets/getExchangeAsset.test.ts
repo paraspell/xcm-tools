@@ -34,9 +34,10 @@ vi.mock('./getExchangeConfig', () => ({
 
 describe('getExchangeAsset', () => {
   const mockExchange = 'AcalaDex';
-  const mockNativeAsset: TNativeAssetInfo = { symbol: 'DOT', isNative: true };
+  const mockNativeAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true };
   const mockForeignAsset: TForeignAssetInfo = {
     symbol: 'USDT',
+    decimals: 6,
     assetId: '123',
     location: { parents: 1, interior: 'Here' },
   };

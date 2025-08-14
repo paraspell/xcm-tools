@@ -13,7 +13,7 @@ import { createPublicClient, getContract, http } from 'viem'
 import { InvalidParameterError } from '../../../errors'
 import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
-import { assertIsForeign } from '../../../utils'
+import { abstractDecimals, assertIsForeign } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
@@ -53,6 +53,8 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
 
   const foundAsset = findAssetInfoOrThrow(from, currency, to)
 
+  const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
+
   let asset: string
   if (foundAsset.symbol === getNativeAssetSymbol(from)) {
     asset = NATIVE_ASSET_ID
@@ -87,14 +89,14 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
   const tx = useMultiAssets
     ? await createTx('transferMultiCurrencies', [
         [
-          [asset, currency.amount],
+          [asset, amount.toString()],
           [formatAssetIdToERC20(usdtAsset.assetId ?? ''), '200000']
         ],
         1, // index of the fee asset
         destLocation,
         weight
       ])
-    : await createTx('transfer', [asset, currency.amount, destLocation, weight])
+    : await createTx('transfer', [asset, amount.toString(), destLocation, weight])
 
   return tx
 }

@@ -58,7 +58,7 @@ describe('buildApiTransactions', () => {
     const result = await buildApiTransactions(initialOptions as TBuildTransactionsOptions);
 
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
-    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions);
+    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined);
     expect(buildTransactions).toHaveBeenCalledOnce();
     expect(result).toEqual(mockTransactions);
   });

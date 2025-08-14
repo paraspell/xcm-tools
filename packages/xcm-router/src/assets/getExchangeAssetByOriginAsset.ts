@@ -11,7 +11,7 @@ export const getExchangeAssetByOriginAsset = (
 ): TRouterAsset | undefined => {
   const assets = getExchangeAssets(exchange);
 
-  // Try searching by symbol fist, if duplicates are found, search by multi-location
+  // Try searching by symbol fist, if duplicates are found, search by location
   const candidates = findBestMatches(assets, originAsset.symbol);
 
   if (candidates.length === 0) {
@@ -30,7 +30,7 @@ export const getExchangeAssetByOriginAsset = (
     return undefined;
   }
 
-  // Origin asset is a foreign asset, try matching by multi-location.
+  // Origin asset is a foreign asset, try matching by location.
   const candidateByML = candidates.find((asset) => {
     if (asset.assetId === undefined) return false;
     const sdkAsset = findAssetInfo(

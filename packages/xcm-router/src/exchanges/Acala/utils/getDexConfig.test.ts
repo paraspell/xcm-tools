@@ -46,6 +46,7 @@ vi.mock('@paraspell/sdk', () => ({
   findAssetById: vi.fn(() => ({ symbol: 'DOT', assetId: '1' })),
   getNativeAssets: vi.fn(() => [{ symbol: 'ACA', location: { Here: '' } }]),
   getOtherAssets: vi.fn(() => [{ symbol: 'DOT', assetId: '1', location: undefined }]),
+  InvalidParameterError: class extends Error {},
 }));
 
 vi.mock('rxjs', () => {

@@ -9,22 +9,15 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
 import type { TSendBaseOptions, TXcmFeeDetail } from '../../types'
+import { abstractDecimals } from '../../utils'
 import { attemptDryRunFee } from './attemptDryRunFee'
 import { getAssetBalanceInternal } from './balance/getAssetBalance'
 import { getTransferableAmount } from './getTransferableAmount'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
-  getExistentialDepositOrThrow: vi.fn(),
-  getNativeAssetSymbol: vi.fn()
-}))
-
+vi.mock('@paraspell/assets')
 vi.mock('./attemptDryRunFee')
 vi.mock('./balance/getAssetBalance')
-
-vi.mock('../../utils/validateAddress', () => ({
-  validateAddress: vi.fn()
-}))
+vi.mock('../../utils')
 
 describe('getTransferableAmount', () => {
   const mockApi = {
@@ -36,6 +29,7 @@ describe('getTransferableAmount', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   test('subtracts XCM fee for native asset', async () => {

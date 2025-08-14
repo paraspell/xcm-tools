@@ -15,7 +15,7 @@ import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 @Injectable()
 export class AssetClaimService {
-  async claimAssets({ from, fungible, address, options }: AssetClaimDto) {
+  async claimAssets({ from, currency, address, options }: AssetClaimDto) {
     const fromChain = from as TSubstrateChain | undefined;
 
     if (!fromChain) {
@@ -40,8 +40,8 @@ export class AssetClaimService {
     try {
       builder = Builder(hasOptions ? options : undefined)
         .claimFrom(fromChain)
-        .fungible(fungible)
-        .account(address);
+        .currency(currency)
+        .address(address);
 
       const tx = await builder.build();
 

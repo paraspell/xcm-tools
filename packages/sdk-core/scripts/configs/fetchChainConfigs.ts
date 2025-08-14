@@ -5,9 +5,9 @@
 import axios from 'axios'
 import { Project, SyntaxKind, Node } from 'ts-morph'
 import { writeFileSync } from 'fs'
-import { CHAIN_NAMES_DOT_KSM } from '../../src'
+import { PARACHAINS, SUBSTRATE_CHAINS } from '../../src'
 import { getChain } from '../../src/utils'
-import type { TChainConfig, TProviderEntry, TChainDotKsmWithRelayChains } from '../../src'
+import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../../src'
 
 type TModifiedChainConfig = TChainConfig & {
   relayChain: string | undefined
@@ -94,7 +94,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
 
       // Filter out the non RPC compliant Hydration endpoint
       const filteredProviders =
-        paraId === HYDRATION_PARA_ID && relayChainName !== 'paseo'
+        paraId === HYDRATION_PARA_ID && relayChainName !== 'Paseo'
           ? providers.filter(p => p.name !== 'Galactic Council')
           : providers
 
@@ -126,38 +126,38 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
       }
     }
 
-    if (relayChainName === 'polkadot') {
+    if (relayChainName === 'Polkadot') {
       processEndpointOptions('prodParasPolkadot')
       processEndpointOptions('prodParasPolkadotCommon')
       processEndpointOptions('prodRelayPolkadot')
-    } else if (relayChainName === 'kusama') {
+    } else if (relayChainName === 'Kusama') {
       processEndpointOptions('prodParasKusama')
       processEndpointOptions('prodParasKusamaCommon')
       processEndpointOptions('prodRelayKusama')
-    } else if (relayChainName === 'westend') {
+    } else if (relayChainName === 'Westend') {
       processEndpointOptions('testParasWestend')
       processEndpointOptions('testParasWestendCommon')
       processEndpointOptions('testRelayWestend')
-    } else if (relayChainName === 'paseo') {
+    } else if (relayChainName === 'Paseo') {
       processEndpointOptions('testParasPaseo')
       processEndpointOptions('testParasPaseoCommon')
       processEndpointOptions('testRelayPaseo')
     }
   }
 
-  await processEndpointsFromUrl(polkadotUrl, 'polkadot')
-  await processEndpointsFromUrl(kusamaUrl, 'kusama')
-  await processEndpointsFromUrl(westendUrl, 'westend')
-  await processEndpointsFromUrl(paseoUrl, 'paseo')
+  await processEndpointsFromUrl(polkadotUrl, 'Polkadot')
+  await processEndpointsFromUrl(kusamaUrl, 'Kusama')
+  await processEndpointsFromUrl(westendUrl, 'Westend')
+  await processEndpointsFromUrl(paseoUrl, 'Paseo')
 
-  const chains = CHAIN_NAMES_DOT_KSM.map(chain => {
+  const chains = PARACHAINS.map(chain => {
     return getChain(chain)
   })
 
-  const obj = {} as Record<TChainDotKsmWithRelayChains, TModifiedChainConfig>
+  const obj = {} as Record<TSubstrateChain, TModifiedChainConfig>
 
   chains.forEach(chain => {
-    const config = chainConfig.find(c => c.info === chain.info && c.relayChain === chain.type)
+    const config = chainConfig.find(c => c.info === chain.info && c.relayChain === chain.ecosystem)
     if (config) {
       obj[chain.chain] = {
         ...config,

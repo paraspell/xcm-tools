@@ -529,6 +529,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
 
@@ -559,6 +560,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
 
@@ -587,6 +589,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
 
@@ -599,6 +602,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
 
@@ -611,6 +615,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignXTokens('Centrifuge', 'some_address', {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
 
@@ -1276,7 +1281,7 @@ describe('PapiApi', () => {
     })
 
     it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
-      const mockAssetDetails = { symbol: 'USDT', assetId: 'test-asset-id' }
+      const mockAssetDetails = { symbol: 'USDT', decimals: 6, assetId: 'test-asset-id' }
       const testAmount = 10000n
       const testOriginFee = 100n
       const foreignAssetsIssuedAmount = 500n

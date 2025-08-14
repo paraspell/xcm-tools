@@ -368,7 +368,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     isOverriddenAsset?: boolean
   ) {
     if (scenario === 'ParaToPara') {
-      // If the asset has overridden multi-locaiton, provide default multi-location
+      // If the asset has overridden location, provide default location
       // as it will be replaced later
       const location: TLocation | undefined = isOverriddenAsset
         ? { parents: Parents.ZERO, interior: 'Here' }

@@ -4,7 +4,7 @@ import type { TRouterAsset } from '../../../types';
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  asset: TRouterAsset,
+  asset: Pick<TRouterAsset, 'symbol' | 'assetId'>,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
   return asset.assetId

@@ -37,7 +37,7 @@ describe('filterEthCompatibleAssets', () => {
       location: 'valid' as unknown as TLocation
     } as TForeignAssetInfo
     vi.mocked(findAssetInfoByLoc).mockImplementation((_ethAssets, assetML) =>
-      assetML === 'valid' ? { assetId: 'eth1', symbol: '' } : undefined
+      assetML === 'valid' ? ({ assetId: 'eth1', symbol: '' } as TForeignAssetInfo) : undefined
     )
     const result = filterEthCompatibleAssets([asset])
     expect(result).toEqual([asset])
@@ -66,13 +66,15 @@ describe('filterEthCompatibleAssets', () => {
     const asset1 = {
       symbol: '',
       id: 'asset1',
+      decimals: 18,
       location: 'valid' as unknown as TLocation
     } as TForeignAssetInfo
     const asset2 = {
       symbol: '',
       assetId: 'asset2',
-      location: 'invalid'
-    } as unknown as TForeignAssetInfo
+      decimals: 18,
+      location: 'invalid' as unknown as TLocation
+    } as TForeignAssetInfo
     const asset3 = {
       symbol: '',
       location: 'valid',
@@ -80,7 +82,9 @@ describe('filterEthCompatibleAssets', () => {
     } as unknown as TForeignAssetInfo
     const asset4 = { symbol: '', assetId: 'asset4' } as TForeignAssetInfo
     vi.mocked(findAssetInfoByLoc).mockImplementation((_ethAssets, assetML) =>
-      assetML === 'valid' || assetML === 'valid_xcm' ? { symbol: '', assetId: 'eth1' } : undefined
+      assetML === 'valid' || assetML === 'valid_xcm'
+        ? ({ symbol: '', assetId: 'eth1' } as TForeignAssetInfo)
+        : undefined
     )
     const result = filterEthCompatibleAssets([asset1, asset2, asset3, asset4])
     expect(result).toEqual([asset1, asset3])

@@ -66,7 +66,7 @@ describe('transfer utils', () => {
         origin: {
           api: relaychainApi,
           chain: 'Polkadot',
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
         },
         exchange: {
           baseChain: 'Acala',
@@ -84,7 +84,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: from,
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
         },
         exchange: {
           baseChain: 'Acala',
@@ -104,7 +104,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
         },
         exchange: {
           baseChain: 'Acala',
@@ -128,7 +128,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
         },
         exchange: {
           baseChain: 'Acala',
@@ -157,8 +157,8 @@ describe('transfer utils', () => {
           apiPapi: parachainPapiApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', decimals: 12, assetId: '0xabcdef1234567890' },
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
@@ -177,8 +177,8 @@ describe('transfer utils', () => {
           api: parachainApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
+          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', decimals: 12, assetId: '0xabcdef1234567890' },
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);

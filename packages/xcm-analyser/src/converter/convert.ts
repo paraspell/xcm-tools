@@ -3,24 +3,24 @@ import type { Junction, JunctionType, Location } from '../types';
 import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
 
 /**
- * Converts a multi-location JSON string into its URL representation.
+ * Converts a XCM location JSON string into its URL representation.
  *
- * @param locationJson - The multi-location as a JSON string.
- * @returns The URL representation of the multi-location.
+ * @param locationJson - The location as a JSON string.
+ * @returns The URL representation of the location.
  */
-export const convertMultilocationToUrlJson = (locationJson: string): string => {
+export const convertLocationToUrlJson = (locationJson: string): string => {
   const location = JSON.parse(locationJson) as Location;
-  return convertMultilocationToUrl(location);
+  return convertLocationToUrl(location);
 };
 
 /**
- * Converts a multi-location object into its URL representation.
+ * Converts a location object into its URL representation.
  *
- * @param args - The multi-location object.
- * @returns The URL representation of the multi-location.
+ * @param args - The location object.
+ * @returns The URL representation of the location.
  * @throws Will throw an error if the interior or junction array is empty.
  */
-export const convertMultilocationToUrl = (args: unknown): string => {
+export const convertLocationToUrl = (args: unknown): string => {
   const { parents, interior } = LocationSchema.parse(args);
   const parentsNum = Number(parents);
 
@@ -42,16 +42,16 @@ export const convertMultilocationToUrl = (args: unknown): string => {
 };
 
 /**
- * Converts an array of XCM multi-location arguments into an array of URL representations.
+ * Converts an array of XCM location arguments into an array of URL representations.
  *
- * @param args - An array of arguments that may contain multi-location objects.
- * @returns An array of URL representations for each found multi-location.
+ * @param args - An array of arguments that may contain location objects.
+ * @returns An array of URL representations for each found location.
  */
 export const convertXCMToUrls = (args: unknown[]): string[] => {
   return args.flatMap((arg) => {
     const location = findLocationInObject(arg);
     if (location !== null && location !== undefined) {
-      return [convertMultilocationToUrl(location)];
+      return [convertLocationToUrl(location)];
     } else {
       return [];
     }

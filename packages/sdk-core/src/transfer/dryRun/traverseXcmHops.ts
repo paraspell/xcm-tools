@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
-import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
@@ -57,7 +57,7 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTChain(nextParaId, getRelayChainOf(origin).toLowerCase() as TRelaychain)
+    const nextChain = getTChain(nextParaId, getRelayChainOf(origin))
 
     if (!nextChain) {
       throw new InvalidParameterError(`Unable to find TChain for paraId ${nextParaId}`)

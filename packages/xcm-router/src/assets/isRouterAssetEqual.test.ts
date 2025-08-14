@@ -18,10 +18,12 @@ describe('isRouterAssetEqual', () => {
   it('returns true if location is defined and deepEqual returns true', () => {
     const asset1: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
 
@@ -35,10 +37,12 @@ describe('isRouterAssetEqual', () => {
   it('returns false if location is defined and deepEqual returns false', () => {
     const asset1: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 2000 } } },
     };
 
@@ -51,10 +55,12 @@ describe('isRouterAssetEqual', () => {
   it('falls back to symbol comparison when location is undefined', () => {
     const asset1: TRouterAsset = {
       symbol: 'dot',
+      decimals: 12,
       location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: undefined,
     };
 
@@ -67,10 +73,12 @@ describe('isRouterAssetEqual', () => {
   it('returns false if normalized symbols are different', () => {
     const asset1: TRouterAsset = {
       symbol: 'KSM',
+      decimals: 12,
       location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'DOT',
+      decimals: 12,
       location: undefined,
     };
 
@@ -81,10 +89,12 @@ describe('isRouterAssetEqual', () => {
   it('compares symbols when one location is undefined', () => {
     const asset1: TRouterAsset = {
       symbol: 'abc',
+      decimals: 12,
       location: undefined,
     };
     const asset2: TRouterAsset = {
       symbol: 'ABC',
+      decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } },
     };
 

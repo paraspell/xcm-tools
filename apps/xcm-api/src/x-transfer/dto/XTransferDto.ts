@@ -41,6 +41,7 @@ export const BuilderOptionsSchema = z
       .record(z.string(), z.union([z.string(), z.array(z.string())]))
       .optional(),
     development: z.boolean().optional(),
+    abstractDecimals: z.boolean().optional(),
   })
   .strict();
 

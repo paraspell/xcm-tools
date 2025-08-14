@@ -26,10 +26,13 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
     const sdkAsset = sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
 
+    if (!sdkAsset) return;
+
     assetsMap.set(symbol, {
       symbol,
-      assetId: sdkAsset && isForeignAsset(sdkAsset) ? sdkAsset.assetId : undefined,
-      location: sdkAsset?.location,
+      assetId: isForeignAsset(sdkAsset) ? sdkAsset.assetId : undefined,
+      location: sdkAsset.location,
+      decimals: sdkAsset.decimals,
     });
   });
 

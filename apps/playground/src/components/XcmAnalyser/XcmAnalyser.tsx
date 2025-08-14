@@ -8,7 +8,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
+import { convertLocationToUrlJson } from '@paraspell/xcm-analyser';
 import { useEffect, useState } from 'react';
 
 import type { FormValues } from '../../components/XcmAnalyser/XcmAnalyserForm';
@@ -45,7 +45,7 @@ export const XcmAnalyser = () => {
   }, [error, scrollIntoView]);
 
   const convertUsingSdk = (input: string) => {
-    return convertMultilocationToUrlJson(input);
+    return convertLocationToUrlJson(input);
   };
 
   const convertUsingApi = async (input: string) => {
@@ -117,7 +117,7 @@ export const XcmAnalyser = () => {
               fw={700}
               ta="center"
             >
-              This tool allows you to convert multi-locations to human readable
+              This tool allows you to convert XCM locations to human readable
               format (URLs)
             </Text>
           </Box>

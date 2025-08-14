@@ -1,10 +1,11 @@
-import type { TPallet } from '@paraspell/pallets'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { getSupportedPallets } from '@paraspell/pallets'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
+import { InvalidParameterError } from '../../../errors'
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { validateAddress } from '../../../utils'
-import { buildClaimAssetsInput } from './buildClaimAssetsInput'
+import { getChainVersion, validateAddress } from '../../../utils'
+import { buildClaimAssetsParams } from './buildClaimAssetsParams'
+import { resolveAssets } from './resolveAssets'
 
 export const claimAssets = async <TApi, TRes>(
   options: TAssetClaimOptions<TApi, TRes>
@@ -15,14 +16,28 @@ export const claimAssets = async <TApi, TRes>(
 
   await api.init(chain, TX_CLIENT_TIMEOUT_MS)
 
-  const args = buildClaimAssetsInput<TApi, TRes>(options)
+  const pallets = getSupportedPallets(chain)
 
-  const module: TPallet = isRelayChain(chain) ? 'XcmPallet' : 'PolkadotXcm'
+  const supportedPallet = pallets.find(p => p === 'PolkadotXcm' || p === 'XcmPallet')
+
+  if (!supportedPallet) {
+    throw new InvalidParameterError('Unsupported pallet for asset claim')
+  }
+
+  const version = getChainVersion(chain)
+
+  const assets = resolveAssets(options, version)
+
+  const parameters = buildClaimAssetsParams<TApi, TRes>({
+    ...options,
+    version,
+    assets
+  })
 
   const call = {
-    module,
+    module: supportedPallet,
     method: 'claim_assets',
-    parameters: args
+    parameters
   }
 
   return api.callTxMethod(call)

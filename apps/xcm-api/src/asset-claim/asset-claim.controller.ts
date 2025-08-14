@@ -18,10 +18,10 @@ export class AssetClaimController {
     req: Request,
     params: AssetClaimDto,
   ) {
-    const { from, fungible } = params;
+    const { from, currency } = params;
     this.analyticsService.track(eventName, req, {
       from: from || 'unknown',
-      assetLength: fungible.length,
+      assetLength: Array.isArray(currency) ? currency.length : 0,
     });
   }
 

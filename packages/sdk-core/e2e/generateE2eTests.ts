@@ -122,7 +122,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             const api = await createOrGetApiInstanceForChain(chain)
             const tx = await Builder(api)
               .claimFrom(chain)
-              .fungible([
+              .currency([
                 {
                   id: {
                     parents: Parents.ZERO,
@@ -131,7 +131,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   fun: { Fungible: MOCK_AMOUNT }
                 }
               ])
-              .account(MOCK_ADDRESS)
+              .address(MOCK_ADDRESS)
               .build()
             await validateTx(tx, signer)
           })
@@ -142,7 +142,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         const api = await createOrGetApiInstanceForChain('AssetHubPolkadot')
         const tx = await Builder(api)
           .claimFrom('AssetHubPolkadot')
-          .fungible([
+          .currency([
             {
               id: {
                 Concrete: {
@@ -153,7 +153,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               fun: { Fungible: 1000 }
             }
           ])
-          .account(MOCK_ADDRESS)
+          .address(MOCK_ADDRESS)
           .xcmVersion(Version.V3)
           .build()
         expect(tx).toBeDefined()

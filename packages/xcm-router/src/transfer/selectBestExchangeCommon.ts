@@ -41,7 +41,7 @@ export const selectBestExchangeCommon = async <
 
   if ('id' in currencyTo) {
     throw new InvalidParameterError(
-      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or multi-location.',
+      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or location.',
     );
   }
 

@@ -12,27 +12,14 @@ import type { IPolkadotApi } from '../../../api'
 import { DryRunFailedError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
-import { validateAddress } from '../../../utils'
+import { abstractDecimals, validateAddress } from '../../../utils'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
-import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal' // Adjust path as needed
+import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetOnDestOrThrow: vi.fn(),
-  getExistentialDepositOrThrow: vi.fn(),
-  normalizeSymbol: vi.fn()
-}))
-
-vi.mock('../../../transfer', () => ({
-  getXcmFee: vi.fn()
-}))
-
-vi.mock('../../../utils', () => ({
-  validateAddress: vi.fn()
-}))
-
-vi.mock('../balance/getAssetBalance', () => ({
-  getAssetBalanceInternal: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('../../../transfer')
+vi.mock('../../../utils')
+vi.mock('../balance/getAssetBalance')
 
 describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {
@@ -72,6 +59,7 @@ describe('verifyEdOnDestinationInternal', () => {
       if (!symbol) return ''
       return symbol.toUpperCase()
     })
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('should throw DryRunFailedError if assetHub dryRunError occurs', async () => {

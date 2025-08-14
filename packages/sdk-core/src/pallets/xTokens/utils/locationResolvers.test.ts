@@ -116,7 +116,7 @@ describe('buildLocation', () => {
     vi.mocked(isRelayChain).mockReturnValue(false)
 
     const location: TLocation = { parents: 1, interior: 'Here' }
-    vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', location }])
+    vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', decimals: 10, location }])
 
     const input = {
       ...baseInput,

@@ -5,11 +5,13 @@ import { getExchangePairs } from './getExchangePairs';
 
 const assetABC: TAssetInfo = {
   symbol: 'ABC',
+  decimals: 12,
   assetId: '1',
   location: { foo: 'bar' } as unknown as TLocation,
 };
 const assetXYZ: TAssetInfo = {
   symbol: 'XYZ',
+  decimals: 12,
   assetId: '2',
   location: { foo: 'baz' } as unknown as TLocation,
 };

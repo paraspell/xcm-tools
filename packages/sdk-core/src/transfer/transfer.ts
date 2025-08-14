@@ -6,7 +6,7 @@ import { isDotKsmBridge, isRelayChain, isTLocation } from '@paraspell/sdk-common
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
-import { getChain, validateAddress } from '../utils'
+import { abstractDecimals, getChain, validateAddress } from '../utils'
 import { getChainVersion } from '../utils/chain'
 import { transferRelayToPara } from './transferRelayToPara'
 import {
@@ -56,6 +56,13 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     : undefined
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
+  const amount: bigint = Array.isArray(currency)
+    ? 0n
+    : abstractDecimals(currency.amount, asset?.decimals, api)
+
+  // Ensure amount is at least 2 to avoid Rust panic (only for non-array currencies)
+  const finalAmount = !Array.isArray(currency) && amount < 2n ? 2n : amount
+
   const originVersion = getChainVersion(origin)
 
   const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
@@ -75,9 +82,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
     if (isLocalTransfer) {
       if (isTLocation(address)) {
-        throw new InvalidAddressError(
-          'Multi-Location address is not supported for local transfers.'
-        )
+        throw new InvalidAddressError('Location address is not supported for local transfers.')
       }
 
       await api.init(origin, TX_CLIENT_TIMEOUT_MS)
@@ -86,7 +91,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
         method: 'transfer_keep_alive',
         parameters: {
           dest: { Id: address },
-          value: Array.isArray(currency) ? 0n : BigInt(currency.amount)
+          value: finalAmount
         }
       })
     }
@@ -98,7 +103,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       address,
       assetInfo: {
         ...asset,
-        amount: Array.isArray(currency) ? 0n : BigInt(currency.amount)
+        amount: finalAmount
       },
       paraIdTo,
       version: resolvedVersion,
@@ -125,8 +130,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const finalAsset = Array.isArray(currency)
     ? { ...resolvedAsset, amount: 0n, assetId: '1' }
-    : // Ensure amount is at least 2 to avoid Rust panic
-      { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount) }
+    : { ...resolvedAsset, amount: finalAmount }
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)
 

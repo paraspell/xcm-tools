@@ -9,9 +9,9 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import ParachainNode from '../Parachain'
+import Parachain from '../Parachain'
 
-class IntegriteeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
+class IntegriteeKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor(
     chain: TParachain = 'IntegriteeKusama',
     info: string = 'integritee',

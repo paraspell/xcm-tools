@@ -71,8 +71,8 @@ describe('AssetHubExchange', () => {
 
     baseSwapOptions = {
       papiApi: papiApi,
-      assetFrom: { symbol: 'ASSET1', location: assetFromML },
-      assetTo: { symbol: 'ASSET2', location: assetToML },
+      assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
+      assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
       amount: '1000',
       senderAddress: 'sender',
       slippagePct: '5',
@@ -111,9 +111,9 @@ describe('AssetHubExchange', () => {
       });
       const opts = {
         ...baseSwapOptions,
-        assetFrom: { symbol: 'ASSET1', location: assetFromML },
-        assetTo: { symbol: 'NATIVE', location: assetToML },
-        amoun: 1000,
+        assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
+        assetTo: { symbol: 'NATIVE', decimals: 10, location: assetToML },
+        amount: '1000',
       } as TSwapOptions;
       await expect(instance.swapCurrency(api, opts, BigNumber('50000'))).rejects.toThrow(
         SmallAmountError,
@@ -195,6 +195,7 @@ describe('AssetHubExchange', () => {
   describe('handleMultiSwap', () => {
     const assetNative = {
       symbol: 'NATIVE',
+      decimals: 12,
       location: { parents: 0, interior: { Here: null } },
     };
 
@@ -354,6 +355,7 @@ describe('AssetHubExchange', () => {
   describe('getAmountOut', () => {
     const assetNative = {
       symbol: 'NATIVE',
+      decimals: 12,
       location: { parents: 0, interior: { Here: null } },
     };
 
@@ -620,7 +622,7 @@ describe('AssetHubExchange', () => {
     });
 
     it('should throw if native asset location is missing in multi-hop', async () => {
-      vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'NATIVE' });
+      vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'NATIVE', decimals: 12 });
       const opts = {
         ...baseSwapOptions,
         assetFrom: assetA,

@@ -5,7 +5,7 @@ import { replaceBigInt } from '@paraspell/sdk-common'
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
-import { validateAddress } from '../../../utils'
+import { abstractDecimals, validateAddress } from '../../../utils'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
@@ -52,6 +52,8 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   const asset = findAssetOnDestOrThrow(origin, destination, currency)
 
+  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+
   const destCurrency = asset.location ? { location: asset.location } : { symbol: asset.symbol }
 
   const ed = getExistentialDepositOrThrow(destination, destCurrency)
@@ -70,7 +72,10 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     destination,
     senderAddress,
     address,
-    currency,
+    currency: {
+      ...currency,
+      amount
+    },
     feeAsset,
     disableFallback: false
   })
@@ -128,5 +133,5 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     feeToSubtract = destFee
   }
 
-  return BigInt(currency.amount) - feeToSubtract > (balance < ed ? ed : 0)
+  return amount - feeToSubtract > (balance < ed ? ed : 0)
 }

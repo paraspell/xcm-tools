@@ -50,7 +50,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
       currencyOptionId: '',
-      amount: '1000000000',
+      amount: '10',
       address: DEFAULT_ADDRESS,
       ahAddress: '',
       useViem: false,

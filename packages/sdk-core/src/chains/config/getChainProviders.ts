@@ -5,6 +5,7 @@ import { getChainConfig } from './getChainConfig'
 
 export const getChainProviders = (chain: TSubstrateChain): string[] => {
   const { providers } = getChainConfig(chain)
+
   if (providers.length === 0) {
     throw new InvalidParameterError(`No providers found for chain ${chain}`)
   }

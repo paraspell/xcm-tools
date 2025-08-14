@@ -42,6 +42,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
   const transformedAssets: TRouterAsset[] = filteredAssets.map((asset) => ({
     symbol: asset.symbol,
+    decimals: asset.decimals,
     assetId: isForeignAsset(asset) ? asset.assetId : undefined,
     location: asset.location,
   }));

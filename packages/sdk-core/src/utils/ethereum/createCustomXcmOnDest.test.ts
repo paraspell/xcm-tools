@@ -151,6 +151,7 @@ describe('createCustomXcmOnDest', () => {
   it('should return a valid XCM message structure', () => {
     const mockEthAsset = {
       symbol: 'ETH',
+      decimals: 18,
       assetId: '0x123'
     }
 

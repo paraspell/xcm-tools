@@ -16,9 +16,8 @@ import classes from "./XcmAnalyser.module.css";
 const data = [
   {
     icon: IconArrowsExchange,
-    title: "Easy MultiLocation Conversion",
-    description:
-      "Effortlessly convert XCM MultiLocations into human-readable URLs.",
+    title: "Easy Location Conversion",
+    description: "Effortlessly convert XCM Location into human-readable URLs.",
   },
   {
     icon: IconPuzzle,
@@ -57,8 +56,8 @@ const XcmAnalyser = () => {
         <Title className={classes.title}>XCM Analyser 🔎</Title>
         <Text c="dimmed" maw={550}>
           Simplify your development process with an advanced tool that
-          translates XCM MultiLocations into human-readable URLs, making
-          cross-chain interactions easier to access and understand.
+          translates XCM Locations into human-readable URLs, making cross-chain
+          interactions easier to access and understand.
         </Text>
 
         <SimpleGrid

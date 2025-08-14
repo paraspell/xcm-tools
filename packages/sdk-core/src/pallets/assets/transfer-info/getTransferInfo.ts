@@ -10,9 +10,9 @@ import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
-import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
+import { resolveFeeAsset } from '../../../transfer/utils'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
-import { getRelayChainOf } from '../../../utils'
+import { abstractDecimals, getRelayChainOf } from '../../../utils'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -41,6 +41,8 @@ export const getTransferInfo = async <TApi, TRes>({
 
   try {
     const originAsset = findAssetInfoOrThrow(origin, currency, destination)
+
+    const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
     const originBalanceFee =
       feeAsset && resolvedFeeAsset
@@ -94,10 +96,10 @@ export const getTransferInfo = async <TApi, TRes>({
       resolvedFeeAsset &&
       isAssetEqual(resolvedFeeAsset, originAsset)
 
-    const originBalanceAfter = originBalance - BigInt(currency.amount)
+    const originBalanceAfter = originBalance - amount
 
     const originBalanceFeeAfter = isFeeAssetAh
-      ? originBalanceFee - BigInt(currency.amount)
+      ? originBalanceFee - amount
       : originBalanceFee - originFee
 
     const originBalanceNativeSufficient = originBalanceFee >= originFee
@@ -158,7 +160,10 @@ export const getTransferInfo = async <TApi, TRes>({
       origin,
       destination,
       address,
-      currency,
+      currency: {
+        ...currency,
+        amount
+      },
       originFee,
       isFeeAssetAh: !!isFeeAssetAh,
       destFeeDetail,

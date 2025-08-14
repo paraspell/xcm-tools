@@ -1,9 +1,4 @@
-import {
-  isRelayChain,
-  TRelaychain,
-  type TParachain,
-  type TSubstrateChain
-} from '@paraspell/sdk-common'
+import { isRelayChain, type TParachain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getTChain } from '../../chains/getTChain'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
@@ -17,10 +12,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
 
   assertHasLocation(assetInfo)
 
-  const destChain = getTChain(
-    paraIdTo as number,
-    getRelayChainOf(chain).toLowerCase() as TRelaychain
-  ) as TParachain
+  const destChain = getTChain(paraIdTo as number, getRelayChainOf(chain)) as TParachain
 
   const reserveChain = isRelayChain(destChain)
     ? destChain

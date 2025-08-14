@@ -360,8 +360,8 @@ describe('HydrationExchange', () => {
       vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
       vi.mocked(getAssets).mockReturnValue([
-        { symbol: 'ABC', assetId: '1' },
-        { symbol: 'XYZ', assetId: '2' },
+        { symbol: 'ABC', decimals: 12, assetId: '1' },
+        { symbol: 'XYZ', decimals: 12, assetId: '2' },
       ]);
 
       const result = await chain.getDexConfig(api);

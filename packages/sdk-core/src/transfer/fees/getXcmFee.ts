@@ -16,7 +16,7 @@ import type {
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../types'
-import { getRelayChainOf } from '../../utils'
+import { abstractDecimals, getRelayChainOf } from '../../utils'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dryRun'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
@@ -75,6 +75,8 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
 > => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
+  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+
   const {
     fee: originFee,
     currency: originCurrency,
@@ -112,7 +114,10 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
         origin,
         prevChain: origin,
         destination,
-        currency,
+        currency: {
+          ...currency,
+          amount
+        },
         address,
         asset,
         originFee: originFee ?? 0n,
@@ -172,7 +177,10 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
       origin,
       prevChain: currentOrigin,
       destination: currentChain,
-      currency,
+      currency: {
+        ...currency,
+        amount
+      },
       address,
       senderAddress,
       asset: currentAsset,
@@ -258,7 +266,10 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
       origin,
       prevChain: traversalResult.lastProcessedChain || origin,
       destination,
-      currency,
+      currency: {
+        ...currency,
+        amount
+      },
       address,
       asset,
       originFee: originFee ?? 0n,

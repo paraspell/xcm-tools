@@ -93,7 +93,7 @@ const XcmUtilsForm: FC<Props> = ({
         {
           currencyOptionId: '',
           customCurrency: '',
-          amount: '10000000000000000000',
+          amount: '10',
           isCustomCurrency: false,
           customCurrencyType: 'id',
           customCurrencySymbolSpecifier: 'auto',

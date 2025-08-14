@@ -22,7 +22,7 @@ describe.sequential('E2E tests', () => {
       expect(hashes.length).toBe(2);
     });
 
-    it('should build a transfer extrinsic without error for DOT to ACA (specified by multi-location) on AcalaDex', async () => {
+    it('should build a transfer extrinsic without error for DOT to ACA (specified by location) on AcalaDex', async () => {
       const hashes = await RouterBuilder()
         .from('Polkadot')
         .exchange('AcalaDex')
@@ -56,7 +56,7 @@ describe.sequential('E2E tests', () => {
       expect(hashes.length).toBe(2);
     });
 
-    it('should build a transfer extrinsic without error for ACA to DOT (specified by multi-location) on AcalaDex', async () => {
+    it('should build a transfer extrinsic without error for ACA to DOT (specified by location) on AcalaDex', async () => {
       const hashes = await RouterBuilder()
         .from('Acala')
         .exchange('AcalaDex')

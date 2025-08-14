@@ -36,7 +36,7 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack gap="lg">
           <JsonInput
-            label="Multi-Location"
+            label="XCM Location"
             description="Enter the location in JSON format"
             placeholder={PLACEHOLDER_LOCATION}
             formatOnBlur

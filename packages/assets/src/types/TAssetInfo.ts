@@ -7,7 +7,7 @@ type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Ke
 
 type TBaseAssetInfo = {
   symbol: string
-  decimals?: number
+  decimals: number
   manuallyAdded?: boolean
   alias?: string
   existentialDeposit?: string

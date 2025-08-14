@@ -6,4 +6,7 @@ export const isConfig = <TApi>(value: any): value is TBuilderConfig<TApi> =>
   value !== null &&
   !Array.isArray(value) &&
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  (Object.keys(value).length === 0 || 'apiOverrides' in value || 'development' in value)
+  (Object.keys(value).length === 0 ||
+    'apiOverrides' in value ||
+    'development' in value ||
+    'abstractDecimals' in value)

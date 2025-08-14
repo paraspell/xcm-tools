@@ -684,12 +684,12 @@ describe('Builder', () => {
   describe('Claim asset', () => {
     it('should create a normal claim asset tx', async () => {
       const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue(mockExtrinsic)
-      await Builder(mockApi).claimFrom(CHAIN).fungible([]).account(ADDRESS).build()
+      await Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS).build()
       expect(spy).toHaveBeenCalledTimes(1)
       expect(spy).toHaveBeenCalledWith({
         api: mockApi,
         chain: CHAIN,
-        assets: [],
+        currency: [],
         address: ADDRESS
       })
     })
@@ -701,8 +701,8 @@ describe('Builder', () => {
       })
       const tx = await Builder(mockApi)
         .claimFrom(CHAIN)
-        .fungible([])
-        .account(ADDRESS)
+        .currency([])
+        .address(ADDRESS)
         .xcmVersion(Version.V3)
         .build()
 
@@ -720,7 +720,7 @@ describe('Builder', () => {
       const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
       const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
-      const builder = Builder(mockApi).claimFrom(CHAIN).fungible([]).account(ADDRESS)
+      const builder = Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS)
 
       const tx = await builder.build()
       expect(tx).toBeDefined()

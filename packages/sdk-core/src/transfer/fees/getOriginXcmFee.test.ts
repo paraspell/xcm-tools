@@ -1,5 +1,5 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import type { TCurrencyCore, TNativeAssetInfo, WithAmount } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -7,19 +7,10 @@ import { getOriginXcmFee } from './getOriginXcmFee'
 import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
-vi.mock('@paraspell/assets', () => ({
-  hasDryRunSupport: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
-
-vi.mock('./padFee', () => ({
-  padFee: vi.fn()
-}))
-
-vi.mock('./isSufficient', () => ({
-  isSufficientOrigin: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('./padFee')
+vi.mock('./isSufficient')
+vi.mock('../../utils')
 
 const createApi = (fee: bigint) =>
   ({
@@ -29,15 +20,18 @@ const createApi = (fee: bigint) =>
   }) as unknown as IPolkadotApi<unknown, unknown>
 
 describe('getOriginXcmFee', () => {
-  const mockCurrency = 'TOKEN'
+  const mockSymbol = 'TOKEN'
+  const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
+  const mockAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(getNativeAssetSymbol).mockReturnValue(mockCurrency)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue(mockSymbol)
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
   })
 
-  it('returns padded **paymentInfo** fee when dry-run is NOT supported', async () => {
+  it('returns padded paymentInfo fee when dry-run is NOT supported', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(padFee).mockReturnValue(150n)
     const api = createApi(100n)
@@ -51,13 +45,13 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
-      currency: {} as WithAmount<TCurrencyCore>,
+      currency: mockCurrency,
       disableFallback: false
     })
 
     expect(res).toEqual({
       fee: 150n,
-      currency: mockCurrency,
+      currency: mockSymbol,
       feeType: 'paymentInfo',
       sufficient: true
     })
@@ -68,8 +62,8 @@ describe('getOriginXcmFee', () => {
       'Acala',
       'addr',
       150n,
-      {},
-      undefined,
+      mockCurrency,
+      mockAsset,
       undefined
     )
     expect(dryRunCallSpy).not.toHaveBeenCalled()
@@ -101,7 +95,7 @@ describe('getOriginXcmFee', () => {
 
     expect(res).toEqual({
       fee: 200n,
-      currency: mockCurrency,
+      currency: mockSymbol,
       feeType: 'dryRun',
       sufficient: true,
       forwardedXcms: [[{ x: 1 }]],
@@ -140,7 +134,7 @@ describe('getOriginXcmFee', () => {
     expect(isSufficientOrigin).not.toHaveBeenCalled()
   })
 
-  it('falls back to padded **paymentInfo** and returns `dryRunError` when dry-run fails', async () => {
+  it('falls back to padded paymentInfo and returns `dryRunError` when dry-run fails', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
 
     const api = createApi(888n)
@@ -166,7 +160,7 @@ describe('getOriginXcmFee', () => {
 
     expect(res).toEqual({
       fee: 999n,
-      currency: mockCurrency,
+      currency: mockSymbol,
       feeType: 'paymentInfo',
       dryRunError: 'fail',
       sufficient: true
@@ -180,7 +174,7 @@ describe('getOriginXcmFee', () => {
       'addr',
       999n,
       {},
-      undefined,
+      mockAsset,
       undefined
     )
   })

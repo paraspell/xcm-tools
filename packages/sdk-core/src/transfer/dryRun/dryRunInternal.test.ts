@@ -13,38 +13,18 @@ import { getRelayChainOf } from '../../utils'
 import { dryRunInternal } from './dryRunInternal'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
-  findAssetOnDestOrThrow: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  hasDryRunSupport: vi.fn()
-}))
-
+vi.mock('@paraspell/assets')
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
-vi.mock('../../chains/getTChain', () => ({
-  getTChain: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  getRelayChainOf: vi.fn(),
-  addXcmVersionHeader: vi.fn().mockReturnValue({})
-}))
-
-vi.mock('../utils/resolveFeeAsset', () => ({
-  resolveFeeAsset: vi.fn()
-}))
-
+vi.mock('../../chains/getTChain')
+vi.mock('../../utils')
+vi.mock('../utils/resolveFeeAsset')
+vi.mock('./traverseXcmHops')
 vi.mock('../fees/getDestXcmFee', () => ({
   createOriginLocation: vi.fn().mockReturnValue({})
-}))
-
-vi.mock('./traverseXcmHops', () => ({
-  traverseXcmHops: vi.fn(),
-  addEthereumBridgeFees: vi.fn()
 }))
 
 const createFakeApi = (originDryRun: unknown) =>

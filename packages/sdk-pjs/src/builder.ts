@@ -1,4 +1,8 @@
-import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
+import type {
+  GeneralBuilder as GeneralBuilderCore,
+  TBuilderOptions,
+  TSendBaseOptions
+} from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
 import type { AbstractProvider } from 'ethers'
 
@@ -12,7 +16,7 @@ import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = (api?: TPjsApiOrUrl) => {
+export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
   const pjsApi = new PolkadotJsApi(api)
   return BuilderImpl<TPjsApi, Extrinsic>(pjsApi)
 }
@@ -23,7 +27,7 @@ export type GeneralBuilder<T extends Partial<TSendBaseOptions> = object> = Gener
   T
 >
 
-export const EvmBuilder = (provider?: AbstractProvider) => {
-  const pjsApi = new PolkadotJsApi()
+export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {
+  const pjsApi = new PolkadotJsApi(api)
   return EvmBuilderImpl<TPjsApi, Extrinsic>(pjsApi, provider)
 }

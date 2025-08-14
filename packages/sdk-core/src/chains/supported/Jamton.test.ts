@@ -94,7 +94,7 @@ describe('Jamton', () => {
     it('should handle foreign asset with assetId', () => {
       const input = {
         ...baseInput,
-        asset: { symbol: 'USDT', assetId: '123', amount: 100n }
+        asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
       }
       vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(isSymbolMatch).mockReturnValue(false)
@@ -125,7 +125,7 @@ describe('Jamton', () => {
       it('should throw ScenarioNotSupportedError for ParaToPara to non-AssetHubPolkadot', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
+          asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
           scenario: 'ParaToPara' as const,
           destination: 'Acala' as const
         }
@@ -141,7 +141,7 @@ describe('Jamton', () => {
       it('should allow ParaToPara to AssetHubPolkadot', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
+          asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
           scenario: 'ParaToPara' as const,
           destination: 'AssetHubPolkadot' as const
         }
@@ -156,7 +156,7 @@ describe('Jamton', () => {
       it('should allow non-ParaToPara scenarios to any destination', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: 100n },
+          asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
           scenario: 'ParaToRelay' as const,
           destination: 'Acala' as const
         }
@@ -217,7 +217,7 @@ describe('Jamton', () => {
       it('should not treat non-WUD symbols as WUD', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '123', amount: 100n }
+          asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
         }
         vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
@@ -233,7 +233,7 @@ describe('Jamton', () => {
       it('should handle string assetId conversion to number', () => {
         const input = {
           ...baseInput,
-          asset: { symbol: 'USDT', assetId: '999', amount: 100n }
+          asset: { symbol: 'USDT', assetId: '999', decimals: 6, amount: 100n }
         }
         vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)

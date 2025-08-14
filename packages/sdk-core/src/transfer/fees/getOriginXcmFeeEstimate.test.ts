@@ -1,26 +1,19 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol } from '@paraspell/assets'
+import type { TCurrencyCore, TNativeAssetInfo, WithAmount } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { TGetOriginXcmFeeEstimateOptions, TGetXcmFeeEstimateDetail } from '../../types'
+import { abstractDecimals } from '../../utils'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
 import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
-
-vi.mock('./padFee', () => ({
-  padFee: vi.fn()
-}))
-
-vi.mock('./isSufficient', () => ({
-  isSufficientOrigin: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('./padFee')
+vi.mock('../../utils')
+vi.mock('./isSufficient')
 
 describe('getOriginXcmFeeEstimate', () => {
   const mockApi = {
@@ -31,10 +24,16 @@ describe('getOriginXcmFeeEstimate', () => {
   const mockOriginChain = 'origin' as TSubstrateChain
   const mockDestinationChain = 'destination' as TChain
   const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
+  const mockAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
 
   const MOCK_RAW_FEE = 100000000000n
   const MOCK_PADDED_FEE = 120000000000n
   const MOCK_NATIVE_ASSET_SYMBOL = 'DOT'
+
+  beforeEach(() => {
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
+  })
 
   it('should correctly calculate and return the origin XCM fee estimate including sufficiency', async () => {
     vi.mocked(padFee).mockReturnValue(MOCK_PADDED_FEE)
@@ -72,7 +71,7 @@ describe('getOriginXcmFeeEstimate', () => {
       mockSenderAddress,
       MOCK_PADDED_FEE,
       currency,
-      undefined,
+      mockAsset,
       undefined
     )
 

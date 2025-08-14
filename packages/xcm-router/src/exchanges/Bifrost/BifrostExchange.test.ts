@@ -149,7 +149,11 @@ describe('BifrostExchange', () => {
       await expect(
         chain.swapCurrency(
           mockApi,
-          { ...swapOptions, assetFrom: { symbol: 'KSM' }, assetTo: { symbol: 'BNC' } },
+          {
+            ...swapOptions,
+            assetFrom: { symbol: 'KSM', decimals: 12 },
+            assetTo: { symbol: 'BNC', decimals: 12 },
+          },
           mockToDestTransactionFee,
         ),
       ).rejects.toThrowError(SmallAmountError);

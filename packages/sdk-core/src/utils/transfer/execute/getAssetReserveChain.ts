@@ -1,4 +1,4 @@
-import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
@@ -21,7 +21,7 @@ export const getAssetReserveChain = (
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
-    const resolvedChain = getTChain(paraId, getRelayChainOf(chain).toLowerCase() as TRelaychain)
+    const resolvedChain = getTChain(paraId, getRelayChainOf(chain))
     if (!resolvedChain) {
       throw new InvalidParameterError(`Chain with paraId ${paraId} not found`)
     }

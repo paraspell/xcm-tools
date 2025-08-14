@@ -12,7 +12,7 @@ import type { IPolkadotApi } from '../api'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSendOptions } from '../types'
-import { getChain, validateAddress } from '../utils'
+import { abstractDecimals, getChain, validateAddress } from '../utils'
 import { getChainVersion } from '../utils/chain'
 import { send } from './transfer'
 import { transferRelayToPara } from './transferRelayToPara'
@@ -40,36 +40,11 @@ vi.mock('@paraspell/sdk-common', async () => {
   }
 })
 
-vi.mock('../utils', () => ({
-  getChain: vi.fn(),
-  validateAddress: vi.fn()
-}))
-
-vi.mock('../utils/chain', () => ({
-  getChainVersion: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', () => ({
-  isOverrideLocationSpecifier: vi.fn(),
-  normalizeLocation: vi.fn()
-}))
-
-vi.mock('./transferRelayToPara', () => ({
-  transferRelayToPara: vi.fn()
-}))
-
-vi.mock('./utils', () => ({
-  validateDestinationAddress: vi.fn(),
-  shouldPerformAssetCheck: vi.fn(),
-  resolveAsset: vi.fn(),
-  resolveFeeAsset: vi.fn(),
-  resolveOverriddenAsset: vi.fn(),
-  validateCurrency: vi.fn(),
-  validateDestination: vi.fn(),
-  validateAssetSpecifiers: vi.fn(),
-  validateAssetSupport: vi.fn(),
-  selectXcmVersion: vi.fn()
-}))
+vi.mock('../utils')
+vi.mock('../utils/chain')
+vi.mock('@paraspell/assets')
+vi.mock('./transferRelayToPara')
+vi.mock('./utils')
 
 describe('send', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
@@ -83,7 +58,8 @@ describe('send', () => {
       disconnect: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn(),
       callTxMethod: vi.fn(),
-      getApiOrUrl: vi.fn()
+      getApiOrUrl: vi.fn(),
+      getConfig: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
     originChainMock = {
@@ -99,6 +75,7 @@ describe('send', () => {
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
     vi.mocked(selectXcmVersion).mockReturnValue(Version.V4)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   afterEach(() => {
@@ -429,7 +406,7 @@ describe('send', () => {
       } as TSendOptions<unknown, unknown>
 
       await expect(send(options)).rejects.toThrow(
-        'Multi-Location address is not supported for local transfers.'
+        'Location address is not supported for local transfers.'
       )
     })
   })

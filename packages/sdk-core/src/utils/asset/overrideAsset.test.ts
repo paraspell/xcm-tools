@@ -1,9 +1,7 @@
-import { beforeEach } from 'node:test'
-
 import type { TAmount, TAsset } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Version } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../errors'
 import { createAsset } from './createAsset'

@@ -1,4 +1,3 @@
-import type { TAmount, TAsset } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
@@ -24,8 +23,10 @@ export class AssetClaimBuilder<TApi, TRes, T extends Partial<TAssetClaimOptionsB
    * @param assets - An array of assets to claim in a multi-asset format.
    * @returns An instance of Builder
    */
-  fungible(assets: TAsset<TAmount>[]): AssetClaimBuilder<TApi, TRes, T & { assets: TAsset[] }> {
-    return new AssetClaimBuilder(this.api, { ...this._options, assets })
+  currency(
+    currency: TAssetClaimOptionsBase['currency']
+  ): AssetClaimBuilder<TApi, TRes, T & { currency: TAssetClaimOptionsBase['currency'] }> {
+    return new AssetClaimBuilder(this.api, { ...this._options, currency })
   }
 
   /**
@@ -34,7 +35,7 @@ export class AssetClaimBuilder<TApi, TRes, T extends Partial<TAssetClaimOptionsB
    * @param address - The destination account address.
    * @returns An instance of Builder
    */
-  account(address: TAddress): AssetClaimBuilder<TApi, TRes, T & { address: TAddress }> {
+  address(address: TAddress): AssetClaimBuilder<TApi, TRes, T & { address: TAddress }> {
     return new AssetClaimBuilder(this.api, { ...this._options, address })
   }
 

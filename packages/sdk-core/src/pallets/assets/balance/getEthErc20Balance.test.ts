@@ -68,7 +68,7 @@ describe('getEthErc20Balance', () => {
 
   it('should return ETH balance when symbol is ETH', async () => {
     const currency: TCurrencyCore = { symbol: 'ETH' }
-    const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
+    const mockAsset = { symbol: 'ETH', assetId: '0xETH', decimals: 18 }
     const expectedBalance = 1000000000000000000n
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
@@ -84,7 +84,7 @@ describe('getEthErc20Balance', () => {
 
   it('should throw if asset is not a foreign asset', async () => {
     const currency: TCurrencyCore = { symbol: 'XYZ' }
-    const mockAsset = { symbol: 'XYZ', assetId: 'some-id' }
+    const mockAsset = { symbol: 'XYZ', assetId: 'some-id', decimals: 18 }
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(false)
@@ -120,7 +120,7 @@ describe('getEthErc20Balance', () => {
 
   it('should propagate error from getBalance', async () => {
     const currency: TCurrencyCore = { symbol: 'ETH' }
-    const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
+    const mockAsset = { symbol: 'ETH', assetId: '0xETH', decimals: 18 }
 
     const error = new Error('eth getBalance failed')
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)

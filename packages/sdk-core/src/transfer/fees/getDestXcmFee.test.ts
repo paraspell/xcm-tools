@@ -69,11 +69,12 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
-  it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has multi-location', async () => {
+  it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has location', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'UNIT',
+      decimals: 12,
       location: DOT_LOCATION
     })
 
@@ -113,6 +114,7 @@ describe('getDestXcmFee', () => {
     vi.mocked(getReverseTxFee).mockResolvedValueOnce(130n)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'UNIT',
+      decimals: 12,
       location: DOT_LOCATION
     })
 

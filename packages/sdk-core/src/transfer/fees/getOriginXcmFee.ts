@@ -4,6 +4,7 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@p
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import { abstractDecimals } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
@@ -25,6 +26,8 @@ export const getOriginXcmFee = async <TApi, TRes>({
 > => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
+  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
     : undefined
@@ -42,7 +45,10 @@ export const getOriginXcmFee = async <TApi, TRes>({
       destination,
       senderAddress,
       paddedFee,
-      currency,
+      {
+        ...currency,
+        amount
+      },
       asset,
       resolvedFeeAsset
     )
@@ -77,7 +83,10 @@ export const getOriginXcmFee = async <TApi, TRes>({
       destination,
       senderAddress,
       paddedFee,
-      currency,
+      {
+        ...currency,
+        amount
+      },
       asset,
       resolvedFeeAsset
     )

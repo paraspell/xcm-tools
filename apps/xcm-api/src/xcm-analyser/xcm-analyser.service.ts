@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
-  convertMultilocationToUrl,
+  convertLocationToUrl,
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
 
@@ -25,7 +25,7 @@ export class XcmAnalyserService {
 
     try {
       if (location) {
-        return `"${convertMultilocationToUrl(location)}"`;
+        return `"${convertLocationToUrl(location)}"`;
       } else {
         return convertXCMToUrls(xcm as unknown[]);
       }

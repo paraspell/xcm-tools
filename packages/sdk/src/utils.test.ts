@@ -16,7 +16,6 @@ describe('API Instance and Call Utility Functions with PapiApi', () => {
   describe('createChainClient', () => {
     it('should initialize PapiApi and call createChainClient from internalUtils with the correct arguments', async () => {
       await createChainClient(mockChain)
-
       expect(sdkCore.createChainClient).toHaveBeenCalledWith(expect.any(PapiApi), mockChain)
     })
   })

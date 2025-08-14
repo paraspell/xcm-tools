@@ -10,6 +10,7 @@ import {
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
+  TBuilderOptions,
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
@@ -172,8 +173,10 @@ const XcmUtils = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      options?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     const { from, to, currencies, transformedFeeAsset, address, useApi } =
       formValues;
@@ -230,9 +233,22 @@ const XcmUtils = () => {
 
     try {
       if (useApi) {
-        result = await fetchFromApi(body, apiEndpoint, 'POST', true);
+        const { useApi, currencies, ...safeFormValues } = body;
+        result = await fetchFromApi(
+          {
+            ...safeFormValues,
+            options: {
+              abstractDecimals: true,
+            },
+          },
+          apiEndpoint,
+          'POST',
+          true,
+        );
       } else {
-        const builder = Builder()
+        const builder = Builder({
+          abstractDecimals: true,
+        })
           .from(from)
           .to(to)
           .currency(
@@ -286,8 +302,10 @@ const XcmUtils = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+    const Builder = Sdk.Builder as ((
+      options?: TBuilderOptions<TPjsApiOrUrl>,
+    ) => GeneralBuilder) &
+      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
     const { from, to, currencies, transformedFeeAsset, address, useApi } =
       formValues;
@@ -340,9 +358,22 @@ const XcmUtils = () => {
 
     try {
       if (useApi) {
-        result = await fetchFromApi(body, apiEndpoint, 'POST', true);
+        const { useApi, currencies, ...safeFormValues } = body;
+        result = await fetchFromApi(
+          {
+            ...safeFormValues,
+            options: {
+              abstractDecimals: true,
+            },
+          },
+          apiEndpoint,
+          'POST',
+          true,
+        );
       } else {
-        const builder = Builder()
+        const builder = Builder({
+          abstractDecimals: true,
+        })
           .from(from)
           .to(to)
           .currency(

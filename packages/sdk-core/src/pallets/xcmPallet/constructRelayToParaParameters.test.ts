@@ -54,7 +54,7 @@ describe('constructRelayToParaParameters', () => {
     )
   })
 
-  it('should construct parameters with multi-location destination and include fee', () => {
+  it('should construct parameters with location destination and include fee', () => {
     const result = constructRelayToParaParameters(options, Version.V4, { includeFee: true })
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
@@ -81,7 +81,7 @@ describe('constructRelayToParaParameters', () => {
     })
   })
 
-  it('should construct parameters without fee for multi-location destination', () => {
+  it('should construct parameters without fee for location destination', () => {
     const result = constructRelayToParaParameters(options, Version.V4)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(

@@ -9,7 +9,7 @@ import { replaceBigInt } from '@paraspell/sdk-common'
 import { InvalidParameterError } from '../../errors'
 import { resolveFeeAsset } from '../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferableAmountOptions } from '../../types/TBalance'
-import { validateAddress } from '../../utils/validateAddress'
+import { abstractDecimals, validateAddress } from '../../utils'
 import { attemptDryRunFee } from './attemptDryRunFee'
 import { getAssetBalanceInternal } from './balance/getAssetBalance'
 
@@ -29,6 +29,8 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     : undefined
 
   const asset = findAssetInfoOrThrow(chain, currency, null)
+
+  const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
   const balance = await getAssetBalanceInternal({
     api,
@@ -55,7 +57,10 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
       destination: chain,
       senderAddress,
       feeAsset,
-      currency,
+      currency: {
+        ...currency,
+        amount
+      },
       disableFallback: false
     })
 
