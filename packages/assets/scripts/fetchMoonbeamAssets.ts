@@ -6,15 +6,16 @@ import { capitalizeMultiLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
+import { Parents } from '@paraspell/sdk-common'
 
 const moonbeamWhAssets = [
-  { assetId: '0x06e605775296e851FF43b4dAa541Bb0984E9D6fD', symbol: 'DAI.mwh', decimals: 18 },
-  { assetId: '0x99Fec54a5Ad36D50A4Bba3a41CAB983a5BB86A7d', symbol: 'SOL.mwh', decimals: 9 },
-  { assetId: '0xda430218862d3db25de9f61458645dde49a9e9c1', symbol: 'sUSDS.mwh', decimals: 18 },
-  { assetId: '0x931715FEE2d06333043d11F658C8CE934aC61D0c', symbol: 'USDC.mwh', decimals: 6 },
-  { assetId: '0xc30E9cA94CF52f3Bf5692aaCF81353a27052c46f', symbol: 'USDT.mwh', decimals: 6 },
-  { assetId: '0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D', symbol: 'WBTC.mwh', decimals: 8 },
-  { assetId: '0xab3f0245B83feB11d15AAffeFD7AD465a59817eD', symbol: 'WETH.mwh', decimals: 18 }
+  { assetId: '0x06e605775296e851FF43b4dAa541Bb0984E9D6fD', symbol: 'DAI', decimals: 18 },
+  { assetId: '0x99Fec54a5Ad36D50A4Bba3a41CAB983a5BB86A7d', symbol: 'SOL', decimals: 9 },
+  { assetId: '0xda430218862d3db25de9f61458645dde49a9e9c1', symbol: 'sUSDS', decimals: 18 },
+  { assetId: '0x931715FEE2d06333043d11F658C8CE934aC61D0c', symbol: 'USDC', decimals: 6 },
+  { assetId: '0xc30E9cA94CF52f3Bf5692aaCF81353a27052c46f', symbol: 'USDT', decimals: 6 },
+  { assetId: '0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D', symbol: 'WBTC', decimals: 8 },
+  { assetId: '0xab3f0245B83feB11d15AAffeFD7AD465a59817eD', symbol: 'WETH', decimals: 18 }
 ]
 
 const ERC20_ABI = [
@@ -46,7 +47,7 @@ export const fetchMoonbeamForeignAssets = async (
     existentialDeposit: '1',
     assetId,
     multiLocation: {
-      parents: 0,
+      parents: Parents.ONE,
       interior: {
         X3: [
           { Parachain: 2004 },
