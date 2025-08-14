@@ -13,6 +13,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getParaId } from '../../../chains/config'
 import { BridgeHaltedError } from '../../../errors'
 import type { TEvmBuilderOptions } from '../../../types'
+import { abstractDecimals } from '../../../utils'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
@@ -37,6 +38,8 @@ vi.mock('../../../chains/config', () => ({
 vi.mock('../getParaEthTransferFees', () => ({
   getParaEthTransferFees: vi.fn(() => [1000n, 1000n])
 }))
+
+vi.mock('../../../utils')
 
 vi.mock('../../../utils/ethereum/createCustomXcmOnDest', () => ({
   createCustomXcmOnDest: vi.fn(() => '0xmockedXcm')
@@ -104,12 +107,18 @@ describe('transferMoonbeamToEth', () => {
     vi.clearAllMocks()
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: '',
+      decimals: 18,
       location: { valid: 'location' } as unknown as TLocation,
       assetId: '0xmockedAssetId'
     })
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({
+      symbol: '',
+      assetId: '0xethAssetId',
+      decimals: 18
+    })
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('should throw error for missing AssetHub address', async () => {

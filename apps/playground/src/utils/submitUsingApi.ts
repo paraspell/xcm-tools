@@ -55,7 +55,13 @@ export const getTxFromApi = async <T>(
   useBody = false,
 ): Promise<Extrinsic | TPapiTransaction> => {
   const txHash = await fetchFromApi(
-    { ...params, senderAddress },
+    {
+      ...params,
+      senderAddress,
+      options: {
+        abstractDecimals: true,
+      },
+    },
     endpoint,
     method,
     useBody,

@@ -12,7 +12,7 @@ const mockApi = {
 
 describe('getBalanceForeignXTokens', () => {
   const address = '5F3sa2TJAWMqDhXG6jhV4N8ko9NmoaMZP8F3sa2TJAWMqDh'
-  const asset: TAssetInfo = { assetId: '1', symbol: 'AssetName' }
+  const asset: TAssetInfo = { assetId: '1', symbol: 'AssetName', decimals: 12 }
 
   beforeEach(() => {
     vi.clearAllMocks()

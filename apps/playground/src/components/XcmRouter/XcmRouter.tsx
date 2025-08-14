@@ -155,7 +155,7 @@ export const XcmRouter = () => {
       evmSigner,
     } = formValues;
 
-    await RouterBuilder()
+    await RouterBuilder({ abstractDecimals: true })
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -295,13 +295,21 @@ export const XcmRouter = () => {
       let result;
       if (useApi) {
         result = await fetchFromApi(
-          formValues,
+          {
+            ...formValues,
+            senderAddress: selectedAccount?.address,
+            options: {
+              abstractDecimals: true,
+            },
+          },
           '/router/xcm-fees',
           'POST',
           true,
         );
       } else {
-        result = await RouterBuilder()
+        result = await RouterBuilder({
+          abstractDecimals: true,
+        })
           .from(from)
           .exchange(exchange)
           .to(to)
@@ -361,13 +369,20 @@ export const XcmRouter = () => {
       let result;
       if (useApi) {
         result = await fetchFromApi(
-          formValues,
+          {
+            ...formValues,
+            options: {
+              abstractDecimals: true,
+            },
+          },
           '/router/best-amount-out',
           'POST',
           true,
         );
       } else {
-        result = await RouterBuilder()
+        result = await RouterBuilder({
+          abstractDecimals: true,
+        })
           .from(from)
           .exchange(exchange)
           .to(to)

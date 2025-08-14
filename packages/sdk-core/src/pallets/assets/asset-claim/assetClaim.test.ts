@@ -6,15 +6,18 @@ import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { validateAddress } from '../../../utils'
 import { claimAssets } from './assetClaim'
-import { buildClaimAssetsInput } from './buildClaimAssetsInput'
+import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 
 vi.mock('../../../utils', () => ({
-  validateAddress: vi.fn()
+  validateAddress: vi.fn(),
+  getChainVersion: vi.fn()
 }))
 
-vi.mock('./buildClaimAssetsInput', () => ({
-  buildClaimAssetsInput: vi.fn()
+vi.mock('./buildClaimAssetsParams', () => ({
+  buildClaimAssetsParams: vi.fn()
 }))
+
+vi.mock('./resolveAssets')
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
@@ -35,7 +38,7 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
       chain: mockChain,
-      assets: ['asset1', 'asset2'] as unknown as TAsset[],
+      currency: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
@@ -43,7 +46,7 @@ describe('claimAssets', () => {
       assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
       beneficiary: { [Version.V4]: {} as TLocation }
     }
-    vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
+    vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
     const callSpy = vi.spyOn(apiMock, 'callTxMethod')
@@ -63,7 +66,7 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
       chain: mockChain,
-      assets: ['asset1', 'asset2'] as unknown as TAsset[],
+      currency: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
@@ -72,7 +75,7 @@ describe('claimAssets', () => {
       assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
       beneficiary: { [Version.V4]: {} as TLocation }
     }
-    vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
+    vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
     const callSpy = vi.spyOn(apiInstanceMock, 'callTxMethod')
@@ -92,8 +95,8 @@ describe('claimAssets', () => {
   it('should use xcmPallet module when chain is on the relay chain', async () => {
     const options: TAssetClaimOptions<unknown, unknown> = {
       api: apiMock,
-      chain: mockChain,
-      assets: ['asset1', 'asset2'] as unknown as TAsset[],
+      chain: 'Polkadot',
+      currency: ['asset1', 'asset2'] as unknown as TAsset[],
       address: 'someAddress',
       version: Version.V4
     }
@@ -101,7 +104,7 @@ describe('claimAssets', () => {
       assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TAsset[] },
       beneficiary: { [Version.V4]: {} as TLocation }
     }
-    vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
+    vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(true)
 
     const callSpy = vi.spyOn(apiMock, 'callTxMethod')

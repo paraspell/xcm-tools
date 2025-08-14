@@ -19,7 +19,7 @@ import type {
   THopInfo
 } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
-import { addXcmVersionHeader, getRelayChainOf } from '../../utils'
+import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
@@ -48,13 +48,19 @@ const getFailureInfo = (
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
-  const { origin, destination, currency, api, tx, senderAddress, feeAsset, swapConfig } = options
+  const { api, origin, destination, currency, tx, senderAddress, feeAsset, swapConfig } = options
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
     : undefined
 
   const asset = findAssetInfoOrThrow(origin, currency, destination)
+
+  const amount = abstractDecimals(
+    (currency as WithAmount<TCurrencyCore>).amount,
+    asset.decimals,
+    api
+  )
 
   const originDryRun = await api.getDryRunCall({
     tx,
@@ -103,7 +109,7 @@ export const dryRunInternal = async <TApi, TRes>(
       asset: currentAsset,
       feeAsset: resolvedFeeAsset,
       originFee: originDryRun.fee,
-      amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
+      amount
     })
 
     // Add currency information

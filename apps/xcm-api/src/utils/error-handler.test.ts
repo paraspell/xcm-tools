@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import {
   BridgeHaltedError,
+  ChainNotSupportedError,
   DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
@@ -11,7 +12,6 @@ import {
   InvalidAddressError,
   InvalidCurrencyError,
   MissingChainApiError,
-  ChainNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
   TransferToAhNotSupported,

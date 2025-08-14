@@ -360,14 +360,14 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return { success: true, fee, weight, forwardedXcms, destParaId }
   }
 
-  async getXcmPaymentApiFee(node: TSubstrateChain, xcm: any, asset: TAssetInfo): Promise<bigint> {
+  async getXcmPaymentApiFee(chain: TSubstrateChain, xcm: any, asset: TAssetInfo): Promise<bigint> {
     const weight = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm)
 
     assertHasLocation(asset)
 
     const localizedLocation =
-      node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
-        ? localizeLocation(node, asset.location)
+      chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama' || isRelayChain(chain)
+        ? localizeLocation(chain, asset.location)
         : asset.location
 
     const feeResult = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(

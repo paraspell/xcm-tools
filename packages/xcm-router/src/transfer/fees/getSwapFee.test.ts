@@ -79,7 +79,7 @@ describe('getSwapFee', () => {
     await expect(getSwapFee(exchange, options)).rejects.toThrow('fee error');
   });
 
-  it('includes dryRunError when getFeeForOriginNode returns one', async () => {
+  it('includes dryRunError when getFeeForOriginChain returns one', async () => {
     const dryError = 'Dry run error';
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],

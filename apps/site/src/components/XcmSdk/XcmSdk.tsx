@@ -99,16 +99,16 @@ const XcmSdk = () => {
           }
         >
           <List.Item>
-            <b>Multi-chain compatibility</b> – Seamlessly interact with every
+            <b>Multi-chain compatibility</b> - Seamlessly interact with every
             XCM compatible Parachain or Relay chain across the Polkadot and
             Kusama ecosystems.
           </List.Item>
           <List.Item>
-            <b>Extensive asset support</b> – Manage both native and foreign
-            assets with flexible customization of multilocations and XCM calls.
+            <b>Extensive asset support</b> - Manage both native and foreign
+            assets with flexible customization of XCM locations and XCM calls.
           </List.Item>
           <List.Item>
-            <b>Customizable XCM Versions</b> – Tailor your transactions by
+            <b>Customizable XCM Versions</b> - Tailor your transactions by
             selecting the appropriate XCM version for your cross-chain
             interactions.
           </List.Item>

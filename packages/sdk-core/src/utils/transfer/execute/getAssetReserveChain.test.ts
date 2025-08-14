@@ -47,7 +47,7 @@ describe('getAssetReserveChain', () => {
 
     const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
-    expect(getTChain).toHaveBeenCalledWith(1000, 'polkadot')
+    expect(getTChain).toHaveBeenCalledWith(1000, 'Polkadot')
     expect(result).toBe('Moonbeam')
   })
 
@@ -59,7 +59,7 @@ describe('getAssetReserveChain', () => {
 
     getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
-    expect(getTChain).toHaveBeenCalledWith(2000, 'kusama')
+    expect(getTChain).toHaveBeenCalledWith(2000, 'Kusama')
   })
 
   it('throws error when parachain not found', () => {

@@ -2,9 +2,9 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
   TAssetInfo,
-  TNativeAssetInfo,
   TChain,
   TChainAssetsInfo,
+  TNativeAssetInfo,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

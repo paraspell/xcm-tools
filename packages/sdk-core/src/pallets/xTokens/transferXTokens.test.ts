@@ -41,6 +41,7 @@ describe('transferXTokens', () => {
       ...baseOptions,
       asset: {
         symbol: 'ACA',
+        decimals: 12,
         assetId: '123',
         amount: 3000n
       },
@@ -70,6 +71,7 @@ describe('transferXTokens', () => {
       ...baseOptions,
       asset: {
         symbol: 'ACA',
+        decimals: 12,
         assetId: '123',
         amount: 3000n
       },

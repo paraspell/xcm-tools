@@ -7,10 +7,10 @@ import { supportsExchangePair } from './supportsExchangePair';
 const mlA = { foo: 'bar' } as unknown as TLocation;
 const mlB = { baz: 'qux' } as unknown as TLocation;
 
-const assetA: TRouterAsset = { symbol: 'ABC', assetId: '1', location: mlA };
-const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', location: mlA };
-const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', location: mlB };
-const assetC: TRouterAsset = { symbol: 'ZZZ', assetId: '9' };
+const assetA: TRouterAsset = { symbol: 'ABC', assetId: '1', location: mlA, decimals: 12 };
+const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', location: mlA, decimals: 12 };
+const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
+const assetC: TRouterAsset = { symbol: 'ZZZ', assetId: '9', decimals: 12 };
 
 vi.mock('@paraspell/sdk', () => ({
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
@@ -47,7 +47,7 @@ describe('supportsExchangePair', () => {
   });
 
   it('matches assets via location deep equality', () => {
-    const alt = { symbol: 'DIFF', location: mlA };
+    const alt = { symbol: 'DIFF', location: mlA, decimals: 12 };
     expect(supportsExchangePair('AcalaDex', alt, assetB)).toBe(true);
   });
 

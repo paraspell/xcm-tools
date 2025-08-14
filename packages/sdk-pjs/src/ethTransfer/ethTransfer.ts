@@ -1,9 +1,9 @@
 import {
-  findAssetInfo,
+  abstractDecimals,
+  assertHasId,
+  findAssetInfoOrThrow,
   getParaId,
-  InvalidCurrencyError,
   InvalidParameterError,
-  isForeignAsset,
   isOverrideLocationSpecifier
 } from '@paraspell/sdk-core'
 import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
@@ -24,6 +24,7 @@ import { createContext } from './createContext'
  * @throws Will throw an error if the transfer validation fails or if the transfer cannot be completed.
  */
 export const transferEthToPolkadot = async <TApi, TRes>({
+  api,
   provider,
   signer,
   address,
@@ -46,22 +47,16 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new InvalidParameterError('Snowbridge does not support Viem provider yet.')
   }
 
-  const ethAsset = findAssetInfo('Ethereum', currency, to)
+  const ethAsset = findAssetInfoOrThrow('Ethereum', currency, to)
 
-  if (ethAsset === null) {
-    throw new InvalidCurrencyError(
-      `Origin chain Ethereum does not support currency ${JSON.stringify(currency)}.`
-    )
-  }
+  const amount = abstractDecimals(currency.amount, ethAsset.decimals, api)
 
   const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
   const context = createContext(provider, env)
 
   const destParaId = getParaId(to)
 
-  if (!isForeignAsset(ethAsset) || ethAsset.assetId === undefined) {
-    throw new InvalidCurrencyError('Selected asset has no asset id')
-  }
+  assertHasId(ethAsset)
 
   const overrides: Partial<RegistryOptions> = {
     precompiles: { '2004': '0x000000000000000000000000000000000000081A' },
@@ -103,7 +98,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     address,
     ethAsset.assetId,
     destParaId,
-    BigInt(currency.amount),
+    amount,
     fee
   )
 

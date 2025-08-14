@@ -47,6 +47,7 @@ describe('getModifiedCurrencySelection', () => {
     vi.mocked(getOtherAssets).mockReturnValue([
       {
         symbol: 'DOT',
+        decimals: 10,
         location: { parents: Parents.ONE, interior: 'Here' }
       }
     ])

@@ -15,7 +15,7 @@ import visualizatorLogoImg from "../../assets/visualizator_logo.png";
 import visualizatorImg from "../../assets/visualizator-mockup-1-compressed.png";
 
 const codeForAnalyser = `
-  convertMultilocationToUrl({
+  convertLocationToUrl({
   parents: '1',
   interior: { 
     X1: { Parachain: 2000 }
@@ -212,7 +212,7 @@ const HeroCards = () => {
           XCM Analyser<span style={{ paddingLeft: "14px" }}>🔎</span>
         </Title>
         <Text size="lg" mt="sm" c="black">
-          Convert XCM Multilocations into human-readable format.
+          Convert XCM Locations into human-readable format.
         </Text>
         <CodeHighlight
           mb={2}

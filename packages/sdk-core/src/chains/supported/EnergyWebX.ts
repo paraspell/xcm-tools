@@ -7,9 +7,9 @@ import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TSerializedApiCall } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import ParachainNode from '../Parachain'
+import Parachain from '../Parachain'
 
-class EnergyWebX<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
+class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'EnergyWebX',
     info: string = 'ewx',

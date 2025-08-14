@@ -185,7 +185,7 @@ describe('tokensToChainTokenMap', () => {
 });
 
 describe('getTokenMap', () => {
-  it('returns a map of address -> Token for a given node and chainId', () => {
+  it('returns a map of address -> Token for a given chain and chainId', () => {
     DEFULT_TOKEN_LIST_MAP['bifrost-kusama'] = {
       name: 'Mock Bifrost Kusama List',
       timestamp: '2021-09-01T00:00:00Z',

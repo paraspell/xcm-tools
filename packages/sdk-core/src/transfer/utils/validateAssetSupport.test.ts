@@ -45,7 +45,7 @@ describe('validateAssetSupport', () => {
     const isBridge = false
     const asset = { symbol: 'DOT' } as TAssetInfo
 
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'DOT', isNative: true }])
+    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'DOT', isNative: true, decimals: 10 }])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       TransferToAhNotSupported
@@ -116,8 +116,8 @@ describe('validateAssetSupport', () => {
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
     vi.mocked(getNativeAssets).mockReturnValue([
-      { symbol: 'DOT', isNative: true },
-      { symbol: 'KSM', isNative: true }
+      { symbol: 'DOT', isNative: true, decimals: 10 },
+      { symbol: 'KSM', isNative: true, decimals: 12 }
     ])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()

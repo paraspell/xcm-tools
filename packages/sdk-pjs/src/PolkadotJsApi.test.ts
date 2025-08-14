@@ -453,6 +453,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
@@ -466,6 +467,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
@@ -479,6 +481,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignXTokens('Centrifuge', address, {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
       expect(mockApiPromise.query.ormlTokens.accounts.entries).toHaveBeenCalledWith(address)
@@ -506,6 +509,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
@@ -533,6 +537,7 @@ describe('PolkadotJsApi', () => {
 
       const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
@@ -600,6 +605,7 @@ describe('PolkadotJsApi', () => {
       const xcm = { some: 'xcm_payload' }
       const asset: TAssetInfo = {
         symbol: 'DOT',
+        decimals: 10,
         location: {
           parents: 1,
           interior: {
@@ -640,6 +646,7 @@ describe('PolkadotJsApi', () => {
       const xcm = { some: 'xcm_payload' }
       const asset: TAssetInfo = {
         symbol: 'KSM',
+        decimals: 12,
         location: {
           parents: 0,
           interior: {
@@ -690,6 +697,7 @@ describe('PolkadotJsApi', () => {
       const xcm = { some: 'xcm_payload' }
       const asset: TAssetInfo = {
         symbol: 'DOT',
+        decimals: 10,
         location: {
           parents: 0,
           interior: {
@@ -730,6 +738,7 @@ describe('PolkadotJsApi', () => {
       const xcm = { some: 'xcm_payload' }
       const asset: TAssetInfo = {
         symbol: 'KSM',
+        decimals: 12,
         location: {
           parents: 1,
           interior: {
@@ -770,6 +779,7 @@ describe('PolkadotJsApi', () => {
       const xcm = { some: 'xcm_payload' }
       const asset: TAssetInfo = {
         symbol: 'KSM',
+        decimals: 12,
         location: {
           parents: 0,
           interior: {

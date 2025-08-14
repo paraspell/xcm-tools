@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { Location } from '../src/types';
-import { convertMultilocationToUrl, convertXCMToUrls } from '../src/converter/convert';
+import { convertLocationToUrl, convertXCMToUrls } from '../src/converter/convert';
 
 const location: Location = {
   parents: '1',
@@ -9,7 +9,7 @@ const location: Location = {
   },
 };
 
-const url = convertMultilocationToUrl(location);
+const url = convertLocationToUrl(location);
 
 console.log();
 console.log(`URL: ${url}`);

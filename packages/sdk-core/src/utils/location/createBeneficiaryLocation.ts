@@ -57,12 +57,12 @@ export const createBeneficiaryLocXTokens = <TApi, TRes>({
 
 export const createBeneficiaryLocation = <TApi, TRes>({
   api,
-  address: recipientAddress,
+  address,
   version
 }: TCreateBeneficiaryOptions<TApi, TRes>): TLocation => {
-  if (isTLocation(recipientAddress)) return recipientAddress
+  if (isTLocation(address)) return address
 
-  const accountPayload = createAccountPayload(api, recipientAddress)
+  const accountPayload = createAccountPayload(api, address)
 
   return {
     parents: Parents.ZERO,

@@ -14,7 +14,7 @@ describe('AssetClaimController', () => {
 
   const bodyParams = {
     from: 'address1',
-    fungible: [
+    currency: [
       {
         id: { parents: 1, interior: { X1: { Parachain: 2000 } } },
         fun: {

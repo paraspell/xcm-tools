@@ -1,9 +1,9 @@
-import { createChainClient, InvalidParameterError } from '@paraspell/sdk';
+import { applyDecimalAbstraction, createChainClient, InvalidParameterError } from '@paraspell/sdk';
 
 import { supportsExchangePair } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
-import type { TAdditionalTransferOptions } from '../../types';
+import type { TAdditionalTransferOptions, TRouterBuilderOptions } from '../../types';
 import { type TBuildTransactionsOptions, type TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { resolveAssets } from './resolveAssets';
@@ -13,8 +13,9 @@ export const prepareTransformedOptions = async <
   T extends TTransferOptions | TBuildTransactionsOptions,
 >(
   options: T,
+  builderOptions?: TRouterBuilderOptions,
 ): Promise<{ dex: ExchangeChain; options: T & TAdditionalTransferOptions }> => {
-  const { from, to, exchange, senderAddress, recipientAddress } = options;
+  const { from, to, exchange, senderAddress, recipientAddress, amount } = options;
 
   const originApi = from ? await createChainClient(from) : undefined;
 
@@ -34,34 +35,41 @@ export const prepareTransformedOptions = async <
   const originSpecified = from && originApi && from !== dex.chain;
   const destinationSpecified = to && to !== dex.chain;
 
+  const transformed = {
+    ...options,
+    amount: applyDecimalAbstraction(
+      amount,
+      assetFromOrigin?.decimals ?? assetFromExchange.decimals,
+      !!builderOptions?.abstractDecimals,
+    ),
+    origin:
+      originSpecified && assetFromOrigin
+        ? {
+            api: originApi,
+            chain: from,
+            assetFrom: assetFromOrigin,
+          }
+        : undefined,
+    exchange: {
+      api: await dex.createApiInstance(),
+      apiPapi: await dex.createApiInstancePapi(),
+      baseChain: dex.chain,
+      exchangeChain: dex.exchangeChain,
+      assetFrom: assetFromExchange,
+      assetTo,
+    },
+    destination:
+      destinationSpecified && recipientAddress
+        ? {
+            chain: to,
+            address: recipientAddress,
+          }
+        : undefined,
+    feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
+  };
+
   return {
     dex,
-    options: {
-      ...options,
-      origin:
-        originSpecified && assetFromOrigin
-          ? {
-              api: originApi,
-              chain: from,
-              assetFrom: assetFromOrigin,
-            }
-          : undefined,
-      exchange: {
-        api: await dex.createApiInstance(),
-        apiPapi: await dex.createApiInstancePapi(),
-        baseChain: dex.chain,
-        exchangeChain: dex.exchangeChain,
-        assetFrom: assetFromExchange,
-        assetTo,
-      },
-      destination:
-        destinationSpecified && recipientAddress
-          ? {
-              chain: to,
-              address: recipientAddress,
-            }
-          : undefined,
-      feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
-    },
+    options: transformed,
   };
 };

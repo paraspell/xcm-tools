@@ -322,7 +322,7 @@ abstract class Parachain<TApi, TRes> {
     const { assetInfo: asset, address } = options
 
     if (isTLocation(address)) {
-      throw new InvalidAddressError('Multi-Location address is not supported for local transfers')
+      throw new InvalidAddressError('Location address is not supported for local transfers')
     }
 
     const validatedOptions = { ...options, address }

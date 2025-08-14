@@ -1,10 +1,10 @@
 import { test, expect, Page } from '@playwright/test';
-import { CHAIN_NAMES_DOT_KSM, TChain, getOtherAssets } from '@paraspell/sdk';
+import { SUBSTRATE_CHAINS, TChain, getOtherAssets } from '@paraspell/sdk';
 
 const performAssetsObjectTest = async (
   page: Page,
   funcName: string,
-  nodeName: string,
+  chain: string,
   useApi: boolean,
 ) => {
   const showSymbolInput =
@@ -16,10 +16,10 @@ const performAssetsObjectTest = async (
   await page.getByRole('option', { name: funcName, exact: true }).click();
 
   await page.getByTestId('select-chain').click();
-  await page.getByRole('option', { name: nodeName, exact: true }).click();
+  await page.getByRole('option', { name: chain, exact: true }).click();
 
   if (showSymbolInput) {
-    const randomCurrencySymbol = getOtherAssets(nodeName as TChain).find(
+    const randomCurrencySymbol = getOtherAssets(chain as TChain).find(
       (asset) => !!asset.assetId && !!asset.symbol,
     )?.symbol;
     if (!randomCurrencySymbol) return;
@@ -56,14 +56,14 @@ test.describe('XCM SDK - Assets', () => {
     await page.getByTestId('tab-assets').click();
   });
 
-  CHAIN_NAMES_DOT_KSM.forEach((nodeName) => {
+  SUBSTRATE_CHAINS.forEach((chain) => {
     functionNames.forEach((funcName) => {
       [false, true].forEach((useApi) => {
         const apiLabel = useApi ? ' - API' : '';
-        test(`Should succeed for ${funcName} function for ${nodeName}${apiLabel}`, async ({
+        test(`Should succeed for ${funcName} function for ${chain}${apiLabel}`, async ({
           page,
         }) => {
-          await performAssetsObjectTest(page, funcName, nodeName, useApi);
+          await performAssetsObjectTest(page, funcName, chain, useApi);
         });
       });
     });

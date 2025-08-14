@@ -26,7 +26,7 @@ export const generateAssetsTests = () => {
         it('should have the required asset properties', () => {
           expect(assetsObj).toHaveProperty('nativeAssets')
           expect(assetsObj).toHaveProperty('otherAssets')
-          expect(assetsObj).toHaveProperty('relayChainAssetSymbol')
+          expect(assetsObj).toHaveProperty('relaychainSymbol')
           expect(assetsObj).toHaveProperty('nativeAssetSymbol')
           expect(assetsObj).toHaveProperty('isEVM')
           expect(assetsObj).toHaveProperty('supportsDryRunApi')
@@ -223,7 +223,7 @@ export const generateAssetsTests = () => {
           it('should return valid decimals for all available assets', () => {
             const { nativeAssets, otherAssets } = getAssetsObject(chain)
             ;[...nativeAssets, ...otherAssets].forEach(asset => {
-              if (asset.symbol !== undefined && asset.decimals !== undefined) {
+              if (asset.symbol !== undefined) {
                 const decimals = getAssetDecimals(chain, asset.symbol)
                 expect(decimals).toBeTypeOf('number')
                 expect(decimals).toBeGreaterThanOrEqual(0)

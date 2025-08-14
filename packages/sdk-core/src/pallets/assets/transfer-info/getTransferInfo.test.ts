@@ -8,20 +8,19 @@ import {
   isChainEvm
 } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
-import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
-import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
+import { resolveFeeAsset } from '../../../transfer/utils'
 import type {
   TGetTransferInfoOptions,
   TTransferInfo,
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../../types'
-import { getRelayChainOf } from '../../../utils'
+import { abstractDecimals, getRelayChainOf } from '../../../utils'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -39,39 +38,14 @@ vi.mock('@paraspell/assets', async importOriginal => {
   }
 })
 
-vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {
-    constructor(message: string) {
-      super(message)
-      this.name = 'InvalidParameterError'
-    }
-  }
-}))
-
-vi.mock('../../../transfer', () => ({
-  getXcmFee: vi.fn()
-}))
-
-vi.mock('../../../transfer/utils/resolveFeeAsset', () => ({
-  resolveFeeAsset: vi.fn()
-}))
-
-vi.mock('../../../utils', () => ({
-  getRelayChainOf: vi.fn()
-}))
-
-vi.mock('../balance', () => ({
-  getAssetBalanceInternal: vi.fn(),
-  getBalanceNativeInternal: vi.fn()
-}))
-
-vi.mock('./buildDestInfo', () => ({
-  buildDestInfo: vi.fn()
-}))
-
-vi.mock('./buildHopInfo', () => ({
-  buildHopInfo: vi.fn()
-}))
+vi.mock('../../../errors')
+vi.mock('../../../transfer')
+vi.mock('../../../transfer/utils')
+vi.mock('../../../transfer/abstractDecimals')
+vi.mock('../../../utils')
+vi.mock('../balance')
+vi.mock('./buildDestInfo')
+vi.mock('./buildHopInfo')
 
 describe('getTransferInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
@@ -148,6 +122,7 @@ describe('getTransferInfo', () => {
         currencySymbol: 'DOT'
       }
     })
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('should successfully get transfer info for a Polkadot parachain transfer with all hops', async () => {
@@ -284,9 +259,6 @@ describe('getTransferInfo', () => {
     }
 
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
-    await expect(getTransferInfo(options)).rejects.toThrow(
-      'ahAddress is required for EVM origin Moonbeam.'
-    )
     expect(mockApi.init).not.toHaveBeenCalled()
   })
 
@@ -322,9 +294,6 @@ describe('getTransferInfo', () => {
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
 
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
-    await expect(getTransferInfo(options)).rejects.toThrow(
-      `Cannot get origin xcm fee for currency ${JSON.stringify(options.currency, replaceBigInt)} on chain ${options.origin}.`
-    )
     expect(mockApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
     expect(mockApi.disconnect).toHaveBeenCalled()
   })

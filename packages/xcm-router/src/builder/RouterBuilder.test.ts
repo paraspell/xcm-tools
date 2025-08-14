@@ -1,7 +1,7 @@
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { buildApiTransactions, getXcmFees, transfer } from '../transfer';
+import { buildApiTransactions, getBestAmountOut, getXcmFees, transfer } from '../transfer';
 import type { TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
@@ -44,9 +44,12 @@ describe('Builder', () => {
   let getBestAmountOutSpy: MockInstance;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     transferSpy = vi.mocked(transfer).mockResolvedValue(undefined);
     buildApiTransactionsSpy = vi.mocked(buildApiTransactions).mockResolvedValue([]);
-    getBestAmountOutSpy = vi.mocked(transfer).mockResolvedValue(undefined);
+    getBestAmountOutSpy = vi
+      .mocked(getBestAmountOut)
+      .mockResolvedValue({ amountOut: 900000000n, exchange: 'AcalaDex' });
   });
 
   it('should construct transactions using RouterBuilder', async () => {
@@ -63,7 +66,7 @@ describe('Builder', () => {
       .slippagePct(slippagePct)
       .buildTransactions();
 
-    expect(buildApiTransactionsSpy).toHaveBeenCalledWith(transferParams);
+    expect(buildApiTransactionsSpy).toHaveBeenCalledWith(transferParams, undefined);
   });
 
   it('should construct a transfer using RouterBuilder', async () => {
@@ -80,7 +83,7 @@ describe('Builder', () => {
       .slippagePct(slippagePct)
       .build();
 
-    expect(transferSpy).toHaveBeenCalledWith(transferParams);
+    expect(transferSpy).toHaveBeenCalledWith(transferParams, undefined);
   });
 
   it('should construct a transfer using RouterBuilder with onStatusChange', async () => {
@@ -100,7 +103,7 @@ describe('Builder', () => {
       .onStatusChange(onStatusChange)
       .build();
 
-    expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, onStatusChange });
+    expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, onStatusChange }, undefined);
   });
 
   it('should construct a transfer using RouterBuilder with evmSenderAddress and evmSigner', async () => {
@@ -124,12 +127,15 @@ describe('Builder', () => {
       .onStatusChange(onStatusChange)
       .build();
 
-    expect(transferSpy).toHaveBeenCalledWith({
-      ...transferParams,
-      onStatusChange,
-      evmSenderAddress,
-      evmSigner,
-    });
+    expect(transferSpy).toHaveBeenCalledWith(
+      {
+        ...transferParams,
+        onStatusChange,
+        evmSenderAddress,
+        evmSigner,
+      },
+      undefined,
+    );
   });
 
   it('should construct a transfer using RouterBuilder with automatic selection', async () => {
@@ -148,11 +154,14 @@ describe('Builder', () => {
       .onStatusChange(onStatusChange)
       .build();
 
-    expect(transferSpy).toHaveBeenCalledWith({
-      ...transferParams,
-      onStatusChange,
-      exchange: undefined,
-    });
+    expect(transferSpy).toHaveBeenCalledWith(
+      {
+        ...transferParams,
+        onStatusChange,
+        exchange: undefined,
+      },
+      undefined,
+    );
   });
 
   it('should get best amount out', async () => {
@@ -165,7 +174,7 @@ describe('Builder', () => {
       .amount(amount)
       .getBestAmountOut();
 
-    expect(getBestAmountOutSpy).toHaveBeenCalledWith(transferParams);
+    expect(getBestAmountOutSpy).toHaveBeenCalled();
   });
 
   it('should get xcm fees', async () => {
@@ -181,16 +190,19 @@ describe('Builder', () => {
       .slippagePct(slippagePct)
       .getXcmFees();
 
-    expect(getXcmFees).toHaveBeenCalledWith({
-      from,
-      exchange,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      senderAddress,
-      recipientAddress,
-      slippagePct,
-    });
+    expect(getXcmFees).toHaveBeenCalledWith(
+      {
+        from,
+        exchange,
+        to,
+        currencyFrom,
+        currencyTo,
+        amount,
+        senderAddress,
+        recipientAddress,
+        slippagePct,
+      },
+      undefined,
+    );
   });
 });

@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
+import { PARACHAINS } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
 import { validateChain } from './utils.js';
-import { PARACHAINS } from '@paraspell/sdk';
 
 describe('validateChain', () => {
   it('should not throw for valid chain', () => {

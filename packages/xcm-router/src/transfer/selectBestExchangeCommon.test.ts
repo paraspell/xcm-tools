@@ -59,14 +59,14 @@ describe('selectBestExchangeCommon', () => {
     await expect(
       selectBestExchangeCommon(options, undefined, () => Promise.resolve(new BigNumber(0))),
     ).rejects.toThrow(
-      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or multi-location.',
+      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or location.',
     );
   });
 
   it('returns best exchange if one qualifies', async () => {
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
-    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA' });
-    vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA', decimals: 8 });
+    vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB', decimals: 8 });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
@@ -103,8 +103,8 @@ describe('selectBestExchangeCommon', () => {
 
   it('throws error with aggregated errors if computeAmountOut fails for all exchanges', async () => {
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
-    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA' });
-    vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB' });
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA', decimals: 8 });
+    vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'BBB', decimals: 8 });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
@@ -134,8 +134,8 @@ describe('selectBestExchangeCommon', () => {
       exchange: ['AcalaDex'],
     } as unknown as TCommonTransferOptions;
 
-    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA' });
-    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA', decimals: 8 });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB', decimals: 8 });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
@@ -161,8 +161,8 @@ describe('selectBestExchangeCommon', () => {
     } as unknown as TCommonTransferOptions;
 
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
-    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA' });
-    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB' });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA', decimals: 8 });
+    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB', decimals: 8 });
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;

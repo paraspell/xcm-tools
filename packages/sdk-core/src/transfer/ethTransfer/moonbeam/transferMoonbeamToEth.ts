@@ -17,6 +17,7 @@ import { getParaId } from '../../../chains/config'
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
 import { type TEvmBuilderOptions } from '../../../types'
+import { abstractDecimals } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -56,8 +57,10 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   const foundAsset = findAssetInfoOrThrow(from, currency, to)
 
+  const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
+
   if (!isForeignAsset(foundAsset) || !foundAsset.location) {
-    throw new InvalidCurrencyError('Currency must be a foreign asset with valid multi-location')
+    throw new InvalidCurrencyError('Currency must be a foreign asset with a valid location')
   }
 
   const ethAsset = findAssetInfoByLoc(getOtherAssets('Ethereum'), foundAsset.location)
@@ -94,7 +97,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     getParaId(from),
     ethAsset.assetId,
     address,
-    currency.amount
+    amount
   )
 
   const customXcm = createCustomXcmOnDest(
@@ -105,7 +108,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       scenario: 'ParaToPara',
       senderAddress,
       ahAddress,
-      assetInfo: { ...foundAsset, amount: BigInt(currency.amount) },
+      assetInfo: { ...foundAsset, amount },
       currency,
       destLocation: {} as TLocation,
       asset: {} as TAsset,
@@ -144,7 +147,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     // Assets including fee and the ERC20 asset, with fee be the first
     [
       [XCDOT, transferFee],
-      [ethAsset.assetId, currency.amount.toString()]
+      [ethAsset.assetId, amount.toString()]
     ],
     // The TransferType corresponding to asset being sent, 2 represents `DestinationReserve`
     2,

@@ -20,7 +20,7 @@ describe('isForeignAsset', () => {
   })
 
   it('returns false for an asset with "assetId" and "isNative" true', () => {
-    const asset = { symbol: 'DOT', assetId: '123', isNative: true } as TAssetInfo
+    const asset = { symbol: 'DOT', assetId: '123', decimals: 18, isNative: true } as TAssetInfo
     expect(isForeignAsset(asset)).toBe(false)
   })
 })

@@ -127,7 +127,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       to: 'Hydration',
       currencyFromOptionId: '',
       currencyToOptionId: '',
-      amount: '10000000000000000000',
+      amount: '10',
       recipientAddress: DEFAULT_ADDRESS,
       slippagePct: '1',
       useApi: false,

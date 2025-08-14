@@ -3,35 +3,19 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { abstractDecimals } from '../../utils'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
 import { getReverseTxFee } from './getReverseTxFee'
 import { getXcmFeeEstimate } from './getXcmFeeEstimate'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
-}))
-
-vi.mock('./padFee', () => ({
-  padFee: vi.fn()
-}))
-
-vi.mock('./getOriginXcmFeeEstimate', () => ({
-  getOriginXcmFeeEstimate: vi.fn()
-}))
-
-vi.mock('./isSufficient', () => ({
-  isSufficientOrigin: vi.fn(),
-  isSufficientDestination: vi.fn()
-}))
-
-vi.mock('./getReverseTxFee', () => ({
-  getReverseTxFee: vi.fn()
-}))
-
+vi.mock('@paraspell/assets')
+vi.mock('./padFee')
+vi.mock('./getOriginXcmFeeEstimate')
+vi.mock('../../utils')
+vi.mock('./isSufficient')
+vi.mock('./getReverseTxFee')
 vi.mock('../utils')
 
 const makeApi = (originFee: bigint, destFee: bigint) => {
@@ -64,10 +48,10 @@ describe('getXcmFeeEstimate', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
     vi.mocked(isSufficientDestination).mockResolvedValue(true)
     vi.mocked(getReverseTxFee).mockResolvedValue(2000n)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('returns bridge constants polkadot → kusama with sufficiency checks', async () => {

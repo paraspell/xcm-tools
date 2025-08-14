@@ -24,7 +24,7 @@ export type GeneralBuilder<T extends Partial<TSendBaseOptions> = object> = Gener
   T
 >
 
-export const EvmBuilder = () => {
-  const papiApi = new PapiApi()
+export const EvmBuilder = (api?: TBuilderOptions<TPapiApiOrUrl>) => {
+  const papiApi = new PapiApi(api)
   return EvmBuilderImpl<TPapiApi, TPapiTransaction>(papiApi)
 }

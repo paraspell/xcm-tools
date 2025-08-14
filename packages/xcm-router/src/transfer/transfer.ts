@@ -1,5 +1,6 @@
 import { InvalidParameterError } from '@paraspell/sdk';
 
+import type { TRouterBuilderOptions } from '../types';
 import { type TTransferOptions } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
@@ -33,7 +34,10 @@ import { validateTransferOptions } from './utils/validateTransferOptions';
  * @returns A Promise that resolves when the transfer is complete.
  * @throws An error if required parameters are missing or invalid.
  */
-export const transfer = async (initialOptions: TTransferOptions): Promise<void> => {
+export const transfer = async (
+  initialOptions: TTransferOptions,
+  builderOptions?: TRouterBuilderOptions,
+): Promise<void> => {
   const {
     exchange: exchangeChain,
     signer,
@@ -59,7 +63,7 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
     });
   }
 
-  const { dex, options } = await prepareTransformedOptions(initialOptions);
+  const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
 
   const routerPlan = await buildTransactions(dex, options);
 

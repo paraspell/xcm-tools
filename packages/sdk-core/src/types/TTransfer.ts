@@ -103,15 +103,15 @@ export type TSendBaseOptions = {
    */
   ahAddress?: string
   /**
-   * The destination chain or multi-location
+   * The destination chain or XCM location
    */
   to: TDestination
   /**
-   * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
+   * The currency to transfer. Either ID, symbol, location, or multi-asset
    */
   currency: TCurrencyInputWithAmount
   /**
-   * The optional fee asset. Either ID, symbol, or multi-location
+   * The optional fee asset. Either ID, symbol, or location
    */
   feeAsset?: TCurrencyInput
   /**
@@ -164,7 +164,7 @@ type TRelayToParaBaseOptions = {
    */
   origin: TRelaychain
   /**
-   * The destination chain or multi-location
+   * The destination chain or XCM location
    */
   destination: TRelayToParaDestination
   /**

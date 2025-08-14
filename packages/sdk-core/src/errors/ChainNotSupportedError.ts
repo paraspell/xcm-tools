@@ -9,6 +9,6 @@ export class ChainNotSupportedError extends Error {
    */
   constructor(message?: string) {
     super(message ?? 'These chains do not support XCM transfers from Relay / to Relay chain.')
-    this.name = 'ChainNotSupportedError'
+    this.name = 'ChainNotSupported'
   }
 }

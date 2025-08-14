@@ -40,13 +40,13 @@ export const fetchMoonbeamForeignAssets = async (
   api: ApiPromise,
   query: string,
   chain: 'Moonbeam' | 'Moonriver'
-): Promise<TForeignAsset[]> => {
-  const whAssets: TForeignAsset[] = moonbeamWhAssets.map(({ assetId, symbol, decimals }) => ({
+): Promise<TForeignAssetInfo[]> => {
+  const whAssets: TForeignAssetInfo[] = moonbeamWhAssets.map(({ assetId, symbol, decimals }) => ({
     symbol,
     decimals,
     existentialDeposit: '1',
     assetId,
-    multiLocation: {
+    location: {
       parents: Parents.ONE,
       interior: {
         X3: [
@@ -109,6 +109,6 @@ export const fetchMoonbeamForeignAssets = async (
 
   return [
     ...(chain === 'Moonbeam' ? whAssets : []),
-    ...evmAssets.filter((a): a is TForeignAsset => a !== null)
+    ...evmAssets.filter((a): a is TForeignAssetInfo => a !== null)
   ]
 }

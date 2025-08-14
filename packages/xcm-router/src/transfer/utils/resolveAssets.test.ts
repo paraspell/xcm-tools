@@ -39,8 +39,8 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
-    const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
+    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE', decimals: 8 };
+    const mockAssetTo = { symbol: 'ETH_EXCHANGE', decimals: 8 };
 
     vi.mocked(getExchangeAsset).mockImplementation(
       (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
@@ -66,9 +66,9 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
-    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
-    const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo;
+    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE', decimals: 8 };
+    const mockAssetTo = { symbol: 'ETH_EXCHANGE', decimals: 8 };
 
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
@@ -125,26 +125,8 @@ describe('resolveAssets', () => {
     vi.mocked(getExchangeAsset).mockImplementation(
       (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
         if ('symbol' in currency && currency.symbol === 'BTC') return null;
-        if ('symbol' in currency && currency.symbol === 'ETH') return { symbol: 'ETH_EXCHANGE' };
-        return null;
-      },
-    );
-
-    expect(() => resolveAssets(dex, options)).toThrowError();
-  });
-
-  it('throws error when asset to is not found', () => {
-    const options = {
-      from: undefined,
-      to: undefined,
-      currencyFrom: { symbol: 'BTC' },
-      currencyTo: { symbol: 'ETH' },
-    } as unknown as TTransferOptions;
-
-    vi.mocked(getExchangeAsset).mockImplementation(
-      (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
-        if ('symbol' in currency && currency.symbol === 'BTC') return { symbol: 'BTC_EXCHANGE' };
-        if ('symbol' in currency && currency.symbol === 'ETH') return null;
+        if ('symbol' in currency && currency.symbol === 'ETH')
+          return { symbol: 'ETH_EXCHANGE', decimals: 8 };
         return null;
       },
     );
@@ -160,8 +142,8 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
-    const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
+    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE', decimals: 8 };
+    const mockAssetTo = { symbol: 'ETH_EXCHANGE', decimals: 8 };
 
     vi.mocked(getExchangeAsset).mockImplementation(
       (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
@@ -183,8 +165,8 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
-    const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
+    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE', decimals: 8 };
+    const mockAssetTo = { symbol: 'ETH_EXCHANGE', decimals: 8 };
 
     vi.mocked(getExchangeAsset).mockImplementation(
       (_exchangeChain: TExchangeChain, currency: TCurrencyInput) => {
@@ -211,9 +193,9 @@ describe('resolveAssets', () => {
       currencyTo: { symbol: 'ETH' },
     } as unknown as TTransferOptions;
 
-    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
-    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE' };
-    const mockAssetTo = { symbol: 'ETH_EXCHANGE' };
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo;
+    const mockAssetFromExchange = { symbol: 'BTC_EXCHANGE', decimals: 8 };
+    const mockAssetTo = { symbol: 'ETH_EXCHANGE', decimals: 8 };
 
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);

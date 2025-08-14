@@ -9,12 +9,10 @@ import {
   type TAssetInfo,
   type TAssetWithFee
 } from '@paraspell/assets'
-import type { TParachain } from '@paraspell/sdk-common'
-import { deepEqual, isTLocation, replaceBigInt, type TLocation } from '@paraspell/sdk-common'
+import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
 
 import type { TSendOptions } from '../../types'
-import { getChain } from '../../utils'
-import { createAsset } from '../../utils/asset'
+import { abstractDecimals, assertHasLocation, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
 export const resolveOverriddenAsset = <TApi, TRes>(
@@ -23,7 +21,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
   assetCheckEnabled: boolean,
   resolvedFeeAsset: TAssetInfo | undefined
 ): TLocation | TAssetWithFee[] | undefined => {
-  const { currency, feeAsset, from: origin, to: destination } = options
+  const { api, currency, feeAsset, from: origin, to: destination } = options
   if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
     return currency.location.value
   }
@@ -64,17 +62,13 @@ export const resolveOverriddenAsset = <TApi, TRes>(
     const assets = currency.map(currency => {
       const asset = findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
 
-      if (asset && !asset.location) {
-        throw new InvalidCurrencyError(
-          `Asset ${JSON.stringify(currency, replaceBigInt)} does not have a location`
-        )
-      }
-
       if (!asset) {
         throw new InvalidCurrencyError(
           `Origin chain ${origin} does not support currency ${JSON.stringify(currency)}`
         )
       }
+
+      assertHasLocation(asset)
 
       if (!resolvedFeeAsset) {
         throw new InvalidCurrencyError('Fee asset not found')
@@ -82,11 +76,13 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
       validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-      const originTyped = origin as TParachain
-      const originChain = getChain<TApi, TRes, typeof originTyped>(originTyped)
+      const version = getChainVersion(origin)
+
+      const abstractedAmount = abstractDecimals(currency.amount, asset.decimals, api)
+
       return {
         isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
-        ...createAsset(originChain.version, BigInt(currency.amount), asset.location as TLocation)
+        ...createAsset(version, abstractedAmount, asset.location)
       }
     })
 

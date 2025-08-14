@@ -4,16 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import {
+  CHAINS,
   getChainProviders,
   getParaId,
   getTChain,
   hasDryRunSupport,
-  SUBSTRATE_CHAINS,
-  CHAINS,
-  TChain,
-  TSubstrateChain,
   RELAYCHAINS,
+  SUBSTRATE_CHAINS,
+  TChain,
   TRelaychain,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { validateChain } from '../utils.js';
@@ -31,9 +31,7 @@ export class ChainConfigsService {
 
   getChainByParaId(paraId: number, ecosystem: string | undefined) {
     if (!RELAYCHAINS.includes(ecosystem as TRelaychain)) {
-      throw new BadRequestException(
-        "Invalid ecosystem provided. Available options are 'polkadot' and 'kusama'.",
-      );
+      throw new BadRequestException('Invalid ecosystem provided.');
     }
     const chain = getTChain(paraId, ecosystem as TRelaychain);
     if (!chain) {

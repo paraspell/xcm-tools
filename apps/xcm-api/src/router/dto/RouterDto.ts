@@ -35,6 +35,11 @@ export const RouterDtoSchema = z.object({
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   slippagePct: z.string().optional(),
+  options: z
+    .object({
+      abstractDecimals: z.boolean(),
+    })
+    .optional(),
 });
 
 export const RouterBestAmountOutSchema = RouterDtoSchema.pick({
@@ -44,6 +49,7 @@ export const RouterBestAmountOutSchema = RouterDtoSchema.pick({
   currencyFrom: true,
   currencyTo: true,
   amount: true,
+  options: true,
 });
 
 export const ExchangePairsSchema = RouterDtoSchema.pick({

@@ -153,11 +153,13 @@ describe('RouterController', () => {
         [
           {
             symbol: 'ASTR',
+            decimals: 18,
             assetId: '0x1234567890abcdef',
             location: {} as TLocation,
           },
           {
             symbol: 'GLMR',
+            decimals: 18,
             assetId: '0xabcdef1234567890',
             location: {} as TLocation,
           },

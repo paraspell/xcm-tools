@@ -41,7 +41,7 @@ describe('getXcmFees', () => {
     const result = await getXcmFees(initialOptions);
 
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
-    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions);
+    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined);
     expect(getRouterFees).toHaveBeenCalledWith(transformed.dex, transformed.options);
     expect(result).toBe(feeResult);
   });

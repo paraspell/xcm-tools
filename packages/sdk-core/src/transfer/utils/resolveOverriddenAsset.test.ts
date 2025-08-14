@@ -16,27 +16,17 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type AssetHubPolkadot from '../../chains/supported/AssetHubPolkadot'
+import type { IPolkadotApi } from '../../api'
 import type { TSendOptions } from '../../types'
-import { getChain } from '../../utils'
-import { createAsset } from '../../utils/asset'
+import { abstractDecimals, createAsset } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
-vi.mock('../../utils/asset', () => ({
-  createAsset: vi.fn()
-}))
+vi.mock('../../utils')
+vi.mock('../abstractDecimals')
+vi.mock('./validateAssetSupport')
 
-vi.mock('../../utils', () => ({
-  getChain: vi.fn()
-}))
-
-vi.mock('@paraspell/sdk-common', () => ({
-  isTLocation: vi.fn(),
-  Parents: vi.fn(),
-  deepEqual: vi.fn()
-}))
-
+vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
   findAssetInfo: vi.fn(),
   isTAsset: vi.fn(),
@@ -47,19 +37,12 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {}
 }))
 
-vi.mock('./validateAssetSupport', () => ({
-  validateAssetSupport: vi.fn()
-}))
-
 describe('resolveOverriddenAsset', () => {
-  const mockOriginChain = { version: 'testVersion' } as unknown as AssetHubPolkadot<
-    unknown,
-    unknown
-  >
   const mockOrigin = 'Acala'
   const mockDestination = {} as TLocation
 
   const defaultOptions = {
+    api: {} as unknown as IPolkadotApi<unknown, unknown>,
     currency: { symbol: 'TEST', amount: '1000' },
     from: mockOrigin,
     to: mockDestination
@@ -70,12 +53,12 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTAsset).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getChain).mockReturnValue(mockOriginChain)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(createAsset).mockReturnValue({} as TAsset)
     vi.mocked(findAssetInfo).mockReturnValue({
       location: {}
     } as TAssetInfo)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('returns the overridden location if currency has override location', () => {
@@ -179,7 +162,7 @@ describe('resolveOverriddenAsset', () => {
     )
   })
 
-  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset by not multi-location', () => {
+  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset by not location', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}],

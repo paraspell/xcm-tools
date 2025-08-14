@@ -12,14 +12,13 @@ import { AssetClaimService } from './asset-claim.service.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 vi.mock('@paraspell/sdk', async () => {
-  const actual =
-    await vi.importActual<typeof import('@paraspell/sdk')>('@paraspell/sdk');
+  const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
     Builder: vi.fn(() => ({
       claimFrom: vi.fn().mockReturnThis(),
-      fungible: vi.fn().mockReturnThis(),
-      account: vi.fn().mockReturnThis(),
+      currency: vi.fn().mockReturnThis(),
+      address: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue({
         getEncodedData: vi.fn().mockResolvedValue({
           asHex: vi.fn().mockReturnValue('hash'),
@@ -46,7 +45,7 @@ describe('AssetClaimService', () => {
   });
 
   it('throws BadRequestException if the chain is not valid', async () => {
-    const dto = { from: 'InvalidChain', fungible: [], address: 'validAddress' };
+    const dto = { from: 'InvalidChain', currency: [], address: 'validAddress' };
     sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(false);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
@@ -54,7 +53,7 @@ describe('AssetClaimService', () => {
   });
 
   it('throws BadRequestException when fromChain is undefined', async () => {
-    const dto = { from: undefined, fungible: [], address: 'validAddress' };
+    const dto = { from: undefined, currency: [], address: 'validAddress' };
 
     await expect(service.claimAssets(dto)).rejects.toThrow(
       new BadRequestException("You need to provide a 'from' parameter"),
@@ -62,7 +61,7 @@ describe('AssetClaimService', () => {
   });
 
   it('throws BadRequestException if the wallet address is not valid', async () => {
-    const dto = { from: 'Acala', fungible: [], address: 'invalidAddress' };
+    const dto = { from: 'Acala', currency: [], address: 'invalidAddress' };
     sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(false);
 
@@ -72,7 +71,7 @@ describe('AssetClaimService', () => {
   it('successfully claims assets when parameters are valid', async () => {
     const dto = {
       from: 'Acala',
-      fungible: [
+      currency: [
         {
           id: {
             parents: 2,
@@ -96,7 +95,7 @@ describe('AssetClaimService', () => {
   it('successfully claims assets when parameters are valid with hash enabled', async () => {
     const dto = {
       from: 'Acala',
-      fungible: [
+      currency: [
         {
           id: {
             parents: 2,
@@ -121,7 +120,7 @@ describe('AssetClaimService', () => {
       throw new sdk.InvalidCurrencyError('Invalid currency error');
     });
 
-    const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
+    const dto = { from: 'Acala', currency: [], address: 'validAddress' };
     sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 
@@ -135,7 +134,7 @@ describe('AssetClaimService', () => {
       throw new Error('Some internal error');
     });
 
-    const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
+    const dto = { from: 'Acala', currency: [], address: 'validAddress' };
     sdk.SUBSTRATE_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
 

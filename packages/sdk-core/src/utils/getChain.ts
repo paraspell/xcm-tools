@@ -9,6 +9,6 @@ import { chains } from '../constants'
 export const getChain = <TApi, TRes, T extends keyof ReturnType<typeof chains>>(
   chain: T
 ): ReturnType<typeof chains<TApi, TRes>>[T] => {
-  const nodeMap = chains<TApi, TRes>()
-  return nodeMap[chain]
+  const map = chains<TApi, TRes>()
+  return map[chain]
 }

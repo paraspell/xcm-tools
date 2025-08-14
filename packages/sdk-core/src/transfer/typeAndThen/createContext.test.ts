@@ -1,5 +1,6 @@
 import type { TAssetWithLocation } from '@paraspell/assets'
-import { isRelayChain, TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -30,6 +31,7 @@ describe('createTypeAndThenCallContext', () => {
   const mockAsset = {
     amount: 1000n,
     symbol: 'DOT',
+    decimals: 10,
     location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
   } as TAssetWithLocation
 

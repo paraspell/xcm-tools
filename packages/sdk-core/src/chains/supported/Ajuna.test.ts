@@ -48,7 +48,7 @@ describe('Ajuna', () => {
     api,
     scenario: 'ParaToRelay',
     senderAddress: 'senderAddress',
-    asset: { symbol: 'DOT', amount: '100', multiLocation: DOT_LOCATION }
+    asset: { symbol: 'DOT', amount: '100', location: DOT_LOCATION }
   } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {

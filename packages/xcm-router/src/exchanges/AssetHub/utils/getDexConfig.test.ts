@@ -15,6 +15,7 @@ vi.mock('@paraspell/sdk-pjs', async (importOriginal) => {
 const makeAsset = (symbol: string, id: string, ml: object): TAssetInfo => ({
   symbol,
   assetId: id,
+  decimals: 12,
   location: ml as TLocation,
 });
 
@@ -53,8 +54,8 @@ describe('getDexConfig', () => {
 
     expect(cfg.assets).toEqual(
       expect.arrayContaining([
-        { symbol: 'DOT', assetId: '1', location: DOT_ML },
-        { symbol: 'ACA', assetId: '2', location: ACA_ML },
+        { symbol: 'DOT', decimals: 12, assetId: '1', location: DOT_ML },
+        { symbol: 'ACA', decimals: 12, assetId: '2', location: ACA_ML },
       ]),
     );
     expect(cfg.assets.length).toBe(2);
@@ -107,7 +108,9 @@ describe('getDexConfig', () => {
     expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', assetOriginalMl);
     expect(cfg.assets.length).toBe(1);
     expect(cfg.assets).toEqual(
-      expect.arrayContaining([{ symbol: 'SPECIAL', assetId: 'sp_id', location: assetOriginalMl }]),
+      expect.arrayContaining([
+        { symbol: 'SPECIAL', decimals: 12, assetId: 'sp_id', location: assetOriginalMl },
+      ]),
     );
 
     expect(cfg.pairs).toEqual([]);

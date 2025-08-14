@@ -58,8 +58,8 @@ const makeApi = (pairEntries: any[]) =>
   }) as unknown as Parameters<typeof getDexConfig>[0];
 
 const makeSdkAssets = () => [
-  { symbol: 'btc', assetId: '1', location: undefined },
-  { symbol: 'eth', assetId: '2', location: undefined },
+  { symbol: 'btc', assetId: '1', decimals: 12, location: undefined },
+  { symbol: 'eth', assetId: '2', decimals: 12, location: undefined },
 ];
 
 describe('getDexConfig', () => {

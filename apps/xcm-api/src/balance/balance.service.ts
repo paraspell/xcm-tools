@@ -8,11 +8,11 @@ import {
   TChain,
 } from '@paraspell/sdk';
 
+import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
-import { validateChain } from '../utils.js';
 
 @Injectable()
 export class BalanceService {

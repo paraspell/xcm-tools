@@ -6,6 +6,7 @@ import type {
   TBuildTransactionsOptions,
   TExchangeInput,
   TGetBestAmountOutOptions,
+  TRouterBuilderOptions,
   TRouterXcmFeeResult,
   TStatusChangeCallback,
   TTransferOptions,
@@ -17,8 +18,10 @@ import type {
  */
 export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   protected readonly _options: T;
+  private readonly _builderOptions?: TRouterBuilderOptions;
 
-  constructor(options?: T) {
+  constructor(builderOptions?: TRouterBuilderOptions, options?: T) {
+    this._builderOptions = builderOptions;
     this._options = options ?? ({} as T);
   }
 
@@ -31,7 +34,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   from(
     chain: TSubstrateChain | undefined,
   ): RouterBuilderCore<T & { from: TSubstrateChain | undefined }> {
-    return new RouterBuilderCore({ ...this._options, from: chain });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, from: chain });
   }
 
   /**
@@ -41,7 +44,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   exchange(chain: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
-    return new RouterBuilderCore({ ...this._options, exchange: chain });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, exchange: chain });
   }
 
   /**
@@ -51,7 +54,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   to(chain: TChain | undefined): RouterBuilderCore<T & { to: TChain | undefined }> {
-    return new RouterBuilderCore({ ...this._options, to: chain });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, to: chain });
   }
 
   /**
@@ -61,7 +64,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   currencyFrom(currency: TCurrencyInput): RouterBuilderCore<T & { currencyFrom: TCurrencyInput }> {
-    return new RouterBuilderCore({ ...this._options, currencyFrom: currency });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      currencyFrom: currency,
+    });
   }
 
   /**
@@ -71,7 +77,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   currencyTo(currency: TCurrencyInput): RouterBuilderCore<T & { currencyTo: TCurrencyInput }> {
-    return new RouterBuilderCore({ ...this._options, currencyTo: currency });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, currencyTo: currency });
   }
 
   /**
@@ -81,7 +87,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   amount(amount: string | bigint): RouterBuilderCore<T & { amount: string }> {
-    return new RouterBuilderCore({ ...this._options, amount: amount.toString() });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      amount: amount.toString(),
+    });
   }
 
   /**
@@ -93,7 +102,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   recipientAddress(
     address: string | undefined,
   ): RouterBuilderCore<T & { recipientAddress: string | undefined }> {
-    return new RouterBuilderCore({ ...this._options, recipientAddress: address });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      recipientAddress: address,
+    });
   }
 
   /**
@@ -103,7 +115,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   senderAddress(address: string): RouterBuilderCore<T & { senderAddress: string }> {
-    return new RouterBuilderCore({ ...this._options, senderAddress: address });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      senderAddress: address,
+    });
   }
 
   /**
@@ -113,7 +128,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   signer(signer: PolkadotSigner): RouterBuilderCore<T & { signer: PolkadotSigner }> {
-    return new RouterBuilderCore({ ...this._options, signer });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, signer });
   }
 
   /**
@@ -125,7 +140,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   evmSenderAddress(
     address: string | undefined,
   ): RouterBuilderCore<T & { evmSenderAddress: string | undefined }> {
-    return new RouterBuilderCore({ ...this._options, evmSenderAddress: address });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      evmSenderAddress: address,
+    });
   }
 
   /**
@@ -137,7 +155,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   evmSigner(
     signer: PolkadotSigner | undefined,
   ): RouterBuilderCore<T & { evmSigner: PolkadotSigner | undefined }> {
-    return new RouterBuilderCore({ ...this._options, evmSigner: signer });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, evmSigner: signer });
   }
 
   /**
@@ -147,7 +165,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   slippagePct(pct: string): RouterBuilderCore<T & { slippagePct: string }> {
-    return new RouterBuilderCore({ ...this._options, slippagePct: pct });
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, slippagePct: pct });
   }
 
   /**
@@ -159,7 +177,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   onStatusChange(
     callback: TStatusChangeCallback,
   ): RouterBuilderCore<T & { onStatusChange: TStatusChangeCallback }> {
-    return new RouterBuilderCore({ ...this._options, onStatusChange: callback });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      onStatusChange: callback,
+    });
   }
 
   /**
@@ -170,7 +191,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   async getXcmFees(
     this: RouterBuilderCore<TBuildTransactionsOptions>,
   ): Promise<TRouterXcmFeeResult> {
-    return getXcmFees(this._options);
+    return getXcmFees(this._options, this._builderOptions);
   }
 
   /**
@@ -179,14 +200,14 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @throws Error if required parameters are missing.
    */
   build(this: RouterBuilderCore<TTransferOptions>): Promise<void> {
-    return transfer(this._options);
+    return transfer(this._options, this._builderOptions);
   }
 
   /**
    * Builds the transactions for the transfer with the provided parameters.
    */
   buildTransactions(this: RouterBuilderCore<TBuildTransactionsOptions>) {
-    return buildApiTransactions(this._options);
+    return buildApiTransactions(this._options, this._builderOptions);
   }
 
   getBestAmountOut(this: RouterBuilderCore<TGetBestAmountOutOptions>) {
@@ -199,7 +220,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
  *
  * **Example usage:**
  * ```typescript
- * await RouterBuilder()
+ * await RouterBuilder(options)
  *   .from('Polkadot')
  *   .exchange('HydrationDex')
  *   .to('Astar')
@@ -218,4 +239,4 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
  *
  * @returns A new `RouterBuilder`.
  */
-export const RouterBuilder = () => new RouterBuilderCore();
+export const RouterBuilder = (options?: TRouterBuilderOptions) => new RouterBuilderCore(options);

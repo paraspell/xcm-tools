@@ -2,6 +2,7 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetXcmFeeEstimateOptions, TGetXcmFeeEstimateResult } from '../../types/TXcmFee'
+import { abstractDecimals } from '../../utils'
 import { resolveFeeAsset } from '../utils'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
 import { getReverseTxFee } from './getReverseTxFee'
@@ -16,6 +17,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
   const { api, origin, destination, currency, feeAsset, address, senderAddress } = options
 
   const originAsset = findAssetInfoOrThrow(origin, currency, destination)
+
+  const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
@@ -41,7 +44,10 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
       destination,
       senderAddress,
       fixedOriginFee,
-      currency,
+      {
+        ...currency,
+        amount
+      },
       originAsset,
       resolvedFeeAsset
     )
@@ -84,7 +90,7 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
     destApi,
     destination,
     address,
-    BigInt(currency.amount),
+    amount,
     originAsset,
     destinationFee
   )

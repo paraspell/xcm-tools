@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
 import { type Location } from '../types';
-import { convertMultilocationToUrl, convertXCMToUrls } from './convert';
+import { convertLocationToUrl, convertXCMToUrls } from './convert';
 
 describe('convert', () => {
   it('convert location to URL', () => {
@@ -20,7 +20,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(41)');
   });
 
@@ -39,7 +39,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('../../../PalletInstance(50)/GeneralIndex(41)');
   });
 
@@ -53,7 +53,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('../Parachain(2006)');
   });
 
@@ -70,7 +70,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./AccountId32(null, 0x123)');
   });
 
@@ -87,7 +87,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./AccountIndex64(null, 100)');
   });
 
@@ -104,7 +104,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./AccountKey20(null, 0x123)');
   });
 
@@ -120,7 +120,7 @@ describe('convert', () => {
         },
       },
     };
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./GeneralKey(10, 0xabc)');
   });
 
@@ -134,7 +134,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./OnlyChild(child)');
   });
 
@@ -148,7 +148,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./GlobalConsensus(consensus)');
   });
 
@@ -160,7 +160,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
   });
 
@@ -172,7 +172,7 @@ describe('convert', () => {
       },
     };
 
-    const result = convertMultilocationToUrl(location);
+    const result = convertLocationToUrl(location);
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
   });
 

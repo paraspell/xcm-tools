@@ -42,6 +42,7 @@ describe('getAssetBalance', () => {
     const currency = { symbol: 'DOT' }
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'DOT',
+      decimals: 10,
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
@@ -62,6 +63,7 @@ describe('getAssetBalance', () => {
     const currency = { symbol: 'KSM' }
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'KSM',
+      decimals: 12,
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
@@ -83,6 +85,7 @@ describe('getAssetBalance', () => {
     const currency = { symbol: 'XYZ' }
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'XYZ',
+      decimals: 12,
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
@@ -98,6 +101,7 @@ describe('getAssetBalance', () => {
     const currency = { symbol: 'INTR' }
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'INTR',
+      decimals: 10,
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')

@@ -18,11 +18,11 @@ export const handleToAhTeleport = async <TApi, TRes>(
   const { api, destination, address, senderAddress, assetInfo: asset, currency } = input
 
   if (isTLocation(destination)) {
-    throw new InvalidParameterError('Multi-Location destination is not supported for this scenario')
+    throw new InvalidParameterError('Location destination is not supported for this scenario')
   }
 
   if (isTLocation(address)) {
-    throw new InvalidParameterError('Multi-Location address is not supported for this scenario')
+    throw new InvalidParameterError('Location address is not supported for this scenario')
   }
 
   if (!senderAddress) {

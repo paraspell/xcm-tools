@@ -15,37 +15,17 @@ import { getOriginXcmFee } from './getOriginXcmFee'
 import type { XcmFeeHopResult } from './getXcmFee'
 import { getXcmFee } from './getXcmFee'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
-  findAssetOnDestOrThrow: vi.fn(),
-  getNativeAssetSymbol: vi.fn()
-}))
-
+vi.mock('@paraspell/assets')
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
-vi.mock('../../chains/getTChain', () => ({
-  getTChain: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  getRelayChainOf: vi.fn()
-}))
-
-vi.mock('../dryRun', () => ({
-  traverseXcmHops: vi.fn(),
-  addEthereumBridgeFees: vi.fn()
-}))
-
-vi.mock('./getOriginXcmFee', () => ({
-  getOriginXcmFee: vi.fn()
-}))
-
-vi.mock('./getDestXcmFee', () => ({
-  getDestXcmFee: vi.fn()
-}))
+vi.mock('../../chains/getTChain')
+vi.mock('../../utils')
+vi.mock('../dryRun')
+vi.mock('./getOriginXcmFee')
+vi.mock('./getDestXcmFee')
 
 const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>) =>
   ({

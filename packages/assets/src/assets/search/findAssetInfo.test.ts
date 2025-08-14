@@ -5,14 +5,24 @@ import { CHAINS } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { isForeignAsset } from '../../guards'
-import type { TAssetInfo, TForeignAssetInfo } from '../../types'
+import type { TAssetInfo, TChainAssetsInfo, TForeignAssetInfo } from '../../types'
 import * as assetFunctions from '../assets'
+import { getAssetsObject } from '../assets'
 import { Foreign, ForeignAbstract, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
 
-const getAssetsObject = assetFunctions.getAssetsObject
-
 describe('findAssetInfo', () => {
+  const mockOptions = {
+    nativeAssetSymbol: 'DOT',
+    relaychainSymbol: 'DOT',
+    isEVM: false,
+    ss58Prefix: 42,
+    supportsDryRunApi: false,
+    supportsXcmPaymentApi: true,
+    otherAssets: [],
+    nativeAssets: []
+  } as TChainAssetsInfo
+
   afterEach(() => {
     vi.restoreAllMocks()
   })
@@ -143,18 +153,22 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      ...mockOptions,
+      otherAssets: [
+        {
+          assetId: '1',
+          decimals: 18,
+          symbol: 'WETH'
+        }
+      ]
+    })
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum when entered withou suffix', () => {
-    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
-      {
-        assetId: '1',
-        symbol: 'WETH.e'
-      }
-    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
@@ -164,6 +178,7 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
       {
         assetId: '1',
+        decimals: 18,
         symbol: 'MON'
       }
     ])
@@ -179,10 +194,12 @@ describe('findAssetInfo', () => {
         : [
             {
               assetId: '1',
+              decimals: 18,
               symbol: 'MON'
             },
             {
               assetId: '2',
+              decimals: 18,
               symbol: 'MON'
             }
           ]
@@ -194,6 +211,7 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
       {
         assetId: '1',
+        decimals: 18,
         symbol: 'WETH.e'
       }
     ])
@@ -203,12 +221,6 @@ describe('findAssetInfo', () => {
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
-      {
-        assetId: '1',
-        symbol: 'WETH.e'
-      }
-    ])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
@@ -218,6 +230,7 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
       {
         assetId: '1',
+        decimals: 18,
         symbol: 'WETH'
       }
     ])
@@ -230,6 +243,7 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
       {
         assetId: '1',
+        decimals: 18,
         symbol: 'WETH.e'
       }
     ])
@@ -242,29 +256,21 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(chain => {
       return chain === 'Ethereum'
         ? {
-            nativeAssetSymbol: 'ETH',
-            relaychainSymbol: 'DOT',
-            isEVM: false,
-            ss58Prefix: 42,
-            supportsDryRunApi: false,
-            supportsXcmPaymentApi: true,
+            ...mockOptions,
             otherAssets: [],
             nativeAssets: []
           }
         : {
-            nativeAssetSymbol: 'DOT',
-            relaychainSymbol: 'DOT',
-            isEVM: false,
-            ss58Prefix: 42,
-            supportsDryRunApi: false,
-            supportsXcmPaymentApi: true,
+            ...mockOptions,
             otherAssets: [
               {
                 assetId: '1',
+                decimals: 18,
                 symbol: 'WTH'
               },
               {
                 assetId: '2',
+                decimals: 18,
                 symbol: 'WTH'
               }
             ],
@@ -280,29 +286,21 @@ describe('findAssetInfo', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(chain => {
       return chain === 'Ethereum'
         ? {
-            nativeAssetSymbol: 'ETH',
-            isEVM: false,
-            ss58Prefix: 42,
-            supportsDryRunApi: false,
-            supportsXcmPaymentApi: true,
-            relaychainSymbol: 'DOT',
+            ...mockOptions,
             otherAssets: [],
             nativeAssets: []
           }
         : {
-            nativeAssetSymbol: 'DOT',
-            isEVM: false,
-            ss58Prefix: 42,
-            supportsDryRunApi: false,
-            supportsXcmPaymentApi: true,
-            relaychainSymbol: 'DOT',
+            ...mockOptions,
             otherAssets: [
               {
                 assetId: '1',
+                decimals: 18,
                 symbol: 'WTH.e'
               },
               {
                 assetId: '2',
+                decimals: 18,
                 symbol: 'WTH.e'
               }
             ],
@@ -316,19 +314,16 @@ describe('findAssetInfo', () => {
 
   it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
+          decimals: 18,
           symbol: 'DOT'
         },
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'DOT'
         }
       ],
@@ -345,19 +340,16 @@ describe('findAssetInfo', () => {
 
   it('Should throw error when duplicate dot asset on Hydration', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
+          decimals: 18,
           symbol: 'DOT'
         },
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'DOT'
         }
       ],
@@ -368,19 +360,16 @@ describe('findAssetInfo', () => {
 
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
+          decimals: 18,
           symbol: 'DOT'
         },
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'DOT'
         }
       ],
@@ -391,19 +380,16 @@ describe('findAssetInfo', () => {
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
+          decimals: 18,
           symbol: 'xcGLMR'
         },
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'xcGLMR'
         }
       ],
@@ -414,19 +400,16 @@ describe('findAssetInfo', () => {
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
+          decimals: 18,
           symbol: 'xcDOT'
         },
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'xcDOT'
         }
       ],
@@ -437,15 +420,11 @@ describe('findAssetInfo', () => {
 
   it('should find asset with xc prefix on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'xcDOT'
         }
       ],
@@ -457,6 +436,24 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find ethereum assets', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH'
+      }
+    ])
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      ...mockOptions,
+      otherAssets: [
+        {
+          assetId: '1',
+          decimals: 18,
+          symbol: 'WETH'
+        }
+      ]
+    })
+
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
@@ -464,12 +461,7 @@ describe('findAssetInfo', () => {
 
   it('should find native asset on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [],
       nativeAssets: [
         {
@@ -486,21 +478,18 @@ describe('findAssetInfo', () => {
 
   it('should find foreign abstract asset on Acala', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
           symbol: 'DOT',
+          decimals: 10,
           alias: 'DOT1'
         },
         {
           assetId: '2',
           symbol: 'DOT',
+          decimals: 10,
           alias: 'DOT2'
         }
       ],
@@ -513,22 +502,19 @@ describe('findAssetInfo', () => {
 
   it('should throw error when multiple matches in native and foreign assets', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '1',
           symbol: 'DOT',
-          alias: 'DOT1'
+          alias: 'DOT1',
+          decimals: 10
         },
         {
           assetId: '2',
           symbol: 'DOT',
-          alias: 'DOT2'
+          alias: 'DOT2',
+          decimals: 10
         }
       ],
       nativeAssets: [
@@ -544,15 +530,11 @@ describe('findAssetInfo', () => {
 
   it('should find asset with lowercase matching', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '2',
+          decimals: 18,
           symbol: 'glmr',
           alias: 'glmr2'
         }
@@ -566,12 +548,7 @@ describe('findAssetInfo', () => {
 
   it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [],
       nativeAssets: []
     })
@@ -599,16 +576,12 @@ describe('findAssetInfo', () => {
 
   it('should return asset when passing a location currency that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '2',
           symbol: 'dot',
+          decimals: 12,
           location: {
             parents: 1,
             interior: {
@@ -657,16 +630,12 @@ describe('findAssetInfo', () => {
 
   it('should return asset when passing a location currency that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '2',
           symbol: 'dot',
+          decimals: 12,
           location: {
             parents: 1,
             interior: {
@@ -715,16 +684,12 @@ describe('findAssetInfo', () => {
 
   it('should return asset when passing a location currency with commas that is present', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      nativeAssetSymbol: 'DOT',
-      relaychainSymbol: 'DOT',
-      isEVM: false,
-      ss58Prefix: 42,
-      supportsDryRunApi: false,
-      supportsXcmPaymentApi: true,
+      ...mockOptions,
       otherAssets: [
         {
           assetId: '2',
           symbol: 'dot',
+          decimals: 12,
           location: {
             parents: 1,
             interior: {

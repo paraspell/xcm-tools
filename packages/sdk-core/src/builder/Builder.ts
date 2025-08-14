@@ -223,14 +223,12 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     if (isTLocation(to)) {
       throw new InvalidParameterError(
-        'Multi-Location destination is not supported for XCM fee calculation.'
+        'Location destination is not supported for XCM fee calculation.'
       )
     }
 
     if (isTLocation(address)) {
-      throw new InvalidParameterError(
-        'Multi-Location address is not supported for XCM fee calculation.'
-      )
+      throw new InvalidParameterError('Location address is not supported for XCM fee calculation.')
     }
 
     return dryRun({
@@ -377,7 +375,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    return await getTransferableAmount({
+    return getTransferableAmount({
       api: this.api,
       builder: this,
       origin: from,

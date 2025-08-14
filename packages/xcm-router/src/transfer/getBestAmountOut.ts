@@ -1,13 +1,18 @@
-import { createChainClient } from '@paraspell/sdk';
+import { applyDecimalAbstraction, createChainClient } from '@paraspell/sdk';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import type { TGetBestAmountOutOptions, TGetBestAmountOutResult } from '../types';
+import type {
+  TGetBestAmountOutOptions,
+  TGetBestAmountOutResult,
+  TRouterBuilderOptions,
+} from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { resolveAssets } from './utils/resolveAssets';
 
 export const getBestAmountOut = async (
   options: TGetBestAmountOutOptions,
+  builderOptions?: TRouterBuilderOptions,
 ): Promise<TGetBestAmountOutResult> => {
   const { exchange, amount, from } = options;
 
@@ -37,7 +42,11 @@ export const getBestAmountOut = async (
       papiApi,
       assetFrom,
       assetTo,
-      amount,
+      amount: applyDecimalAbstraction(
+        amount,
+        assetFromOrigin?.decimals ?? assetFrom.decimals,
+        !!builderOptions?.abstractDecimals,
+      ).toString(),
     }),
   };
 };

@@ -205,12 +205,14 @@ class HydrationExchange extends ExchangeChain {
 
     const sdkAssets = getAssets(this.chain);
 
-    const transformedAssets = assets.map(({ symbol, id }) => {
+    const transformedAssets = assets.map(({ symbol, id, decimals }) => {
       const asset =
         sdkAssets.find((a) => isForeignAsset(a) && a.assetId === id) ??
         sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
+
       return {
         symbol,
+        decimals,
         assetId: asset && isForeignAsset(asset) ? asset.assetId : undefined,
         location: asset?.location,
       };

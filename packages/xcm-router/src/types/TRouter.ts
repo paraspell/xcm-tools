@@ -196,6 +196,7 @@ export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'sig
 
 export type TRouterAsset = {
   symbol: string;
+  decimals: number;
   assetId?: string;
   location?: TLocation;
 };

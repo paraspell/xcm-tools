@@ -10,8 +10,8 @@ import {
   EXCHANGE_CHAINS,
   getExchangePairs,
   RouterBuilder,
-  TExchangeInput,
   TExchangeChain,
+  TExchangeInput,
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
@@ -66,7 +66,7 @@ const validateChainsAndExchange = (
 
 @Injectable()
 export class RouterService {
-  async generateExtrinsics(options: RouterDto) {
+  async generateExtrinsics(input: RouterDto) {
     const {
       from,
       exchange,
@@ -78,7 +78,8 @@ export class RouterService {
       evmSenderAddress,
       recipientAddress,
       slippagePct = '1',
-    } = options;
+      options,
+    } = input;
 
     const fromChain = from as TSubstrateChain;
     const exchangeChain = exchange as TExchangeChain;
@@ -99,7 +100,7 @@ export class RouterService {
     }
 
     try {
-      const transactions = await RouterBuilder()
+      const transactions = await RouterBuilder(options)
         .from(fromChain)
         .exchange(exchangeChain)
         .to(toChain)
@@ -137,7 +138,7 @@ export class RouterService {
     }
   }
 
-  async getXcmFees(options: RouterDto) {
+  async getXcmFees(input: RouterDto) {
     const {
       from,
       exchange,
@@ -149,7 +150,8 @@ export class RouterService {
       evmSenderAddress,
       recipientAddress,
       slippagePct = '1',
-    } = options;
+      options,
+    } = input;
 
     const fromChain = from as TSubstrateChain;
     const exchangeChain = exchange as TExchangeChain;
@@ -170,7 +172,7 @@ export class RouterService {
     }
 
     try {
-      return await RouterBuilder()
+      return await RouterBuilder(options)
         .from(fromChain)
         .exchange(exchangeChain)
         .to(toChain)
@@ -187,8 +189,9 @@ export class RouterService {
     }
   }
 
-  async getBestAmountOut(options: RouterBestAmountOutDto) {
-    const { from, exchange, to, currencyFrom, currencyTo, amount } = options;
+  async getBestAmountOut(input: RouterBestAmountOutDto) {
+    const { from, exchange, to, currencyFrom, currencyTo, amount, options } =
+      input;
 
     const fromChain = from as TSubstrateChain;
     const exchangeChain = exchange as TExchangeChain;
@@ -197,7 +200,7 @@ export class RouterService {
     validateChainsAndExchange(from, exchange, to);
 
     try {
-      return await RouterBuilder()
+      return await RouterBuilder(options)
         .from(fromChain)
         .exchange(exchangeChain)
         .to(toChain)

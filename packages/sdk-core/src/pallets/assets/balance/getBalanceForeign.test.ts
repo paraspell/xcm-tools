@@ -40,7 +40,7 @@ describe('getBalanceForeign', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(createChainClient).mockResolvedValue(mockApi)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123', decimals: 10 })
   })
 
   it('should return Ethereum ERC20 balance if chain is Ethereum', async () => {

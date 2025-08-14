@@ -166,7 +166,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
@@ -177,7 +177,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid ETH transfer', async () => {
-      const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
+      const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -225,7 +225,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
@@ -236,7 +236,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid AH native asset to ETH transfer', async () => {
-      const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
+      const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -300,7 +300,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', assetId: '' }])
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', decimals: 10, assetId: '' }])
 
       const input = {
         ...mockInput,
@@ -411,6 +411,7 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for USDC currencyId', async () => {
       mockInput.assetInfo = {
         symbol: 'USDC',
+        decimals: 6,
         location: {
           parents: 1,
           interior: {
@@ -438,7 +439,7 @@ describe('AssetHubPolkadot', () => {
       } as WithAmount<TNativeAssetInfo>
 
       vi.mocked(getOtherAssets).mockImplementation(chain =>
-        chain === 'Ethereum' ? [] : [{ symbol: 'DOT', assetId: '' }]
+        chain === 'Ethereum' ? [] : [{ symbol: 'DOT', decimals: 10, assetId: '' }]
       )
 
       await assetHub.transferPolkadotXCM(mockInput)

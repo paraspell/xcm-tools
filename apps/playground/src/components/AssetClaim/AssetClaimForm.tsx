@@ -32,7 +32,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       from: 'Polkadot',
-      amount: '10000000000000000000',
+      amount: '10',
       address: DEFAULT_ADDRESS,
       useApi: false,
     },

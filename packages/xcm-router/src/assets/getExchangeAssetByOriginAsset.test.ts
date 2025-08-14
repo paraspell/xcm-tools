@@ -51,10 +51,12 @@ describe('getExchangeAssetByOriginAsset', () => {
       if ('id' in currency && currency.id === '1')
         return {
           symbol: 'DOT',
+          decimals: 12,
           location: 'ml1' as unknown as sdk.TLocation,
         };
       return {
         symbol: 'DOT',
+        decimals: 12,
         location: 'ml2' as unknown as sdk.TLocation,
       };
     });

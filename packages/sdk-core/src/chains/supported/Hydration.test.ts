@@ -156,6 +156,7 @@ describe('Hydration', () => {
       mockInput.destination = 'AssetHubPolkadot'
       mockInput.assetInfo = {
         symbol: 'DOT',
+        decimals: 10,
         assetId: '1',
         amount: 1000n
       }
@@ -176,7 +177,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer using assetId', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.assetInfo = { symbol: 'DOT', assetId: '3', amount: 1000n }
+      mockInput.assetInfo = { symbol: 'DOT', assetId: '3', decimals: 10, amount: 1000n }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')

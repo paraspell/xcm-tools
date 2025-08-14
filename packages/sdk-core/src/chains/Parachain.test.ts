@@ -362,6 +362,7 @@ describe('Parachain', () => {
   it('should create currency spec', () => {
     const result = chain.createCurrencySpec(100n, 'ParaToRelay', Version.V4, {
       symbol: 'DOT',
+      decimals: 10,
       isNative: true
     })
 
@@ -383,7 +384,7 @@ describe('Parachain', () => {
 
     const spy = vi.spyOn(options.api, 'callTxMethod')
 
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123', decimals: 18 })
 
     await chain.exposeTransferToEthereum(options)
 

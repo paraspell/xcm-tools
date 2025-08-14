@@ -7,7 +7,7 @@ export const getSdkAssetByRouterAsset = (
   exchangeBaseChain: TParachain,
   routerAsset: TRouterAsset,
 ): TAssetInfo | undefined => {
-  // Try searching by symbol fist, if duplicates are found, search by multi-location
+  // Try searching by symbol fist, if duplicates are found, search by location
 
   const assets = getAssets(exchangeBaseChain);
 
@@ -28,7 +28,7 @@ export const getSdkAssetByRouterAsset = (
     return undefined;
   }
 
-  // Origin asset is a foreign asset, try matching by multi-location.
+  // Origin asset is a foreign asset, try matching by location.
   return candidates.find((asset) => {
     if (!isForeignAsset(asset)) return false;
 

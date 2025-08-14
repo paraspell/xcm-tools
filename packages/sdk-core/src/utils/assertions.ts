@@ -12,7 +12,7 @@ export const assertToIsString: (
 ) => asserts to is Exclude<TDestination, TLocation> = (to, overrideMsg) => {
   if (isTLocation(to)) {
     throw new InvalidParameterError(
-      overrideMsg ?? 'Multi-Location destination is not supported for XCM fee calculation.'
+      overrideMsg ?? 'Location destination is not supported for XCM fee calculation.'
     )
   }
 }
@@ -21,9 +21,7 @@ export const assertAddressIsString: (
   address: TAddress
 ) => asserts address is Exclude<TAddress, TLocation> = address => {
   if (isTLocation(address)) {
-    throw new InvalidParameterError(
-      'Multi-Location address is not supported for this transfer type.'
-    )
+    throw new InvalidParameterError('Location address is not supported for this transfer type.')
   }
 }
 

@@ -27,36 +27,36 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return undefined when no candidate is found', () => {
-    vi.mocked(getAssets).mockReturnValue([{ symbol: 'ABC', assetId: '1' }]);
+    vi.mocked(getAssets).mockReturnValue([{ symbol: 'ABC', decimals: 12, assetId: '1' }]);
     vi.mocked(findBestMatches).mockReturnValue([]);
-    const routerAsset: TRouterAsset = { symbol: 'XYZ' };
+    const routerAsset: TRouterAsset = { symbol: 'XYZ', decimals: 8 };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toBeUndefined();
   });
 
   it('should return candidate when exactly one candidate is found', () => {
-    const candidate: TAssetInfo = { symbol: 'ABC', assetId: '1' };
+    const candidate: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1' };
     vi.mocked(getAssets).mockReturnValue([candidate]);
     vi.mocked(findBestMatches).mockReturnValue([candidate]);
-    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1' };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', decimals: 12 };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual(candidate);
   });
 
   it('should return undefined when multiple candidates are found and routerAsset has no id', () => {
-    const candidate1: TAssetInfo = { symbol: 'ABC', assetId: '1' };
-    const candidate2: TAssetInfo = { symbol: 'ABC', assetId: '2' };
+    const candidate1: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1' };
+    const candidate2: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
-    const routerAsset: TRouterAsset = { symbol: 'ABC' };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', decimals: 12 };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toBeUndefined();
   });
 
   it('should return a candidate when matching by location', () => {
     const location: TLocation = { parents: 0, interior: 'Here' };
-    const candidate1: TForeignAssetInfo = { symbol: 'ABC', assetId: '1', location };
-    const candidate2: TAssetInfo = { symbol: 'ABC', assetId: '2' };
+    const candidate1: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1', location };
+    const candidate2: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     vi.mocked(isForeignAsset).mockImplementation((asset: TAssetInfo) =>
@@ -68,14 +68,14 @@ describe('getSdkAssetByRouterAsset', () => {
       }
       return null;
     });
-    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', location };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', location, decimals: 12 };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual({ ...candidate1, location });
   });
 
   it('should return a candidate when matching by assetId', () => {
-    const candidate1: TForeignAssetInfo = { symbol: 'ABC', assetId: '1' };
-    const candidate2: TForeignAssetInfo = { symbol: 'ABC', assetId: '2' };
+    const candidate1: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1' };
+    const candidate2: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
     vi.mocked(isForeignAsset).mockImplementation(
@@ -85,7 +85,7 @@ describe('getSdkAssetByRouterAsset', () => {
       if ('id' in currency && currency.id === candidate2.assetId) return candidate2;
       return null;
     });
-    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '2' };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '2', decimals: 12 };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
     expect(result).toEqual(candidate2);
   });
@@ -93,11 +93,13 @@ describe('getSdkAssetByRouterAsset', () => {
   it('should return undefined when multiple candidates are found but none match', () => {
     const candidate1: TForeignAssetInfo = {
       symbol: 'ABC',
+      decimals: 12,
       assetId: '1',
       location: { parents: 0, interior: 'Here' },
     };
     const candidate2: TForeignAssetInfo = {
       symbol: 'ABC',
+      decimals: 12,
       assetId: '2',
       location: { parents: 0, interior: 'Here' },
     };
@@ -108,6 +110,7 @@ describe('getSdkAssetByRouterAsset', () => {
     const routerAsset: TRouterAsset = {
       symbol: 'ABC',
       assetId: '1',
+      decimals: 12,
       location: candidate1.location,
     };
     const result = getSdkAssetByRouterAsset(exchangeBaseChain, routerAsset);
