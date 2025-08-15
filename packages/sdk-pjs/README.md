@@ -72,11 +72,13 @@ NOTES:
 - Local transfers are now available for every currency and every chain. To try them, simply use the same origin and destination parameters.
 - Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
 - You can now query Ethereum asset balances on Ethereum via balance query
+- The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
 ```
 
 ```
 Latest news:
-- The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
+- V10 > V11 Migration guide https://paraspell.github.io/docs/migration/v10-to-v11.html
+- Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
 ```
 
 ### Sending XCM
@@ -85,20 +87,20 @@ For full documentation with examples on this feature head over to [official docu
 
 #### Transfer assets from Parachain to Parachain
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(NODE)
-      .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
-      .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .from(CHAIN)
+      .to(CHAIN /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..])
+      .address(address | Location object /*If you are sending through xTokens, you need to pass the destination and address Location in one object (x2)*/)
       .senderAddress(address) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
-      /*.ahAddress(ahAddress) - OPTIONAL - used when origin is EVM node and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address eg. origin: Moonbeam & destination: Ethereum (Multihop goes from Moonbeam > AssetHub > BridgeHub > Ethereum)
-        .feeAsset({symbol: 'symbol'} || {id: 'id'} || {multilocation: 'multilocation'}) // Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
-        .xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
-        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
+      /*.ahAddress(ahAddress) - OPTIONAL - used when origin is EVM chain and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address eg. origin: Moonbeam & destination: Ethereum (Multihop goes from Moonbeam > AssetHub > BridgeHub > Ethereum)
+        .feeAsset({symbol: 'symbol'} || {id: 'id'} || {location: 'location'}) // Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
+        .xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
+        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -118,19 +120,20 @@ const tx = await builder.build()
 await builder.disconnect()
 */
 ```
-#### Transfer assets from the Relay chain to Parachain
+
+#### Transfer assets from the Relay chain to the Parachain
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(RELAY_NODE) //Kusama or Polkadot
-      .to(NODE/*,customParaId - optional*/ | Multilocation object)
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .from(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
+      .to(CHAIN/*,customParaId - optional*/ | Location object)
       .currency({symbol: 'DOT', amount: amount})
-      .address(address | Multilocation object)
-      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
-      .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
+      .address(address | Location object)
+      /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
+      .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -150,19 +153,20 @@ const tx = await builder.build()
 await builder.disconnect()
 */
 ```
+
 #### Transfer assets from Parachain to Relay chain
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(NODE)
-      .to(RELAY_NODE) //Kusama or Polkadot
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .from(CHAIN)
+      .to(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
       .currency({symbol: 'DOT', amount: amount})
-      .address(address | Multilocation object)
-      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
-        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
+      .address(address | Location object)
+      /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
+        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -185,15 +189,15 @@ await builder.disconnect()
 
 #### Local transfers
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(NODE)
-      .to(NODE) //Has to be same as origin (from)
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .from(CHAIN)
+      .to(CHAIN) //Has to be the same as the origin (from)
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..])
       .address(address)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -216,17 +220,17 @@ await builder.disconnect()
 
 #### Batch calls
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
-      .to(NODE_2) //Any compatible Parachain
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .from(CHAIN) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .to(CHAIN_2) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
-      .address(address | Multilocation object)
+      .address(address | Location object)
       .addToBatch()
 
-      .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
-      .to(NODE_3) //Any compatible Parachain
+      .from(CHAIN) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .to(CHAIN_3) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
-      .address(address | Multilocation object)
+      .address(address | Location object)
       .addToBatch()
       
 const tx = await builder.buildBatch({ 
@@ -234,41 +238,42 @@ const tx = await builder.buildBatch({
           mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
       })
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 ```
 
 #### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .claimFrom(NODE)
-      .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
-      .account(address | Multilocation object)
-      /*.xcmVersion(Version.V3) Optional parameter, by default V3. XCM Version ENUM if a different XCM version is needed (Supported V2 & V3). Requires importing Version enum.*/
+const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+      .claimFrom(CHAIN)
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..]
+)
+      .address(address | Location object)
+      /*.xcmVersion(Version.V3) Optional parameter, by default chain specific version. XCM Version ENUM if a different XCM version is needed (Supported V3 & V4 & V5). Requires importing Version enum.*/
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 ```
 
 #### Dry run your XCM Calls:
 ```ts
 //Builder pattern
-const result = await Builder(API /*optional*/)
-        .from(NODE)
-        .to(NODE_2)
-        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(ADDRESS)
         .senderAddress(SENDER_ADDRESS)
         .dryRun()
 
 //Check Parachain for DryRun support - returns true/false
-import { hasDryRunSupport } from "@paraspell/sdk-pjs";
+import { hasDryRunSupport } from "@paraspell/sdk";
 
-const result = hasDryRunSupport(node)
+const result = hasDryRunSupport(chain)
 ```
 
 ### Localhost test setup
@@ -278,6 +283,7 @@ SDK offers enhanced localhost support. You can pass an object containing overrid
 ```ts
 const builder = await Builder({
   development: true, // Optional: Enforces overrides for all chains used
+  decimalAbstraction: true //Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT.
   apiOverrides: {
     Hydration: // "wsEndpointString" | papiClient
     BridgeHubPolkadot: // "wsEndpointString" | papiClient
@@ -286,7 +292,7 @@ const builder = await Builder({
 })
   .from(CHAIN)
   .to(CHAIN)
-  .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+  .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}])
   .address(address)
 
 const tx = await builder.build()
@@ -297,15 +303,15 @@ await builder.disconnect()
 
 ### XCM Fee queries
 
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
+For full documentation with examples on this feature, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
 
 #### XCM Transfer info
 ```ts
-const info = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .getTransferInfo()
@@ -313,11 +319,11 @@ const info = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 #### Transferable amount
 ```ts
-const transferable = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .getTransferableAmount()
@@ -325,11 +331,11 @@ const transferable = await Builder(/*node api/ws_url_string/ws_url_array - optio
 
 #### Verify ED on destination
 ```ts
-const ed = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .verifyEdOnDestination()
@@ -339,19 +345,19 @@ const ed = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 ##### More accurate query using DryRun
 ```ts
-const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
-          .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
+          .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
 ##### Less accurate query using Payment info
 ```ts
-const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
@@ -364,19 +370,19 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 ##### More accurate query using DryRun
 ```ts
-const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
-          .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
+          .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
 ```
 
 ##### Less accurate query using Payment info
 ```ts
-const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
@@ -389,8 +395,8 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 ```ts
 import { getAssetBalance } from "@paraspell/sdk-pjs";
 
-//Retrieves the asset balance for a given account on a specified node (You do not need to specify if it is native or foreign).
-const balance = await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
+//Retrieves the asset balance for a given account on a specified chain (You do not need to specify if it is native or foreign).
+const balance = await getAssetBalance({address, chain, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {location: AssetLocationString | AssetLocationJson}*/, api /* api/ws_url_string optional */});
 ```
 
 #### Ethereum bridge fees
@@ -405,15 +411,15 @@ const fees = await getParaEthTransferFees(/*api - optional (Can also be WS port 
 import { getExistentialDeposit } from "@paraspell/sdk-pjs";
 
 //Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
-//Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
-const ed = getExistentialDeposit(node, currency?)
+//Currency can be either {symbol: assetSymbol}, {id: assetId}, {location: assetLocation}.
+const ed = getExistentialDeposit(chain, currency?)
 ```
 
 #### Convert SS58 address 
 ```ts
 import { convertSs58 } from "@paraspell/sdk-pjs";
 
-let result = convertSs58(address, node) // returns converted address in string
+let result = convertSs58(address, chain) // returns converted address in string
 ```
 
 ### Asset queries:
@@ -421,69 +427,49 @@ let result = convertSs58(address, node) // returns converted address in string
 For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
-import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk-pjs'
+import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS } from  '@paraspell/sdk-pjs'
 
 //Get chains that support the specific asset related to origin
-getSupportedDestinations(NODE, CURRENCY)
+getSupportedDestinations(CHAIN, CURRENCY)
 
-// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
-getFeeAssets(NODE)
+// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
+getFeeAssets(CHAIN)
 
-// Get multilocation for asset id or symbol on specific chain
-getAssetMultiLocation(NODE, { symbol: symbol } | { id: assetId })
+// Get Location for asset ID or symbol on a  specific chain
+getAssetLocation(CHAIN, { symbol: symbol } | { id: assetId })
 
-// Retrieve assets object from assets.json for particular node including information about native and foreign assets
-getAssetsObject(NODE)
+// Retrieve assets object from assets.json for a particular chain, including information about native and foreign assets
+getAssetsObject(CHAIN)
 
-// Retrieve foreign assetId for a particular node and asset symbol
-getAssetId(NODE, ASSET_SYMBOL)
+// Retrieve foreign assetId for a particular chain and asset symbol
+getAssetId(CHAIN, ASSET_SYMBOL)
 
-// Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
-getRelayChainSymbol(NODE)
+// Retrieve the symbol of the relay chain for a particular chain. Either "DOT" or "KSM"
+getRelayChainSymbol(CHAIN)
 
-// Retrieve string array of native assets symbols for particular node
-getNativeAssets(NODE)
+// Retrieve string array of native assets symbols for a  particular chain
+getNativeAssets(CHAIN)
 
-// Retrieve object array of foreign assets for a particular node. Each object has a symbol and assetId property
-getOtherAssets(NODE)
+// Retrieve object array of foreign assets for a particular chain. Each object has a symbol and an  assetId property
+getOtherAssets(CHAIN)
 
-// Retrieve string array of all assets symbols. (native and foreign assets are merged into a single array)
-getAllAssetsSymbols(NODE)
+// Retrieve string array of all asset symbols. (native and foreign assets are merged into a single array)
+getAllAssetsSymbols(CHAIN)
 
-// Check if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
-hasSupportForAsset(NODE, ASSET_SYMBOL)
+// Check if a chain supports a particular asset. (Both native and foreign assets are searched). Returns boolean
+hasSupportForAsset(CHAIN, ASSET_SYMBOL)
 
 // Get decimals for specific asset
-getAssetDecimals(NODE, ASSET_SYMBOL)
+getAssetDecimals(CHAIN, ASSET_SYMBOL)
 
-// Get specific node id
-getParaId(NODE)
+// Get specific chain id
+getParaId(CHAIN)
 
-// Get specific TNode from nodeID
-getTNode(paraID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+// Get specific TChain from chainID
+getTChain(paraID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo' | 'Westend') //When the Ethereum ecosystem is selected, please fill chainID as 1 to select Ethereum.
 
-// Import all compatible nodes as constant
-NODE_NAMES
-```
-
-### Parachain XCM Pallet queries
-
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
-
-```ts
-import { getDefaultPallet, getSupportedPallets, getPalletIndex SUPPORTED_PALLETS } from  '@paraspell/sdk-pjs';
-
-//Retrieve default pallet for specific Parachain 
-getDefaultPallet(NODE)
-
-// Returns an array of supported pallets for a specific Parachain
-getSupportedPallets(NODE)
-
-//Returns index of XCM Pallet used by Parachain
-getPalletIndex(NODE)
-
-// Print all pallets that are currently supported
-console.log(SUPPORTED_PALLETS)
+// Import all compatible chains as constant
+CHAINS
 ```
 
 ## 💻 Tests

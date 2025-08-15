@@ -38,7 +38,7 @@ pnpm | npm install || yarn add @paraspell/assets
 
 To use this functionality you first have to import it in the following way.
 ```ts
-import { getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/assets'
+import { getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS } from  '@paraspell/assets'
 ```
 
 
@@ -76,7 +76,7 @@ getAllAssetsSymbols('Acala')
 ### Query asset support
 The function checks if Parachain supports a particular asset. (Both native and foreign assets are searched). Returns boolean
 ```ts
-hasSupportForAsset(node: TNode, symbol: string)
+hasSupportForAsset(chain: TChain, symbol: string)
 ```
 ### Query asset decimals
 The function returns decimals for a specific asset
@@ -90,21 +90,21 @@ getParaId('Basilisk')
 ```
 
 ### Query Parachain name
-Function to get specific TNode from Parachain id
+Function to get specific TChain from Parachain id
 ```ts
-getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+getTChain(chainID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo' | 'Westend') //When Ethereum ecosystem is selected please fill chainID as 1 to select Ethereum.
 ```
 
-### Import Parachains as constant
-Import all compatible Parachains as constant
+### Import chains as constant
+Import all compatible chains as constant
 ```ts
-console.log(NODE_NAMES)
+console.log(CHAINS)
 ```
 
-### Convert id or symbol to multilocation
-Get multilocation for asset id or symbol.
+### Convert id or symbol to location
+Get location for asset id or symbol.
 ```ts
-getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
+getAssetLocation(chainFrom, { symbol: symbol } | { id: assetId })
 ```
 
 ## 💻 Tests

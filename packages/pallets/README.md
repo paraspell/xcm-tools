@@ -45,21 +45,21 @@ import { getDefaultPallet, getSupportedPallets, getPalletIndex, SUPPORTED_PALLET
 
 The function returns the default XCM pallet for selected compatible Parachain.
 ```ts
-getDefaultPallet(node: TNode)
+getDefaultPallet(chain: TChain)
 ```
 
 ### Get all supported XCM pallets
 
 The function returns all supported XCM pallets for selected compatible Parachain.
 ```ts
-getSupportedPallets(node: TNode)
+getSupportedPallets(chain: TChain)
 ```
 
 ### Get index of XCM Pallet
 
 The function returns all index of XCM Pallet for selected Parachain.
 ```ts
-getPalletIndex(node: TNode)
+getPalletIndex(chain: TChain)
 ```
 
 ### Print all supported XCM pallets
