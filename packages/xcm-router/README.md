@@ -95,24 +95,24 @@ import { transfer,
 If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
  ```js
-await RouterBuilder
+await RouterBuilder(/*{abstractDecimals: true} - optional*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(injectorAddress)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
-        //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+        //.evmSenderAddress(evmInjector address)   //Optional parameters when origin chain is EVM based (Required with evmSigner)
+        //.evmSigner(EVM signer)                     //Optional parameters when origin chain is EVM based (Required with evmInjectorAddress)
 
         .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
           console.log(status.type);   // Current transaction type
           console.log(status.routerPlan);   // Array of all transactions to execute
-          console.log(status.node);   // Current transaction origin node
-          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.chain);   // Current transaction origin chain
+          console.log(status.destinationChain);    // Current transaction destination chain
           console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
@@ -123,25 +123,25 @@ await RouterBuilder
 If you wish to have specific exchanges selection and select the best one among them based on the best price outcome, you can opt for the whitelist automatic exchange selection method. This method can be selected by **using** `.exchange()` parameter in the call and feeding it with **array of exchanges**. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
 ```ts
-await RouterBuilder
+await RouterBuilder(/*{abstractDecimals: true} - optional*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange(['HydrationDex','AcalaDex','AssetHubPolkadotDex'])    //Exchange Parachains
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} 
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+        .currencyFrom({symbol: 'DOT'})    // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} 
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
-        //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+        //.evmSenderAddress(evmInjector address)   //Optional parameters when origin chain is EVM based (Required with evmSigner)
+        //.evmSigner(EVM signer)                     //Optional parameters when origin chain is EVM based (Required with evmInjectorAddress)
 
         .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
           console.log(status.type);   // Current transaction type
           console.log(status.routerPlan);   // Array of all transactions to execute
-          console.log(status.node);   // Current transaction origin node
-          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.chain);   // Current transaction origin chain
+          console.log(status.destinationChain);    // Current transaction destination chain
           console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
@@ -152,25 +152,25 @@ await RouterBuilder
 If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice.
 
  ```js
-await RouterBuilder
+await RouterBuilder(/*{abstractDecimals: true} - optional*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange('HydraDDex')    //Exchange Parachain
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
-        //.evmSignerAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+        //.evmSignerAddress(evmInjector address)   //Optional parameters when origin chain is EVM based (Required with evmSigner)
+        //.evmSigner(EVM signer)                     //Optional parameters when origin chain is EVM based (Required with evmInjectorAddress)
 
         .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
           console.log(status.type);   // Current transaction type
           console.log(status.routerPlan);   // Array of all transactions to execute
-          console.log(status.node);   // Current transaction origin node
-          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.chain);   // Current transaction origin chain
+          console.log(status.destinationChain);    // Current transaction destination chain
           console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
@@ -181,7 +181,7 @@ await RouterBuilder
 To retrieve exchange amount, that you receive for your desired asset pair you can use following function. This function returns 2 parameters. Name of best fitting DEX (Automatic selection - can be further used for manual selection) and Amount out
 
 ```ts
-const result = await RouterBuilder()
+const result = await RouterBuilder(/*{abstractDecimals: true} - optional*/)
       .from('Astar') //Optional parameter based on scenario
       .to('Acala') //Optional parameter based on scenario
       .exchange('Hydration') //Optional parameter based on scenario
@@ -199,7 +199,7 @@ console.log(result.exchange)
 You can retrieve fees for all operations XCM Router performs. Keep in mind that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dry run in that scenario). Find out the example output of this function in the [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-router-fees).
 
 ```ts
-const fees = await RouterBuilder()
+const fees = await RouterBuilder(/*{abstractDecimals: true} - optional*/)
       .from(from) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .to(to) //Optional parameter based on scenario

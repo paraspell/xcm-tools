@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/xcm-analyser</h1>
-  <h4 align="center"> Tool to convert XCM multiLocations into human-readable format. </h4>
+  <h4 align="center"> Tool to convert XCM Locations into human-readable format. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/sdk">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/xcm-analyser?style=flat-square" />
@@ -45,16 +45,16 @@ OnlyChild
 Plurality
 GlobalConsensus
 ```
-#### Compile a single multilocation object to the URL
+#### Compile a single location object to the URL
 
-To compile a single multilocation object to url use the following structure:
+To compile a single location object to url use the following structure:
 
 ```js
 //Importing the call
-import { convertMultilocationToUrl } from '@paraspell/xcm-analyser';
+import { convertLocationToUrl } from '@paraspell/xcm-analyser';
 
-//Define the multilocation you wish to convert to URL
-/*const multilocation: MultiLocation = {
+//Define the location you wish to convert to URL
+/*const location: Location = {
       parents: '0',
       interior: {
         X2: [
@@ -68,7 +68,7 @@ import { convertMultilocationToUrl } from '@paraspell/xcm-analyser';
       },
     };*/
 
-const result = convertMultilocationToUrl(multiplication);
+const result = convertLocationToUrl(location);
 
 /*
 This should result into:
@@ -76,15 +76,15 @@ This should result into:
 */
 ```
 
-#### Compile a single multilocation JSON to the URL
-To compile a single multilocation JSON to url use the following structure:
+#### Compile a single location JSON to the URL
+To compile a single location JSON to url use the following structure:
 
 ```js
 //Importing the call
-import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
+import { convertLocationToUrlJson } from '@paraspell/xcm-analyser';
 
-//Define multilocation JSON
-/*const multilocationJson = `{
+//Define location JSON
+/*const locationJson = `{
       "parents": "3",
       "interior": {
         "X2": [
@@ -98,7 +98,7 @@ import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
       }
     }`*/
 
-const result = convertMultilocationToUrl(multilocationJson);
+const result = convertLocationToUrl(locationJson);
 
 /*
 This should result into:
