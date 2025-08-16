@@ -50,6 +50,7 @@ import { isValidWalletAddress } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
 import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
 
@@ -317,7 +318,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const infoEvmWallet = (
     <Tooltip
-      label="You need to connect yout Polkadot EVM wallet when choosing EVM chain as origin"
+      label="You need to connect your Polkadot EVM wallet when choosing EVM chain as origin"
       position="top-end"
       withArrow
       transitionProps={{ transition: 'pop-bottom-right' }}
@@ -481,7 +482,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           <TextInput
             label="Amount"
             placeholder="0"
+            flex={1}
             required
+            rightSection={<CurrencyInfo />}
             data-testid="input-amount"
             {...form.getInputProps('amount')}
           />
