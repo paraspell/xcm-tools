@@ -1,5 +1,21 @@
 # Changelog
 
+## [11.0.0](https://github.com/paraspell/xcm-tools/compare/pallets-v10.11.10...pallets-v11.0.0) (2025-08-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rename `node` to `chain` 👨‍💻
+
+### Features
+
+* Rename `node` to `chain` 👨‍💻 ([ec1a66f](https://github.com/paraspell/xcm-tools/commit/ec1a66fc7d6ee3a68f2072516c2fbfd176dbaa14))
+
+
+### Documentation
+
+* Prepare package docs for v11 ([b533e8b](https://github.com/paraspell/xcm-tools/commit/b533e8bc77f523957483ace131f2965f0644b856))
+
 ## [10.11.10](https://github.com/paraspell/xcm-tools/compare/pallets-v10.11.9...pallets-v10.11.10) (2025-08-14)
 
 
