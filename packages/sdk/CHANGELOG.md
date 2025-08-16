@@ -1,5 +1,24 @@
 # Changelog
 
+## [11.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.10...sdk-v11.0.0) (2025-08-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rename `node` to `chain` 👨‍💻
+* Remove multi prefix 🪄
+
+### Features
+
+* Add decimal abstraction feature ✨ ([604ab79](https://github.com/paraspell/xcm-tools/commit/604ab795c219f29b2276e5f0e7b644c26f4a281c))
+* Remove multi prefix 🪄 ([2577fd8](https://github.com/paraspell/xcm-tools/commit/2577fd868dca2a06cca452357dc84385910b9c19))
+* Rename `node` to `chain` 👨‍💻 ([ec1a66f](https://github.com/paraspell/xcm-tools/commit/ec1a66fc7d6ee3a68f2072516c2fbfd176dbaa14))
+
+
+### Documentation
+
+* Prepare package docs for v11 ([b533e8b](https://github.com/paraspell/xcm-tools/commit/b533e8bc77f523957483ace131f2965f0644b856))
+
 ## [10.11.10](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.9...sdk-v10.11.10) (2025-08-14)
 
 
