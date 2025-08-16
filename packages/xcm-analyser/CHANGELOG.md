@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.9...xcm-analyser-v2.0.0) (2025-08-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove multi prefix 🪄
+
+### Features
+
+* Add decimal abstraction feature ✨ ([604ab79](https://github.com/paraspell/xcm-tools/commit/604ab795c219f29b2276e5f0e7b644c26f4a281c))
+* Remove multi prefix 🪄 ([2577fd8](https://github.com/paraspell/xcm-tools/commit/2577fd868dca2a06cca452357dc84385910b9c19))
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix xcm-api zod schema 🔧 ([b8e7db0](https://github.com/paraspell/xcm-tools/commit/b8e7db0fb4ca8cf4b14b1b4a499a8a3d994aa526))
+
+
+### Documentation
+
+* Prepare package docs for v11 ([b533e8b](https://github.com/paraspell/xcm-tools/commit/b533e8bc77f523957483ace131f2965f0644b856))
+
 ## [1.5.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.8...xcm-analyser-v1.5.9) (2025-07-31)
 
 
