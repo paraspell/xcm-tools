@@ -34,6 +34,7 @@ import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TCurrencyEntry = {
@@ -345,6 +346,7 @@ const XcmTransferForm: FC<Props> = ({
                     />
                     <TextInput
                       label="Amount"
+                      rightSection={<CurrencyInfo />}
                       placeholder="0"
                       size={currencies.length > 1 ? 'xs' : 'sm'}
                       required

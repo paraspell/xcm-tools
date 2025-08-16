@@ -22,6 +22,7 @@ import {
 } from '../../hooks';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
+import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
@@ -201,6 +202,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
 
           <TextInput
             label="Amount"
+            rightSection={<CurrencyInfo />}
             placeholder="0"
             required
             data-testid="input-amount"

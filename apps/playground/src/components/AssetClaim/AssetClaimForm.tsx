@@ -7,6 +7,7 @@ import { DEFAULT_ADDRESS } from '../../constants';
 import { useAutoFillWalletAddress, useWallet } from '../../hooks';
 import { isValidWalletAddress } from '../../utils';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 const SUPPORTED_CHAINS: TSubstrateChain[] = [
@@ -86,6 +87,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
 
           <TextInput
             label="Amount"
+            rightSection={<CurrencyInfo />}
             placeholder="0"
             required
             data-testid="input-amount"
