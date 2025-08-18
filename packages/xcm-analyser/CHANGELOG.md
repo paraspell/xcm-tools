@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.10](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.9...xcm-analyser-v1.5.10) (2025-08-18)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix xcm-api zod schema 🔧 ([b8e7db0](https://github.com/paraspell/xcm-tools/commit/b8e7db0fb4ca8cf4b14b1b4a499a8a3d994aa526))
+
 ## [1.5.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.8...xcm-analyser-v1.5.9) (2025-07-31)
 
 
