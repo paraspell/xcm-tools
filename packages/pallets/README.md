@@ -38,7 +38,7 @@ pnpm | npm install || yarn add @paraspell/pallets
 
 To use this functionality you first have to import it in the following way.
 ```ts
-import { getDefaultPallet, getSupportedPallets, getPalletIndex, SUPPORTED_PALLETS } from  '@paraspell/pallets'
+import { getDefaultPallet, getSupportedPallets, getPalletIndex, SUPPORTED_PALLETS, getNativeAssetsPallet, getOtherAssetsPallets } from  '@paraspell/pallets'
 ```
 
 ### Get default XCM pallet
@@ -67,6 +67,21 @@ getPalletIndex(chain: TChain)
 This returns all supported XCM pallets supported by compatible Parachains as constant.
 ```ts
 console.log(SUPPORTED_PALLETS)
+```
+
+
+### Print local pallets for native assets
+
+Following function returns all pallets for local transfers of native assets for specific chain.
+```ts
+getNativeAssetsPallet(chain: TChain)
+```
+
+### Print local pallets for foreign assets
+
+Following function returns all pallets for local transfers of foreign assets for specific chain.
+```ts
+getOtherAssetsPallets(chain: TChain)
 ```
 
 ## 💻 Tests

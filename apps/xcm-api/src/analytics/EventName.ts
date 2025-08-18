@@ -17,6 +17,8 @@ export enum EventName {
   CONVERT_SS58 = 'Convert Ss58 address',
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
+  GET_NATIVE_ASSETS_PALLET = 'Get Native Assets Pallet',
+  GET_OTHER_ASSETS_PALLETS = 'Get Other Assets Pallets',
   GET_PALLET_INDEX = 'Get Pallet Index',
   GET_ASSET_BALANCE = 'Get Asset Balance',
   GET_BALANCE_NATIVE = 'Get Balance Native',

@@ -832,31 +832,16 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from P
           },
           "id": {
             "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
+              "type": "X1",
+              "value": {
+                "type": "GlobalConsensus",
+                "value": {
+                  "type": "Ethereum",
                   "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
+                    "chain_id": 1n,
                   },
                 },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
+              },
             },
             "parents": 2,
           },
@@ -6640,70 +6625,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
             {
               "type": "Parachain",
               "value": 2051,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to AssetHubPolkadot - (ETH) 1`] = `
-{
-  "method": "transfer_multiasset",
-  "module": "XTokens",
-  "parameters": {
-    "asset": {
-      "type": "V4",
-      "value": {
-        "fun": {
-          "type": "Fungible",
-          "value": 1000000000000n,
-        },
-        "id": {
-          "interior": {
-            "type": "X1",
-            "value": {
-              "type": "GlobalConsensus",
-              "value": {
-                "type": "Ethereum",
-                "value": {
-                  "chain_id": 1n,
-                },
-              },
-            },
-          },
-          "parents": 2,
-        },
-      },
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1000,
             },
             {
               "type": "AccountId32",

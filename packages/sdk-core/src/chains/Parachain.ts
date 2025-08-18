@@ -398,7 +398,7 @@ abstract class Parachain<TApi, TRes> {
 
     const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
 
-    const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
+    const PARA_TO_PARA_FEE_DOT = 5000000000n // 0.5 DOT
 
     const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
 

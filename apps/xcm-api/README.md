@@ -471,6 +471,12 @@ const response = await fetch('http://localhost:3001/v4/pallets/:chain/index?pall
 
 // Return Parachain support for DryRun
 const response = await fetch('http://localhost:3001/v4/chains/:chain/has-dry-run-support');
+
+//Returns all pallets for local transfers of native assets for specific chain.
+const response = await fetch('http://localhost:3001/v4/pallets/:chain/native-assets');
+
+//Returns all pallets for local transfers of foreign assets for specific chain.
+const response = await fetch('http://localhost:3001/v4/pallets/:chain/other-assets');
 ```
 
 ### XCM Router
