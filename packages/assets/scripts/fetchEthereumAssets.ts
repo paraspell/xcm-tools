@@ -11,6 +11,8 @@ export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
   const ethereumChainId = registry.ethChainId
   const snowbridgeAssets = registry.ethereumChains[ethereumChainId].assets
 
+  const gcJunction = { GlobalConsensus: { Ethereum: { chainId: 1 } } }
+
   const assets: TForeignAssetInfo[] = Object.values(snowbridgeAssets).map(asset => ({
     symbol: asset.symbol,
     assetId: asset.token,
@@ -18,14 +20,14 @@ export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
     existentialDeposit: ['WETH', 'ETH'].includes(asset.symbol) ? ED_ETH : DEFAULT_ED,
     location: {
       parents: Parents.TWO,
-      interior: {
-        X2: [
-          {
-            GlobalConsensus: { Ethereum: { chainId: 1 } }
-          },
-          { AccountKey20: { network: null, key: asset.token } }
-        ]
-      }
+      interior:
+        asset.symbol === 'ETH'
+          ? {
+              X1: [gcJunction]
+            }
+          : {
+              X2: [gcJunction, { AccountKey20: { network: null, key: asset.token } }]
+            }
     }
   }))
 
