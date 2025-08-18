@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.0.0...assets-v11.0.1) (2025-08-18)
+
+
+### Bug Fixes
+
+* **assets:** Fix wrong ETH location 🔧 ([e676933](https://github.com/paraspell/xcm-tools/commit/e676933b8e0af9d9d444a5a26e952c7d0382e177))
+
 ## [11.0.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.11.10...assets-v11.0.0) (2025-08-16)
 
 
