@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
   getDefaultPallet,
+  getNativeAssetsPallet,
+  getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
   SUBSTRATE_CHAINS,
@@ -20,6 +22,16 @@ export class PalletsService {
   getPallets(chain: string) {
     validateChain(chain, SUBSTRATE_CHAINS);
     return getSupportedPallets(chain as TSubstrateChain);
+  }
+
+  getNativeAssetsPallet(chain: string) {
+    validateChain(chain, SUBSTRATE_CHAINS);
+    return JSON.stringify(getNativeAssetsPallet(chain as TSubstrateChain));
+  }
+
+  getOtherAssetsPallets(chain: string) {
+    validateChain(chain, SUBSTRATE_CHAINS);
+    return getOtherAssetsPallets(chain as TSubstrateChain);
   }
 
   getPalletIndex(chain: string, pallet: string) {

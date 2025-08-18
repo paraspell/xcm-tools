@@ -478,7 +478,7 @@ CHAINS
 For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
 
 ```ts
-import { getDefaultPallet, getSupportedPallets, getPalletIndex SUPPORTED_PALLETS } from  '@paraspell/sdk';
+import { getDefaultPallet, getSupportedPallets, getPalletIndex, getNativeAssetsPallet, getOtherAssetsPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk';
 
 //Retrieve default pallet for specific Parachain 
 getDefaultPallet(CHAIN)
@@ -488,6 +488,12 @@ getSupportedPallets(CHAIN)
 
 //Returns index of XCM Pallet used by Parachain
 getPalletIndex(CHAIN)
+
+//Returns all pallets for local transfers of native assets for specific chain.
+getNativeAssetsPallet(chain: TChain)
+
+//Returns all pallets for local transfers of foreign assets for specific chain.
+getOtherAssetsPallets(CHAIN)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)

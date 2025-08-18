@@ -18,6 +18,22 @@ export class PalletsController {
     return Promise.resolve(this.palletsService.getDefaultPallet(chain));
   }
 
+  @Get(':chain/native-assets')
+  getNativeAssetsPallet(@Param('chain') chain: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.GET_NATIVE_ASSETS_PALLET, req, {
+      chain,
+    });
+    return Promise.resolve(this.palletsService.getNativeAssetsPallet(chain));
+  }
+
+  @Get(':chain/other-assets')
+  getOtherAssetsPallets(@Param('chain') chain: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.GET_OTHER_ASSETS_PALLETS, req, {
+      chain,
+    });
+    return Promise.resolve(this.palletsService.getOtherAssetsPallets(chain));
+  }
+
   @Get(':chain')
   getPallets(@Param('chain') chain: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_SUPPORTED_PALLETS, req, {

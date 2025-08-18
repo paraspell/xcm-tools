@@ -10,6 +10,8 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { TPallet } from '@paraspell/sdk';
 import {
   getDefaultPallet,
+  getNativeAssetsPallet,
+  getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
 } from '@paraspell/sdk';
@@ -56,6 +58,10 @@ const PalletsQueries = () => {
         return getDefaultPallet(chain);
       case 'PALLET_INDEX':
         return getPalletIndex(chain, pallet as TPallet);
+      case 'NATIVE_ASSETS_PALLET':
+        return getNativeAssetsPallet(chain);
+      case 'OTHER_ASSETS_PALLETS':
+        return getOtherAssetsPallets(chain);
     }
   };
 
@@ -67,6 +73,10 @@ const PalletsQueries = () => {
         return `${chain}/default`;
       case 'PALLET_INDEX':
         return `${chain}/index`;
+      case 'NATIVE_ASSETS_PALLET':
+        return `${chain}/native-assets`;
+      case 'OTHER_ASSETS_PALLETS':
+        return `${chain}/other-assets`;
     }
   };
 

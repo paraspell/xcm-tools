@@ -44,7 +44,13 @@ describe('getSupportedPallets', () => {
 
   it('should return PolkadotXcm, Xtokens pallets for Acala', () => {
     const chain: TChain = 'Acala'
-    const supportedPallets: TPallet[] = ['PolkadotXcm', 'XTokens']
+    const supportedPallets: TPallet[] = [
+      'Balances',
+      'Tokens',
+      'Currencies',
+      'PolkadotXcm',
+      'XTokens'
+    ]
     const pallets = getSupportedPallets(chain)
     expect(pallets).toEqual(supportedPallets)
   })

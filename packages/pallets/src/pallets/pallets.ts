@@ -30,3 +30,9 @@ export const getSupportedPalletsDetails = (chain: TSubstrateChain): TPalletDetai
 
 export const getPalletIndex = (chain: TSubstrateChain, pallet: TPallet): number | undefined =>
   palletsMap[chain].supportedPallets.find(p => p.name === pallet)?.index
+
+export const getNativeAssetsPallet = (chain: TSubstrateChain): TPallet =>
+  palletsMap[chain].nativeAssets
+
+export const getOtherAssetsPallets = (chain: TSubstrateChain): TPallet[] =>
+  palletsMap[chain].otherAssets

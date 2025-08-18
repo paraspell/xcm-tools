@@ -10,5 +10,7 @@ export type TPalletDetails = {
 export interface TPalletMap {
   defaultPallet: TPallet
   supportedPallets: TPalletDetails[]
+  nativeAssets: TPallet
+  otherAssets: TPallet[]
 }
 export type TPalletJsonMap = Record<TSubstrateChain, TPalletMap>

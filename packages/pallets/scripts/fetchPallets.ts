@@ -2,16 +2,25 @@ import type { ApiPromise } from '@polkadot/api'
 import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../src'
 import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
 import { getChainProviders } from '../../sdk-core/src'
-import { CHAINS_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk-common'
+import { SUBSTRATE_CHAINS } from '@paraspell/sdk-common'
 
-const defaultPalletsSortedByPriority: TPallet[] = [
+const defaultPalletsByPriority: TPallet[] = [
   'XcmPallet',
   'XTransfer',
   'XTokens',
   'OrmlXTokens',
-  'PolkadotXcm',
-  'RelayerXcm'
+  'PolkadotXcm'
 ]
+
+const nativeAssetPalletsByPriority = ['Balances', 'Currencies', 'Tokens'] as const
+
+const otherAssetPalletsByPriority = [
+  'Currencies',
+  'Tokens',
+  'Assets',
+  'ForeignAssets',
+  'AssetManager'
+] as const
 
 const fetchPallets = async (api: ApiPromise): Promise<TPalletDetails[]> => {
   const res = await api.rpc.state.getMetadata()
@@ -23,21 +32,38 @@ const fetchPallets = async (api: ApiPromise): Promise<TPalletDetails[]> => {
 
 const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
   const palletDetails = await fetchPallets(api)
-  const supportedPallets = palletDetails.filter(pallet =>
-    defaultPalletsSortedByPriority.includes(pallet.name)
-  )
-  const defaultPallet = defaultPalletsSortedByPriority.find(pallet =>
+
+  const allPallets = [
+    ...defaultPalletsByPriority,
+    ...nativeAssetPalletsByPriority,
+    ...otherAssetPalletsByPriority
+  ]
+
+  const supportedPallets = palletDetails.filter(pallet => allPallets.includes(pallet.name))
+
+  const defaultPallet = defaultPalletsByPriority.find(pallet =>
     supportedPallets.map(item => item.name).includes(pallet)
   ) as TPallet
+
+  const nativeAssetsPallet = nativeAssetPalletsByPriority.find(pallet =>
+    palletDetails.map(item => item.name).includes(pallet)
+  ) as TPallet
+
+  const otherAssetsPallets = otherAssetPalletsByPriority.filter(pallet =>
+    palletDetails.map(item => item.name).includes(pallet)
+  ) as TPallet[]
+
   return {
     defaultPallet,
-    supportedPallets
+    supportedPallets,
+    nativeAssets: nativeAssetsPallet,
+    otherAssets: otherAssetsPallets
   }
 }
 
 export const fetchAllChainsPallets = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
-  for (const chain of CHAINS_WITH_RELAY_CHAINS_DOT_KSM) {
+  for (const chain of SUBSTRATE_CHAINS) {
     console.log(`Fetching pallets for ${chain}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(chain, getChainProviders, api =>

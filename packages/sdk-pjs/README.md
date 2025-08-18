@@ -472,6 +472,32 @@ getTChain(paraID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo
 CHAINS
 ```
 
+### Parachain XCM Pallet queries
+
+For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
+
+```ts
+import { getDefaultPallet, getSupportedPallets, getPalletIndex, getNativeAssetsPallet, getOtherAssetsPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk-pjs';
+
+//Retrieve default pallet for specific Parachain 
+getDefaultPallet(CHAIN)
+
+// Returns an array of supported pallets for a specific Parachain
+getSupportedPallets(CHAIN)
+
+//Returns index of XCM Pallet used by Parachain
+getPalletIndex(CHAIN)
+
+//Returns all pallets for local transfers of native assets for specific chain.
+getNativeAssetsPallet(chain: TChain)
+
+//Returns all pallets for local transfers of foreign assets for specific chain.
+getOtherAssetsPallets(CHAIN)
+
+// Print all pallets that are currently supported
+console.log(SUPPORTED_PALLETS)
+```
+
 ## 💻 Tests
 - Run compilation using `pnpm compile`
 
