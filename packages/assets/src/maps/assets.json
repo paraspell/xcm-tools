@@ -14131,18 +14131,12 @@
         "location": {
           "parents": 2,
           "interior": {
-            "X2": [
+            "X1": [
               {
                 "GlobalConsensus": {
                   "Ethereum": {
                     "chainId": 1
                   }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x0000000000000000000000000000000000000000"
                 }
               }
             ]
