@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - 10.x
 
 name: release-please
 jobs:
@@ -14,6 +15,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          target-branch: ${{ github.ref_name }}
 
   publish_packages:
     needs: release-please
