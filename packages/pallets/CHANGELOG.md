@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/paraspell/xcm-tools/compare/pallets-v11.0.1...pallets-v11.1.0) (2025-08-19)
+
+
+### Features
+
+* **pallets:** Add assets pallet info to pallets.json 🪄 ([66279f1](https://github.com/paraspell/xcm-tools/commit/66279f17765fccfc72b36d4ffd28b4789de88343))
+
 ## [11.0.1](https://github.com/paraspell/xcm-tools/compare/pallets-v11.0.0...pallets-v11.0.1) (2025-08-18)
 
 
