@@ -143,6 +143,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.tx.utility[method](calls)
   }
 
+  callDispatchAsMethod(call: Extrinsic, address: string): Extrinsic {
+    return this.api.tx.utility.dispatchAs(address, call)
+  }
+
   objectToHex(obj: unknown, typeName: string) {
     return Promise.resolve(this.api.createType(typeName, obj).toHex())
   }

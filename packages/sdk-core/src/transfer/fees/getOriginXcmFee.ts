@@ -17,7 +17,8 @@ export const getOriginXcmFee = async <TApi, TRes>({
   senderAddress,
   disableFallback,
   feeAsset,
-  currency
+  currency,
+  useRootOrigin = false
 }: TGetOriginXcmFeeOptions<TApi, TRes>): Promise<
   TXcmFeeDetail & {
     forwardedXcms?: any
@@ -65,7 +66,10 @@ export const getOriginXcmFee = async <TApi, TRes>({
     tx,
     chain: origin,
     address: senderAddress,
-    feeAsset: resolvedFeeAsset
+    asset,
+    feeAsset: resolvedFeeAsset,
+    // Force dryRun pass
+    useRootOrigin
   })
 
   if (!dryRunResult.success) {
@@ -77,26 +81,13 @@ export const getOriginXcmFee = async <TApi, TRes>({
 
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
-    const sufficient = await isSufficientOrigin(
-      api,
-      origin,
-      destination,
-      senderAddress,
-      paddedFee,
-      {
-        ...currency,
-        amount
-      },
-      asset,
-      resolvedFeeAsset
-    )
 
     return {
       fee: paddedFee,
       currency: nativeAssetSymbol,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
-      sufficient
+      sufficient: false
     }
   }
 

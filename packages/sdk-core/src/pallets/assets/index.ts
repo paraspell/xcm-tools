@@ -1,4 +1,5 @@
 export * from './asset-claim'
+export * from './AssetsPallet'
 export * from './balance/getAssetBalance'
 export * from './balance/getBalanceForeign'
 export * from './balance/getBalanceNative'

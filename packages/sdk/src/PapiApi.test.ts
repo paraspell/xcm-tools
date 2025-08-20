@@ -337,6 +337,24 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('callDispatchAsMethod', () => {
+    it('should create a dispatch call with the provided module, method, and parameters', () => {
+      const mockAddress = 'some_address'
+      const mockDispatchMethod = vi.fn().mockReturnValue(mockTransaction)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.tx.Utility = {
+        dispatch_as: mockDispatchMethod
+      }
+
+      const result = papiApi.callDispatchAsMethod(mockTransaction, mockAddress)
+
+      expect(result).toBe(mockTransaction)
+      expect(mockDispatchMethod).toHaveBeenCalledOnce()
+    })
+  })
+
   describe('callBatchMethod', () => {
     it('should call the batch method with the provided calls and BATCH mode', () => {
       const calls = [mockTransaction, mockTransaction]
@@ -857,7 +875,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as TAssetInfo
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -909,7 +928,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'AssetHubPolkadot'
+        chain: 'AssetHubPolkadot',
+        asset: {} as TAssetInfo
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -960,7 +980,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Kusama'
+        chain: 'Kusama',
+        asset: {} as TAssetInfo
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -993,7 +1014,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as TAssetInfo
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1017,7 +1039,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as TAssetInfo
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -1036,7 +1059,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as TAssetInfo
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -1050,7 +1074,8 @@ describe('PapiApi', () => {
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: testAddress,
-          chain: 'Acala'
+          chain: 'Acala',
+          asset: {} as TAssetInfo
         })
       ).rejects.toThrow(ChainNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
@@ -1084,7 +1109,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as TAssetInfo
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1133,6 +1159,7 @@ describe('PapiApi', () => {
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
+        asset: {} as TAssetInfo,
         address: testAddress,
         chain: 'Moonbeam'
       })

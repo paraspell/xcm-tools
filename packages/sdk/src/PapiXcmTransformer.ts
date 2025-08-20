@@ -5,6 +5,7 @@
 
 import { InvalidParameterError } from '@paraspell/sdk-core'
 import { FixedSizeBinary } from 'polkadot-api'
+import { isAddress } from 'viem'
 
 export const checkAndConvertToNumberOrBigInt = (input: string) => {
   if (!/^-?\d+$/.test(input)) {
@@ -165,12 +166,14 @@ export const transform = (obj: any): any => {
           continue
         }
 
-        if ((k === 'dest' || k === 'target') && typeof v === 'string') {
+        if ((k === 'dest' || k === 'who' || k === 'target') && typeof v === 'string') {
           newObj[k] = v
           continue
         }
 
-        if (typeof v === 'string' && v.startsWith('0x')) {
+        if (typeof v === 'string' && isAddress(v)) {
+          newObj[k] = v
+        } else if (typeof v === 'string' && v.startsWith('0x')) {
           newObj[k] = FixedSizeBinary.fromHex(v)
         } else if (typeof v === 'string') {
           newObj[k] = {

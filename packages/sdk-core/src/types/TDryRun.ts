@@ -40,6 +40,11 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
+  /**
+   * Whether to use the root origin
+   */
+  useRootOrigin?: boolean
+  asset: TAssetInfo
   feeAsset?: TAssetInfo
 }
 

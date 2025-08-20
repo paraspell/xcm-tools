@@ -42,6 +42,7 @@ describe('calculateTxFeeDryRun', () => {
       api,
       chain,
       tx,
+      asset: {},
       address,
     });
     expect(result.isEqualTo(expectedFee)).toBe(true);
