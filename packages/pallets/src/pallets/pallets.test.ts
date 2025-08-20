@@ -8,6 +8,8 @@ import { SUPPORTED_PALLETS } from '../constants'
 import { type TPallet } from '../types'
 import {
   getDefaultPallet,
+  getNativeAssetsPallet,
+  getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
   getSupportedPalletsDetails
@@ -84,5 +86,42 @@ describe('getPalletIndex', () => {
       const index = getPalletIndex(chain, 'RelayerXcm')
       expect(index).toBeUndefined()
     })
+  })
+})
+
+describe('getNativeAssetsPallet', () => {
+  it('should return native assets pallet for all chains', () => {
+    SUBSTRATE_CHAINS.forEach(chain => {
+      const pallet = getNativeAssetsPallet(chain)
+      expect(pallet).toBeTypeOf('string')
+      const res = SUPPORTED_PALLETS.includes(pallet)
+      expect(res).toBeTruthy()
+    })
+  })
+
+  it('should return Balances pallet for Acala', () => {
+    const chain: TChain = 'Acala'
+    const nativeAssetsPallet: TPallet = 'Balances'
+    const pallet = getNativeAssetsPallet(chain)
+    expect(pallet).toEqual(nativeAssetsPallet)
+  })
+})
+
+describe('getOtherAssetsPallets', () => {
+  it('should return other assets pallets for all chains', () => {
+    SUBSTRATE_CHAINS.forEach(chain => {
+      const pallets = getOtherAssetsPallets(chain)
+      pallets.forEach(pallet => {
+        const res = SUPPORTED_PALLETS.includes(pallet)
+        expect(res).toBeTruthy()
+      })
+    })
+  })
+
+  it('should return Assets, ForeignAssets pallets for Acala', () => {
+    const chain: TChain = 'Acala'
+    const otherAssetsPallets: TPallet[] = ['Currencies', 'Tokens']
+    const pallets = getOtherAssetsPallets(chain)
+    expect(pallets).toEqual(otherAssetsPallets)
   })
 })
