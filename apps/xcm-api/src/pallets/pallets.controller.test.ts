@@ -83,4 +83,38 @@ describe('PalletsController', () => {
       expect(spy).toHaveBeenCalledWith(chain, pallet);
     });
   });
+
+  describe('getNativeAssetsPallet', () => {
+    it('should return the native-assets pallet for the given chain', async () => {
+      const nativePallet = 'Assets' as TPallet;
+      const spy = vi
+        .spyOn(palletsService, 'getNativeAssetsPallet')
+        .mockResolvedValue(nativePallet);
+
+      const result = await controller.getNativeAssetsPallet(
+        chain,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(nativePallet);
+      expect(spy).toHaveBeenCalledWith(chain);
+    });
+  });
+
+  describe('getOtherAssetsPallets', () => {
+    it('should return the other-assets pallets for the given chain', async () => {
+      const otherPallets = ['ForeignAssets', 'Assets'] as TPallet[];
+      const spy = vi
+        .spyOn(palletsService, 'getOtherAssetsPallets')
+        .mockResolvedValue(otherPallets);
+
+      const result = await controller.getOtherAssetsPallets(
+        chain,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(otherPallets);
+      expect(spy).toHaveBeenCalledWith(chain);
+    });
+  });
 });

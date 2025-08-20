@@ -3,6 +3,8 @@ import { Test } from '@nestjs/testing';
 import type { TChain, TPallet } from '@paraspell/sdk';
 import {
   getDefaultPallet,
+  getNativeAssetsPallet,
+  getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
   SUBSTRATE_CHAINS,
@@ -16,6 +18,8 @@ import { validatePallet } from './utils/index.js';
 
 const mockPallets: TPallet[] = ['OrmlXTokens', 'RelayerXcm'];
 const mockPallet: TPallet = 'PolkadotXcm';
+const mockNativeAssetsPallet: TPallet = 'Assets';
+const mockOtherAssetsPallets: TPallet[] = ['ForeignAssets', 'Assets'];
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -24,6 +28,12 @@ vi.mock('@paraspell/sdk', async () => {
     getDefaultPallet: vi.fn().mockImplementation(() => mockPallet),
     getSupportedPallets: vi.fn().mockImplementation(() => mockPallets),
     getPalletIndex: vi.fn().mockImplementation(() => 0),
+    getNativeAssetsPallet: vi
+      .fn()
+      .mockImplementation(() => mockNativeAssetsPallet),
+    getOtherAssetsPallets: vi
+      .fn()
+      .mockImplementation(() => mockOtherAssetsPallets),
   };
 });
 
@@ -97,6 +107,36 @@ describe('PalletsService', () => {
       expect(validatePallet).toHaveBeenCalledWith(mockPallet);
       expect(getPalletIndex).toHaveBeenCalledWith(mockChain, mockPallet);
       expect(result).toEqual(expectedIndex);
+    });
+  });
+
+  describe('getNativeAssetsPallet', () => {
+    it('should return the native assets pallet as string', () => {
+      const mockChain: TChain = 'Acala';
+
+      const result = service.getNativeAssetsPallet(mockChain);
+
+      expect(validateChainSpy).toHaveBeenCalledWith(
+        mockChain,
+        SUBSTRATE_CHAINS,
+      );
+      expect(getNativeAssetsPallet).toHaveBeenCalledWith(mockChain);
+      expect(result).toEqual(JSON.stringify(mockNativeAssetsPallet));
+    });
+  });
+
+  describe('getOtherAssetsPallets', () => {
+    it('should return other assets pallets array', () => {
+      const mockChain: TChain = 'Acala';
+
+      const result = service.getOtherAssetsPallets(mockChain);
+
+      expect(validateChainSpy).toHaveBeenCalledWith(
+        mockChain,
+        SUBSTRATE_CHAINS,
+      );
+      expect(getOtherAssetsPallets).toHaveBeenCalledWith(mockChain);
+      expect(result).toEqual(mockOtherAssetsPallets);
     });
   });
 });
