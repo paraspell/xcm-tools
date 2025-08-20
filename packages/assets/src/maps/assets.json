@@ -5313,7 +5313,7 @@
         "symbol": "DAI",
         "decimals": 18,
         "existentialDeposit": "1",
-        "assetId": "0x06e605775296e851FF43b4dAa541Bb0984E9D6fD",
+        "assetId": "0x06e605775296e851ff43b4daa541bb0984e9d6fd",
         "location": {
           "parents": 1,
           "interior": {
@@ -5327,7 +5327,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0x06e605775296e851FF43b4dAa541Bb0984E9D6fD"
+                  "key": "0x06e605775296e851ff43b4daa541bb0984e9d6fd"
                 }
               }
             ]
@@ -5338,7 +5338,7 @@
         "symbol": "SOL",
         "decimals": 9,
         "existentialDeposit": "1",
-        "assetId": "0x99Fec54a5Ad36D50A4Bba3a41CAB983a5BB86A7d",
+        "assetId": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d",
         "location": {
           "parents": 1,
           "interior": {
@@ -5352,7 +5352,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0x99Fec54a5Ad36D50A4Bba3a41CAB983a5BB86A7d"
+                  "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
                 }
               }
             ]
@@ -5388,7 +5388,7 @@
         "symbol": "USDC",
         "decimals": 6,
         "existentialDeposit": "1",
-        "assetId": "0x931715FEE2d06333043d11F658C8CE934aC61D0c",
+        "assetId": "0x931715fee2d06333043d11f658c8ce934ac61d0c",
         "location": {
           "parents": 1,
           "interior": {
@@ -5402,7 +5402,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0x931715FEE2d06333043d11F658C8CE934aC61D0c"
+                  "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
                 }
               }
             ]
@@ -5413,7 +5413,7 @@
         "symbol": "USDT",
         "decimals": 6,
         "existentialDeposit": "1",
-        "assetId": "0xc30E9cA94CF52f3Bf5692aaCF81353a27052c46f",
+        "assetId": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f",
         "location": {
           "parents": 1,
           "interior": {
@@ -5427,7 +5427,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0xc30E9cA94CF52f3Bf5692aaCF81353a27052c46f"
+                  "key": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f"
                 }
               }
             ]
@@ -5438,7 +5438,7 @@
         "symbol": "WBTC",
         "decimals": 8,
         "existentialDeposit": "1",
-        "assetId": "0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D",
+        "assetId": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d",
         "location": {
           "parents": 1,
           "interior": {
@@ -5452,7 +5452,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D"
+                  "key": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d"
                 }
               }
             ]
@@ -5463,7 +5463,7 @@
         "symbol": "WETH",
         "decimals": 18,
         "existentialDeposit": "1",
-        "assetId": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD",
+        "assetId": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed",
         "location": {
           "parents": 1,
           "interior": {
@@ -5477,7 +5477,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD"
+                  "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
                 }
               }
             ]

@@ -143,6 +143,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.tx.utility[method](calls)
   }
 
+  callDispatchAsMethod(call: Extrinsic, address: string): Extrinsic {
+    return this.api.tx.utility.dispatchAs(address, call)
+  }
+
   objectToHex(obj: unknown, typeName: string) {
     return Promise.resolve(this.api.createType(typeName, obj).toHex())
   }
@@ -169,6 +173,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     )
 
     return quoted.toJSON() !== null ? BigInt(quoted.toString()) : undefined
+  }
+
+  getEvmStorage(contract: string, slot: string): Promise<string> {
+    return Promise.resolve(this.api.query.evm.accountStorages.key(contract, slot))
   }
 
   async getBalanceNative(address: string) {

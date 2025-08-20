@@ -71,9 +71,7 @@ describe('Moonbeam', () => {
           id: {
             parents: 0,
             interior: {
-              X1: {
-                PalletInstance: 10
-              }
+              X1: [{ PalletInstance: 10 }]
             }
           }
         }

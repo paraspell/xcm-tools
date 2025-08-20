@@ -8,7 +8,10 @@ describe('index.ts re-exports', () => {
   })
 
   it('contains expected exports', () => {
-    expect(rootExports.SUPPORTED_PALLETS).toBeDefined()
+    expect(rootExports.CROSSCHAIN_PALLETS).toBeDefined()
+    expect(rootExports.ASSETS_PALLETS).toBeDefined()
+    expect(rootExports.OTHER_PALLETS).toBeDefined()
+    expect(rootExports.PALLETS).toBeDefined()
     expect(rootExports.getDefaultPallet).toBeDefined()
     expect(rootExports.getPalletIndex).toBeDefined()
     expect(rootExports.getSupportedPallets).toBeDefined()

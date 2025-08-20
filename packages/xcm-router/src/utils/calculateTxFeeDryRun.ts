@@ -1,4 +1,4 @@
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TAssetInfo, TPapiApi, TPapiTransaction, WithAmount } from '@paraspell/sdk';
 import { dryRunOrigin, InvalidParameterError } from '@paraspell/sdk';
 import type { TSubstrateChain } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
@@ -16,6 +16,7 @@ export const calculateTxFeeDryRun = async (
     chain,
     tx,
     address,
+    asset: {} as WithAmount<TAssetInfo>,
   });
 
   if (!result.success) {

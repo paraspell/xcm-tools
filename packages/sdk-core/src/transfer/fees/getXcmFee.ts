@@ -1,364 +1,44 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  findAssetInfoOrThrow,
-  findAssetOnDestOrThrow,
-  getNativeAssetSymbol
-} from '@paraspell/assets'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
+import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
+import { getXcmFeeInternal } from './getXcmFeeInternal'
 
-import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import type {
-  HopProcessParams,
-  TFeeType,
-  TGetXcmFeeOptions,
-  TGetXcmFeeResult,
-  TXcmFeeChain,
-  TXcmFeeDetail,
-  TXcmFeeHopInfo
-} from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
-import { addEthereumBridgeFees, traverseXcmHops } from '../dryRun'
-import { getDestXcmFee } from './getDestXcmFee'
-import { getOriginXcmFee } from './getOriginXcmFee'
-
-export type XcmFeeHopResult = {
-  fee?: bigint
-  feeType?: TFeeType
-  sufficient?: boolean
-  dryRunError?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  forwardedXcms?: any
-  destParaId?: number
-  currency?: string
-}
-
-const getFailureInfo = (
-  chains: Partial<Record<TXcmFeeChain, TXcmFeeDetail>>,
-  hops: TXcmFeeHopInfo[]
-): {
-  failureChain?: TXcmFeeChain
-  failureReason?: string
-} => {
-  // Check standard chains first for backwards compatibility
-  if (chains.origin?.dryRunError)
-    return { failureChain: 'origin', failureReason: chains.origin.dryRunError }
-  if (chains.assetHub?.dryRunError)
-    return { failureChain: 'assetHub', failureReason: chains.assetHub.dryRunError }
-  if (chains.bridgeHub?.dryRunError)
-    return { failureChain: 'bridgeHub', failureReason: chains.bridgeHub.dryRunError }
-  if (chains.destination?.dryRunError)
-    return { failureChain: 'destination', failureReason: chains.destination.dryRunError }
-
-  // Check hops for failures
-  for (const hop of hops) {
-    if (hop.result.dryRunError) {
-      return { failureChain: hop.chain as TXcmFeeChain, failureReason: hop.result.dryRunError }
-    }
-  }
-
-  return {}
-}
-
-export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>({
-  api,
-  tx,
-  origin,
-  destination,
-  senderAddress,
-  address,
-  currency,
-  feeAsset,
-  disableFallback,
-  swapConfig
-}: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>): Promise<
-  TGetXcmFeeResult<TDisableFallback>
-> => {
-  const asset = findAssetInfoOrThrow(origin, currency, destination)
-
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
-
-  const {
-    fee: originFee,
-    currency: originCurrency,
-    feeType: originFeeType,
-    dryRunError: originDryRunError,
-    forwardedXcms: initialForwardedXcm,
-    destParaId: initialDestParaId,
-    weight: originWeight,
-    sufficient: sufficientOriginFee
-  } = await getOriginXcmFee({
-    api,
-    tx,
-    origin,
-    destination,
-    senderAddress,
-    feeAsset,
-    currency,
-    disableFallback
-  })
-
-  api.setDisconnectAllowed(true)
-  await api.disconnect()
-
-  // If origin dry run failed or we only have paymentInfo, handle fallback
-  if (originDryRunError || originFeeType === 'paymentInfo') {
-    const destApi = api.clone()
-
-    try {
-      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-      destApi.setDisconnectAllowed(false)
-
-      const destFeeRes = await getDestXcmFee({
-        api: destApi,
-        forwardedXcms: undefined, // force paymentInfo
-        origin,
-        prevChain: origin,
-        destination,
-        currency: {
-          ...currency,
-          amount
-        },
-        address,
-        asset,
-        originFee: originFee ?? 0n,
-        senderAddress,
-        disableFallback
-      })
-
-      const result = {
-        origin: {
-          ...(originFee && { fee: originFee }),
-          ...(originFeeType && { feeType: originFeeType }),
-          ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
-          currency: originCurrency,
-          ...(originDryRunError && { dryRunError: originDryRunError })
-        } as TXcmFeeDetail,
-        destination: {
-          ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
-          ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
-          ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
-          currency: getNativeAssetSymbol(destination)
-        } as TXcmFeeDetail,
-        hops: []
-      }
-
-      const { failureChain, failureReason } = getFailureInfo(
-        {
-          origin: result.origin,
-          destination: result.destination
-        },
-        []
-      )
-
-      return {
-        ...result,
-        failureChain,
-        failureReason
-      } as TGetXcmFeeResult<TDisableFallback>
-    } finally {
-      destApi.setDisconnectAllowed(true)
-      await destApi.disconnect()
-    }
-  }
-
-  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<XcmFeeHopResult> => {
-    const {
-      api: hopApi,
-      currentChain,
-      currentOrigin,
-      currentAsset,
-      forwardedXcms,
-      hasPassedExchange
-    } = params
-
-    const hopResult = await getDestXcmFee({
-      api: hopApi,
-      forwardedXcms,
-      origin,
-      prevChain: currentOrigin,
-      destination: currentChain,
-      currency: {
-        ...currency,
-        amount
-      },
-      address,
-      senderAddress,
-      asset: currentAsset,
-      feeAsset,
-      originFee: originFee ?? 0n,
-      disableFallback
-    })
-
-    let hopCurrency: string
-    if (
-      hopResult.feeType === 'dryRun' &&
-      !(
-        destination === 'Ethereum' &&
-        (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
-      )
-    ) {
-      if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-        hopCurrency = findAssetOnDestOrThrow(
-          swapConfig.exchangeChain,
-          currentChain,
-          swapConfig.currencyTo
-        ).symbol
-      } else if (destination === currentChain) {
-        hopCurrency = findAssetOnDestOrThrow(origin, currentChain, currency).symbol
-      } else {
-        hopCurrency = asset.symbol
-      }
-    } else {
-      hopCurrency = getNativeAssetSymbol(currentChain)
-    }
-
-    return {
-      ...hopResult,
-      currency: hopCurrency
-    }
-  }
-
-  const traversalResult = await traverseXcmHops({
-    api,
-    origin,
-    destination,
-    currency,
-    initialForwardedXcms: initialForwardedXcm,
-    initialDestParaId,
-    swapConfig,
-    processHop,
-    shouldContinue: hopResult => !hopResult.dryRunError,
-    extractNextHopData: hopResult => ({
-      forwardedXcms: hopResult.forwardedXcms,
-      destParaId: hopResult.destParaId
-    })
-  })
-
-  // Handle case where we failed before reaching destination
-  let destFee: bigint | undefined = 0n
-  let destCurrency: string | undefined
-  let destFeeType: TFeeType | undefined =
-    destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
-  let destDryRunError: string | undefined
-  let destSufficient: boolean | undefined = undefined
-
-  if (traversalResult.destination) {
-    const destResult = traversalResult.destination
-    destFee = destResult.fee
-    destFeeType = destResult.feeType
-    destDryRunError = destResult.dryRunError
-    destSufficient = destResult.sufficient
-    destCurrency = destResult.currency
-  } else if (
-    traversalResult.hops.length > 0 &&
-    traversalResult.hops[traversalResult.hops.length - 1].result.dryRunError
-  ) {
-    // We failed before reaching destination, use fallback
-    const destApi = api.clone()
-
-    if (destination !== 'Ethereum') {
-      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-    }
-
-    const destFallback = await getDestXcmFee({
-      api: destApi,
-      forwardedXcms: undefined,
-      origin,
-      prevChain: traversalResult.lastProcessedChain || origin,
-      destination,
-      currency: {
-        ...currency,
-        amount
-      },
-      address,
-      asset,
-      originFee: originFee ?? 0n,
-      senderAddress,
-      disableFallback
-    })
-
-    destFee = destFallback.fee
-    destFeeType = destFallback.feeType
-    destSufficient = destFallback.sufficient
-    destCurrency = getNativeAssetSymbol(destination)
-  } else {
-    destFee = 0n
-    destFeeType = 'noFeeRequired'
-    destSufficient = true
-    destCurrency = getNativeAssetSymbol(destination)
-  }
-
-  // Process Ethereum bridge fees
-  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
-  const processedBridgeHub = await addEthereumBridgeFees(
-    api,
-    traversalResult.bridgeHub,
-    destination,
-    assetHubChain
-  )
-
-  // Update bridge hub fee in hops if needed
-  if (
-    processedBridgeHub &&
-    traversalResult.bridgeHub &&
-    processedBridgeHub.fee !== traversalResult.bridgeHub.fee
-  ) {
-    const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-    const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
-    if (bridgeHubHopIndex !== -1) {
-      traversalResult.hops[bridgeHubHopIndex].result = {
-        ...traversalResult.hops[bridgeHubHopIndex].result,
-        fee: processedBridgeHub.fee
-      }
-    }
-  }
-
-  const convertToFeeDetail = (result: XcmFeeHopResult): TXcmFeeDetail =>
-    ({
-      ...(result.fee !== undefined && { fee: result.fee }),
-      ...(result.feeType && { feeType: result.feeType }),
-      ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
-      currency: result.currency,
-      ...(result.dryRunError && { dryRunError: result.dryRunError })
-    }) as TXcmFeeDetail
-
-  const result: TGetXcmFeeResult = {
-    origin: {
-      ...(originWeight && { weight: originWeight }),
-      ...(originFee && { fee: originFee }),
-      ...(originFeeType && { feeType: originFeeType }),
-      ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
-      currency: originCurrency,
-      ...(originDryRunError && { dryRunError: originDryRunError })
-    } as TXcmFeeDetail,
-    ...(traversalResult.assetHub && { assetHub: convertToFeeDetail(traversalResult.assetHub) }),
-    ...(processedBridgeHub && { bridgeHub: convertToFeeDetail(processedBridgeHub) }),
-    destination: {
-      ...(destFee !== undefined && { fee: destFee }),
-      ...(destFeeType && { feeType: destFeeType }),
-      sufficient: destSufficient,
-      currency: destCurrency,
-      ...(destDryRunError && { dryRunError: destDryRunError })
-    } as TXcmFeeDetail,
-    hops: traversalResult.hops.map(hop => ({
-      chain: hop.chain,
-      result: convertToFeeDetail(hop.result)
-    }))
-  }
-
-  const { failureChain, failureReason } = getFailureInfo(
-    {
-      origin: result.origin,
-      assetHub: result.assetHub,
-      bridgeHub: result.bridgeHub,
-      destination: result.destination
-    },
-    result.hops
-  )
+export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
+  options: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>
+): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+  const forced = await getXcmFeeInternal(options, true)
+  const real = await getXcmFeeInternal(options, false)
 
   return {
-    ...result,
-    failureChain,
-    failureReason
-  } as TGetXcmFeeResult<TDisableFallback>
+    ...forced,
+    origin: {
+      ...forced.origin,
+      sufficient: real.origin.sufficient
+    },
+    destination: {
+      ...forced.destination,
+      sufficient: real.destination.sufficient
+    },
+    ...(forced.assetHub
+      ? {
+          assetHub: {
+            ...forced.assetHub,
+            sufficient: real.assetHub?.sufficient
+          }
+        }
+      : {}),
+    ...(forced.bridgeHub
+      ? {
+          bridgeHub: {
+            ...forced.bridgeHub,
+            sufficient: real.bridgeHub?.sufficient
+          }
+        }
+      : {}),
+    hops: forced.hops.map((hop, index) => ({
+      ...hop,
+      result: {
+        ...hop.result,
+        sufficient: real.hops[index]?.result.sufficient
+      }
+    }))
+  }
 }

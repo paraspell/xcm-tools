@@ -23897,7 +23897,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
         {
           "fun": {
             "type": "Fungible",
-            "value": 5894958000n,
+            "value": 4333158000n,
           },
           "id": {
             "interior": {
@@ -23995,7 +23995,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                 {
                   "fun": {
                     "type": "Fungible",
-                    "value": 3739158000n,
+                    "value": 2177358000n,
                   },
                   "id": {
                     "interior": {
@@ -28823,12 +28823,8 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           },
           "id": {
             "interior": {
-              "type": "X3",
+              "type": "X2",
               "value": [
-                {
-                  "type": "Parachain",
-                  "value": 2004,
-                },
                 {
                   "type": "PalletInstance",
                   "value": 110,
@@ -28848,7 +28844,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                 },
               ],
             },
-            "parents": 1,
+            "parents": 0,
           },
         },
       ],
@@ -29135,7 +29131,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "interior": {
@@ -29399,7 +29395,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "interior": {
@@ -29666,7 +29662,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "interior": {
@@ -30078,12 +30074,8 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           },
           "id": {
             "interior": {
-              "type": "X3",
+              "type": "X2",
               "value": [
-                {
-                  "type": "Parachain",
-                  "value": 2004,
-                },
                 {
                   "type": "PalletInstance",
                   "value": 110,
@@ -30103,7 +30095,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                 },
               ],
             },
-            "parents": 1,
+            "parents": 0,
           },
         },
       ],
@@ -30252,7 +30244,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "interior": {
@@ -30879,7 +30871,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "interior": {
@@ -31288,7 +31280,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 994126600000n,
+                      "value": 995688400000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -33009,8 +33001,8 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
   "module": "PolkadotXcm",
   "parameters": {
     "max_weight": {
-      "proof_size": 196608n,
-      "ref_time": 3080024000n,
+      "proof_size": 18446744073709551615n,
+      "ref_time": 18446744073709551615n,
     },
     "message": {
       "type": "V5",
@@ -33038,7 +33030,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
             "fees": {
               "fun": {
                 "type": "Fungible",
-                "value": 4583808214404241675n,
+                "value": 4660227600000000000n,
               },
               "id": {
                 "interior": {
@@ -33079,7 +33071,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 4583808214404241675n,
+                      "value": 4660227600000000000n,
                     },
                     "id": {
                       "interior": {

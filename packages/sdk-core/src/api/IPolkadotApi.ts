@@ -22,6 +22,7 @@ export interface IPolkadotApi<TApi, TRes> {
   accountToUint8a(address: string): Uint8Array
   callTxMethod(serializedCall: TSerializedApiCall): TRes
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes
+  callDispatchAsMethod(call: TRes, address: string): TRes
   objectToHex(obj: unknown, typeName: string): Promise<string>
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
@@ -42,6 +43,7 @@ export interface IPolkadotApi<TApi, TRes> {
     asset: TAssetInfo,
     transformXcm: boolean
   ): Promise<bigint>
+  getEvmStorage(contract: string, slot: string): Promise<string>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>

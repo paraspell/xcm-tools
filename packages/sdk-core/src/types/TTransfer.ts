@@ -204,7 +204,7 @@ export type TRelayToParaOverrides = {
 export type TRelayToParaOptions<TApi, TRes> = WithApi<TRelayToParaBaseOptions, TApi, TRes>
 
 export type TSerializedApiCall = {
-  module: TPallet | 'Utility'
+  module: TPallet
   method: string
   parameters: Record<string, unknown>
 }

@@ -4,7 +4,7 @@ import type { TChain } from '@paraspell/sdk-common'
 import { SUBSTRATE_CHAINS } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { SUPPORTED_PALLETS } from '../constants'
+import { ASSETS_PALLETS, PALLETS } from '../constants'
 import { type TPallet } from '../types'
 import {
   getDefaultPallet,
@@ -20,7 +20,7 @@ describe('getDefaultPallet', () => {
     SUBSTRATE_CHAINS.forEach(chain => {
       const pallet = getDefaultPallet(chain)
       expect(pallet).toBeTypeOf('string')
-      const res = SUPPORTED_PALLETS.includes(pallet)
+      const res = PALLETS.includes(pallet)
       expect(res).toBeTruthy()
     })
   })
@@ -38,7 +38,7 @@ describe('getSupportedPallets', () => {
     SUBSTRATE_CHAINS.forEach(chain => {
       const pallets = getSupportedPallets(chain)
       pallets.forEach(pallet => {
-        const res = SUPPORTED_PALLETS.includes(pallet)
+        const res = PALLETS.includes(pallet)
         expect(res).toBeTruthy()
       })
     })
@@ -46,13 +46,7 @@ describe('getSupportedPallets', () => {
 
   it('should return PolkadotXcm, Xtokens pallets for Acala', () => {
     const chain: TChain = 'Acala'
-    const supportedPallets: TPallet[] = [
-      'Balances',
-      'Tokens',
-      'Currencies',
-      'PolkadotXcm',
-      'XTokens'
-    ]
+    const supportedPallets: TPallet[] = ['Balances', 'Currencies', 'PolkadotXcm', 'XTokens']
     const pallets = getSupportedPallets(chain)
     expect(pallets).toEqual(supportedPallets)
   })
@@ -63,7 +57,7 @@ describe('getSupportedPalletsDetails', () => {
     SUBSTRATE_CHAINS.forEach(chain => {
       const pallets = getSupportedPalletsDetails(chain)
       pallets.forEach(pallet => {
-        const res = SUPPORTED_PALLETS.includes(pallet.name)
+        const res = PALLETS.includes(pallet.name)
         expect(pallet.index).toBeTypeOf('number')
         expect(res).toBeTruthy()
       })
@@ -80,13 +74,6 @@ describe('getPalletIndex', () => {
       })
     })
   })
-
-  it('should return undefined for unsupported pallets', () => {
-    SUBSTRATE_CHAINS.forEach(chain => {
-      const index = getPalletIndex(chain, 'RelayerXcm')
-      expect(index).toBeUndefined()
-    })
-  })
 })
 
 describe('getNativeAssetsPallet', () => {
@@ -94,7 +81,7 @@ describe('getNativeAssetsPallet', () => {
     SUBSTRATE_CHAINS.forEach(chain => {
       const pallet = getNativeAssetsPallet(chain)
       expect(pallet).toBeTypeOf('string')
-      const res = SUPPORTED_PALLETS.includes(pallet)
+      const res = ASSETS_PALLETS.includes(pallet)
       expect(res).toBeTruthy()
     })
   })
@@ -112,7 +99,7 @@ describe('getOtherAssetsPallets', () => {
     SUBSTRATE_CHAINS.forEach(chain => {
       const pallets = getOtherAssetsPallets(chain)
       pallets.forEach(pallet => {
-        const res = SUPPORTED_PALLETS.includes(pallet)
+        const res = ASSETS_PALLETS.includes(pallet)
         expect(res).toBeTruthy()
       })
     })
@@ -120,7 +107,7 @@ describe('getOtherAssetsPallets', () => {
 
   it('should return Assets, ForeignAssets pallets for Acala', () => {
     const chain: TChain = 'Acala'
-    const otherAssetsPallets: TPallet[] = ['Currencies', 'Tokens']
+    const otherAssetsPallets: TPallet[] = ['Currencies']
     const pallets = getOtherAssetsPallets(chain)
     expect(pallets).toEqual(otherAssetsPallets)
   })

@@ -9,13 +9,13 @@ import { moonbeam, moonriver } from 'viem/chains'
 import { Parents } from '@paraspell/sdk-common'
 
 const moonbeamWhAssets = [
-  { assetId: '0x06e605775296e851FF43b4dAa541Bb0984E9D6fD', symbol: 'DAI', decimals: 18 },
-  { assetId: '0x99Fec54a5Ad36D50A4Bba3a41CAB983a5BB86A7d', symbol: 'SOL', decimals: 9 },
+  { assetId: '0x06e605775296e851ff43b4daa541bb0984e9d6fd', symbol: 'DAI', decimals: 18 },
+  { assetId: '0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d', symbol: 'SOL', decimals: 9 },
   { assetId: '0xda430218862d3db25de9f61458645dde49a9e9c1', symbol: 'sUSDS', decimals: 18 },
-  { assetId: '0x931715FEE2d06333043d11F658C8CE934aC61D0c', symbol: 'USDC', decimals: 6 },
-  { assetId: '0xc30E9cA94CF52f3Bf5692aaCF81353a27052c46f', symbol: 'USDT', decimals: 6 },
-  { assetId: '0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D', symbol: 'WBTC', decimals: 8 },
-  { assetId: '0xab3f0245B83feB11d15AAffeFD7AD465a59817eD', symbol: 'WETH', decimals: 18 }
+  { assetId: '0x931715fee2d06333043d11f658c8ce934ac61d0c', symbol: 'USDC', decimals: 6 },
+  { assetId: '0xc30e9ca94cf52f3bf5692aacf81353a27052c46f', symbol: 'USDT', decimals: 6 },
+  { assetId: '0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d', symbol: 'WBTC', decimals: 8 },
+  { assetId: '0xab3f0245b83feb11d15aaffefd7ad465a59817ed', symbol: 'WETH', decimals: 18 }
 ]
 
 const ERC20_ABI = [

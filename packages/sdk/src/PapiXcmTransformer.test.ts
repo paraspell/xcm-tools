@@ -1,3 +1,4 @@
+import { Binary } from 'polkadot-api'
 import { describe, expect, it, vi } from 'vitest'
 
 import { checkAndConvertToNumberOrBigInt, transform } from './PapiXcmTransformer'
@@ -5,6 +6,9 @@ import { checkAndConvertToNumberOrBigInt, transform } from './PapiXcmTransformer
 vi.mock('polkadot-api', () => ({
   FixedSizeBinary: {
     fromHex: vi.fn((hex: string) => `FixedSizeBinary(${hex})`)
+  },
+  Binary: {
+    fromHex: vi.fn((hex: string) => `Binary(${hex})`)
   }
 }))
 
@@ -12,6 +16,22 @@ describe('checkAndConvertToNumberOrBigInt', () => {
   it('should convert valid integer strings to numbers within safe range', () => {
     expect(checkAndConvertToNumberOrBigInt('42')).toBe(42)
     expect(checkAndConvertToNumberOrBigInt('-100')).toBe(-100)
+  })
+
+  it('should transform items array of hex string arrays using Binary.fromHex', () => {
+    const input = {
+      items: [['0xdead', '0xbeef'], ['0x00']]
+    }
+
+    const expected = {
+      items: [['Binary(0xdead)', 'Binary(0xbeef)'], ['Binary(0x00)']]
+    }
+
+    const spy = vi.spyOn(Binary, 'fromHex')
+
+    expect(transform(input)).toEqual(expected)
+
+    expect(spy).toHaveBeenCalledTimes(3)
   })
 
   it('should convert large integers to BigInt', () => {

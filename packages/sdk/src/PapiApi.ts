@@ -44,7 +44,9 @@ import {
   Native,
   padFeeBy,
   Parents,
-  Version
+  replaceBigInt,
+  Version,
+  wrapTxBypass
 } from '@paraspell/sdk-core'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
@@ -229,6 +231,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .tx.Utility[method]({ calls: calls.map(call => call.decodedCall) })
   }
 
+  callDispatchAsMethod(call: TPapiTransaction, address: string) {
+    const origin = {
+      type: 'system',
+      value: {
+        type: 'Signed',
+        value: address
+      }
+    }
+    return this.api
+      .getUnsafeApi()
+      .tx.Utility.dispatch_as({ as_origin: origin, call: call.decodedCall })
+  }
+
   async objectToHex(obj: unknown) {
     const transformedObj = transform(obj)
 
@@ -285,6 +300,15 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       )
 
     return response ? BigInt(response) : undefined
+  }
+
+  getEvmStorage(contract: string, slot: string): Promise<string> {
+    return this.api
+      .getUnsafeApi()
+      .query.EVM.AccountStorages.getKey(
+        FixedSizeBinary.fromHex(contract),
+        FixedSizeBinary.fromHex(slot)
+      )
   }
 
   async getBalanceNative(address: string) {
@@ -410,7 +434,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     tx,
     address,
     chain,
-    feeAsset
+    asset,
+    feeAsset,
+    useRootOrigin = false
   }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunChainResultInternal> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
@@ -422,14 +448,22 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const basePayload = {
       type: 'system',
-      value: {
-        type: 'Signed',
-        value: address
-      }
+      value: useRootOrigin
+        ? {
+            type: 'Root'
+          }
+        : {
+            type: 'Signed',
+            value: address
+          }
     }
 
+    const resolvedTx = useRootOrigin
+      ? await wrapTxBypass(this, chain, asset, feeAsset, address, tx)
+      : tx
+
     const performDryRunCall = async (includeVersion: boolean): Promise<any> => {
-      const callArgs: any[] = [basePayload, tx.decodedCall]
+      const callArgs: any[] = [basePayload, resolvedTx.decodedCall]
       if (includeVersion) {
         callArgs.push(DEFAULT_XCM_VERSION)
       }
@@ -454,7 +488,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       if (result?.value?.type) {
         return String(result.value.type)
       }
-      return JSON.stringify(result?.value ?? result ?? 'Unknown error structure')
+      return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
     }
 
     let result
@@ -500,7 +534,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
+    const executionFee = await this.calculateTransactionFee(resolvedTx, address)
 
     const nativeAsset = findAssetInfo(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
 
