@@ -2,7 +2,8 @@ import type {
   TAssetInfo,
   TCurrencyCore,
   TCurrencyInput,
-  TCurrencyInputWithAmount
+  TCurrencyInputWithAmount,
+  WithAmount
 } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
@@ -40,6 +41,11 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
+  /**
+   * Whether to use the root origin
+   */
+  useRootOrigin?: boolean
+  asset: WithAmount<TAssetInfo>
   feeAsset?: TAssetInfo
 }
 

@@ -1,4 +1,9 @@
-import type { TAssetInfo, TChainAssetsInfo, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
+import type {
+  TAssetInfo,
+  TChainAssetsInfo,
+  TDryRunXcmBaseOptions,
+  WithAmount
+} from '@paraspell/sdk-core'
 import {
   BatchMode,
   ChainNotSupportedError,
@@ -37,18 +42,7 @@ vi.mock('polkadot-api/polkadot-sdk-compat', () => ({
   withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider)
 }))
 
-vi.mock('polkadot-api', () => ({
-  createClient: vi.fn(),
-  FixedSizeBinary: {
-    fromAccountId32: vi.fn()
-  },
-  Binary: {
-    fromHex: vi.fn(),
-    fromText: vi.fn()
-  },
-  AccountId: vi.fn(),
-  getSs58AddressInfo: vi.fn()
-}))
+vi.mock('polkadot-api')
 
 vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
@@ -134,6 +128,11 @@ describe('PapiApi', () => {
           }
         },
         query: {
+          EVM: {
+            AccountStorages: {
+              getValue: vi.fn()
+            }
+          },
           EthereumOutboundQueue: {
             OperatingMode: {
               getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
@@ -337,6 +336,24 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('callDispatchAsMethod', () => {
+    it('should create a dispatch call with the provided module, method, and parameters', () => {
+      const mockAddress = 'some_address'
+      const mockDispatchMethod = vi.fn().mockReturnValue(mockTransaction)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.tx.Utility = {
+        dispatch_as: mockDispatchMethod
+      }
+
+      const result = papiApi.callDispatchAsMethod(mockTransaction, mockAddress)
+
+      expect(result).toBe(mockTransaction)
+      expect(mockDispatchMethod).toHaveBeenCalledOnce()
+    })
+  })
+
   describe('callBatchMethod', () => {
     it('should call the batch method with the provided calls and BATCH mode', () => {
       const calls = [mockTransaction, mockTransaction]
@@ -376,6 +393,26 @@ describe('PapiApi', () => {
       const fee = await papiApi.calculateTransactionFee(mockTransaction, 'some_address')
       expect(mockTransaction.getEstimatedFees).toHaveBeenCalledWith('some_address')
       expect(fee).toBe(1000n)
+    })
+  })
+
+  describe('getEvmStorage', () => {
+    it('should return the EVM storage as bigint', async () => {
+      vi.spyOn(FixedSizeBinary, 'fromHex').mockImplementation(
+        (x: string) => x as unknown as FixedSizeBinary<32>
+      )
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.query.EVM.AccountStorages.getKey = vi.fn().mockResolvedValue(3000n)
+
+      const storage = await papiApi.getEvmStorage('some_address', 'some_slot')
+
+      expect(unsafeApi.query.EVM.AccountStorages.getKey).toHaveBeenCalledWith(
+        'some_address',
+        'some_slot'
+      )
+      expect(storage).toBe(3000n)
     })
   })
 
@@ -857,7 +894,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -909,7 +947,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'AssetHubPolkadot'
+        chain: 'AssetHubPolkadot',
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -960,7 +999,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Kusama'
+        chain: 'Kusama',
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -993,7 +1033,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1017,7 +1058,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as WithAmount<TAssetInfo>
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -1036,7 +1078,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as WithAmount<TAssetInfo>
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -1050,7 +1093,8 @@ describe('PapiApi', () => {
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: testAddress,
-          chain: 'Acala'
+          chain: 'Acala',
+          asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow(ChainNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
@@ -1084,7 +1128,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1133,6 +1178,7 @@ describe('PapiApi', () => {
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
+        asset: {} as WithAmount<TAssetInfo>,
         address: testAddress,
         chain: 'Moonbeam'
       })

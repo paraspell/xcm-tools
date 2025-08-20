@@ -68,6 +68,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   currency: WithComplexAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
+  useRootOrigin?: boolean
 }
 
 export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
@@ -140,6 +141,16 @@ export type TXcmFeeDetail =
       sufficient?: boolean
       dryRunError: string
     }
+
+export type TXcmFeeHopResult = {
+  fee?: bigint
+  feeType?: TFeeType
+  sufficient?: boolean
+  dryRunError?: string
+  forwardedXcms?: any
+  destParaId?: number
+  currency?: string
+}
 
 export type TConditionalXcmFeeDetail<TDisableFallback extends boolean> =
   TDisableFallback extends false ? TXcmFeeDetailWithFallback : TXcmFeeDetail

@@ -87,7 +87,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     return {
       fee,
       feeType: 'paymentInfo',
-      sufficient
+      sufficient: !hasDryRunSupport(destination) ? sufficient : false
     } as TDestXcmFeeDetail<TDisableFallback>
   }
 
@@ -111,20 +111,11 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
 
     const fee = await calcPaymentInfoFee()
 
-    const sufficient = await isSufficientDestination(
-      api,
-      destination,
-      address,
-      BigInt(currency.amount),
-      asset,
-      fee
-    )
-
     return {
       fee,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
-      sufficient
+      sufficient: false
     } as TDestXcmFeeDetail<TDisableFallback>
   }
 

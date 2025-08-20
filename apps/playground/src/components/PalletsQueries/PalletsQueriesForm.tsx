@@ -1,7 +1,7 @@
 import { Button, Paper, Select, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TSubstrateChain } from '@paraspell/sdk';
-import { SUBSTRATE_CHAINS, SUPPORTED_PALLETS } from '@paraspell/sdk';
+import { PALLETS, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
@@ -67,7 +67,7 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             <Select
               label="Pallet"
               placeholder="Pick value"
-              data={SUPPORTED_PALLETS}
+              data={PALLETS}
               searchable
               required
               allowDeselect={false}

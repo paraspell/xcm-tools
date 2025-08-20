@@ -14,7 +14,7 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, assertHasLocation } from '../../utils'
+import { assertHasId, assertHasLocation, localizeLocation } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import Parachain from '../Parachain'
 
@@ -64,7 +64,7 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     return transferPolkadotXcm(
       {
         ...input,
-        asset: createAsset(version, assetInfo.amount, location)
+        asset: createAsset(version, assetInfo.amount, localizeLocation(this.chain, location))
       },
       'transfer_assets',
       'Unlimited'

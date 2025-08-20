@@ -1,6 +1,7 @@
 import { hasDryRunSupport } from '@paraspell/assets'
 
-import { getOriginXcmFee, padFeeBy } from '../../transfer'
+import { padFeeBy } from '../../transfer'
+import { getOriginXcmFeeInternal } from '../../transfer'
 import type { TAttemptDryRunFeeOptions, TXcmFeeDetail } from '../../types'
 
 export const attemptDryRunFee = async <TApi, TRes>(
@@ -18,7 +19,7 @@ export const attemptDryRunFee = async <TApi, TRes>(
       amount: padFeeBy(BigInt(currency.amount), -percentage)
     })
 
-    result = await getOriginXcmFee({
+    result = await getOriginXcmFeeInternal({
       ...options,
       tx: await modifiedBuilder.build()
     })

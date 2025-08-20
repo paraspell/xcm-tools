@@ -1,4 +1,4 @@
-import type { TAssetInfo, TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
+import type { TAssetInfo, TDryRunXcmBaseOptions, WithAmount } from '@paraspell/sdk-core'
 import {
   BatchMode,
   ChainNotSupportedError,
@@ -72,10 +72,16 @@ describe('PolkadotJsApi', () => {
         },
         utility: {
           batch: vi.fn().mockReturnValue('mocked_utility_extrinsic'),
-          batchAll: vi.fn().mockReturnValue('mocked_utility_extrinsic')
+          batchAll: vi.fn().mockReturnValue('mocked_utility_extrinsic'),
+          dispatchAs: vi.fn().mockReturnValue('mocked_utility_extrinsic')
         }
       },
       query: {
+        evm: {
+          accountStorages: {
+            key: vi.fn().mockResolvedValue('0x1234567890abcdef')
+          }
+        },
         ethereumOutboundQueue: {
           operatingMode: vi.fn().mockResolvedValue({ toPrimitive: () => 'Normal' })
         },
@@ -239,6 +245,18 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('callDispatchAsMethod', () => {
+    it('should create a dispatchAs extrinsic with the provided inner and address', () => {
+      const tx = '' as unknown as Extrinsic
+      const address = 'recipient_address'
+
+      const result = polkadotApi.callDispatchAsMethod(tx, address)
+
+      expect(mockApiPromise.tx.utility.dispatchAs).toHaveBeenCalledWith(address, tx)
+      expect(result).toBe('mocked_utility_extrinsic')
+    })
+  })
+
   describe('callBatchMethod', () => {
     it('should create a batch extrinsic with the provided calls and BATCH mode', () => {
       const calls = ['call1', 'call2'] as unknown as Extrinsic[]
@@ -274,6 +292,18 @@ describe('PolkadotJsApi', () => {
 
       expect(spy).toHaveBeenCalledWith(address)
       expect(fee).toBe(1000n)
+    })
+  })
+
+  describe('getEvmStorage', () => {
+    it('should return the EVM storage value as bigint', async () => {
+      const address = 'some_address'
+      const key = 'some_key'
+
+      const result = await polkadotApi.getEvmStorage(address, key)
+
+      expect(mockApiPromise.query.evm.accountStorages.key).toHaveBeenCalledWith(address, key)
+      expect(result).toBe('0x1234567890abcdef')
     })
   })
 
@@ -941,7 +971,8 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        chain
+        chain,
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -990,7 +1021,8 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        chain
+        chain,
+        asset: {} as WithAmount<TAssetInfo>
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -1012,7 +1044,8 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
-          chain: 'Acala'
+          chain: 'Acala',
+          asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow(ChainNotSupportedError)
     })

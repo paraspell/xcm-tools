@@ -8,7 +8,7 @@ describe('Module Exports', () => {
     expect(sdk.RELAYCHAINS).toBeDefined()
     expect(sdk.EXTERNAL_CHAINS).toBeDefined()
     expect(sdk.CHAINS).toBeDefined()
-    expect(sdk.SUPPORTED_PALLETS).toBeDefined()
+    expect(sdk.PALLETS).toBeDefined()
     expect(sdk.TX_CLIENT_TIMEOUT_MS).toBeDefined()
     expect(sdk.DRY_RUN_CLIENT_TIMEOUT_MS).toBeDefined()
   })

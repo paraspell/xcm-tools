@@ -1,6 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TChain, TPallet } from '@paraspell/sdk';
+import type { TAssetsPallet, TChain, TPallet } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -36,7 +36,7 @@ describe('PalletsController', () => {
 
   describe('getDefaultPallet', () => {
     it('should return the default pallet for the given chain', async () => {
-      const defaultPallet: TPallet = 'OrmlXTokens';
+      const defaultPallet: TPallet = 'XTokens';
       const spy = vi
         .spyOn(palletsService, 'getDefaultPallet')
         .mockResolvedValue(defaultPallet);
@@ -53,7 +53,7 @@ describe('PalletsController', () => {
 
   describe('getPallets', () => {
     it('should return the list of pallets for the given chain', async () => {
-      const pallets: TPallet[] = ['OrmlXTokens', 'PolkadotXcm'];
+      const pallets: TPallet[] = ['XTokens', 'PolkadotXcm'];
       const spy = vi
         .spyOn(palletsService, 'getPallets')
         .mockResolvedValue(pallets);
@@ -103,7 +103,7 @@ describe('PalletsController', () => {
 
   describe('getOtherAssetsPallets', () => {
     it('should return the other-assets pallets for the given chain', async () => {
-      const otherPallets = ['ForeignAssets', 'Assets'] as TPallet[];
+      const otherPallets: TAssetsPallet[] = ['ForeignAssets', 'Assets'];
       const spy = vi
         .spyOn(palletsService, 'getOtherAssetsPallets')
         .mockResolvedValue(otherPallets);

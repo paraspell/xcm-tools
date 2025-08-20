@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { GeneralBuilder } from '../../builder'
-import { getOriginXcmFee, padFeeBy } from '../../transfer'
+import { getOriginXcmFeeInternal, padFeeBy } from '../../transfer'
 import type { TAttemptDryRunFeeOptions, TSendBaseOptions, TXcmFeeDetail } from '../../types'
 import { attemptDryRunFee } from './attemptDryRunFee'
 
@@ -32,7 +32,7 @@ describe('attemptDryRunFee', () => {
 
   const setupMocks = (results: string[]) => {
     results.forEach(type => {
-      vi.mocked(getOriginXcmFee).mockResolvedValueOnce(mockFeeResult(type))
+      vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(mockFeeResult(type))
     })
   }
 
@@ -52,7 +52,7 @@ describe('attemptDryRunFee', () => {
     const result = await attemptDryRunFee(mockOptions)
 
     expect(result.feeType).toBe('dryRun')
-    expect(getOriginXcmFee).toHaveBeenCalledTimes(1)
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledTimes(1)
     expect(padFeeBy).toHaveBeenCalledWith(BigInt(1000), -0)
     expect(mockBuilder.currency).toHaveBeenCalledWith({
       amount: 1000n
@@ -72,7 +72,7 @@ describe('attemptDryRunFee', () => {
     const result = await attemptDryRunFee(mockOptions)
 
     expect(result.feeType).toBe('dryRun')
-    expect(getOriginXcmFee).toHaveBeenCalledTimes(attempt)
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledTimes(attempt)
     expect(padFeeBy).toHaveBeenLastCalledWith(BigInt(1000), -percentage)
     expect(mockBuilder.build).toHaveBeenCalledTimes(attempt)
   })
@@ -84,7 +84,7 @@ describe('attemptDryRunFee', () => {
     const result = await attemptDryRunFee(mockOptions)
 
     expect(result.feeType).toBe('paymentInfo')
-    expect(getOriginXcmFee).toHaveBeenCalledTimes(6)
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledTimes(6)
     expect(padFeeBy).toHaveBeenNthCalledWith(1, BigInt(1000), -0)
     expect(padFeeBy).toHaveBeenNthCalledWith(6, BigInt(1000), -50)
     expect(mockBuilder.build).toHaveBeenCalledTimes(6)
@@ -95,7 +95,7 @@ describe('attemptDryRunFee', () => {
 
     await attemptDryRunFee(mockOptions)
 
-    expect(getOriginXcmFee).toHaveBeenCalledWith({
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledWith({
       api: mockOptions.api,
       currency: mockOptions.currency,
       origin: mockOptions.origin,

@@ -66,6 +66,10 @@ export const dryRunInternal = async <TApi, TRes>(
     tx,
     chain: origin,
     address: senderAddress,
+    asset: {
+      ...asset,
+      amount
+    },
     feeAsset: resolvedFeeAsset
   })
 

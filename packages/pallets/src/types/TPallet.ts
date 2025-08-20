@@ -1,8 +1,10 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { SUPPORTED_PALLETS } from '../constants'
+import type { ASSETS_PALLETS, PALLETS } from '../constants'
 
-export type TPallet = (typeof SUPPORTED_PALLETS)[number]
+export type TPallet = (typeof PALLETS)[number]
+export type TAssetsPallet = (typeof ASSETS_PALLETS)[number]
+
 export type TPalletDetails = {
   name: TPallet
   index: number
@@ -10,7 +12,7 @@ export type TPalletDetails = {
 export interface TPalletMap {
   defaultPallet: TPallet
   supportedPallets: TPalletDetails[]
-  nativeAssets: TPallet
-  otherAssets: TPallet[]
+  nativeAssets: TAssetsPallet
+  otherAssets: TAssetsPallet[]
 }
 export type TPalletJsonMap = Record<TSubstrateChain, TPalletMap>

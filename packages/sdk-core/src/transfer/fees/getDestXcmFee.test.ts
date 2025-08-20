@@ -9,11 +9,7 @@ import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
 
-vi.mock('@paraspell/assets', () => ({
-  hasDryRunSupport: vi.fn(),
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  findAssetInfoOrThrow: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
 vi.mock('./getReverseTxFee', () => ({
   getReverseTxFee: vi.fn()
@@ -206,7 +202,7 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       dryRunError: 'fail',
-      sufficient: true
+      sufficient: false
     })
   })
 

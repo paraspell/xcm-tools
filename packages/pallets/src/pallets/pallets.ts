@@ -3,7 +3,7 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import * as palletsMapJson from '../maps/pallets.json' with { type: 'json' }
-import type { TPalletDetails } from '../types'
+import type { TAssetsPallet, TPalletDetails } from '../types'
 import { type TPallet, type TPalletJsonMap } from '../types'
 
 const palletsMap = palletsMapJson as TPalletJsonMap
@@ -31,8 +31,8 @@ export const getSupportedPalletsDetails = (chain: TSubstrateChain): TPalletDetai
 export const getPalletIndex = (chain: TSubstrateChain, pallet: TPallet): number | undefined =>
   palletsMap[chain].supportedPallets.find(p => p.name === pallet)?.index
 
-export const getNativeAssetsPallet = (chain: TSubstrateChain): TPallet =>
+export const getNativeAssetsPallet = (chain: TSubstrateChain): TAssetsPallet =>
   palletsMap[chain].nativeAssets
 
-export const getOtherAssetsPallets = (chain: TSubstrateChain): TPallet[] =>
+export const getOtherAssetsPallets = (chain: TSubstrateChain): TAssetsPallet[] =>
   palletsMap[chain].otherAssets

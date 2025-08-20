@@ -16,7 +16,7 @@ import * as utils from '../utils.js';
 import { PalletsService } from './pallets.service.js';
 import { validatePallet } from './utils/index.js';
 
-const mockPallets: TPallet[] = ['OrmlXTokens', 'RelayerXcm'];
+const mockPallets: TPallet[] = ['XTokens', 'PolkadotXcm'];
 const mockPallet: TPallet = 'PolkadotXcm';
 const mockNativeAssetsPallet: TPallet = 'Assets';
 const mockOtherAssetsPallets: TPallet[] = ['ForeignAssets', 'Assets'];
