@@ -11,8 +11,8 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import visualizatorLogoImg from "../../assets/visualizator_logo.png";
-import visualizatorImg from "../../assets/visualizator-mockup-1-compressed.png";
+import visualizerLogoImg from "../../assets/visualizer_logo.png";
+import visualizerImg from "../../assets/visualizer-mockup-1-compressed.png";
 
 const codeForAnalyser = `
   convertLocationToUrl({
@@ -64,7 +64,7 @@ const HeroCards = () => {
       ? "1fr 1fr"
       : "1fr 1fr 1fr";
 
-  const visualizator = (
+  const visualizer = (
     <Box>
       <Paper
         shadow="xl"
@@ -80,15 +80,15 @@ const HeroCards = () => {
       >
         <Group align="center" gap="sm">
           <Title fw={800} order={2}>
-            XCM Visualizator
+            XCM Visualizer
           </Title>
-          <Image src={visualizatorLogoImg} w={32} h={32} />
+          <Image src={visualizerLogoImg} w={32} h={32} />
         </Group>
         <Text size="lg" mt="sm">
           Visualize XCM interactions within the Polkadot ecosystem.
         </Text>
         <Box pt="xl" pos="relative" left={31}>
-          <Image src={visualizatorImg} />
+          <Image src={visualizerImg} />
         </Box>
       </Paper>
     </Box>
@@ -239,7 +239,7 @@ const HeroCards = () => {
       <Stack flex={1} gap="xl">
         {sdk}
         {api}
-        {visualizator}
+        {visualizer}
         {router}
         {analyser}
       </Stack>
@@ -255,7 +255,7 @@ const HeroCards = () => {
       }}
     >
       <Stack flex={1} gap="xl">
-        {visualizator}
+        {visualizer}
         {router}
       </Stack>
       <Stack flex={1} gap="xl">
@@ -277,7 +277,7 @@ const HeroCards = () => {
         alignItems: "start",
       }}
     >
-      {visualizator}
+      {visualizer}
       {sdk}
       {api}
       {router}

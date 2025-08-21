@@ -15,7 +15,7 @@ Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools
 - [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) ⚡️ (<img width="50" alt="Lightspell logo" src="https://user-images.githubusercontent.com/55763425/251588168-4855abc3-445a-4207-9a65-e891975be62c.png">): An API that provides the ability to integrate XCM interoperability into your decentralized application in package-less way offloading heavy computing tasks from your decentralized application, and reducing associated costs.
 - [XCM ROUTER](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router) ☄️ (<img width="50" alt="Spellrouter logo" src="https://raw.githubusercontent.com/paraspell/presskit/refs/heads/main/logos_spellrouter/Full%20name.png">): A tool aiming to provide the capability of cross-chain swaps where you receive different assets than those you send (e.g. send DOT from Polkadot and receive ASTR on Astar) — all within a single command.
 - [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) 🔎 - Analyser package to convert XCM Multilocations into a human-readable format.
-- [XCM Visualizator](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizator-fe) 🖼️ - An application developed to visualize XCM within the Polkadot ecosystem.
+- [XCM Visualizer](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-fe) 🖼️ - An application developed to visualize XCM within the Polkadot ecosystem.
 
 **Other:**
 - [XCM Tools playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground) 🛝: Playground for testing/trying all three mentioned XCM tools.
@@ -43,8 +43,8 @@ apps | - XCM Playground
      | - XCM API
      | - XCM API Landing page
      | - XCM Tools Landing page
-     | - XCM Visualizator FE
-     | - XCM Visualizator BE
+     | - XCM Visualizer FE
+     | - XCM Visualizer BE
 
 packages | - XCM SDK
          | - XCM SDK-PJS

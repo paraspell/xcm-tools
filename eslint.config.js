@@ -83,8 +83,8 @@ export default tseslint.config(
   },
   {
     files: [
-      "apps/{playground,visualizator-fe,landing-page}/**/*.ts",
-      "apps/{playground,visualizator-fe,landing-page}/**/*.tsx",
+      "apps/{playground,visualizer-fe,landing-page}/**/*.ts",
+      "apps/{playground,visualizer-fe,landing-page}/**/*.tsx",
     ],
     ...reactPlugin.configs.flat?.recommended,
     rules: {

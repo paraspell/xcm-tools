@@ -10,25 +10,25 @@ jobs:
   filter:
     runs-on: ubuntu-latest
     outputs:
-      visualizator_changed: ${{ steps.filter.outputs.visualizator }}
+      visualizer_changed: ${{ steps.filter.outputs.visualizer }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
-            visualizator:
-              - 'apps/visualizator-be/**'
+            visualizer:
+              - 'apps/visualizer-be/**'
 
-  deploy_visualizator_backend:
+  deploy_visualizer_backend:
     needs: filter
-    if: ${{ needs.filter.outputs.visualizator_changed == 'true' }}
+    if: ${{ needs.filter.outputs.visualizer_changed == 'true' }}
     runs-on: self-hosted
     steps:
       - run: git pull
       - run: pnpm install
-      - run: pnpm --filter visualizator-be... build
+      - run: pnpm --filter visualizer-be... build
       - name: Restart PM2 process
-        run: pm2 restart visualizator-be
+        run: pm2 restart visualizer-be
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2

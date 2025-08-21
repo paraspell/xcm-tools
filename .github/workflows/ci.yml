@@ -83,12 +83,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/xcm-router
           flags: xcm-router
-      - name: Upload Visualizator BE coverage report to Codecov
+      - name: Upload Visualizer BE coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/visualizator-be
-          flags: visualizator-be
+          directory: apps/visualizer-be
+          flags: visualizer-be
       - name: Upload XCM API coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:

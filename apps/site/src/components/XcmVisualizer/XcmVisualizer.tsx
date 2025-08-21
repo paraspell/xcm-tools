@@ -11,20 +11,20 @@ import {
 } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 
-import visualizatorLogoImg from "../../assets/visualizator_logo.png";
-import visualizatorMockupImg from "../../assets/visualizator-mockup-2-h.png";
-import classes from "./XcmVisualizator.module.css";
+import visualizerLogoImg from "../../assets/visualizer_logo.png";
+import visualizerMockupImg from "../../assets/visualizer-mockup-2-h.png";
+import classes from "./XcmVisualizer.module.css";
 
-const XcmVisualizator = () => (
-  <div className={classes.wrapper} id="xcm-visualizator">
+const XcmVisualizer = () => (
+  <div className={classes.wrapper} id="xcm-visualizer">
     <div className={classes.body}>
       <Group align="center" gap="sm" mb="md">
-        <Title className={classes.title}>XCM Visualizator</Title>
-        <Image src={visualizatorLogoImg} w={32} h={32} />
+        <Title className={classes.title}>XCM Visualizer</Title>
+        <Image src={visualizerLogoImg} w={32} h={32} />
       </Group>
       <Text c="dimmed" maw={550}>
         Experience the Polkadot and Kusama ecosystems like never before with our
-        XCM Visualizator—the first and only XCM - oriented visualization tool.
+        XCM Visualizer — the first and only XCM-oriented visualization tool.
         Effortlessly decode and visualize complex cross-chain messaging data,
         explore network infrastructure, and gain valuable insights into
         cross-chain interactions.
@@ -32,7 +32,7 @@ const XcmVisualizator = () => (
 
       <Image
         hiddenFrom="sm"
-        src={visualizatorMockupImg}
+        src={visualizerMockupImg}
         alt="Playground"
         fit="contain"
         my={80}
@@ -71,18 +71,18 @@ const XcmVisualizator = () => (
       <div className={classes.controls}>
         <Button
           component="a"
-          href="https://xcm-visualizator.paraspell.xyz/"
+          href="https://xcm-visualizer.paraspell.xyz/"
           target="_blank"
           size="lg"
           radius="lg"
           mt="xl"
         >
-          Open XCM Visualizator
+          Open XCM Visualizer
         </Button>
         <Button
           variant="outline"
           component="a"
-          href="https://paraspell.github.io/docs/visualizator/user-guide.html"
+          href="https://paraspell.github.io/docs/visualizer/user-guide.html"
           target="_blank"
           size="lg"
           radius="lg"
@@ -101,7 +101,7 @@ const XcmVisualizator = () => (
     >
       <Image
         visibleFrom="sm"
-        src={visualizatorMockupImg}
+        src={visualizerMockupImg}
         alt="Playground"
         fit="contain"
         ml={80}
@@ -110,4 +110,4 @@ const XcmVisualizator = () => (
   </div>
 );
 
-export default XcmVisualizator;
+export default XcmVisualizer;

@@ -11,7 +11,7 @@ import XcmAnalyser from "../components/XcmAnalyser/XcmAnalyser";
 import XcmApi from "../components/XcmApi/XcmApi";
 import XcmRouter from "../components/XcmRouter/XcmRouter";
 import XcmSdk from "../components/XcmSdk/XcmSdk";
-import XcmVisualizator from "../components/XcmVisualizator/XcmVisualizator";
+import XcmVisualizer from "../components/XcmVisualizer/XcmVisualizer";
 
 const HomePage = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -25,7 +25,7 @@ const HomePage = () => {
           <Sponsors />
           <XcmSdk />
           <XcmApi />
-          <XcmVisualizator />
+          <XcmVisualizer />
           <XcmRouter />
           <XcmAnalyser />
           <Tryit />
