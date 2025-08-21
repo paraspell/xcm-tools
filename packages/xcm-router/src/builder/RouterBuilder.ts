@@ -211,7 +211,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   }
 
   getBestAmountOut(this: RouterBuilderCore<TGetBestAmountOutOptions>) {
-    return getBestAmountOut(this._options);
+    return getBestAmountOut(this._options, this._builderOptions);
   }
 }
 

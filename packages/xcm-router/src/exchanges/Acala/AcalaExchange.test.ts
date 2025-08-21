@@ -189,7 +189,7 @@ describe('AcalaExchange', () => {
 
     it('should return the amountOut with fee deducted', async () => {
       const result = await chain.getAmountOut(mockApi, baseSwapOptions);
-      expect(result).toBe(42n);
+      expect(result).toBe(42000000000000n);
     });
   });
 });

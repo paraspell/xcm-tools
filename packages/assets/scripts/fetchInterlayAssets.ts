@@ -1,6 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo } from '../src'
+import type { TForeignAssetInfo, TNativeAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
+import { Parents, TJunction, TLocation } from '@paraspell/sdk-common'
+import { getParaId } from '../../sdk-core/src'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
@@ -34,4 +36,79 @@ export const fetchInterlayAssets = async (
       }
     }
   )
+}
+
+export const fetchInterlayNativeAssets = async (
+  nativeAssets: TNativeAssetInfo[]
+): Promise<TNativeAssetInfo[]> => {
+  const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
+    IBTC: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2032
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000'
+            }
+          }
+        ]
+      }
+    },
+    KINT: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2092
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x000c000000000000000000000000000000000000000000000000000000000000'
+            }
+          }
+        ]
+      }
+    },
+    KBTC: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2092
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x000b000000000000000000000000000000000000000000000000000000000000'
+            }
+          }
+        ]
+      }
+    },
+    KSM: {
+      parents: 2,
+      interior: {
+        X1: [
+          {
+            GlobalConsensus: {
+              kusama: null
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  return nativeAssets.map(asset => {
+    const customLoc = CUSTOM_NATIVE_JUNCTIONS[asset.symbol]
+    return {
+      ...asset,
+      location: customLoc
+    }
+  })
 }

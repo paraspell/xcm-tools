@@ -37,7 +37,7 @@ import { fetchHydrationAssets } from './fetchHydrationAssets'
 import { fetchPhalaAssets } from './fetchPhalaAssets'
 import { fetchAstarAssets } from './fetchAstarAssets'
 import { fetchDarwiniaAssets } from './fetchDarwiniaAssets'
-import { fetchInterlayAssets } from './fetchInterlayAssets'
+import { fetchInterlayAssets, fetchInterlayNativeAssets } from './fetchInterlayAssets'
 import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
@@ -100,7 +100,13 @@ const fetchNativeAssets = async (
     nativeAssets = await fetchCentrifugeNativeAssets(api, query)
   }
 
-  const transformed = nativeAssets.length > 0 ? nativeAssets : await resolveNativeAssets(chain, api)
+  const defaultNativeAssets = await resolveNativeAssets(chain, api)
+
+  if (chain === 'Interlay') {
+    nativeAssets = await fetchInterlayNativeAssets(defaultNativeAssets)
+  }
+
+  const transformed = nativeAssets.length > 0 ? nativeAssets : defaultNativeAssets
 
   const nativeSymbol = getNativeAssetSymbol(chain)
 

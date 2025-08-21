@@ -41,7 +41,7 @@ class AcalaExchange extends ExchangeChain {
       providers: [acalaDex],
     });
 
-    const amountBN = new BigNumber(amount);
+    const amountBN = BigNumber(amount);
 
     const swapFee = await calculateAcalaSwapFee(dex, wallet, fromToken, toToken, options);
     const totalNativeCurrencyFee = swapFee.plus(toDestTransactionFee).multipliedBy(FEE_BUFFER);
@@ -56,7 +56,7 @@ class AcalaExchange extends ExchangeChain {
 
     Logger.log('Native currency balance:', balance.toString());
 
-    const balanceBN = new BigNumber(balance.toString());
+    const balanceBN = BigNumber(balance.toString());
 
     if (balanceBN.isLessThan(totalNativeCurrencyFee)) {
       throw new SmallAmountError(
@@ -66,7 +66,7 @@ class AcalaExchange extends ExchangeChain {
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
@@ -92,7 +92,7 @@ class AcalaExchange extends ExchangeChain {
     const tx = dex.getTradingTx(tradeResult) as unknown as Extrinsic;
 
     const amountOut = tradeResult.result.output.amount.toString();
-    const amountOutBN = new BigNumber(amountOut).shiftedBy(toToken.decimals);
+    const amountOutBN = BigNumber(amountOut).shiftedBy(toToken.decimals).decimalPlaces(0);
 
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
 
@@ -131,8 +131,8 @@ class AcalaExchange extends ExchangeChain {
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountBN = new BigNumber(amount);
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+    const amountBN = BigNumber(amount);
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
 
     const tradeResult = await firstValueFrom(
       dex.swap({
@@ -147,8 +147,12 @@ class AcalaExchange extends ExchangeChain {
     );
 
     const amountOut = tradeResult.result.output.amount.toString();
+    const amountOutBN = BigNumber(amountOut)
+      .shiftedBy(toToken.decimals)
+      .decimalPlaces(0)
+      .toString();
 
-    return BigInt(amountOut);
+    return BigInt(amountOutBN);
   }
 
   async createApiInstance(): Promise<ApiPromise> {

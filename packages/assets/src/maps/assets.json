@@ -4827,7 +4827,23 @@
         "symbol": "IBTC",
         "isNative": true,
         "decimals": 8,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "DOT",
@@ -4845,19 +4861,63 @@
         "symbol": "KINT",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "KBTC",
         "isNative": true,
         "decimals": 8,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              }
+            ]
+          }
+        }
       }
     ],
     "otherAssets": [
@@ -7884,6 +7944,33 @@
         },
         "existentialDeposit": "1",
         "isFeeAsset": true
+      },
+      {
+        "symbol": "PEPE",
+        "decimals": 18,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "isFeeAsset": true,
+        "alias": "PEPE4"
       }
     ]
   },
@@ -11709,6 +11796,31 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
+        "symbol": "PEPE",
+        "decimals": 18,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
                 }
               }
             ]

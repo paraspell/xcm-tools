@@ -23,6 +23,11 @@ const STATIC_FOREIGN_ASSETS = [
     symbol: 'tBTC',
     decimals: 18,
     address: '0x18084fba666a33d37592fa2633fd49a74dd93a88'
+  },
+  {
+    symbol: 'PEPE',
+    decimals: 18,
+    address: '0x6982508145454ce325ddbe47a25d4ec3d2311933'
   }
 ]
 
