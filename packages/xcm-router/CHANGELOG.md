@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.0.1...xcm-router-v11.1.0) (2025-08-21)
+
+
+### Bug Fixes
+
+* Add missing locations & fix AcalaDex 🔧 ([4e47cb9](https://github.com/paraspell/xcm-tools/commit/4e47cb962570037986bae6efe713d717e4b5368b))
+
 ## [11.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.0.0...xcm-router-v11.0.1) (2025-08-18)
 
 
