@@ -34,7 +34,7 @@ const LoadingScreen: FC<Props> = ({ useApolloNetworkStatus }) => {
             }
           }, 500);
         }
-      }, 1000);
+      }, 0);
 
       return () => {
         clearTimeout(timeout);

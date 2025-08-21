@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { WalletContext } from '../context/WalletContext';
 import type { TWalletAccount } from '../types';
 
-const STORAGE_KEY = 'wallet-xcm-visualizator';
+const STORAGE_KEY = 'wallet-xcm-visualizer';
 
 const getWalletStateFromLocalStorage = (): TWalletAccount | undefined => {
   const walletState = localStorage.getItem(STORAGE_KEY);

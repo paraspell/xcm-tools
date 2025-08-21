@@ -11,8 +11,18 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
  * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
+type Documents = {
+  '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n': typeof types.ChannelsDocument;
+  '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n': typeof types.ChannelDocument;
+  '\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n': typeof types.MessageCountsDocument;
+  '\n  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n': typeof types.MessageCountsByDayDocument;
+  '\n  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      symbol\n      count\n    }\n  }\n': typeof types.AssetCountsBySymbolDocument;
+  '\n  query accountCounts(\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      id\n      count\n    }\n  }\n': typeof types.AccountCountsDocument;
+  '\n  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {\n    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {\n      paraId\n      totalCount\n    }\n  }\n': typeof types.TotalMessageCountsDocument;
+};
+const documents: Documents = {
   '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n':
     types.ChannelsDocument,
   '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n':
