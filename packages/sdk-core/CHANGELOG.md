@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.11.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.10...sdk-core-v10.11.11) (2025-08-22)
+
+
+### Bug Fixes
+
+* Fix incorrect variable name used ([10683cf](https://github.com/paraspell/xcm-tools/commit/10683cfc66f857d3ffcfd89742a7e24b8ba6fb62))
+* Re-enable mythos ([a036f61](https://github.com/paraspell/xcm-tools/commit/a036f61b8ed333b0147d04d5172d38906e843c10))
+
 ## [10.11.10](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.9...sdk-core-v10.11.10) (2025-08-14)
 
 
