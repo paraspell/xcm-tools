@@ -41,16 +41,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: pnpm publish -r --no-git-checks --access=public --tag legacy
-
-  deploy_xcm_api:
-    needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
-    runs-on: self-hosted
-    steps:
-      - run: git pull
-      - run: pnpm install
-      - run: pnpm --filter xcm-api... build
-      - name: Restart PM2 process
-        run: pm2 restart xcm-api
-        env:
-          PM2_HOME: /${{ secrets.USER }}/.pm2
