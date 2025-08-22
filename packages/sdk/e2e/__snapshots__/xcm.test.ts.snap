@@ -10991,6 +10991,75 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Mythos - (MYTH) 1`] = `
+{
+  "method": "limited_teleport_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X1",
+              "value": {
+                "type": "Parachain",
+                "value": 3369,
+              },
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountKey20",
+            "value": {
+              "key": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 3369,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to PeoplePolkadot - (DOT) 1`] = `
 {
   "method": "limited_teleport_assets",
@@ -32929,6 +32998,167 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonriver > should create tra
     "fee_asset_item": 0,
     "weight_limit": {
       "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should create transfer tx from Mythos to AssetHubPolkadot - (MYTH) 1`] = `
+{
+  "method": "execute",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "max_weight": {
+      "proof_size": 196608n,
+      "ref_time": 3080024000n,
+    },
+    "message": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "WithdrawAsset",
+          "value": [
+            {
+              "fun": {
+                "type": "Fungible",
+                "value": 1000000000000n,
+              },
+              "id": {
+                "interior": {
+                  "type": "Here",
+                },
+                "parents": 0,
+              },
+            },
+          ],
+        },
+        {
+          "type": "BuyExecution",
+          "value": {
+            "fees": {
+              "fun": {
+                "type": "Fungible",
+                "value": 4583808214404241675n,
+              },
+              "id": {
+                "interior": {
+                  "type": "Here",
+                },
+                "parents": 0,
+              },
+            },
+            "weight_limit": {
+              "type": "Unlimited",
+            },
+          },
+        },
+        {
+          "type": "InitiateTeleport",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4583808214404241675n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X1",
+                        "value": {
+                          "type": "Parachain",
+                          "value": 3369,
+                        },
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "ExchangeAsset",
+                "value": {
+                  "give": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "maximal": false,
+                  "want": [
+                    {
+                      "fun": {
+                        "type": "Fungible",
+                        "value": 100000000n,
+                      },
+                      "id": {
+                        "interior": {
+                          "type": "Here",
+                        },
+                        "parents": 1,
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 2,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": FixedSizeBinary {
+                            "asBytes": [Function],
+                            "asHex": [Function],
+                            "asOpaqueBytes": [Function],
+                            "asOpaqueHex": [Function],
+                            "asText": [Function],
+                          },
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
 }
