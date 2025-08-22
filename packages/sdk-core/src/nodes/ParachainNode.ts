@@ -231,7 +231,7 @@ abstract class ParachainNode<TApi, TRes> {
 
       const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
 
-      if (shouldUseTeleport && this.chain !== 'Mythos' && destination !== 'Mythos') {
+      if (shouldUseTeleport && this.node !== 'Mythos' && destination !== 'Mythos') {
         throw new TransferToAhNotSupported(
           'Native asset transfers to or from AssetHub are temporarily disabled'
         )
