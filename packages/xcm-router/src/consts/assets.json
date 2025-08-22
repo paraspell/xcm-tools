@@ -363,6 +363,30 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "PEPE",
+        "decimals": 18,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+                }
+              }
+            ]
+          }
+        }
       }
     ],
     "pairs": []
@@ -1103,30 +1127,6 @@
         "assetId": "100"
       },
       {
-        "symbol": "WETH",
-        "decimals": 18,
-        "assetId": "20",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 2004
-              },
-              {
-                "PalletInstance": 110
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "2-Pool",
         "decimals": 18,
         "assetId": "101"
@@ -1581,6 +1581,30 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "WETH",
+        "decimals": 18,
+        "assetId": "20",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
                 }
               }
             ]
