@@ -40,7 +40,7 @@ jobs:
       - run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: pnpm publish -r --no-git-checks --access=public
+      - run: pnpm publish -r --no-git-checks --access=public --tag legacy
 
   deploy_xcm_api:
     needs: release-please
