@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.11](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.10...sdk-v10.11.11) (2025-08-22)
+
+
+### Bug Fixes
+
+* Re-enable mythos ([a036f61](https://github.com/paraspell/xcm-tools/commit/a036f61b8ed333b0147d04d5172d38906e843c10))
+
 ## [10.11.10](https://github.com/paraspell/xcm-tools/compare/sdk-v10.11.9...sdk-v10.11.10) (2025-08-14)
 
 
