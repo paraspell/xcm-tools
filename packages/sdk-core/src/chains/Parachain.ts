@@ -229,7 +229,7 @@ abstract class Parachain<TApi, TRes> {
 
       const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
 
-      if (shouldUseTeleport) {
+      if (shouldUseTeleport && this.chain !== 'Mythos' && destination !== 'Mythos') {
         throw new TransferToAhNotSupported(
           'Native asset transfers to or from AssetHub are temporarily disabled'
         )
