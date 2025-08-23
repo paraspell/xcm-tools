@@ -148,12 +148,12 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
       evmSigner,
     } = formValues;
+    const amount = currencyFrom.amount;
 
     await RouterBuilder({ abstractDecimals: true })
       .from(from)
@@ -201,6 +201,7 @@ export const XcmRouter = () => {
         `${API_URL}/router`,
         {
           ...formValues,
+          amount: currencyFrom.amount,
           currencyFrom: { symbol: currencyFrom.symbol },
           currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
@@ -283,11 +284,11 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
     } = formValues;
+    const amount = currencyFrom.amount;
 
     setLoading(true);
 
@@ -362,6 +363,7 @@ export const XcmRouter = () => {
     exchange: TExchangeChain | undefined,
   ) => {
     const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+    const amount = currencyFrom.amount;
 
     setLoading(true);
 
@@ -405,7 +407,7 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(formValues.amount)
+          .amount(amount)
           .getBestAmountOut();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));

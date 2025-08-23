@@ -13,18 +13,18 @@ import { isRelayChain } from '@paraspell/sdk';
 import type { FC } from 'react';
 import { useEffect } from 'react';
 
-import type { FormValues } from '../XcmTransfer/XcmTransferForm';
-
 type Props = {
-  form: UseFormReturnType<FormValues>;
+  form: UseFormReturnType<any>;
   currencyOptions: ComboboxItem[];
   index: number;
+  isAutoExchange?: boolean;
 };
 
 export const CurrencySelection: FC<Props> = ({
   form,
   currencyOptions,
   index,
+  isAutoExchange = false,
 }) => {
   const { from, to, currencies } = form.getValues();
 
@@ -48,8 +48,19 @@ export const CurrencySelection: FC<Props> = ({
     }
   }, [isNotParaToPara]);
 
+  // If auto exchange is used and user had selected Asset ID, reset to Symbol
+  useEffect(() => {
+    if (isAutoExchange && customCurrencyType === 'id') {
+      form.setFieldValue(`currencies.${index}.customCurrencyType`, 'symbol');
+    }
+  }, [isAutoExchange, customCurrencyType, form, index]);
+
   const options = [
-    { label: 'Asset ID', value: 'id' },
+    { 
+      label: 'Asset ID', 
+      value: 'id',
+      disabled: isAutoExchange // Gray out and disable when auto exchange is used
+    },
     { label: 'Symbol', value: 'symbol' },
     { label: 'Location', value: 'location' },
     ...(currencies.length === 1
