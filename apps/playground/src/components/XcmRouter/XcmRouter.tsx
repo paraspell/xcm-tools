@@ -119,7 +119,7 @@ export const XcmRouter = () => {
         ? { location: asset.location }
         : { symbol: asset.symbol };
     }
-    
+
     const hasDuplicateIds = chain
       ? getOtherAssets(chain).filter(
           (other) =>
@@ -144,7 +144,7 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    throw Error('Currency is required');
+    throw new Error('Invalid currency input');
   };
 
   const submitUsingRouterModule = async (
