@@ -367,29 +367,15 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       ? null 
       : currencyToMap[currencyToEntry.currencyOptionId];
 
-    const finalCurrencyFrom = currencyFromAsset || {
-      symbol: currencyFromEntry.customCurrency,
-      decimals: 0, // Default value for custom currencies
-      assetId: currencyFromEntry.customCurrency,
-      isNative: false,
-    };
-    
-    const finalCurrencyTo = currencyToAsset || {
-      symbol: currencyToEntry.customCurrency,
-      decimals: 0, // Default value for custom currencies
-      assetId: currencyToEntry.customCurrency,
-      isNative: false,
-    };
-
-    if (!finalCurrencyFrom || !finalCurrencyTo) {
+    if (!currencyFromAsset || !currencyToAsset) {
       return;
     }
 
     const transformedValues = {
       ...values,
       exchange: getExchange(values.exchange) as TExchangeChain,
-      currencyFrom: { ...finalCurrencyFrom, amount: currencyFromEntry.amount },
-      currencyTo: finalCurrencyTo as TAssetInfo,
+      currencyFrom: { ...currencyFromAsset, amount: currencyFromEntry.amount } as TAssetInfo & { amount: string },
+      currencyTo: currencyToAsset as TAssetInfo,
     };
 
     onSubmit(transformedValues, submitType);
