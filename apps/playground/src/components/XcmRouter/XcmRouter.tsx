@@ -98,14 +98,14 @@ export const XcmRouter = () => {
 
   const determineCurrency = (
     chain: TSubstrateChain | undefined,
-    asset: TAssetInfo,
-    isAutoExchange = false,
-  ): TCurrencyInput => {
-    if (!isForeignAsset(asset)) {
-      return { symbol: asset.symbol };
-    }
+    asset: TAssetInfo
+    ): TCurrencyInput => {
 
-    if (asset.assetId === undefined && asset.location === undefined) {
+    // Handle native assets FIRST (like DOT on AssetHub)
+    if (!isForeignAsset(asset)) {
+      if (asset.location) {
+        return { location: asset.location };
+      }
       return { symbol: asset.symbol };
     }
 
@@ -113,28 +113,31 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    if (isAutoExchange) {
-      return asset.location
-        ? { location: asset.location }
-        : { symbol: asset.symbol };
+    const hasDuplicateIds = chain
+      ? getOtherAssets(chain).filter(
+          (other) =>
+            isForeignAsset(other) &&
+            other.assetId === asset.assetId,
+        ).length > 1
+      : false;
+
+    if (asset.assetId && !hasDuplicateIds) {
+      return {
+        id: asset.assetId,
+      };
     }
 
-    const hasDuplicateIds =
-      chain &&
-      getOtherAssets(chain).filter(
-        (other) =>
-          other.assetId !== undefined && other.assetId === asset.assetId,
-      ).length > 1;
+    if (asset.location) {
+      return {
+        location: asset.location,
+      };
+    }
 
-    if (hasDuplicateIds) {
+    if(isForeignAsset(asset)) {
       return { symbol: asset.symbol };
     }
 
-    if (asset.location) return { location: asset.location };
-
-    if (asset.assetId) return { id: asset.assetId };
-
-    throw new Error('Invalid currency input');
+    throw Error('Currency is required');
   };
 
   const submitUsingRouterModule = async (
@@ -166,7 +169,7 @@ export const XcmRouter = () => {
             : exchange && !Array.isArray(exchange)
               ? createExchangeInstance(exchange).chain
               : undefined,
-          currencyFrom,
+          currencyFrom
         ),
       )
       .currencyTo(
@@ -174,8 +177,7 @@ export const XcmRouter = () => {
           exchange && !Array.isArray(exchange)
             ? createExchangeInstance(exchange).chain
             : undefined,
-          currencyTo,
-          exchange === undefined || Array.isArray(exchange),
+          currencyTo      
         ),
       )
       .amount(amount)
@@ -321,7 +323,7 @@ export const XcmRouter = () => {
                 : exchange && !Array.isArray(exchange)
                   ? createExchangeInstance(exchange).chain
                   : undefined,
-              currencyFrom,
+              currencyFrom
             ),
           )
           .currencyTo(
@@ -329,8 +331,7 @@ export const XcmRouter = () => {
               exchange && !Array.isArray(exchange)
                 ? createExchangeInstance(exchange).chain
                 : undefined,
-              currencyTo,
-              exchange === undefined || Array.isArray(exchange),
+              currencyTo
             ),
           )
           .amount(amount)
@@ -395,7 +396,7 @@ export const XcmRouter = () => {
                 : exchange && !Array.isArray(exchange)
                   ? createExchangeInstance(exchange).chain
                   : undefined,
-              currencyFrom,
+              currencyFrom
             ),
           )
           .currencyTo(
@@ -403,8 +404,7 @@ export const XcmRouter = () => {
               exchange && !Array.isArray(exchange)
                 ? createExchangeInstance(exchange).chain
                 : undefined,
-              currencyTo,
-              exchange === undefined || Array.isArray(exchange),
+              currencyTo
             ),
           )
           .amount(amount)

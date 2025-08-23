@@ -432,21 +432,6 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   }, [isToNotParaToPara, currencyToMap]);
 
-  // Reset Currency From placeholder when Origin changes
-  useEffect(() => {
-    form.setFieldValue('currencies.0.currencyOptionId', '');
-  }, [formFrom]);
-
-  // Reset Currency To placeholder when Destination changes  
-  useEffect(() => {
-    form.setFieldValue('currencies.1.currencyOptionId', '');
-  }, [formTo]);
-
-  // Reset Currency To placeholder when Exchange changes
-  useEffect(() => {
-    form.setFieldValue('currencies.1.currencyOptionId', '');
-  }, [formExchange]);
-
   const {
     connectWallet,
     selectedAccount: selectedAccountPolkadot,
