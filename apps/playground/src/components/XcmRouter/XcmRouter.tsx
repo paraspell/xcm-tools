@@ -98,7 +98,8 @@ export const XcmRouter = () => {
 
   const determineCurrency = (
     chain: TSubstrateChain | undefined,
-    asset: TAssetInfo
+    asset: TAssetInfo,
+    isAutoExchange: boolean = false
     ): TCurrencyInput => {
 
     // Handle native assets FIRST (like DOT on AssetHub)
@@ -113,6 +114,12 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
+    if (isAutoExchange) {
+      return asset.location
+        ? { location: asset.location }
+        : { symbol: asset.symbol };
+    }
+    
     const hasDuplicateIds = chain
       ? getOtherAssets(chain).filter(
           (other) =>
@@ -169,7 +176,8 @@ export const XcmRouter = () => {
             : exchange && !Array.isArray(exchange)
               ? createExchangeInstance(exchange).chain
               : undefined,
-          currencyFrom
+          currencyFrom,
+          exchange === undefined || Array.isArray(exchange)
         ),
       )
       .currencyTo(
@@ -177,7 +185,8 @@ export const XcmRouter = () => {
           exchange && !Array.isArray(exchange)
             ? createExchangeInstance(exchange).chain
             : undefined,
-          currencyTo      
+          currencyTo,
+          exchange === undefined || Array.isArray(exchange)        
         ),
       )
       .amount(amount)
@@ -323,7 +332,8 @@ export const XcmRouter = () => {
                 : exchange && !Array.isArray(exchange)
                   ? createExchangeInstance(exchange).chain
                   : undefined,
-              currencyFrom
+              currencyFrom,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .currencyTo(
@@ -331,7 +341,8 @@ export const XcmRouter = () => {
               exchange && !Array.isArray(exchange)
                 ? createExchangeInstance(exchange).chain
                 : undefined,
-              currencyTo
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .amount(amount)
@@ -396,7 +407,8 @@ export const XcmRouter = () => {
                 : exchange && !Array.isArray(exchange)
                   ? createExchangeInstance(exchange).chain
                   : undefined,
-              currencyFrom
+              currencyFrom,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .currencyTo(
@@ -404,7 +416,8 @@ export const XcmRouter = () => {
               exchange && !Array.isArray(exchange)
                 ? createExchangeInstance(exchange).chain
                 : undefined,
-              currencyTo
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .amount(amount)
