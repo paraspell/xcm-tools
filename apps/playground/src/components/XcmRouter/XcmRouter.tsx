@@ -99,13 +99,14 @@ export const XcmRouter = () => {
   const determineCurrency = (
     chain: TSubstrateChain | undefined,
     asset: TAssetInfo,
-    isAutoExchange = false,
-  ): TCurrencyInput => {
-    if (!isForeignAsset(asset)) {
-      return { symbol: asset.symbol };
-    }
+    isAutoExchange: boolean = false
+    ): TCurrencyInput => {
 
-    if (asset.assetId === undefined && asset.location === undefined) {
+    // Handle native assets FIRST (like DOT on AssetHub)
+    if (!isForeignAsset(asset)) {
+      if (asset.location) {
+        return { location: asset.location };
+      }
       return { symbol: asset.symbol };
     }
 
@@ -119,20 +120,29 @@ export const XcmRouter = () => {
         : { symbol: asset.symbol };
     }
 
-    const hasDuplicateIds =
-      chain &&
-      getOtherAssets(chain).filter(
-        (other) =>
-          other.assetId !== undefined && other.assetId === asset.assetId,
-      ).length > 1;
+    const hasDuplicateIds = chain
+      ? getOtherAssets(chain).filter(
+          (other) =>
+            isForeignAsset(other) &&
+            other.assetId === asset.assetId,
+        ).length > 1
+      : false;
 
-    if (hasDuplicateIds) {
-      return { symbol: asset.symbol };
+    if (asset.assetId && !hasDuplicateIds) {
+      return {
+        id: asset.assetId,
+      };
     }
 
-    if (asset.location) return { location: asset.location };
+    if (asset.location) {
+      return {
+        location: asset.location,
+      };
+    }
 
-    if (asset.assetId) return { id: asset.assetId };
+    if(isForeignAsset(asset)) {
+      return { symbol: asset.symbol };
+    }
 
     throw new Error('Invalid currency input');
   };
@@ -148,12 +158,12 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
       evmSigner,
     } = formValues;
+    const amount = currencyFrom.amount;
 
     await RouterBuilder({ abstractDecimals: true })
       .from(from)
@@ -167,6 +177,7 @@ export const XcmRouter = () => {
               ? createExchangeInstance(exchange).chain
               : undefined,
           currencyFrom,
+          exchange === undefined || Array.isArray(exchange)
         ),
       )
       .currencyTo(
@@ -175,7 +186,7 @@ export const XcmRouter = () => {
             ? createExchangeInstance(exchange).chain
             : undefined,
           currencyTo,
-          exchange === undefined || Array.isArray(exchange),
+          exchange === undefined || Array.isArray(exchange)        
         ),
       )
       .amount(amount)
@@ -201,6 +212,7 @@ export const XcmRouter = () => {
         `${API_URL}/router`,
         {
           ...formValues,
+          amount: currencyFrom.amount,
           currencyFrom: { symbol: currencyFrom.symbol },
           currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
@@ -283,11 +295,11 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
     } = formValues;
+    const amount = currencyFrom.amount;
 
     setLoading(true);
 
@@ -321,6 +333,7 @@ export const XcmRouter = () => {
                   ? createExchangeInstance(exchange).chain
                   : undefined,
               currencyFrom,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .currencyTo(
@@ -329,7 +342,7 @@ export const XcmRouter = () => {
                 ? createExchangeInstance(exchange).chain
                 : undefined,
               currencyTo,
-              exchange === undefined || Array.isArray(exchange),
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .amount(amount)
@@ -362,6 +375,7 @@ export const XcmRouter = () => {
     exchange: TExchangeChain | undefined,
   ) => {
     const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+    const amount = currencyFrom.amount;
 
     setLoading(true);
 
@@ -394,6 +408,7 @@ export const XcmRouter = () => {
                   ? createExchangeInstance(exchange).chain
                   : undefined,
               currencyFrom,
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
           .currencyTo(
@@ -402,10 +417,10 @@ export const XcmRouter = () => {
                 ? createExchangeInstance(exchange).chain
                 : undefined,
               currencyTo,
-              exchange === undefined || Array.isArray(exchange),
+              exchange === undefined || Array.isArray(exchange)
             ),
           )
-          .amount(formValues.amount)
+          .amount(amount)
           .getBestAmountOut();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
