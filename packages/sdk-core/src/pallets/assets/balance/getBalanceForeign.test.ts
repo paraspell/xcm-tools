@@ -106,7 +106,7 @@ describe('getBalanceForeign', () => {
   })
 
   it('throws an error for unsupported pallet', async () => {
-    vi.spyOn(palletsModule, 'getDefaultPallet').mockReturnValue('RelayerXcm')
+    vi.spyOn(palletsModule, 'getDefaultPallet').mockReturnValue('Utility')
     await expect(
       getBalanceForeign({
         address: 'address',

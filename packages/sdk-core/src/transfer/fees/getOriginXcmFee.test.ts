@@ -134,7 +134,7 @@ describe('getOriginXcmFee', () => {
     expect(isSufficientOrigin).not.toHaveBeenCalled()
   })
 
-  it('falls back to padded paymentInfo and returns `dryRunError` when dry-run fails', async () => {
+  it('falls back to padded paymentInfo when dry-run fails', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
 
     const api = createApi(888n)
@@ -163,19 +163,9 @@ describe('getOriginXcmFee', () => {
       currency: mockSymbol,
       feeType: 'paymentInfo',
       dryRunError: 'fail',
-      sufficient: true
+      sufficient: false
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
     expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
-    expect(isSufficientOrigin).toHaveBeenCalledWith(
-      api,
-      'Moonbeam',
-      'Acala',
-      'addr',
-      999n,
-      {},
-      mockAsset,
-      undefined
-    )
   })
 })

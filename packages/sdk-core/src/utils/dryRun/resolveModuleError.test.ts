@@ -41,10 +41,10 @@ describe('resolveModuleError', () => {
 
   it('should throw an error if pallet is not supported', () => {
     const error: TModuleError = { index: '3', error: '0000' }
-    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'RelayerXcm' }])
+    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'XTransfer' }])
 
     expect(() => resolveModuleError(mockChain, error)).toThrowError(
-      'Pallet RelayerXcm is not supported'
+      'Pallet XTransfer is not supported'
     )
   })
 
