@@ -65,7 +65,8 @@ Then, run the following commands:
 Install dependencies:
 
 ```bash
-//This has to be run from monorepository root
+# This has to be run from monorepository root
+
 pnpm install
 pnpm build
 ```
