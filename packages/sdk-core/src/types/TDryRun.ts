@@ -24,6 +24,7 @@ export type TDryRunBaseOptions<TRes> = {
     currencyTo: TCurrencyCore
     exchangeChain: TParachain
   }
+  useRootOrigin?: boolean
 }
 
 export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>

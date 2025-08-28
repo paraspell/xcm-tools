@@ -153,14 +153,6 @@ describe('handleSwapExecuteTransfer', () => {
     expect(baseOptions.calculateMinAmountOut).toHaveBeenCalledWith(1680n)
   })
 
-  it('throws if second dry run fails', async () => {
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunResult(true, true))
-      .mockResolvedValueOnce(mockDryRunResult(false, true))
-
-    await expect(handleSwapExecuteTransfer(baseOptions)).rejects.toThrow(DryRunFailedError)
-  })
-
   it('handles case when exchange chain is final destination', async () => {
     const optionsNoDestChain = {
       ...baseOptions,
@@ -179,25 +171,6 @@ describe('handleSwapExecuteTransfer', () => {
 
     const result = await handleSwapExecuteTransfer(optionsNoDestChain)
     expect(result).toMatch(/^tx:/)
-  })
-
-  it('throws when exchange destination fails with no destChain', async () => {
-    const optionsNoDestChain = {
-      ...baseOptions,
-      destChain: undefined
-    }
-
-    const mockDryRunDestFailed = {
-      origin: { success: true, fee: 100n },
-      destination: { success: false, failureReason: 'Destination failed' },
-      hops: []
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValueOnce(mockDryRunDestFailed)
-
-    await expect(handleSwapExecuteTransfer(optionsNoDestChain)).rejects.toThrow(
-      'Exchange (destination) failed when no origin reserve exists'
-    )
   })
 
   it('extracts origin reserve fee from last hop when no destChain', async () => {
@@ -262,133 +235,6 @@ describe('handleSwapExecuteTransfer', () => {
     await expect(handleSwapExecuteTransfer(baseOptions)).rejects.toThrow()
   })
 
-  it('throws when hop before exchange fails in second dry run', async () => {
-    const mockDryRunFirstSuccess = mockDryRunResult(true, true)
-    const mockDryRunSecondFailure = {
-      origin: { success: true, fee: 100n },
-      hops: [
-        {
-          chain: 'A',
-          result: { success: false, failureReason: 'Hop failed' }
-        },
-        {
-          chain: 'B',
-          result: { success: true, fee: 200n }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunFirstSuccess)
-      .mockResolvedValueOnce(mockDryRunSecondFailure)
-
-    await expect(handleSwapExecuteTransfer(baseOptions)).rejects.toThrow(
-      'Hop before exchange failed: Hop failed'
-    )
-  })
-
-  it('throws when hop after exchange fails', async () => {
-    const mockDryRunFirstSuccess = mockDryRunResult(true, true)
-    const mockDryRunSecondFailure = {
-      origin: { success: true, fee: 100n },
-      hops: [
-        {
-          chain: 'A',
-          result: { success: true, fee: 100n }
-        },
-        {
-          chain: 'B',
-          result: { success: true, fee: 200n }
-        },
-        {
-          chain: 'C',
-          result: { success: false, failureReason: 'Destination hop failed' }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunFirstSuccess)
-      .mockResolvedValueOnce(mockDryRunSecondFailure)
-
-    await expect(handleSwapExecuteTransfer(baseOptions)).rejects.toThrow(
-      'Hop after exchange failed: Destination hop failed'
-    )
-  })
-
-  it('throws when origin reserve hop fails with no destChain', async () => {
-    const optionsNoDestChain = {
-      ...baseOptions,
-      destChain: undefined
-    }
-
-    const mockDryRunFirstSuccess = {
-      origin: { success: true, fee: 100n },
-      destination: { success: true, fee: 300n },
-      hops: [
-        {
-          chain: 'A',
-          result: { success: true, fee: 150n }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    const mockDryRunSecondFailure = {
-      origin: { success: true, fee: 100n },
-      destination: { success: true, fee: 300n },
-      hops: [
-        {
-          chain: 'A',
-          result: { success: false, failureReason: 'Last hop failed' }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunFirstSuccess)
-      .mockResolvedValueOnce(mockDryRunSecondFailure)
-
-    await expect(handleSwapExecuteTransfer(optionsNoDestChain)).rejects.toThrow(
-      'Origin reserve hop failed: Last hop failed'
-    )
-  })
-
-  it('performs third iteration when fees change', async () => {
-    const mockDryRunFirst = mockDryRunResult(true, true)
-    const mockDryRunSecond = {
-      origin: { success: true, fee: 100n },
-      hops: [
-        {
-          chain: 'A',
-          result: { success: true, fee: 200n }
-        },
-        {
-          chain: 'B',
-          result: { success: true, fee: 300n }
-        },
-        {
-          chain: 'C',
-          result: { success: true, fee: 150n }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    baseOptions.calculateMinAmountOut = vi
-      .fn()
-      .mockResolvedValueOnce(1500n)
-      .mockResolvedValueOnce(1400n)
-
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunFirst)
-      .mockResolvedValueOnce(mockDryRunSecond)
-
-    const result = await handleSwapExecuteTransfer(baseOptions)
-
-    expect(result).toMatch(/^tx:/)
-    expect(baseOptions.calculateMinAmountOut).toHaveBeenCalledTimes(2)
-    expect(mockApi.callTxMethod).toHaveBeenCalledTimes(3)
-  })
-
   it('handles case when origin chain is same as exchange chain', async () => {
     const optionsSameChain = {
       ...baseOptions,
@@ -417,55 +263,5 @@ describe('handleSwapExecuteTransfer', () => {
 
     const result = await handleSwapExecuteTransfer(optionsSameChain)
     expect(result).toMatch(/^tx:/)
-  })
-
-  it('throws when exchange hop fails and no origin reserve exists', async () => {
-    const mockDryRunNoOriginReserve = {
-      origin: { success: true, fee: 100n },
-      hops: [
-        {
-          chain: 'B',
-          result: { success: false, failureReason: 'Exchange hop failed' }
-        }
-      ]
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValueOnce(mockDryRunNoOriginReserve)
-
-    const optionsDirectToExchange = {
-      ...baseOptions,
-      chain: 'A' as TSubstrateChain
-    }
-
-    await expect(handleSwapExecuteTransfer(optionsDirectToExchange)).rejects.toThrow(
-      'Exchange hop failed when no origin reserve exists: Exchange hop failed'
-    )
-  })
-
-  it('throws when destination fails for exchange as final destination', async () => {
-    const optionsNoDestChain = {
-      ...baseOptions,
-      destChain: undefined
-    }
-
-    const mockDryRunDestFailed = {
-      origin: { success: true, fee: 100n },
-      destination: { success: false, failureReason: 'Exchange destination failed' },
-      hops: []
-    } as unknown as TDryRunResult
-
-    const mockDryRunDestSuccess = {
-      origin: { success: true, fee: 100n },
-      destination: { success: true, fee: 300n },
-      hops: []
-    } as unknown as TDryRunResult
-
-    vi.spyOn(dryRunModule, 'dryRunInternal')
-      .mockResolvedValueOnce(mockDryRunDestSuccess)
-      .mockResolvedValueOnce(mockDryRunDestFailed)
-
-    await expect(handleSwapExecuteTransfer(optionsNoDestChain)).rejects.toThrow(
-      'Exchange (destination) failed: Exchange destination failed'
-    )
   })
 })

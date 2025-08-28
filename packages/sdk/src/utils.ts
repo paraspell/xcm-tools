@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IPolkadotApi, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 
@@ -23,3 +27,11 @@ export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult
     return apiCall(optionsWithApi)
   }
 }
+
+export const findFailingEvent = (result: any) =>
+  result.value?.emitted_events?.find(
+    (event: any) =>
+      event.type === 'Utility' &&
+      event.value.type === 'DispatchedAs' &&
+      event.value.value.result.success === false
+  )

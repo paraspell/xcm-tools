@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
-import { createChainClient, createPapiApiCall } from './utils'
+import { createChainClient, createPapiApiCall, findFailingEvent } from './utils'
 
 vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')
@@ -48,5 +48,94 @@ describe('API Instance and Call Utility Functions with PapiApi', () => {
       })
       expect(result).toEqual('test-result')
     })
+  })
+})
+
+describe('findFailingEvent', () => {
+  it('returns undefined if result has no value', () => {
+    const result = {}
+    expect(findFailingEvent(result)).toBeUndefined()
+  })
+
+  it('returns undefined if no emitted_events', () => {
+    const result = { value: {} }
+    expect(findFailingEvent(result)).toBeUndefined()
+  })
+
+  it('returns undefined if no Utility events', () => {
+    const result = {
+      value: {
+        emitted_events: [{ type: 'Balances', value: { type: 'Transfer', value: {} } }]
+      }
+    }
+    expect(findFailingEvent(result)).toBeUndefined()
+  })
+
+  it('returns undefined if Utility event is not DispatchedAs', () => {
+    const result = {
+      value: {
+        emitted_events: [{ type: 'Utility', value: { type: 'BatchCompleted', value: {} } }]
+      }
+    }
+    expect(findFailingEvent(result)).toBeUndefined()
+  })
+
+  it('returns undefined if DispatchedAs result is successful', () => {
+    const result = {
+      value: {
+        emitted_events: [
+          {
+            type: 'Utility',
+            value: {
+              type: 'DispatchedAs',
+              value: { result: { success: true } }
+            }
+          }
+        ]
+      }
+    }
+    expect(findFailingEvent(result)).toBeUndefined()
+  })
+
+  it('returns the event if DispatchedAs result is failed', () => {
+    const failingEvent = {
+      type: 'Utility',
+      value: {
+        type: 'DispatchedAs',
+        value: { result: { success: false } }
+      }
+    }
+
+    const result = {
+      value: {
+        emitted_events: [failingEvent]
+      }
+    }
+
+    expect(findFailingEvent(result)).toBe(failingEvent)
+  })
+
+  it('returns the first failing event if multiple are present', () => {
+    const failingEvent1 = {
+      type: 'Utility',
+      value: {
+        type: 'DispatchedAs',
+        value: { result: { success: false } }
+      }
+    }
+    const failingEvent2 = {
+      type: 'Utility',
+      value: {
+        type: 'DispatchedAs',
+        value: { result: { success: false } }
+      }
+    }
+    const result = {
+      value: {
+        emitted_events: [failingEvent1, failingEvent2]
+      }
+    }
+
+    expect(findFailingEvent(result)).toBe(failingEvent1)
   })
 })

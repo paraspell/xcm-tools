@@ -186,14 +186,14 @@ describe.sequential('E2E tests', () => {
         .to('Hydration')
         .currencyFrom({ id: 1984 })
         .currencyTo({ symbol: 'DOT' })
-        .amount('38821036538894063687')
+        .amount('100000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(2);
+      expect(hashes.length).toBe(1);
     });
   });
 
@@ -218,7 +218,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(2);
+      expect(hashes.length).toBe(1);
     });
 
     it('should build a transfer extrinsic without error on AssetHubKusama', async () => {

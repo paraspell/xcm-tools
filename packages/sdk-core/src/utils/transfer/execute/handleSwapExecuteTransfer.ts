@@ -214,7 +214,8 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
       exchangeChain
-    }
+    },
+    useRootOrigin: true
   }
 
   // First dry run with dummy fees to extract actual fees
@@ -239,12 +240,6 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     destChain
   )
 
-  // Check if there's a hop before exchange (origin reserve hop)
-  const hasOriginReserveHop = destChain ? exchangeHopIndex > 0 : firstDryRunResult.hops.length > 0
-
-  // If there's no origin reserve hop, we need the exchange hop/destination to succeed to get fees
-  const requireExchangeSuccess = !hasOriginReserveHop
-
   const extractedFees = extractFeesFromDryRun(
     chain,
     firstDryRunResult,
@@ -252,26 +247,6 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     destChain,
     false
   )
-
-  // If we need exchange to succeed but it failed, throw error
-  if (requireExchangeSuccess && extractedFees.exchangeFee === 0n) {
-    if (destChain) {
-      if (chain) {
-        const exchangeHop = firstDryRunResult.hops[exchangeHopIndex]
-        if (!exchangeHop.result.success) {
-          throw new DryRunFailedError(
-            `Exchange hop failed when no origin reserve exists: ${exchangeHop.result.failureReason || 'Unknown reason'}`
-          )
-        }
-      }
-    } else {
-      if (firstDryRunResult.destination && !firstDryRunResult.destination.success) {
-        throw new DryRunFailedError(
-          `Exchange (destination) failed when no origin reserve exists: ${firstDryRunResult.destination.failureReason || 'Unknown reason'}`
-        )
-      }
-    }
-  }
 
   if (extractedFees.exchangeFee === 0n) {
     // We set the exchange fee to non-zero value to prevent creating dummy tx
@@ -298,75 +273,11 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     }
   }
 
-  // Second dry run with actual fees and amounts
-  const { call: secondCall } = await createXcmAndCall(
-    {
-      ...internalOptions,
-      assetInfoTo: updatedAssetTo,
-      fees: extractedFees
-    },
+  const { call: finalCall } = await createXcmAndCall(
+    { ...internalOptions, assetInfoTo: updatedAssetTo, fees: extractedFees },
     firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
   )
 
-  const secondDryRunResult = await executeDryRun({
-    ...dryRunParams,
-    tx: api.callTxMethod(secondCall)
-  })
-
-  // Extract final fees from second dry run (now require all hops to succeed)
-  let finalFees: TSwapFeeEstimates
-
-  const hasHopsInSecondRun = secondDryRunResult.hops && secondDryRunResult.hops.length > 0
-  const isOnExchangeChain = chain === exchangeChain
-
-  if (hasHopsInSecondRun && !isOnExchangeChain) {
-    const finalExchangeHopIndex = findExchangeHopIndex(
-      chain,
-      secondDryRunResult.hops,
-      exchangeChain,
-      destChain
-    )
-    finalFees = extractFeesFromDryRun(
-      chain,
-      secondDryRunResult,
-      finalExchangeHopIndex,
-      destChain,
-      true
-    )
-  } else {
-    finalFees = extractFeesFromDryRun(chain, secondDryRunResult, 0, destChain, true)
-  }
-
-  // Validate that we have enough after accounting for final fees
-  const finalTotalFeesInFromAsset = chain ? finalFees.originReserveFee + finalFees.exchangeFee : 0n
-
-  validateAmount(BigInt(assetFrom.amount), finalTotalFeesInFromAsset)
-
-  // If the final fees are different, we might need one more iteration
-  if (
-    finalFees.exchangeFee !== extractedFees.exchangeFee ||
-    finalFees.originReserveFee !== extractedFees.originReserveFee
-  ) {
-    const finalAmountAvailableForSwap = BigInt(assetFrom.amount) - finalTotalFeesInFromAsset
-    const finalMinAmountOut = await calculateMinAmountOut(finalAmountAvailableForSwap)
-
-    const finalAssetTo = {
-      ...assetTo,
-      amount: finalMinAmountOut
-    }
-
-    const { call: finalCall } = await createXcmAndCall(
-      {
-        ...internalOptions,
-        assetInfoTo: finalAssetTo,
-        fees: finalFees
-      },
-      secondDryRunResult.origin.success ? secondDryRunResult.origin.weight : undefined
-    )
-
-    return api.callTxMethod(finalCall)
-  }
-
   // If fees didn't change, use the second call
-  return api.callTxMethod(secondCall)
+  return api.callTxMethod(finalCall)
 }
