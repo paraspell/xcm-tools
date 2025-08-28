@@ -180,33 +180,6 @@ describe('handleExecuteTransfer', () => {
     await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow('Origin execution failed')
   })
 
-  it('should throw error if hop dry run fails', async () => {
-    const input = {
-      ...mockInput,
-      senderAddress: '0xvalid',
-      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
-    }
-
-    vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
-
-    const dryRunResult = {
-      origin: { success: true, fee: 1000n },
-      hops: [
-        {
-          chain: 'IntermediateChain',
-          result: { success: false, fee: 0n, failureReason: 'Hop execution failed' }
-        }
-      ]
-    } as unknown as TDryRunResult
-    vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
-
-    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
-      'Dry run failed on an intermediate hop (IntermediateChain). Reason: Hop execution failed'
-    )
-  })
-
   it('should successfully create and return executeXcm transaction with hop', async () => {
     const input = {
       ...mockInput,
@@ -317,104 +290,6 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 2100n,
         reserveFee: 1400n
-      },
-      paraIdTo: mockInput.paraIdTo
-    })
-  })
-
-  it('should fetch fee asset balance when fee asset is different', async () => {
-    const input = {
-      ...mockInput,
-      senderAddress: '0xvalid',
-      assetInfo: { ...mockInput.assetInfo, amount: 10000n },
-      feeAssetInfo: { symbol: 'USDT' },
-      feeCurrency: { symbol: 'USDT' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(5000))
-
-    vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
-    vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 15000n })
-
-    const dryRunResult = {
-      origin: { success: true, fee: 1000n },
-      hops: [{ chain: 'IntermediateChain', result: { success: true, fee: 2000n } }]
-    } as unknown as TDryRunResult
-    vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
-
-    const result = await handleExecuteTransfer(mockChain, input)
-
-    expect(result).toBe('finalTx')
-    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
-      api: mockApi,
-      address: '0xvalid',
-      chain: mockChain,
-      currency: { symbol: 'USDT' }
-    })
-
-    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(1, {
-      api: mockApi,
-      chain: mockChain,
-      destChain: mockDestChain,
-      address: 'address',
-      assetInfo: input.assetInfo,
-      currency: input.currency,
-      feeAssetInfo: { symbol: 'USDT' },
-      feeCurrency: { symbol: 'USDT' },
-      recipientAddress: 'address',
-      senderAddress: '0xvalid',
-      version: Version.V4,
-      fees: {
-        originFee: 5000n,
-        reserveFee: 1000n
-      },
-      paraIdTo: mockInput.paraIdTo
-    })
-  })
-
-  it('should use MIN_FEE for originFee when fee asset balance is 1n or less', async () => {
-    const input = {
-      ...mockInput,
-      senderAddress: '0xvalid',
-      assetInfo: { ...mockInput.assetInfo, amount: 10000n },
-      feeAssetInfo: { symbol: 'USDT' },
-      feeCurrency: { symbol: 'USDT' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(1))
-
-    vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
-    vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 15000n })
-
-    const dryRunResult = {
-      origin: { success: true, fee: 1000n },
-      hops: []
-    } as unknown as TDryRunResult
-    vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
-
-    await handleExecuteTransfer(mockChain, input)
-
-    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(1, {
-      api: mockApi,
-      chain: mockChain,
-      destChain: mockDestChain,
-      address: 'address',
-      assetInfo: input.assetInfo,
-      currency: input.currency,
-      feeAssetInfo: { symbol: 'USDT' },
-      feeCurrency: { symbol: 'USDT' },
-      recipientAddress: 'address',
-      senderAddress: '0xvalid',
-      version: Version.V4,
-      fees: {
-        originFee: 1000n,
-        reserveFee: 1000n
       },
       paraIdTo: mockInput.paraIdTo
     })

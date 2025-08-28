@@ -283,21 +283,6 @@ describe('getTransferInfo', () => {
     })
   })
 
-  it('should throw InvalidParameterError if getXcmFee does not return originFee', async () => {
-    vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: undefined, currency: 'DOT' } as TXcmFeeDetail,
-      assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
-      bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
-      hops: [],
-      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
-    })
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
-
-    await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
-    expect(mockApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockApi.disconnect).toHaveBeenCalled()
-  })
-
   it('should correctly calculate originBalanceFeeAfter when feeAsset is same as transfer currency on AssetHubPolkadot (isFeeAssetAh true)', async () => {
     const ahOrigin = 'AssetHubPolkadot' as TSubstrateChain
     const sameCurrency = {

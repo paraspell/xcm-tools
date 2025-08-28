@@ -6,7 +6,6 @@ import {
   isChainEvm
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
@@ -84,12 +83,6 @@ export const getTransferInfo = async <TApi, TRes>({
       feeAsset,
       disableFallback: false
     })
-
-    if (originFee === undefined) {
-      throw new InvalidParameterError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${origin}.`
-      )
-    }
 
     const isFeeAssetAh =
       origin === 'AssetHubPolkadot' &&

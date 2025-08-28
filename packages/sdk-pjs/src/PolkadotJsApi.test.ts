@@ -646,13 +646,17 @@ describe('PolkadotJsApi', () => {
         }
       }
 
+      const weight = {
+        refTime: 1000,
+        proofSize: 2000
+      }
+
       const mockWeight = {
-        refTime: '1000',
-        proofSize: '2000'
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
       }
 
       const mockFeeResult = {
-        toString: vi.fn().mockReturnValue('5000')
+        toJSON: vi.fn().mockReturnValue({ ok: 5000 })
       }
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
@@ -664,7 +668,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
-        mockWeight,
+        weight,
         expect.objectContaining({
           V4: expect.any(Object)
         })
@@ -685,13 +689,17 @@ describe('PolkadotJsApi', () => {
         }
       }
 
-      const mockWeight = {
+      const weight = {
         refTime: '2000',
         proofSize: '3000'
       }
 
+      const mockWeight = {
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
+      }
+
       const mockFeeResult = {
-        toString: vi.fn().mockReturnValue('10000')
+        toJSON: vi.fn().mockReturnValue({ ok: 10000 })
       }
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
@@ -703,7 +711,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
-        mockWeight,
+        weight,
         expect.objectContaining({
           V4: asset.location
         })
@@ -738,13 +746,17 @@ describe('PolkadotJsApi', () => {
         }
       }
 
+      const weight = {
+        refTime: 1500,
+        proofSize: 2500
+      }
+
       const mockWeight = {
-        refTime: '1500',
-        proofSize: '2500'
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
       }
 
       const mockFeeResult = {
-        toString: vi.fn().mockReturnValue('7500')
+        toJSON: vi.fn().mockReturnValue({ ok: 7500 })
       }
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
@@ -756,7 +768,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
-        mockWeight,
+        weight,
         expect.objectContaining({
           V4: expect.any(Object)
         })
@@ -779,13 +791,14 @@ describe('PolkadotJsApi', () => {
         }
       }
 
+      const weight = { refTime: 3000, proofSize: 4000 }
+
       const mockWeight = {
-        refTime: '3000',
-        proofSize: '4000'
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
       }
 
       const mockFeeResult = {
-        toString: vi.fn().mockReturnValue('15000')
+        toJSON: vi.fn().mockReturnValue({ ok: 15000 })
       }
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
@@ -797,7 +810,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
-        mockWeight,
+        weight,
         expect.objectContaining({
           V4: expect.any(Object)
         })
@@ -818,13 +831,14 @@ describe('PolkadotJsApi', () => {
         }
       }
 
+      const weight = { refTime: 2500, proofSize: 3500 }
+
       const mockWeight = {
-        refTime: '2500',
-        proofSize: '3500'
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
       }
 
       const mockFeeResult = {
-        toString: vi.fn().mockReturnValue('12500')
+        toJSON: vi.fn().mockReturnValue({ ok: 12500 })
       }
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockWeight)
@@ -836,7 +850,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
-        mockWeight,
+        weight,
         expect.objectContaining({
           V4: expect.any(Object)
         })

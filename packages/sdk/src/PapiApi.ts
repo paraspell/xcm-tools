@@ -56,6 +56,7 @@ import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
 import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import { findFailingEvent } from './utils'
 
 const DEFAULT_TTL_MS = 60_000 // 1 minute
 const MAX_CLIENTS = 100
@@ -471,7 +472,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     const getExecutionSuccessFromResult = (result: any): boolean => {
-      return result?.success && result.value?.execution_result?.success
+      const errorInEvents = findFailingEvent(result)
+      return result?.success && result.value?.execution_result?.success && !errorInEvents
     }
 
     const extractFailureReasonFromResult = (result: any): string => {
@@ -488,6 +490,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       if (result?.value?.type) {
         return String(result.value.type)
       }
+
+      const erroredEvent = findFailingEvent(result)
+
+      if (erroredEvent) {
+        return erroredEvent.value.value.result.value.value.value.type
+      }
+
       return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
     }
 

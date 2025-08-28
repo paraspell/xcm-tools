@@ -1,29 +1,16 @@
-import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
+import { parseUnits } from 'viem'
 
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
 import { assertAddressIsString, getRelayChainOf } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
-
-const validateHops = (hops: THopInfo[]): void => {
-  for (const hop of hops) {
-    if (!hop.result.success) {
-      throw new DryRunFailedError(
-        `Dry run failed on an intermediate hop (${hop.chain}). Reason: ${
-          hop.result.failureReason || 'Unknown'
-        }`
-      )
-    }
-  }
-}
 
 const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
   if (!hops || hops.length === 0 || !hops[0].result.success) {
@@ -57,16 +44,6 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   assertAddressIsString(address)
 
-  const feeAssetBalance =
-    feeCurrency && feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? await getAssetBalanceInternal({
-          api,
-          address: senderAddress,
-          chain,
-          currency: feeCurrency as TCurrencyCore
-        })
-      : undefined
-
   const checkAmount = (fee: bigint) => {
     if (assetInfo.amount <= fee) {
       throw new InvalidParameterError(
@@ -94,12 +71,19 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     paraIdTo
   }
 
+  // We mint 1000 units of feeAsset and use 100
+  const FEE_ASSET_AMOUNT = 100
+
+  const feeAssetAmount = feeAssetInfo
+    ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
+    : MIN_FEE
+
   const call = createExecuteCall(
     chain,
     createDirectExecuteXcm({
       ...internalOptions,
       fees: {
-        originFee: feeAssetBalance && feeAssetBalance > 1n ? feeAssetBalance : MIN_FEE,
+        originFee: feeAssetAmount,
         reserveFee: MIN_FEE
       }
     }),
@@ -114,14 +98,13 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     senderAddress,
     address,
     currency,
-    feeAsset: feeCurrency
+    feeAsset: feeCurrency,
+    useRootOrigin: true
   })
 
   if (!dryRunResult.origin.success) {
     throw new DryRunFailedError(dryRunResult.failureReason as string)
   }
-
-  validateHops(dryRunResult.hops)
 
   const originFeeEstimate = dryRunResult.origin.fee
   const originFee = padFeeBy(originFeeEstimate, FEE_PADDING_PERCENTAGE)
