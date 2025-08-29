@@ -20,11 +20,26 @@ class PeoplePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario } = input
+    const { scenario, destination } = input
 
-    if (scenario === 'ParaToPara') {
+    if (
+      scenario === 'ParaToPara' &&
+      destination !== 'AssetHubPolkadot' &&
+      destination !== 'AssetHubKusama' &&
+      destination !== 'AssetHubPaseo' &&
+      destination !== 'AssetHubWestend'
+    ) {
       throw new ScenarioNotSupportedError(this.chain, scenario)
     }
+
+    const newOverridenAsset = {
+      parents: 1,
+      interior: {
+        Here: null
+      }
+    }
+
+    input.overriddenAsset = newOverridenAsset
 
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }

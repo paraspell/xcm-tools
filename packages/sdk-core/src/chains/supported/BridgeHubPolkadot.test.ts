@@ -39,7 +39,7 @@ describe('BridgeHubPolkadot', () => {
       new ScenarioNotSupportedError(
         chain.chain,
         'ParaToPara',
-        'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
+        'Unable to use bridge hub for transfers to other Parachains.'
       )
     )
   })
