@@ -48,7 +48,17 @@ const getFailureInfo = (
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
-  const { api, origin, destination, currency, tx, senderAddress, feeAsset, swapConfig } = options
+  const {
+    api,
+    origin,
+    destination,
+    currency,
+    tx,
+    senderAddress,
+    feeAsset,
+    swapConfig,
+    useRootOrigin = false
+  } = options
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
@@ -70,7 +80,8 @@ export const dryRunInternal = async <TApi, TRes>(
       ...asset,
       amount
     },
-    feeAsset: resolvedFeeAsset
+    feeAsset: resolvedFeeAsset,
+    useRootOrigin
   })
 
   if (!originDryRun.success) {

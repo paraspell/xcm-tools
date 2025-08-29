@@ -6,9 +6,7 @@ import type {
 } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptions } from './TTransfer'
 
 export type TBalanceResponse = {
   free?: string
@@ -162,7 +160,7 @@ export type TGetMaxForeignTransferableAmountOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
+export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The sender address of the account.
    */
@@ -180,14 +178,14 @@ export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
    */
   currency: WithAmount<TCurrencyCore>
   /**
-   * The transaction builder
+   * The transaction instance
    */
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+  tx: TRes
   feeAsset?: TCurrencyInput
 }
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase<TApi, TRes>,
+  TGetTransferableAmountOptionsBase<TRes>,
   TApi,
   TRes
 >

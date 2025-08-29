@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.2.0...xcm-api-v11.2.1) (2025-08-29)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [11.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.1.1...xcm-api-v11.2.0) (2025-08-29)
+
+
+### Features
+
+* **sdk-core:** Use dryRun root bypass to always show fees 🪄 ([76fee70](https://github.com/paraspell/xcm-tools/commit/76fee703be840203a97eac07d747221c273257ab))
+
 ## [11.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.1.0...xcm-api-v11.1.1) (2025-08-22)
 
 

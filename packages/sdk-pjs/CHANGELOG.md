@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.2.0...sdk-pjs-v11.2.1) (2025-08-29)
+
+
+### Code Refactoring
+
+* Use dryRun bypass in every func ✨ ([5997993](https://github.com/paraspell/xcm-tools/commit/59979932ced5a3d91ee3873d2b470597eb87e7e8))
+
+## [11.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.1.1...sdk-pjs-v11.2.0) (2025-08-29)
+
+
+### Features
+
+* **sdk-core:** Use dryRun root bypass to always show fees 🪄 ([76fee70](https://github.com/paraspell/xcm-tools/commit/76fee703be840203a97eac07d747221c273257ab))
+
 ## [11.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.1.0...sdk-pjs-v11.1.1) (2025-08-22)
 
 

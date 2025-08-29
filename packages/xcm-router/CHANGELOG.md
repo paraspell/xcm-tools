@@ -1,5 +1,24 @@
 # Changelog
 
+## [11.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.2.0...xcm-router-v11.2.1) (2025-08-29)
+
+
+### Code Refactoring
+
+* Use dryRun bypass in every func ✨ ([5997993](https://github.com/paraspell/xcm-tools/commit/59979932ced5a3d91ee3873d2b470597eb87e7e8))
+
+## [11.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.1.1...xcm-router-v11.2.0) (2025-08-29)
+
+
+### Features
+
+* **sdk-core:** Use dryRun root bypass to always show fees 🪄 ([76fee70](https://github.com/paraspell/xcm-tools/commit/76fee703be840203a97eac07d747221c273257ab))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([d4c24f8](https://github.com/paraspell/xcm-tools/commit/d4c24f8c950bccbb4dbad13f9ec3d00aeef3eac5))
+
 ## [11.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.1.0...xcm-router-v11.1.1) (2025-08-22)
 
 

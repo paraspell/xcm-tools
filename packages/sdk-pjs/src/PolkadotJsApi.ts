@@ -369,7 +369,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   async getXcmPaymentApiFee(chain: TSubstrateChain, xcm: any, asset: TAssetInfo): Promise<bigint> {
-    const weight = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm)
+    const weight = await this.getXcmWeight(xcm)
 
     assertHasLocation(asset)
 
@@ -383,7 +383,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       addXcmVersionHeader(localizedLocation, Version.V4)
     )
 
-    return BigInt(feeResult.toString())
+    const res = feeResult.toJSON() as any
+
+    return BigInt(res.ok)
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {

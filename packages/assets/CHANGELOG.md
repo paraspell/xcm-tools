@@ -1,5 +1,25 @@
 # Changelog
 
+## [11.2.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.2.0...assets-v11.2.1) (2025-08-29)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [11.2.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.1.1...assets-v11.2.0) (2025-08-29)
+
+
+### Features
+
+* **sdk-core:** Use dryRun root bypass to always show fees 🪄 ([76fee70](https://github.com/paraspell/xcm-tools/commit/76fee703be840203a97eac07d747221c273257ab))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([a6b4963](https://github.com/paraspell/xcm-tools/commit/a6b4963ed45571dd52d55f279b9f236198dc47bb))
+* Update assets map 📋 ([8a0405a](https://github.com/paraspell/xcm-tools/commit/8a0405a687c13c62b5df8eb2ab7e64ff2f2e8412))
+
 ## [11.1.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.1.0...assets-v11.1.1) (2025-08-22)
 
 
