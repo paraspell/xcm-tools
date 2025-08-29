@@ -32,12 +32,12 @@ const SkyboxUploadForm = () => {
       back: null
     },
     validate: {
-      right: value => (value ? undefined : t('rightImageRequired')),
-      left: value => (value ? undefined : t('leftImageRequired')),
-      top: value => (value ? undefined : t('topImageRequired')),
-      bottom: value => (value ? undefined : t('bottomImageRequired')),
-      front: value => (value ? undefined : t('frontImageRequired')),
-      back: value => (value ? undefined : t('backImageRequired'))
+      right: value => (value ? undefined : t('imageRequired')),
+      left: value => (value ? undefined : t('imageRequired')),
+      top: value => (value ? undefined : t('imageRequired')),
+      bottom: value => (value ? undefined : t('imageRequired')),
+      front: value => (value ? undefined : t('imageRequired')),
+      back: value => (value ? undefined : t('imageRequired'))
     }
   });
   const { setSkyboxTrigger } = useSelectedParachain();
@@ -107,7 +107,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('rightImageLabel')}
-          placeholder={t('rightImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('right')}
         />
@@ -115,7 +115,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('leftImageLabel')}
-          placeholder={t('leftImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('left')}
         />
@@ -123,7 +123,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('topImageLabel')}
-          placeholder={t('topImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('top')}
         />
@@ -131,7 +131,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('bottomImageLabel')}
-          placeholder={t('bottomImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('bottom')}
         />
@@ -139,7 +139,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('frontImageLabel')}
-          placeholder={t('frontImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('front')}
         />
@@ -147,7 +147,7 @@ const SkyboxUploadForm = () => {
           leftSection={icon}
           accept="image/png,image/jpeg"
           label={t('backImageLabel')}
-          placeholder={t('backImagePlaceholder')}
+          placeholder={t('imagePlaceholder')}
           required
           {...form.getInputProps('back')}
         />
