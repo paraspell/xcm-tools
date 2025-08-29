@@ -15,6 +15,10 @@ export const validateAssetSupport = <TApi, TRes>(
 
   const allowedChainsToAh = [
     'AssetHubPolkadot',
+    'BridgeHubPolkadot',
+    'PeoplePolkadot',
+    'CoretimePolkadot',
+    'Collectives',
     'BifrostPolkadot',
     'BifrostKusama',
     'Hydration',
