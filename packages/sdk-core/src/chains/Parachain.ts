@@ -16,6 +16,7 @@ import type { TPallet } from '@paraspell/pallets'
 import type { TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   isDotKsmBridge,
+  isSystemChain,
   isTLocation,
   Parents,
   replaceBigInt,
@@ -229,7 +230,14 @@ abstract class Parachain<TApi, TRes> {
 
       const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
 
-      if (shouldUseTeleport && this.chain !== 'Mythos' && destination !== 'Mythos') {
+      if (
+        !isSystemChain(this.chain) &&
+        !isTLocation(destination) &&
+        !isSystemChain(destination) &&
+        shouldUseTeleport &&
+        this.chain !== 'Mythos' &&
+        destination !== 'Mythos'
+      ) {
         throw new TransferToAhNotSupported(
           'Native asset transfers to or from AssetHub are temporarily disabled'
         )

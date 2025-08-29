@@ -20,8 +20,24 @@ class Collectives<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadot
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario } = input
-    if (scenario === 'ParaToPara') {
+    const { scenario, destination } = input
+
+    const newOverridenAsset = {
+      parents: 1,
+      interior: {
+        Here: null
+      }
+    }
+
+    input.overriddenAsset = newOverridenAsset
+
+    if (
+      scenario === 'ParaToPara' &&
+      destination !== 'AssetHubPolkadot' &&
+      destination !== 'AssetHubKusama' &&
+      destination !== 'AssetHubPaseo' &&
+      destination !== 'AssetHubWestend'
+    ) {
       throw new ScenarioNotSupportedError(this.chain, scenario)
     }
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
