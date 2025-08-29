@@ -8962,6 +8962,31 @@
     ],
     "otherAssets": [
       {
+        "symbol": "KILT",
+        "decimals": 18,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 8453
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x5d0dd05bb095fdd6af4865a1adf97c39c85ad2d8"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
         "symbol": "DOT",
         "decimals": 10,
         "location": {
@@ -15904,6 +15929,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "1000996",
+        "symbol": "EURC",
+        "decimals": 6,
+        "existentialDeposit": "10000"
       },
       {
         "assetId": "31",
