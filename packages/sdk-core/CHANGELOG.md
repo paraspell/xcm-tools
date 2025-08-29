@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.2.1...sdk-core-v11.2.2) (2025-08-29)
+
+
+### Bug Fixes
+
+* Re-enable system chains ([833e82b](https://github.com/paraspell/xcm-tools/commit/833e82b7d8108b1aab3817dc05863ec3949ac378))
+
 ## [11.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.2.0...sdk-core-v11.2.1) (2025-08-29)
 
 
