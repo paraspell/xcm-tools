@@ -16,7 +16,7 @@ const OptionsModal: FC<Props> = ({ opened, close }) => {
       <Modal.Overlay backgroundOpacity={0.55} blur={3} />
       <Modal.Content>
         <Modal.Header pb="xs">
-          <Title order={4}>{t('editOptions')}</Title>
+          <Title order={4}>{t('options.title')}</Title>
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body p="lg">

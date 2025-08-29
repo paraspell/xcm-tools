@@ -21,7 +21,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
   const chartData = counts.map(count => ({
     category: getParachainByIdInternal(count.paraId ?? 0),
     Success: count.success,
-    Failure: count.failed
+    Failed: count.failed
   }));
 
   return (
@@ -35,7 +35,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
       minBarSize={3}
       series={[
         { name: t('success'), color: 'green' },
-        { name: t('failure'), color: 'red' }
+        { name: t('failed'), color: 'red' }
       ]}
       tickLine="y"
       tooltipProps={{
@@ -61,7 +61,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
                         Success: 558651,
                         Total:
                           (payload[0].payload as (typeof chartData)[number]).Success +
-                          (payload[1].payload as (typeof chartData)[number]).Failure
+                          (payload[1].payload as (typeof chartData)[number]).Failed
                       },
                       hide: false
                     },

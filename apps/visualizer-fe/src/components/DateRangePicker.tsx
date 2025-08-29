@@ -19,8 +19,8 @@ const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
   return (
     <DatePickerInput
       type="range"
-      label={t('selectDateRange')}
-      placeholder={t('selectDateRange')}
+      label={t('dateRange')}
+      placeholder={t('select')}
       leftSection={icon}
       leftSectionPointerEvents="none"
       value={value}
