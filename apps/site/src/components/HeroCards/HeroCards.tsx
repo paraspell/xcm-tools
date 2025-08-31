@@ -48,7 +48,7 @@ await RouterBuilder
     .buildAndSend()`;
 
 const codeForLightSpell = `HTTP GET 
-api.lightspell.xyz/v3/chains/
+api.lightspell.xyz/v4/chains/
 Acala/para-id
 -> { 
   "paraId": 2000

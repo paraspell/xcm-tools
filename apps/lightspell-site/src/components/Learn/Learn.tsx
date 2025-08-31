@@ -21,7 +21,7 @@ const NODE_JS_CODE = `// Define API URL
 const API_URL = 'https://api.lightspell.xyz'
 
 // Make a HTTP GET request
-const response = await fetch(\`\${API_URL}/assets/Acala\`)
+const response = await fetch(\`\${API_URL}/v4/assets/Acala\`)
 
 // Use response data as necessary
 console.log(response)
@@ -33,22 +33,28 @@ const PYTHON_CODE = `import requests
 API_URL = 'https://api.lightspell.xyz'
 
 # Make a HTTP GET request
-response = requests.get(f'{API_URL}/assets/Acala')
+response = requests.get(f'{API_URL}/v4/assets/Acala')
 
 # Use response data as necessary
 print(response.json())
 `;
 
-const RUST_CODE = `import requests
+const RUST_CODE = `use reqwest;
+use std::error::Error;
 
-let api_url = "https://api.lightspell.xyz";
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let api_url = "https://api.lightspell.xyz";
 
-// Make a HTTP GET request
-let res = reqwest::get(format!("{}/assets/Acala", api_url)).await?;
+    // Make a HTTP GET request
+    let res = reqwest::get(format!("{}/v4/assets/Acala", api_url)).await?;
 
-// Use response data as necessary
-let body = res.text().await?;
-println!("Response: {:?}", body);
+    // Use response data as necessary
+    let body = res.text().await?;
+    println!("Response: {}", body);
+
+    Ok(())
+}}
 `;
 
 export function Learn() {

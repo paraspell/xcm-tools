@@ -37,10 +37,10 @@
   },
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "0.1.64",
-    "@snowbridge/contract-types": "0.1.64",
+    "@snowbridge/api": "0.2.0",
+    "@snowbridge/contract-types": "0.2.0",
     "ethers": "^6.15.0",
-    "viem": "^2.33.2"
+    "viem": "^2.36.0"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
-    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-env": "^7.28.3",
     "@codecov/rollup-plugin": "^1.9.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
@@ -60,8 +60,8 @@
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "prettier": "^3.6.2",
-    "rollup": "^4.46.2",
-    "rollup-plugin-dts": "^6.2.1",
+    "rollup": "^4.50.0",
+    "rollup-plugin-dts": "^6.2.3",
     "tslib": "^2.8.1"
   }
 }

@@ -10,6 +10,7 @@ export const createContext = (
   const config = env.config
   return new Context({
     environment: env.name,
+    graphqlApiUrl: config.GRAPHQL_API_URL,
     ethereum: {
       ethChainId: env.ethChainId,
       ethChains: {
