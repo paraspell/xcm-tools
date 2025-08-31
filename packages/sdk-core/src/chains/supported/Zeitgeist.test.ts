@@ -25,7 +25,7 @@ describe('Zeitgeist', () => {
     expect(zeitgeist.chain).toBe('Zeitgeist')
     expect(zeitgeist.info).toBe('zeitgeist')
     expect(zeitgeist.ecosystem).toBe('Polkadot')
-    expect(zeitgeist.version).toBe(Version.V3)
+    expect(zeitgeist.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with native asset "Ztg" when currency matches native asset', () => {

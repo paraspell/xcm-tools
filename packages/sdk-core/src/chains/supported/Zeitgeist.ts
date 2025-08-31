@@ -20,7 +20,7 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
     chain: TParachain = 'Zeitgeist',
     info: string = 'zeitgeist',
     ecosystem: TRelaychain = 'Polkadot',
-    version: Version = Version.V3
+    version: Version = Version.V4
   ) {
     super(chain, info, ecosystem, version)
   }

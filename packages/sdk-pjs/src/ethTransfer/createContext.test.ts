@@ -16,8 +16,9 @@ describe('createContext', () => {
   const mockConfig: Config = {
     BEACON_HTTP_API: 'http://beacon-api.test',
     ETHEREUM_CHAINS: {
-      '1': () => 'http://ethereum-chain.test'
+      '1': 'http://ethereum-chain.test'
     },
+    GRAPHQL_API_URL: 'http://graphql.test',
     RELAY_CHAIN_URL: 'http://relay-chain.test',
     GATEWAY_CONTRACT: '0xGatewayContract',
     BEEFY_CONTRACT: '0xBeefyContract',
@@ -54,6 +55,7 @@ describe('createContext', () => {
         },
         beacon_url: mockConfig.BEACON_HTTP_API
       },
+      graphqlApiUrl: mockConfig.GRAPHQL_API_URL,
       polkadot: {
         assetHubParaId: mockConfig.ASSET_HUB_PARAID,
         bridgeHubParaId: mockConfig.BRIDGE_HUB_PARAID,

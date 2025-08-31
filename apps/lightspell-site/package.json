@@ -14,22 +14,22 @@
     "format:write": "prettier --write src"
   },
   "dependencies": {
-    "@mantine/core": "^8.2.2",
-    "@mantine/form": "^8.2.2",
-    "@mantine/hooks": "^8.2.2",
+    "@mantine/core": "^8.2.8",
+    "@mantine/form": "^8.2.8",
+    "@mantine/hooks": "^8.2.8",
     "@mantinex/dev-icons": "^2.0.0",
     "@tabler/icons-react": "^3.34.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.7.1"
+    "react-router-dom": "^7.8.2"
   },
   "devDependencies": {
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
     "postcss": "^8.5.6",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
-    "vite": "^7.0.6"
+    "vite": "^7.1.3"
   }
 }

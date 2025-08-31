@@ -40,15 +40,15 @@
     "@paraspell/assets": "workspace:*",
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
-    "@scure/base": "^1.2.6",
-    "viem": "^2.33.2"
+    "@scure/base": "^2.0.0",
+    "viem": "^2.36.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
-    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-env": "^7.28.3",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@polkadot/api": "^16.4.3",
-    "@polkadot/types": "^16.4.3",
+    "@polkadot/api": "^16.4.6",
+    "@polkadot/types": "^16.4.6",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.1.4",
@@ -56,8 +56,8 @@
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "prettier": "^3.6.2",
-    "rollup": "^4.46.2",
-    "rollup-plugin-dts": "^6.2.1",
+    "rollup": "^4.50.0",
+    "rollup-plugin-dts": "^6.2.3",
     "ts-morph": "^26.0.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1"
