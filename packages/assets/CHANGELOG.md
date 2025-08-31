@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.3](https://github.com/paraspell/xcm-tools/compare/assets-v11.2.2...assets-v11.2.3) (2025-08-31)
+
+
+### Bug Fixes
+
+* Perform monthly maintenance check ([8854677](https://github.com/paraspell/xcm-tools/commit/88546775fbb5ab4b95ec1a1dde9f0c92d99a5bb5))
+
 ## [11.2.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.2.1...assets-v11.2.2) (2025-08-29)
 
 
