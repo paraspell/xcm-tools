@@ -52,7 +52,7 @@ class BifrostExchange extends ExchangeChain {
     Logger.log('To dest tx fee in native currency:', toDestTxFee.toString());
     Logger.log('Original amount', amount);
 
-    const amountBN = new BigNumber(amount);
+    const amountBN = BigNumber(amount);
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
@@ -86,7 +86,7 @@ class BifrostExchange extends ExchangeChain {
       throw new InvalidParameterError('Extrinsic is null');
     }
 
-    const amountOutBN = new BigNumber(trade.outputAmount.toFixed())
+    const amountOutBN = BigNumber(trade.outputAmount.toFixed())
       .shiftedBy(tokenTo.decimals)
       .decimalPlaces(0);
 
@@ -146,14 +146,16 @@ class BifrostExchange extends ExchangeChain {
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
 
     const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
     const trade = getBestTrade(chainId, pairs, amountIn, tokenTo);
 
-    const amountOut = trade.outputAmount.toFixed();
+    const amountOutBN = BigNumber(trade.outputAmount.toFixed())
+      .shiftedBy(tokenTo.decimals)
+      .decimalPlaces(0);
 
-    return BigInt(amountOut);
+    return BigInt(amountOutBN.toString());
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {

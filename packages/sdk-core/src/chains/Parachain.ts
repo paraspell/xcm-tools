@@ -15,6 +15,7 @@ import {
 import type { TPallet } from '@paraspell/pallets'
 import type { TRelaychain, Version } from '@paraspell/sdk-common'
 import {
+  deepEqual,
   isDotKsmBridge,
   isSystemChain,
   isTLocation,
@@ -23,7 +24,7 @@ import {
   type TParachain
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION } from '../constants'
+import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   InvalidAddressError,
@@ -66,6 +67,7 @@ import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
+import { getTChain } from './getTChain'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -117,10 +119,8 @@ abstract class Parachain<TApi, TRes> {
 
   canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
     const { assetInfo: asset } = options
-    const isEthAsset =
-      asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
-
-    return !isEthAsset && !this.shouldUseNativeAssetTeleport(options)
+    const isExternalAsset = asset.location && asset.location.parents === Parents.TWO
+    return !isExternalAsset && !this.shouldUseNativeAssetTeleport(options)
   }
 
   async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
@@ -142,6 +142,9 @@ abstract class Parachain<TApi, TRes> {
     } = sendOptions
     const scenario = resolveScenario(this.chain, destination)
     const paraId = resolveParaId(paraIdTo, destination)
+    const destChain = paraId
+      ? (getTChain(paraId, getRelayChainOf(this.chain)) as TParachain)
+      : undefined
 
     if (
       destination === 'Polimec' &&
@@ -220,6 +223,7 @@ abstract class Parachain<TApi, TRes> {
         feeCurrency,
         scenario,
         destination,
+        destChain,
         paraIdTo: paraId,
         version,
         senderAddress,
@@ -230,17 +234,16 @@ abstract class Parachain<TApi, TRes> {
 
       const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
 
-      if (
-        ((this.chain.includes('AssetHub') &&
-          destination !== ('Mythos' as TParachain) &&
-          typeof destination === 'string' &&
-          !isSystemChain(destination)) ||
-          (!isSystemChain(this.chain) &&
-            this.chain !== ('Mythos' as TParachain) &&
-            typeof destination === 'string' &&
-            destination.includes('AssetHub'))) &&
-        shouldUseTeleport
-      ) {
+      const isAhToOtherPara =
+        this.chain.startsWith('AssetHub') &&
+        destChain &&
+        destChain !== 'Mythos' &&
+        !isSystemChain(destChain)
+
+      const isOtherParaToAh =
+        destChain?.startsWith('AssetHub') && this.chain !== 'Mythos' && !isSystemChain(this.chain)
+
+      if ((isAhToOtherPara || isOtherParaToAh) && shouldUseTeleport) {
         throw new TransferToAhNotSupported(
           'Native asset transfers to or from AssetHub are temporarily disabled'
         )
@@ -250,18 +253,19 @@ abstract class Parachain<TApi, TRes> {
       const isAHPDest = !isTLocation(destination) && destination.includes('AssetHub')
 
       // Handle common cases
-      const isEthAsset =
-        asset.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
+      const isExternalAsset = asset.location && asset.location.parents === Parents.TWO
 
       const isEthDest = destination === 'Ethereum'
 
-      // Eth asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
-      const isEthAssetViaAh = isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset
+      // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
+      const isExternalAssetViaAh =
+        isExternalAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset
 
-      // Eth asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
-      const isEthAssetToAh = isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset
+      // External asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
+      const isExternalAssetToAh =
+        isExternalAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset
 
-      if (isEthAssetViaAh || isEthAssetToAh) {
+      if (isExternalAssetViaAh || isExternalAssetToAh) {
         const call = await createTypeAndThenCall(this.chain, options)
         return api.callTxMethod(call)
       }
@@ -316,11 +320,16 @@ abstract class Parachain<TApi, TRes> {
     amount: bigint,
     scenario: TScenario,
     version: Version,
-    _asset?: TAssetInfo,
+    asset?: TAssetInfo,
     _isOverridenAsset?: boolean
   ): TAsset {
+    const isRelayAsset = deepEqual(asset?.location, RELAY_LOCATION)
+    const parents =
+      scenario === 'ParaToRelay' || (isRelayAsset && isSystemChain(this.chain))
+        ? Parents.ONE
+        : Parents.ZERO
     return createAsset(version, amount, {
-      parents: scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
+      parents,
       interior: 'Here'
     })
   }

@@ -324,7 +324,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
               const getCurrency = (): TCurrencyCore => {
                 if (
-                  (chain.startsWith('AssetHub') || chain === 'Astar' || chain === 'Hydration') &&
+                  (chain.startsWith('AssetHub') ||
+                    chain === 'Astar' ||
+                    chain === 'Hydration' ||
+                    chain === 'KiltSpiritnet') &&
                   asset.symbol.toUpperCase() === getNativeAssetSymbol(chain)
                 ) {
                   return {

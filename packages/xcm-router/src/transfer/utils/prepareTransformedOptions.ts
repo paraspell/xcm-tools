@@ -22,7 +22,7 @@ export const prepareTransformedOptions = async <
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
       ? createExchangeInstance(exchange)
-      : await selectBestExchange(options, originApi);
+      : await selectBestExchange(options, originApi, builderOptions);
 
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
 

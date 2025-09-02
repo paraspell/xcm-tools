@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getXcmFee } from './getXcmFee'
 import { getXcmFeeInternal } from './getXcmFeeInternal'
@@ -7,13 +8,19 @@ import { getXcmFeeInternal } from './getXcmFeeInternal'
 vi.mock('./getXcmFeeInternal')
 
 describe('getXcmFee', () => {
+  const mockApi = {
+    disconnect: vi.fn().mockResolvedValue(undefined)
+  } as unknown as IPolkadotApi<unknown, unknown>
+
+  const commonOptions = {
+    api: mockApi
+  } as TGetXcmFeeOptions<unknown, unknown>
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('calls getXcmFeeInternal twice (forced=true then forced=false) with same options', async () => {
-    const options = { any: 'opts' } as unknown as TGetXcmFeeOptions<unknown, unknown>
-
     const forced = {
       origin: { currency: 'DOT', fee: 1n, sufficient: true },
       destination: { currency: 'ACA', fee: 2n, sufficient: true },
@@ -28,15 +35,13 @@ describe('getXcmFee', () => {
 
     vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
-    await getXcmFee(options)
+    await getXcmFee(commonOptions)
 
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(1, options, true)
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(2, options, false)
+    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(1, commonOptions, true)
+    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(2, commonOptions, false)
   })
 
   it('overwrites only `sufficient` for origin/destination and keeps other fields from forced', async () => {
-    const options = {} as unknown as TGetXcmFeeOptions<unknown, unknown>
-
     const forced = {
       origin: { currency: 'DOT', fee: 1n, feeType: 'dryRun', sufficient: true },
       destination: { currency: 'ACA', fee: 2n, feeType: 'paymentInfo', sufficient: true },
@@ -51,7 +56,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
-    const res = await getXcmFee(options)
+    const res = await getXcmFee(commonOptions)
 
     expect(res.origin.sufficient).toBe(false)
     expect(res.destination.sufficient).toBe(false)
@@ -63,8 +68,6 @@ describe('getXcmFee', () => {
   })
 
   it('handles assetHub/bridgeHub: only present if forced had them; `sufficient` taken from real', async () => {
-    const options = {} as unknown as TGetXcmFeeOptions<unknown, unknown>
-
     const forced = {
       origin: { currency: 'DOT', sufficient: true },
       destination: { currency: 'ACA', sufficient: true },
@@ -83,7 +86,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
-    const res = await getXcmFee(options)
+    const res = await getXcmFee(commonOptions)
 
     expect(res.assetHub?.currency).toBe('AH')
     expect(res.assetHub?.fee).toBe(3n)
@@ -108,15 +111,13 @@ describe('getXcmFee', () => {
     vi.mocked(getXcmFeeInternal)
       .mockResolvedValueOnce(forcedNoHubs)
       .mockResolvedValueOnce(realWithHubs)
-    const res2 = await getXcmFee(options)
+    const res2 = await getXcmFee(commonOptions)
 
     expect(res2.assetHub).toBeUndefined()
     expect(res2.bridgeHub).toBeUndefined()
   })
 
   it('merges hop `sufficient` by index; missing real hops set `sufficient` to undefined', async () => {
-    const options = {} as unknown as TGetXcmFeeOptions<unknown, unknown>
-
     const forced = {
       origin: { currency: 'DOT', sufficient: true },
       destination: { currency: 'ACA', sufficient: true },
@@ -134,7 +135,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
-    const res = await getXcmFee(options)
+    const res = await getXcmFee(commonOptions)
 
     expect(res.hops).toHaveLength(2)
     expect(res.hops[0].chain).toBe('AssetHubPolkadot')

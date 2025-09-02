@@ -101,6 +101,8 @@ export const XcmRouter = () => {
     asset: TAssetInfo,
     isAutoExchange = false,
   ): TCurrencyInput => {
+    if (asset.location) return { location: asset.location };
+
     if (!isForeignAsset(asset)) {
       return { symbol: asset.symbol };
     }
@@ -129,8 +131,6 @@ export const XcmRouter = () => {
     if (hasDuplicateIds) {
       return { symbol: asset.symbol };
     }
-
-    if (asset.location) return { location: asset.location };
 
     if (asset.assetId) return { id: asset.assetId };
 

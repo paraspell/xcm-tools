@@ -21,7 +21,7 @@ export const getBestAmountOut = async (
   const isExchangeAutoSelect = exchange === undefined || Array.isArray(exchange);
 
   const dex = isExchangeAutoSelect
-    ? await selectBestExchangeAmountOut(options, originApi)
+    ? await selectBestExchangeAmountOut(options, originApi, builderOptions)
     : createExchangeInstance(exchange);
 
   const { assetFromOrigin, assetFromExchange: assetFrom, assetTo } = resolveAssets(dex, options);

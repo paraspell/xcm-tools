@@ -64,7 +64,7 @@ describe('prepareTransformedOptions', () => {
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow();
 
-    expect(selectBestExchange).toHaveBeenCalledWith(mockOptions, undefined);
+    expect(selectBestExchange).toHaveBeenCalledWith(mockOptions, undefined, undefined);
   });
 
   test('throws error when origin asset is not found', async () => {

@@ -89,9 +89,6 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     useRootOrigin
   })
 
-  api.setDisconnectAllowed(true)
-  await api.disconnect()
-
   // If origin dry run failed or we only have paymentInfo, handle fallback
   if (originDryRunError || originFeeType === 'paymentInfo') {
     const destApi = api.clone()

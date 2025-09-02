@@ -1,4 +1,4 @@
-// Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
+// Contains detailed structure of XCM call construction for PeoplePolkadot Parachain
 
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
@@ -20,26 +20,15 @@ class PeoplePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, destination } = input
+    const { scenario, destChain } = input
 
-    if (
-      scenario === 'ParaToPara' &&
-      destination !== 'AssetHubPolkadot' &&
-      destination !== 'AssetHubKusama' &&
-      destination !== 'AssetHubPaseo' &&
-      destination !== 'AssetHubWestend'
-    ) {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+    if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {
+      throw new ScenarioNotSupportedError(
+        this.chain,
+        scenario,
+        `Unable to use ${this.chain} for transfers to other Parachains.`
+      )
     }
-
-    const newOverridenAsset = {
-      parents: 1,
-      interior: {
-        Here: null
-      }
-    }
-
-    input.overriddenAsset = newOverridenAsset
 
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }

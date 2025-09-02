@@ -20,32 +20,17 @@ class BridgeHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPo
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, destination } = input
+    const { scenario, destChain } = input
 
-    const newOverridenAsset = {
-      parents: 1,
-      interior: {
-        Here: null
-      }
-    }
-
-    input.overriddenAsset = newOverridenAsset
-
-    if (
-      scenario === 'ParaToPara' &&
-      destination !== 'AssetHubPolkadot' &&
-      destination !== 'AssetHubKusama' &&
-      destination !== 'AssetHubPaseo' &&
-      destination !== 'AssetHubWestend'
-    ) {
+    if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {
       throw new ScenarioNotSupportedError(
         this.chain,
         scenario,
-        'Unable to use bridge hub for transfers to other Parachains.'
+        `Unable to use ${this.chain} for transfers to other Parachains.`
       )
     }
-    const method = 'limited_teleport_assets'
-    return transferPolkadotXcm(input, method, 'Unlimited')
+
+    return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

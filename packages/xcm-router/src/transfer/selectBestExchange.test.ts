@@ -74,6 +74,7 @@ describe('selectBestExchange', () => {
       baseOptions,
       originApi,
       expect.any(Function),
+      undefined,
     );
 
     expect(result).toBe(dex);

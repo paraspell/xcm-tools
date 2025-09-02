@@ -32,6 +32,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   feeAssetInfo?: TAssetInfo
   feeCurrency?: TCurrencyInput
   destination: TDestination
+  destChain?: TChain
   paraIdTo?: number
   version: Version
   senderAddress?: string
