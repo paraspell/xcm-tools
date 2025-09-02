@@ -980,14 +980,10 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const setDisconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
-    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
     const cloneSpy = vi.spyOn(mockApi, 'clone')
 
     await getXcmFeeInternal(createOptions({ api: mockApi }), false)
 
-    expect(setDisconnectAllowedSpy).toHaveBeenCalledWith(true)
-    expect(disconnectSpy).toHaveBeenCalled()
     expect(cloneSpy).toHaveBeenCalled()
     expect(mockCloneApi.init).toHaveBeenCalled()
     expect(mockCloneApi.setDisconnectAllowed).toHaveBeenCalledWith(false)

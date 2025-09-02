@@ -7,6 +7,10 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
   const forced = await getXcmFeeInternal(options, true)
   const real = await getXcmFeeInternal(options, false)
 
+  const { api } = options
+
+  await api.disconnect()
+
   return {
     ...forced,
     origin: {

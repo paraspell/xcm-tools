@@ -1,4 +1,5 @@
 import {
+  applyDecimalAbstraction,
   findAssetInfo,
   getRelayChainOf,
   hasSupportForAsset,
@@ -13,7 +14,7 @@ import { EXCHANGE_CHAINS } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
+import type { TGetBestAmountOutOptions, TRouterAsset, TRouterBuilderOptions } from '../types';
 import { type TCommonTransferOptions } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 
@@ -28,6 +29,7 @@ export const selectBestExchangeCommon = async <
     assetTo: TRouterAsset,
     options: T,
   ) => Promise<BigNumber>,
+  builderOptions?: TRouterBuilderOptions,
 ): Promise<ExchangeChain> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
 
@@ -94,8 +96,17 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
+    const parsedAmount = applyDecimalAbstraction(
+      options.amount,
+      assetFromExchange?.decimals,
+      !!builderOptions?.abstractDecimals,
+    ).toString();
+
     try {
-      const amountOut = await computeAmountOut(dex, assetFromExchange, assetTo, options);
+      const amountOut = await computeAmountOut(dex, assetFromExchange, assetTo, {
+        ...options,
+        amount: parsedAmount,
+      });
       if (amountOut.gt(maxAmountOut)) {
         bestExchange = dex;
         maxAmountOut = amountOut;

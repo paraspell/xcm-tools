@@ -2,9 +2,7 @@
 
 import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetInfoByLoc,
   getNativeAssetSymbol,
-  getOtherAssets,
   getRelayChainSymbol,
   InvalidCurrencyError,
   isForeignAsset,
@@ -299,10 +297,9 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       return this.handleMythosTransfer(options)
     }
 
-    const isEthereumAsset =
-      assetInfo.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), assetInfo.location)
+    const isExternalAsset = assetInfo.location && assetInfo.location.parents === Parents.TWO
 
-    if (isEthereumAsset) {
+    if (isExternalAsset) {
       const call = await createTypeAndThenCall(this.chain, options)
       return api.callTxMethod(call)
     }

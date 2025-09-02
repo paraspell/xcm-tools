@@ -9,8 +9,9 @@ export const getCurrencySelection = (chain: TSubstrateChain, asset: TAssetInfo):
   const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
   if (isForeignAsset(asset) && !isBifrost) {
     if (asset.assetId) return { id: asset.assetId };
-    if (asset.location) return { location: asset.location };
   }
+
+  if (asset.location) return { location: asset.location };
 
   return { symbol: asset.symbol };
 };

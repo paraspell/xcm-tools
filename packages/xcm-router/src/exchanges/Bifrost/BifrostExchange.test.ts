@@ -233,8 +233,7 @@ describe('BifrostExchange', () => {
 
     it('should return the amount out', async () => {
       const result = await chain.getAmountOut(mockApi, swapOptions);
-
-      expect(result).toEqual(1n);
+      expect(result).toEqual(1000000000000n);
     });
   });
 });

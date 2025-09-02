@@ -29,18 +29,34 @@ describe('BridgeHubPolkadot', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
-      unknown,
-      unknown
-    >
+  it('throws for ParaToPara to a non-AssetHub dest', () => {
+    const invalidInput = {
+      ...mockInput,
+      scenario: 'ParaToPara',
+      destChain: 'Moonbeam'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrowError(
       new ScenarioNotSupportedError(
         chain.chain,
         'ParaToPara',
-        'Unable to use bridge hub for transfers to other Parachains.'
+        'Unable to use BridgeHubPolkadot for transfers to other Parachains.'
       )
+    )
+  })
+
+  it('allows ParaToPara to an AssetHub dest and calls transferPolkadotXcm', async () => {
+    const validInput = {
+      ...mockInput,
+      scenario: 'ParaToPara',
+      destChain: 'AssetHubPolkadot'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await chain.transferPolkadotXCM(validInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      validInput,
+      'limited_teleport_assets',
+      'Unlimited'
     )
   })
 

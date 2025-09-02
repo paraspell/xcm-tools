@@ -25,9 +25,11 @@ import {
   type TXTokensTransferOptions,
   type TXTransferTransferOptions
 } from '../types'
+import { getTChain } from './getTChain'
 import Parachain from './Parachain'
 
 vi.mock('../constants/chains')
+vi.mock('./getTChain')
 
 vi.mock('../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
@@ -216,7 +218,6 @@ describe('Parachain', () => {
 
     const options = {
       api: {},
-      to: 'AssetHubPolkadot',
       assetInfo: {
         symbol: 'DOT',
         amount: 100n,
@@ -224,6 +225,8 @@ describe('Parachain', () => {
       },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
+
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
 
     await expect(chain.transfer(options)).rejects.toThrow(TransferToAhNotSupported)
     await expect(chain.transfer(options)).rejects.toThrow(

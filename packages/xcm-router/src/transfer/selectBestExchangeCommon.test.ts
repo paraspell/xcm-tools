@@ -1,5 +1,5 @@
 import type { TAssetInfo, TParachain } from '@paraspell/sdk';
-import { findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
+import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -14,17 +14,13 @@ vi.mock('@paraspell/sdk', () => ({
   findAssetInfo: vi.fn(),
   hasSupportForAsset: vi.fn(),
   getRelayChainOf: vi.fn(),
+  applyDecimalAbstraction: vi.fn(),
   InvalidParameterError: class extends Error {},
 }));
 
-vi.mock('../assets', () => ({
-  getExchangeAsset: vi.fn(),
-  getExchangeAssetByOriginAsset: vi.fn(),
-}));
+vi.mock('../assets');
 
-vi.mock('../exchanges/ExchangeChainFactory', () => ({
-  createExchangeInstance: vi.fn(),
-}));
+vi.mock('../exchanges/ExchangeChainFactory');
 
 vi.mock('./canBuildToExchangeTx', () => ({
   canBuildToExchangeTx: vi.fn().mockResolvedValue({ success: true }),
@@ -41,6 +37,9 @@ const baseOptions = {
 
 describe('selectBestExchangeCommon', () => {
   beforeEach(() => {
+    vi.mocked(applyDecimalAbstraction).mockImplementation((amount) =>
+      amount ? (amount as bigint) : BigInt(0),
+    );
     vi.clearAllMocks();
   });
 
