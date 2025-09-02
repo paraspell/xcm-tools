@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.2.3...sdk-core-v11.2.4) (2025-09-02)
+
+
+### Bug Fixes
+
+* Refactor location localization & fix bifrost dex issues 🔧 ([0d83ded](https://github.com/paraspell/xcm-tools/commit/0d83ded64dae482ac84986475dd76e4a8f714e82))
+
 ## [11.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.2.2...sdk-core-v11.2.3) (2025-08-31)
 
 
