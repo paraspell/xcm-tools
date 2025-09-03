@@ -28,8 +28,11 @@ export const getAssetReserveChain = (
     return resolvedChain as TSubstrateChain
   }
 
+  const relaychain = getRelayChainOf(chain)
+  const ahChain = `AssetHub${relaychain}` as TSubstrateChain
+
   if (hasGlobalConsensusJunction) {
-    return 'AssetHubPolkadot'
+    return ahChain
   }
 
   if (
@@ -38,7 +41,7 @@ export const getAssetReserveChain = (
       interior: { Here: null }
     })
   ) {
-    return CHAINS_DOT_RESERVE_AH.has(destChain) ? 'AssetHubPolkadot' : 'Polkadot'
+    return CHAINS_DOT_RESERVE_AH.has(destChain) ? ahChain : relaychain
   }
 
   return chain

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TAsset } from '@paraspell/assets'
-import { isSystemChain, Version } from '@paraspell/sdk-common'
+import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../../errors'
@@ -15,7 +15,7 @@ import { prepareExecuteContext } from './prepareExecuteContext'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
-  isSystemChain: vi.fn()
+  isTrustedChain: vi.fn()
 }))
 
 vi.mock('../../../pallets/xcmPallet/utils', () => ({
@@ -72,13 +72,10 @@ describe('createBaseExecuteXcm', () => {
 
   describe('Teleport transfers (trusted chains)', () => {
     it('should create teleport instructions for system chains', () => {
-      // Setup
-      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(isTrustedChain).mockReturnValue(true)
 
-      // Execute
       const result = createBaseExecuteXcm(mockBaseOptions)
 
-      // Assert
       expect(result).toEqual([
         {
           InitiateTeleport: {
@@ -99,12 +96,12 @@ describe('createBaseExecuteXcm', () => {
         }
       ])
 
-      expect(isSystemChain).toHaveBeenCalledWith('AssetHubPolkadot')
-      expect(isSystemChain).toHaveBeenCalledWith('AssetHubKusama')
+      expect(isTrustedChain).toHaveBeenCalledWith('AssetHubPolkadot')
+      expect(isTrustedChain).toHaveBeenCalledWith('AssetHubKusama')
     })
 
     it('should handle teleport with fee multi-asset', () => {
-      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(isTrustedChain).mockReturnValue(true)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         feeAsset: {} as TAsset
@@ -118,7 +115,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should include suffix XCM instructions', () => {
-      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(isTrustedChain).mockReturnValue(true)
       const suffixXcm = [{ ClearOrigin: {} }, { RefundSurplus: {} }]
 
       const result = createBaseExecuteXcm({
@@ -135,7 +132,7 @@ describe('createBaseExecuteXcm', () => {
 
   describe('Reserve transfers', () => {
     it('should create reserve transfer when origin is not reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'Acala'
@@ -184,7 +181,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should handle reserve transfer when destination is reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'AssetHubKusama'
@@ -202,7 +199,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should handle reserve transfer with fee multi-asset', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'Acala',
@@ -220,7 +217,7 @@ describe('createBaseExecuteXcm', () => {
 
   describe('Direct deposit transfers', () => {
     it('should create direct deposit when on reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'AssetHubPolkadot'
@@ -250,7 +247,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should create direct deposit when no reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
 
       const result = createBaseExecuteXcm({
         ...mockBaseOptions,
@@ -279,7 +276,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should handle direct deposit when destination is reserve with suffix', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'AssetHubKusama'
@@ -298,7 +295,7 @@ describe('createBaseExecuteXcm', () => {
 
   describe('Error handling', () => {
     it('should throw error for non-AssetHubPolkadot chain without reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
 
       expect(() =>
         createBaseExecuteXcm({
@@ -318,7 +315,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should not throw error for AssetHubPolkadot without reserve chain', () => {
-      vi.mocked(isSystemChain).mockReturnValue(false)
+      vi.mocked(isTrustedChain).mockReturnValue(false)
 
       expect(() =>
         createBaseExecuteXcm({
@@ -331,7 +328,7 @@ describe('createBaseExecuteXcm', () => {
 
   describe('Edge cases', () => {
     it('should handle empty suffix XCM', () => {
-      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(isTrustedChain).mockReturnValue(true)
 
       const result = createBaseExecuteXcm({
         ...mockBaseOptions,
@@ -343,7 +340,7 @@ describe('createBaseExecuteXcm', () => {
     })
 
     it('should correctly call createAssetsFilter with appropriate assets', () => {
-      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(isTrustedChain).mockReturnValue(true)
 
       createBaseExecuteXcm(mockBaseOptions)
 

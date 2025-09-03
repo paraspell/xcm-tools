@@ -25,6 +25,7 @@ class Subsocial<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
         `Asset ${asset.symbol} is not supported by chain ${this.chain}.`
       )
     }
+
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 }

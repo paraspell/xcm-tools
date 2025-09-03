@@ -146,7 +146,7 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
     return defaultTx
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 }

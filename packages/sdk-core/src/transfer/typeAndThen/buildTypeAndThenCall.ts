@@ -1,10 +1,11 @@
 import type { TAsset } from '@paraspell/assets'
+import { isRelayChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createAsset } from '../../utils'
+import { addXcmVersionHeader, createAsset, localizeLocation } from '../../utils'
 
 export const buildTypeAndThenCall = <TApi, TRes>(
   { origin, reserve, dest, assetInfo, options: { version } }: TTypeAndThenCallContext<TApi, TRes>,
@@ -19,10 +20,14 @@ export const buildTypeAndThenCall = <TApi, TRes>(
 
   const reserveType = origin.chain === reserve.chain ? 'LocalReserve' : 'DestinationReserve'
 
-  const feeMultiAsset = createAsset(version, assetInfo.amount, feeAssetLocation)
+  const feeMultiAsset = createAsset(
+    version,
+    assetInfo.amount,
+    isRelayChain(origin.chain) ? localizeLocation(origin.chain, feeAssetLocation) : feeAssetLocation
+  )
 
   return {
-    module: 'PolkadotXcm',
+    module: isRelayChain(origin.chain) ? 'XcmPallet' : 'PolkadotXcm',
     method: 'transfer_assets_using_type_and_then',
     parameters: {
       dest: addXcmVersionHeader(destLocation, version),

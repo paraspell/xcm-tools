@@ -17,6 +17,7 @@ import type {
   TDryRunChainResultInternal,
   TDryRunXcmBaseOptions,
   TLocation,
+  TPallet,
   TSerializedApiCall,
   TSubstrateChain,
   TWeight
@@ -277,6 +278,21 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   blake2AsHex(data: Uint8Array) {
     return `0x${bytesToHex(blake2b(data, { dkLen: 32 }))}`
+  }
+
+  async hasMethod(pallet: TPallet, method: string): Promise<boolean> {
+    try {
+      await this.api.getUnsafeApi().tx[pallet][method]().getEncodedData()
+      return true
+    } catch (e) {
+      if (
+        e instanceof Error &&
+        e.message.includes(`Runtime entry Tx(${pallet}.${method}) not found`)
+      ) {
+        return false
+      }
+      return true
+    }
   }
 
   getMethod(tx: TPapiTransaction) {
@@ -611,7 +627,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     assertHasLocation(asset)
 
     const localizedLocation =
-      chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama' || isRelayChain(chain)
+      chain.startsWith('AssetHub') || isRelayChain(chain)
         ? localizeLocation(chain, asset.location)
         : asset.location
 

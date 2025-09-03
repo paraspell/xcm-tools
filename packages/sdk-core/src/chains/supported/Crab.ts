@@ -29,7 +29,7 @@ class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     throw new ScenarioNotSupportedError(this.chain, input.scenario)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 

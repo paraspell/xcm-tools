@@ -7,17 +7,7 @@ import { getChain } from '../utils'
 export const transferRelayToPara = async <TApi, TRes>(
   options: TRelayToParaOptions<TApi, TRes>
 ): Promise<TRes> => {
-  const {
-    api,
-    origin,
-    destination,
-    assetInfo: asset,
-    address,
-    paraIdTo,
-    version,
-    pallet,
-    method
-  } = options
+  const { api, origin, destination } = options
   const isLocationDestination = typeof destination === 'object'
 
   if (api.getConfig() === undefined && isLocationDestination) {
@@ -26,19 +16,9 @@ export const transferRelayToPara = async <TApi, TRes>(
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
-  const serializedApiCall = getChain(
+  const serializedApiCall = await getChain(
     isLocationDestination ? resolveTChainFromLocation(origin, destination) : destination
-  ).transferRelayToPara({
-    api,
-    origin,
-    destination,
-    address,
-    paraIdTo,
-    assetInfo: asset,
-    version,
-    pallet,
-    method
-  })
+  ).transferRelayToPara(options)
 
   return api.callTxMethod(serializedApiCall)
 }

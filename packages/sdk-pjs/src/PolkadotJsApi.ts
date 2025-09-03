@@ -15,6 +15,7 @@ import type {
   TDryRunXcmBaseOptions,
   TLocation,
   TModuleError,
+  TPallet,
   TSerializedApiCall,
   TSubstrateChain,
   TWeight
@@ -271,6 +272,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   getMethod(tx: Extrinsic): string {
     return tx.method.toString()
+  }
+
+  hasMethod(pallet: TPallet, method: string): Promise<boolean> {
+    const palletFormatted = lowercaseFirstLetter(pallet)
+    const methodFormatted = snakeToCamel(method)
+    return Promise.resolve(this.api.tx[palletFormatted]?.[methodFormatted] !== undefined)
   }
 
   async getFromRpc(module: string, method: string, key: string) {

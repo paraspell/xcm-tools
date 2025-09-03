@@ -381,6 +381,14 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   } else if (error.message.includes('LocalExecutionIncomplete')) {
                     // Handle DryRunFailedError: LocalExecutionIncomplete
                     expect(error.message).toContain('LocalExecutionIncomplete')
+                  } else if (
+                    error.name === 'InvalidParameterError' &&
+                    (error.message.includes('Relaychain assets can only be transferred') ||
+                      error.message.includes(
+                        'Astar system asset transfers are temporarily disabled'
+                      ))
+                  ) {
+                    expect(error.name).toBe('InvalidParameterError')
                   } else {
                     throw error
                   }
@@ -399,14 +407,26 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               : getRelayChainSymbol(chain)
             const api = await createOrGetApiInstanceForChain(chain)
             const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-            const tx = await Builder(api)
-              .from(chain)
-              .to(getRelayChainOf(chain))
-              .currency({ symbol, amount: MOCK_AMOUNT })
-              .senderAddress(senderAddress)
-              .address(MOCK_ADDRESS)
-              .build()
-            await validateTx(tx, isChainEvm(chain) ? evmSigner : signer)
+            try {
+              const tx = await Builder(api)
+                .from(chain)
+                .to(getRelayChainOf(chain))
+                .currency({ symbol, amount: MOCK_AMOUNT })
+                .senderAddress(senderAddress)
+                .address(MOCK_ADDRESS)
+                .build()
+              await validateTx(tx, isChainEvm(chain) ? evmSigner : signer)
+            } catch (error) {
+              if (
+                error.name === 'InvalidParameterError' &&
+                (error.message.includes('Relaychain assets can only be transferred') ||
+                  error.message.includes('Astar system asset transfers are temporarily disabled'))
+              ) {
+                expect(error.name).toBe('InvalidParameterError')
+              } else {
+                throw error
+              }
+            }
           })
         }
       })

@@ -151,7 +151,9 @@ export const hasDryRunSupport = (chain: TChain): boolean => {
 }
 
 export const hasXcmPaymentApiSupport = (chain: TChain): boolean => {
-  return getAssetsObject(chain).supportsXcmPaymentApi
+  // These chains have XcmPaymentApi but it's not working
+  const DISABLED_CHAINS: TChain[] = ['IntegriteePaseo', 'Basilisk', 'Jamton']
+  return getAssetsObject(chain).supportsXcmPaymentApi && !DISABLED_CHAINS.includes(chain)
 }
 
 export * from './getExistentialDeposit'

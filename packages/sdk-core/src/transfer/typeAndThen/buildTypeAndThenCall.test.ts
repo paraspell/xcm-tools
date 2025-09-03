@@ -6,20 +6,16 @@ import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createAsset } from '../../utils'
+import { addXcmVersionHeader, createAsset, localizeLocation } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
-vi.mock('../../chains/config', () => ({
-  getParaId: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn()
-}))
+vi.mock('../../chains/config')
+vi.mock('../../pallets/xcmPallet/utils')
 
 vi.mock('../../utils', () => ({
   addXcmVersionHeader: vi.fn(value => ({ versioned: value })),
-  createAsset: vi.fn()
+  createAsset: vi.fn(),
+  localizeLocation: vi.fn()
 }))
 
 describe('buildTypeAndThenCall', () => {
@@ -52,6 +48,7 @@ describe('buildTypeAndThenCall', () => {
       id: location,
       fun: { Fungible: amount }
     }))
+    vi.mocked(localizeLocation).mockImplementation((_, location) => location)
   })
 
   it('should build correct call when chain equals reserveChain and asset location is not RELAY_LOCATION', () => {
@@ -66,7 +63,7 @@ describe('buildTypeAndThenCall', () => {
     )
 
     expect(result).toEqual({
-      module: 'PolkadotXcm',
+      module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: { versioned: mockDestination },
@@ -102,7 +99,7 @@ describe('buildTypeAndThenCall', () => {
     )
 
     expect(result).toEqual({
-      module: 'PolkadotXcm',
+      module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: { versioned: mockDestination },

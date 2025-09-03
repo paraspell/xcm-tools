@@ -1,6 +1,6 @@
 import { type TAsset } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
-import { isSystemChain } from '@paraspell/sdk-common'
+import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
@@ -28,14 +28,14 @@ const getTransferType = (
   if (
     reserveChain !== undefined &&
     origin !== reserveChain &&
-    isSystemChain(origin) &&
-    isSystemChain(reserveChain)
+    isTrustedChain(origin) &&
+    isTrustedChain(reserveChain)
   ) {
     return 'teleport_to_reserve'
   }
 
   // Trusted chains can teleport
-  if (isSystemChain(origin) && isSystemChain(destination)) {
+  if (isTrustedChain(origin) && isTrustedChain(destination)) {
     return 'teleport'
   }
 

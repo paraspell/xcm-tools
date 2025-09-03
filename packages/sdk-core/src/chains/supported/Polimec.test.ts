@@ -162,7 +162,7 @@ describe('Polimec', () => {
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
   })
 
-  it('should create a correct call object in transferRelayToPara', () => {
+  it('should create a correct call object in transferRelayToPara', async () => {
     const options = {
       version: polimec.version,
       api: mockApi,
@@ -172,7 +172,7 @@ describe('Polimec', () => {
       assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
-    const call = polimec.transferRelayToPara(options)
+    const call = await polimec.transferRelayToPara(options)
 
     expect(call).toHaveProperty('module', 'XcmPallet')
     expect(call).toHaveProperty('method', 'transfer_assets_using_type_and_then')
@@ -185,7 +185,7 @@ describe('Polimec', () => {
     expect(call.parameters).toHaveProperty('weight_limit', 'Unlimited')
   })
 
-  it('should use default version in transferRelayToPara when version is undefined', () => {
+  it('should use default version in transferRelayToPara when version is undefined', async () => {
     const options = {
       api: mockApi,
       address: 'SomeAddress',
@@ -194,7 +194,7 @@ describe('Polimec', () => {
       assetInfo: { symbol: 'DOT', amount: 1000n }
     } as TRelayToParaOptions<unknown, unknown>
 
-    const call = polimec.transferRelayToPara(options)
+    const call = await polimec.transferRelayToPara(options)
 
     expect(call).toHaveProperty('module', 'XcmPallet')
     expect(call).toHaveProperty('method', 'transfer_assets_using_type_and_then')

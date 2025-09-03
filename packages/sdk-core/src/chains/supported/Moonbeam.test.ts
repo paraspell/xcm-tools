@@ -156,14 +156,6 @@ describe('Moonbeam', () => {
     expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      method: 'limited_reserve_transfer_assets',
-      includeFee: true
-    })
-  })
-
   describe('transferLocalNonNativeAsset', () => {
     it('should throw an error when asset is not a foreign asset', () => {
       const mockApi = {

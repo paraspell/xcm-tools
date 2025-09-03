@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { EXTERNAL_CHAINS, PARACHAINS, RELAYCHAINS } from '../constants'
 import type { TChain } from '../types'
-import { isRelayChain, isSystemChain } from './chain'
+import { isRelayChain, isSystemChain, isTrustedChain } from './chain'
 
 describe('isRelayChain', () => {
   RELAYCHAINS.forEach(relaychain => {
@@ -46,8 +46,7 @@ describe('isSystemChain', () => {
     'CoretimeWestend',
     'CoretimePaseo',
     'Collectives',
-    'CollectivesWestend',
-    'Mythos'
+    'CollectivesWestend'
   ]
 
   systemChains.forEach(chain => {
@@ -77,6 +76,40 @@ describe('isSystemChain', () => {
     it(`should return false for external chain ${externalChain}`, () => {
       const result = isSystemChain(externalChain)
       expect(result).toBe(false)
+    })
+  })
+
+  describe('isTrustedChain', () => {
+    const trustedByAh = new Set<TChain>(['Mythos'])
+
+    it('should return true for Mythos (trusted by AH)', () => {
+      expect(isTrustedChain('Mythos')).toBe(true)
+    })
+
+    systemChains.forEach(chain => {
+      it(`should return true for system chain ${chain}`, () => {
+        expect(isTrustedChain(chain)).toBe(true)
+      })
+    })
+
+    RELAYCHAINS.forEach(relaychain => {
+      it(`should return true for relaychain ${relaychain}`, () => {
+        expect(isTrustedChain(relaychain)).toBe(true)
+      })
+    })
+
+    PARACHAINS.forEach(chain => {
+      if (!systemChains.includes(chain) && !trustedByAh.has(chain)) {
+        it(`should return false for parachain ${chain}`, () => {
+          expect(isTrustedChain(chain)).toBe(false)
+        })
+      }
+    })
+
+    EXTERNAL_CHAINS.forEach(externalChain => {
+      it(`should return false for external chain ${externalChain}`, () => {
+        expect(isTrustedChain(externalChain)).toBe(false)
+      })
     })
   })
 })

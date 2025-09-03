@@ -1,4 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type {
@@ -27,6 +28,7 @@ export interface IPolkadotApi<TApi, TRes> {
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
   getMethod(tx: TRes): string
+  hasMethod(pallet: TPallet, method: string): Promise<boolean>
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   quoteAhPrice(
     fromMl: TLocation,

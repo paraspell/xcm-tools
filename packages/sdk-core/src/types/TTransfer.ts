@@ -185,6 +185,10 @@ type TRelayToParaBaseOptions = {
    */
   assetInfo: WithAmount<TAssetInfo>
   /**
+   * The currency to transfer. Either ID, symbol, location, or multi-asset
+   */
+  currency: TCurrencyInputWithAmount
+  /**
    * The optional pallet override
    */
   pallet?: string
@@ -225,7 +229,10 @@ export type TPolkadotXcmMethod =
   | 'reserve_withdraw_assets'
   | 'transfer_assets'
 
-export type TXcmPalletMethod = 'limited_teleport_assets' | 'limited_reserve_transfer_assets'
+export type TXcmPalletMethod =
+  | 'limited_teleport_assets'
+  | 'limited_reserve_transfer_assets'
+  | 'transfer_assets_using_type_and_then'
 
 export type TWeight = {
   refTime: bigint

@@ -1,10 +1,10 @@
 import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
-import { deepEqual, type TSubstrateChain } from '@paraspell/sdk-common'
+import { deepEqual, isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import { createAsset } from '../../utils'
+import { createAsset, localizeLocation } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -12,6 +12,7 @@ import { createCustomXcm } from './createCustomXcm'
 import { createRefundInstruction } from './utils'
 
 const buildAssets = (
+  chain: TSubstrateChain,
   asset: WithAmount<TAssetWithLocation>,
   feeAmount: bigint,
   isDotAsset: boolean,
@@ -23,7 +24,13 @@ const buildAssets = (
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
 
-  assets.push(createAsset(version, asset.amount, asset.location))
+  assets.push(
+    createAsset(
+      version,
+      asset.amount,
+      isRelayChain(chain) ? localizeLocation(chain, asset.location) : asset.location
+    )
+  )
 
   return assets
 }
@@ -72,7 +79,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
 
-  const assets = buildAssets(assetInfo, totalFee, isDotAsset, version)
+  const assets = buildAssets(chain, assetInfo, totalFee, isDotAsset, version)
 
   return buildTypeAndThenCall(context, isDotAsset, finalCustomXcm, assets)
 }
