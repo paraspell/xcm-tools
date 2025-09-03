@@ -29,7 +29,7 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
     return transferXTokens(input, BigInt(asset.assetId))
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 

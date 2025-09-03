@@ -37,7 +37,7 @@ class IntegriteeKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IXTo
     return transferXTokens(input, asset.symbol)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 

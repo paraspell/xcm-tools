@@ -8,5 +8,5 @@ export const resolveParaId = (paraId: number | undefined, destination: TDestinat
     return undefined
   }
 
-  return paraId ?? getParaId(destination)
+  return paraId !== undefined ? paraId : getParaId(destination)
 }

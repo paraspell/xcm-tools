@@ -36,7 +36,7 @@ class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 }

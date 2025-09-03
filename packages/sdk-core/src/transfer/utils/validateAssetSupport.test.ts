@@ -1,14 +1,7 @@
-import type { TNativeAssetInfo } from '@paraspell/assets'
-import {
-  getNativeAssets,
-  hasSupportForAsset,
-  InvalidCurrencyError,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { hasSupportForAsset, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { TransferToAhNotSupported } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
 import { validateAssetSupport } from './validateAssetSupport'
@@ -20,39 +13,15 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  getNativeAssets: vi.fn(),
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  throwUnsupportedCurrency: vi.fn()
-}))
+vi.mock('../../pallets/xcmPallet/utils')
 
 describe('validateAssetSupport', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-  })
-
-  it('should throw InvalidCurrencyError when trying to send DOT to AssetHub from not allowed chains', () => {
-    const options = {
-      from: 'Acala',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'DOT' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'DOT' } as TAssetInfo
-
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'DOT', isNative: true, decimals: 10 }])
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      TransferToAhNotSupported
-    )
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      'Chain Acala does not support DOT transfer to AssetHub'
-    )
   })
 
   it('should not throw when isBridge is true', () => {
@@ -65,8 +34,6 @@ describe('validateAssetSupport', () => {
     const assetCheckEnabled = true
     const isBridge = true
     const asset = { symbol: 'TEST' } as TAssetInfo
-
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' } as TNativeAssetInfo])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -99,26 +66,6 @@ describe('validateAssetSupport', () => {
     const asset = { symbol: 'TEST' } as TAssetInfo
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should filter out DOT from native assets when origin is Hydration', () => {
-    const options = {
-      from: 'Hydration',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'DOT' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'DOT' } as TAssetInfo
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getNativeAssets).mockReturnValue([
-      { symbol: 'DOT', isNative: true, decimals: 10 },
-      { symbol: 'KSM', isNative: true, decimals: 12 }
-    ])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })

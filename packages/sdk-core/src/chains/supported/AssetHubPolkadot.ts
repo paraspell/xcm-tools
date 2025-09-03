@@ -11,8 +11,8 @@ import {
 import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
   hasJunction,
-  isSystemChain,
   isTLocation,
+  isTrustedChain,
   Parents,
   type TLocation,
   Version
@@ -255,7 +255,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   }
 
   private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
-    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
+    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
     if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
     return scenario === 'ParaToPara' && !isTrusted
       ? 'limited_reserve_transfer_assets'
@@ -313,7 +313,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       'Ajuna'
     ] as const)
 
-    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
+    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
     const isDotReserveAh = !isTLocation(destination) && CHAINS_SUPPORT_DOT_TRANSFER.has(destination)
 
     if (

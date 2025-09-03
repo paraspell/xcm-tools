@@ -2,6 +2,7 @@ import type {
   TAssetInfo,
   TChainAssetsInfo,
   TDryRunXcmBaseOptions,
+  TPallet,
   WithAmount
 } from '@paraspell/sdk-core'
 import {
@@ -351,6 +352,62 @@ describe('PapiApi', () => {
 
       expect(result).toBe(mockTransaction)
       expect(mockDispatchMethod).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('hasMethod', () => {
+    it('returns true when the pallet.method exists (encodes successfully)', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const getEncodedData = vi.fn().mockResolvedValue('0xdead')
+
+      unsafeApi.tx = {
+        PolkadotXcm: {
+          transfer_assets: vi.fn().mockReturnValue({ getEncodedData })
+        }
+      }
+
+      const res = await papiApi.hasMethod('PolkadotXcm', 'transfer_assets')
+      expect(res).toBe(true)
+      expect(unsafeApi.tx.PolkadotXcm.transfer_assets).toHaveBeenCalledTimes(1)
+      expect(getEncodedData).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns false when the specific "Runtime entry … not found" error is thrown', async () => {
+      const pallet: TPallet = 'PolkadotXcm'
+      const method = 'missing_method'
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const getEncodedData = vi
+        .fn()
+        .mockRejectedValue(new Error(`Runtime entry Tx(${pallet}.${method}) not found`))
+
+      unsafeApi.tx = {
+        [pallet]: {
+          [method]: vi.fn().mockReturnValue({ getEncodedData })
+        }
+      }
+
+      const res = await papiApi.hasMethod(pallet, method)
+      expect(res).toBe(false)
+      expect(unsafeApi.tx[pallet][method]).toHaveBeenCalledTimes(1)
+      expect(getEncodedData).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns true when a different error is thrown', async () => {
+      const pallet: TPallet = 'PolkadotXcm'
+      const method = 'some'
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const getEncodedData = vi.fn().mockRejectedValue(new Error('Unexpected'))
+
+      unsafeApi.tx = {
+        [pallet]: {
+          [method]: vi.fn().mockReturnValue({ getEncodedData })
+        }
+      }
+
+      const res = await papiApi.hasMethod(pallet, method)
+      expect(res).toBe(true)
+      expect(unsafeApi.tx[pallet][method]).toHaveBeenCalledTimes(1)
+      expect(getEncodedData).toHaveBeenCalledTimes(1)
     })
   })
 

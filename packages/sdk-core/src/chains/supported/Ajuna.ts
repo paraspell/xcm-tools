@@ -58,7 +58,7 @@ class Ajuna<TApi, TRes>
     return !(assetInfo.symbol === 'DOT' && destination === 'AssetHubPolkadot')
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 

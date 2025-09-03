@@ -137,12 +137,4 @@ describe('Moonriver', () => {
       'Unlimited'
     )
   })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      method: 'limited_reserve_transfer_assets',
-      includeFee: true
-    })
-  })
 })

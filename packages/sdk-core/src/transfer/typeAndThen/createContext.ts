@@ -1,18 +1,22 @@
-import { isRelayChain, type TParachain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getTChain } from '../../chains/getTChain'
+import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
-import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
+import { assertHasLocation, getAssetReserveChain } from '../../utils'
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(
   chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
-  const { api, paraIdTo, assetInfo } = options
+  const { api, destChain, assetInfo } = options
 
   assertHasLocation(assetInfo)
 
-  const destChain = getTChain(paraIdTo as number, getRelayChainOf(chain)) as TParachain
+  if (!destChain) {
+    throw new InvalidParameterError(
+      'Cannot override destination when using type and then transfer.'
+    )
+  }
 
   const reserveChain = isRelayChain(destChain)
     ? destChain
@@ -31,7 +35,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     },
     dest: {
       api: destApi,
-      chain: destChain
+      chain: destChain as TSubstrateChain
     },
     reserve: {
       api: reserveApi,

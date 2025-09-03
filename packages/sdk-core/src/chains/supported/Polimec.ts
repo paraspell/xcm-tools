@@ -210,7 +210,7 @@ class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMT
     return api.callTxMethod(call)
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): Promise<TSerializedApiCall> {
     const { version } = options
 
     const call = createTypeAndThenTransfer(
@@ -222,7 +222,7 @@ class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMT
       'Teleport'
     )
 
-    return call
+    return Promise.resolve(call)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

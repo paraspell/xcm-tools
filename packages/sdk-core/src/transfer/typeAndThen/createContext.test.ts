@@ -4,17 +4,12 @@ import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getTChain } from '../../chains/getTChain'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
 import { createTypeAndThenCallContext } from './createContext'
 
 vi.mock('@paraspell/sdk-common', () => ({
   isRelayChain: vi.fn()
-}))
-
-vi.mock('../../chains/getTChain', () => ({
-  getTChain: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -46,15 +41,13 @@ describe('createTypeAndThenCallContext', () => {
 
   const mockOptions = {
     api: mockApi,
-    paraIdTo: 2000,
+    destChain: mockDestChain,
     assetInfo: mockAsset
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTChain).mockReturnValue(mockDestChain)
     vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
@@ -62,21 +55,24 @@ describe('createTypeAndThenCallContext', () => {
 
   it('should create context with relay chain as destination', async () => {
     const relayDestChain: TSubstrateChain = 'Polkadot'
-    vi.mocked(getTChain).mockReturnValue(relayDestChain)
     vi.mocked(isRelayChain).mockReturnValue(true)
 
-    const result = await createTypeAndThenCallContext(mockChain, mockOptions)
+    const options = {
+      ...mockOptions,
+      destChain: relayDestChain
+    }
+
+    const result = await createTypeAndThenCallContext(mockChain, options)
 
     expect(getAssetReserveChain).not.toHaveBeenCalled()
     expect(mockClonedApi.init).toHaveBeenCalledTimes(2)
-    expect(mockClonedApi.init).toHaveBeenCalledWith(relayDestChain)
 
     expect(result).toEqual({
       origin: { api: mockApi, chain: mockChain },
       dest: { api: mockClonedApi, chain: relayDestChain },
       reserve: { api: mockClonedApi, chain: relayDestChain },
       assetInfo: mockAsset,
-      options: mockOptions
+      options
     })
   })
 

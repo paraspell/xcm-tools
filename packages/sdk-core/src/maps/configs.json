@@ -5,10 +5,6 @@
     "paraId": 1000,
     "providers": [
       {
-        "name": "Blockops",
-        "endpoint": "wss://polkadot-assethub-rpc.blockops.network/ws"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
@@ -197,49 +193,6 @@
       }
     ]
   },
-  "BridgeHubKusama": {
-    "name": "BridgeHub",
-    "info": "kusamaBridgeHub",
-    "paraId": 1002,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://bridge-hub-kusama-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://kusama-bridge-hub-rpc-tn.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/bridgehub-kusama"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bridge-hub-kusama.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-bridge-hub-kusama.luckyfriday.io"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://bridgehub-kusama.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://kusama-bridge-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bridgehub-kusama.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/bridgehub"
-      }
-    ]
-  },
   "Centrifuge": {
     "name": "Centrifuge",
     "info": "centrifuge",
@@ -330,32 +283,6 @@
       }
     ]
   },
-  "IntegriteeKusama": {
-    "name": "Integritee Network",
-    "info": "integritee",
-    "paraId": 2015,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://kusama.api.integritee.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://integritee-kusama.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "IntegriteePaseo": {
-    "name": "Integritee Network (Paseo)",
-    "info": "integritee",
-    "paraId": 2039,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://paseo.api.integritee.network"
-      }
-    ]
-  },
   "Interlay": {
     "name": "Interlay",
     "info": "interlay",
@@ -440,84 +367,6 @@
       }
     ]
   },
-  "AssetHubKusama": {
-    "name": "AssetHub",
-    "info": "KusamaAssetHub",
-    "paraId": 1000,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://asset-hub-kusama-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://statemine-rpc-tn.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/asset-hub-kusama"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://asset-hub-kusama.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-asset-hub-kusama.luckyfriday.io"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://assethub-kusama.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://kusama-asset-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://statemine.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/assethub"
-      }
-    ]
-  },
-  "CoretimeKusama": {
-    "name": "Coretime",
-    "info": "kusamaCoretime",
-    "paraId": 1005,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://coretime-kusama-rpc.n.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/coretime-kusama"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://coretime-kusama.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-coretime-kusama.luckyfriday.io"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://coretime-kusama.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://kusama-coretime-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/coretime"
-      }
-    ]
-  },
   "CoretimePolkadot": {
     "name": "Coretime",
     "info": "polkadotCoretime",
@@ -553,377 +402,46 @@
       }
     ]
   },
-  "Encointer": {
-    "name": "Encointer Network",
-    "info": "encointer",
+  "Collectives": {
+    "name": "Collectives",
+    "info": "polkadotCollectives",
     "paraId": 1001,
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://encointer-kusama-rpc.n.dwellir.com"
+        "endpoint": "wss://collectives-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "Encointer Association",
-        "endpoint": "wss://kusama.api.encointer.org"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/encointer-kusama"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://encointer-kusama.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-encointer-kusama.luckyfriday.io"
-      }
-    ]
-  },
-  "Altair": {
-    "name": "Altair",
-    "info": "altair",
-    "paraId": 2088,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://altair.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Amplitude": {
-    "name": "Amplitude",
-    "info": "amplitude",
-    "paraId": 2124,
-    "providers": [
-      {
-        "name": "PendulumChain",
-        "endpoint": "wss://rpc-amplitude.pendulumchain.tech"
-      }
-    ]
-  },
-  "Basilisk": {
-    "name": "Basilisk",
-    "info": "basilisk",
-    "paraId": 2090,
-    "providers": [
-      {
-        "name": "Basilisk",
-        "endpoint": "wss://rpc.basilisk.cloud"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://basilisk-rpc.n.dwellir.com"
-      }
-    ]
-  },
-  "BifrostKusama": {
-    "name": "Bifrost",
-    "info": "bifrost",
-    "paraId": 2001,
-    "providers": [
-      {
-        "name": "Liebi",
-        "endpoint": "wss://bifrost-rpc.liebi.com/ws"
-      },
-      {
-        "name": "LiebiUS",
-        "endpoint": "wss://us.bifrost-rpc.liebi.com/ws"
-      }
-    ]
-  },
-  "CrustShadow": {
-    "name": "Crust Shadow",
-    "info": "shadow",
-    "paraId": 2012,
-    "providers": [
-      {
-        "name": "Crust",
-        "endpoint": "wss://rpc-shadow.crust.network/"
-      },
-      {
-        "name": "Crust APP",
-        "endpoint": "wss://rpc-shadow.crustnetwork.app"
-      },
-      {
-        "name": "Crust CC",
-        "endpoint": "wss://rpc-shadow.crustnetwork.cc"
-      },
-      {
-        "name": "Crust XYZ",
-        "endpoint": "wss://rpc-shadow.crustnetwork.xyz"
-      }
-    ]
-  },
-  "Crab": {
-    "name": "Crab",
-    "info": "crab",
-    "paraId": 2105,
-    "providers": [
-      {
-        "name": "Darwinia",
-        "endpoint": "wss://crab-rpc.darwinia.network/"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://darwiniacrab-rpc.n.dwellir.com"
-      }
-    ]
-  },
-  "Karura": {
-    "name": "Karura",
-    "info": "karura",
-    "paraId": 2000,
-    "providers": [
-      {
-        "name": "Acala Foundation 0",
-        "endpoint": "wss://karura-rpc-0.aca-api.network"
-      },
-      {
-        "name": "Acala Foundation 1",
-        "endpoint": "wss://karura-rpc-1.aca-api.network"
-      },
-      {
-        "name": "Acala Foundation 2",
-        "endpoint": "wss://karura-rpc-2.aca-api.network/ws"
-      },
-      {
-        "name": "Acala Foundation 3",
-        "endpoint": "wss://karura-rpc-3.aca-api.network/ws"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://karura-rpc.n.dwellir.com"
-      }
-    ]
-  },
-  "Kintsugi": {
-    "name": "Kintsugi BTC",
-    "info": "kintsugi",
-    "paraId": 2092,
-    "providers": [
-      {
-        "name": "Kintsugi Labs",
-        "endpoint": "wss://api-kusama.interlay.io/parachain"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://kintsugi.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Moonriver": {
-    "name": "Moonriver",
-    "info": "moonriver",
-    "paraId": 2023,
-    "providers": [
-      {
-        "name": "Allnodes",
-        "endpoint": "wss://moonriver-rpc.publicnode.com"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://moonriver-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Moonbeam Foundation",
-        "endpoint": "wss://wss.api.moonriver.moonbeam.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://moonriver.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://moonriver.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "UnitedBloc",
-        "endpoint": "wss://moonriver.unitedbloc.com"
-      }
-    ]
-  },
-  "Laos": {
-    "name": "Laos",
-    "info": "laos",
-    "paraId": 3370,
-    "providers": [
-      {
-        "name": "laosfoundation.io",
-        "endpoint": "wss://rpc.laos.laosfoundation.io"
-      }
-    ]
-  },
-  "Quartz": {
-    "name": "QUARTZ by UNIQUE",
-    "info": "quartz",
-    "paraId": 2095,
-    "providers": [
-      {
-        "name": "Geo Load Balancer",
-        "endpoint": "wss://ws-quartz.unique.network"
-      },
-      {
-        "name": "Unique Asia",
-        "endpoint": "wss://asia-ws-quartz.unique.network"
-      },
-      {
-        "name": "Unique Europe",
-        "endpoint": "wss://eu-ws-quartz.unique.network"
-      }
-    ]
-  },
-  "RobonomicsKusama": {
-    "name": "Robonomics",
-    "info": "robonomics",
-    "paraId": 2048,
-    "providers": [
-      {
-        "name": "Airalab",
-        "endpoint": "wss://kusama.rpc.robonomics.network/"
-      }
-    ]
-  },
-  "RobonomicsPolkadot": {
-    "name": "Robonomics",
-    "info": "robonomics",
-    "paraId": 3388,
-    "providers": [
-      {
-        "name": "Airalab",
-        "endpoint": "wss://polkadot.rpc.robonomics.network/"
-      }
-    ]
-  },
-  "PeoplePolkadot": {
-    "name": "People",
-    "info": "polkadotPeople",
-    "paraId": 1004,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://people-polkadot-rpc.n.dwellir.com"
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://polkadot-collectives-rpc-tn.dwellir.com"
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-polkadot"
+        "endpoint": "wss://sys.ibp.network/collectives-polkadot"
       },
       {
         "name": "IBP2",
-        "endpoint": "wss://people-polkadot.dotters.network"
+        "endpoint": "wss://collectives-polkadot.dotters.network"
       },
       {
         "name": "LuckyFriday",
-        "endpoint": "wss://rpc-people-polkadot.luckyfriday.io"
+        "endpoint": "wss://rpc-collectives-polkadot.luckyfriday.io"
       },
       {
         "name": "OnFinality",
-        "endpoint": "wss://people-polkadot.api.onfinality.io/public-ws"
+        "endpoint": "wss://collectives.api.onfinality.io/public-ws"
       },
       {
         "name": "Parity",
-        "endpoint": "wss://polkadot-people-rpc.polkadot.io"
+        "endpoint": "wss://polkadot-collectives-rpc.polkadot.io"
       },
       {
         "name": "RadiumBlock",
-        "endpoint": "wss://people-polkadot.public.curie.radiumblock.co/ws"
+        "endpoint": "wss://collectives.public.curie.radiumblock.co/ws"
       },
       {
         "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/people"
-      }
-    ]
-  },
-  "PeopleKusama": {
-    "name": "People",
-    "info": "kusamaPeople",
-    "paraId": 1004,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://people-kusama-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Helixstreet",
-        "endpoint": "wss://rpc-people-kusama.helixstreet.io"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-kusama"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-kusama.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-people-kusama.luckyfriday.io"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://people-kusama.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://kusama-people-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/people"
-      }
-    ]
-  },
-  "Shiden": {
-    "name": "Shiden",
-    "info": "shiden",
-    "paraId": 2007,
-    "providers": [
-      {
-        "name": "Astar",
-        "endpoint": "wss://rpc.shiden.astar.network"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://shiden-rpc.n.dwellir.com"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://shiden.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://shiden.public.curie.radiumblock.co/ws"
-      }
-    ]
-  },
-  "Unique": {
-    "name": "Unique Network",
-    "info": "unique",
-    "paraId": 2037,
-    "providers": [
-      {
-        "name": "Geo Load Balancer",
-        "endpoint": "wss://ws.unique.network"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://unique.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://unique.dotters.network"
-      },
-      {
-        "name": "Unique America",
-        "endpoint": "wss://us-ws.unique.network"
-      },
-      {
-        "name": "Unique Asia",
-        "endpoint": "wss://asia-ws.unique.network"
-      },
-      {
-        "name": "Unique Europe",
-        "endpoint": "wss://eu-ws.unique.network"
+        "endpoint": "wss://dot-rpc.stakeworld.io/collectives"
       }
     ]
   },
@@ -995,60 +513,6 @@
       {
         "name": "PendulumChain",
         "endpoint": "wss://rpc-pendulum.prd.pendulumchain.tech"
-      }
-    ]
-  },
-  "Zeitgeist": {
-    "name": "Zeitgeist",
-    "info": "zeitgeist",
-    "paraId": 2092,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://zeitgeist.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Collectives": {
-    "name": "Collectives",
-    "info": "polkadotCollectives",
-    "paraId": 1001,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://collectives-polkadot-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://polkadot-collectives-rpc-tn.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/collectives-polkadot"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://collectives-polkadot.dotters.network"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-collectives-polkadot.luckyfriday.io"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://collectives.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://polkadot-collectives-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://collectives.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/collectives"
       }
     ]
   },
@@ -1177,6 +641,523 @@
       }
     ]
   },
+  "RobonomicsPolkadot": {
+    "name": "Robonomics",
+    "info": "robonomics",
+    "paraId": 3388,
+    "providers": [
+      {
+        "name": "Airalab",
+        "endpoint": "wss://polkadot.rpc.robonomics.network/"
+      }
+    ]
+  },
+  "PeoplePolkadot": {
+    "name": "People",
+    "info": "polkadotPeople",
+    "paraId": 1004,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://people-polkadot-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/people-polkadot"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://people-polkadot.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-people-polkadot.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://people-polkadot.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://polkadot-people-rpc.polkadot.io"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://dot-rpc.stakeworld.io/people"
+      }
+    ]
+  },
+  "Unique": {
+    "name": "Unique Network",
+    "info": "unique",
+    "paraId": 2037,
+    "providers": [
+      {
+        "name": "Geo Load Balancer",
+        "endpoint": "wss://ws.unique.network"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://unique.ibp.network"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://unique.dotters.network"
+      },
+      {
+        "name": "Unique America",
+        "endpoint": "wss://us-ws.unique.network"
+      },
+      {
+        "name": "Unique Asia",
+        "endpoint": "wss://asia-ws.unique.network"
+      },
+      {
+        "name": "Unique Europe",
+        "endpoint": "wss://eu-ws.unique.network"
+      }
+    ]
+  },
+  "AssetHubKusama": {
+    "name": "AssetHub",
+    "info": "KusamaAssetHub",
+    "paraId": 1000,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://asset-hub-kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://statemine-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/asset-hub-kusama"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://asset-hub-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-asset-hub-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://assethub-kusama.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://kusama-asset-hub-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://statemine.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://ksm-rpc.stakeworld.io/assethub"
+      }
+    ]
+  },
+  "BridgeHubKusama": {
+    "name": "BridgeHub",
+    "info": "kusamaBridgeHub",
+    "paraId": 1002,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://bridge-hub-kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://kusama-bridge-hub-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/bridgehub-kusama"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://bridge-hub-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-bridge-hub-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://bridgehub-kusama.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://kusama-bridge-hub-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://bridgehub-kusama.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://ksm-rpc.stakeworld.io/bridgehub"
+      }
+    ]
+  },
+  "IntegriteeKusama": {
+    "name": "Integritee Network",
+    "info": "integritee",
+    "paraId": 2015,
+    "providers": [
+      {
+        "name": "Integritee",
+        "endpoint": "wss://kusama.api.integritee.network"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://integritee-kusama.api.onfinality.io/public-ws"
+      }
+    ]
+  },
+  "Karura": {
+    "name": "Karura",
+    "info": "karura",
+    "paraId": 2000,
+    "providers": [
+      {
+        "name": "Acala Foundation 0",
+        "endpoint": "wss://karura-rpc-0.aca-api.network"
+      },
+      {
+        "name": "Acala Foundation 1",
+        "endpoint": "wss://karura-rpc-1.aca-api.network"
+      },
+      {
+        "name": "Acala Foundation 2",
+        "endpoint": "wss://karura-rpc-2.aca-api.network/ws"
+      },
+      {
+        "name": "Acala Foundation 3",
+        "endpoint": "wss://karura-rpc-3.aca-api.network/ws"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://karura-rpc.n.dwellir.com"
+      }
+    ]
+  },
+  "Kintsugi": {
+    "name": "Kintsugi BTC",
+    "info": "kintsugi",
+    "paraId": 2092,
+    "providers": [
+      {
+        "name": "Kintsugi Labs",
+        "endpoint": "wss://api-kusama.interlay.io/parachain"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://kintsugi.api.onfinality.io/public-ws"
+      }
+    ]
+  },
+  "Moonriver": {
+    "name": "Moonriver",
+    "info": "moonriver",
+    "paraId": 2023,
+    "providers": [
+      {
+        "name": "Allnodes",
+        "endpoint": "wss://moonriver-rpc.publicnode.com"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://moonriver-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Moonbeam Foundation",
+        "endpoint": "wss://wss.api.moonriver.moonbeam.network"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://moonriver.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://moonriver.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "UnitedBloc",
+        "endpoint": "wss://moonriver.unitedbloc.com"
+      }
+    ]
+  },
+  "CoretimeKusama": {
+    "name": "Coretime",
+    "info": "kusamaCoretime",
+    "paraId": 1005,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://coretime-kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/coretime-kusama"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://coretime-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-coretime-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://coretime-kusama.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://kusama-coretime-rpc.polkadot.io"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://ksm-rpc.stakeworld.io/coretime"
+      }
+    ]
+  },
+  "Encointer": {
+    "name": "Encointer Network",
+    "info": "encointer",
+    "paraId": 1001,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://encointer-kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Encointer Association",
+        "endpoint": "wss://kusama.api.encointer.org"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/encointer-kusama"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://encointer-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-encointer-kusama.luckyfriday.io"
+      }
+    ]
+  },
+  "Altair": {
+    "name": "Altair",
+    "info": "altair",
+    "paraId": 2088,
+    "providers": [
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://altair.api.onfinality.io/public-ws"
+      }
+    ]
+  },
+  "Amplitude": {
+    "name": "Amplitude",
+    "info": "amplitude",
+    "paraId": 2124,
+    "providers": [
+      {
+        "name": "PendulumChain",
+        "endpoint": "wss://rpc-amplitude.pendulumchain.tech"
+      }
+    ]
+  },
+  "Basilisk": {
+    "name": "Basilisk",
+    "info": "basilisk",
+    "paraId": 2090,
+    "providers": [
+      {
+        "name": "Basilisk",
+        "endpoint": "wss://rpc.basilisk.cloud"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://basilisk-rpc.n.dwellir.com"
+      }
+    ]
+  },
+  "BifrostKusama": {
+    "name": "Bifrost",
+    "info": "bifrost",
+    "paraId": 2001,
+    "providers": [
+      {
+        "name": "Liebi",
+        "endpoint": "wss://bifrost-rpc.liebi.com/ws"
+      },
+      {
+        "name": "LiebiUS",
+        "endpoint": "wss://us.bifrost-rpc.liebi.com/ws"
+      }
+    ]
+  },
+  "CrustShadow": {
+    "name": "Crust Shadow",
+    "info": "shadow",
+    "paraId": 2012,
+    "providers": [
+      {
+        "name": "Crust",
+        "endpoint": "wss://rpc-shadow.crust.network/"
+      },
+      {
+        "name": "Crust APP",
+        "endpoint": "wss://rpc-shadow.crustnetwork.app"
+      },
+      {
+        "name": "Crust CC",
+        "endpoint": "wss://rpc-shadow.crustnetwork.cc"
+      },
+      {
+        "name": "Crust XYZ",
+        "endpoint": "wss://rpc-shadow.crustnetwork.xyz"
+      }
+    ]
+  },
+  "Crab": {
+    "name": "Crab",
+    "info": "crab",
+    "paraId": 2105,
+    "providers": [
+      {
+        "name": "Darwinia",
+        "endpoint": "wss://crab-rpc.darwinia.network/"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://darwiniacrab-rpc.n.dwellir.com"
+      }
+    ]
+  },
+  "Laos": {
+    "name": "Laos",
+    "info": "laos",
+    "paraId": 3370,
+    "providers": [
+      {
+        "name": "laosfoundation.io",
+        "endpoint": "wss://rpc.laos.laosfoundation.io"
+      }
+    ]
+  },
+  "Quartz": {
+    "name": "QUARTZ by UNIQUE",
+    "info": "quartz",
+    "paraId": 2095,
+    "providers": [
+      {
+        "name": "Geo Load Balancer",
+        "endpoint": "wss://ws-quartz.unique.network"
+      },
+      {
+        "name": "Unique Asia",
+        "endpoint": "wss://asia-ws-quartz.unique.network"
+      },
+      {
+        "name": "Unique Europe",
+        "endpoint": "wss://eu-ws-quartz.unique.network"
+      }
+    ]
+  },
+  "RobonomicsKusama": {
+    "name": "Robonomics",
+    "info": "robonomics",
+    "paraId": 2048,
+    "providers": [
+      {
+        "name": "Airalab",
+        "endpoint": "wss://kusama.rpc.robonomics.network/"
+      }
+    ]
+  },
+  "PeopleKusama": {
+    "name": "People",
+    "info": "kusamaPeople",
+    "paraId": 1004,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://people-kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Helixstreet",
+        "endpoint": "wss://rpc-people-kusama.helixstreet.io"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/people-kusama"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://people-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-people-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://people-kusama.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://kusama-people-rpc.polkadot.io"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://ksm-rpc.stakeworld.io/people"
+      }
+    ]
+  },
+  "Shiden": {
+    "name": "Shiden",
+    "info": "shiden",
+    "paraId": 2007,
+    "providers": [
+      {
+        "name": "Astar",
+        "endpoint": "wss://rpc.shiden.astar.network"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://shiden-rpc.n.dwellir.com"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://shiden.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://shiden.public.curie.radiumblock.co/ws"
+      }
+    ]
+  },
+  "Zeitgeist": {
+    "name": "Zeitgeist",
+    "info": "zeitgeist",
+    "paraId": 2092,
+    "providers": [
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://zeitgeist.api.onfinality.io/public-ws"
+      }
+    ]
+  },
   "AssetHubWestend": {
     "name": "AssetHub",
     "info": "WestendAssetHub",
@@ -1253,6 +1234,17 @@
       }
     ]
   },
+  "Penpal": {
+    "name": "Penpal",
+    "info": "westendPenpal",
+    "paraId": 2042,
+    "providers": [
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-penpal-rpc.polkadot.io"
+      }
+    ]
+  },
   "PeopleWestend": {
     "name": "People",
     "info": "westendPeople",
@@ -1268,14 +1260,14 @@
       }
     ]
   },
-  "Penpal": {
-    "name": "Penpal",
-    "info": "westendPenpal",
-    "paraId": 2042,
+  "AjunaPaseo": {
+    "name": "Ajuna Network (Paseo)",
+    "info": "Ajuna(paseo)",
+    "paraId": 2051,
     "providers": [
       {
-        "name": "Parity",
-        "endpoint": "wss://westend-penpal-rpc.polkadot.io"
+        "name": "BajunNetwork",
+        "endpoint": "wss://rpc-paseo.ajuna.network"
       }
     ]
   },
@@ -1303,6 +1295,17 @@
       {
         "name": "TurboFlakes",
         "endpoint": "wss://sys.turboflakes.io/asset-hub-paseo"
+      }
+    ]
+  },
+  "BifrostPaseo": {
+    "name": "Bifrost",
+    "info": "Bifrost(Paseo)",
+    "paraId": 2030,
+    "providers": [
+      {
+        "name": "Liebi",
+        "endpoint": "wss://bifrost-rpc.paseo.liebi.com/ws"
       }
     ]
   },
@@ -1336,66 +1339,6 @@
       }
     ]
   },
-  "PAssetHub": {
-    "name": "PAssetHub - Contracts",
-    "info": "PAssetHub - Contracts",
-    "paraId": 1111,
-    "providers": [
-      {
-        "name": "IBP1",
-        "endpoint": "wss://passet-hub-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://passet-hub-paseo.dotters.network"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://testnet-passet-hub.polkadot.io"
-      }
-    ]
-  },
-  "PeoplePaseo": {
-    "name": "People",
-    "info": "PaseoPeopleChain",
-    "paraId": 1004,
-    "providers": [
-      {
-        "name": "Amforc",
-        "endpoint": "wss://people-paseo.rpc.amforc.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-paseo"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-paseo.dotters.network"
-      }
-    ]
-  },
-  "AjunaPaseo": {
-    "name": "Ajuna Network (Paseo)",
-    "info": "Ajuna(paseo)",
-    "paraId": 2051,
-    "providers": [
-      {
-        "name": "BajunNetwork",
-        "endpoint": "wss://rpc-paseo.ajuna.network"
-      }
-    ]
-  },
-  "BifrostPaseo": {
-    "name": "Bifrost",
-    "info": "Bifrost(Paseo)",
-    "paraId": 2030,
-    "providers": [
-      {
-        "name": "Liebi",
-        "endpoint": "wss://bifrost-rpc.paseo.liebi.com/ws"
-      }
-    ]
-  },
   "HeimaPaseo": {
     "name": "Heima paseo",
     "info": "heima-paseo",
@@ -1415,6 +1358,17 @@
       {
         "name": "Galactic Council",
         "endpoint": "wss://paseo-rpc.play.hydration.cloud"
+      }
+    ]
+  },
+  "IntegriteePaseo": {
+    "name": "Integritee Network (Paseo)",
+    "info": "integritee",
+    "paraId": 2039,
+    "providers": [
+      {
+        "name": "Integritee",
+        "endpoint": "wss://paseo.api.integritee.network"
       }
     ]
   },
@@ -1459,6 +1413,44 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://node-7273232234617282560.nv.onfinality.io/ws?apikey=b937a7d7-7395-49b9-b745-60a0342fa365"
+      }
+    ]
+  },
+  "PAssetHub": {
+    "name": "PAssetHub - Contracts",
+    "info": "PAssetHub - Contracts",
+    "paraId": 1111,
+    "providers": [
+      {
+        "name": "IBP1",
+        "endpoint": "wss://passet-hub-paseo.ibp.network"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://passet-hub-paseo.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://testnet-passet-hub.polkadot.io"
+      }
+    ]
+  },
+  "PeoplePaseo": {
+    "name": "People",
+    "info": "PaseoPeopleChain",
+    "paraId": 1004,
+    "providers": [
+      {
+        "name": "Amforc",
+        "endpoint": "wss://people-paseo.rpc.amforc.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/people-paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://people-paseo.dotters.network"
       }
     ]
   },
@@ -1524,7 +1516,7 @@
       },
       {
         "name": "Simply Staking",
-        "endpoint": "wss://spectrum-01.simplystaking.xyz/cG9sa2Fkb3QtMDEtOTFkMmYwZGYtcG9sa2Fkb3Q/uj77qtNEPueW1w/polkadot/mainnet/"
+        "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/LjwBJpV3dIKyWQ/polkadot/mainnet/"
       },
       {
         "name": "Stakeworld",
@@ -1544,6 +1536,10 @@
       {
         "name": "Allnodes",
         "endpoint": "wss://kusama-rpc.publicnode.com"
+      },
+      {
+        "name": "Blockops",
+        "endpoint": "wss://kusama-public-rpc.blockops.network/ws"
       },
       {
         "name": "Dwellir",

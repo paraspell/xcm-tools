@@ -35,9 +35,13 @@ export const isSystemChain = (chain: TChain): boolean => {
     'CoretimeWestend',
     'CoretimePaseo',
     'Collectives',
-    'CollectivesWestend',
-    'Mythos'
+    'CollectivesWestend'
   ]
 
   return systemChains.includes(chain) || isRelayChain(chain)
+}
+
+export const isTrustedChain = (chain: TChain): boolean => {
+  const isTrustedByAh = (chain: TChain) => ['Mythos'].includes(chain)
+  return isTrustedByAh(chain) || isSystemChain(chain)
 }

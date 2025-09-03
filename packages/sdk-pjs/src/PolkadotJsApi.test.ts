@@ -630,6 +630,16 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('hasMethod', () => {
+    it('resolves true when method exists and false otherwise', async () => {
+      await expect(polkadotApi.hasMethod('XTokens', 'transfer')).resolves.toBe(true)
+      await expect(
+        polkadotApi.hasMethod('PolkadotXcm', 'transfer_assets_using_type_and_then')
+      ).resolves.toBe(false)
+      await expect(polkadotApi.hasMethod('PolkadotXcm', 'foo')).resolves.toBe(false)
+    })
+  })
+
   describe('getXcmPaymentApiFee', () => {
     it('should return the XCM payment fee for AssetHub chains', async () => {
       const xcm = { some: 'xcm_payload' }

@@ -8,7 +8,6 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TRelayToParaOverrides,
   TScenario,
   TTransferLocalOptions
 } from '../../types'
@@ -50,10 +49,6 @@ class Moonriver<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
       'transfer_assets',
       'Unlimited'
     )
-  }
-
-  getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

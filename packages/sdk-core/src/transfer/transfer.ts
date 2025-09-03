@@ -105,6 +105,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
         ...asset,
         amount: finalAmount
       },
+      currency,
       paraIdTo,
       version: resolvedVersion,
       pallet,

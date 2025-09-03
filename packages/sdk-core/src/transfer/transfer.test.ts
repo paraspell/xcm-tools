@@ -349,6 +349,7 @@ describe('send', () => {
         symbol: 'TEST',
         amount: 100n
       },
+      currency: { symbol: 'DOT', amount: '100' },
       paraIdTo: 1000,
       version: Version.V4,
       pallet: 'XTokens',

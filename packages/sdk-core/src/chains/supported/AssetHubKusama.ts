@@ -2,7 +2,7 @@
 
 import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
-import { isSystemChain, isTLocation, Version } from '@paraspell/sdk-common'
+import { isTLocation, isTrustedChain, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -29,7 +29,7 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
       return getChain('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
-    const isTrusted = !isTLocation(destination) && isSystemChain(destination)
+    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
 
     if (
       scenario === 'ParaToPara' &&

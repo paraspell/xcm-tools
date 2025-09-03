@@ -1257,7 +1257,7 @@
     "otherAssets": []
   },
   "AjunaPaseo": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1266,10 +1266,6 @@
       {
         "name": "PolkadotXcm",
         "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 35
       },
       {
         "name": "Assets",

@@ -29,7 +29,7 @@ class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotX
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
   }
 }

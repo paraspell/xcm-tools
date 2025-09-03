@@ -8,7 +8,7 @@ import type {
   TSerializedApiCall,
   TTypeAndThenCallContext
 } from '../../types'
-import { createAsset } from '../../utils'
+import { createAsset, localizeLocation } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -16,29 +16,12 @@ import { createCustomXcm } from './createCustomXcm'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
 import { createRefundInstruction } from './utils'
 
-vi.mock('./createContext', () => ({
-  createTypeAndThenCallContext: vi.fn()
-}))
-
-vi.mock('./createCustomXcm', () => ({
-  createCustomXcm: vi.fn()
-}))
-
-vi.mock('./utils', () => ({
-  createRefundInstruction: vi.fn()
-}))
-
-vi.mock('./computeFees', () => ({
-  computeAllFees: vi.fn()
-}))
-
-vi.mock('./buildTypeAndThenCall', () => ({
-  buildTypeAndThenCall: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  createAsset: vi.fn()
-}))
+vi.mock('./createContext')
+vi.mock('./createCustomXcm')
+vi.mock('./utils')
+vi.mock('./computeFees')
+vi.mock('./buildTypeAndThenCall')
+vi.mock('../../utils')
 
 describe('createTypeAndThenCall', () => {
   const mockApi = {}
@@ -71,13 +54,13 @@ describe('createTypeAndThenCall', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
     vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(createAsset).mockReturnValue(mockAsset)
+    vi.mocked(localizeLocation).mockImplementation((_, location) => location)
   })
 
   it('should handle DOT asset with RELAY_LOCATION', async () => {
