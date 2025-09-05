@@ -4,7 +4,12 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TChain, TDryRunResult, TGetXcmFeeResult } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TChain,
+  TDryRunResult,
+  TGetXcmFeeResult,
+} from '@paraspell/sdk';
 import { IncompatibleChainsError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -22,8 +27,11 @@ const dryRunResult: TDryRunResult = {
   origin: {
     success: true,
     fee: 1n,
-    forwardedXcms: [],
     currency: 'DOT',
+    asset: {
+      symbol: 'DOT',
+    } as TAssetInfo,
+    forwardedXcms: [],
   },
   hops: [],
 };
@@ -31,13 +39,19 @@ const dryRunResult: TDryRunResult = {
 const feeResult: TGetXcmFeeResult = {
   origin: {
     fee: 1n,
-    feeType: 'dryRun',
     currency: 'DOT',
+    asset: {
+      symbol: 'DOT',
+    } as TAssetInfo,
+    feeType: 'dryRun',
   },
   hops: [],
   destination: {
     fee: 1n,
     currency: 'DOT',
+    asset: {
+      symbol: 'DOT',
+    } as TAssetInfo,
     feeType: 'dryRun',
   },
 };

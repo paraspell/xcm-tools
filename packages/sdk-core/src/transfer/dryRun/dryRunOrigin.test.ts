@@ -27,7 +27,11 @@ describe('getDryRunOrigin', () => {
       fee: 1000n,
       forwardedXcms: [],
       destParaId: 0,
-      currency: 'DOT'
+      currency: 'DOT',
+      asset: {
+        symbol: 'DOT',
+        decimals: 10
+      } as TAssetInfo
     }
 
     vi.spyOn(apiMock, 'getDryRunCall').mockResolvedValue(mockResult)

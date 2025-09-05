@@ -68,6 +68,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const showSymbolInput =
     func === 'ASSET_ID' ||
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_INFO' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
@@ -76,6 +77,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const supportsCurrencyType =
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_INFO' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'SUPPORTED_DESTINATIONS';
@@ -97,6 +99,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'NATIVE_ASSETS' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ASSET_BALANCE' ||
+    func === 'ASSET_INFO' ||
     func === 'HAS_DRY_RUN_SUPPORT' ||
     func === 'ALL_SYMBOLS';
 
@@ -182,12 +185,13 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             />
           )}
 
-          {func === 'SUPPORTED_ASSETS' && (
+          {(func === 'SUPPORTED_ASSETS' || func === 'ASSET_INFO') && (
             <ParachainSelect
               label={'Destination'}
               placeholder="Pick value"
               data={CHAINS}
-              required
+              required={func === 'SUPPORTED_ASSETS'}
+              clearable={func === 'ASSET_INFO'}
               data-testid="select-destination"
               {...form.getInputProps('destination')}
             />

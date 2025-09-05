@@ -1,4 +1,4 @@
-import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -32,7 +32,11 @@ describe('dryRun', () => {
         fee: 1000n,
         forwardedXcms: [],
         destParaId: 0,
-        currency: 'DOT'
+        currency: 'DOT',
+        asset: {
+          symbol: 'DOT',
+          decimals: 10
+        } as TAssetInfo
       },
       hops: []
     }

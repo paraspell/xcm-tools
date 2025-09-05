@@ -17,6 +17,7 @@ import {
   AssetLocationDto,
   AssetLocationDtoSchema,
 } from './dto/AssetLocationDto.js';
+import { FindAssetDto, FindAssetDtoSchema } from './dto/FindAssetDto.js';
 import {
   OriginFeeDetailsDto,
   OriginFeeDetailsDtoSchema,
@@ -67,6 +68,19 @@ export class AssetsController {
       chain,
     });
     return this.assetsService.getAssetLocation(chain, params);
+  }
+
+  @Post('assets/:chain/asset-info')
+  getAssetInfo(
+    @Param('chain') chain: string,
+    @Body(new ZodValidationPipe(FindAssetDtoSchema))
+    params: FindAssetDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.FIND_ASSET, req, {
+      chain,
+    });
+    return this.assetsService.getAssetInfo(chain, params);
   }
 
   @Get('assets/:chain/relay-chain-symbol')

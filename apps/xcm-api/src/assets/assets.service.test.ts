@@ -183,6 +183,76 @@ describe('AssetsService', () => {
     });
   });
 
+  describe('getAssetInfo', () => {
+    let getAssetInfoSpy: MockInstance;
+
+    beforeEach(() => {
+      getAssetInfoSpy = vi.spyOn(paraspellSdk, 'findAssetInfo');
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return asset info for a valid chain and symbol', () => {
+      const assetInfo = {
+        assetId: '1234',
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: false,
+      } as paraspellSdk.TAssetInfo;
+      getAssetInfoSpy.mockReturnValue(assetInfo);
+
+      const result = service.getAssetInfo(chain, { currency: { symbol } });
+
+      expect(result).toEqual(JSON.stringify(assetInfo));
+      expect(getAssetInfoSpy).toHaveBeenCalledWith(
+        chain,
+        { symbol },
+        undefined,
+      );
+    });
+
+    it('should return asset info for a valid chain, symbol and destination', () => {
+      const assetInfo = {
+        assetId: '1234',
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: false,
+      } as paraspellSdk.TAssetInfo;
+      getAssetInfoSpy.mockReturnValue(assetInfo);
+
+      const destination = 'Karura';
+
+      const result = service.getAssetInfo(chain, {
+        currency: { symbol },
+        destination,
+      });
+
+      expect(result).toEqual(JSON.stringify(assetInfo));
+      expect(getAssetInfoSpy).toHaveBeenCalledWith(
+        chain,
+        { symbol },
+        destination,
+      );
+    });
+
+    it('should throw BadRequestException for invalid chain', () => {
+      const validateChainSpy = vi
+        .spyOn(utils, 'validateChain')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
+
+      expect(() =>
+        service.getAssetInfo(invalidChain, { currency: { symbol } }),
+      ).toThrow(BadRequestException);
+
+      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
+      expect(getAssetInfoSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getRelayChainSymbol', () => {
     let getRelayChainSymbolSpy: MockInstance;
 

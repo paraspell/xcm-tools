@@ -55,7 +55,7 @@ describe('getXcmFeeEstimate', () => {
   })
 
   it('returns bridge constants polkadot → kusama with sufficiency checks', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
@@ -70,7 +70,12 @@ describe('getXcmFeeEstimate', () => {
     })
 
     expect(res).toEqual({
-      origin: { fee: 682_395_810n, currency: 'DOT', sufficient: true },
+      origin: {
+        fee: 682_395_810n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT', decimals: 10 },
+        sufficient: true
+      },
       destination: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true }
     })
 
@@ -81,7 +86,7 @@ describe('getXcmFeeEstimate', () => {
       'bob',
       682_395_810n,
       { symbol: 'DOT', amount: 1n },
-      { symbol: 'DOT' },
+      { symbol: 'DOT', decimals: 10 },
       undefined
     )
     expect(isSufficientDestination).toHaveBeenCalledWith(
@@ -89,7 +94,7 @@ describe('getXcmFeeEstimate', () => {
       'AssetHubKusama',
       'alice',
       1n,
-      { symbol: 'DOT' },
+      { symbol: 'DOT', decimals: 10 },
       12_016_807_000n
     )
   })
@@ -110,7 +115,14 @@ describe('getXcmFeeEstimate', () => {
     })
 
     expect(res).toEqual({
-      origin: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true },
+      origin: {
+        fee: 12_016_807_000n,
+        currency: 'KSM',
+        asset: {
+          symbol: 'KSM'
+        },
+        sufficient: true
+      },
       destination: { fee: 682_395_810n, currency: 'DOT', sufficient: true }
     })
 
@@ -141,6 +153,10 @@ describe('getXcmFeeEstimate', () => {
     vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({
       fee: rawOrigin,
       currency: 'UNIT',
+      asset: {
+        symbol: 'UNIT',
+        decimals: 12
+      } as TAssetInfo,
       sufficient: true
     })
     vi.mocked(padFee).mockImplementationOnce(() => 2600n)
@@ -170,7 +186,12 @@ describe('getXcmFeeEstimate', () => {
     )
 
     expect(res).toEqual({
-      origin: { fee: rawOrigin, currency: 'UNIT', sufficient: true },
+      origin: {
+        fee: rawOrigin,
+        currency: 'UNIT',
+        asset: { symbol: 'UNIT', decimals: 12 },
+        sufficient: true
+      },
       destination: { fee: rawDest, currency: 'UNIT', sufficient: true }
     })
 

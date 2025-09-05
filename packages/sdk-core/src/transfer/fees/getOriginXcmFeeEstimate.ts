@@ -41,9 +41,12 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
     resolvedFeeAsset
   )
 
+  const asset = resolvedFeeAsset ?? originAsset
+
   return {
     fee: originFee,
     currency: getNativeAssetSymbol(origin),
+    asset,
     sufficient
   }
 }

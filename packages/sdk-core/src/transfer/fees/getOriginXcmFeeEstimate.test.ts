@@ -81,6 +81,7 @@ describe('getOriginXcmFeeEstimate', () => {
     expect(result).toEqual({
       fee: MOCK_PADDED_FEE,
       currency: MOCK_NATIVE_ASSET_SYMBOL,
+      asset: mockAsset,
       sufficient: true
     })
   })

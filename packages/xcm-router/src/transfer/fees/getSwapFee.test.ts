@@ -1,4 +1,4 @@
-import type { TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
+import type { TAssetInfo, TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
 import { getOriginXcmFee } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -35,6 +35,7 @@ describe('getSwapFee', () => {
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
       currency: 'DOT',
+      asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
     });
 
@@ -88,6 +89,7 @@ describe('getSwapFee', () => {
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
       currency: 'DOT',
+      asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
       dryRunError: dryError,
     });
@@ -110,6 +112,7 @@ describe('getSwapFee', () => {
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
       currency: 'DOT',
+      asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
       dryRunError: dryError,
     });

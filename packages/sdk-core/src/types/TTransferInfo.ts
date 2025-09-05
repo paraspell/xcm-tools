@@ -1,4 +1,4 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { UnableToComputeError } from '../errors'
@@ -10,14 +10,18 @@ export type THopTransferInfo = {
     xcmFee: TXcmFeeBase
     balance?: bigint
     existentialDeposit?: bigint
+    /** @deprecated use `asset` property instead */
     currencySymbol: string
+    asset: TAssetInfo
   }
 }
 
 export type TXcmFeeBase = {
   fee: bigint
   balance: bigint
+  /** @deprecated use `asset` property instead */
   currencySymbol: string
+  asset: TAssetInfo
 }
 
 export type TTransferInfo = {
@@ -27,7 +31,9 @@ export type TTransferInfo = {
       sufficient: boolean
       balance: bigint
       balanceAfter: bigint
+      /** @deprecated use `asset` property instead */
       currencySymbol: string
+      asset: TAssetInfo
       existentialDeposit: bigint
     }
     xcmFee: TXcmFeeBase & {
@@ -37,12 +43,16 @@ export type TTransferInfo = {
   }
   assetHub?: {
     balance: bigint
+    /** @deprecated use `asset` property instead */
     currencySymbol: string
+    asset: TAssetInfo
     existentialDeposit: bigint
     xcmFee: TXcmFeeBase
   }
   bridgeHub?: {
+    /** @deprecated use `asset` property instead */
     currencySymbol: string
+    asset: TAssetInfo
     xcmFee: TXcmFeeBase
   }
   hops?: THopTransferInfo[]
@@ -52,7 +62,9 @@ export type TTransferInfo = {
       receivedAmount: bigint | UnableToComputeError
       balance: bigint
       balanceAfter: bigint | UnableToComputeError
+      /** @deprecated use `asset` property instead */
       currencySymbol: string
+      asset: TAssetInfo
       existentialDeposit: bigint
     }
     xcmFee: TXcmFeeBase & {

@@ -1,4 +1,4 @@
-import type { TCurrencyCore } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
@@ -21,6 +21,7 @@ export type BuildHopInfoOptions<TApi, TRes> = {
   }
   originChain: TSubstrateChain
   currency: TCurrencyCore
+  asset: TAssetInfo
   senderAddress: string
   ahAddress?: string
 }
@@ -30,6 +31,7 @@ export const buildHopInfo = async <TApi, TRes>({
   chain,
   feeData,
   originChain,
+  asset,
   currency,
   senderAddress,
   ahAddress
@@ -52,7 +54,8 @@ export const buildHopInfo = async <TApi, TRes>({
     const xcmFeeDetails = {
       fee: feeData.fee,
       balance: nativeBalanceOnHop,
-      currencySymbol: nativeAssetSymbolOnHop
+      currencySymbol: nativeAssetSymbolOnHop,
+      asset
     }
 
     const isBridgeHub = chain.includes('BridgeHub')
@@ -86,6 +89,7 @@ export const buildHopInfo = async <TApi, TRes>({
       return {
         balance: balance,
         currencySymbol: hopAsset.symbol,
+        asset: hopAsset,
         existentialDeposit: BigInt(ed),
         xcmFee: xcmFeeDetails
       }

@@ -99,6 +99,7 @@ export const AssetsQueries = () => {
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
       'ASSET_LOCATION',
+      'ASSET_INFO',
       'EXISTENTIAL_DEPOSIT',
     ]);
 

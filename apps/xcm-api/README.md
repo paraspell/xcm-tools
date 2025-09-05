@@ -439,6 +439,18 @@ const response = await fetch("http://localhost:3001/v4/assets/:chain/location", 
     })
 });
 
+// Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
+const response = await fetch("http://localhost:3001/v4/assets/:chain/asset-info", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+        destination?: "CHAIN"
+    })
+});
+
 //Get chains that support the specific asset related to origin
 const response = await fetch("http://localhost:3001/v4/assets/:chain/supported-destinations", {
     method: 'POST',
