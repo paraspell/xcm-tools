@@ -1,23 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   getNativeAssetSymbol,
-  hasDryRunSupport
+  hasDryRunSupport,
+  Native
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import type {
-  HopProcessParams,
-  TDryRunChain,
-  TDryRunChainResult,
-  TDryRunChainResultInternal,
-  THopInfo
-} from '../../types'
+import type { HopProcessParams, TDryRunChain, TDryRunChainResult, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
 import { createOriginLocation } from '../fees/getDestXcmFee'
@@ -25,7 +20,7 @@ import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 const getFailureInfo = (
-  results: Partial<Record<TDryRunChain, TDryRunChainResultInternal | undefined>>,
+  results: Partial<Record<TDryRunChain, TDryRunChainResult | undefined>>,
   hops: THopInfo[]
 ): { failureReason?: string; failureChain?: TDryRunChain } => {
   // Check standard chains first for backwards compatibility
@@ -106,9 +101,33 @@ export const dryRunInternal = async <TApi, TRes>(
       isDestination
     } = params
 
+    let hopAsset: TAssetInfo
+    if (
+      destination === 'Ethereum' &&
+      (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
+    ) {
+      hopAsset = findAssetInfoOrThrow(
+        currentChain,
+        { symbol: Native(getNativeAssetSymbol(currentChain)) },
+        destination
+      )
+    } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
+      hopAsset = findAssetOnDestOrThrow(
+        swapConfig.exchangeChain,
+        currentChain,
+        swapConfig.currencyTo
+      )
+    } else if (isDestination) {
+      hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
+    } else {
+      hopAsset = asset
+    }
+
     if (!hasDryRunSupport(currentChain)) {
       return {
         success: false,
+        currency: currentAsset.symbol,
+        asset: currentAsset,
         failureReason: `DryRunApi is not available on chain ${currentChain}`
       }
     }
@@ -127,31 +146,7 @@ export const dryRunInternal = async <TApi, TRes>(
       amount
     })
 
-    // Add currency information
-    if (hopDryRun.success) {
-      let hopCurrency: string
-
-      if (
-        destination === 'Ethereum' &&
-        (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
-      ) {
-        hopCurrency = getNativeAssetSymbol(currentChain)
-      } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-        hopCurrency = findAssetOnDestOrThrow(
-          swapConfig.exchangeChain,
-          currentChain,
-          swapConfig.currencyTo
-        ).symbol
-      } else if (isDestination) {
-        hopCurrency = findAssetOnDestOrThrow(origin, currentChain, currency).symbol
-      } else {
-        hopCurrency = asset.symbol
-      }
-
-      return { ...hopDryRun, currency: hopCurrency }
-    }
-
-    return hopDryRun
+    return { ...hopDryRun, currency: hopAsset.symbol, asset: hopAsset }
   }
 
   const traversalResult = await traverseXcmHops({
@@ -194,31 +189,35 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
-  const originWithCurrency = originDryRun.success
-    ? {
-        ...originDryRun,
-        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
-      }
-    : originDryRun
-
   const assetHubWithCurrency = traversalResult.assetHub?.success
     ? {
         ...traversalResult.assetHub,
-        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubChain)
+        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubChain),
+        asset:
+          resolvedFeeAsset ??
+          findAssetInfoOrThrow(
+            assetHubChain,
+            { symbol: Native(getNativeAssetSymbol(assetHubChain)) },
+            destination
+          )
       }
     : traversalResult.assetHub
 
   const bridgeHubWithCurrency = processedBridgeHub?.success
-    ? { ...processedBridgeHub, currency: getNativeAssetSymbol(bridgeHubChain) }
+    ? {
+        ...processedBridgeHub,
+        currency: getNativeAssetSymbol(bridgeHubChain),
+        asset: findAssetInfoOrThrow(
+          bridgeHubChain,
+          { symbol: Native(getNativeAssetSymbol(bridgeHubChain)) },
+          destination
+        )
+      }
     : processedBridgeHub
-
-  const destinationWithCurrency = traversalResult.destination?.success
-    ? { ...traversalResult.destination, currency: asset?.symbol }
-    : traversalResult.destination
 
   const { failureReason, failureChain } = getFailureInfo(
     {
-      destination: destinationWithCurrency,
+      destination: traversalResult.destination,
       assetHub: assetHubWithCurrency,
       bridgeHub: bridgeHubWithCurrency
     },
@@ -228,10 +227,10 @@ export const dryRunInternal = async <TApi, TRes>(
   return {
     failureReason,
     failureChain,
-    origin: originWithCurrency,
+    origin: originDryRun,
     assetHub: assetHubWithCurrency,
     bridgeHub: bridgeHubWithCurrency,
-    destination: destinationWithCurrency,
+    destination: traversalResult.destination,
     hops: traversalResult.hops
   }
 }

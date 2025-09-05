@@ -68,7 +68,7 @@ export type TDryRunXcmBaseOptions = {
    * The origin chain
    */
   origin: TSubstrateChain
-  asset: TAssetInfo | null
+  asset: TAssetInfo
   feeAsset?: TAssetInfo
   amount: bigint
   originFee: bigint
@@ -76,7 +76,13 @@ export type TDryRunXcmBaseOptions = {
 
 export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>
 
-export type TDryRunChainSuccess = {
+export type TDryRunResBase = {
+  /** @deprecated Use `asset` property instead. */
+  currency: string
+  asset: TAssetInfo
+}
+
+export type TDryRunChainSuccess = TDryRunResBase & {
   success: true
   fee: bigint
   weight?: TWeight
@@ -85,18 +91,16 @@ export type TDryRunChainSuccess = {
   destParaId?: number
 }
 
-export type TDryRunChainFailure = {
+export type TDryRunChainFailure = TDryRunResBase & {
   success: false
   failureReason: string
 }
 
-export type TDryRunChainResultInternal = TDryRunChainSuccess | TDryRunChainFailure
-
-export type TDryRunChainResult = (TDryRunChainSuccess & { currency: string }) | TDryRunChainFailure
+export type TDryRunChainResult = TDryRunChainSuccess | TDryRunChainFailure
 
 export type THopInfo = {
   chain: TChain
-  result: TDryRunChainResultInternal & { currency?: string }
+  result: TDryRunChainResult
 }
 
 export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub' | TChain

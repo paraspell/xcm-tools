@@ -45,6 +45,16 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
   }) as unknown as TGetXcmFeeOptions<unknown, unknown>
 
 describe('getXcmFeeInternal', () => {
+  const xcmFeeResCurrency = {
+    currency: 'ACA',
+    asset: { symbol: 'ACA', decimals: 12 } as TAssetInfo
+  }
+
+  const xcmFeeResultbase = {
+    ...xcmFeeResCurrency,
+    fee: 1000n
+  }
+
   afterEach(() => vi.resetAllMocks())
 
   it('returns correct structure when origin dry-run fails', async () => {
@@ -55,8 +65,7 @@ describe('getXcmFeeInternal', () => {
     )
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       dryRunError: 'Simulation failed',
       forwardedXcms: undefined,
@@ -64,6 +73,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
+      ...xcmFeeResCurrency,
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -77,13 +87,15 @@ describe('getXcmFeeInternal', () => {
         fee: 1_000n,
         feeType: 'paymentInfo',
         currency: 'ACA',
+        asset: { symbol: 'ACA', decimals: 12 },
         dryRunError: 'Simulation failed'
       },
       hops: [],
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
-        currency: 'GLMR'
+        currency: 'GLMR',
+        asset: { symbol: 'ACA' }
       }
     })
   })
@@ -96,8 +108,7 @@ describe('getXcmFeeInternal', () => {
     )
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -105,6 +116,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
+      ...xcmFeeResCurrency,
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -115,13 +127,15 @@ describe('getXcmFeeInternal', () => {
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
-        currency: 'ACA'
+        currency: 'ACA',
+        asset: { symbol: 'ACA', decimals: 12 }
       },
       hops: [],
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
-        currency: 'GLMR'
+        currency: 'GLMR',
+        asset: { symbol: 'ACA' }
       }
     })
   })
@@ -134,8 +148,7 @@ describe('getXcmFeeInternal', () => {
     )
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -162,14 +175,16 @@ describe('getXcmFeeInternal', () => {
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA'
+        currency: 'ACA',
+        asset: { symbol: 'ACA', decimals: 12 }
       },
       hops: [],
       destination: {
         fee: 0n,
         feeType: 'noFeeRequired',
         sufficient: true,
-        currency: 'GLMR'
+        currency: 'GLMR',
+        asset: { symbol: 'ACA' }
       },
       failureChain: undefined,
       failureReason: undefined
@@ -188,8 +203,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -225,7 +239,8 @@ describe('getXcmFeeInternal', () => {
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA'
+        currency: 'ACA',
+        asset: { symbol: 'ACA', decimals: 12 }
       },
       assetHub: {
         fee: 3_000n,
@@ -246,7 +261,8 @@ describe('getXcmFeeInternal', () => {
         fee: 0n,
         feeType: 'noFeeRequired',
         sufficient: true,
-        currency: 'GLMR'
+        currency: 'GLMR',
+        asset: { symbol: 'ACA' }
       },
       failureChain: undefined,
       failureReason: undefined
@@ -265,8 +281,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -299,6 +314,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
+      asset: { symbol: 'GLMR', decimals: 12 } as TAssetInfo,
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -313,7 +329,8 @@ describe('getXcmFeeInternal', () => {
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA'
+        currency: 'ACA',
+        asset: { symbol: 'ACA', decimals: 12 }
       },
       assetHub: {
         fee: 3_000n,
@@ -336,7 +353,8 @@ describe('getXcmFeeInternal', () => {
         fee: 2_000n,
         feeType: 'paymentInfo',
         sufficient: undefined,
-        currency: 'GLMR'
+        currency: 'GLMR',
+        asset: { symbol: 'ACA' }
       }
     })
   })
@@ -352,8 +370,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ foo: 1 }, {}]],
@@ -398,8 +415,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      fee: 4_000n,
-      currency: 'DOT',
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       sufficient: false
     })
@@ -411,7 +427,7 @@ describe('getXcmFeeInternal', () => {
       {
         chain: 'AssetHubPolkadot',
         result: {
-          fee: 3_000n,
+          fee: 3000n,
           feeType: 'dryRun',
           currency: 'ACA',
           sufficient: true
@@ -420,7 +436,7 @@ describe('getXcmFeeInternal', () => {
       {
         chain: 'BridgeHubPolkadot',
         result: {
-          fee: 4_000n,
+          fee: 1000n,
           feeType: 'paymentInfo',
           currency: 'DOT',
           sufficient: false
@@ -429,15 +445,16 @@ describe('getXcmFeeInternal', () => {
     ])
 
     expect(res.assetHub).toEqual({
-      fee: 3_000n,
+      fee: 3000n,
       feeType: 'dryRun',
       currency: 'ACA',
       sufficient: true
     })
     expect(res.bridgeHub).toEqual({
-      fee: 4_000n,
+      fee: 1000n,
       feeType: 'paymentInfo',
-      currency: 'DOT',
+      currency: 'ACA',
+      asset: { symbol: 'ACA', decimals: 12 },
       sufficient: false
     })
     expect(res.destination).toMatchObject({
@@ -465,8 +482,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -556,8 +572,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -593,8 +608,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -623,15 +637,15 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      fee: 5_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       currency: 'DOT'
     })
 
     const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }), false)
 
-    expect(res.hops[0].result.fee).toBe(5_000n)
-    expect(res.bridgeHub?.fee).toBe(5_000n)
+    expect(res.hops[0].result.fee).toBe(1_000n)
+    expect(res.bridgeHub?.fee).toBe(1_000n)
   })
 
   it('handles sufficient field being undefined in origin fee', async () => {
@@ -640,8 +654,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -670,8 +683,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -705,8 +717,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -733,7 +744,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo'
     })
 
@@ -749,8 +760,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -771,9 +781,8 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
-      currency: 'DOT',
       dryRunError: 'BridgeHub failed'
     })
 
@@ -789,8 +798,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -824,8 +832,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -858,8 +865,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -897,8 +903,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -932,7 +937,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo'
     })
 
@@ -967,8 +972,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -976,7 +980,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo'
     })
 
@@ -1013,8 +1017,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1047,7 +1050,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 3_000n,
+      ...xcmFeeResultbase,
       feeType: 'paymentInfo',
       sufficient: false
     })
@@ -1058,10 +1061,13 @@ describe('getXcmFeeInternal', () => {
     expect(mockCloneApi.init).toHaveBeenCalledWith('Moonbeam', expect.any(Number))
 
     expect(res.destination).toEqual({
-      fee: 3_000n,
+      fee: 1_000n,
       feeType: 'paymentInfo',
       sufficient: false,
-      currency: 'GLMR'
+      currency: 'GLMR',
+      asset: {
+        symbol: 'ACA'
+      }
     })
   })
 
@@ -1083,8 +1089,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1117,7 +1122,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 0n,
+      ...xcmFeeResultbase,
       feeType: 'noFeeRequired'
     })
 
@@ -1139,8 +1144,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1175,7 +1179,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       sufficient: true
     })
@@ -1197,8 +1201,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1233,7 +1236,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       sufficient: true
     })
@@ -1266,8 +1269,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1312,8 +1314,7 @@ describe('getXcmFeeInternal', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      fee: 1_000n,
-      currency: 'ACA',
+      ...xcmFeeResultbase,
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -1343,7 +1344,7 @@ describe('getXcmFeeInternal', () => {
     })
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
-      fee: 2_000n,
+      ...xcmFeeResultbase,
       feeType: 'dryRun'
     })
 

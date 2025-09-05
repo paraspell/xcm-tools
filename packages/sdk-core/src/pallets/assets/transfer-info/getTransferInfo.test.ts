@@ -99,11 +99,13 @@ describe('getTransferInfo', () => {
     vi.mocked(buildHopInfo).mockResolvedValue({
       balance: 0n,
       currencySymbol: 'DOT',
+      asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo,
       existentialDeposit: 0n,
       xcmFee: {
         fee: 0n,
         balance: 0n,
-        currencySymbol: 'DOT'
+        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo
       }
     })
     vi.mocked(buildDestInfo).mockResolvedValue({
@@ -113,13 +115,15 @@ describe('getTransferInfo', () => {
         balance: 0n,
         balanceAfter: BigInt(baseOptions.currency.amount),
         currencySymbol: 'DOT',
+        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo,
         existentialDeposit: 100000000n
       },
       xcmFee: {
         fee: 70000000n,
         balanceAfter: 0n,
         balance: 0n,
-        currencySymbol: 'DOT'
+        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo
       }
     })
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
@@ -187,15 +191,27 @@ describe('getTransferInfo', () => {
     const mockHydraHopInfo = {
       balance: 100n,
       currencySymbol: 'HDX',
+      asset: { symbol: 'HDX', assetId: 'HDX', decimals: 12 } as TAssetInfo,
       existentialDeposit: 1n,
-      xcmFee: { fee: 12345n, balance: 100n, currencySymbol: 'HDX' }
+      xcmFee: {
+        fee: 12345n,
+        balance: 100n,
+        currencySymbol: 'HDX',
+        asset: { symbol: 'HDX', assetId: 'HDX', decimals: 12 } as TAssetInfo
+      }
     }
 
     const mockInterlayHopInfo = {
       balance: 200n,
       currencySymbol: 'INTR',
+      asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo,
       existentialDeposit: 2n,
-      xcmFee: { fee: 56789n, balance: 200n, currencySymbol: 'INTR' }
+      xcmFee: {
+        fee: 56789n,
+        balance: 200n,
+        currencySymbol: 'INTR',
+        asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo
+      }
     }
 
     vi.mocked(getXcmFee).mockResolvedValue({

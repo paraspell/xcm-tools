@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/sdk';
 import {
   dryRunOrigin,
   type TDryRunChainResult,
@@ -50,7 +51,13 @@ describe('calculateTxFeeDryRun', () => {
 
   it('should throw an error when dry run fails', async () => {
     const failureReason = 'some error';
-    const resultFromDryRun = { success: false, fee: 0, failureReason } as TDryRunChainResult;
+    const resultFromDryRun = {
+      success: false,
+      fee: 0,
+      currency: 'DOT',
+      asset: { symbol: 'DOT' } as TAssetInfo,
+      failureReason,
+    } as TDryRunChainResult;
     vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
     await expect(calculateTxFeeDryRun(api, chain, tx, address)).rejects.toThrow(
       `Failed to calculate fee using dry run. Chain: ${chain} Error: ${failureReason}`,

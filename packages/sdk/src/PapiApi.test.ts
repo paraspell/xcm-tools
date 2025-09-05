@@ -952,7 +952,9 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'GLMR'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -963,6 +965,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo,
         weight: { refTime: 10n, proofSize: 20n },
         forwardedXcms: [],
         destParaId: undefined
@@ -1005,7 +1009,9 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'AssetHubPolkadot',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'DOT'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -1023,6 +1029,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 30n, proofSize: 40n },
         forwardedXcms: [{ type: 'V4', value: { interior: { type: 'Here' } } }],
         destParaId: 0
@@ -1057,7 +1065,9 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Kusama',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'KSM'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -1072,7 +1082,12 @@ describe('PapiApi', () => {
         mockTransaction.decodedCall,
         DEFAULT_XCM_VERSION
       )
-      expect(result).toEqual({ success: false, failureReason: 'SomeOtherErrorAfterRetry' })
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'SomeOtherErrorAfterRetry',
+        currency: 'KSM',
+        asset: { symbol: 'KSM' } as TAssetInfo
+      })
     })
 
     it('should fail on the first attempt and not retry if error is not VersionedConversionFailed', async () => {
@@ -1091,7 +1106,9 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1099,7 +1116,12 @@ describe('PapiApi', () => {
         basePayloadMatcher,
         mockTransaction.decodedCall
       )
-      expect(result).toEqual({ success: false, failureReason: 'NotVersionedConversion' })
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'NotVersionedConversion',
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
+      })
     })
 
     it('should correctly parse failure reason from short error structure', async () => {
@@ -1116,10 +1138,17 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
-      expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'ShortErrorType',
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
+      })
     })
 
     it('should correctly parse failure reason from unknown error structure (stringified)', async () => {
@@ -1136,12 +1165,16 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: JSON.stringify(mockApiResponse.value)
+        failureReason: JSON.stringify(mockApiResponse.value),
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
 
@@ -1340,6 +1373,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 999n,
+        currency: 'USDT',
+        asset: { symbol: 'USDT', location: {} } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: expect.any(Object),
         destParaId: 1000
@@ -1365,11 +1400,17 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        asset: { symbol: 'USDT' } as TAssetInfo,
         chain: 'AssetHubPolkadot',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
 
-      expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'SomeXcmError',
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
+      })
     })
 
     it('should throw error for unsupported chain', async () => {
@@ -1513,6 +1554,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 999n,
+        currency: 'AUSD',
+        asset: { symbol: 'AUSD' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []
       })
@@ -1537,11 +1580,17 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        asset: { symbol: 'AUSD' },
         chain: 'AssetHubPolkadot',
         origin: 'Acala'
       } as TDryRunXcmBaseOptions)
 
-      expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'SomeXcmError',
+        currency: 'AUSD',
+        asset: { symbol: 'AUSD' } as TAssetInfo
+      })
     })
 
     it('should use processAssetsDepositedEvents for AssetHubPolkadot with non-DOT assets', async () => {
@@ -1615,6 +1664,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 4500n,
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: [],
         destParaId: undefined
@@ -1692,6 +1743,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1300n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: [],
         destParaId: undefined
@@ -1731,12 +1784,15 @@ describe('PapiApi', () => {
         await papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          asset: { symbol: 'USDT' },
           chain: 'AssetHubPolkadot',
           origin: 'Mythos'
         } as TDryRunXcmBaseOptions)
       ).toEqual({
         success: false,
-        failureReason: 'Cannot determine destination fee. No fee event found'
+        failureReason: 'Cannot determine destination fee. No fee event found',
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
 
@@ -1777,6 +1833,8 @@ describe('PapiApi', () => {
       ).resolves.toEqual({
         success: true,
         fee: 100n,
+        currency: 'AUSD',
+        asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []
       })

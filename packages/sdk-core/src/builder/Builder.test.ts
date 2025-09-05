@@ -1,5 +1,6 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
+import type { TAssetInfo } from '@paraspell/assets'
 import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import { type TChain, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
@@ -763,9 +764,13 @@ describe('Builder', () => {
         origin: {
           success: true,
           fee: 1000n,
+          currency: 'DOT',
+          asset: {
+            symbol: 'DOT',
+            decimals: 10
+          } as TAssetInfo,
           forwardedXcms: [],
-          destParaId: 0,
-          currency: 'DOT'
+          destParaId: 0
         },
         hops: []
       })
@@ -786,7 +791,11 @@ describe('Builder', () => {
           fee: 1000n,
           forwardedXcms: [],
           destParaId: 0,
-          currency: 'DOT'
+          currency: 'DOT',
+          asset: {
+            symbol: 'DOT',
+            decimals: 10
+          }
         },
         hops: []
       })

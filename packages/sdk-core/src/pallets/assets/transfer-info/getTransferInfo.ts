@@ -67,7 +67,7 @@ export const getTransferInfo = async <TApi, TRes>({
     const edOrigin = getExistentialDepositOrThrow(origin, currency)
 
     const {
-      origin: { fee: originFee, currency: originFeeCurrency },
+      origin: { fee: originFee, currency: originFeeCurrency, asset: originFeeAsset },
       assetHub: assetHubFeeResult,
       bridgeHub: bridgeHubFeeResult,
       destination: destFeeDetail,
@@ -107,6 +107,7 @@ export const getTransferInfo = async <TApi, TRes>({
         feeData: assetHubFeeResult as { fee: bigint; currency: string },
         originChain: origin,
         currency,
+        asset: assetHubFeeResult.asset,
         senderAddress,
         ahAddress
       })
@@ -121,6 +122,7 @@ export const getTransferInfo = async <TApi, TRes>({
         feeData: bridgeHubFeeResult as { fee: bigint; currency: string },
         originChain: origin,
         currency,
+        asset: bridgeHubFeeResult.asset,
         senderAddress,
         ahAddress
       })
@@ -137,6 +139,7 @@ export const getTransferInfo = async <TApi, TRes>({
             feeData: hop.result as { fee: bigint; currency: string },
             originChain: origin,
             currency,
+            asset: hop.result.asset,
             senderAddress,
             ahAddress
           })
@@ -176,6 +179,7 @@ export const getTransferInfo = async <TApi, TRes>({
           balance: originBalance,
           balanceAfter: originBalanceAfter,
           currencySymbol: originAsset.symbol,
+          asset: originAsset,
           existentialDeposit: edOrigin
         },
         xcmFee: {
@@ -183,7 +187,8 @@ export const getTransferInfo = async <TApi, TRes>({
           fee: originFee,
           balance: originBalanceFee,
           balanceAfter: originBalanceFeeAfter,
-          currencySymbol: originFeeCurrency
+          currencySymbol: originFeeCurrency,
+          asset: originFeeAsset
         }
       },
       assetHub,

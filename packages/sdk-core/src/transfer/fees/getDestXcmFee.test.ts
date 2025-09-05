@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
-import type { TDryRunChainResultInternal, TGetFeeForDestChainOptions } from '../../types'
+import type { TDryRunChainResult, TGetFeeForDestChainOptions } from '../../types'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
@@ -19,7 +19,7 @@ vi.mock('./isSufficient', () => ({
   isSufficientDestination: vi.fn()
 }))
 
-const createApi = (dryRunRes?: TDryRunChainResultInternal) =>
+const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
   }) as unknown as IPolkadotApi<unknown, unknown>
@@ -147,11 +147,13 @@ describe('getDestXcmFee', () => {
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const dryRunObj: TDryRunChainResultInternal = {
+    const dryRunObj: TDryRunChainResult = {
       success: true,
       fee: 200n,
       forwardedXcms: [[{ x: 1 }]],
-      destParaId: 3320
+      destParaId: 3320,
+      currency: 'DOT',
+      asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
     }
     const api = createApi(dryRunObj)
 
@@ -179,7 +181,12 @@ describe('getDestXcmFee', () => {
 
   it('falls back to “paymentInfo” and returns `dryRunError` when dry-run fails', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const api = createApi({ success: false, failureReason: 'fail' })
+    const api = createApi({
+      success: false,
+      failureReason: 'fail',
+      currency: 'DOT',
+      asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
+    })
 
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
@@ -208,7 +215,12 @@ describe('getDestXcmFee', () => {
 
   it('returnserror variant (only `dryRunError`) when fallback is disabled', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const api = createApi({ success: false, failureReason: 'boom' })
+    const api = createApi({
+      success: false,
+      failureReason: 'boom',
+      currency: 'DOT',
+      asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
+    })
 
     const res = await getDestXcmFee({
       api,

@@ -14,7 +14,7 @@ import type {
   TBuilderOptions,
   TChain,
   TDryRunCallBaseOptions,
-  TDryRunChainResultInternal,
+  TDryRunChainResult,
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
@@ -454,7 +454,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     asset,
     feeAsset,
     useRootOrigin = false
-  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunChainResultInternal> {
+  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -539,8 +539,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
+    const usedSymbol = feeAsset?.symbol ?? asset.symbol
+    const usedAsset = feeAsset ?? asset
+
     if (!isSuccess) {
-      return Promise.resolve({ success: false, failureReason: failureOutputReason })
+      return Promise.resolve({
+        success: false,
+        failureReason: failureOutputReason,
+        currency: usedSymbol,
+        asset: usedAsset
+      })
     }
 
     const actualWeight = result.value.execution_result.value.actual_weight
@@ -583,6 +591,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         return Promise.resolve({
           success: true,
           fee: xcmFee,
+          currency: usedSymbol,
+          asset: usedAsset,
           weight,
           forwardedXcms,
           destParaId
@@ -595,6 +605,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve({
       success: true,
       fee,
+      currency: usedSymbol,
+      asset: usedAsset,
       weight,
       forwardedXcms,
       destParaId
@@ -652,7 +664,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     feeAsset,
     originFee,
     amount
-  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal> {
+  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -665,10 +677,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .getUnsafeApi()
       .apis.DryRunApi.dry_run_xcm(transformedOriginLocation, xcm)
 
+    const symbol = asset.symbol
+
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
       const failureReason = result.value.execution_result.value.error.type
-      return Promise.resolve({ success: false, failureReason })
+      return Promise.resolve({ success: false, failureReason, currency: symbol, asset })
     }
 
     const actualWeight = result.value.execution_result.value.used
@@ -699,6 +713,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         return {
           success: true,
           fee,
+          currency: symbol,
+          asset,
           weight,
           forwardedXcms,
           destParaId
@@ -771,7 +787,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!feeEvent) {
       return Promise.resolve({
         success: false,
-        failureReason: 'Cannot determine destination fee. No fee event found'
+        failureReason: 'Cannot determine destination fee. No fee event found',
+        currency: symbol,
+        asset
       })
     }
 
@@ -792,6 +810,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve({
       success: true,
       fee: processedFee,
+      currency: symbol,
+      asset,
       weight,
       forwardedXcms,
       destParaId

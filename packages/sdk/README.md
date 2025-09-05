@@ -428,10 +428,16 @@ let result = convertSs58(address, chain) // returns converted address in string
 For full documentation with examples on this feature, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
-import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS } from  '@paraspell/sdk'
+import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/sdk'
 
 //Get chains that support the specific asset related to origin
 getSupportedDestinations(CHAIN, CURRENCY)
+
+//Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
+findAssetInfo(CHAIN, CURRENCY, DESTINATION?)
+
+//Find out whether asset is registered on chain and return its entire parameters. If not found, returns error.
+findAssetInfoOrThrow(CHAIN, CURRENCY, DESTINATION?)
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
 getFeeAssets(CHAIN)

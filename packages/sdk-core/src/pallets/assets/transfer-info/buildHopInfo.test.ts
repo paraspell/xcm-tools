@@ -6,7 +6,7 @@ import {
   getNativeAssetSymbol,
   isChainEvm
 } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -27,18 +27,10 @@ vi.mock('@paraspell/assets', async () => {
 })
 
 vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {
-    constructor(message: string) {
-      super(message)
-      this.name = 'InvalidParameterError'
-    }
-  }
+  InvalidParameterError: class extends Error {}
 }))
 
-vi.mock('../balance', () => ({
-  getAssetBalanceInternal: vi.fn(),
-  getBalanceNativeInternal: vi.fn()
-}))
+vi.mock('../balance')
 
 describe('buildHopInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
@@ -72,6 +64,7 @@ describe('buildHopInfo', () => {
       },
       originChain: 'Polkadot' as TSubstrateChain,
       currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
+      asset: { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo,
       senderAddress: 'senderAlice',
       ahAddress: 'ahBobForEvm'
     }
@@ -87,10 +80,7 @@ describe('buildHopInfo', () => {
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
-      location: {
-        parents: 0,
-        interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }
-      }
+      location: {} as TLocation
     } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_ASSET_BALANCE)
     vi.mocked(getExistentialDeposit).mockReturnValue(DEFAULT_ED)
@@ -130,11 +120,18 @@ describe('buildHopInfo', () => {
     expect(result).toEqual({
       balance: DEFAULT_ASSET_BALANCE,
       currencySymbol: 'USDT',
+      asset: {
+        symbol: 'USDT',
+        assetId: '1984',
+        decimals: 6,
+        location: {}
+      },
       existentialDeposit: BigInt(DEFAULT_ED),
       xcmFee: {
         fee: DEFAULT_HOP_FEE,
         balance: DEFAULT_NATIVE_BALANCE,
-        currencySymbol: 'DOT'
+        currencySymbol: 'DOT',
+        asset: { symbol: 'USDT', assetId: '1984', decimals: 6 }
       }
     })
     expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
@@ -192,7 +189,12 @@ describe('buildHopInfo', () => {
       xcmFee: {
         fee: DEFAULT_HOP_FEE,
         balance: DEFAULT_NATIVE_BALANCE,
-        currencySymbol: 'DOT'
+        currencySymbol: 'DOT',
+        asset: {
+          symbol: 'USDT',
+          assetId: '1984',
+          decimals: 6
+        }
       }
     })
     expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)

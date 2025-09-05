@@ -996,7 +996,9 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'DOT'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -1008,6 +1010,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
         weight: {
           refTime: 1000n,
           proofSize: 2000n
@@ -1046,7 +1050,9 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
-        asset: {} as WithAmount<TAssetInfo>
+        asset: {
+          symbol: 'DOT'
+        } as WithAmount<TAssetInfo>
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -1057,7 +1063,9 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'ModuleError'
+        failureReason: 'ModuleError',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
       })
     })
 
@@ -1143,6 +1151,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        asset: { symbol: 'DOT' } as TAssetInfo,
         chain: 'Astar',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
@@ -1151,6 +1160,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
         weight: {
           refTime: 111n,
           proofSize: 222n
@@ -1180,13 +1191,16 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        asset: { symbol: 'DOT' } as TAssetInfo,
         chain: 'Astar',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions)
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'ModuleError'
+        failureReason: 'ModuleError',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
       })
     })
 
@@ -1224,12 +1238,15 @@ describe('PolkadotJsApi', () => {
         await polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          asset: { symbol: 'DOT' } as TAssetInfo,
           chain: 'AssetHubPolkadot',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions)
       ).toEqual({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found'
+        failureReason: 'Cannot determine destination fee. No Issued event found',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
       })
     })
   })

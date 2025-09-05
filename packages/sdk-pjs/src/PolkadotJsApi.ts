@@ -11,7 +11,7 @@ import type {
   TBuilderOptions,
   TChain,
   TDryRunCallBaseOptions,
-  TDryRunChainResultInternal,
+  TDryRunChainResult,
   TDryRunXcmBaseOptions,
   TLocation,
   TModuleError,
@@ -306,8 +306,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getDryRunCall({
     tx,
     address,
+    asset,
+    feeAsset,
     chain
-  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResultInternal> {
+  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -342,12 +344,15 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const result = response.toHuman() as any
     const resultJson = response.toJSON() as any
 
+    const usedSymbol = feeAsset?.symbol ?? asset?.symbol
+    const usedAsset = feeAsset ?? asset
+
     const isSuccess = result.Ok && result.Ok.executionResult.Ok
 
     if (!isSuccess) {
       const moduleError = result.Ok.executionResult.Err.error.Module
       const failureReason = resolveModuleError(chain, moduleError as TModuleError)
-      return { success: false, failureReason }
+      return { success: false, failureReason, currency: usedSymbol, asset: usedAsset }
     }
 
     const executionFee = await this.calculateTransactionFee(tx, address)
@@ -372,7 +377,15 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
-    return { success: true, fee, weight, forwardedXcms, destParaId }
+    return {
+      success: true,
+      fee,
+      currency: usedSymbol,
+      asset: usedAsset,
+      weight,
+      forwardedXcms,
+      destParaId
+    }
   }
 
   async getXcmPaymentApiFee(chain: TSubstrateChain, xcm: any, asset: TAssetInfo): Promise<bigint> {
@@ -404,9 +417,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getDryRunXcm({
     originLocation,
     xcm,
+    asset,
     chain,
     origin
-  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal> {
+  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -418,11 +432,13 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const result = response.toHuman() as any
     const resultJson = response.toJSON() as any
 
+    const symbol = asset.symbol
+
     const isSuccess = result.Ok && result.Ok.executionResult.Complete
 
     if (!isSuccess) {
       const failureReason = result.Ok.executionResult.Incomplete.error
-      return { success: false, failureReason }
+      return { success: false, failureReason, currency: symbol, asset }
     }
 
     const emitted = result.Ok.emittedEvents
@@ -453,7 +469,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!feeEvent) {
       return Promise.resolve({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found'
+        failureReason: 'Cannot determine destination fee. No Issued event found',
+        currency: symbol,
+        asset
       })
     }
 
@@ -481,7 +499,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
-    return { success: true, fee, weight, forwardedXcms, destParaId }
+    return { success: true, fee, currency: symbol, asset, weight, forwardedXcms, destParaId }
   }
 
   async getBridgeStatus() {

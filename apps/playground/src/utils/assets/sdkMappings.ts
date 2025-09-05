@@ -32,6 +32,10 @@ export const callSdkFunc = (
     ASSET_ID: () => Promise.resolve(getAssetId(chain, currency)),
     ASSET_LOCATION: () =>
       Promise.resolve(getAssetLocation(chain, resolvedCurrency)),
+    ASSET_INFO: () =>
+      Promise.resolve(
+        chosenSdk.findAssetInfo(chain, resolvedCurrency, destination),
+      ),
     RELAYCHAIN_SYMBOL: () => Promise.resolve(getRelayChainSymbol(chain)),
     NATIVE_ASSETS: () => Promise.resolve(getNativeAssets(chain)),
     OTHER_ASSETS: () => Promise.resolve(getOtherAssets(chain)),

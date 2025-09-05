@@ -131,7 +131,7 @@ export const buildDestInfo = async <TApi, TRes>({
   }
 
   let destXcmFeeBalance: bigint
-  const isDestFeeInNativeCurrency = destFeeDetail.currency === getNativeAssetSymbol(destination)
+  const isDestFeeInNativeCurrency = destFeeDetail.asset.symbol === getNativeAssetSymbol(destination)
 
   if (isDestFeeInNativeCurrency) {
     const destRecipientNativeBalance = await getBalanceNativeInternal({
@@ -157,13 +157,15 @@ export const buildDestInfo = async <TApi, TRes>({
       balance: destBalance,
       balanceAfter: destbalanceAfterResult,
       currencySymbol: destAsset.symbol,
+      asset: destAsset,
       existentialDeposit: edDestBn
     },
     xcmFee: {
       fee: destFeeDetail.fee as bigint,
       balance: destXcmFeeBalance,
       balanceAfter: destXcmFeeBalanceAfter,
-      currencySymbol: destFeeDetail.currency as string
+      currencySymbol: destFeeDetail.currency,
+      asset: destFeeDetail.asset
     }
   }
 }

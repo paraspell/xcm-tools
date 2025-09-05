@@ -427,7 +427,7 @@ let result = convertSs58(address, chain) // returns converted address in string
 For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
-import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS } from  '@paraspell/sdk-pjs'
+import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/sdk-pjs'
 
 //Get chains that support the specific asset related to origin
 getSupportedDestinations(CHAIN, CURRENCY)
@@ -437,6 +437,12 @@ getFeeAssets(CHAIN)
 
 // Get Location for asset ID or symbol on a  specific chain
 getAssetLocation(CHAIN, { symbol: symbol } | { id: assetId })
+
+//Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
+findAssetInfo(CHAIN, CURRENCY, DESTINATION?)
+
+//Find out whether asset is registered on chain and return its entire parameters. If not found, returns error.
+findAssetInfoOrThrow(CHAIN, CURRENCY, DESTINATION?)
 
 // Retrieve assets object from assets.json for a particular chain, including information about native and foreign assets
 getAssetsObject(CHAIN)

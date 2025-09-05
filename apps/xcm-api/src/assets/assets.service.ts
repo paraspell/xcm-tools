@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CHAINS,
+  findAssetInfo,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
@@ -22,6 +23,7 @@ import {
 import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetLocationDto } from './dto/AssetLocationDto.js';
+import { FindAssetDto } from './dto/FindAssetDto.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 
@@ -44,6 +46,14 @@ export class AssetsService {
   getAssetLocation(chain: string, { currency }: AssetLocationDto) {
     validateChain(chain, CHAINS);
     return JSON.stringify(getAssetLocation(chain as TChain, currency));
+  }
+
+  getAssetInfo(chain: string, { currency, destination }: FindAssetDto) {
+    validateChain(chain, CHAINS);
+    if (destination) validateChain(destination, CHAINS);
+    return JSON.stringify(
+      findAssetInfo(chain as TChain, currency, destination as TChain),
+    );
   }
 
   getRelayChainSymbol(chain: string) {

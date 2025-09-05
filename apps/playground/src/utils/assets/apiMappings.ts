@@ -5,6 +5,7 @@ export const getApiEndpoint = (func: TAssetsQuery, chain: string): string => {
     ASSETS_OBJECT: `/assets/${chain}`,
     ASSET_ID: `/assets/${chain}/id`,
     ASSET_LOCATION: `/assets/${chain}/location`,
+    ASSET_INFO: `/assets/${chain}/asset-info`,
     RELAYCHAIN_SYMBOL: `/assets/${chain}/relay-chain-symbol`,
     NATIVE_ASSETS: `/assets/${chain}/native`,
     OTHER_ASSETS: `/assets/${chain}/other`,

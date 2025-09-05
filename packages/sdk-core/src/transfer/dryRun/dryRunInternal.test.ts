@@ -84,7 +84,9 @@ describe('dryRunInternal', () => {
       success: true,
       fee: 1_000n,
       forwardedXcms: [null, [{ value: [1] }]],
-      destParaId: 2000
+      destParaId: 2000,
+      currency: 'ACA',
+      asset: { symbol: 'ACA' } as TAssetInfo
     }
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -107,7 +109,10 @@ describe('dryRunInternal', () => {
   })
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT', decimals: 10 } as TAssetInfo
+      return { symbol: 'ACA' } as TAssetInfo
+    })
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
       return 'ACA'
@@ -119,7 +124,9 @@ describe('dryRunInternal', () => {
       success: true,
       fee: 1_000n,
       forwardedXcms: [null, [{ value: [1] }]],
-      destParaId: 1000
+      destParaId: 1000,
+      currency: 'ACA',
+      asset: { symbol: 'ACA' } as TAssetInfo
     }
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -137,8 +144,13 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
-      origin: { ...originOk, currency: 'ACA' },
-      assetHub: { success: true, fee: 3_000n, currency: 'DOT' },
+      origin: { ...originOk, currency: 'ACA', asset: { symbol: 'ACA' } },
+      assetHub: {
+        success: true,
+        fee: 3_000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT', decimals: 10 }
+      },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
         {
@@ -159,7 +171,9 @@ describe('dryRunInternal', () => {
       success: true,
       fee: 1_000n,
       forwardedXcms: [null, [{ value: [1] }]],
-      destParaId: 2000
+      destParaId: 2000,
+      currency: 'ACA',
+      asset: { symbol: 'ACA' } as TAssetInfo
     }
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -183,7 +197,10 @@ describe('dryRunInternal', () => {
     const initialAsset = { symbol: 'ACA' } as TAssetInfo
     const swappedAsset = { symbol: 'USDT' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(initialAsset)
+    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT', decimals: 10 } as TAssetInfo
+      return initialAsset
+    })
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
@@ -197,7 +214,9 @@ describe('dryRunInternal', () => {
       success: true,
       fee: 1_000n,
       forwardedXcms: [null, [{ value: [1] }]],
-      destParaId: 1000
+      destParaId: 1000,
+      currency: 'ACA',
+      asset: initialAsset
     }
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -227,7 +246,12 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       origin: { ...originOk, currency: 'ACA' },
-      assetHub: { success: true, fee: 2_000n, currency: 'DOT' },
+      assetHub: {
+        success: true,
+        fee: 2_000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT', decimals: 10 }
+      },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
         {
@@ -590,7 +614,8 @@ describe('dryRunInternal', () => {
         success: true,
         fee: 1_000n,
         forwardedXcms: [null, [{ value: [1] }]],
-        destParaId: 1000
+        destParaId: 1000,
+        currency: 'DOT'
       }
 
       vi.mocked(traverseXcmHops).mockResolvedValue({

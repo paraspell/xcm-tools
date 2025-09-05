@@ -38,71 +38,104 @@ pnpm | npm install || yarn add @paraspell/assets
 
 To use this functionality you first have to import it in the following way.
 ```ts
-import { getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS } from  '@paraspell/assets'
+import { getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
 ```
 
 
 ### Query assets object
 This function returns `assets object` from `assets.json` for `particular Parachain` including information about `native` and `foreign` assets.
+
 ```ts
 getAssetsObject('Acala')
 ```
 
 ### Query asset ID
-This function returns `assetId` for `particular Parachain` and `asset symbol`
+This function returns `assetId` for `particular Parachain` and `asset symbol`.
+
 ```ts
 getAssetId('Acala', 'DOT')
 ```
+
 ### Query Relay chain asset symbol
-This function returns the `symbol` of the Relay chain for a particular Parachain. Either "DOT" or "KSM"
+This function returns the `symbol` of the Relay chain for a particular Parachain. Either "DOT" or "KSM".
+
 ```ts
 getRelayChainSymbol('Basilisk')
 ```
+
 ### Query native assets
-This function returns a string array of `native` assets symbols for a particular Parachain
+This function returns a string array of `native` assets symbols for a particular Parachain.
+
 ```ts
 getNativeAssets('Acala')
 ```
+
 ### Query foreign assets
-This function returns an object array of foreign assets for a particular Parachain. Each object has a symbol and assetId property
+This function returns an object array of foreign assets for a particular Parachain. Each object has a symbol and assetId property.
+
 ```ts
 getOtherAssets('Acala')
 ```
+
 ### Query all asset symbols
-Function returns string array of all asset symbols for a specific Parachain. (native and foreign assets are merged into a single array)
+Function returns string array of all asset symbols for a specific Parachain. (native and foreign assets are merged into a single array).
+
 ```ts
 getAllAssetsSymbols('Acala')
 ```
+
 ### Query asset support
-The function checks if Parachain supports a particular asset. (Both native and foreign assets are searched). Returns boolean
+The function checks if Parachain supports a particular asset. (Both native and foreign assets are searched). Returns boolean.
+
 ```ts
 hasSupportForAsset(chain: TChain, symbol: string)
 ```
+
 ### Query asset decimals
-The function returns decimals for a specific asset
+The function returns decimals for a specific asset.
+
 ```ts
 getAssetDecimals('Basilisk', 'KSM')
 ```
+
 ### Query Parachain ID
-The function returns specific Parachain id
+The function returns specific Parachain id.
+
 ```ts
 getParaId('Basilisk')
 ```
 
+### Query asset data and support for specific chain I
+Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
+
+```ts
+findAssetInfo('AssetHubPolkadot', {symbol: 'DOT'}/*, DESTINATION?*/)
+```
+
+### Query asset data and support for specific chain II
+Find out whether asset is registered on chain and return its entire parameters. If not found, returns error.
+
+```ts
+findAssetInfoOrThrow('AssetHubPolkadot', {symbol: 'DOT'}/*, DESTINATION?*/)
+```
+
 ### Query Parachain name
-Function to get specific TChain from Parachain id
+Function to get specific TChain from Parachain id.
+
 ```ts
 getTChain(chainID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo' | 'Westend') //When Ethereum ecosystem is selected please fill chainID as 1 to select Ethereum.
 ```
 
 ### Import chains as constant
-Import all compatible chains as constant
+Import all compatible chains as constant.
+
 ```ts
 console.log(CHAINS)
 ```
 
 ### Convert id or symbol to location
 Get location for asset id or symbol.
+
 ```ts
 getAssetLocation(chainFrom, { symbol: symbol } | { id: assetId })
 ```

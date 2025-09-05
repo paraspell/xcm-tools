@@ -78,7 +78,13 @@ describe('buildDestInfo', () => {
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
       originFee: 50000000n,
       isFeeAssetAh: false,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'GLMR' } as TXcmFeeDetail,
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        currency: 'GLMR',
+        asset: {
+          symbol: 'GLMR'
+        } as TAssetInfo
+      } as TXcmFeeDetail,
       assetHubFee: undefined,
       bridgeFee: undefined
     }
@@ -149,7 +155,11 @@ describe('buildDestInfo', () => {
     const options = {
       ...baseOptions,
       api: mockApi,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'OTHER' } as TXcmFeeDetail
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        currency: 'OTHER',
+        asset: { symbol: 'OTHER' }
+      } as TXcmFeeDetail
     }
     const result = await buildDestInfo(options)
     expect(result.receivedCurrency.sufficient).toBeInstanceOf(UnableToComputeError)
@@ -189,7 +199,11 @@ describe('buildDestInfo', () => {
         ...ahToAhBase,
         api: mockApi,
         originFee: 50000000n,
-        destFeeDetail: { fee: DEFAULT_FEE, currency: 'DOT' } as TXcmFeeDetail,
+        destFeeDetail: {
+          fee: DEFAULT_FEE,
+          currency: 'DOT',
+          asset: { symbol: 'DOT' }
+        } as TXcmFeeDetail,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
         bridgeFee: 30000000n
       }
@@ -214,7 +228,11 @@ describe('buildDestInfo', () => {
       const options = {
         ...ahToAhBase,
         api: mockApi,
-        destFeeDetail: { fee: DEFAULT_FEE, currency: 'DOT' } as TXcmFeeDetail,
+        destFeeDetail: {
+          fee: DEFAULT_FEE,
+          currency: 'DOT',
+          asset: { symbol: 'DOT' } as TAssetInfo
+        } as TXcmFeeDetail,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
         bridgeFee: undefined
       }
@@ -241,7 +259,11 @@ describe('buildDestInfo', () => {
       const options = {
         ...ahToAhBase,
         api: mockApi,
-        destFeeDetail: { fee: DEFAULT_FEE, currency: 'USDT' } as TXcmFeeDetail,
+        destFeeDetail: {
+          fee: DEFAULT_FEE,
+          currency: 'USDT',
+          asset: { symbol: 'USDT' } as TAssetInfo
+        } as TXcmFeeDetail,
         currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>
       }
       const result = await buildDestInfo(options)
@@ -264,8 +286,16 @@ describe('buildDestInfo', () => {
     const options = {
       ...baseOptions,
       api: mockApi,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'USDT' } as TXcmFeeDetail,
-      currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        currency: 'USDT',
+        asset: { symbol: 'USDT' }
+      } as TXcmFeeDetail,
+      currency: {
+        symbol: 'USDT',
+        amount: DEFAULT_AMOUNT,
+        asset: { symbol: 'USDT' } as TAssetInfo
+      } as WithAmount<TCurrencyCore>
     }
 
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
@@ -311,7 +341,11 @@ describe('buildDestInfo', () => {
       ...baseOptions,
       api: mockApi,
       isFeeAssetAh: true,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'GLMR' } as TXcmFeeDetail
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' }
+      } as TXcmFeeDetail
     }
 
     const expectedDestAmount = BigInt(options.currency.amount) - options.originFee
@@ -327,7 +361,13 @@ describe('buildDestInfo', () => {
       ...baseOptions,
       api: mockApi,
       isFeeAssetAh: false,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'SOME_OTHER_FEE_TOKEN' } as TXcmFeeDetail
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        currency: 'SOME_OTHER_FEE_TOKEN',
+        asset: {
+          symbol: 'SOME_OTHER_FEE_TOKEN'
+        } as TAssetInfo
+      } as TXcmFeeDetail
     }
     const nativeBalanceForFee = 70000000000n
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>

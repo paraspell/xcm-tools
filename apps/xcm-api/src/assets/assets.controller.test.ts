@@ -103,6 +103,29 @@ describe('AssetsController', () => {
     });
   });
 
+  describe('getAssetInfo', () => {
+    it('should return asset info for a valid chain and symbol', () => {
+      const mockResult = {
+        assetId: '1234',
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: false,
+      } as TAssetInfo;
+      const spy = vi
+        .spyOn(assetsService, 'getAssetInfo')
+        .mockReturnValue(JSON.stringify(mockResult));
+
+      const result = controller.getAssetInfo(
+        chain,
+        { currency: { symbol } },
+        mockRequestObject,
+      );
+
+      expect(result).toBe(JSON.stringify(mockResult));
+      expect(spy).toHaveBeenCalledWith(chain, { currency: { symbol } });
+    });
+  });
+
   describe('getRelayChainSymbol', () => {
     it('should return relay chain symbol for a valid chain', () => {
       const mockResult = 'KSM';

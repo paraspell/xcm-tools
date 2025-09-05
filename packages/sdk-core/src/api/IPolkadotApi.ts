@@ -7,7 +7,7 @@ import type {
   TBridgeStatus,
   TBuilderOptions,
   TDryRunCallBaseOptions,
-  TDryRunChainResultInternal,
+  TDryRunChainResult,
   TDryRunXcmBaseOptions,
   TSerializedApiCall,
   TWeight
@@ -63,8 +63,8 @@ export interface IPolkadotApi<TApi, TRes> {
   blake2AsHex(data: Uint8Array): string
   clone(): IPolkadotApi<TApi, TRes>
   createApiForChain(chain: TSubstrateChain): Promise<IPolkadotApi<TApi, TRes>>
-  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResultInternal>
-  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunChainResultInternal>
+  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResult>
+  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunChainResult>
   getBridgeStatus(): Promise<TBridgeStatus>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean

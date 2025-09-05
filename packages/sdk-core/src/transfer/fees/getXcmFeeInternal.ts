@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
-  getNativeAssetSymbol
+  getNativeAssetSymbol,
+  Native
 } from '@paraspell/assets'
+import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -66,11 +69,15 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
+  const findNativeAssetInfo = (chain: TChain, dest: TChain | null = null) =>
+    findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, dest)
+
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
   const {
     fee: originFee,
     currency: originCurrency,
+    asset: originAsset,
     feeType: originFeeType,
     dryRunError: originDryRunError,
     forwardedXcms: initialForwardedXcm,
@@ -120,13 +127,15 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
           ...(originFeeType && { feeType: originFeeType }),
           sufficient: sufficientOriginFee,
           currency: originCurrency,
+          asset: originAsset,
           ...(originDryRunError && { dryRunError: originDryRunError })
         } as TXcmFeeDetail,
         destination: {
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
-          currency: getNativeAssetSymbol(destination)
+          currency: getNativeAssetSymbol(destination),
+          asset: findNativeAssetInfo(destination)
         } as TXcmFeeDetail,
         hops: []
       }
@@ -178,7 +187,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       disableFallback
     })
 
-    let hopCurrency: string
+    let hopAsset: TAssetInfo
     if (
       hopResult.feeType === 'dryRun' &&
       !(
@@ -187,23 +196,24 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       )
     ) {
       if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-        hopCurrency = findAssetOnDestOrThrow(
+        hopAsset = findAssetOnDestOrThrow(
           swapConfig.exchangeChain,
           currentChain,
           swapConfig.currencyTo
-        ).symbol
+        )
       } else if (destination === currentChain) {
-        hopCurrency = findAssetOnDestOrThrow(origin, currentChain, currency).symbol
+        hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
       } else {
-        hopCurrency = asset.symbol
+        hopAsset = asset
       }
     } else {
-      hopCurrency = getNativeAssetSymbol(currentChain)
+      hopAsset = findNativeAssetInfo(currentChain, destination)
     }
 
     return {
       ...hopResult,
-      currency: hopCurrency
+      currency: hopAsset.symbol,
+      asset: hopAsset
     }
   }
 
@@ -226,6 +236,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   // Handle case where we failed before reaching destination
   let destFee: bigint | undefined = 0n
   let destCurrency: string | undefined
+  let destAsset: TAssetInfo | undefined
   let destFeeType: TFeeType | undefined =
     destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
   let destDryRunError: string | undefined
@@ -238,6 +249,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     destDryRunError = destResult.dryRunError
     destSufficient = destResult.sufficient
     destCurrency = destResult.currency
+    destAsset = destResult.asset
   } else if (
     traversalResult.hops.length > 0 &&
     traversalResult.hops[traversalResult.hops.length - 1].result.dryRunError
@@ -270,11 +282,13 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     destFeeType = destFallback.feeType
     destSufficient = destFallback.sufficient
     destCurrency = getNativeAssetSymbol(destination)
+    destAsset = findNativeAssetInfo(destination)
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'
     destSufficient = true
     destCurrency = getNativeAssetSymbol(destination)
+    destAsset = findNativeAssetInfo(destination)
   }
 
   // Process Ethereum bridge fees
@@ -308,6 +322,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(result.feeType && { feeType: result.feeType }),
       ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
       currency: result.currency,
+      asset: result.asset,
       ...(result.dryRunError && { dryRunError: result.dryRunError })
     }) as TXcmFeeDetail
 
@@ -318,6 +333,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(originFeeType && { feeType: originFeeType }),
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
       currency: originCurrency,
+      asset: originAsset,
       ...(originDryRunError && { dryRunError: originDryRunError })
     } as TXcmFeeDetail,
     ...(traversalResult.assetHub && { assetHub: convertToFeeDetail(traversalResult.assetHub) }),
@@ -327,6 +343,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(destFeeType && { feeType: destFeeType }),
       sufficient: destSufficient,
       currency: destCurrency,
+      asset: destAsset,
       ...(destDryRunError && { dryRunError: destDryRunError })
     } as TXcmFeeDetail,
     hops: traversalResult.hops.map(hop => ({
