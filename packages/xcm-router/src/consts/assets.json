@@ -1080,23 +1080,6 @@
         }
       },
       {
-        "symbol": "KSM",
-        "decimals": 12,
-        "assetId": "1000771",
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X1": [
-              {
-                "GlobalConsensus": {
-                  "kusama": null
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "HDXb",
         "decimals": 12
       },
@@ -1125,6 +1108,23 @@
         "symbol": "4-Pool",
         "decimals": 18,
         "assetId": "100"
+      },
+      {
+        "symbol": "KSM",
+        "decimals": 12,
+        "assetId": "1000771",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "2-Pool",
