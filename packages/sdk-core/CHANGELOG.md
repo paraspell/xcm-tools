@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.3.0...sdk-core-v11.3.1) (2025-09-06)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix use type and then condition 🔧 ([6b2fd37](https://github.com/paraspell/xcm-tools/commit/6b2fd375f250f433bf69e11827f52accd1cc3d93))
+
 ## [11.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.2.4...sdk-core-v11.3.0) (2025-09-06)
 
 
