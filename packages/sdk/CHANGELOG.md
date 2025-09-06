@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.2.4...sdk-v11.3.0) (2025-09-06)
+
+
+### Features
+
+* Add full asset info to fee queries 🪄 ([0c56240](https://github.com/paraspell/xcm-tools/commit/0c562408361e1e3d4301799b4a5a140893385451))
+* Switch system asset transfers to type and then 🛠️ ([f2c3dd5](https://github.com/paraspell/xcm-tools/commit/f2c3dd54d8e90b8f27415f0b8c8f6f3650218678))
+
 ## [11.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-v11.2.3...sdk-v11.2.4) (2025-09-02)
 
 

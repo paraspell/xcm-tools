@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.2.4...xcm-api-v11.3.0) (2025-09-06)
+
+
+### Features
+
+* Add full asset info to fee queries 🪄 ([0c56240](https://github.com/paraspell/xcm-tools/commit/0c562408361e1e3d4301799b4a5a140893385451))
+
 ## [11.2.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.2.3...xcm-api-v11.2.4) (2025-09-02)
 
 
