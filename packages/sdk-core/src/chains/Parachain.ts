@@ -172,7 +172,11 @@ abstract class Parachain<TApi, TRes> {
       )
     }
 
-    const useTypeAndThen = isRelayAsset && supportsTypeThen
+    const useTypeAndThen =
+      isRelayAsset &&
+      supportsTypeThen &&
+      destChain &&
+      (!isTrustedChain(this.chain) || !isTrustedChain(destChain))
 
     if (supportsXTokens(this) && this.canUseXTokens(sendOptions) && !useTypeAndThen) {
       const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
