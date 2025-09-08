@@ -1080,23 +1080,6 @@
         }
       },
       {
-        "symbol": "KSM",
-        "decimals": 12,
-        "assetId": "1000771",
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X1": [
-              {
-                "GlobalConsensus": {
-                  "kusama": null
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "HDXb",
         "decimals": 12
       },
@@ -1127,9 +1110,21 @@
         "assetId": "100"
       },
       {
-        "symbol": "2-Pool",
-        "decimals": 18,
-        "assetId": "101"
+        "symbol": "KSM",
+        "decimals": 12,
+        "assetId": "1000771",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "GLMR",
@@ -1246,24 +1241,6 @@
         }
       },
       {
-        "symbol": "RING",
-        "decimals": 18,
-        "assetId": "31",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2046
-              },
-              {
-                "PalletInstance": 5
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "vASTR",
         "decimals": 18,
         "assetId": "33",
@@ -1349,27 +1326,6 @@
             "X1": [
               {
                 "Parachain": 2035
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "ZTG",
-        "decimals": 10,
-        "assetId": "12",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
               }
             ]
           }
@@ -1511,6 +1467,11 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "2-Pool",
+        "decimals": 18,
+        "assetId": "101"
       },
       {
         "symbol": "USDC",
