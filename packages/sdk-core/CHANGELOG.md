@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.3.1...sdk-core-v11.3.2) (2025-09-08)
+
+
+### Bug Fixes
+
+* **sdk-core:** Temporarily disable Ajuna transfers 🔧 ([031912e](https://github.com/paraspell/xcm-tools/commit/031912e53025697712b6fc1dbee3aeb65b558431))
+
 ## [11.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.3.0...sdk-core-v11.3.1) (2025-09-06)
 
 
