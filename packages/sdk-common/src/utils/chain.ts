@@ -1,5 +1,5 @@
-import { RELAYCHAINS } from '../constants'
-import type { TChain, TRelaychain } from '../types'
+import { EXTERNAL_CHAINS, RELAYCHAINS } from '../constants'
+import type { TChain, TExternalChain, TRelaychain } from '../types'
 
 /**
  * Determines whether a given chain is a relaychain.
@@ -9,6 +9,15 @@ import type { TChain, TRelaychain } from '../types'
  */
 export const isRelayChain = (chain: TChain): chain is TRelaychain =>
   RELAYCHAINS.includes(chain as TRelaychain)
+
+/**
+ * Determines whether a given chain is an external chain.
+ *
+ * @param chain - The chain to check.
+ * @returns True if the chain is an external chain; otherwise, false.
+ */
+export const isExternalChain = (chain: TChain): chain is TExternalChain =>
+  EXTERNAL_CHAINS.includes(chain as TExternalChain)
 
 /**
  * Checks if a given chain is a system chain.

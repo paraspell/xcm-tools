@@ -90,6 +90,11 @@ describe('Ajuna', () => {
     })
   })
 
+  it('should have sending and receiving disabled', () => {
+    expect(ajuna.isSendingTempDisabled({} as TSendInternalOptions<unknown, unknown>)).toBe(true)
+    expect(ajuna.isReceivingTempDisabled({} as TSendInternalOptions<unknown, unknown>)).toBe(true)
+  })
+
   describe('transferPolkadotXCM', () => {
     it('delegates unchanged input to PolkadotXCM implementation', async () => {
       await ajuna.transferPolkadotXCM(basePolkadotXCMInput)

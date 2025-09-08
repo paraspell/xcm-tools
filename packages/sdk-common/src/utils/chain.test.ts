@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { EXTERNAL_CHAINS, PARACHAINS, RELAYCHAINS } from '../constants'
 import type { TChain } from '../types'
-import { isRelayChain, isSystemChain, isTrustedChain } from './chain'
+import { isExternalChain, isRelayChain, isSystemChain, isTrustedChain } from './chain'
 
 describe('isRelayChain', () => {
   RELAYCHAINS.forEach(relaychain => {
@@ -22,6 +22,29 @@ describe('isRelayChain', () => {
   EXTERNAL_CHAINS.forEach(externalChain => {
     it(`should return false for ${externalChain}`, () => {
       const result = isRelayChain(externalChain)
+      expect(result).toBe(false)
+    })
+  })
+})
+
+describe('isExternalChain', () => {
+  EXTERNAL_CHAINS.forEach(externalChain => {
+    it(`should return true for ${externalChain}`, () => {
+      const result = isExternalChain(externalChain)
+      expect(result).toBe(true)
+    })
+  })
+
+  PARACHAINS.forEach(parachain => {
+    it(`should return false for ${parachain}`, () => {
+      const result = isExternalChain(parachain)
+      expect(result).toBe(false)
+    })
+  })
+
+  RELAYCHAINS.forEach(relaychain => {
+    it(`should return false for ${relaychain}`, () => {
+      const result = isExternalChain(relaychain)
       expect(result).toBe(false)
     })
   })
