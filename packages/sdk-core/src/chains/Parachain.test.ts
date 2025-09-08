@@ -8,6 +8,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import type { chains } from '../constants'
 import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
@@ -23,11 +24,9 @@ import {
   type TPolkadotXcmMethod,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type TXTokensCurrencySelection,
-  type TXTokensTransferOptions,
   type TXTransferTransferOptions
 } from '../types'
-import { createBeneficiaryLocation, resolveDestChain } from '../utils'
+import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
 import Parachain from './Parachain'
 
 vi.mock('../constants/chains')
@@ -45,7 +44,8 @@ vi.mock('../utils', async () => {
     isTLocation: vi.fn(),
     createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryLocation'),
     getRelayChainOf: vi.fn().mockReturnValue('Polkadot'),
-    resolveDestChain: vi.fn()
+    resolveDestChain: vi.fn(),
+    getChain: vi.fn()
   }
 })
 
@@ -95,24 +95,20 @@ vi.mock('../utils/ethereum/generateMessageId', () => ({
   generateMessageId: vi.fn().mockReturnValue('0xmessageId')
 }))
 
-class TestParachain extends Parachain<unknown, unknown> {
-  transferXTokens(
-    _input: TXTokensTransferOptions<unknown, unknown>,
-    _currencySelection: TXTokensCurrencySelection,
-    _fees: string | number = 'Unlimited'
-  ) {
+class TestParachainBase extends Parachain<unknown, unknown> {
+  throwIfTempDisabled() {}
+}
+
+class TestParachain extends TestParachainBase {
+  transferXTokens() {
     return 'transferXTokens called'
   }
 
-  transferXTransfer(_input: TXTransferTransferOptions<unknown, unknown>) {
+  transferXTransfer() {
     return 'transferXTransfer called'
   }
 
-  transferPolkadotXCM(
-    _options: TPolkadotXCMTransferOptions<unknown, unknown>,
-    _method: TPolkadotXcmMethod,
-    _fees: 'Unlimited' | { Limited: string } | undefined = undefined
-  ) {
+  transferPolkadotXCM() {
     return 'transferPolkadotXCM called'
   }
 
@@ -128,13 +124,13 @@ class TestParachain extends Parachain<unknown, unknown> {
   }
 }
 
-class NoXTokensParachain extends Parachain<unknown, unknown> {
+class NoXTokensParachain extends TestParachainBase {
   transferXTransfer(_input: TXTransferTransferOptions<unknown, unknown>) {
     return 'transferXTransfer called'
   }
 }
 
-class OnlyPolkadotXCMParachain extends Parachain<unknown, unknown> {
+class OnlyPolkadotXCMParachain extends TestParachainBase {
   transferPolkadotXCM(
     _options: TPolkadotXCMTransferOptions<unknown, unknown>,
     _method: TPolkadotXcmMethod,
@@ -144,7 +140,7 @@ class OnlyPolkadotXCMParachain extends Parachain<unknown, unknown> {
   }
 }
 
-class NoSupportParachain extends Parachain<unknown, unknown> {}
+class NoSupportParachain extends TestParachainBase {}
 
 describe('Parachain', () => {
   let chain: TestParachain
@@ -181,6 +177,58 @@ describe('Parachain', () => {
 
   it('should get the version', () => {
     expect(chain.version).toBe(Version.V4)
+  })
+
+  describe('Sending / receiving disabled', () => {
+    class SendDisabledParachain extends Parachain<unknown, unknown> {
+      isSendingTempDisabled() {
+        return true
+      }
+    }
+
+    it('should throw if sending is disabled', async () => {
+      const chainName = 'Acala'
+      const chain = new SendDisabledParachain(chainName, 'TestChain', 'Polkadot', Version.V4)
+
+      const options = {
+        api,
+        to: 'Astar',
+        assetInfo: { symbol: 'DOT', amount: 100n },
+        address: 'destinationAddress'
+      } as TSendInternalOptions<unknown, unknown>
+
+      await expect(chain.transfer(options)).rejects.toThrow(
+        'Sending from Acala is temporarily disabled'
+      )
+    })
+
+    it('should throw if receiving is disabled', async () => {
+      class ReceiveDisabledParachain extends Parachain<unknown, unknown> {
+        isReceivingTempDisabled() {
+          return true
+        }
+      }
+
+      const chainName = 'Acala'
+      const chain = new ReceiveDisabledParachain(chainName, 'TestChain', 'Polkadot', Version.V4)
+
+      vi.mocked(getChain).mockReturnValue(
+        chain as unknown as ReturnType<typeof chains<unknown, unknown>>['Acala']
+      )
+
+      const options = {
+        api,
+        to: 'Astar',
+        assetInfo: { symbol: 'DOT', amount: 100n },
+        address: 'destinationAddress'
+      } as TSendInternalOptions<unknown, unknown>
+
+      vi.mocked(resolveDestChain).mockReturnValue('Astar')
+
+      await expect(chain.transfer(options)).rejects.toThrow(
+        'Receiving on Astar is temporarily disabled'
+      )
+    })
   })
 
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
@@ -252,16 +300,12 @@ describe('Parachain', () => {
   })
 
   it('should throw error when native asset transfer to AssetHub requires teleport', async () => {
-    class NativeTeleportChain extends Parachain<unknown, unknown> {
-      transferPolkadotXCM(
-        _options: TPolkadotXCMTransferOptions<unknown, unknown>,
-        _method: TPolkadotXcmMethod,
-        _fees: 'Unlimited' | { Limited: string } | undefined = undefined
-      ) {
+    class NativeTeleportChain extends TestParachainBase {
+      transferPolkadotXCM() {
         return 'transferPolkadotXCM called'
       }
 
-      shouldUseNativeAssetTeleport(_options: TSendInternalOptions<unknown, unknown>): boolean {
+      shouldUseNativeAssetTeleport() {
         return true
       }
     }
@@ -347,7 +391,7 @@ describe('Parachain', () => {
 
   it('should not call transferXTokens when canUseXTokens returns false', async () => {
     class SomeParachain extends TestParachain {
-      canUseXTokens(_: TSendInternalOptions<unknown, unknown>): boolean {
+      canUseXTokens() {
         return false
       }
     }

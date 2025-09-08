@@ -386,7 +386,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     (error.message.includes('Relaychain assets can only be transferred') ||
                       error.message.includes(
                         'Astar system asset transfers are temporarily disabled'
-                      ))
+                      ) ||
+                      error.message.includes('temporarily disabled'))
                   ) {
                     expect(error.name).toBe('InvalidParameterError')
                   } else {
@@ -420,7 +421,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               if (
                 error.name === 'InvalidParameterError' &&
                 (error.message.includes('Relaychain assets can only be transferred') ||
-                  error.message.includes('Astar system asset transfers are temporarily disabled'))
+                  error.message.includes('Astar system asset transfers are temporarily disabled') ||
+                  error.message.includes('temporarily disabled'))
               ) {
                 expect(error.name).toBe('InvalidParameterError')
               } else {

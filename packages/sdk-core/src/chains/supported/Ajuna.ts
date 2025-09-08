@@ -62,6 +62,14 @@ class Ajuna<TApi, TRes>
     throw new ChainNotSupportedError()
   }
 
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, address } = options
 

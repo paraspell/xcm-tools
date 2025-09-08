@@ -13,10 +13,12 @@ import {
   type TAsset
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TRelaychain, Version } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
   isDotKsmBridge,
+  isExternalChain,
+  isRelayChain,
   isTLocation,
   isTrustedChain,
   Parents,
@@ -59,6 +61,7 @@ import {
   assertHasId,
   assertHasLocation,
   createBeneficiaryLocation,
+  getChain,
   getRelayChainOf,
   resolveDestChain
 } from '../utils'
@@ -159,6 +162,8 @@ abstract class Parachain<TApi, TRes> {
     if (isLocalTransfer) {
       return this.transferLocal(sendOptions)
     }
+
+    this.throwIfTempDisabled(sendOptions, destChain)
 
     const isRelayAsset = deepEqual(asset.location, RELAY_LOCATION)
     const supportsTypeThen = await api.hasMethod(
@@ -292,6 +297,30 @@ abstract class Parachain<TApi, TRes> {
     }
 
     throw new NoXCMSupportImplementedError(this._chain)
+  }
+
+  throwIfTempDisabled(options: TSendInternalOptions<TApi, TRes>, destChain?: TChain): void {
+    const isSendingDisabled = this.isSendingTempDisabled(options)
+    if (isSendingDisabled) {
+      throw new InvalidParameterError(`Sending from ${this.chain} is temporarily disabled`)
+    }
+
+    const isReceivingDisabled =
+      destChain &&
+      !isRelayChain(destChain) &&
+      !isExternalChain(destChain) &&
+      getChain(destChain).isReceivingTempDisabled(options)
+    if (isReceivingDisabled) {
+      throw new InvalidParameterError(`Receiving on ${destChain} is temporarily disabled`)
+    }
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return false
+  }
+
+  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return false
   }
 
   shouldUseNativeAssetTeleport({
