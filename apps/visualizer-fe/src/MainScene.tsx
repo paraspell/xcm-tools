@@ -75,6 +75,7 @@ const MainScene = () => {
       <ParachainsGraphContainer ecosystem={Ecosystem.POLKADOT} />
       <ParachainsGraphContainer ecosystem={Ecosystem.KUSAMA} />
       <ParachainsGraphContainer ecosystem={Ecosystem.WESTEND} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.PASEO} />
       <OrbitControls enableDamping autoRotate={false} target={target} makeDefault />
       <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
     </>
