@@ -20,7 +20,8 @@ export type TAggregatedData = {
 export enum Ecosystem {
   POLKADOT = 'Polkadot',
   KUSAMA = 'Kusama',
-  WESTEND = 'Westend'
+  WESTEND = 'Westend',
+  PASEO = 'Paseo'
 }
 
 export type TWalletAccount = {
