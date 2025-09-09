@@ -6,9 +6,7 @@ import type { TSendOptions } from '../types'
 import { BatchMode } from '../types'
 import BatchTransactionManager from './BatchTransactionManager'
 
-vi.mock('../transfer', () => ({
-  send: vi.fn()
-}))
+vi.mock('../transfer')
 
 const mockApi = {
   init: vi.fn(),

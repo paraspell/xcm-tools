@@ -19,7 +19,7 @@ describe('ForeignAssetsPallet.setBalance', () => {
 
     vi.mocked(assertHasLocation).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset)
+    const res = await pallet.mint(address, asset)
 
     expect(vi.mocked(assertHasLocation)).toHaveBeenCalledTimes(1)
     expect(vi.mocked(assertHasLocation)).toHaveBeenCalledWith(asset)

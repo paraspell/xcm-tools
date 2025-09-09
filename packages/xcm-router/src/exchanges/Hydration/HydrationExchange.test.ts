@@ -1,18 +1,18 @@
 import type { Asset, SdkCtx, Trade, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk';
 import { createSdkContext } from '@galacticcouncil/sdk';
 import {
+  AmountTooLowError,
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  InvalidParameterError,
+  isForeignAsset,
 } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import HydrationExchange from './HydrationExchange';
 import * as utils from './utils';
@@ -30,20 +30,18 @@ vi.mock('@galacticcouncil/sdk', () => ({
   },
 }));
 
-vi.mock('@paraspell/sdk', () => ({
-  getAssetDecimals: vi.fn(),
-  InvalidCurrencyError: class extends Error {},
-  InvalidParameterError: class extends Error {},
-  getNativeAssetSymbol: vi.fn(),
-  getAssets: vi.fn(),
-  isForeignAsset: vi.fn().mockReturnValue(true),
-}));
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
+  return {
+    ...actual,
+    getAssets: vi.fn(),
+    getAssetDecimals: vi.fn(),
+    getNativeAssetSymbol: vi.fn(),
+    isForeignAsset: vi.fn(),
+  };
+});
 
-vi.mock('./utils', () => ({
-  getAssetInfo: vi.fn(),
-  getMinAmountOut: vi.fn(),
-  calculateFee: vi.fn(),
-}));
+vi.mock('./utils');
 
 describe('HydrationExchange', () => {
   const api = {} as ApiPromise;
@@ -76,6 +74,7 @@ describe('HydrationExchange', () => {
       api: { router: mockTradeRouter },
       tx: mockTxBuilderFactory,
     } as SdkCtx);
+    vi.mocked(isForeignAsset).mockReturnValue(true);
   });
 
   describe('swapCurrency', () => {
@@ -116,7 +115,7 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = BigNumber('10');
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        new InvalidParameterError('Native currency decimals not found'),
+        'Native currency decimals not found',
       );
 
       expect(getAssetDecimals).toHaveBeenCalledWith(chain.chain, 'HDX');
@@ -157,7 +156,7 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = BigNumber('10');
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        new InvalidParameterError('Price not found'),
+        'Price not found',
       );
 
       expect(spotPriceSpy).toHaveBeenCalledWith('2', '999');
@@ -271,7 +270,7 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = BigNumber('10');
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        SmallAmountError,
+        AmountTooLowError,
       );
     });
 
@@ -315,7 +314,7 @@ describe('HydrationExchange', () => {
       expect(slippageSpy).toHaveBeenCalledWith(1);
     });
 
-    it('throws SmallAmountError if final amountOut is negative after fees', async () => {
+    it('throws AmountTooLowError if final amountOut is negative after fees', async () => {
       vi.spyOn(utils, 'getAssetInfo')
         .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
@@ -345,7 +344,7 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = BigNumber('99999');
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        SmallAmountError,
+        AmountTooLowError,
       );
     });
   });

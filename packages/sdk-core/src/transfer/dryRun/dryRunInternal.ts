@@ -52,6 +52,7 @@ export const dryRunInternal = async <TApi, TRes>(
     senderAddress,
     feeAsset,
     swapConfig,
+    bypassOptions,
     useRootOrigin = false
   } = options
 
@@ -76,7 +77,8 @@ export const dryRunInternal = async <TApi, TRes>(
       amount
     },
     feeAsset: resolvedFeeAsset,
-    useRootOrigin
+    bypassOptions,
+    useRootOrigin: useRootOrigin || !!bypassOptions
   })
 
   if (!originDryRun.success) {

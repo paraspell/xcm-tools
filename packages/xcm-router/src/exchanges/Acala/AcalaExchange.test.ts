@@ -1,20 +1,13 @@
-import { getBalanceNative } from '@paraspell/sdk';
+import { AmountTooLowError, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSingleSwapResult, TSwapOptions } from '../../types';
 import AcalaExchange from './AcalaExchange';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
-vi.mock('@paraspell/sdk', () => ({
-  getBalanceNative: vi.fn().mockResolvedValue(100n),
-  getNativeAssetSymbol: vi.fn().mockReturnValue('ACA'),
-  getNativeAssets: vi.fn(),
-  getOtherAssets: vi.fn(),
-  findAssetById: vi.fn(),
-}));
+vi.mock('@paraspell/sdk');
 
 vi.mock('@acala-network/sdk-core', () => ({
   FixedPointNumber: vi.fn().mockImplementation((value: string) => ({
@@ -93,19 +86,15 @@ vi.mock('./utils', () => ({
   getDexConfig: vi.fn(),
 }));
 
-vi.mock('../../Logger/Logger', () => {
-  return {
-    default: {
-      log: vi.fn(),
-    },
-  };
-});
+vi.mock('../../Logger/Logger');
 
 describe('AcalaExchange', () => {
   let chain: AcalaExchange;
 
   beforeEach(() => {
     chain = new AcalaExchange('Acala', 'AcalaDex');
+    vi.mocked(getBalanceNative).mockResolvedValue(100n);
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA');
   });
 
   describe('createApiInstance', () => {
@@ -138,7 +127,26 @@ describe('AcalaExchange', () => {
       amount: '100',
     } as TSwapOptions;
 
-    it('should throw SmallAmountError when amountWithoutFee is negative in swapCurrency', async () => {
+    it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
+      vi.mocked(getBalanceNative).mockResolvedValueOnce(1_000_000n);
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(0));
+
+      await expect(
+        chain.swapCurrency(
+          {} as ApiPromise,
+          {
+            assetFrom: { symbol: 'DOT' },
+            assetTo: { symbol: 'ACA' },
+            amount: '-1',
+            senderAddress: '5xxxx',
+            origin: {},
+          } as TSwapOptions,
+          BigNumber(0),
+        ),
+      ).rejects.toThrowError(AmountTooLowError);
+    });
+
+    it('should throw AmountTooLowError when amountWithoutFee is negative in swapCurrency', async () => {
       const mockApi = {} as ApiPromise;
       const options = {
         assetFrom: { symbol: 'DOT' },
@@ -150,10 +158,10 @@ describe('AcalaExchange', () => {
 
       vi.mocked(getBalanceNative).mockResolvedValueOnce(0n);
 
-      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(new BigNumber(1));
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(1));
 
-      await expect(chain.swapCurrency(mockApi, options, new BigNumber(1))).rejects.toThrow(
-        SmallAmountError,
+      await expect(chain.swapCurrency(mockApi, options, BigNumber(1))).rejects.toThrow(
+        AmountTooLowError,
       );
     });
 
@@ -161,7 +169,7 @@ describe('AcalaExchange', () => {
       const result: TSingleSwapResult = await chain.swapCurrency(
         mockApi,
         baseSwapOptions,
-        new BigNumber(0.01),
+        BigNumber(0.01),
       );
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
@@ -170,12 +178,12 @@ describe('AcalaExchange', () => {
       expect(result.amountOut).toBe('46200000000000');
     });
 
-    it('should throw SmallAmountError if the amount is too small to cover fees', async () => {
-      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(new BigNumber(9999));
+    it('should throw AmountTooLowError if the amount is too small to cover fees', async () => {
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(9999));
 
-      await expect(
-        chain.swapCurrency(mockApi, baseSwapOptions, new BigNumber(0.01)),
-      ).rejects.toThrow(SmallAmountError);
+      await expect(chain.swapCurrency(mockApi, baseSwapOptions, BigNumber(0.01))).rejects.toThrow(
+        AmountTooLowError,
+      );
     });
   });
 

@@ -8,13 +8,8 @@ import { validateAddress } from '../../utils'
 import { dryRun } from './dryRun'
 import { dryRunInternal } from './dryRunInternal'
 
-vi.mock('../../utils', () => ({
-  validateAddress: vi.fn()
-}))
-
-vi.mock('./dryRunInternal', () => ({
-  dryRunInternal: vi.fn()
-}))
+vi.mock('../../utils')
+vi.mock('./dryRunInternal')
 
 describe('dryRun', () => {
   const apiMock = {

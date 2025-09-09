@@ -11,23 +11,10 @@ import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
-  findAssetOnDestOrThrow: vi.fn()
-}))
-
-vi.mock('../../chains/getTChain', () => ({
-  getTChain: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  getRelayChainOf: vi.fn()
-}))
-
-vi.mock('../ethTransfer', () => ({
-  getParaEthTransferFees: vi.fn()
-}))
-
+vi.mock('@paraspell/assets')
+vi.mock('../../chains/getTChain')
+vi.mock('../../utils')
+vi.mock('../ethTransfer')
 vi.mock('../../constants', () => ({
   DRY_RUN_CLIENT_TIMEOUT_MS: 300000
 }))

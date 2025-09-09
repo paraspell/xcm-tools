@@ -142,8 +142,17 @@ export const GetXcmFeeSchema = XTransferDtoWSenderAddressSchema.extend({
   disableFallback: z.boolean().default(false).optional(),
 });
 
+export const DryRunPreviewSchema = XTransferDtoWSenderAddressSchema.omit({
+  options: true,
+}).extend({
+  options: BuilderOptionsSchema.extend({
+    mintFeeAssets: z.boolean().optional(),
+  }).optional(),
+});
+
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
 export type XTransferDtoWSenderAddress = z.infer<
   typeof XTransferDtoWSenderAddressSchema
 >;
+export type DryRunPreviewDto = z.infer<typeof DryRunPreviewSchema>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;

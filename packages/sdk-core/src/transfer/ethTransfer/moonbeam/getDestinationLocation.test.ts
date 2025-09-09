@@ -8,13 +8,8 @@ import { getChainConfig } from '../../../chains/config'
 import type { TChainConfig } from '../../../types'
 import { getDestinationLocation } from './getDestinationLocation'
 
-vi.mock('@paraspell/assets', () => ({
-  getAssetsObject: vi.fn()
-}))
-
-vi.mock('../../../chains/config', () => ({
-  getChainConfig: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('../../../chains/config')
 
 describe('getDestinationLocation', () => {
   const mockApi = {

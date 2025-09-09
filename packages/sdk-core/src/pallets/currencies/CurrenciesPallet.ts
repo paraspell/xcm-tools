@@ -4,7 +4,11 @@ import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
 export class CurrenciesPallet implements IAssetsPallet {
-  setBalance(address: string, assetInfo: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
+  mint(
+    address: string,
+    assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint
+  ): Promise<TSetBalanceRes> {
     assertHasId(assetInfo)
 
     const { assetId, amount } = assetInfo
@@ -16,7 +20,7 @@ export class CurrenciesPallet implements IAssetsPallet {
         parameters: {
           who: address,
           currency_id: Number(assetId),
-          amount
+          amount: balance + amount
         }
       }
     })

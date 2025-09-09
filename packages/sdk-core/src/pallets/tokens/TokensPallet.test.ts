@@ -28,7 +28,7 @@ describe('TokensPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(2)
     expect(vi.mocked(getChain)).not.toHaveBeenCalled()
@@ -49,7 +49,7 @@ describe('TokensPallet.setBalance', () => {
     const chain = 'BifrostKusama' as TSubstrateChain
     const asset = { amount: 5n } as WithAmount<TAssetInfo>
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(vi.mocked(assertHasId)).not.toHaveBeenCalled()
     expect(vi.mocked(getChain)).toHaveBeenCalledTimes(1)

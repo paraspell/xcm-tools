@@ -17,6 +17,8 @@ import {
   BatchXTransferDtoSchema,
 } from './dto/XTransferBatchDto.js';
 import {
+  DryRunPreviewDto,
+  DryRunPreviewSchema,
   GetXcmFeeDto,
   GetXcmFeeSchema,
   XTransferDto,
@@ -61,11 +63,19 @@ export class XTransferController {
       resolvedOptions,
     });
   }
+
   @Post('dry-run')
   @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
   dryRun(@Body() params: XTransferDtoWSenderAddress, @Req() req: Request) {
-    this.trackAnalytics(EventName.DRY_RUN_XCM_CALL, req, params);
+    this.trackAnalytics(EventName.DRY_RUN, req, params);
     return this.xTransferService.dryRun(params);
+  }
+
+  @Post('dry-run-preview')
+  @UsePipes(new ZodValidationPipe(DryRunPreviewSchema))
+  dryRunPreview(@Body() params: DryRunPreviewDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.DRY_RUN_PREVIEW, req, params);
+    return this.xTransferService.dryRunPreview(params);
   }
 
   @Post('xcm-fee')

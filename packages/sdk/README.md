@@ -277,6 +277,21 @@ import { hasDryRunSupport } from "@paraspell/sdk";
 const result = hasDryRunSupport(chain)
 ```
 
+#### Dry run preview:
+More on this feature in [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html#preview-your-call-results)
+
+```ts
+//Builder pattern
+const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}]})
+        /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+        .address(ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+        .dryRunPreview(/*{ mintFeeAssets: true } - false by default - Mints fee assets also, if user does not have enough to cover fees on origin.*/)
+```
+
 ### Localhost test setup
 
 SDK offers enhanced localhost support. You can pass an object containing overrides for all WS endpoints (Including hops) used in the test transfer. This allows for advanced localhost testing such as localhost dry-run or xcm-fee queries. More information about available options can be found in the [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html#localhost-testing-setup).

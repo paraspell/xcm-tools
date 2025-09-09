@@ -25,6 +25,7 @@ export type TDryRunBaseOptions<TRes> = {
     exchangeChain: TParachain
   }
   useRootOrigin?: boolean
+  bypassOptions?: TBypassOptions
 }
 
 export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>
@@ -47,8 +48,15 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   useRootOrigin?: boolean
   asset: WithAmount<TAssetInfo>
+  bypassOptions?: TBypassOptions
   feeAsset?: TAssetInfo
 }
+
+export type TDryRunBypassOptions<TApi, TRes> = WithApi<
+  Omit<TDryRunCallBaseOptions<TRes>, 'useRootOrigin'>,
+  TApi,
+  TRes
+>
 
 export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
 
@@ -162,6 +170,11 @@ export type HopTraversalResult<THopResult> = {
   lastProcessedChain?: TSubstrateChain
 }
 
+export type TBypassOptions = {
+  mintFeeAssets?: boolean
+  sentAssetMintMode?: 'preview' | 'bypass'
+}
+
 export enum XTokensError {
   AssetHasNoReserve = 'AssetHasNoReserve',
   NotCrossChainTransfer = 'NotCrossChainTransfer',
@@ -210,7 +223,11 @@ export enum PolkadotXcmError {
   InvalidAssetUnknownReserve = 'InvalidAssetUnknownReserve',
   InvalidAssetUnsupportedReserve = 'InvalidAssetUnsupportedReserve',
   TooManyReserves = 'TooManyReserves',
-  LocalExecutionIncomplete = 'LocalExecutionIncomplete'
+  LocalExecutionIncomplete = 'LocalExecutionIncomplete',
+  TooManyAuthorizedAliases = 'TooManyAuthorizedAliases',
+  ExpiresInPast = 'ExpiresInPast',
+  AliasNotFound = 'AliasNotFound',
+  LocalExecutionIncompleteWithError = 'LocalExecutionIncompleteWithError'
 }
 
 export type TModuleError = {

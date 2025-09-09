@@ -1,5 +1,6 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import {
+  AmountTooLowError,
   getNativeAssetSymbol,
   InvalidParameterError,
   isForeignAsset,
@@ -12,15 +13,11 @@ import { BigNumber } from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset } from '../../assets';
-import { SmallAmountError } from '../../errors';
 import type { TSingleSwapResult, TSwapOptions } from '../../types';
 import AssetHubExchange from './AssetHubExchange';
 import { getQuotedAmount } from './utils';
 
-vi.mock('./utils', () => ({
-  getQuotedAmount: vi.fn(),
-  getDexConfig: vi.fn(),
-}));
+vi.mock('./utils');
 
 vi.mock('@paraspell/sdk', async () => {
   const original = await vi.importActual('@paraspell/sdk');
@@ -98,7 +95,7 @@ describe('AssetHubExchange', () => {
       );
     });
 
-    it('should throw SmallAmountError if amount is too small', async () => {
+    it('should throw AmountTooLowError if amount is too small', async () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce({
         amountOut: BigInt('100'),
         usedFromML: assetFromML,
@@ -116,7 +113,7 @@ describe('AssetHubExchange', () => {
         amount: '1000',
       } as TSwapOptions;
       await expect(instance.swapCurrency(api, opts, BigNumber('50000'))).rejects.toThrow(
-        SmallAmountError,
+        AmountTooLowError,
       );
     });
 
@@ -329,7 +326,7 @@ describe('AssetHubExchange', () => {
           } as TSwapOptions,
           BigNumber(0),
         ),
-      ).rejects.toThrow(SmallAmountError);
+      ).rejects.toThrow(AmountTooLowError);
     });
 
     it('throws if hop 2 returns 0', async () => {
@@ -348,7 +345,7 @@ describe('AssetHubExchange', () => {
           } as TSwapOptions,
           new BigNumber(0),
         ),
-      ).rejects.toThrow(SmallAmountError);
+      ).rejects.toThrow(AmountTooLowError);
     });
   });
 
@@ -576,7 +573,7 @@ describe('AssetHubExchange', () => {
       );
     });
 
-    it('should throw SmallAmountError if first hop returns zero in multi-hop', async () => {
+    it('should throw AmountTooLowError if first hop returns zero in multi-hop', async () => {
       const opts = {
         ...baseSwapOptions,
         assetFrom: assetA,
@@ -596,7 +593,7 @@ describe('AssetHubExchange', () => {
       );
     });
 
-    it('should throw SmallAmountError if second hop returns zero in multi-hop', async () => {
+    it('should throw AmountTooLowError if second hop returns zero in multi-hop', async () => {
       const opts = {
         ...baseSwapOptions,
         assetFrom: assetA,

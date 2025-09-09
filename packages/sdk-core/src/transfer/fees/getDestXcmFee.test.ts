@@ -10,14 +10,8 @@ import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
 
 vi.mock('@paraspell/assets')
-
-vi.mock('./getReverseTxFee', () => ({
-  getReverseTxFee: vi.fn()
-}))
-
-vi.mock('./isSufficient', () => ({
-  isSufficientDestination: vi.fn()
-}))
+vi.mock('./getReverseTxFee')
+vi.mock('./isSufficient')
 
 const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({

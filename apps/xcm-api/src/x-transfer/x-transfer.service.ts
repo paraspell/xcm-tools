@@ -15,6 +15,7 @@ import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
+  DryRunPreviewDto,
   GetXcmFeeDto,
   XTransferDto,
   XTransferDtoWSenderAddress,
@@ -118,6 +119,14 @@ export class XTransferService {
 
   dryRun(transfer: XTransferDto) {
     return this.executeWithBuilder(transfer, (builder) => builder.dryRun());
+  }
+
+  dryRunPreview(transfer: DryRunPreviewDto) {
+    return this.executeWithBuilder(transfer, (builder) =>
+      builder.dryRunPreview({
+        mintFeeAssets: transfer.options?.mintFeeAssets,
+      }),
+    );
   }
 
   getXcmFee(transfer: GetXcmFeeDto) {

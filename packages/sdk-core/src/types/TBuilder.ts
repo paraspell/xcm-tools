@@ -76,6 +76,10 @@ export type TBatchOptions = {
   mode: BatchMode
 }
 
+export type TDryRunPreviewOptions = {
+  mintFeeAssets?: boolean
+}
+
 export type TBuilderOptions<TApi> = TApi | TBuilderConfig<TApi>
 
 export type TBuilderConfig<TApi> = {

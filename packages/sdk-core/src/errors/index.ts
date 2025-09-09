@@ -1,3 +1,4 @@
+export * from './AmountTooLowError'
 export * from './BridgeHaltedError'
 export * from './ChainNotSupportedError'
 export * from './DryRunFailedError'

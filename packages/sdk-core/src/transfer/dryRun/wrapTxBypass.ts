@@ -3,6 +3,7 @@ import {
   findAssetInfo,
   findAssetInfoOrThrow,
   getNativeAssetSymbol,
+  isAssetEqual,
   isForeignAsset,
   isSymbolMatch,
   Native
@@ -15,10 +16,22 @@ import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
 import { getPalletInstance } from '../../pallets'
+import { getAssetBalanceInternal } from '../../pallets/assets'
+import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
 
 const MINT_AMOUNT = 1000n // Mint 1000 units of asset
+
+export const getCurrencySelection = (asset: TAssetInfo): TCurrencyCore => {
+  if (asset.location) return { location: asset.location }
+
+  if (isForeignAsset(asset) && asset.assetId) {
+    return { id: asset.assetId }
+  }
+
+  return { symbol: asset.symbol }
+}
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   if (isForeignAsset(asset) && asset.assetId === undefined) {
@@ -31,6 +44,7 @@ const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
 const createMintTxs = <TApi, TRes>(
   chain: TSubstrateChain,
   asset: WithAmount<TAssetInfo>,
+  balance: bigint,
   address: string,
   api: IPolkadotApi<TApi, TRes>
 ): Promise<TSetBalanceRes> => {
@@ -43,32 +57,34 @@ const createMintTxs = <TApi, TRes>(
       : nativePallet
 
   const palletInstance = getPalletInstance(pallet)
-  return palletInstance.setBalance(address, asset, chain, api)
+  return palletInstance.mint(address, asset, balance, chain, api)
 }
 
 const createRequiredMintTxs = <TApi, TRes>(
   chain: TSubstrateChain,
   currency: TCurrencyCore,
   amountHuman: bigint,
+  balance: bigint,
   address: string,
   api: IPolkadotApi<TApi, TRes>
 ) => {
   const asset = findAssetInfoOrThrow(chain, currency, null)
   const amount = parseUnits(amountHuman.toString(), asset.decimals)
-  return createMintTxs(chain, { ...asset, amount }, address, api)
+  return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
 const createOptionalMintTxs = <TApi, TRes>(
   chain: TSubstrateChain,
   currency: TCurrencyCore,
   amountHuman: bigint,
+  balance: bigint,
   address: string,
   api: IPolkadotApi<TApi, TRes>
 ) => {
   const asset = findAssetInfo(chain, currency, null)
   if (!asset) return null
   const amount = parseUnits(amountHuman.toString(), asset.decimals)
-  return createMintTxs(chain, { ...asset, amount }, address, api)
+  return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
 const resultToExtrinsics = <TApi, TRes>(
@@ -84,45 +100,106 @@ const resultToExtrinsics = <TApi, TRes>(
   ]
 }
 
-export const wrapTxBypass = async <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
-  chain: TSubstrateChain,
-  asset: WithAmount<TAssetInfo>,
-  feeAsset: TAssetInfo | undefined,
-  address: string,
-  tx: TRes
-) => {
-  const mintNativeAssetRes = await createRequiredMintTxs(
-    chain,
-    { symbol: Native(getNativeAssetSymbol(chain)) },
-    MINT_AMOUNT,
-    address,
-    api
-  )
+export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint | null => {
+  // Ensure mint amount is at least 2 to avoid Rust panic
+  if (desired <= 0n) return null
+  const missing = desired - balance
+  return missing > 0n ? missing : null
+}
 
-  const mintRelayAssetRes = await createOptionalMintTxs(
+const assetKey = (a: TAssetInfo) =>
+  a.location
+    ? JSON.stringify(a.location)
+    : isForeignAsset(a) && a.assetId != null
+      ? `id:${a.assetId}`
+      : `sym:${a.symbol}`
+
+const mintBonusForSent = (
+  chain: TSubstrateChain,
+  sent: TAssetInfo,
+  feeAsset: TAssetInfo | undefined,
+  mintFeeAssets: boolean
+): bigint => {
+  if (!mintFeeAssets) return 0n
+
+  const native = findAssetInfo(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+  const relay = findAssetInfo(
     chain,
     { location: { parents: Parents.ONE, interior: { Here: null } } },
-    MINT_AMOUNT,
-    address,
-    api
+    null
   )
+
+  const seen = new Set<string>()
+  const preminted = [native, relay, feeAsset]
+    .filter((a): a is TAssetInfo => !!a)
+    .filter(a => {
+      const k = assetKey(a)
+      if (seen.has(k)) return false
+      seen.add(k)
+      return true
+    })
+
+  return preminted.some(a => isAssetEqual(a, sent))
+    ? parseUnits(MINT_AMOUNT.toString(), sent.decimals)
+    : 0n
+}
+
+export const wrapTxBypass = async <TApi, TRes>(
+  dryRunOptions: TDryRunBypassOptions<TApi, TRes>,
+  options: TBypassOptions = {
+    mintFeeAssets: true,
+    sentAssetMintMode: 'bypass'
+  }
+) => {
+  const { api, chain, address, asset, feeAsset, tx } = dryRunOptions
+  const { mintFeeAssets } = options
+
+  const nativeCurrency = { symbol: Native(getNativeAssetSymbol(chain)) } as const
+  const relayCurrency = { location: { parents: Parents.ONE, interior: { Here: null } } } as const
+
+  const nativeInfo = mintFeeAssets ? findAssetInfo(chain, nativeCurrency, null) : null
+  const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency, null) : null
+  const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetEqual(nativeInfo, relayInfo))
+
+  const mintNativeAssetRes = mintFeeAssets
+    ? await createRequiredMintTxs(chain, nativeCurrency, MINT_AMOUNT, 0n, address, api)
+    : null
+
+  const mintRelayAssetRes =
+    mintFeeAssets && !sameNativeRelay
+      ? await createOptionalMintTxs(chain, relayCurrency, MINT_AMOUNT, 0n, address, api)
+      : null
 
   // mint fee asset if exists
   let mintFeeAssetRes: TSetBalanceRes | undefined
-  if (feeAsset) {
+  if (feeAsset && mintFeeAssets) {
     const amount = parseUnits(MINT_AMOUNT.toString(), feeAsset.decimals)
-    mintFeeAssetRes = await createMintTxs(chain, { ...feeAsset, amount }, address, api)
+    mintFeeAssetRes = await createMintTxs(chain, { ...feeAsset, amount }, 0n, address, api)
+  }
+
+  const balance = await getAssetBalanceInternal({
+    api,
+    chain,
+    address,
+    currency: getCurrencySelection(asset)
+  })
+
+  const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets)
+
+  let mintAmount: bigint | null
+  if (options?.sentAssetMintMode === 'bypass') {
+    mintAmount = parseUnits(MINT_AMOUNT.toString(), asset.decimals) + asset.amount
+  } else {
+    const missing = calcPreviewMintAmount(balance, asset.amount) ?? 0n
+    const total = missing + bonus
+    mintAmount = total > 0n ? total : null
   }
 
   // mint asset that is being sent
-  const mintAmount = parseUnits(MINT_AMOUNT.toString(), asset.decimals)
-  const mintAssetRes = await createMintTxs(
-    chain,
-    { ...asset, amount: asset.amount + mintAmount },
-    address,
-    api
-  )
+  const mintAssetRes =
+    mintAmount !== null
+      ? await createMintTxs(chain, { ...asset, amount: mintAmount }, balance, address, api)
+      : null
 
   return api.callBatchMethod(
     [

@@ -18,7 +18,7 @@ describe('AssetManagerPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset)
+    const res = await pallet.mint(address, asset, 0n)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
     expect(vi.mocked(assertHasId)).toHaveBeenCalledWith(asset)

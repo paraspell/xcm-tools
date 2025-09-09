@@ -22,7 +22,7 @@ describe('AssetsPallet.setBalance', () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
     expect(res.assetStatusTx?.module).toBe('Assets')
@@ -53,7 +53,7 @@ describe('AssetsPallet.setBalance', () => {
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
     expect(typeof res.assetStatusTx?.parameters.id).toBe('number')

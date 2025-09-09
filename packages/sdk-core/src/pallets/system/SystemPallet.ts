@@ -19,16 +19,17 @@ const calculateMappingSlot = (key: string) => {
 }
 
 export class SystemPallet implements IAssetsPallet {
-  async setBalance<TApi, TRes>(
+  async mint<TApi, TRes>(
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint,
     _chain: TSubstrateChain,
     api: IPolkadotApi<TApi, TRes>
   ): Promise<TSetBalanceRes> {
     assertHasId(assetInfo)
     const contractAddr = formatAssetIdToERC20(assetInfo.assetId)
     const slot = calculateMappingSlot(address)
-    const amountEncoded = pad(toHex(assetInfo.amount), { size: SIZE })
+    const amountEncoded = pad(toHex(assetInfo.amount + balance), { size: SIZE })
 
     const storageKey = await api.getEvmStorage(contractAddr, slot)
 

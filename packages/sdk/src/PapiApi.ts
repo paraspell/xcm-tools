@@ -447,14 +447,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return api
   }
 
-  async getDryRunCall({
-    tx,
-    address,
-    chain,
-    asset,
-    feeAsset,
-    useRootOrigin = false
-  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
+  async getDryRunCall(
+    options: TDryRunCallBaseOptions<TPapiTransaction>
+  ): Promise<TDryRunChainResult> {
+    const { tx, chain, address, asset, feeAsset, bypassOptions, useRootOrigin = false } = options
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -476,7 +472,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     const resolvedTx = useRootOrigin
-      ? await wrapTxBypass(this, chain, asset, feeAsset, address, tx)
+      ? await wrapTxBypass(
+          {
+            ...options,
+            api: this
+          },
+          bypassOptions
+        )
       : tx
 
     const performDryRunCall = async (includeVersion: boolean): Promise<any> => {

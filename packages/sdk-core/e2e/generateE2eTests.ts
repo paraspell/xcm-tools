@@ -10,7 +10,8 @@ import {
   TSubstrateChain,
   TRelaychain,
   PARACHAINS,
-  SUBSTRATE_CHAINS
+  SUBSTRATE_CHAINS,
+  TBuilderOptions
 } from '../src'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
@@ -33,7 +34,7 @@ const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
 export const generateE2eTests = <TApi, TRes, TSigner>(
-  Builder: (api?: TApiOrUrl<TApi>) => GeneralBuilder<TApi, TRes>,
+  Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes>,
   createChainClient: (chain: TSubstrateChain) => Promise<TApi>,
   signer: TSigner,
   evmSigner: TSigner,

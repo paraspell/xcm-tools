@@ -1,4 +1,5 @@
 import type {
+  TAssetInfo,
   TCurrencyCore,
   TCurrencyInput,
   WithAmount,
@@ -47,14 +48,26 @@ export type TGetBalanceForeignOptionsBase = {
    * The chain on which to query the balance.
    */
   chain: TChain
-  /**
-   * The currency to query.
-   */
-  currency: TCurrencyCore
 }
 
 export type TGetBalanceForeignOptions<TApi, TRes> = WithApi<
-  TGetBalanceForeignOptionsBase,
+  TGetBalanceForeignOptionsBase & {
+    /**
+     * The currency to query.
+     */
+    currency: TCurrencyCore
+  },
+  TApi,
+  TRes
+>
+
+export type TGetBalanceForeignByAssetOptions<TApi, TRes> = WithApi<
+  TGetBalanceForeignOptionsBase & {
+    /**
+     * The asset to query balance for.
+     */
+    asset: TAssetInfo
+  },
   TApi,
   TRes
 >

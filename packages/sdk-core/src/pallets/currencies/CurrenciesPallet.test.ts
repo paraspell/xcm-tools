@@ -18,7 +18,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset)
+    const res = await pallet.mint(address, asset, 0n)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
     expect(vi.mocked(assertHasId)).toHaveBeenCalledWith(asset)
@@ -37,7 +37,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.setBalance(address, asset)
+    const res = await pallet.mint(address, asset, 0n)
 
     expect(res.balanceTx.parameters.who).toBe(address)
     expect(res.balanceTx.parameters.currency_id).toBe(7)
@@ -53,6 +53,6 @@ describe('CurrenciesPallet.setBalance', () => {
       throw new Error('missing id')
     })
 
-    expect(() => pallet.setBalance(address, asset)).toThrow('missing id')
+    expect(() => pallet.mint(address, asset, 0n)).toThrow('missing id')
   })
 })

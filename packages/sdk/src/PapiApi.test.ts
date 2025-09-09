@@ -19,7 +19,8 @@ import {
   MissingChainApiError,
   type TLocation,
   type TSerializedApiCall,
-  type TSubstrateChain
+  type TSubstrateChain,
+  wrapTxBypass
 } from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
@@ -49,9 +50,7 @@ vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
 
-vi.mock('../utils/dryRun/computeFeeFromDryRun', () => ({
-  computeFeeFromDryRun: vi.fn()
-}))
+vi.mock('../utils/dryRun/computeFeeFromDryRun')
 
 vi.mock('../utils/createChainClient', () => ({
   createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient)
@@ -64,7 +63,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   getAssetsObject: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
-  getChainProviders: vi.fn()
+  getChainProviders: vi.fn(),
+  wrapTxBypass: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -1148,6 +1148,49 @@ describe('PapiApi', () => {
         failureReason: 'ShortErrorType',
         currency: 'USDT',
         asset: { symbol: 'USDT' } as TAssetInfo
+      })
+    })
+
+    it('should wrap tx if useRootOrigin is true', async () => {
+      const successResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
+          },
+          forwarded_xcms: []
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(successResponse)
+      vi.mocked(wrapTxBypass).mockResolvedValue(mockTransaction)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Moonbeam',
+        useRootOrigin: true,
+        asset: {
+          symbol: 'GLMR'
+        } as WithAmount<TAssetInfo>
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+        {
+          type: 'system',
+          value: { type: 'Root' }
+        },
+        mockTransaction.decodedCall
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo,
+        weight: { refTime: 10n, proofSize: 20n },
+        forwardedXcms: [],
+        destParaId: undefined
       })
     })
 

@@ -337,7 +337,7 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('X-Transfer controller', () => {
-    const amount = '1000000000';
+    const amount = '10000000000';
     const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const xTransferUrl = '/x-transfer';
     const xTransferBatchUrl = '/x-transfer-batch';
@@ -1326,11 +1326,11 @@ describe('XCM API (e2e)', () => {
 
   describe('Transfer info controller', () => {
     const transferInfo: XTransferDto = {
-      from: 'Acala',
-      to: 'Astar',
+      from: 'Hydration',
+      to: 'AssetHubPolkadot',
       senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-      currency: { symbol: 'DOT', amount: '100000000' },
+      currency: { symbol: 'DOT', amount: '10000000000' },
     };
 
     it('Generate transfer info call - invalid origin provided - /transfer-info', () => {

@@ -1,5 +1,6 @@
 import { createSdkContext } from '@galacticcouncil/sdk';
 import {
+  AmountTooLowError,
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
@@ -11,7 +12,6 @@ import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -70,9 +70,7 @@ class HydrationExchange extends ExchangeChain {
     const amountWithoutFee = origin ? amountBnum.minus(tradeFee) : amountBnum;
 
     if (amountWithoutFee.isNegative()) {
-      throw new SmallAmountError(
-        'The provided amount is too small to cover the fees. Please provide a larger amount.',
-      );
+      throw new AmountTooLowError();
     }
 
     const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
@@ -137,9 +135,7 @@ class HydrationExchange extends ExchangeChain {
     const amountOutModified = amountOut.minus(currencyToFeeBnum).decimalPlaces(0);
 
     if (amountOutModified.isNegative()) {
-      throw new SmallAmountError(
-        'The provided amount is too small to cover the fees. Please provide a larger amount.',
-      );
+      throw new AmountTooLowError();
     }
 
     Logger.log('Amount out original', amountOut.toString());

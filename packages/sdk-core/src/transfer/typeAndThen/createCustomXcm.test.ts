@@ -1,9 +1,11 @@
+import type { TAssetWithLocation, WithAmount } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { MIN_FEE, RELAY_LOCATION } from '../../constants'
+import { AmountTooLowError } from '../../errors'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
 import { createBeneficiaryLocation } from '../../utils'
 import { createCustomXcm } from './createCustomXcm'
@@ -168,6 +170,24 @@ describe('createCustomXcm', () => {
           expect(result.DepositReserveAsset.xcm[0].BuyExecution.fees.fun.Fungible).toBe(MIN_FEE)
         }
       }
+    })
+
+    it('throws AmountTooLowError when buyExecutionAmount is negative', () => {
+      expect(() =>
+        createCustomXcm(
+          {
+            ...mockContext,
+            origin: { chain: 'Astar', api: mockApi } as TChainWithApi<unknown, unknown>,
+            assetInfo: { amount: 20n, location: RELAY_LOCATION } as WithAmount<TAssetWithLocation>
+          },
+          true,
+          {
+            reserveFee: 100n,
+            refundFee: 50n,
+            destFee: 200n
+          }
+        )
+      ).toThrowError(AmountTooLowError)
     })
   })
 

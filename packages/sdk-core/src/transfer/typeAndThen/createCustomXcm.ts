@@ -1,4 +1,5 @@
 import { MIN_FEE, RELAY_LOCATION } from '../../constants'
+import { AmountTooLowError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, createBeneficiaryLocation, localizeLocation } from '../../utils'
@@ -52,30 +53,32 @@ export const createCustomXcm = <TApi, TRes>(
     createAsset(version, assetInfo.amount, localizeLocation(reserve.chain, assetInfo.location))
   )
 
-  return origin.chain !== reserve.chain && dest.chain !== reserve.chain
-    ? {
-        DepositReserveAsset: {
-          assets:
-            fees.destFee === MIN_FEE
-              ? { Wild: 'All' }
-              : {
-                  Definite: assetsFilter
-                },
-          dest: createDestination(version, origin.chain, destination, paraIdTo),
-          xcm: [
-            {
-              BuyExecution: {
-                fees: createAsset(
-                  version,
-                  !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee,
-                  feeAssetLocation
-                ),
-                weight_limit: 'Unlimited'
-              }
-            },
-            depositInstruction
-          ]
-        }
+  if (origin.chain !== reserve.chain && dest.chain !== reserve.chain) {
+    const buyExecutionAmount = !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee
+
+    if (buyExecutionAmount < 0n) throw new AmountTooLowError()
+
+    return {
+      DepositReserveAsset: {
+        assets:
+          fees.destFee === MIN_FEE
+            ? { Wild: 'All' }
+            : {
+                Definite: assetsFilter
+              },
+        dest: createDestination(version, origin.chain, destination, paraIdTo),
+        xcm: [
+          {
+            BuyExecution: {
+              fees: createAsset(version, buyExecutionAmount, feeAssetLocation),
+              weight_limit: 'Unlimited'
+            }
+          },
+          depositInstruction
+        ]
       }
-    : depositInstruction
+    }
+  }
+
+  return depositInstruction
 }

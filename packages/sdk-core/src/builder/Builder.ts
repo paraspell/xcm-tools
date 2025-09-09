@@ -9,7 +9,6 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { InvalidParameterError } from '../errors'
 import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
 import {
-  dryRun,
   getOriginXcmFee,
   getOriginXcmFeeEstimate,
   getXcmFee,
@@ -20,6 +19,7 @@ import type {
   TAddress,
   TBatchOptions,
   TDestination,
+  TDryRunPreviewOptions,
   TGetXcmFeeBuilderOptions,
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress
@@ -27,6 +27,7 @@ import type {
 import { assertAddressIsString, assertToIsString } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
+import { buildDryRun } from './buildDryRun'
 
 /**
  * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
@@ -217,29 +218,18 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { to, address, senderAddress, feeAsset } = this._options
-
     const tx = await this.build()
+    return buildDryRun(this.api, tx, this._options)
+  }
 
-    if (isTLocation(to)) {
-      throw new InvalidParameterError(
-        'Location destination is not supported for XCM fee calculation.'
-      )
-    }
-
-    if (isTLocation(address)) {
-      throw new InvalidParameterError('Location address is not supported for XCM fee calculation.')
-    }
-
-    return dryRun({
-      api: this.api,
-      tx,
-      address: senderAddress,
-      origin: this._options.from,
-      destination: to,
-      currency: this._options.currency,
-      senderAddress: this._options.senderAddress,
-      feeAsset
+  async dryRunPreview(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+    options?: TDryRunPreviewOptions
+  ) {
+    const tx = await this.build()
+    return buildDryRun(this.api, tx, this._options, {
+      sentAssetMintMode: 'preview',
+      mintFeeAssets: options?.mintFeeAssets
     })
   }
 

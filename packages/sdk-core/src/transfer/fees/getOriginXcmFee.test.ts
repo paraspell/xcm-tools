@@ -4,9 +4,7 @@ import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
-vi.mock('./getOriginXcmFeeInternal', () => ({
-  getOriginXcmFeeInternal: vi.fn()
-}))
+vi.mock('./getOriginXcmFeeInternal')
 
 describe('getOriginXcmFee', () => {
   beforeEach(() => vi.clearAllMocks())
