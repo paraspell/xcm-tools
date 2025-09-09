@@ -19,7 +19,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(res.balanceTx.module).toBe('Balances')
     expect(res.balanceTx.method).toBe('force_set_balance')
@@ -35,7 +35,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(res.balanceTx.parameters.who).toBe(address)
     expect(res.balanceTx.parameters.new_free).toBe(222n)
@@ -49,7 +49,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(true)
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(res.balanceTx.parameters.who).toBe(address)
     expect(res.balanceTx.parameters.new_free).toBe(333n)
@@ -63,7 +63,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.setBalance(address, asset, chain)
+    const res = await pallet.mint(address, asset, 0n, chain)
 
     expect(res.balanceTx.parameters.who).toEqual({ Id: address })
     expect(res.balanceTx.parameters.new_free).toBe(444n)

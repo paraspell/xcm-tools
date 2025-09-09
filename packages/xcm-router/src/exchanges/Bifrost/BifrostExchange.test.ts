@@ -1,19 +1,18 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
+import { AmountTooLowError, getBalanceNative, getParaId } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { getBalanceNative, getParaId } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSwapOptions } from '../../types';
 import BifrostExchange from './BifrostExchange';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const actualModule = await vi.importActual('@paraspell/sdk-pjs');
+vi.mock('@paraspell/sdk', async () => {
+  const actualModule = await vi.importActual('@paraspell/sdk');
   return {
     ...actualModule,
     getParaId: vi.fn(),
@@ -21,19 +20,9 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   };
 });
 
-vi.mock('./utils', () => ({
-  findToken: vi.fn(),
-  getBestTrade: vi.fn(),
-  getFilteredPairs: vi.fn(),
-  getTokenMap: vi.fn(),
-  convertAmount: vi.fn(),
-}));
+vi.mock('./utils');
 
-vi.mock('@crypto-dex-sdk/parachains-bifrost', () => ({
-  SwapRouter: {
-    swapCallParameters: vi.fn(),
-  },
-}));
+vi.mock('@crypto-dex-sdk/parachains-bifrost');
 
 vi.mock('@crypto-dex-sdk/currency', () => ({
   Amount: {
@@ -57,11 +46,7 @@ vi.mock('@crypto-dex-sdk/math', () => ({
   })),
 }));
 
-vi.mock('../../Logger/Logger', () => ({
-  default: {
-    log: vi.fn(),
-  },
-}));
+vi.mock('../../Logger/Logger');
 
 describe('BifrostExchange', () => {
   let chain: BifrostExchange;
@@ -128,6 +113,19 @@ describe('BifrostExchange', () => {
       ).rejects.toThrowError('Currency to not found');
     });
 
+    it('throws AmountTooLowError when input amount is negative (amountWithoutFee.isNegative)', async () => {
+      await expect(
+        chain.swapCurrency(
+          mockApi,
+          {
+            ...swapOptions,
+            amount: '-1',
+          },
+          mockToDestTransactionFee,
+        ),
+      ).rejects.toThrowError(AmountTooLowError);
+    });
+
     it('should throw an error if extrinsic is null', async () => {
       vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
         extrinsic: null,
@@ -156,7 +154,7 @@ describe('BifrostExchange', () => {
           },
           mockToDestTransactionFee,
         ),
-      ).rejects.toThrowError(SmallAmountError);
+      ).rejects.toThrowError(AmountTooLowError);
     });
 
     it('should return the extrinsic and final amountOut if successful', async () => {

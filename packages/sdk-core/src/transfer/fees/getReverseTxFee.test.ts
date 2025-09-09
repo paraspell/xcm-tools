@@ -15,9 +15,7 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class InvalidCurrencyError extends Error {}
 }))
 
-vi.mock('viem', () => ({
-  isAddress: vi.fn()
-}))
+vi.mock('viem')
 
 const mockBuild = vi.fn()
 const mockCurrency = vi.fn().mockReturnThis()

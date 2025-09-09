@@ -105,7 +105,7 @@ describe('XTransferController', () => {
   });
 
   describe('dryRun', () => {
-    it('should call generateXcmCall service method with correct parameters and return result', async () => {
+    it('should dry run call with correct params', async () => {
       const bodyParams: XTransferDtoWSenderAddress = {
         from: 'Acala',
         to: 'Basilisk',
@@ -117,6 +117,30 @@ describe('XTransferController', () => {
       const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
 
       const result = await controller.dryRun(bodyParams, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('dryRunPreview', () => {
+    it('should dry run call with correct params', async () => {
+      const bodyParams: XTransferDtoWSenderAddress = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        currency: { symbol: 'DOT', amount: 100 },
+      };
+      const mockResult = {} as TDryRunResult;
+      const spy = vi
+        .spyOn(service, 'dryRunPreview')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.dryRunPreview(
+        bodyParams,
+        mockRequestObject,
+      );
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);

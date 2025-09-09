@@ -5,9 +5,10 @@ import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
 export class AssetsPallet implements IAssetsPallet {
-  setBalance(
+  mint(
     address: string,
     asset: WithAmount<TAssetInfo>,
+    _balance: bigint,
     chain: TSubstrateChain
   ): Promise<TSetBalanceRes> {
     assertHasId(asset)

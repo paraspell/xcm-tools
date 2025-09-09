@@ -10,9 +10,10 @@ export type TSetBalanceRes = {
 }
 
 export interface IAssetsPallet {
-  setBalance<TApi, TRes>(
+  mint<TApi, TRes>(
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint,
     chain: TSubstrateChain,
     api: IPolkadotApi<TApi, TRes>
   ): Promise<TSetBalanceRes>

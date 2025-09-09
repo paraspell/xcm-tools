@@ -47,6 +47,7 @@ export type TSubmitType =
   | 'update'
   | 'delete'
   | 'dryRun'
+  | 'dryRunPreview'
   | 'getXcmFee'
   | 'getOriginXcmFee'
   | 'getXcmFeeEstimate'

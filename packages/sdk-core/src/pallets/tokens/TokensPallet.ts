@@ -5,9 +5,10 @@ import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
 export class TokensPallet implements IAssetsPallet {
-  setBalance(
+  mint(
     address: string,
     asset: WithAmount<TAssetInfo>,
+    balance: bigint,
     chain: TSubstrateChain
   ): Promise<TSetBalanceRes> {
     const isBifrost = chain.startsWith('Bifrost')
@@ -27,7 +28,7 @@ export class TokensPallet implements IAssetsPallet {
         parameters: {
           who: { Id: address },
           currency_id: id,
-          new_free: amount,
+          new_free: balance + amount,
           new_reserved: 0n
         }
       }

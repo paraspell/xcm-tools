@@ -103,10 +103,11 @@ describe('isSystemChain', () => {
   })
 
   describe('isTrustedChain', () => {
-    const trustedByAh = new Set<TChain>(['Mythos'])
+    const trustedByAh = new Set<TChain>(['Mythos', 'Encointer'])
 
-    it('should return true for Mythos (trusted by AH)', () => {
+    it('should return true for Mythos and Encointer', () => {
       expect(isTrustedChain('Mythos')).toBe(true)
+      expect(isTrustedChain('Encointer')).toBe(true)
     })
 
     systemChains.forEach(chain => {

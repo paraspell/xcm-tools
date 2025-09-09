@@ -1,14 +1,13 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import { getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
+import { AmountTooLowError, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -59,7 +58,7 @@ class AcalaExchange extends ExchangeChain {
     const balanceBN = BigNumber(balance.toString());
 
     if (balanceBN.isLessThan(totalNativeCurrencyFee)) {
-      throw new SmallAmountError(
+      throw new AmountTooLowError(
         `The native currency balance on ${this.chain} is too low to cover the fees. Please provide a larger amount.`,
       );
     }
@@ -69,7 +68,7 @@ class AcalaExchange extends ExchangeChain {
     const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
 
     if (amountWithoutFee.isNegative()) {
-      throw new SmallAmountError(
+      throw new AmountTooLowError(
         'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }

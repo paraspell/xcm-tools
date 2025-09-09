@@ -51,6 +51,7 @@ export const isSystemChain = (chain: TChain): boolean => {
 }
 
 export const isTrustedChain = (chain: TChain): boolean => {
-  const isTrustedByAh = (chain: TChain) => ['Mythos'].includes(chain)
+  const trusted: TChain[] = ['Mythos', 'Encointer']
+  const isTrustedByAh = (chain: TChain) => trusted.includes(chain)
   return isTrustedByAh(chain) || isSystemChain(chain)
 }

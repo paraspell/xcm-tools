@@ -3,16 +3,24 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import { type TChain, Version } from '@paraspell/sdk-common'
-import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { DOT_LOCATION } from '../constants'
-import { InvalidParameterError } from '../errors'
-import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
-import * as claimAssets from '../pallets/assets/asset-claim'
-import * as xcmPallet from '../transfer'
+import {
+  claimAssets,
+  getTransferableAmount,
+  getTransferInfo,
+  verifyEdOnDestination
+} from '../pallets/assets'
+import {
+  getOriginXcmFee,
+  getOriginXcmFeeEstimate,
+  getXcmFee,
+  getXcmFeeEstimate,
+  send
+} from '../transfer'
 import type {
+  TDryRunResult,
   TGetXcmFeeEstimateDetail,
   TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
@@ -20,28 +28,13 @@ import type {
   TXcmFeeDetail
 } from '../types'
 import { assertAddressIsString, assertToIsString } from '../utils'
+import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
 
-vi.mock('../transfer', () => ({
-  send: vi.fn(),
-  transferRelayToPara: vi.fn(),
-  dryRun: vi.fn(),
-  getXcmFee: vi.fn(),
-  getOriginXcmFee: vi.fn(),
-  getXcmFeeEstimate: vi.fn(),
-  getOriginXcmFeeEstimate: vi.fn()
-}))
-
-vi.mock('../pallets/assets', () => ({
-  getTransferableAmount: vi.fn(),
-  getTransferInfo: vi.fn(),
-  verifyEdOnDestination: vi.fn()
-}))
-
-vi.mock('../utils', () => ({
-  assertToIsString: vi.fn(),
-  assertAddressIsString: vi.fn()
-}))
+vi.mock('../transfer')
+vi.mock('../pallets/assets')
+vi.mock('../utils')
+vi.mock('./buildDryRun')
 
 const CHAIN: TChain = 'Acala'
 const CHAIN_2: TChain = 'Hydration'
@@ -49,6 +42,7 @@ const AMOUNT = 1000
 const CURRENCY = { symbol: 'ACA', amount: AMOUNT }
 const CURRENCY_ID = -1n
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
+const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const PARA_ID_TO = 1999
 
 describe('Builder', () => {
@@ -80,16 +74,14 @@ describe('Builder', () => {
   })
 
   describe('Para to Para / Para to Relay / Relay to Para  transfer', () => {
-    let sendSpy: MockInstance<typeof xcmPallet.send>
-
     beforeEach(() => {
-      sendSpy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(mockExtrinsic)
+      vi.mocked(send).mockResolvedValue(mockExtrinsic)
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).address(ADDRESS).build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: CURRENCY,
@@ -106,7 +98,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: CURRENCY,
@@ -124,7 +116,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: CURRENCY,
@@ -144,7 +136,7 @@ describe('Builder', () => {
         .ahAddress(ASSET_HUB_ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: CURRENCY,
@@ -167,7 +159,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: {
@@ -191,7 +183,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: CURRENCY,
@@ -210,7 +202,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency: { id: CURRENCY_ID, amount: AMOUNT },
@@ -227,7 +219,7 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency,
@@ -278,7 +270,7 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         currency,
@@ -297,7 +289,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -317,7 +309,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -340,7 +332,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -370,7 +362,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -392,7 +384,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -425,7 +417,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -444,7 +436,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a para to relay transfer using batching', async () => {
@@ -461,7 +453,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: 'Polkadot',
@@ -472,7 +464,7 @@ describe('Builder', () => {
         address: ADDRESS
       })
 
-      expect(sendSpy).toHaveBeenCalledTimes(2)
+      expect(send).toHaveBeenCalledTimes(2)
     })
 
     it('should initiate a para to para transfer using batching', async () => {
@@ -484,7 +476,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: CHAIN_2,
@@ -507,7 +499,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: CHAIN,
         to: CHAIN_2,
@@ -515,7 +507,7 @@ describe('Builder', () => {
         address: ADDRESS
       })
 
-      expect(sendSpy).toHaveBeenCalledTimes(2)
+      expect(send).toHaveBeenCalledTimes(2)
     })
 
     it('should throw if trying to build when transactions are batched', async () => {
@@ -544,7 +536,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
         to: CHAIN,
@@ -561,7 +553,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
         to: CHAIN,
@@ -582,7 +574,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
         to: CHAIN,
@@ -604,7 +596,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
         to: CHAIN,
@@ -634,7 +626,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(sendSpy).toHaveBeenCalledTimes(1)
+      expect(send).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a double relay to para transfer using batching', async () => {
@@ -651,7 +643,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(sendSpy).toHaveBeenCalledWith({
+      expect(send).toHaveBeenCalledWith({
         api: mockApi,
         from: 'Polkadot',
         to: CHAIN_2,
@@ -659,7 +651,7 @@ describe('Builder', () => {
         address: ADDRESS
       })
 
-      expect(sendSpy).toHaveBeenCalledTimes(2)
+      expect(send).toHaveBeenCalledTimes(2)
     })
 
     it('should disconnect the api after building', async () => {
@@ -684,10 +676,10 @@ describe('Builder', () => {
 
   describe('Claim asset', () => {
     it('should create a normal claim asset tx', async () => {
-      const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue(mockExtrinsic)
+      vi.mocked(claimAssets).mockResolvedValue(mockExtrinsic)
       await Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS).build()
-      expect(spy).toHaveBeenCalledTimes(1)
-      expect(spy).toHaveBeenCalledWith({
+      expect(claimAssets).toHaveBeenCalledTimes(1)
+      expect(claimAssets).toHaveBeenCalledWith({
         api: mockApi,
         chain: CHAIN,
         currency: [],
@@ -696,7 +688,7 @@ describe('Builder', () => {
     })
 
     it('should create a claim asset tx with valid output', async () => {
-      const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue({
+      vi.mocked(claimAssets).mockResolvedValue({
         method: 'claim',
         args: []
       })
@@ -709,11 +701,11 @@ describe('Builder', () => {
 
       expect(tx).toHaveProperty('method')
       expect(tx).toHaveProperty('args')
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(claimAssets).toHaveBeenCalledTimes(1)
     })
 
     it('should disconnect the api after building', async () => {
-      const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue({
+      vi.mocked(claimAssets).mockResolvedValue({
         method: 'claim',
         args: []
       })
@@ -730,37 +722,13 @@ describe('Builder', () => {
 
       expect(disconnectAllowedSpy).not.toHaveBeenCalled()
       expect(disconnectSpy).toHaveBeenCalledWith(true)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(claimAssets).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('Dry run', () => {
-    it('should throw when destination is a location (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(CHAIN)
-          .to(DOT_LOCATION)
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .dryRun()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
-    it('should throw when address is a location (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency(CURRENCY)
-          .address(DOT_LOCATION)
-          .senderAddress('alice')
-          .dryRun()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
     it('should dry run a normal transfer', async () => {
-      const spy = vi.mocked(xcmPallet.dryRun).mockResolvedValue({
+      vi.mocked(buildDryRun).mockResolvedValue({
         origin: {
           success: true,
           fee: 1000n,
@@ -774,8 +742,6 @@ describe('Builder', () => {
         },
         hops: []
       })
-
-      const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -799,13 +765,43 @@ describe('Builder', () => {
         },
         hops: []
       })
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(buildDryRun).toHaveBeenCalledTimes(1)
+    })
+
+    it('should dry run preview', async () => {
+      const mockDryRunResult = {
+        origin: {
+          success: true,
+          fee: 1000n,
+          currency: 'DOT',
+          asset: {
+            symbol: 'DOT',
+            decimals: 10
+          } as TAssetInfo,
+          forwardedXcms: [],
+          destParaId: 0
+        },
+        hops: []
+      } as TDryRunResult
+
+      vi.mocked(buildDryRun).mockResolvedValue(mockDryRunResult)
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+        .dryRunPreview({ mintFeeAssets: true })
+
+      expect(result).toEqual(mockDryRunResult)
+      expect(buildDryRun).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('Fee calculation', () => {
     it('should fetch XCM fee ', async () => {
-      const spy = vi.mocked(xcmPallet.getXcmFee).mockResolvedValue({} as TGetXcmFeeResult)
+      vi.mocked(getXcmFee).mockResolvedValue({} as TGetXcmFeeResult)
 
       const SENDER = 'sender-address'
 
@@ -818,13 +814,13 @@ describe('Builder', () => {
         .getXcmFee()
 
       expect(result).toEqual({})
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getXcmFee).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
     it('should fetch origin XCM fee', async () => {
-      const spy = vi.mocked(xcmPallet.getOriginXcmFee).mockResolvedValue({} as TXcmFeeDetail)
+      vi.mocked(getOriginXcmFee).mockResolvedValue({} as TXcmFeeDetail)
 
       const SENDER = 'sender-address'
 
@@ -837,14 +833,12 @@ describe('Builder', () => {
         .getOriginXcmFee()
 
       expect(result).toEqual({})
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getOriginXcmFee).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
     it('should fetch XCM fee estimate', async () => {
-      const spy = vi
-        .mocked(xcmPallet.getXcmFeeEstimate)
-        .mockResolvedValue({} as TGetXcmFeeEstimateResult)
+      vi.mocked(getXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateResult)
 
       const SENDER = 'sender-address'
 
@@ -857,15 +851,13 @@ describe('Builder', () => {
         .getXcmFeeEstimate()
 
       expect(result).toEqual({})
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
     it('should fetch origin XCM fee estimate', async () => {
-      const spy = vi
-        .mocked(xcmPallet.getOriginXcmFeeEstimate)
-        .mockResolvedValue({} as TGetXcmFeeEstimateDetail)
+      vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateDetail)
 
       const SENDER = 'sender-address'
 
@@ -878,14 +870,14 @@ describe('Builder', () => {
         .getOriginXcmFeeEstimate()
 
       expect(result).toEqual({})
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getOriginXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
     it('should fetch transferable amount', async () => {
       const amount = 1000n
 
-      const spy = vi.mocked(getTransferableAmount).mockResolvedValue(amount)
+      vi.mocked(getTransferableAmount).mockResolvedValue(amount)
 
       const SENDER = 'sender-address'
 
@@ -898,13 +890,13 @@ describe('Builder', () => {
         .getTransferableAmount()
 
       expect(result).toEqual(amount)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getTransferableAmount).toHaveBeenCalledTimes(1)
     })
 
     it('should verify ed on destination', async () => {
       const mockResult = true
 
-      const spy = vi.mocked(verifyEdOnDestination).mockResolvedValue(mockResult)
+      vi.mocked(verifyEdOnDestination).mockResolvedValue(mockResult)
 
       const SENDER = 'sender-address'
 
@@ -917,13 +909,13 @@ describe('Builder', () => {
         .verifyEdOnDestination()
 
       expect(result).toEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(verifyEdOnDestination).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
-    it('should fetch tansfer info', async () => {
-      const spy = vi.mocked(getTransferInfo).mockResolvedValue({} as TTransferInfo)
+    it('should fetch transfer info', async () => {
+      vi.mocked(getTransferInfo).mockResolvedValue({} as TTransferInfo)
 
       const SENDER = 'sender-address'
 
@@ -936,7 +928,7 @@ describe('Builder', () => {
         .getTransferInfo()
 
       expect(result).toEqual({})
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(getTransferInfo).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })

@@ -4,7 +4,7 @@ import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
 import { assertHasLocation } from '../../utils'
 
 export class ForeignAssetsPallet implements IAssetsPallet {
-  setBalance(address: string, asset: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
+  mint(address: string, asset: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
     assertHasLocation(asset)
 
     const { location, amount } = asset

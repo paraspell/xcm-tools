@@ -11,18 +11,9 @@ import { type TRelayToParaOptions } from '../types'
 import { getChain, getRelayChainOf } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 
-vi.mock('../utils', () => ({
-  getRelayChainOf: vi.fn(),
-  getChain: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', () => ({
-  getRelayChainSymbol: vi.fn()
-}))
-
-vi.mock('../pallets/xcmPallet/utils', () => ({
-  resolveTChainFromLocation: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('../utils')
+vi.mock('../pallets/xcmPallet/utils')
 
 describe('transferRelayToPara', () => {
   let apiMock: IPolkadotApi<unknown, unknown>

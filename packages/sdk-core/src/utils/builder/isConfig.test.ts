@@ -27,8 +27,9 @@ describe('isConfig', () => {
     expect(isConfig([])).toBe(false)
   })
 
-  it('should return false for objects without expected keys', () => {
-    expect(isConfig({ someOtherKey: 'value' })).toBe(false)
+  it('should return false for objects with 3 or more keys', () => {
+    const input = { key1: 'value1', key2: 'value2', key3: 'value3' }
+    expect(isConfig(input)).toBe(false)
   })
 
   it('should return true for empty object', () => {

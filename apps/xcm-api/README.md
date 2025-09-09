@@ -181,6 +181,22 @@ const response = await fetch('http://localhost:3001/v4/dry-run', {
     senderAddress: 'Address' //Replace "Address" with sender address from origin chain
   }),
 });
+
+//Preview dryrun result of different amount than you currently have
+const response = await fetch('http://localhost:3001/v4/dry-run-preview', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain or Relay chain, e.g., "Acala"
+    to: 'Parachain', // Replace "Parachain" with destination Parachain or Relay chain, e.g., "Moonbeam" or custom location
+    currency: { currencySpec }, //{id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom location'), amount: amount} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount}]
+    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
+    senderAddress: 'Address' //Replace "Address" with sender address from origin chain
+  }),
+});
 ```
 
 ### Localhost testing setup

@@ -375,6 +375,7 @@ const XcmTransfer = () => {
   const performDryRun = async (
     formValues: FormValuesTransformed,
     selectedAccount: { address: string },
+    submitType: 'dryRun' | 'dryRunPreview',
     notifId: string | undefined,
   ) => {
     const Sdk =
@@ -414,13 +415,16 @@ const XcmTransfer = () => {
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+          ...(submitType === 'dryRunPreview'
+            ? { mintFeeAssets: true }
+            : undefined),
         },
-        '/dry-run',
+        submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
         'POST',
         true,
       );
     } else {
-      result = await Builder({
+      const builder = Builder({
         abstractDecimals: true,
       })
         .from(from)
@@ -433,8 +437,12 @@ const XcmTransfer = () => {
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address)
         .senderAddress(selectedAccount.address)
-        .ahAddress(ahAddress)
-        .dryRun();
+        .ahAddress(ahAddress);
+
+      result =
+        submitType === 'dryRun'
+          ? await builder.dryRun()
+          : await builder.dryRunPreview({ mintFeeAssets: true });
     }
 
     setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -540,8 +548,8 @@ const XcmTransfer = () => {
 
     let api;
     try {
-      if (submitType === 'dryRun') {
-        await performDryRun(formValues, selectedAccount, notifId);
+      if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
+        await performDryRun(formValues, selectedAccount, submitType, notifId);
         return;
       }
 

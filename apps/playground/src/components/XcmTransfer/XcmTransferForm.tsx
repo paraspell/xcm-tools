@@ -15,6 +15,7 @@ import { CHAINS, isChainEvm, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import {
   IconChevronDown,
   IconLocationCheck,
+  IconLocationQuestion,
   IconPlus,
   IconTransfer,
   IconTrash,
@@ -208,7 +209,11 @@ const XcmTransferForm: FC<Props> = ({
       transformedFeeAsset,
     };
 
-    if (submitType === 'dryRun' || submitType === 'delete') {
+    if (
+      submitType === 'dryRun' ||
+      submitType === 'dryRunPreview' ||
+      submitType === 'delete'
+    ) {
       onSubmit(transformedValues, submitType);
       return;
     }
@@ -220,6 +225,13 @@ const XcmTransferForm: FC<Props> = ({
     form.validate();
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), undefined, 'dryRun');
+    }
+  };
+
+  const onSubmitInternalDryRunPreview = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'dryRunPreview');
     }
   };
 
@@ -447,6 +459,13 @@ const XcmTransferForm: FC<Props> = ({
                     onClick={onSubmitInternalDryRun}
                   >
                     Dry run
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconLocationQuestion size={16} />}
+                    onClick={onSubmitInternalDryRunPreview}
+                  >
+                    Dry run preview
                   </Menu.Item>
 
                   {!initialValues && (

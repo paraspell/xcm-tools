@@ -10,16 +10,8 @@ import type { IPolkadotApi } from '../../api'
 import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 
-vi.mock('@paraspell/assets', () => ({
-  getExistentialDepositOrThrow: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  isSymbolMatch: vi.fn()
-}))
-
-vi.mock('../../pallets/assets', () => ({
-  getBalanceNativeInternal: vi.fn(),
-  getAssetBalance: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('../../pallets/assets')
 
 describe('isSufficientOrigin', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>

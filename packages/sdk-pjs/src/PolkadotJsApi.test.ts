@@ -959,107 +959,180 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('getDryRunCall', () => {
-    it('should return sucess when dryRunCall is successful', async () => {
-      const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
-      } as unknown as Extrinsic
+    const address = 'some_address'
+    const chain = 'Astar'
+    let mockExtrinsic: Extrinsic
 
-      const address = 'some_address'
-      const chain = 'Astar'
+    const hereForwarded = [
+      [
+        {
+          v4: { parents: 0, interior: { Here: null } }
+        }
+      ]
+    ] as unknown as object[]
 
-      const mockResponse = {
-        toHuman: vi.fn().mockReturnValue({
-          Ok: {
-            executionResult: { Ok: true }
+    const x1ArrayForwarded = [
+      [
+        {
+          v4: {
+            parents: 1,
+            interior: { x1: [{ parachain: 2001 }] }
           }
+        }
+      ]
+    ] as unknown as object[]
+
+    const makeSuccessResponse = (opts?: {
+      weight?: { refTime: string; proofSize: string }
+      forwarded?: object[]
+    }): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Ok: true } }
         }),
         toJSON: vi.fn().mockReturnValue({
           ok: {
-            executionResult: { ok: { actualWeight: { refTime: '1000', proofSize: '2000' } } },
-            forwardedXcms: [
-              [
-                {
-                  v4: {
-                    parents: 0,
-                    interior: { Here: null }
-                  }
-                }
-              ]
-            ]
+            executionResult: {
+              ok: opts?.weight ? { actualWeight: opts.weight } : {}
+            },
+            forwardedXcms: opts?.forwarded ?? []
           }
         })
-      } as unknown as Codec
+      }) as unknown as Codec
 
-      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
+    const makeErrOtherResponse = (reason = 'SomeOtherReason'): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Err: { error: { Other: reason } } } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { err: { error: { other: reason } } },
+            forwardedXcms: []
+          }
+        })
+      }) as unknown as Codec
+
+    const makeErrModuleResponse = (): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Err: { error: { Module: 'ModuleError' } } } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { err: { error: { Module: 'ModuleError' } } },
+            forwardedXcms: []
+          }
+        })
+      }) as unknown as Codec
+
+    const makeJsonModuleOnlyResponse = (): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({}),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { err: { error: { module: { index: 1, error: 2 } } } },
+            forwardedXcms: []
+          }
+        })
+      }) as unknown as Codec
+
+    const makeNoErrShapesResponse = (): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({}),
+        toJSON: vi.fn().mockReturnValue(undefined)
+      }) as unknown as Codec
+
+    beforeEach(() => {
+      mockExtrinsic = {
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
+      } as unknown as Extrinsic
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockReset()
+    })
+
+    it('simple success (no version), returns weight and forwardedXcms', async () => {
+      const resp = makeSuccessResponse({
+        weight: { refTime: '1000', proofSize: '2000' },
+        forwarded: hereForwarded
+      })
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
         chain,
-        asset: {
-          symbol: 'DOT'
-        } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
-        mockExtrinsic,
-        3
+        mockExtrinsic
       )
-
       expect(result).toEqual({
         success: true,
         fee: 1000n,
         currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
-        weight: {
-          refTime: 1000n,
-          proofSize: 2000n
-        },
-        forwardedXcms: expect.any(Object)
+        weight: { refTime: 1000n, proofSize: 2000n },
+        forwardedXcms: expect.any(Object),
+        destParaId: undefined
       })
     })
 
-    it('should return failureReason when dryRunCall is not successful', async () => {
-      const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
-      } as unknown as Extrinsic
-
-      const address = 'some_address'
-      const chain = 'Astar'
-
-      const mockResponse = {
-        toHuman: vi.fn().mockReturnValue({
-          Ok: {
-            executionResult: { Err: { error: { Module: 'ModuleError' } } }
-          }
-        }),
-        toJSON: vi.fn().mockReturnValue({
-          ok: {
-            executionResult: {
-              err: { error: { Module: 'ModuleError' } }
-            },
-            forwardedXcms: []
-          }
-        })
-      } as unknown as Codec
-
-      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
+    it('success with undefined weight and no forwardedXcms', async () => {
+      const resp = makeSuccessResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
         chain,
-        asset: {
-          symbol: 'DOT'
-        } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
-      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
-        { system: { Signed: address } },
-        mockExtrinsic,
-        3
-      )
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: true,
+        fee: 1000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
+        weight: undefined,
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+    })
+
+    it('returns failure with "Other" error without retry', async () => {
+      const resp = makeErrOtherResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'SomeOtherReason',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
+      })
+    })
+
+    it('JSON-only module error (no human error present)', async () => {
+      const resp = makeJsonModuleOnlyResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
 
       expect(result).toEqual({
         success: false,
@@ -1069,13 +1142,178 @@ describe('PolkadotJsApi', () => {
       })
     })
 
+    it('falls back to stringified output when neither human nor JSON have recognizable error', async () => {
+      const resp = makeNoErrShapesResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: '{}',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
+      })
+    })
+
+    it('retries after VersionedConversionFailed and succeeds on the second attempt (with version)', async () => {
+      const vcf = makeErrOtherResponse('VersionedConversionFailed')
+      const ok = makeSuccessResponse({
+        weight: { refTime: '123', proofSize: '456' },
+        forwarded: []
+      })
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
+        .mockResolvedValueOnce(vcf) // first: no version
+        .mockResolvedValueOnce(ok) // second: with version
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mock.calls[0].length).toBe(2)
+      expect(vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mock.calls[1][2]).toBe(3)
+
+      expect(result).toEqual({
+        success: true,
+        fee: 1000n,
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo,
+        weight: { refTime: 123n, proofSize: 456n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+    })
+
+    it('retries after VersionedConversionFailed and returns failure when second attempt also fails', async () => {
+      const vcf = makeErrOtherResponse('VersionedConversionFailed')
+      const modErr = makeErrModuleResponse()
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
+        .mockResolvedValueOnce(vcf)
+        .mockResolvedValueOnce(modErr)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(2)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'ModuleError',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
+      })
+    })
+
+    it('retries with version when first call throws "Expected 3 arguments" and then succeeds', async () => {
+      const ok = makeSuccessResponse({
+        weight: { refTime: '1000', proofSize: '2000' },
+        forwarded: hereForwarded
+      })
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
+        .mockImplementationOnce(() => {
+          throw new Error('DryRunApi_dry_run_call:: Expected 3 arguments, found 2')
+        })
+        .mockResolvedValueOnce(ok)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenNthCalledWith(
+        1,
+        { system: { Signed: address } },
+        mockExtrinsic
+      )
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenNthCalledWith(
+        2,
+        { system: { Signed: address } },
+        mockExtrinsic,
+        3
+      )
+      expect(result.success).toBe(true)
+    })
+
+    it('returns failure immediately when first call throws a non-arity error (no retry)', async () => {
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockImplementationOnce(() => {
+        throw new Error('Some unexpected error')
+      })
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'Some unexpected error',
+        currency: 'DOT',
+        asset: { symbol: 'DOT' } as TAssetInfo
+      })
+    })
+
+    it('extracts destParaId from forwardedXcms when interior.x1 is an array (parachain id)', async () => {
+      const resp = makeSuccessResponse({
+        weight: { refTime: '1', proofSize: '2' },
+        forwarded: x1ArrayForwarded
+      })
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      if (result.success) expect(result.destParaId).toBe(2001)
+    })
+
+    it('prefers feeAsset metadata when provided (currency and asset fields)', async () => {
+      const resp = makeSuccessResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const feeAsset: TAssetInfo = { symbol: 'USDC', decimals: 6 } as unknown as TAssetInfo
+      const asset: TAssetInfo = { symbol: 'DOT', decimals: 10 } as unknown as TAssetInfo
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        asset: asset as WithAmount<TAssetInfo>,
+        feeAsset
+      })
+
+      expect(result.currency).toBe('USDC')
+      expect(result.asset).toEqual(feeAsset)
+    })
+
     it('should throw error for unsupported chain', async () => {
       const mockTransaction = {} as unknown as Extrinsic
 
       await expect(
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
-          address: 'some_address',
+          address,
           chain: 'Acala',
           asset: {} as WithAmount<TAssetInfo>
         })

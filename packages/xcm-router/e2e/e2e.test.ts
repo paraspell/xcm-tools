@@ -80,7 +80,7 @@ describe.sequential('E2E tests', () => {
           },
         })
         .currencyTo({ symbol: 'DOT' })
-        .amount('5000000000')
+        .amount('500000000000000')
         .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
         .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('1')

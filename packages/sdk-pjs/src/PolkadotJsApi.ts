@@ -316,47 +316,99 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
     }
 
-    const chainsRequiringVersionParam: TSubstrateChain[] = [
-      'BifrostPolkadot',
-      'BifrostKusama',
-      'AssetHubKusama',
-      'AssetHubPolkadot',
-      'Kusama',
-      'Polkadot',
-      'Polimec',
-      'Astar'
-    ]
-
-    const needsVersionParam = chainsRequiringVersionParam.includes(chain)
-
     const DEFAULT_XCM_VERSION = 3
-
-    const response = await this.api.call.dryRunApi.dryRunCall(
-      {
-        system: {
-          Signed: address
-        }
-      },
-      tx,
-      ...(needsVersionParam ? [DEFAULT_XCM_VERSION] : [])
-    )
-
-    const result = response.toHuman() as any
-    const resultJson = response.toJSON() as any
 
     const usedSymbol = feeAsset?.symbol ?? asset?.symbol
     const usedAsset = feeAsset ?? asset
 
-    const isSuccess = result.Ok && result.Ok.executionResult.Ok
+    const performDryRunCall = async (includeVersion: boolean) => {
+      return this.api.call.dryRunApi.dryRunCall(
+        { system: { Signed: address } },
+        tx,
+        ...(includeVersion ? [DEFAULT_XCM_VERSION] : [])
+      )
+    }
+
+    const getExecutionSuccessFromResult = (resultHuman: any): boolean => {
+      return Boolean(resultHuman?.Ok && resultHuman.Ok.executionResult?.Ok)
+    }
+
+    const extractFailureReasonFromResult = (resultHuman: any, resultJson: any): string => {
+      const modErrHuman = resultHuman?.Ok?.executionResult?.Err?.error?.Module
+      if (modErrHuman) {
+        return resolveModuleError(chain, modErrHuman as TModuleError)
+      }
+      const otherErrHuman = resultHuman?.Ok?.executionResult?.Err?.error?.Other
+      if (otherErrHuman) {
+        return String(otherErrHuman)
+      }
+      const execErrJson = resultJson?.ok?.executionResult?.err?.error
+      if (execErrJson?.module) {
+        return resolveModuleError(chain, execErrJson.module as TModuleError)
+      }
+      if (execErrJson?.other) {
+        return String(execErrJson.other)
+      }
+      return JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error')
+    }
+
+    // Attempt 1: WITHOUT version
+    let response: any
+    let resultHuman: any
+    let resultJson: any
+    let isSuccess = false
+    let failureReason = ''
+    let shouldRetryWithVersion = false
+
+    try {
+      response = await performDryRunCall(false)
+      resultHuman = response.toHuman()
+      resultJson = response.toJSON()
+      isSuccess = getExecutionSuccessFromResult(resultHuman)
+
+      if (!isSuccess) {
+        failureReason = extractFailureReasonFromResult(resultHuman, resultJson)
+        if (failureReason === 'VersionedConversionFailed') {
+          shouldRetryWithVersion = true
+        }
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      if (msg.includes('Expected 3 arguments')) {
+        shouldRetryWithVersion = true
+      } else {
+        return { success: false, failureReason: msg, currency: usedSymbol, asset: usedAsset }
+      }
+    }
+
+    // Attempt 2: WITH version (only if needed)
+    if (shouldRetryWithVersion) {
+      try {
+        response = await performDryRunCall(true)
+        resultHuman = response.toHuman()
+        resultJson = response.toJSON()
+        isSuccess = getExecutionSuccessFromResult(resultHuman)
+        if (!isSuccess) {
+          failureReason = extractFailureReasonFromResult(resultHuman, resultJson)
+        }
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e)
+        failureReason = failureReason || msg
+        return { success: false, failureReason, currency: usedSymbol, asset: usedAsset }
+      }
+    }
 
     if (!isSuccess) {
-      const moduleError = result.Ok.executionResult.Err.error.Module
-      const failureReason = resolveModuleError(chain, moduleError as TModuleError)
-      return { success: false, failureReason, currency: usedSymbol, asset: usedAsset }
+      return {
+        success: false,
+        failureReason: failureReason || 'Unknown error',
+        currency: usedSymbol,
+        asset: usedAsset
+      }
     }
 
     const executionFee = await this.calculateTransactionFee(tx, address)
-    const fee = computeFeeFromDryRunPjs(result, chain, executionFee)
+    const fee = computeFeeFromDryRunPjs(resultHuman, chain, executionFee)
 
     const actualWeight = resultJson.ok.executionResult.ok.actualWeight
 

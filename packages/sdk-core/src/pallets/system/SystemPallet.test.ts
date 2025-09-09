@@ -46,7 +46,7 @@ describe('SystemPallet.setBalance', () => {
 
     const spy = vi.spyOn(api, 'getEvmStorage')
 
-    const res = await pallet.setBalance(address, asset, chain, api)
+    const res = await pallet.mint(address, asset, 0n, chain, api)
 
     expect(vi.mocked(assertHasId)).toHaveBeenCalledWith(asset)
     expect(vi.mocked(formatAssetIdToERC20)).toHaveBeenCalledWith('123')

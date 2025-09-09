@@ -16,6 +16,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
+  DryRunPreviewDto,
   XTransferDto,
   XTransferDtoWSenderAddress,
 } from './dto/XTransferDto.js';
@@ -80,6 +81,7 @@ const builderMock = {
     }),
   }),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
+  dryRunPreview: vi.fn().mockResolvedValue(dryRunResult),
   getXcmFee: vi.fn().mockResolvedValue(feeResult),
   getOriginXcmFee: vi.fn().mockResolvedValue(feeResult),
   getXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
@@ -365,6 +367,23 @@ describe('XTransferService', () => {
       await expect(
         service.dryRun({ ...xTransferDto, senderAddress: 'alice' }),
       ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('dryRunPreview', () => {
+    it('returns SDK dry-run result', async () => {
+      const dto: DryRunPreviewDto = {
+        ...xTransferDto,
+        senderAddress: 'alice',
+        options: { mintFeeAssets: false },
+      };
+
+      const result = await service.dryRunPreview(dto);
+
+      expect(result).toBe(dryRunResult);
+      expect(builderMock.dryRunPreview).toHaveBeenCalledWith({
+        mintFeeAssets: false,
+      });
     });
   });
 

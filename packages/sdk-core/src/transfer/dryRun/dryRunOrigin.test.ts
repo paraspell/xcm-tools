@@ -7,9 +7,7 @@ import type { TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'
 import { dryRunOrigin } from './dryRunOrigin'
 
-vi.mock('../../utils', () => ({
-  validateAddress: vi.fn()
-}))
+vi.mock('../../utils')
 
 describe('getDryRunOrigin', () => {
   const apiMock = {

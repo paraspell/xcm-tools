@@ -1,12 +1,16 @@
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import { Percent } from '@crypto-dex-sdk/math';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import { getNativeAssetSymbol, getParaId, InvalidParameterError } from '@paraspell/sdk-pjs';
+import {
+  AmountTooLowError,
+  getNativeAssetSymbol,
+  getParaId,
+  InvalidParameterError,
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -60,9 +64,7 @@ class BifrostExchange extends ExchangeChain {
     Logger.log('Amount modified', amountWithoutFee.toString());
 
     if (amountWithoutFee.isNegative()) {
-      throw new SmallAmountError(
-        'The provided amount is too small to cover the fees. Please provide a larger amount.',
-      );
+      throw new AmountTooLowError();
     }
 
     const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
@@ -99,9 +101,7 @@ class BifrostExchange extends ExchangeChain {
         .decimalPlaces(0);
 
       if (amountOutWithFee.isNegative()) {
-        throw new SmallAmountError(
-          'The provided amount is too small to cover the fees. Please provide a larger amount.',
-        );
+        throw new AmountTooLowError();
       }
 
       Logger.log('Amount out with fee:', amountOutWithFee.toString());

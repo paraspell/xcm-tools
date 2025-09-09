@@ -1,10 +1,15 @@
-import { getNativeAssetSymbol, InvalidParameterError, Parents, transform } from '@paraspell/sdk';
+import {
+  AmountTooLowError,
+  getNativeAssetSymbol,
+  InvalidParameterError,
+  Parents,
+  transform,
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { getExchangeAsset } from '../../assets';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type {
   TDexConfig,
   TGetAmountOutOptions,
@@ -85,9 +90,7 @@ class AssetHubExchange extends ExchangeChain {
       .decimalPlaces(0);
 
     if (finalAmountOut.isNegative()) {
-      throw new SmallAmountError(
-        'The provided amount is too small to cover the fees. Please provide a larger amount.',
-      );
+      throw new AmountTooLowError();
     }
 
     return {
@@ -131,7 +134,7 @@ class AssetHubExchange extends ExchangeChain {
       const resultHop1 = await this.swapCurrency(api, optionsHop1, BigNumber(0));
 
       if (BigNumber(resultHop1.amountOut).isLessThanOrEqualTo(0)) {
-        throw new SmallAmountError(
+        throw new AmountTooLowError(
           `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
         );
       }
@@ -153,7 +156,7 @@ class AssetHubExchange extends ExchangeChain {
       const resultHop2 = await this.swapCurrency(api, optionsHop2, toDestTransactionFee);
 
       if (BigNumber(resultHop2.amountOut).isLessThanOrEqualTo(0)) {
-        throw new SmallAmountError(
+        throw new AmountTooLowError(
           `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
         );
       }
@@ -219,7 +222,7 @@ class AssetHubExchange extends ExchangeChain {
       );
 
       if (BigNumber(hop1AmountOut.toString()).isLessThanOrEqualTo(0)) {
-        throw new SmallAmountError(
+        throw new AmountTooLowError(
           `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
         );
       }
@@ -236,7 +239,7 @@ class AssetHubExchange extends ExchangeChain {
       );
 
       if (BigNumber(finalAmountOut.toString()).isLessThanOrEqualTo(0)) {
-        throw new SmallAmountError(
+        throw new AmountTooLowError(
           `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
         );
       }
