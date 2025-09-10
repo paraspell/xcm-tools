@@ -10,6 +10,7 @@ import {
   ChainNotSupportedError,
   computeFeeFromDryRun,
   createChainClient,
+  findAssetInfoOrThrow,
   getAssetsObject,
   getChainProviders,
   hasXcmPaymentApiSupport,
@@ -64,7 +65,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
-  wrapTxBypass: vi.fn()
+  wrapTxBypass: vi.fn(),
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -947,6 +949,9 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1004,6 +1009,9 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockResolvedValueOnce(versionedConversionFailedResponse)
         .mockResolvedValueOnce(successResponseWithVersion)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1060,6 +1068,9 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockResolvedValueOnce(versionedConversionFailedResponse)
         .mockResolvedValueOnce(retryFailedResponse)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1085,8 +1096,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeOtherErrorAfterRetry',
-        currency: 'KSM',
-        asset: { symbol: 'KSM' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1101,6 +1112,9 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(otherErrorResponse)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1119,8 +1133,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'NotVersionedConversion',
-        currency: 'USDT',
-        asset: { symbol: 'USDT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1133,6 +1147,9 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1146,8 +1163,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ShortErrorType',
-        currency: 'USDT',
-        asset: { symbol: 'USDT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1164,6 +1181,9 @@ describe('PapiApi', () => {
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
       vi.mocked(wrapTxBypass).mockResolvedValue(mockTransaction)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1203,6 +1223,9 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1216,8 +1239,8 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: JSON.stringify(mockApiResponse.value),
-        currency: 'USDT',
-        asset: { symbol: 'USDT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1257,6 +1280,9 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1308,6 +1334,9 @@ describe('PapiApi', () => {
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
 
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,

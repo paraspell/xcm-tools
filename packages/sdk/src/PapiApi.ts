@@ -30,6 +30,7 @@ import {
   computeFeeFromDryRun,
   createChainClient,
   findAssetInfo,
+  findAssetInfoOrThrow,
   getAssetsObject,
   getChain,
   getChainProviders,
@@ -450,7 +451,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getDryRunCall(
     options: TDryRunCallBaseOptions<TPapiTransaction>
   ): Promise<TDryRunChainResult> {
-    const { tx, chain, address, asset, feeAsset, bypassOptions, useRootOrigin = false } = options
+    const { tx, chain, address, feeAsset, bypassOptions, useRootOrigin = false } = options
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -541,8 +542,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const usedSymbol = feeAsset?.symbol ?? asset.symbol
-    const usedAsset = feeAsset ?? asset
+    const usedAsset =
+      feeAsset ?? findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+    const usedSymbol = usedAsset.symbol
 
     if (!isSuccess) {
       return Promise.resolve({
