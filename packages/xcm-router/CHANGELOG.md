@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.3.2...xcm-router-v11.4.0) (2025-09-10)
+
+
+### Features
+
+* Add dry run preview 🪄 ([101f25d](https://github.com/paraspell/xcm-tools/commit/101f25da6a4f4fcce9435a948ddeae7b0631cdc5))
+
 ## [11.3.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.3.1...xcm-router-v11.3.2) (2025-09-08)
 
 
