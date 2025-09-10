@@ -1,7 +1,9 @@
 export type ChannelResult = {
   id: string;
+  ecosystem: string;
   senderId: string;
   recipientId: string;
+  transferCount: string;
   totalCount: string;
 };
 
