@@ -58,7 +58,7 @@ export class ChannelService {
     );
   }
 
-  async findAllWithinInterval(
+  async findAllInInterval(
     ecosystem: string,
     startTime: number,
     endTime: number,
@@ -125,8 +125,9 @@ export class ChannelService {
       LEFT JOIN 
         messages msg ON (msg.origin_para_id = ch.sender AND msg.dest_para_id = ch.recipient)
       WHERE 
-        (ch.sender = $1 AND ch.recipient = $2)
+        ch.ecosystem = $1
         AND ch.status = 'accepted'
+        AND (ch.sender = $2 AND ch.recipient = $3)
       GROUP BY 
         ch.sender, ch.recipient, ch.id, ch.status;
     `;

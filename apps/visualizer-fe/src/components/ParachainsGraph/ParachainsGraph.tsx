@@ -143,7 +143,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       })}
 
       {/* Channels */}
-      {ecosystem === Ecosystem.POLKADOT &&
+      {ecosystem &&
         refsInitialized &&
         channels.map(channel => {
           const senderKey =

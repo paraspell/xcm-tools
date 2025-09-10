@@ -115,7 +115,7 @@ describe('ChannelService', () => {
 
       mockRepository.query.mockResolvedValue(expectedResponse);
 
-      const result = await service.findAllWithinInterval(
+      const result = await service.findAllInInterval(
         ecosystem,
         startTime,
         endTime,
@@ -140,7 +140,7 @@ describe('ChannelService', () => {
     it('should return an empty array when no channels are found', async () => {
       mockRepository.query.mockResolvedValue([]);
 
-      const result = await service.findAllWithinInterval(
+      const result = await service.findAllInInterval(
         ecosystem,
         startTime,
         endTime,
@@ -156,7 +156,7 @@ describe('ChannelService', () => {
       );
 
       await expect(
-        service.findAllWithinInterval(ecosystem, startTime, endTime),
+        service.findAllInInterval(ecosystem, startTime, endTime),
       ).rejects.toThrow('Query execution failed');
     });
   });

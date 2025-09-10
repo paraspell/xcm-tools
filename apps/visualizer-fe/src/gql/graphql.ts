@@ -47,6 +47,7 @@ export type AssetCount = {
 export type Channel = {
   __typename?: 'Channel';
   active_at: Scalars['Int']['output'];
+  ecosystem: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   message_count: Scalars['Int']['output'];
   proposed_max_capacity: Scalars['Int']['output'];
@@ -92,6 +93,7 @@ export type Query = {
   assetCountsBySymbol: Array<AssetCount>;
   channel: Channel;
   channels: Array<Channel>;
+  channelsInInterval: Array<Channel>;
   messageCounts: Array<MessageCountByStatus>;
   messageCountsByDay: Array<MessageCountByDay>;
   totalMessageCounts: Array<MessageCount>;
@@ -111,11 +113,17 @@ export type QueryAssetCountsBySymbolArgs = {
 };
 
 export type QueryChannelArgs = {
+  ecosystem: Scalars['String']['input'];
   recipient: Scalars['Int']['input'];
   sender: Scalars['Int']['input'];
 };
 
 export type QueryChannelsArgs = {
+  ecosystem: Scalars['String']['input'];
+};
+
+export type QueryChannelsInIntervalArgs = {
+  ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
   startTime: Scalars['Timestamp']['input'];
 };
@@ -139,8 +147,7 @@ export type QueryTotalMessageCountsArgs = {
 };
 
 export type ChannelsQueryVariables = Exact<{
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: Scalars['String']['input'];
 }>;
 
 export type ChannelsQuery = {
@@ -148,6 +155,26 @@ export type ChannelsQuery = {
   channels: Array<{
     __typename?: 'Channel';
     id: number;
+    ecosystem: string;
+    sender: number;
+    recipient: number;
+    transfer_count: number;
+    message_count: number;
+  }>;
+};
+
+export type ChannelsInIntervalQueryVariables = Exact<{
+  ecosystem: Scalars['String']['input'];
+  startTime: Scalars['Timestamp']['input'];
+  endTime: Scalars['Timestamp']['input'];
+}>;
+
+export type ChannelsInIntervalQuery = {
+  __typename?: 'Query';
+  channelsInInterval: Array<{
+    __typename?: 'Channel';
+    id: number;
+    ecosystem: string;
     sender: number;
     recipient: number;
     message_count: number;
@@ -155,6 +182,7 @@ export type ChannelsQuery = {
 };
 
 export type ChannelQueryVariables = Exact<{
+  ecosystem: Scalars['String']['input'];
   sender: Scalars['Int']['input'];
   recipient: Scalars['Int']['input'];
 }>;
@@ -164,6 +192,7 @@ export type ChannelQuery = {
   channel: {
     __typename?: 'Channel';
     id: number;
+    ecosystem: string;
     sender: number;
     recipient: number;
     message_count: number;
@@ -254,6 +283,61 @@ export const ChannelsDocument = {
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+          }
+        }
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'channels' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'ecosystem' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
+              }
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'transfer_count' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+} as unknown as DocumentNode<ChannelsQuery, ChannelsQueryVariables>;
+export const ChannelsInIntervalDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'channelsInInterval' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+          }
+        },
+        {
+          kind: 'VariableDefinition',
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
           type: {
             kind: 'NonNullType',
@@ -274,8 +358,13 @@ export const ChannelsDocument = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'channels' },
+            name: { kind: 'Name', value: 'channelsInInterval' },
             arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'ecosystem' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
+              },
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'startTime' },
@@ -291,6 +380,7 @@ export const ChannelsDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'message_count' } }
@@ -301,7 +391,7 @@ export const ChannelsDocument = {
       }
     }
   ]
-} as unknown as DocumentNode<ChannelsQuery, ChannelsQueryVariables>;
+} as unknown as DocumentNode<ChannelsInIntervalQuery, ChannelsInIntervalQueryVariables>;
 export const ChannelDocument = {
   kind: 'Document',
   definitions: [
@@ -310,6 +400,14 @@ export const ChannelDocument = {
       operation: 'query',
       name: { kind: 'Name', value: 'channel' },
       variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+          }
+        },
         {
           kind: 'VariableDefinition',
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } },
@@ -336,6 +434,11 @@ export const ChannelDocument = {
             arguments: [
               {
                 kind: 'Argument',
+                name: { kind: 'Name', value: 'ecosystem' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
+              },
+              {
+                kind: 'Argument',
                 name: { kind: 'Name', value: 'sender' },
                 value: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } }
               },
@@ -349,6 +452,7 @@ export const ChannelDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'message_count' } },

@@ -12,13 +12,13 @@ export class ChannelResolver {
     return this.channelService.findAll(ecosystem);
   }
 
-  @Query(() => [Channel], { name: 'channelsWithInterval' })
+  @Query(() => [Channel], { name: 'channelsInInterval' })
   findAllInterval(
     @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
-    return this.channelService.findAllWithinInterval(
+    return this.channelService.findAllInInterval(
       ecosystem,
       startTime.getTime(),
       endTime.getTime(),
