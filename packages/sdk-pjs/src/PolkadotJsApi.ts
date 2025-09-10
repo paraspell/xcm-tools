@@ -26,11 +26,14 @@ import {
   BatchMode,
   ChainNotSupportedError,
   createChainClient,
+  findAssetInfoOrThrow,
   getChain,
+  getNativeAssetSymbol,
   InvalidParameterError,
   isConfig,
   isRelayChain,
   localizeLocation,
+  Native,
   Version
 } from '@paraspell/sdk-core'
 import {
@@ -306,7 +309,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getDryRunCall({
     tx,
     address,
-    asset,
     feeAsset,
     chain
   }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
@@ -318,8 +320,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const DEFAULT_XCM_VERSION = 3
 
-    const usedSymbol = feeAsset?.symbol ?? asset?.symbol
-    const usedAsset = feeAsset ?? asset
+    const usedAsset =
+      feeAsset ?? findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+    const usedSymbol = usedAsset.symbol
 
     const performDryRunCall = async (includeVersion: boolean) => {
       return this.api.call.dryRunApi.dryRunCall(

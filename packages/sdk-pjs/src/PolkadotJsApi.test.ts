@@ -4,6 +4,7 @@ import {
   ChainNotSupportedError,
   computeFeeFromDryRunPjs,
   createChainClient,
+  findAssetInfoOrThrow,
   MissingChainApiError,
   type TLocation,
   type TSerializedApiCall
@@ -22,7 +23,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
   createChainClient: vi.fn().mockResolvedValue({} as ApiPromise),
-  resolveModuleError: vi.fn().mockReturnValue('ModuleError')
+  resolveModuleError: vi.fn().mockReturnValue('ModuleError'),
+  findAssetInfoOrThrow: vi.fn()
 }))
 
 vi.mock('@polkadot/api', () => ({
@@ -1056,6 +1058,9 @@ describe('PolkadotJsApi', () => {
         forwarded: hereForwarded
       })
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1083,6 +1088,9 @@ describe('PolkadotJsApi', () => {
     it('success with undefined weight and no forwardedXcms', async () => {
       const resp = makeSuccessResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1106,6 +1114,9 @@ describe('PolkadotJsApi', () => {
     it('returns failure with "Other" error without retry', async () => {
       const resp = makeErrOtherResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1118,14 +1129,17 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeOtherReason',
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
     it('JSON-only module error (no human error present)', async () => {
       const resp = makeJsonModuleOnlyResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1137,14 +1151,17 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
     it('falls back to stringified output when neither human nor JSON have recognizable error', async () => {
       const resp = makeNoErrShapesResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1156,8 +1173,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: '{}',
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1169,8 +1186,11 @@ describe('PolkadotJsApi', () => {
       })
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
-        .mockResolvedValueOnce(vcf) // first: no version
-        .mockResolvedValueOnce(ok) // second: with version
+        .mockResolvedValueOnce(vcf)
+        .mockResolvedValueOnce(ok)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1185,8 +1205,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo,
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo,
         weight: { refTime: 123n, proofSize: 456n },
         forwardedXcms: [],
         destParaId: undefined
@@ -1200,6 +1220,9 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
         .mockResolvedValueOnce(vcf)
         .mockResolvedValueOnce(modErr)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1212,8 +1235,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1228,6 +1251,9 @@ describe('PolkadotJsApi', () => {
           throw new Error('DryRunApi_dry_run_call:: Expected 3 arguments, found 2')
         })
         .mockResolvedValueOnce(ok)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1254,6 +1280,9 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockImplementationOnce(() => {
         throw new Error('Some unexpected error')
       })
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1266,8 +1295,8 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'Some unexpected error',
-        currency: 'DOT',
-        asset: { symbol: 'DOT' } as TAssetInfo
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
 
@@ -1277,6 +1306,9 @@ describe('PolkadotJsApi', () => {
         forwarded: x1ArrayForwarded
       })
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
