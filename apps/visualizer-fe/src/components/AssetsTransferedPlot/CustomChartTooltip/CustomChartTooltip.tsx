@@ -21,7 +21,7 @@ import dayjs from 'dayjs';
 
 import subscanLogo from '../../../assets/subscan.png';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
-import { Ecosystem } from '../../../types/types';
+import type { Ecosystem } from '../../../types/types';
 import { getParachainId } from '../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
@@ -115,9 +115,9 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string): number | undefined => {
+const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => {
   if (!label || label === 'Total') return undefined;
-  return getParachainId(label, Ecosystem.POLKADOT);
+  return getParachainId(label, ecosystem);
 };
 
 const generateExplorerLink = (
@@ -172,14 +172,14 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     return null;
   }
 
+  const { dateRange, selectedEcosystem } = useSelectedParachain();
+
   const filteredPayload = getFilteredChartTooltipPayload(payload, segmentId);
   const scatterLabel = type === 'scatter' ? payload[0]?.payload?.name : null;
   const labels = getSeriesLabels(series);
   const _label = label || scatterLabel;
 
-  const paraId = getParaId(label as string);
-
-  const { dateRange } = useSelectedParachain();
+  const paraId = getParaId(selectedEcosystem, label as string);
 
   const [startDate, endDate] = dateRange;
 

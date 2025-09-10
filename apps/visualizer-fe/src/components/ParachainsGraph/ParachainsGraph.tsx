@@ -55,18 +55,18 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
   }, [totalMessageCounts, ecosystem]);
 
   const handleParachainClick = (chain: string) => {
-    if (ecosystem === Ecosystem.POLKADOT) toggleParachain(chain);
+    if (ecosystem) toggleParachain(chain);
   };
 
   const onRightClick = (chain: string) => {
-    if (ecosystem === Ecosystem.POLKADOT) {
+    if (ecosystem) {
       toggleActiveEditParachain(`${ecosystem};${chain}`);
     }
   };
 
   const onRelaychainClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    toggleParachain(ecosystem === Ecosystem.POLKADOT ? 'Polkadot' : 'Kusama');
+    if (ecosystem == Ecosystem.POLKADOT) toggleParachain(ecosystem.toString()); // TODO: fix parachain selection
   };
 
   const calculateParachainScale = (parachain: string): number => {
@@ -83,22 +83,21 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
   const onChannelClick =
     (channel: ChannelsQuery['channels'][number]) => (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
-      if (ecosystem === Ecosystem.POLKADOT) {
+      if (ecosystem) {
         setChannelAlertOpen(true);
         setSelectedChannel(channel);
       }
     };
 
-  const selectedParachainChannels =
-    ecosystem === Ecosystem.POLKADOT
-      ? channels.filter(channel =>
-          parachains.some(
-            p =>
-              getParachainId(p, ecosystem) === channel.sender ||
-              getParachainId(p, ecosystem) === channel.recipient
-          )
+  const selectedParachainChannels = ecosystem
+    ? channels.filter(channel =>
+        parachains.some(
+          p =>
+            getParachainId(p, ecosystem) === channel.sender ||
+            getParachainId(p, ecosystem) === channel.recipient
         )
-      : [];
+      )
+    : [];
 
   const RELAYCHAIN_ID = 0;
 
@@ -143,7 +142,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       })}
 
       {/* Channels */}
-      {ecosystem === Ecosystem.POLKADOT &&
+      {ecosystem &&
         refsInitialized &&
         channels.map(channel => {
           const senderKey =

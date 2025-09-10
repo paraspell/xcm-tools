@@ -18,6 +18,7 @@ const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
 
   const channelFromQuery = useQuery(channelQueryDocument, {
     variables: {
+      ecosystem: selectedChannel.ecosystem.toLowerCase(),
       sender: selectedChannel.sender,
       recipient: selectedChannel.recipient
     }
@@ -25,6 +26,7 @@ const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
 
   const channelToQuery = useQuery(channelQueryDocument, {
     variables: {
+      ecosystem: selectedChannel.ecosystem.toLowerCase(),
       sender: selectedChannel.recipient,
       recipient: selectedChannel.sender
     }

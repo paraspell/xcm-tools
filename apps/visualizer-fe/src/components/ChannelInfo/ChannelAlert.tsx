@@ -19,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelQuery } from '../../gql/graphql';
-import { Ecosystem } from '../../types/types';
 import { getParachainById } from '../../utils/utils';
 
 type Props = {
@@ -31,7 +30,7 @@ type Props = {
 
 const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
   const { t } = useTranslation();
-  const { dateRange } = useSelectedParachain();
+  const { dateRange, selectedEcosystem } = useSelectedParachain();
   const [startDate, endDate] = dateRange;
   const [value, setValue] = useState('from');
 
@@ -81,7 +80,7 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
               data={[
                 {
                   value: 'from',
-                  label: getParachainById(channelFrom?.sender ?? 0, Ecosystem.POLKADOT)
+                  label: getParachainById(channelFrom?.sender ?? 0, selectedEcosystem)
                 },
                 {
                   value: '_',
@@ -95,7 +94,7 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
                 },
                 {
                   value: 'to',
-                  label: getParachainById(channelFrom?.recipient ?? 0, Ecosystem.POLKADOT)
+                  label: getParachainById(channelFrom?.recipient ?? 0, selectedEcosystem)
                 }
               ]}
             />

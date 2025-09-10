@@ -1,8 +1,19 @@
 import { graphql } from '../gql';
 
 export const messageCountsQueryDocument = graphql(`
-  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {
-    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {
+  query messageCounts(
+    $ecosystem: String!
+    $paraIds: [Int!]
+    $startTime: Timestamp!
+    $endTime: Timestamp!
+  ) {
+    messageCounts(
+      ecosystem: $ecosystem
+      paraIds: $paraIds
+      startTime: $startTime
+      endTime: $endTime
+    ) {
+      ecosystem
       paraId
       success
       failed
@@ -11,8 +22,19 @@ export const messageCountsQueryDocument = graphql(`
 `);
 
 export const messageCountsByDayQueryDocument = graphql(`
-  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {
-    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {
+  query messageCountsByDay(
+    $ecosystem: String!
+    $paraIds: [Int!]
+    $startTime: Timestamp!
+    $endTime: Timestamp!
+  ) {
+    messageCountsByDay(
+      ecosystem: $ecosystem
+      paraIds: $paraIds
+      startTime: $startTime
+      endTime: $endTime
+    ) {
+      ecosystem
       paraId
       date
       messageCount
@@ -23,8 +45,19 @@ export const messageCountsByDayQueryDocument = graphql(`
 `);
 
 export const assetCountsBySymbolQueryDocument = graphql(`
-  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {
-    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {
+  query assetCountsBySymbol(
+    $ecosystem: String!
+    $paraIds: [Int!]
+    $startTime: Timestamp!
+    $endTime: Timestamp!
+  ) {
+    assetCountsBySymbol(
+      ecosystem: $ecosystem
+      paraIds: $paraIds
+      startTime: $startTime
+      endTime: $endTime
+    ) {
+      ecosystem
       paraId
       symbol
       count
@@ -34,17 +67,20 @@ export const assetCountsBySymbolQueryDocument = graphql(`
 
 export const accountXcmCountsQueryDocument = graphql(`
   query accountCounts(
+    $ecosystem: String!
     $threshold: Int!
     $paraIds: [Int!]
     $startTime: Timestamp!
     $endTime: Timestamp!
   ) {
     accountCounts(
+      ecosystem: $ecosystem
       threshold: $threshold
       paraIds: $paraIds
       startTime: $startTime
       endTime: $endTime
     ) {
+      ecosystem
       id
       count
     }
@@ -52,8 +88,19 @@ export const accountXcmCountsQueryDocument = graphql(`
 `);
 
 export const totalMessageCountsQueryDocument = graphql(`
-  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {
-    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {
+  query totalMessageCounts(
+    $ecosystem: String!
+    $startTime: Timestamp!
+    $endTime: Timestamp!
+    $countBy: CountOption!
+  ) {
+    totalMessageCounts(
+      ecosystem: $ecosystem
+      startTime: $startTime
+      endTime: $endTime
+      countBy: $countBy
+    ) {
+      ecosystem
       paraId
       totalCount
     }

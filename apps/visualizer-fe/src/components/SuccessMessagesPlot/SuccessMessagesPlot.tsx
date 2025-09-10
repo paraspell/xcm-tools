@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsQuery } from '../../gql/graphql';
-import { Ecosystem } from '../../types/types';
+import type { Ecosystem } from '../../types/types';
 import { getParachainById } from '../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
@@ -12,14 +13,15 @@ type Props = {
   counts: MessageCountsQuery['messageCounts'];
 };
 
-const getParachainByIdInternal = (id: number | null) => {
-  return id ? getParachainById(id, Ecosystem.POLKADOT) : 'Total';
+const getParachainByIdInternal = (id: number | null, ecosystem: Ecosystem) => {
+  return id ? getParachainById(id, ecosystem) : 'Total';
 };
 
 const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
+  const { selectedEcosystem } = useSelectedParachain();
   const chartData = counts.map(count => ({
-    category: getParachainByIdInternal(count.paraId ?? 0),
+    category: getParachainByIdInternal(count.paraId ?? 0, selectedEcosystem),
     Success: count.success,
     Failed: count.failed
   }));

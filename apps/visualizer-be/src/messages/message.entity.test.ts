@@ -16,6 +16,7 @@ describe('Message Entity', () => {
 
     const message = new Message();
     message.message_hash = 'hash';
+    message.ecosystem = 'polkadot';
     message.origin_event_index = 'event_1';
     message.from_account_id = 'account_1';
     message.origin_para_id = 1000;
@@ -40,6 +41,7 @@ describe('Message Entity', () => {
     message.assets = assets;
 
     expect(message.message_hash).toBe('hash');
+    expect(message.ecosystem).toBe('polkadot');
     expect(message.assets[0].symbol).toBe('TOKEN');
     expect(message.xcm_version).toBe(2);
     expect(returnID()).toBe(ID);

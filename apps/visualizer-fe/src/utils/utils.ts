@@ -19,7 +19,7 @@ export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosyste
 };
 
 export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedParachain | null => {
-  if (id === 0) return ecosystem === Ecosystem.POLKADOT ? 'Polkadot' : 'Kusama';
+  if (id === 0) return ecosystem.toString();
   const parachain = getFilteredEndpointOptions(ecosystem)?.find(chain => chain.paraId === id)?.text;
   if (!parachain) return null;
   return parachain;

@@ -10,6 +10,10 @@ export class Channel {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field()
+  @Column()
+  ecosystem: string;
+
   @Field(returnInt)
   @Column()
   sender: number;

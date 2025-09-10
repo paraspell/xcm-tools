@@ -23,7 +23,8 @@ import dayjs from 'dayjs';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Ecosystem } from '../../../types/types';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { Ecosystem } from '../../../types/types';
 import { getParachainId } from '../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
@@ -119,9 +120,9 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string): number | undefined => {
+const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => {
   if (!label || label === 'Total') return undefined;
-  return getParachainId(label, Ecosystem.POLKADOT);
+  return getParachainId(label, ecosystem);
 };
 
 const generateExplorerLink = (from: number | undefined, date: string) => {
@@ -156,6 +157,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
 
   const theme = useMantineTheme();
   const { t } = useTranslation();
+  const { selectedEcosystem } = useSelectedParachain();
 
   if (!payload) {
     return null;
@@ -222,7 +224,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
       parachainName !== 'Median' &&
       parachainName !== 'Total'
     ) {
-      paraId = getParaId(parachainName);
+      paraId = getParaId(selectedEcosystem, parachainName);
     }
 
     const explorerLink = generateExplorerLink(paraId, label as string);

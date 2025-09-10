@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../gql/graphql';
-import { Ecosystem } from '../../types/types';
 import { getParachainById, getParachainColor } from '../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
@@ -23,6 +23,7 @@ type Props = {
 const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showMedian }, ref) => {
   const [isTooltipActive, setIsTooltipActive] = useState<boolean | undefined>(undefined);
   const { t } = useTranslation();
+  const { selectedEcosystem } = useSelectedParachain();
   const processData = () => {
     const dataByDate = counts.reduce<
       Record<
@@ -37,7 +38,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
         acc[item.date] = { date: item.date };
       }
       const parachainKey = item.paraId
-        ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
+        ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
         : 'Total';
 
       acc[item.date][parachainKey] = Number(acc[item.date][parachainKey] || 0) + item.messageCount;
@@ -72,14 +73,14 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
   const series = Object.keys(
     counts.reduce<Record<string, boolean>>((result, item) => {
       const key = item.paraId
-        ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
+        ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
         : 'Total';
       result[key] = true;
       return result;
     }, {})
   ).map(key => ({
     name: key,
-    color: key === 'Total' ? 'blue.6' : getParachainColor(key, Ecosystem.POLKADOT)
+    color: key === 'Total' ? 'blue.6' : getParachainColor(key, selectedEcosystem)
   }));
 
   const onTooltipClose = () => {
