@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.0...sdk-pjs-v11.4.1) (2025-09-10)
+
+
+### Bug Fixes
+
+* Fix origin fee incorrect currency selected 🔧 ([e875c9b](https://github.com/paraspell/xcm-tools/commit/e875c9b2d34e26a71fda7b86cbde72a3f4a035d4))
+
 ## [11.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.3.2...sdk-pjs-v11.4.0) (2025-09-10)
 
 
