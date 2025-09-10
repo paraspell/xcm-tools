@@ -1,6 +1,7 @@
 import {
   prodRelayKusama,
   prodRelayPolkadot,
+  testRelayPaseo,
   testRelayWestend
 } from '@polkadot/apps-config/endpoints';
 
@@ -58,5 +59,7 @@ const getEndpointOptions = (ecosystem: Ecosystem) => {
       return prodRelayKusama.linked;
     case Ecosystem.WESTEND:
       return testRelayWestend.linked;
+    case Ecosystem.PASEO:
+      return testRelayPaseo.linked;
   }
 };

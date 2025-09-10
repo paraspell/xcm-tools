@@ -2,6 +2,7 @@ import { Box, Combobox, Group, Input, InputBase, useCombobox } from '@mantine/co
 import type { FC } from 'react';
 
 import KusamaLogo from '../../logos/icons/kusama.svg?react';
+import PaseoLogo from '../../logos/icons/paseo.svg?react';
 import PolkadotLogo from '../../logos/icons/polkadot.svg?react';
 import WestendLogo from '../../logos/icons/westend.svg?react';
 import { Ecosystem } from '../../types/types';
@@ -24,6 +25,8 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
         return <KusamaLogo />;
       case 'Westend':
         return <WestendLogo />;
+      case 'Paseo':
+        return <PaseoLogo />;
       default:
         return null;
     }

@@ -39,14 +39,23 @@ export class ChannelService {
       ecosystem,
     ]);
 
-    return results.map(({ id, ecosystem, senderId, recipientId, transferCount, totalCount }) => ({
-      id: parseInt(id, 10),
-      ecosystem: ecosystem,
-      sender: parseInt(senderId, 10),
-      recipient: parseInt(recipientId, 10),
-      transfer_count: parseInt(transferCount, 10),
-      message_count: parseInt(totalCount, 10)
-    }));
+    return results.map(
+      ({
+        id,
+        ecosystem,
+        senderId,
+        recipientId,
+        transferCount,
+        totalCount,
+      }) => ({
+        id: parseInt(id, 10),
+        ecosystem: ecosystem,
+        sender: parseInt(senderId, 10),
+        recipient: parseInt(recipientId, 10),
+        transfer_count: parseInt(transferCount, 10),
+        message_count: parseInt(totalCount, 10),
+      }),
+    );
   }
 
   async findAllWithinInterval(

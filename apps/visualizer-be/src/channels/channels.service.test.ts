@@ -39,7 +39,7 @@ describe('ChannelService', () => {
           senderId: 101,
           recipientId: 201,
           totalCount: 5,
-          transferCount: 6
+          transferCount: 6,
         },
         {
           id: 2,
@@ -47,7 +47,7 @@ describe('ChannelService', () => {
           senderId: 102,
           recipientId: 202,
           totalCount: 3,
-          transferCount: 9
+          transferCount: 9,
         },
       ];
 
@@ -62,7 +62,7 @@ describe('ChannelService', () => {
           sender: channel.senderId,
           recipient: channel.recipientId,
           message_count: channel.totalCount,
-          transfer_count: channel.transferCount
+          transfer_count: channel.transferCount,
         })),
       );
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
