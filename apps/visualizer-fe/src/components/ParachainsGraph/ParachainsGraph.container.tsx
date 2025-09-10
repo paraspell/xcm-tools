@@ -21,12 +21,12 @@ const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
 
   const { data } = useQuery(allChannelsQueryDocument, {
     variables: {
-      startTime: start && end ? start.getTime() / 1000 : 1,
-      endTime: start && end ? end.getTime() / 1000 : now
+      ecosystem: ecosystem.toString().toLowerCase()
     }
   });
   const totalCountsQuery = useQuery(totalMessageCountsQueryDocument, {
     variables: {
+      ecosystem: ecosystem.toString().toLowerCase(),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now,
       countBy: parachainArrangement ?? CountOption.ORIGIN

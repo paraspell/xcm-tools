@@ -10,6 +10,9 @@ registerEnumType(CountOption, {
 
 @ObjectType()
 export class MessageCount {
+  @Field()
+  ecosystem: string;
+
   @Field(returnInt)
   paraId: number;
 

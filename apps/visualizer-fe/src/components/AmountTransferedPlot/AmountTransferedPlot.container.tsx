@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { messageCountsByDayQueryDocument } from '../../api/messages';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../gql/graphql';
-import { Ecosystem } from '../../types/types';
 import convertToCsv from '../../utils/convertToCsv';
 import downloadSvg from '../../utils/downloadSvg';
 import { downloadZip } from '../../utils/downloadZip';
@@ -24,12 +23,13 @@ const AmountTransferedPlotContainer = () => {
 
   const [showMedian, setShowMedian] = useState(false);
 
-  const { parachains, dateRange } = useSelectedParachain();
+  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
   const [start, end] = dateRange;
 
   const { data, loading, error } = useQuery(messageCountsByDayQueryDocument, {
     variables: {
-      paraIds: parachains.map(parachain => getParachainId(parachain, Ecosystem.POLKADOT)),
+      ecosystem: selectedEcosystem.toString().toLowerCase(),
+      paraIds: parachains.map(parachain => getParachainId(parachain, selectedEcosystem)),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }

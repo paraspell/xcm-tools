@@ -23,6 +23,7 @@ export class MessageService {
   ) {}
 
   async countMessagesByStatus(
+    ecosystem: string,
     paraIds: number[] = [],
     startTime: number,
     endTime: number,
@@ -32,6 +33,7 @@ export class MessageService {
         paraIds.map(async (paraId) => {
           const successCount = await this.messagesRepository.count({
             where: {
+              ecosystem: ecosystem,
               origin_para_id: paraId,
               status: 'success',
               origin_block_timestamp: Between(startTime, endTime),
@@ -40,13 +42,19 @@ export class MessageService {
 
           const failedCount = await this.messagesRepository.count({
             where: {
+              ecosystem: ecosystem,
               origin_para_id: paraId,
               status: 'failed',
               origin_block_timestamp: Between(startTime, endTime),
             },
           });
 
-          return { paraId, success: successCount, failed: failedCount };
+          return {
+            ecosystem,
+            paraId,
+            success: successCount,
+            failed: failedCount,
+          };
         }),
       );
 
@@ -54,6 +62,7 @@ export class MessageService {
     } else {
       const successCount = await this.messagesRepository.count({
         where: {
+          ecosystem: ecosystem,
           status: 'success',
           origin_block_timestamp: Between(startTime, endTime),
         },
@@ -61,16 +70,18 @@ export class MessageService {
 
       const failedCount = await this.messagesRepository.count({
         where: {
+          ecosystem: ecosystem,
           status: 'failed',
           origin_block_timestamp: Between(startTime, endTime),
         },
       });
 
-      return [{ success: successCount, failed: failedCount }];
+      return [{ ecosystem, success: successCount, failed: failedCount }];
     }
   }
 
   async countMessagesByDay(
+    ecosystem: string,
     paraIds: number[],
     startTime: number,
     endTime: number,
@@ -90,6 +101,8 @@ export class MessageService {
         "SUM(CASE WHEN message.status = 'failed' THEN 1 ELSE 0 END)",
         'message_count_failed',
       );
+
+    queryBuilder.where('message.ecosystem = :ecosystem', { ecosystem });
 
     queryBuilder.where(
       'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
@@ -123,6 +136,7 @@ export class MessageService {
       message_count_failed: string;
     }[] = await queryBuilder.getRawMany();
     return data.map((d) => ({
+      ecosystem,
       paraId: d.paraId ? parseInt(d.paraId, 10) : undefined,
       date: d.date,
       messageCount:
@@ -134,6 +148,7 @@ export class MessageService {
   }
 
   async getTotalMessageCounts(
+    ecosystem: string,
     startTime: number,
     endTime: number,
     countBy: CountOption,
@@ -143,6 +158,7 @@ export class MessageService {
         .createQueryBuilder('message')
         .select('message.origin_para_id', 'paraId')
         .addSelect('COUNT(*)', 'totalCount')
+        .where('message.ecosystem = :ecosystem', { ecosystem })
         .where(
           'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
           { startTime, endTime },
@@ -153,6 +169,7 @@ export class MessageService {
         .createQueryBuilder('message')
         .select('message.dest_para_id', 'paraId')
         .addSelect('COUNT(*)', 'totalCount')
+        .where('message.ecosystem = :ecosystem', { ecosystem })
         .where(
           'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
           { startTime, endTime },
@@ -175,6 +192,7 @@ export class MessageService {
       });
 
       return Array.from(totalCounts.entries()).map(([paraId, totalCount]) => ({
+        ecosystem,
         paraId: parseInt(paraId, 10),
         totalCount: totalCount,
       }));
@@ -182,13 +200,15 @@ export class MessageService {
       const queryBuilder =
         this.messagesRepository.createQueryBuilder('message');
 
-      queryBuilder.where(
-        'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-        {
-          startTime,
-          endTime,
-        },
-      );
+      queryBuilder
+        .where('message.ecosystem = :ecosystem', { ecosystem })
+        .where(
+          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
+          {
+            startTime,
+            endTime,
+          },
+        );
 
       if (countBy === CountOption.ORIGIN) {
         queryBuilder
@@ -207,6 +227,7 @@ export class MessageService {
         totalCount: string;
       }[] = await queryBuilder.getRawMany();
       return results.map((result) => ({
+        ecosystem,
         paraId: result.paraId,
         totalCount: parseInt(result.totalCount, 10),
       }));
@@ -214,12 +235,17 @@ export class MessageService {
   }
 
   async countAssetsBySymbol(
+    ecosystem: string,
     paraIds: number[],
     startTime: number,
     endTime: number,
   ): Promise<AssetCount[]> {
     let query = '';
-    const queryParameters: (number | number[])[] = [startTime, endTime];
+    const queryParameters: (number | number[] | string)[] = [
+      ecosystem,
+      startTime,
+      endTime,
+    ];
 
     if (paraIds.length > 0) {
       query = `
@@ -227,8 +253,10 @@ export class MessageService {
         FROM (
           SELECT origin_para_id, (jsonb_array_elements(assets)->>'symbol') AS symbol
           FROM messages
-          WHERE origin_block_timestamp BETWEEN $1 AND $2
-            AND origin_para_id = ANY($3)
+          WHERE 
+            ecosystem = $1
+            AND origin_block_timestamp BETWEEN $2 AND $3
+            AND origin_para_id = ANY($4)
         ) as assets_symbols
         WHERE symbol IS NOT NULL
           AND symbol <> ''
@@ -242,7 +270,9 @@ export class MessageService {
         FROM (
           SELECT (jsonb_array_elements(assets)->>'symbol') AS symbol
           FROM messages
-          WHERE origin_block_timestamp BETWEEN $1 AND $2
+          WHERE 
+            ecosystem = $1
+            AND origin_block_timestamp BETWEEN $2 AND $3
         ) as assets_symbols
         WHERE symbol IS NOT NULL
           AND symbol <> ''
@@ -258,11 +288,13 @@ export class MessageService {
     return results.map((result) =>
       'origin_para_id' in result
         ? {
+            ecosystem,
             paraId: result.origin_para_id,
             symbol: result.symbol,
             count: parseInt(result.count),
           }
         : {
+            ecosystem,
             symbol: result.symbol,
             count: parseInt(result.count),
           },
@@ -270,6 +302,7 @@ export class MessageService {
   }
 
   async getAccountXcmCounts(
+    ecosystem: string,
     paraIds: number[],
     threshold: number,
     startTime: number,
@@ -278,12 +311,13 @@ export class MessageService {
     const whereConditions = [];
     const parameters = [];
 
-    whereConditions.push('origin_block_timestamp BETWEEN $1 AND $2');
-    parameters.push(startTime, endTime);
+    whereConditions.push('ecosystem = $1');
+    whereConditions.push('origin_block_timestamp BETWEEN $2 AND $3');
+    parameters.push(ecosystem, startTime, endTime);
 
     if (paraIds.length > 0) {
       whereConditions.push(
-        `origin_para_id IN (${paraIds.map((_, index) => `$${index + 3}`).join(', ')})`,
+        `origin_para_id IN (${paraIds.map((_, index) => `$${index + 1 + 3}`).join(', ')})`,
       );
       parameters.push(...paraIds);
     }
@@ -304,6 +338,7 @@ export class MessageService {
     >(query, parameters);
 
     return results.map((account) => ({
+      ecosystem,
       id: account.from_account_id,
       count: parseInt(account.message_count, 10),
     }));

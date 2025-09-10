@@ -4,6 +4,7 @@ describe('Channel Entity', () => {
   it('should create a Channel entity with the correct fields', () => {
     const channel = new Channel();
     channel.id = 1;
+    channel.ecosystem = 'polkadot';
     channel.sender = 101;
     channel.recipient = 202;
     channel.status = 'active';
@@ -14,6 +15,7 @@ describe('Channel Entity', () => {
     channel.proposed_max_message_size = 256;
 
     expect(channel.id).toBe(1);
+    expect(channel.ecosystem).toBe('polkadot');
     expect(channel.sender).toBe(101);
     expect(channel.recipient).toBe(202);
     expect(channel.status).toBe('active');
@@ -27,6 +29,7 @@ describe('Channel Entity', () => {
   it('should handle nullable or optional fields correctly', () => {
     const channel = new Channel();
     channel.id = 2;
+    channel.ecosystem = 'polkadot';
     channel.sender = 103;
     channel.recipient = 204;
     channel.status = 'pending';
@@ -37,6 +40,7 @@ describe('Channel Entity', () => {
     channel.proposed_max_message_size = 128;
 
     expect(channel.id).toBe(2);
+    expect(channel.ecosystem).toBe('polkadot');
     expect(channel.sender).toBe(103);
     expect(channel.recipient).toBe(204);
     expect(channel.status).toBe('pending');

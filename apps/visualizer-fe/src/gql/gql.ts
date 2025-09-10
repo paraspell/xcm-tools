@@ -14,28 +14,31 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-  '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n': typeof types.ChannelsDocument;
-  '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n': typeof types.ChannelDocument;
-  '\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n': typeof types.MessageCountsDocument;
-  '\n  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n': typeof types.MessageCountsByDayDocument;
-  '\n  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      symbol\n      count\n    }\n  }\n': typeof types.AssetCountsBySymbolDocument;
-  '\n  query accountCounts(\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      id\n      count\n    }\n  }\n': typeof types.AccountCountsDocument;
-  '\n  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {\n    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {\n      paraId\n      totalCount\n    }\n  }\n': typeof types.TotalMessageCountsDocument;
+  '\n  query channels($ecosystem: String!) {\n    channels(ecosystem: $ecosystem) {\n      id\n      ecosystem\n      sender\n      recipient\n      transfer_count\n      message_count\n    }\n  }\n': typeof types.ChannelsDocument;
+  '\n  query channelsInInterval($ecosystem: String!, $startTime: Timestamp!, $endTime: Timestamp!) {\n    channelsInInterval(ecosystem: $ecosystem, startTime: $startTime, endTime: $endTime) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n    }\n  }\n': typeof types.ChannelsInIntervalDocument;
+  '\n  query channel($ecosystem: String!, $sender: Int!, $recipient: Int!) {\n    channel(ecosystem: $ecosystem, sender: $sender, recipient: $recipient) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n': typeof types.ChannelDocument;
+  '\n  query messageCounts(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCounts(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      success\n      failed\n    }\n  }\n': typeof types.MessageCountsDocument;
+  '\n  query messageCountsByDay(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCountsByDay(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n': typeof types.MessageCountsByDayDocument;
+  '\n  query assetCountsBySymbol(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    assetCountsBySymbol(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      symbol\n      count\n    }\n  }\n': typeof types.AssetCountsBySymbolDocument;
+  '\n  query accountCounts(\n    $ecosystem: String!\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      ecosystem: $ecosystem\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      id\n      count\n    }\n  }\n': typeof types.AccountCountsDocument;
+  '\n  query totalMessageCounts(\n    $ecosystem: String!\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n    $countBy: CountOption!\n  ) {\n    totalMessageCounts(\n      ecosystem: $ecosystem\n      startTime: $startTime\n      endTime: $endTime\n      countBy: $countBy\n    ) {\n      ecosystem\n      paraId\n      totalCount\n    }\n  }\n': typeof types.TotalMessageCountsDocument;
 };
 const documents: Documents = {
-  '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n':
+  '\n  query channels($ecosystem: String!) {\n    channels(ecosystem: $ecosystem) {\n      id\n      ecosystem\n      sender\n      recipient\n      transfer_count\n      message_count\n    }\n  }\n':
     types.ChannelsDocument,
-  '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n':
+  '\n  query channelsInInterval($ecosystem: String!, $startTime: Timestamp!, $endTime: Timestamp!) {\n    channelsInInterval(ecosystem: $ecosystem, startTime: $startTime, endTime: $endTime) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n    }\n  }\n':
+    types.ChannelsInIntervalDocument,
+  '\n  query channel($ecosystem: String!, $sender: Int!, $recipient: Int!) {\n    channel(ecosystem: $ecosystem, sender: $sender, recipient: $recipient) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n':
     types.ChannelDocument,
-  '\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n':
+  '\n  query messageCounts(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCounts(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      success\n      failed\n    }\n  }\n':
     types.MessageCountsDocument,
-  '\n  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n':
+  '\n  query messageCountsByDay(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCountsByDay(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n':
     types.MessageCountsByDayDocument,
-  '\n  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      symbol\n      count\n    }\n  }\n':
+  '\n  query assetCountsBySymbol(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    assetCountsBySymbol(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      symbol\n      count\n    }\n  }\n':
     types.AssetCountsBySymbolDocument,
-  '\n  query accountCounts(\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      id\n      count\n    }\n  }\n':
+  '\n  query accountCounts(\n    $ecosystem: String!\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      ecosystem: $ecosystem\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      id\n      count\n    }\n  }\n':
     types.AccountCountsDocument,
-  '\n  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {\n    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {\n      paraId\n      totalCount\n    }\n  }\n':
+  '\n  query totalMessageCounts(\n    $ecosystem: String!\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n    $countBy: CountOption!\n  ) {\n    totalMessageCounts(\n      ecosystem: $ecosystem\n      startTime: $startTime\n      endTime: $endTime\n      countBy: $countBy\n    ) {\n      ecosystem\n      paraId\n      totalCount\n    }\n  }\n':
     types.TotalMessageCountsDocument
 };
 
@@ -57,44 +60,50 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n'
-): (typeof documents)['\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n'];
+  source: '\n  query channels($ecosystem: String!) {\n    channels(ecosystem: $ecosystem) {\n      id\n      ecosystem\n      sender\n      recipient\n      transfer_count\n      message_count\n    }\n  }\n'
+): (typeof documents)['\n  query channels($ecosystem: String!) {\n    channels(ecosystem: $ecosystem) {\n      id\n      ecosystem\n      sender\n      recipient\n      transfer_count\n      message_count\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'
-): (typeof documents)['\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'];
+  source: '\n  query channelsInInterval($ecosystem: String!, $startTime: Timestamp!, $endTime: Timestamp!) {\n    channelsInInterval(ecosystem: $ecosystem, startTime: $startTime, endTime: $endTime) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n    }\n  }\n'
+): (typeof documents)['\n  query channelsInInterval($ecosystem: String!, $startTime: Timestamp!, $endTime: Timestamp!) {\n    channelsInInterval(ecosystem: $ecosystem, startTime: $startTime, endTime: $endTime) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n'
-): (typeof documents)['\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n'];
+  source: '\n  query channel($ecosystem: String!, $sender: Int!, $recipient: Int!) {\n    channel(ecosystem: $ecosystem, sender: $sender, recipient: $recipient) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'
+): (typeof documents)['\n  query channel($ecosystem: String!, $sender: Int!, $recipient: Int!) {\n    channel(ecosystem: $ecosystem, sender: $sender, recipient: $recipient) {\n      id\n      ecosystem\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n'
-): (typeof documents)['\n  query messageCountsByDay($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCountsByDay(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n'];
+  source: '\n  query messageCounts(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCounts(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      success\n      failed\n    }\n  }\n'
+): (typeof documents)['\n  query messageCounts(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCounts(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      success\n      failed\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      symbol\n      count\n    }\n  }\n'
-): (typeof documents)['\n  query assetCountsBySymbol($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    assetCountsBySymbol(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      symbol\n      count\n    }\n  }\n'];
+  source: '\n  query messageCountsByDay(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCountsByDay(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n'
+): (typeof documents)['\n  query messageCountsByDay(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    messageCountsByDay(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      date\n      messageCount\n      messageCountSuccess\n      messageCountFailed\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query accountCounts(\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      id\n      count\n    }\n  }\n'
-): (typeof documents)['\n  query accountCounts(\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      id\n      count\n    }\n  }\n'];
+  source: '\n  query assetCountsBySymbol(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    assetCountsBySymbol(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      symbol\n      count\n    }\n  }\n'
+): (typeof documents)['\n  query assetCountsBySymbol(\n    $ecosystem: String!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    assetCountsBySymbol(\n      ecosystem: $ecosystem\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      paraId\n      symbol\n      count\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {\n    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {\n      paraId\n      totalCount\n    }\n  }\n'
-): (typeof documents)['\n  query totalMessageCounts($startTime: Timestamp!, $endTime: Timestamp!, $countBy: CountOption!) {\n    totalMessageCounts(startTime: $startTime, endTime: $endTime, countBy: $countBy) {\n      paraId\n      totalCount\n    }\n  }\n'];
+  source: '\n  query accountCounts(\n    $ecosystem: String!\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      ecosystem: $ecosystem\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      id\n      count\n    }\n  }\n'
+): (typeof documents)['\n  query accountCounts(\n    $ecosystem: String!\n    $threshold: Int!\n    $paraIds: [Int!]\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n  ) {\n    accountCounts(\n      ecosystem: $ecosystem\n      threshold: $threshold\n      paraIds: $paraIds\n      startTime: $startTime\n      endTime: $endTime\n    ) {\n      ecosystem\n      id\n      count\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query totalMessageCounts(\n    $ecosystem: String!\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n    $countBy: CountOption!\n  ) {\n    totalMessageCounts(\n      ecosystem: $ecosystem\n      startTime: $startTime\n      endTime: $endTime\n      countBy: $countBy\n    ) {\n      ecosystem\n      paraId\n      totalCount\n    }\n  }\n'
+): (typeof documents)['\n  query totalMessageCounts(\n    $ecosystem: String!\n    $startTime: Timestamp!\n    $endTime: Timestamp!\n    $countBy: CountOption!\n  ) {\n    totalMessageCounts(\n      ecosystem: $ecosystem\n      startTime: $startTime\n      endTime: $endTime\n      countBy: $countBy\n    ) {\n      ecosystem\n      paraId\n      totalCount\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
