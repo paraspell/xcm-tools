@@ -2,9 +2,9 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
 import type { TGetOriginXcmFeeEstimateOptions, TGetXcmFeeEstimateDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
+import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils'
 import { isSufficientOrigin } from './isSufficient'
-import { padFee } from './padFee'
 
 export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   api,

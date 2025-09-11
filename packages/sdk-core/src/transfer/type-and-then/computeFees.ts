@@ -3,8 +3,7 @@ import type { Version } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { addXcmVersionHeader } from '../../utils'
-import { padFeeBy } from '../fees'
+import { addXcmVersionHeader, padFeeBy } from '../../utils'
 import type { createCustomXcm } from './createCustomXcm'
 import type { createRefundInstruction } from './utils'
 

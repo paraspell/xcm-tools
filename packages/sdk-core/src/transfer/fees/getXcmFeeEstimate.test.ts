@@ -4,14 +4,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { abstractDecimals } from '../../utils'
+import { padFee } from '../../utils/fees'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
 import { getReverseTxFee } from './getReverseTxFee'
 import { getXcmFeeEstimate } from './getXcmFeeEstimate'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
-import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets')
-vi.mock('./padFee')
+vi.mock('../../utils/fees')
 vi.mock('./getOriginXcmFeeEstimate')
 vi.mock('../../utils')
 vi.mock('./isSufficient')

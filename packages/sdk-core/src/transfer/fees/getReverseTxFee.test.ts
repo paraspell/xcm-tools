@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions } from '../../types'
+import { padFee } from '../../utils/fees'
 import { getReverseTxFee } from './getReverseTxFee'
-import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
   isChainEvm: vi.fn(),
@@ -16,6 +16,7 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 vi.mock('viem')
+vi.mock('../../utils/fees')
 
 const mockBuild = vi.fn()
 const mockCurrency = vi.fn().mockReturnThis()

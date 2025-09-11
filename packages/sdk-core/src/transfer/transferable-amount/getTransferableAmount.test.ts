@@ -1,22 +1,23 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol
+  findNativeAssetInfoOrThrow,
+  getEdFromAssetOrThrow,
+  isAssetEqual
 } from '@paraspell/assets'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getOriginXcmFee } from '../../transfer'
+import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
-import { getAssetBalanceInternal } from './balance/getAssetBalance'
+import { getOriginXcmFee } from '../fees'
 import { getTransferableAmount } from './getTransferableAmount'
 
 vi.mock('@paraspell/assets')
-vi.mock('../../transfer')
-vi.mock('./balance/getAssetBalance')
 vi.mock('../../utils')
+vi.mock('../../pallets/assets')
+vi.mock('../fees')
 
 describe('getTransferableAmount', () => {
   const mockApi = {
@@ -37,8 +38,9 @@ describe('getTransferableAmount', () => {
     const fee = 200n
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
@@ -68,8 +70,8 @@ describe('getTransferableAmount', () => {
     const ed = 100n
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'USDT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
 
     const result = await getTransferableAmount({
@@ -91,8 +93,9 @@ describe('getTransferableAmount', () => {
     const fee = 200n
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
@@ -110,8 +113,9 @@ describe('getTransferableAmount', () => {
 
   test('throws error when XCM fee is undefined for native asset', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 
@@ -131,8 +135,8 @@ describe('getTransferableAmount', () => {
 
   test('sets disconnect allowed to false and disconnects after', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000n)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
 
@@ -155,8 +159,9 @@ describe('getTransferableAmount', () => {
 
   test('disconnects even if internal function throws', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 

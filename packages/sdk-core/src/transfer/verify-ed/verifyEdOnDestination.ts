@@ -1,4 +1,4 @@
-import type { TVerifyEdOnDestinationOptions } from '../../../types'
+import type { TVerifyEdOnDestinationOptions } from '../../types'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 export const verifyEdOnDestination = async <TApi, TRes>(

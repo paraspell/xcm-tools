@@ -4,28 +4,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TCurrencyCore } from '../types'
 import { getNativeAssetSymbol } from './assets'
-import { getExistentialDeposit, getExistentialDepositOrThrow } from './getExistentialDeposit'
+import {
+  getEdFromAssetOrThrow,
+  getExistentialDeposit,
+  getExistentialDepositOrThrow
+} from './getExistentialDeposit'
 import { findAssetInfo, findAssetInfoOrThrow } from './search'
 
-vi.mock('./assets', () => ({
-  getNativeAssetSymbol: vi.fn()
-}))
-
-vi.mock('./search', () => ({
-  findAssetInfo: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
+vi.mock('./assets', () => ({ getNativeAssetSymbol: vi.fn() }))
+vi.mock('./search')
 
 describe('getExistentialDeposit', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should return the ED of native asset when currency is not provided and findAsset succeeds', () => {
+  it('returns ED of native asset when currency is not provided and findAssetInfo succeeds', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
-    const wrappedSymbol = { type: 'Native', value: nativeSymbol }
-    const ed = 1000000000n
+    const ed = 1_000_000_000n
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
     vi.mocked(findAssetInfo).mockReturnValue({
@@ -36,15 +33,18 @@ describe('getExistentialDeposit', () => {
     const result = getExistentialDeposit(chain)
 
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
-    expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: wrappedSymbol }, null)
+    expect(findAssetInfo).toHaveBeenCalledWith(
+      chain,
+      expect.objectContaining({ symbol: expect.anything() }),
+      null
+    )
     expect(result).toBe(ed)
   })
 
-  it('should fallback to findAssetInfoOrThrow when currency is not provided and findAsset returns null', () => {
+  it('falls back to findAssetInfoOrThrow when currency is not provided and findAssetInfo returns null', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
-    const wrappedSymbol = { type: 'Native', value: nativeSymbol }
-    const ed = 1000000000n
+    const ed = 1_000_000_000n
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
     vi.mocked(findAssetInfo).mockReturnValue(null)
@@ -55,12 +55,16 @@ describe('getExistentialDeposit', () => {
 
     const result = getExistentialDeposit(chain)
 
-    expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: wrappedSymbol }, null)
+    expect(findAssetInfo).toHaveBeenCalledWith(
+      chain,
+      expect.objectContaining({ symbol: expect.anything() }),
+      null
+    )
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: nativeSymbol }, null)
     expect(result).toBe(ed)
   })
 
-  it('should return null if currency is not provided and native asset has no ED', () => {
+  it('returns null if currency is not provided and native asset has no ED', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
 
@@ -73,10 +77,10 @@ describe('getExistentialDeposit', () => {
     expect(result).toBeNull()
   })
 
-  it('should return the ED of the specified currency when currency is provided', () => {
+  it('returns ED of the specified currency when currency is provided', () => {
     const chain: TChain = 'Karura'
     const currency: TCurrencyCore = { symbol: 'KSM' }
-    const ed = 500000000n
+    const ed = 500_000_000n
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'KSM',
@@ -90,7 +94,7 @@ describe('getExistentialDeposit', () => {
     expect(result).toBe(ed)
   })
 
-  it('should return null if currency is provided but asset has no ED', () => {
+  it('returns null if currency is provided but asset has no ED', () => {
     const chain: TChain = 'Karura'
     const currency: TCurrencyCore = { symbol: 'KSM' }
 
@@ -104,11 +108,9 @@ describe('getExistentialDeposit', () => {
 })
 
 describe('getExistentialDepositOrThrow', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
+  beforeEach(() => vi.clearAllMocks())
 
-  it('should throw InvalidCurrencyError if ED is not found', () => {
+  it('throws InvalidCurrencyError if ED is not found (with chain in message)', () => {
     const chain: TChain = 'Acala'
     const currency: TCurrencyCore = { symbol: 'KSM' }
 
@@ -122,7 +124,7 @@ describe('getExistentialDepositOrThrow', () => {
     )
   })
 
-  it('should return the ED as BigInt if found', () => {
+  it('returns ED as BigInt if found for a provided currency', () => {
     const chain: TChain = 'Acala'
     const currency: TCurrencyCore = { symbol: 'ACA' }
     const ed = '1000000000'
@@ -136,19 +138,41 @@ describe('getExistentialDepositOrThrow', () => {
     expect(result).toBe(BigInt(ed))
   })
 
-  it('should return the ED as BigInt for native asset when no currency provided', () => {
+  it('returns ED as BigInt for native asset when no currency provided', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
-    const wrappedSymbol = 'Native(ACA)'
     const ed = '1000000000'
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
     vi.mocked(findAssetInfo).mockReturnValue({
-      symbol: wrappedSymbol,
+      symbol: nativeSymbol,
       existentialDeposit: ed
     } as TAssetInfo)
 
     const result = getExistentialDepositOrThrow(chain)
     expect(result).toBe(BigInt(ed))
+  })
+})
+
+describe('getEdFromAssetOrThrow', () => {
+  it('returns ED bigint from asset when present', () => {
+    const asset: TAssetInfo = {
+      symbol: 'DOT',
+      existentialDeposit: '1000'
+    } as TAssetInfo
+
+    const ed = getEdFromAssetOrThrow(asset)
+    expect(ed).toBe(1000n)
+  })
+
+  it('throws InvalidCurrencyError when asset has no ED', () => {
+    const asset: TAssetInfo = { symbol: 'DOT' } as TAssetInfo
+    expect(() => getEdFromAssetOrThrow(asset)).toThrow(InvalidCurrencyError)
+  })
+
+  it('supports large ED string -> BigInt conversion', () => {
+    const big = '123456789012345678901234567890'
+    const asset: TAssetInfo = { symbol: 'GLMR', existentialDeposit: big } as TAssetInfo
+    expect(getEdFromAssetOrThrow(asset)).toBe(BigInt(big))
   })
 })

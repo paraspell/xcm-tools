@@ -8,18 +8,18 @@ import type { TChain } from '@paraspell/sdk-common'
 import { replaceBigInt, type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
-import { DryRunFailedError, UnableToComputeError } from '../../../errors'
-import { getXcmFee } from '../../../transfer'
-import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
-import { abstractDecimals, validateAddress } from '../../../utils'
-import { getAssetBalanceInternal } from '../balance/getAssetBalance'
+import type { IPolkadotApi } from '../../api'
+import { DryRunFailedError, UnableToComputeError } from '../../errors'
+import { getAssetBalanceInternal } from '../../pallets/assets'
+import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
+import { abstractDecimals, validateAddress } from '../../utils'
+import { getXcmFee } from '../fees'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 vi.mock('@paraspell/assets')
-vi.mock('../../../transfer')
-vi.mock('../../../utils')
-vi.mock('../balance/getAssetBalance')
+vi.mock('../../utils')
+vi.mock('../../pallets/assets')
+vi.mock('../fees')
 
 describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {

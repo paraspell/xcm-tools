@@ -6,7 +6,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
   TAssetInfo,
-  TBalanceResponse,
   TBridgeStatus,
   TBuilderOptions,
   TChain,
@@ -50,7 +49,7 @@ import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
 
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TBalanceResponse, TPjsApi, TPjsApiOrUrl } from './types'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 

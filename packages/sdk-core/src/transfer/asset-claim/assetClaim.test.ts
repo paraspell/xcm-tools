@@ -2,21 +2,14 @@ import type { TAsset } from '@paraspell/assets'
 import { isRelayChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { validateAddress } from '../../../utils'
+import type { IPolkadotApi } from '../../api'
+import type { TAssetClaimOptions } from '../../types'
+import { validateAddress } from '../../utils'
 import { claimAssets } from './assetClaim'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 
-vi.mock('../../../utils', () => ({
-  validateAddress: vi.fn(),
-  getChainVersion: vi.fn()
-}))
-
-vi.mock('./buildClaimAssetsParams', () => ({
-  buildClaimAssetsParams: vi.fn()
-}))
-
+vi.mock('../../utils')
+vi.mock('./buildClaimAssetsParams')
 vi.mock('./resolveAssets')
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({

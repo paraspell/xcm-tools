@@ -264,6 +264,30 @@ describe('XTransferController', () => {
     });
   });
 
+  describe('getMinTransferableAmount', () => {
+    it('should call service.getMinTransferableAmount and returns its value', async () => {
+      const bodyParams: XTransferDtoWSenderAddress = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        currency: { symbol: 'DOT', amount: 100 },
+      };
+      const mockResult = 500n;
+      const spy = vi
+        .spyOn(service, 'getMinTransferableAmount')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getMinTransferableAmount(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
   describe('verifyEdOnDestination', () => {
     it('should call service.verifyEdOnDestination and returns its value', async () => {
       const bodyParams: XTransferDtoWSenderAddress = {

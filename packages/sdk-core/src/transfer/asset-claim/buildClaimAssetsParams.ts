@@ -1,5 +1,5 @@
-import type { TAssetClaimInternalOptions } from '../../../types/TAssetClaim'
-import { addXcmVersionHeader, createBeneficiaryLocation } from '../../../utils'
+import type { TAssetClaimInternalOptions } from '../../types'
+import { addXcmVersionHeader, createBeneficiaryLocation } from '../../utils'
 
 export const buildClaimAssetsParams = <TApi, TRes>(
   options: TAssetClaimInternalOptions<TApi, TRes>

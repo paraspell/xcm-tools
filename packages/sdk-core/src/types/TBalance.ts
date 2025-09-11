@@ -5,14 +5,11 @@ import type {
   WithAmount,
   WithComplexAmount
 } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-
-export type TBalanceResponse = {
-  free?: string
-  balance?: string
-}
+import type { TSendBaseOptions } from './TTransfer'
 
 /**
  * Retrieves the native asset balance for a given account on a specified chain.
@@ -129,50 +126,6 @@ export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TGetMaxNativeTransferableAmountOptionsBase = {
-  /**
-   * The address of the account.
-   */
-  address: string
-  /**
-   * The chain on which to query the balance.
-   */
-  chain: TSubstrateChain
-  /**
-   * The currency to query.
-   */
-  currency?: {
-    symbol: string
-  }
-}
-
-export type TGetMaxNativeTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetMaxNativeTransferableAmountOptionsBase,
-  TApi,
-  TRes
->
-
-export type TGetMaxForeignTransferableAmountOptionsBase = {
-  /**
-   * The address of the account.
-   */
-  address: string
-  /**
-   * The chain on which to query the balance.
-   */
-  chain: TParachain
-  /**
-   * The currency to query.
-   */
-  currency: TCurrencyCore
-}
-
-export type TGetMaxForeignTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetMaxForeignTransferableAmountOptionsBase,
-  TApi,
-  TRes
->
-
 export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The sender address of the account.
@@ -199,6 +152,15 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
   TGetTransferableAmountOptionsBase<TRes>,
+  TApi,
+  TRes
+>
+
+export type TGetMinTransferableAmountOptions<TApi, TRes> = WithApi<
+  TGetTransferableAmountOptionsBase<TRes> & {
+    address: string
+    builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+  },
   TApi,
   TRes
 >

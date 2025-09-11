@@ -2,15 +2,12 @@ import type { TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import type { TAssetClaimInternalOptions } from '../../../types/TAssetClaim'
-import { addXcmVersionHeader, createBeneficiaryLocation } from '../../../utils'
+import type { IPolkadotApi } from '../../api'
+import type { TAssetClaimInternalOptions } from '../../types'
+import { addXcmVersionHeader, createBeneficiaryLocation } from '../../utils'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 
-vi.mock('../../../utils', () => ({
-  addXcmVersionHeader: vi.fn(),
-  createBeneficiaryLocation: vi.fn()
-}))
+vi.mock('../../utils')
 
 describe('buildClaimAssetsParams', () => {
   const apiMock = {} as unknown as IPolkadotApi<unknown, unknown>

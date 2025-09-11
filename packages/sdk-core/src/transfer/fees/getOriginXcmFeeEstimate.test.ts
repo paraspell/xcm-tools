@@ -6,12 +6,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { TGetOriginXcmFeeEstimateOptions, TGetXcmFeeEstimateDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
+import { padFee } from '../../utils/fees'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
 import { isSufficientOrigin } from './isSufficient'
-import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets')
-vi.mock('./padFee')
+vi.mock('../../utils/fees')
 vi.mock('../../utils')
 vi.mock('./isSufficient')
 

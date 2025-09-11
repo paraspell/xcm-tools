@@ -10,7 +10,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { HopProcessParams, TGetXcmFeeOptions, TXcmFeeHopResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
-import { addEthereumBridgeFees, traverseXcmHops } from '../dryRun'
+import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 import { getXcmFeeInternal } from './getXcmFeeInternal'
@@ -23,7 +23,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
-vi.mock('../dryRun')
+vi.mock('../dry-run')
 vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
 

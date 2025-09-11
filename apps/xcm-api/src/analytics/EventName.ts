@@ -27,6 +27,7 @@ export enum EventName {
   GET_MAX_NATIVE_TRANSFERABLE_AMOUNT = 'Get Max Native Transferable Amount',
   GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT = 'Get Max Foreign Transferable Amount',
   GET_TRANSFERABLE_AMOUNT = 'Get Transferable Amount',
+  GET_MIN_TRANSFERABLE_AMOUNT = 'Get Min Transferable Amount',
   GET_EXISTENTIAL_DEPOSIT = 'Get Existential Deposit',
   GET_ORIGIN_FEE_DETAILS = 'Get Origin fee details',
   HAS_DRY_RUN_SUPPORT = 'Has Dry Run Support',

@@ -1,17 +1,17 @@
 import {
   findAssetInfoOrThrow,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol,
+  findNativeAssetInfoOrThrow,
+  getEdFromAssetOrThrow,
   isAssetEqual
 } from '@paraspell/assets'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
-import { getOriginXcmFee } from '../../transfer'
-import { resolveFeeAsset } from '../../transfer/utils/resolveFeeAsset'
-import type { TGetTransferableAmountOptions } from '../../types/TBalance'
+import { getAssetBalanceInternal } from '../../pallets/assets'
+import type { TGetTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
-import { getAssetBalanceInternal } from './balance/getAssetBalance'
+import { getOriginXcmFee } from '../fees'
+import { resolveFeeAsset } from '../utils'
 
 export const getTransferableAmountInternal = async <TApi, TRes>({
   api,
@@ -35,21 +35,22 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   const balance = await getAssetBalanceInternal({
     api,
     address: senderAddress,
-    chain: chain,
+    chain,
     currency
   })
 
-  const ed = getExistentialDepositOrThrow(chain, currency)
+  const ed = getEdFromAssetOrThrow(asset)
 
-  const isNativeAsset = getNativeAssetSymbol(chain) === asset.symbol
+  const nativeAssetInfo = findNativeAssetInfoOrThrow(chain)
+  const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
 
-  const shouldSubstractFee =
-    isNativeAsset ||
-    (chain === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+  const paysOriginInSendingAsset =
+    (!resolvedFeeAsset && isNativeAsset) ||
+    (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
 
   let feeToSubtract = 0n
 
-  if (shouldSubstractFee) {
+  if (paysOriginInSendingAsset) {
     const { fee } = await getOriginXcmFee({
       api,
       tx,

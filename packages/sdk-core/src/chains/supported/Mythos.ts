@@ -13,7 +13,6 @@ import {
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { getParaEthTransferFees } from '../../transfer'
-import { padFeeBy } from '../../transfer/fees/padFee'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -23,6 +22,7 @@ import { assertAddressIsString, assertHasLocation } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
+import { padFeeBy } from '../../utils/fees'
 import { handleToAhTeleport } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'

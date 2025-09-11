@@ -87,6 +87,7 @@ const builderMock = {
   getXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
   getOriginXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
   getTransferableAmount: vi.fn().mockResolvedValue(amountResult),
+  getMinTransferableAmount: vi.fn().mockResolvedValue(amountResult),
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
   getTransferInfo: vi.fn().mockResolvedValue({}),
   disconnect: vi.fn(),
@@ -424,6 +425,14 @@ describe('XTransferService', () => {
       const res = await service.getTransferableAmount(xTransferDto);
       expect(res).toBe(amountResult);
       expect(builderMock.getTransferableAmount).toHaveBeenCalled();
+    });
+  });
+
+  describe('getMinTransferableAmount', () => {
+    it('delegates to builder.getMinTransferableAmount', async () => {
+      const res = await service.getMinTransferableAmount(xTransferDto);
+      expect(res).toBe(amountResult);
+      expect(builderMock.getMinTransferableAmount).toHaveBeenCalled();
     });
   });
 

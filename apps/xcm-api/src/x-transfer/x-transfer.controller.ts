@@ -151,6 +151,16 @@ export class XTransferController {
     return this.xTransferService.getTransferableAmount(bodyParams);
   }
 
+  @Post('min-transferable-amount')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getMinTransferableAmount(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_MIN_TRANSFERABLE_AMOUNT, req, bodyParams);
+    return this.xTransferService.getMinTransferableAmount(bodyParams);
+  }
+
   @Post('verify-ed-on-destination')
   @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
   verifyEdOnDestination(

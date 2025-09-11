@@ -1,24 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../errors'
-import { getXcmFee } from '../../transfer'
-import { dryRunInternal } from '../../transfer/dryRun/dryRunInternal'
-import { padFeeBy } from '../../transfer/fees/padFee'
+import { dryRunInternal, getXcmFee } from '../../transfer'
 import type { TDryRunResult, TGetXcmFeeResult, TPolkadotXCMTransferOptions } from '../../types'
+import { padFeeBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 import { handleToAhTeleport } from './handleToAhTeleport'
 
-vi.mock('../../transfer/dryRun/dryRunInternal', () => ({
-  dryRunInternal: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  getXcmFee: vi.fn()
-}))
-
-vi.mock('./execute', () => ({
-  createExecuteExchangeXcm: vi.fn()
-}))
+vi.mock('../../transfer')
+vi.mock('./execute')
+vi.mock('../fees/padFee')
 
 vi.mock('../../transfer/fees/padFee', () => ({
   padFeeBy: vi.fn((fee: bigint, percent: number) => fee + (fee * BigInt(percent)) / 100n)

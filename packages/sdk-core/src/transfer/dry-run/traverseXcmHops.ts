@@ -11,7 +11,7 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
-import { getParaEthTransferFees } from '../ethTransfer'
+import { getParaEthTransferFees } from '../eth-transfer'
 
 export async function traverseXcmHops<TApi, TRes, THopResult>(
   config: HopTraversalConfig<TApi, TRes, THopResult>

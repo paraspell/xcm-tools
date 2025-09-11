@@ -2,9 +2,8 @@ import type { TAmount, TCurrencyCore } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isTAsset, type TAsset } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 
-import type { TAssetClaimOptions } from '../../../types'
-import { assertHasLocation, createAsset, localizeLocation } from '../../../utils'
-import { abstractDecimals } from '../../../utils/transfer/abstractDecimals'
+import type { TAssetClaimOptions } from '../../types'
+import { abstractDecimals, assertHasLocation, createAsset, localizeLocation } from '../../utils'
 
 export const resolveAssets = <TApi, TRes>(
   { api, chain, currency }: TAssetClaimOptions<TApi, TRes>,

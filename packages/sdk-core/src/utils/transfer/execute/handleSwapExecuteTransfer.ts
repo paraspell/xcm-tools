@@ -5,8 +5,7 @@ import { type TLocation } from '@paraspell/sdk-common'
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
-import { padFeeBy } from '../../../transfer/fees/padFee'
+import { dryRunInternal } from '../../../transfer/dry-run/dryRunInternal'
 import type {
   TCreateSwapXcmInternalOptions,
   TCreateSwapXcmOptions,
@@ -17,6 +16,7 @@ import type {
   TWeight
 } from '../../../types'
 import { getChainVersion } from '../../chain'
+import { padFeeBy } from '../../fees/padFee'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 

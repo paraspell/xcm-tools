@@ -13,7 +13,8 @@ import { useForm } from '@mantine/form';
 import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
 import { CHAINS, isChainEvm, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import {
-  IconArrowsExchange,
+  IconArrowBarDown,
+  IconArrowBarUp,
   IconChecks,
   IconChevronDown,
   IconCoin,
@@ -231,6 +232,13 @@ const XcmUtilsForm: FC<Props> = ({
     form.validate();
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), 'getTransferableAmount');
+    }
+  };
+
+  const onSubmitGetMinTransferableAmount = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getMinTransferableAmount');
     }
   };
 
@@ -473,10 +481,16 @@ const XcmUtilsForm: FC<Props> = ({
 
                 <Menu.Divider />
                 <Menu.Item
-                  leftSection={<IconArrowsExchange size={16} />}
+                  leftSection={<IconArrowBarUp size={16} />}
                   onClick={onSubmitGetTransferableAmount}
                 >
                   Get Transferable Amount
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconArrowBarDown size={16} />}
+                  onClick={onSubmitGetMinTransferableAmount}
+                >
+                  Get Min Transferable Amount
                 </Menu.Item>
                 <Menu.Item
                   leftSection={<IconChecks size={16} />}
