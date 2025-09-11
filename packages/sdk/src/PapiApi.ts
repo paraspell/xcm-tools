@@ -29,12 +29,10 @@ import {
   ChainNotSupportedError,
   computeFeeFromDryRun,
   createChainClient,
-  findAssetInfo,
-  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChain,
   getChainProviders,
-  getNativeAssetSymbol,
   hasXcmPaymentApiSupport,
   InvalidParameterError,
   isAssetEqual,
@@ -43,7 +41,6 @@ import {
   isRelayChain,
   localizeLocation,
   MissingChainApiError,
-  Native,
   padFeeBy,
   Parents,
   replaceBigInt,
@@ -542,8 +539,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const usedAsset =
-      feeAsset ?? findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+    const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
     const usedSymbol = usedAsset.symbol
 
     if (!isSuccess) {
@@ -573,7 +569,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const executionFee = await this.calculateTransactionFee(resolvedTx, address)
 
-    const nativeAsset = findAssetInfo(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+    const nativeAsset = findNativeAssetInfoOrThrow(chain)
 
     const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
@@ -581,7 +577,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       hasXcmPaymentApiSupport(chain) &&
       result.value.local_xcm &&
       hasLocation &&
-      nativeAsset &&
       chain !== 'AssetHubPolkadot' &&
       chain !== 'Kusama'
     ) {

@@ -2,6 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
+  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -59,10 +60,9 @@ describe('getXcmFeeInternal', () => {
 
   it('returns correct structure when origin dry-run fails', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
-      chain === 'Acala' ? 'ACA' : 'GLMR'
-    )
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -102,10 +102,9 @@ describe('getXcmFeeInternal', () => {
 
   it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
-      chain === 'Acala' ? 'ACA' : 'GLMR'
-    )
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -142,10 +141,9 @@ describe('getXcmFeeInternal', () => {
 
   it('computes fees when origin simulation succeeds and no hops are needed', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
-      chain === 'Acala' ? 'ACA' : 'GLMR'
-    )
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -193,9 +191,9 @@ describe('getXcmFeeInternal', () => {
 
   it('adds intermediate AssetHub fee when hop succeeds', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
       if (chain === 'AssetHubPolkadot') return 'DOT'
       return 'GLMR'
     })
@@ -271,9 +269,9 @@ describe('getXcmFeeInternal', () => {
 
   it('handles hop dry-run error and falls back to destination paymentInfo', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
       if (chain === 'AssetHubPolkadot') return 'DOT'
       return 'GLMR'
     })
@@ -1009,6 +1007,9 @@ describe('getXcmFeeInternal', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+      symbol: 'ACA'
+    } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
       if (chain === 'Acala') return 'ACA'
       if (chain === 'AssetHubPolkadot') return 'DOT'
@@ -1310,6 +1311,7 @@ describe('getXcmFeeInternal', () => {
 
   it('handles processHop currency logic: Ethereum destination with AssetHub hop', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -1352,6 +1354,6 @@ describe('getXcmFeeInternal', () => {
 
     await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }), false)
 
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith('AssetHubPolkadot')
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith('Ethereum')
   })
 })
