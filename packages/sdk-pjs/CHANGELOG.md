@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.1...sdk-pjs-v11.4.2) (2025-09-11)
+
+
+### Bug Fixes
+
+* Fix Ethereum native asset search for fee queries 🔧 ([c71e004](https://github.com/paraspell/xcm-tools/commit/c71e004ff77c4b036cd75a7914709a819be20134))
+
 ## [11.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.0...sdk-pjs-v11.4.1) (2025-09-10)
 
 
