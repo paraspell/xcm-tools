@@ -1,9 +1,9 @@
 import { getSupportedPallets } from '@paraspell/pallets'
 
-import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
-import { InvalidParameterError } from '../../../errors'
-import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { getChainVersion, validateAddress } from '../../../utils'
+import { TX_CLIENT_TIMEOUT_MS } from '../../constants'
+import { InvalidParameterError } from '../../errors'
+import type { TAssetClaimOptions } from '../../types'
+import { getChainVersion, validateAddress } from '../../utils'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 import { resolveAssets } from './resolveAssets'
 

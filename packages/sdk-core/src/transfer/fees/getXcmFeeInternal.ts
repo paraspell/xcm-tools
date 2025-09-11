@@ -20,7 +20,7 @@ import type {
   TXcmFeeHopResult
 } from '../../types'
 import { abstractDecimals, getRelayChainOf } from '../../utils'
-import { addEthereumBridgeFees, traverseXcmHops } from '../dryRun'
+import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 

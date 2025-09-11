@@ -167,6 +167,12 @@ export class XTransferService {
     );
   }
 
+  getMinTransferableAmount(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getMinTransferableAmount(),
+    );
+  }
+
   verifyEdOnDestination(transfer: XTransferDtoWSenderAddress) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.verifyEdOnDestination(),

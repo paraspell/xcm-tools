@@ -3,11 +3,10 @@ import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
-import { InvalidParameterError, UnableToComputeError } from '../../../errors'
-import type { TXcmFeeDetail } from '../../../types'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-import type { TBuildDestInfoOptions } from './buildDestInfo'
+import type { IPolkadotApi } from '../../api'
+import { UnableToComputeError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
 import { buildDestInfo } from './buildDestInfo'
 
 vi.mock('@paraspell/assets', async () => {
@@ -20,24 +19,12 @@ vi.mock('@paraspell/assets', async () => {
 })
 
 vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {
-    constructor(message: string) {
-      super(message)
-      this.name = 'InvalidParameterError'
-    }
-  },
-  UnableToComputeError: class extends Error {
-    constructor(message: string) {
-      super(message)
-      this.name = 'UnableToComputeError'
-    }
-  }
+  InvalidParameterError: class extends Error {},
+  UnableToComputeError: class extends Error {}
 }))
 
-vi.mock('../balance', () => ({
-  getAssetBalanceInternal: vi.fn(),
-  getBalanceNativeInternal: vi.fn()
-}))
+vi.mock('../balance')
+vi.mock('../../pallets/assets')
 
 describe('buildDestInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
@@ -137,18 +124,6 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT))
-  })
-
-  it('should throw InvalidParameterError if ED is not found', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
-      symbol: 'GLMR',
-      assetId: 'glmrid',
-      decimals: 18,
-      location: LOCATION,
-      existentialDeposit: undefined // No ED
-    } as TAssetInfo)
-    const options = { ...baseOptions, api: mockApi }
-    await expect(buildDestInfo(options)).rejects.toThrow(InvalidParameterError)
   })
 
   it('should return UnableToComputeError if fee currency is different and not Ethereum', async () => {

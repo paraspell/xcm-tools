@@ -7,50 +7,20 @@ import type { IPolkadotApi } from '../../../api'
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
-import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
-import { padFeeBy } from '../../../transfer/fees/padFee'
+import { dryRunInternal } from '../../../transfer'
 import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, getRelayChainOf } from '../..'
+import { assertAddressIsString, getRelayChainOf, padFeeBy } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 import { handleExecuteTransfer } from './handleExecuteTransfer'
 
-vi.mock('../../validateAddress', () => ({
-  validateAddress: vi.fn()
-}))
-
-vi.mock('./createExecuteXcm', () => ({
-  createDirectExecuteXcm: vi.fn()
-}))
-
-vi.mock('./createExecuteCall', () => ({
-  createExecuteCall: vi.fn()
-}))
-
-vi.mock('../../../chains/getTChain', () => ({
-  getTChain: vi.fn()
-}))
-
-vi.mock('../../../pallets/assets', () => ({
-  getAssetBalanceInternal: vi.fn()
-}))
-
-vi.mock('../../../transfer/dryRun/dryRunInternal', () => ({
-  dryRunInternal: vi.fn()
-}))
-
-vi.mock('../../../transfer/fees/padFee', () => ({
-  padFeeBy: vi.fn()
-}))
-
-vi.mock('../..', () => ({
-  assertAddressIsString: vi.fn(),
-  getRelayChainOf: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', () => ({
-  isAssetEqual: vi.fn()
-}))
+vi.mock('../../../chains/getTChain')
+vi.mock('./createExecuteXcm')
+vi.mock('./createExecuteCall')
+vi.mock('../..')
+vi.mock('../../../transfer')
+vi.mock('../../../pallets/assets')
+vi.mock('@paraspell/assets')
 
 describe('handleExecuteTransfer', () => {
   const mockApi = {

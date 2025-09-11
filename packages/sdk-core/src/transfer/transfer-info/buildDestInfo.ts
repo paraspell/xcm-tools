@@ -1,28 +1,9 @@
-import {
-  findAssetOnDestOrThrow,
-  getNativeAssetSymbol,
-  type TCurrencyCore,
-  type WithAmount
-} from '@paraspell/assets'
-import { replaceBigInt, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
-import type { IPolkadotApi } from '../../../api'
-import { InvalidParameterError, UnableToComputeError } from '../../../errors'
-import type { TXcmFeeDetail } from '../../../types'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-
-export type TBuildDestInfoOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
-  origin: TSubstrateChain
-  destination: TChain
-  address: string
-  currency: WithAmount<TCurrencyCore>
-  originFee: bigint
-  isFeeAssetAh: boolean
-  destFeeDetail: TXcmFeeDetail
-  assetHubFee?: bigint
-  bridgeFee?: bigint
-}
+import { UnableToComputeError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import type { TBuildDestInfoOptions } from '../../types'
 
 export const buildDestInfo = async <TApi, TRes>({
   api,
@@ -38,19 +19,11 @@ export const buildDestInfo = async <TApi, TRes>({
 }: TBuildDestInfoOptions<TApi, TRes>) => {
   const destApi = api.clone()
 
-  if (destination !== 'Ethereum') {
-    await destApi.init(destination)
-  }
+  await destApi.init(destination)
 
   const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const edDest = destAsset.existentialDeposit
-
-  if (!edDest) {
-    throw new InvalidParameterError(
-      `Existential deposit not found for ${destination} with currency ${JSON.stringify(currency, replaceBigInt)}`
-    )
-  }
+  const edDest = getEdFromAssetOrThrow(destAsset)
 
   const edDestBn = BigInt(edDest)
 

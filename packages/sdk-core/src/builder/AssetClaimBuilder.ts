@@ -1,7 +1,7 @@
 import type { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
-import { claimAssets } from '../pallets/assets'
+import { claimAssets } from '../transfer'
 import { type TAddress } from '../types'
 import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
 

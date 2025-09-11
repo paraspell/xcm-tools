@@ -1,29 +1,18 @@
+import { hasXcmPaymentApiSupport } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
+import { addXcmVersionHeader, padFeeBy } from '../../utils'
 import { computeAllFees } from './computeFees'
-
-vi.mock('@paraspell/assets', () => ({
-  hasXcmPaymentApiSupport: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  addXcmVersionHeader: vi.fn()
-}))
-
-vi.mock('../fees', () => ({
-  padFeeBy: vi.fn()
-}))
-
-import { hasXcmPaymentApiSupport } from '@paraspell/assets'
-
-import type { IPolkadotApi } from '../../api'
-import { addXcmVersionHeader } from '../../utils'
-import { padFeeBy } from '../fees'
 import type { createCustomXcm } from './createCustomXcm'
 import type { createRefundInstruction } from './utils'
+
+vi.mock('@paraspell/assets')
+vi.mock('../../utils')
+vi.mock('../fees')
 
 describe('computeAllFees', () => {
   const mockVersion = 'V3' as Version

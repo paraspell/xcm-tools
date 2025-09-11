@@ -1,8 +1,10 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../api'
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
+import type { TXcmFeeDetail } from './TXcmFee'
 
 export type THopTransferInfo = {
   chain: TChain
@@ -71,6 +73,33 @@ export type TTransferInfo = {
       balanceAfter: bigint | UnableToComputeError
     }
   }
+}
+
+export type BuildHopInfoOptions<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  chain: TSubstrateChain
+  feeData: {
+    fee: bigint
+    currency: string
+  }
+  originChain: TSubstrateChain
+  currency: TCurrencyCore
+  asset: TAssetInfo
+  senderAddress: string
+  ahAddress?: string
+}
+
+export type TBuildDestInfoOptions<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  origin: TSubstrateChain
+  destination: TChain
+  address: string
+  currency: WithAmount<TCurrencyCore>
+  originFee: bigint
+  isFeeAssetAh: boolean
+  destFeeDetail: TXcmFeeDetail
+  assetHubFee?: bigint
+  bridgeFee?: bigint
 }
 
 export type TOriginFeeDetails = {

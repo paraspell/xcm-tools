@@ -1,30 +1,13 @@
-import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
   getNativeAssetSymbol,
   isChainEvm
 } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../../api'
-import { InvalidParameterError } from '../../../errors'
-import type { TTransferInfo } from '../../../types'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-
-export type BuildHopInfoOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
-  chain: TSubstrateChain
-  feeData: {
-    fee: bigint
-    currency: string
-  }
-  originChain: TSubstrateChain
-  currency: TCurrencyCore
-  asset: TAssetInfo
-  senderAddress: string
-  ahAddress?: string
-}
+import { InvalidParameterError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import type { BuildHopInfoOptions, TTransferInfo } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes>({
   api,

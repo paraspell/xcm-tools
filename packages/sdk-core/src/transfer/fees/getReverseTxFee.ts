@@ -5,7 +5,7 @@ import { isAddress } from 'viem'
 
 import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions } from '../../types'
-import { padFee } from './padFee'
+import { padFee } from '../../utils/fees'
 
 const determineAddress = (
   chain: TSubstrateChain,

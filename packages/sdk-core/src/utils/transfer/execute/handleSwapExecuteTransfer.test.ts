@@ -6,12 +6,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
-import * as dryRunModule from '../../../transfer/dryRun/dryRunInternal'
+import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
 import type { TCreateSwapXcmOptions } from '../../../types'
 import { type TDryRunResult } from '../../../types'
 import { handleSwapExecuteTransfer } from './handleSwapExecuteTransfer'
 
-vi.mock('../../../transfer/fees/padFee', () => ({
+vi.mock('../../fees/padFee', () => ({
   padFeeBy: (fee: bigint) => fee + 10n
 }))
 
@@ -31,9 +31,7 @@ vi.mock('./isMultiHopSwap', () => ({
   isMultiHopSwap: () => true
 }))
 
-vi.mock('../../../chains/config', () => ({
-  getParaId: vi.fn()
-}))
+vi.mock('../../../chains/config')
 
 vi.mock('@paraspell/assets', () => ({
   hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true)

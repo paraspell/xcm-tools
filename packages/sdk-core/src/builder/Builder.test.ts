@@ -8,16 +8,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import {
   claimAssets,
-  getTransferableAmount,
-  getTransferInfo,
-  verifyEdOnDestination
-} from '../pallets/assets'
-import {
+  getMinTransferableAmount,
   getOriginXcmFee,
   getOriginXcmFeeEstimate,
+  getTransferableAmount,
+  getTransferInfo,
   getXcmFee,
   getXcmFeeEstimate,
-  send
+  send,
+  verifyEdOnDestination
 } from '../transfer'
 import type {
   TDryRunResult,
@@ -32,7 +31,6 @@ import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
 
 vi.mock('../transfer')
-vi.mock('../pallets/assets')
 vi.mock('../utils')
 vi.mock('./buildDryRun')
 
@@ -891,6 +889,25 @@ describe('Builder', () => {
 
       expect(result).toEqual(amount)
       expect(getTransferableAmount).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fetch min transferable amount', async () => {
+      const amount = 1000n
+
+      vi.mocked(getMinTransferableAmount).mockResolvedValue(amount)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .getMinTransferableAmount()
+
+      expect(result).toEqual(amount)
+      expect(getMinTransferableAmount).toHaveBeenCalledTimes(1)
     })
 
     it('should verify ed on destination', async () => {

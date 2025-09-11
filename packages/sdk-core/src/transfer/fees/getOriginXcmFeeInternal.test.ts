@@ -3,12 +3,12 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@p
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { padFee } from '../../utils/fees'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { isSufficientOrigin } from './isSufficient'
-import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets')
-vi.mock('./padFee')
+vi.mock('../../utils/fees')
 vi.mock('./isSufficient')
 vi.mock('../../utils')
 

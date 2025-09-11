@@ -7,12 +7,12 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../../errors'
-import { getXcmFee } from '../../../transfer'
-import { resolveFeeAsset } from '../../../transfer/utils'
-import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
-import { abstractDecimals, getRelayChainOf } from '../../../utils'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
+import { InvalidParameterError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
+import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { getXcmFee } from '../fees'
+import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 

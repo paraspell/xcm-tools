@@ -2,11 +2,11 @@ import { getExistentialDepositOrThrow, normalizeSymbol } from '@paraspell/assets
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
-import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../../errors'
-import { getXcmFee } from '../../../transfer'
-import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
-import { abstractDecimals, validateAddress } from '../../../utils'
-import { getAssetBalanceInternal } from '../balance/getAssetBalance'
+import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
+import { getAssetBalanceInternal } from '../../pallets/assets'
+import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
+import { abstractDecimals, validateAddress } from '../../utils'
+import { getXcmFee } from '../fees'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
   let totalFee = 0n

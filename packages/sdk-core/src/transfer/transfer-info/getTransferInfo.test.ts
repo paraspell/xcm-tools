@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getExistentialDepositOrThrow } from '@paraspell/assets'
 import {
@@ -10,18 +9,18 @@ import {
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
-import { InvalidParameterError } from '../../../errors'
-import { getXcmFee } from '../../../transfer'
-import { resolveFeeAsset } from '../../../transfer/utils'
+import type { IPolkadotApi } from '../../api'
+import { InvalidParameterError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
 import type {
   TGetTransferInfoOptions,
   TTransferInfo,
   TXcmFeeDetail,
   TXcmFeeHopInfo
-} from '../../../types'
-import { abstractDecimals, getRelayChainOf } from '../../../utils'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
+} from '../../types'
+import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { getXcmFee } from '../fees'
+import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { getTransferInfo } from './getTransferInfo'
@@ -38,12 +37,11 @@ vi.mock('@paraspell/assets', async importOriginal => {
   }
 })
 
-vi.mock('../../../errors')
-vi.mock('../../../transfer')
-vi.mock('../../../transfer/utils')
-vi.mock('../../../transfer/abstractDecimals')
-vi.mock('../../../utils')
-vi.mock('../balance')
+vi.mock('../../errors')
+vi.mock('../../utils')
+vi.mock('../../pallets/assets')
+vi.mock('../utils')
+vi.mock('../fees')
 vi.mock('./buildDestInfo')
 vi.mock('./buildHopInfo')
 
@@ -131,10 +129,15 @@ describe('getTransferInfo', () => {
 
   it('should successfully get transfer info for a Polkadot parachain transfer with all hops', async () => {
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
+
+    const initSpy = vi.spyOn(mockApi, 'init')
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
     const result = await getTransferInfo(options)
 
-    expect(mockApi.init).toHaveBeenCalledWith(options.origin)
-    expect(mockApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
+    expect(initSpy).toHaveBeenCalledWith(options.origin)
+    expect(disconnectAllowedSpy).toHaveBeenCalledWith(false)
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
       options.origin,
       options.currency,
@@ -156,8 +159,8 @@ describe('getTransferInfo', () => {
     })
     expect(buildHopInfo).toHaveBeenCalledTimes(2) // AssetHub and BridgeHub
     expect(buildDestInfo).toHaveBeenCalled()
-    expect(mockApi.setDisconnectAllowed).toHaveBeenCalledWith(true)
-    expect(mockApi.disconnect).toHaveBeenCalled()
+    expect(disconnectAllowedSpy).toHaveBeenCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalled()
 
     expect(result.chain.origin).toBe(options.origin)
     expect(result.chain.destination).toBe(options.destination)
@@ -274,8 +277,10 @@ describe('getTransferInfo', () => {
       origin: 'Moonbeam' as TSubstrateChain
     }
 
+    const initSpy = vi.spyOn(mockApi, 'init')
+
     await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
-    expect(mockApi.init).not.toHaveBeenCalled()
+    expect(initSpy).not.toHaveBeenCalled()
   })
 
   it('should use getBalanceNativeInternal for fee balance if feeAsset is not provided', async () => {
@@ -414,14 +419,17 @@ describe('getTransferInfo', () => {
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
 
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
     await expect(getTransferInfo(options)).rejects.toThrow(
       'Simulated error in findAssetInfoOrThrow'
     )
 
-    expect(mockApi.setDisconnectAllowed).toHaveBeenCalledTimes(2)
-    expect(mockApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
-    expect(mockApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
+    expect(disconnectAllowedSpy).toHaveBeenCalledTimes(2)
+    expect(disconnectAllowedSpy).toHaveBeenCalledWith(false)
+    expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {
@@ -434,9 +442,11 @@ describe('getTransferInfo', () => {
       ahAddress: 'evmAhAddress'
     }
 
+    const initSpy = vi.spyOn(mockApi, 'init')
+
     await getTransferInfo(options)
 
-    expect(mockApi.init).toHaveBeenCalledWith(options.origin)
+    expect(initSpy).toHaveBeenCalledWith(options.origin)
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({ ahAddress: 'evmAhAddress' })
     )

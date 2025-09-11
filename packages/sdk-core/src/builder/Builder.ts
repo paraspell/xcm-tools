@@ -7,13 +7,16 @@ import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { InvalidParameterError } from '../errors'
-import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
 import {
+  getMinTransferableAmount,
   getOriginXcmFee,
   getOriginXcmFeeEstimate,
+  getTransferableAmount,
+  getTransferInfo,
   getXcmFee,
   getXcmFeeEstimate,
-  send
+  send,
+  verifyEdOnDestination
 } from '../transfer'
 import type {
   TAddress,
@@ -375,6 +378,34 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       senderAddress,
       feeAsset,
       currency: currency as WithAmount<TCurrencyCore>
+    })
+  }
+
+  /**
+   * Returns the min transferable amount for the transfer
+   *
+   * @returns The min transferable amount.
+   */
+  async getMinTransferableAmount(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  ) {
+    const { from, to, senderAddress, address, currency, feeAsset } = this._options
+
+    assertToIsString(to)
+    assertAddressIsString(address)
+
+    const tx = await this.build()
+
+    return getMinTransferableAmount({
+      api: this.api,
+      tx,
+      origin: from,
+      destination: to,
+      senderAddress,
+      address,
+      feeAsset,
+      currency: currency as WithAmount<TCurrencyCore>,
+      builder: this
     })
   }
 

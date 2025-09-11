@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
@@ -9,10 +8,10 @@ import {
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
-import { InvalidParameterError } from '../../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-import type { BuildHopInfoOptions } from './buildHopInfo'
+import type { IPolkadotApi } from '../../api'
+import { InvalidParameterError } from '../../errors'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
 
 vi.mock('@paraspell/assets', async () => {
@@ -31,6 +30,7 @@ vi.mock('../../../errors', () => ({
 }))
 
 vi.mock('../balance')
+vi.mock('../../pallets/assets')
 
 describe('buildHopInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
@@ -88,11 +88,17 @@ describe('buildHopInfo', () => {
 
   it('should successfully build info for an AssetHub-like hop chain (non-EVM origin)', async () => {
     const options = { ...baseOptions }
+
+    const cloneSpy = vi.spyOn(mockApi, 'clone')
+    const initSpy = vi.spyOn(mockHopApi, 'init')
+    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
+
     const result = await buildHopInfo(options)
 
-    expect(mockApi.clone).toHaveBeenCalledTimes(1)
-    expect(mockHopApi.init).toHaveBeenCalledWith(options.chain)
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
+    expect(cloneSpy).toHaveBeenCalledTimes(1)
+    expect(initSpy).toHaveBeenCalledWith(options.chain)
+    expect(setDisconnectAllowedSpy).toHaveBeenCalledWith(false)
     expect(isChainEvm).toHaveBeenCalledWith(options.originChain)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockHopApi,
@@ -134,8 +140,8 @@ describe('buildHopInfo', () => {
         asset: { symbol: 'USDT', assetId: '1984', decimals: 6 }
       }
     })
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockHopApi.disconnect).toHaveBeenCalledTimes(1)
+    expect(setDisconnectAllowedSpy).toHaveBeenLastCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
   it('should use ahAddress for EVM origin if provided', async () => {
@@ -171,9 +177,14 @@ describe('buildHopInfo', () => {
   it('should correctly build info for a BridgeHub hop chain', async () => {
     const chain: TSubstrateChain = 'BridgeHubPolkadot'
     const options = { ...baseOptions, chain }
+
+    const initSpy = vi.spyOn(mockHopApi, 'init')
+    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
+
     const result = await buildHopInfo(options)
 
-    expect(mockHopApi.init).toHaveBeenCalledWith(chain)
+    expect(initSpy).toHaveBeenCalledWith(chain)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
       api: mockHopApi,
       address: options.senderAddress,
@@ -197,13 +208,16 @@ describe('buildHopInfo', () => {
         }
       }
     })
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockHopApi.disconnect).toHaveBeenCalledTimes(1)
+    expect(setDisconnectAllowedSpy).toHaveBeenLastCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
   it('should throw InvalidParameterError if ED is not found for AssetHub-like chain', async () => {
     vi.mocked(getExistentialDeposit).mockReturnValue(null)
     const options = { ...baseOptions }
+
+    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
     await expect(buildHopInfo(options)).rejects.toThrow(InvalidParameterError)
     const hopAsset = vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo
@@ -214,9 +228,9 @@ describe('buildHopInfo', () => {
       `Existential deposit not found for chain ${options.chain} with currency ${JSON.stringify(expectedPayload)}`
     )
 
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenCalledTimes(4)
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockHopApi.disconnect).toHaveBeenCalledTimes(2)
+    expect(disconnectAllowedSpy).toHaveBeenCalledTimes(4)
+    expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalledTimes(2)
   })
 
   it('should handle hop asset without location correctly', async () => {
@@ -239,10 +253,13 @@ describe('buildHopInfo', () => {
     vi.mocked(getBalanceNativeInternal).mockRejectedValueOnce(new Error('Network error'))
     const options = { ...baseOptions }
 
+    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
+
     await expect(buildHopInfo(options)).rejects.toThrow('Network error')
 
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenCalledTimes(2)
-    expect(mockHopApi.setDisconnectAllowed).toHaveBeenLastCalledWith(true)
-    expect(mockHopApi.disconnect).toHaveBeenCalledTimes(1)
+    expect(disconnectAllowedSpy).toHaveBeenCalledTimes(2)
+    expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
+    expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 })

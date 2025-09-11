@@ -8,13 +8,13 @@ import { getTChain } from '../../chains/getTChain'
 import { InvalidParameterError } from '../../errors'
 import type { HopTraversalConfig } from '../../types'
 import { getRelayChainOf } from '../../utils'
-import { getParaEthTransferFees } from '../ethTransfer'
+import { getParaEthTransferFees } from '../eth-transfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
-vi.mock('../ethTransfer')
+vi.mock('../eth-transfer')
 vi.mock('../../constants', () => ({
   DRY_RUN_CLIENT_TIMEOUT_MS: 300000
 }))

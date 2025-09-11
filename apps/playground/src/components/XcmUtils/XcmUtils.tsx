@@ -340,6 +340,10 @@ const XcmUtils = () => {
         apiEndpoint = '/transferable-amount';
         successMessage = 'Transferable amount retrieved';
         break;
+      case 'getMinTransferableAmount':
+        apiEndpoint = '/min-transferable-amount';
+        successMessage = 'Minimum transferable amount retrieved';
+        break;
       case 'verifyEdOnDestination':
         apiEndpoint = '/verify-ed-on-destination';
         successMessage = 'ED verification result retrieved';
@@ -389,6 +393,9 @@ const XcmUtils = () => {
         switch (submitType) {
           case 'getTransferableAmount':
             result = await builder.getTransferableAmount();
+            break;
+          case 'getMinTransferableAmount':
+            result = await builder.getMinTransferableAmount();
             break;
           case 'verifyEdOnDestination':
             result = await builder.verifyEdOnDestination();
@@ -452,6 +459,7 @@ const XcmUtils = () => {
         );
       } else if (
         submitType === 'getTransferableAmount' ||
+        submitType === 'getMinTransferableAmount' ||
         submitType === 'verifyEdOnDestination' ||
         submitType === 'getTransferInfo'
       ) {

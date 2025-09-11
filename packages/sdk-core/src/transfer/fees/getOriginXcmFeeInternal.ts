@@ -5,9 +5,9 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@p
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
+import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { isSufficientOrigin } from './isSufficient'
-import { padFee } from './padFee'
 
 export const getOriginXcmFeeInternal = async <TApi, TRes>({
   api,
