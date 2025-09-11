@@ -3,10 +3,9 @@ import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
-  getNativeAssetSymbol,
-  Native
+  findNativeAssetInfoOrThrow,
+  getNativeAssetSymbol
 } from '@paraspell/assets'
-import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -68,9 +67,6 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   useRootOrigin: boolean
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
-
-  const findNativeAssetInfo = (chain: TChain, dest: TChain | null = null) =>
-    findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, dest)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
@@ -135,7 +131,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
           currency: getNativeAssetSymbol(destination),
-          asset: findNativeAssetInfo(destination)
+          asset: findNativeAssetInfoOrThrow(destination)
         } as TXcmFeeDetail,
         hops: []
       }
@@ -207,7 +203,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
         hopAsset = asset
       }
     } else {
-      hopAsset = findNativeAssetInfo(currentChain, destination)
+      hopAsset = findNativeAssetInfoOrThrow(currentChain)
     }
 
     return {
@@ -282,13 +278,13 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     destFeeType = destFallback.feeType
     destSufficient = destFallback.sufficient
     destCurrency = getNativeAssetSymbol(destination)
-    destAsset = findNativeAssetInfo(destination)
+    destAsset = findNativeAssetInfoOrThrow(destination)
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'
     destSufficient = true
     destCurrency = getNativeAssetSymbol(destination)
-    destAsset = findNativeAssetInfo(destination)
+    destAsset = findNativeAssetInfoOrThrow(destination)
   }
 
   // Process Ethereum bridge fees

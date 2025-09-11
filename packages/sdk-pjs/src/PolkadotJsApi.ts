@@ -26,14 +26,12 @@ import {
   BatchMode,
   ChainNotSupportedError,
   createChainClient,
-  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
   getChain,
-  getNativeAssetSymbol,
   InvalidParameterError,
   isConfig,
   isRelayChain,
   localizeLocation,
-  Native,
   Version
 } from '@paraspell/sdk-core'
 import {
@@ -320,8 +318,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const DEFAULT_XCM_VERSION = 3
 
-    const usedAsset =
-      feeAsset ?? findAssetInfoOrThrow(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+    const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
     const usedSymbol = usedAsset.symbol
 
     const performDryRunCall = async (includeVersion: boolean) => {

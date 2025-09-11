@@ -10,7 +10,7 @@ import {
   ChainNotSupportedError,
   computeFeeFromDryRun,
   createChainClient,
-  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChainProviders,
   hasXcmPaymentApiSupport,
@@ -66,7 +66,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
   wrapTxBypass: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
+  findNativeAssetInfoOrThrow: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -949,7 +949,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1009,7 +1009,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockResolvedValueOnce(versionedConversionFailedResponse)
         .mockResolvedValueOnce(successResponseWithVersion)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'DOT'
       } as TAssetInfo)
 
@@ -1068,7 +1068,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockResolvedValueOnce(versionedConversionFailedResponse)
         .mockResolvedValueOnce(retryFailedResponse)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1112,7 +1112,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(otherErrorResponse)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1147,7 +1147,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1181,7 +1181,7 @@ describe('PapiApi', () => {
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
       vi.mocked(wrapTxBypass).mockResolvedValue(mockTransaction)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1223,7 +1223,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1280,7 +1280,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1334,7 +1334,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
 
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 

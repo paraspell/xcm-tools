@@ -1,12 +1,12 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfo,
-  findAssetInfoOrThrow,
+  findNativeAssetInfo,
+  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
   isAssetEqual,
   isForeignAsset,
-  isSymbolMatch,
-  Native
+  isSymbolMatch
 } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
@@ -34,7 +34,7 @@ export const getCurrencySelection = (asset: TAssetInfo): TCurrencyCore => {
 }
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
-  if (isForeignAsset(asset) && asset.assetId === undefined) {
+  if (isForeignAsset(asset) && (!asset.assetId || asset.assetId.startsWith('0x'))) {
     // No assetId means it's probably a ForeignAssets pallet asset
     return pallets.find(pallet => pallet.startsWith('Foreign')) ?? pallets[0]
   }
@@ -62,13 +62,12 @@ const createMintTxs = <TApi, TRes>(
 
 const createRequiredMintTxs = <TApi, TRes>(
   chain: TSubstrateChain,
-  currency: TCurrencyCore,
+  asset: TAssetInfo,
   amountHuman: bigint,
   balance: bigint,
   address: string,
   api: IPolkadotApi<TApi, TRes>
 ) => {
-  const asset = findAssetInfoOrThrow(chain, currency, null)
   const amount = parseUnits(amountHuman.toString(), asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
@@ -122,7 +121,7 @@ const mintBonusForSent = (
 ): bigint => {
   if (!mintFeeAssets) return 0n
 
-  const native = findAssetInfo(chain, { symbol: Native(getNativeAssetSymbol(chain)) }, null)
+  const native = findNativeAssetInfo(chain)
   const relay = findAssetInfo(
     chain,
     { location: { parents: Parents.ONE, interior: { Here: null } } },
@@ -154,15 +153,23 @@ export const wrapTxBypass = async <TApi, TRes>(
   const { api, chain, address, asset, feeAsset, tx } = dryRunOptions
   const { mintFeeAssets } = options
 
-  const nativeCurrency = { symbol: Native(getNativeAssetSymbol(chain)) } as const
-  const relayCurrency = { location: { parents: Parents.ONE, interior: { Here: null } } } as const
+  const relayCurrency: TCurrencyCore = {
+    location: { parents: Parents.ONE, interior: { Here: null } }
+  }
 
-  const nativeInfo = mintFeeAssets ? findAssetInfo(chain, nativeCurrency, null) : null
+  const nativeInfo = mintFeeAssets ? findNativeAssetInfo(chain) : null
   const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency, null) : null
   const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetEqual(nativeInfo, relayInfo))
 
   const mintNativeAssetRes = mintFeeAssets
-    ? await createRequiredMintTxs(chain, nativeCurrency, MINT_AMOUNT, 0n, address, api)
+    ? await createRequiredMintTxs(
+        chain,
+        findNativeAssetInfoOrThrow(chain),
+        MINT_AMOUNT,
+        0n,
+        address,
+        api
+      )
     : null
 
   const mintRelayAssetRes =

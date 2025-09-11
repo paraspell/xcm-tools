@@ -5,9 +5,9 @@ import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
+  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
-  hasDryRunSupport,
-  Native
+  hasDryRunSupport
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
@@ -108,11 +108,7 @@ export const dryRunInternal = async <TApi, TRes>(
       destination === 'Ethereum' &&
       (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
     ) {
-      hopAsset = findAssetInfoOrThrow(
-        currentChain,
-        { symbol: Native(getNativeAssetSymbol(currentChain)) },
-        destination
-      )
+      hopAsset = findNativeAssetInfoOrThrow(currentChain)
     } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
       hopAsset = findAssetOnDestOrThrow(
         swapConfig.exchangeChain,
@@ -195,13 +191,7 @@ export const dryRunInternal = async <TApi, TRes>(
     ? {
         ...traversalResult.assetHub,
         currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubChain),
-        asset:
-          resolvedFeeAsset ??
-          findAssetInfoOrThrow(
-            assetHubChain,
-            { symbol: Native(getNativeAssetSymbol(assetHubChain)) },
-            destination
-          )
+        asset: resolvedFeeAsset ?? findNativeAssetInfoOrThrow(assetHubChain)
       }
     : traversalResult.assetHub
 
@@ -209,11 +199,7 @@ export const dryRunInternal = async <TApi, TRes>(
     ? {
         ...processedBridgeHub,
         currency: getNativeAssetSymbol(bridgeHubChain),
-        asset: findAssetInfoOrThrow(
-          bridgeHubChain,
-          { symbol: Native(getNativeAssetSymbol(bridgeHubChain)) },
-          destination
-        )
+        asset: findNativeAssetInfoOrThrow(bridgeHubChain)
       }
     : processedBridgeHub
 

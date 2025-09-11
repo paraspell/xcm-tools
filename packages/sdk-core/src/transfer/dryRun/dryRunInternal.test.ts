@@ -2,6 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
+  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
   hasDryRunSupport
 } from '@paraspell/assets'
@@ -109,10 +110,10 @@ describe('dryRunInternal', () => {
   })
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT', decimals: 10 } as TAssetInfo
-      return { symbol: 'ACA' } as TAssetInfo
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+      symbol: 'DOT'
+    } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
       return 'ACA'
@@ -149,7 +150,7 @@ describe('dryRunInternal', () => {
         success: true,
         fee: 3_000n,
         currency: 'DOT',
-        asset: { symbol: 'DOT', decimals: 10 }
+        asset: { symbol: 'DOT' }
       },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
@@ -197,10 +198,8 @@ describe('dryRunInternal', () => {
     const initialAsset = { symbol: 'ACA' } as TAssetInfo
     const swappedAsset = { symbol: 'USDT' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT', decimals: 10 } as TAssetInfo
-      return initialAsset
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(initialAsset)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
@@ -250,7 +249,7 @@ describe('dryRunInternal', () => {
         success: true,
         fee: 2_000n,
         currency: 'DOT',
-        asset: { symbol: 'DOT', decimals: 10 }
+        asset: { symbol: 'DOT' }
       },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
@@ -635,6 +634,7 @@ describe('dryRunInternal', () => {
 
     it('handles processHop currency logic: Ethereum destination with AssetHub hop', async () => {
       vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       vi.mocked(hasDryRunSupport).mockReturnValue(true)
