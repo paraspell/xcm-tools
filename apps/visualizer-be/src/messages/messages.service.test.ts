@@ -32,6 +32,7 @@ describe('MessageService', () => {
   });
 
   describe('countMessagesByStatus', () => {
+    const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
     const paraIds = [101, 102];
@@ -43,19 +44,21 @@ describe('MessageService', () => {
       );
 
       const results = await service.countMessagesByStatus(
+        ecosystem,
         paraIds,
         startTime,
         endTime,
       );
 
       expect(results).toEqual([
-        { paraId: 101, success: 3, failed: 1 },
-        { paraId: 102, success: 3, failed: 1 },
+        { ecosystem, paraId: 101, success: 3, failed: 1 },
+        { ecosystem, paraId: 102, success: 3, failed: 1 },
       ]);
       expect(mockRepository.count).toHaveBeenCalledTimes(4);
       expect(mockRepository.count).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
+            ecosystem,
             origin_para_id: 101,
             status: 'success',
           }),
@@ -64,6 +67,7 @@ describe('MessageService', () => {
       expect(mockRepository.count).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
+            ecosystem,
             origin_para_id: 102,
             status: 'failed',
           }),
@@ -77,12 +81,13 @@ describe('MessageService', () => {
       );
 
       const results = await service.countMessagesByStatus(
+        ecosystem,
         undefined,
         startTime,
         endTime,
       );
 
-      expect(results).toEqual([{ success: 10, failed: 5 }]);
+      expect(results).toEqual([{ ecosystem, success: 10, failed: 5 }]);
       expect(mockRepository.count).toHaveBeenCalledTimes(2);
       expect(mockRepository.count).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -93,6 +98,7 @@ describe('MessageService', () => {
   });
 
   describe('countMessagesByDay', () => {
+    const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
     const paraIds = [101, 102];
@@ -107,18 +113,21 @@ describe('MessageService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
           {
+            ecosystem,
             paraId: 101,
             date: '2023-09-01',
             message_count_success: '3',
             message_count_failed: '1',
           },
           {
+            ecosystem,
             paraId: 101,
             date: '2023-09-02',
             message_count_success: '2',
             message_count_failed: '0',
           },
           {
+            ecosystem,
             paraId: 102,
             date: '2023-09-01',
             message_count_success: '5',
@@ -128,6 +137,7 @@ describe('MessageService', () => {
       });
 
       const results = await service.countMessagesByDay(
+        ecosystem,
         paraIds,
         startTime,
         endTime,
@@ -135,6 +145,7 @@ describe('MessageService', () => {
 
       expect(results).toEqual([
         {
+          ecosystem,
           paraId: 101,
           date: '2023-09-01',
           messageCount: 4,
@@ -142,6 +153,7 @@ describe('MessageService', () => {
           messageCountFailed: 1,
         },
         {
+          ecosystem,
           paraId: 101,
           date: '2023-09-02',
           messageCount: 2,
@@ -149,6 +161,7 @@ describe('MessageService', () => {
           messageCountFailed: 0,
         },
         {
+          ecosystem,
           paraId: 102,
           date: '2023-09-01',
           messageCount: 7,
@@ -170,11 +183,13 @@ describe('MessageService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
           {
+            ecosystem,
             date: '2023-09-01',
             message_count_success: '8',
             message_count_failed: '3',
           },
           {
+            ecosystem,
             date: '2023-09-02',
             message_count_success: '6',
             message_count_failed: '1',
@@ -182,16 +197,23 @@ describe('MessageService', () => {
         ]),
       });
 
-      const results = await service.countMessagesByDay([], startTime, endTime);
+      const results = await service.countMessagesByDay(
+        ecosystem,
+        [],
+        startTime,
+        endTime,
+      );
 
       expect(results).toEqual([
         {
+          ecosystem,
           date: '2023-09-01',
           messageCount: 11,
           messageCountSuccess: 8,
           messageCountFailed: 3,
         },
         {
+          ecosystem,
           date: '2023-09-02',
           messageCount: 7,
           messageCountSuccess: 6,
@@ -204,11 +226,12 @@ describe('MessageService', () => {
   });
 
   describe('getTotalMessageCounts', () => {
+    const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
     const mockCounts = [
-      { paraId: 101, totalCount: '10' },
-      { paraId: 102, totalCount: '5' },
+      { ecosystem, paraId: 101, totalCount: '10' },
+      { ecosystem, paraId: 102, totalCount: '5' },
     ];
 
     type MockQueryBuilder = {
@@ -237,6 +260,7 @@ describe('MessageService', () => {
         mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
         const results = await service.getTotalMessageCounts(
+          ecosystem,
           startTime,
           endTime,
           countBy,
@@ -244,6 +268,7 @@ describe('MessageService', () => {
 
         expect(results).toEqual(
           mockCounts.map((item) => ({
+            ecosystem,
             paraId: item.paraId,
             totalCount: parseInt(item.totalCount),
           })),
@@ -264,7 +289,7 @@ describe('MessageService', () => {
         groupBy: jest.fn().mockReturnThis(),
         getRawMany: jest
           .fn()
-          .mockResolvedValue([{ paraId: 101, totalCount: '5' }]),
+          .mockResolvedValue([{ ecosystem, paraId: 101, totalCount: '5' }]),
         addGroupBy: jest.fn().mockReturnThis(),
       };
       const mockQueryBuilderDestination: MockQueryBuilder = {
@@ -273,8 +298,8 @@ describe('MessageService', () => {
         where: jest.fn().mockReturnThis(),
         groupBy: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
-          { paraId: 101, totalCount: '7' },
-          { paraId: 102, totalCount: '3' },
+          { ecosystem, paraId: 101, totalCount: '7' },
+          { ecosystem, paraId: 102, totalCount: '3' },
         ]),
         addGroupBy: jest.fn().mockReturnThis(),
       };
@@ -283,42 +308,46 @@ describe('MessageService', () => {
         .mockReturnValueOnce(mockQueryBuilderDestination);
 
       const results = await service.getTotalMessageCounts(
+        ecosystem,
         startTime,
         endTime,
         CountOption.BOTH,
       );
 
       expect(results).toEqual([
-        { paraId: 101, totalCount: 12 },
-        { paraId: 102, totalCount: 3 },
+        { ecosystem, paraId: 101, totalCount: 12 },
+        { ecosystem, paraId: 102, totalCount: 3 },
       ]);
       expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('countAssetsBySymbol', () => {
+    const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
     const paraIds = [101, 102];
 
     it('should return asset counts by symbol for each paraId when paraIds are provided', async () => {
       const mockResult = [
-        { origin_para_id: 101, symbol: 'GOLD', count: '3' },
-        { origin_para_id: 102, symbol: 'SILVER', count: '5' },
+        { ecosystem, origin_para_id: 101, symbol: 'GOLD', count: '3' },
+        { ecosystem, origin_para_id: 102, symbol: 'SILVER', count: '5' },
       ];
       mockRepository.query.mockResolvedValue(mockResult);
 
       const results = await service.countAssetsBySymbol(
+        ecosystem,
         paraIds,
         startTime,
         endTime,
       );
 
       expect(results).toEqual([
-        { paraId: 101, symbol: 'GOLD', count: 3 },
-        { paraId: 102, symbol: 'SILVER', count: 5 },
+        { ecosystem, paraId: 101, symbol: 'GOLD', count: 3 },
+        { ecosystem, paraId: 102, symbol: 'SILVER', count: 5 },
       ]);
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+        ecosystem,
         startTime,
         endTime,
         paraIds,
@@ -327,18 +356,24 @@ describe('MessageService', () => {
 
     it('should return asset counts by symbol when no paraIds are provided', async () => {
       const mockResult = [
-        { symbol: 'GOLD', count: '10' },
-        { symbol: 'SILVER', count: '7' },
+        { ecosystem, symbol: 'GOLD', count: '10' },
+        { ecosystem, symbol: 'SILVER', count: '7' },
       ];
       mockRepository.query.mockResolvedValue(mockResult);
 
-      const results = await service.countAssetsBySymbol([], startTime, endTime);
+      const results = await service.countAssetsBySymbol(
+        ecosystem,
+        [],
+        startTime,
+        endTime,
+      );
 
       expect(results).toEqual([
-        { symbol: 'GOLD', count: 10 },
-        { symbol: 'SILVER', count: 7 },
+        { ecosystem, symbol: 'GOLD', count: 10 },
+        { ecosystem, symbol: 'SILVER', count: 7 },
       ]);
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+        ecosystem,
         startTime,
         endTime,
       ]);
@@ -346,6 +381,7 @@ describe('MessageService', () => {
   });
 
   describe('getAccountXcmCounts', () => {
+    const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
     const paraIds = [101, 102];
@@ -353,12 +389,13 @@ describe('MessageService', () => {
 
     it('should return account message counts when paraIds are provided', async () => {
       const mockResult = [
-        { from_account_id: 'account1', message_count: '6' },
-        { from_account_id: 'account2', message_count: '7' },
+        { ecosystem, from_account_id: 'account1', message_count: '6' },
+        { ecosystem, from_account_id: 'account2', message_count: '7' },
       ];
       mockRepository.query.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
+        ecosystem,
         paraIds,
         threshold,
         startTime,
@@ -366,34 +403,39 @@ describe('MessageService', () => {
       );
 
       expect(results).toEqual([
-        { id: 'account1', count: 6 },
-        { id: 'account2', count: 7 },
+        { ecosystem, id: 'account1', count: 6 },
+        { ecosystem, id: 'account2', count: 7 },
       ]);
 
       // Ensure that the WHERE clause includes paraIds
       expect(mockRepository.query).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE origin_block_timestamp BETWEEN'),
-        [startTime, endTime, ...paraIds, threshold],
+        expect.stringContaining(
+          'WHERE ecosystem = $1 AND origin_block_timestamp BETWEEN',
+        ),
+        [ecosystem, startTime, endTime, ...paraIds, threshold],
       );
     });
 
     it('should return account message counts when no paraIds are provided', async () => {
-      const mockResult = [{ from_account_id: 'account3', message_count: '8' }];
+      const mockResult = [
+        { ecosystem, from_account_id: 'account3', message_count: '8' },
+      ];
       mockRepository.query.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
+        ecosystem,
         [],
         threshold,
         startTime,
         endTime,
       );
 
-      expect(results).toEqual([{ id: 'account3', count: 8 }]);
+      expect(results).toEqual([{ ecosystem, id: 'account3', count: 8 }]);
 
       // Ensure that the WHERE clause does not include paraIds
       expect(mockRepository.query).toHaveBeenCalledWith(
         expect.not.stringContaining('origin_para_id IN'),
-        [startTime, endTime, threshold],
+        [ecosystem, startTime, endTime, threshold],
       );
     });
 
@@ -401,10 +443,17 @@ describe('MessageService', () => {
       mockRepository.query.mockRejectedValue(new Error('Database error'));
 
       await expect(
-        service.getAccountXcmCounts(paraIds, threshold, startTime, endTime),
+        service.getAccountXcmCounts(
+          ecosystem,
+          paraIds,
+          threshold,
+          startTime,
+          endTime,
+        ),
       ).rejects.toThrow('Database error');
 
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+        ecosystem,
         startTime,
         endTime,
         ...paraIds,

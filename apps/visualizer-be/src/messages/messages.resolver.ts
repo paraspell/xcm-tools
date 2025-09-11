@@ -15,11 +15,13 @@ export class MessageResolver {
 
   @Query(() => [MessageCountByStatus])
   async messageCounts(
+    @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ): Promise<MessageCountByStatus[]> {
     return this.messageService.countMessagesByStatus(
+      ecosystem,
       paraIds,
       startTime.getTime(),
       endTime.getTime(),
@@ -28,11 +30,13 @@ export class MessageResolver {
 
   @Query(() => [MessageCountByDay])
   async messageCountsByDay(
+    @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.countMessagesByDay(
+      ecosystem,
       paraIds,
       startTime.getTime(),
       endTime.getTime(),
@@ -41,11 +45,13 @@ export class MessageResolver {
 
   @Query(() => [AssetCount])
   async assetCountsBySymbol(
+    @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.countAssetsBySymbol(
+      ecosystem,
       paraIds,
       startTime.getTime(),
       endTime.getTime(),
@@ -54,12 +60,14 @@ export class MessageResolver {
 
   @Query(() => [AccountXcmCountType])
   async accountCounts(
+    @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('threshold', { type: () => Int }) threshold: number,
     @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.getAccountXcmCounts(
+      ecosystem,
       paraIds,
       threshold,
       startTime.getTime(),
@@ -69,6 +77,7 @@ export class MessageResolver {
 
   @Query(() => [MessageCount])
   async totalMessageCounts(
+    @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
     @Args('countBy', {
@@ -78,6 +87,7 @@ export class MessageResolver {
     countBy: CountOption,
   ): Promise<MessageCount[]> {
     return this.messageService.getTotalMessageCounts(
+      ecosystem,
       startTime.getTime(),
       endTime.getTime(),
       countBy,

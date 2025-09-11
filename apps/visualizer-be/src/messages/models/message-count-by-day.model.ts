@@ -4,6 +4,9 @@ import { returnInt } from '../../utils/graphql.utils';
 
 @ObjectType()
 export class MessageCountByDay {
+  @Field()
+  ecosystem: string;
+
   @Field(returnInt, { nullable: true })
   paraId?: number;
 

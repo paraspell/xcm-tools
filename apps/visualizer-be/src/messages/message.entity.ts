@@ -15,6 +15,10 @@ export class Message {
 
   @Field()
   @Column()
+  ecosystem: string;
+
+  @Field()
+  @Column()
   origin_event_index: string;
 
   @Field()
