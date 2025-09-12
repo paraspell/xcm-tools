@@ -4753,6 +4753,46 @@
       }
     ]
   },
+  "IntegriteePolkadot": {
+    "relaychainSymbol": "DOT",
+    "nativeAssetSymbol": "TEER",
+    "isEVM": false,
+    "ss58Prefix": 13,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
+    "nativeAssets": [
+      {
+        "symbol": "TEER",
+        "isNative": true,
+        "decimals": 12,
+        "existentialDeposit": "1000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3359
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "0",
+        "symbol": "DOT",
+        "decimals": 10,
+        "existentialDeposit": "100000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      }
+    ]
+  },
   "IntegriteeKusama": {
     "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "TEER",

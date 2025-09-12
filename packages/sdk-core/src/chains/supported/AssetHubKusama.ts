@@ -6,7 +6,12 @@ import { isTLocation, isTrustedChain, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
+import type {
+  TDestination,
+  TPolkadotXcmMethod,
+  TRelayToParaOverrides,
+  TTransferLocalOptions
+} from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -52,12 +57,19 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
       )
     }
 
-    const method =
-      scenario === 'ParaToPara' && !isTrusted
-        ? 'limited_reserve_transfer_assets'
-        : 'limited_teleport_assets'
+    const method = this.getMethod(scenario, destination)
 
     return transferPolkadotXcm(input, method, 'Unlimited')
+  }
+
+  getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
+    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
+
+    if (destination === 'IntegriteeKusama') return 'transfer_assets'
+
+    return scenario === 'ParaToPara' && !isTrusted
+      ? 'limited_reserve_transfer_assets'
+      : 'limited_teleport_assets'
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

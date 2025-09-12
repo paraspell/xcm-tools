@@ -16,6 +16,7 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   EnergyWebX: ['assets.metadata'],
   Hydration: ['assetRegistry.assets'],
   IntegriteeKusama: ['assets.metadata'],
+  IntegriteePolkadot: ['assets.metadata'],
   Interlay: ['assetRegistry.metadata'],
   Heima: ['assets.metadata'],
   Jamton: ['assetRegistry.metadata'],

@@ -256,7 +256,12 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
   private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
     const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
-    if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
+    if (
+      destination === 'Polimec' ||
+      destination === 'Moonbeam' ||
+      (typeof destination === 'string' && destination.startsWith('Integritee'))
+    )
+      return 'transfer_assets'
     return scenario === 'ParaToPara' && !isTrusted
       ? 'limited_reserve_transfer_assets'
       : 'limited_teleport_assets'

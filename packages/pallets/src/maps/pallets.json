@@ -995,7 +995,7 @@
     "otherAssets": []
   },
   "Ajuna": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1004,10 +1004,6 @@
       {
         "name": "PolkadotXcm",
         "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 35
       },
       {
         "name": "Assets",
@@ -1531,6 +1527,29 @@
     "otherAssets": ["Assets"]
   },
   "IntegriteePaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "Balances",
+        "index": 10
+      },
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 34
+      },
+      {
+        "name": "Assets",
+        "index": 41
+      }
+    ],
+    "nativeAssets": "Balances",
+    "otherAssets": ["Assets"]
+  },
+  "IntegriteePolkadot": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
       {
