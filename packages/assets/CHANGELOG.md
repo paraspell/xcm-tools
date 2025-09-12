@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.5.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.5.0...assets-v11.5.1) (2025-09-12)
+
+
+### Bug Fixes
+
+* Use XcmPaymentApi for AH if not execute & Fix transfer info calculations 🛠️ ([70e7434](https://github.com/paraspell/xcm-tools/commit/70e7434ef4a004522e563bca7db63c8e0ee8a7a4))
+
 ## [11.5.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.4.2...assets-v11.5.0) (2025-09-12)
 
 

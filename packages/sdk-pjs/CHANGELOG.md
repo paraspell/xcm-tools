@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.5.0...sdk-pjs-v11.5.1) (2025-09-12)
+
+
+### Bug Fixes
+
+* Fix PJS compilation errors 👨‍💻 ([a84846b](https://github.com/paraspell/xcm-tools/commit/a84846bbd7d362c051720561b5ae92ce52657216))
+
 ## [11.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.2...sdk-pjs-v11.5.0) (2025-09-12)
 
 
