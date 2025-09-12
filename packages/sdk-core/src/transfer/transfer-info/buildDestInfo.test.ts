@@ -72,7 +72,7 @@ describe('buildDestInfo', () => {
           symbol: 'GLMR'
         } as TAssetInfo
       } as TXcmFeeDetail,
-      assetHubFee: undefined,
+      totalHopFee: 0n,
       bridgeFee: undefined
     }
 
@@ -114,7 +114,7 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.balance).toBe(DEFAULT_BALANCE)
     expect(result.receivedCurrency.existentialDeposit).toBe(BigInt(DEFAULT_ED))
     expect(result.receivedCurrency.sufficient).toBe(true)
-    const expectedReceived = BigInt(DEFAULT_AMOUNT) - DEFAULT_FEE
+    const expectedReceived = DEFAULT_AMOUNT - DEFAULT_FEE
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
     expect(result.receivedCurrency.balanceAfter).toBe(
       DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT)
@@ -123,7 +123,7 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.currencySymbol).toBe('GLMR')
     expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
-    expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT))
+    expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
 
   it('should return UnableToComputeError if fee currency is different and not Ethereum', async () => {
@@ -144,7 +144,7 @@ describe('buildDestInfo', () => {
 
   it('should adjust destAmount if isFeeAssetAh is true', async () => {
     const options = { ...baseOptions, api: mockApi, isFeeAssetAh: true }
-    const expectedDestAmount = BigInt(options.currency.amount) - options.originFee
+    const expectedDestAmount = options.currency.amount - options.originFee
     const result = await buildDestInfo(options)
     const expectedReceived = expectedDestAmount - (options.destFeeDetail.fee as bigint)
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
@@ -174,6 +174,7 @@ describe('buildDestInfo', () => {
         ...ahToAhBase,
         api: mockApi,
         originFee: 50000000n,
+        totalHopFee: 0n,
         destFeeDetail: {
           fee: DEFAULT_FEE,
           currency: 'DOT',
@@ -183,8 +184,7 @@ describe('buildDestInfo', () => {
         bridgeFee: 30000000n
       }
       const result = await buildDestInfo(options)
-      const expectedReceived =
-        BigInt(options.currency.amount) - options.originFee - options.bridgeFee
+      const expectedReceived = options.currency.amount - options.originFee - options.bridgeFee
       expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
     })
 
@@ -208,6 +208,7 @@ describe('buildDestInfo', () => {
           currency: 'DOT',
           asset: { symbol: 'DOT' } as TAssetInfo
         } as TXcmFeeDetail,
+        totalHopFee: 0n,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
         bridgeFee: undefined
       }
@@ -239,6 +240,7 @@ describe('buildDestInfo', () => {
           currency: 'USDT',
           asset: { symbol: 'USDT' } as TAssetInfo
         } as TXcmFeeDetail,
+        totalHopFee: 0n,
         currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>
       }
       const result = await buildDestInfo(options)
@@ -280,7 +282,7 @@ describe('buildDestInfo', () => {
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(options.destination)
     expect(getBalanceNativeInternal).not.toHaveBeenCalled()
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
-    expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT))
+    expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
 
   it('should handle destBalance < edDestBn correctly in sufficiency check', async () => {
@@ -288,7 +290,7 @@ describe('buildDestInfo', () => {
     const options = { ...baseOptions, api: mockApi }
     const result = await buildDestInfo(options)
 
-    const destAmount = BigInt(options.currency.amount)
+    const destAmount = options.currency.amount
     const expectedSufficient =
       destAmount - (options.destFeeDetail.fee as bigint) > BigInt(DEFAULT_ED)
     expect(result.receivedCurrency.sufficient).toBe(expectedSufficient)
@@ -323,7 +325,7 @@ describe('buildDestInfo', () => {
       } as TXcmFeeDetail
     }
 
-    const expectedDestAmount = BigInt(options.currency.amount) - options.originFee
+    const expectedDestAmount = options.currency.amount - options.originFee
     const expectedDestBalanceAfter =
       DEFAULT_BALANCE - (options.destFeeDetail.fee ?? 0n) + expectedDestAmount
 

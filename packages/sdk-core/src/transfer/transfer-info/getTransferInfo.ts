@@ -3,6 +3,7 @@ import {
   getExistentialDepositOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
+  isAssetXcEqual,
   isChainEvm
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -151,6 +152,11 @@ export const getTransferInfo = async <TApi, TRes>({
       )) as TTransferInfo['hops']
     }
 
+    const totalHopFee = hops.reduce(
+      (acc, hop) => (isAssetXcEqual(hop.result.asset, originAsset) ? acc + hop.result.fee : acc),
+      0n
+    )
+
     const destinationInfo = await buildDestInfo({
       api,
       origin,
@@ -163,7 +169,7 @@ export const getTransferInfo = async <TApi, TRes>({
       originFee,
       isFeeAssetAh: !!isFeeAssetAh,
       destFeeDetail,
-      assetHubFee: assetHubFeeResult?.fee,
+      totalHopFee,
       bridgeFee: bridgeHubFeeResult?.fee
     })
 

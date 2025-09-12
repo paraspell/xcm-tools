@@ -98,7 +98,7 @@ export type TBuildDestInfoOptions<TApi, TRes> = {
   originFee: bigint
   isFeeAssetAh: boolean
   destFeeDetail: TXcmFeeDetail
-  assetHubFee?: bigint
+  totalHopFee: bigint
   bridgeFee?: bigint
 }
 

@@ -294,7 +294,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   getMethod(tx: TPapiTransaction) {
-    return tx.decodedCall.value.value
+    return tx.decodedCall.value.type
   }
 
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {
@@ -660,10 +660,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     chain,
     origin,
     asset,
+    tx,
     feeAsset,
     originFee,
     amount
-  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResult> {
+  }: TDryRunXcmBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -700,11 +701,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
+    const txMethod = this.getMethod(tx)
+
     if (
       hasXcmPaymentApiSupport(chain) &&
       asset &&
-      chain !== 'AssetHubPolkadot' &&
-      chain !== 'Polkadot'
+      // Do not use XcmPaymentApi if method is `execute` on AssetHub or Polkadot
+      // as fee calculation would be incorrect
+      (txMethod !== 'execute' || (chain !== 'AssetHubPolkadot' && chain !== 'Polkadot'))
     ) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, asset)
 

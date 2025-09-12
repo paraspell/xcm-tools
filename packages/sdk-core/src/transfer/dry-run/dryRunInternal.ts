@@ -135,6 +135,7 @@ export const dryRunInternal = async <TApi, TRes>(
         createOriginLocation(currentOrigin, currentChain),
         Version.V4
       ),
+      tx,
       xcm: forwardedXcms[1][0],
       chain: currentChain,
       origin: currentOrigin,

@@ -84,7 +84,7 @@ export type TAttemptDryRunFeeOptions<TApi, TRes> = Omit<
   builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
 }
 
-export type TGetFeeForDestChainBaseOptions = {
+export type TGetFeeForDestChainBaseOptions<TRes> = {
   prevChain: TSubstrateChain
   origin: TSubstrateChain
   destination: TChain
@@ -92,6 +92,7 @@ export type TGetFeeForDestChainBaseOptions = {
   address: string
   currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
+  tx: TRes
   asset: TAssetInfo
   originFee: bigint
   feeAsset?: TCurrencyInput
@@ -99,7 +100,7 @@ export type TGetFeeForDestChainBaseOptions = {
 }
 
 export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<
-  TGetFeeForDestChainBaseOptions,
+  TGetFeeForDestChainBaseOptions<TRes>,
   TApi,
   TRes
 >

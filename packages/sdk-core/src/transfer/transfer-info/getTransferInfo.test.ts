@@ -32,6 +32,7 @@ vi.mock('@paraspell/assets', async importOriginal => {
     findAssetInfoOrThrow: vi.fn(),
     getExistentialDepositOrThrow: vi.fn(),
     getRelayChainSymbol: vi.fn(),
+    isAssetXcEqual: vi.fn(),
     isAssetEqual: vi.fn(),
     isChainEvm: vi.fn()
   }
