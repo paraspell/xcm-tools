@@ -25,6 +25,14 @@ export const assertAddressIsString: (
   }
 }
 
+export const assertSenderAddress: (
+  address: string | undefined
+) => asserts address is string = address => {
+  if (!address) {
+    throw new InvalidParameterError('Sender address parameter is required for this transfer.')
+  }
+}
+
 export const assertHasLocation: (
   asset: TAssetInfo
 ) => asserts asset is TAssetWithLocation = asset => {

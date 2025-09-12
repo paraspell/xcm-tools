@@ -299,7 +299,8 @@ SDK offers enhanced localhost support. You can pass an object containing overrid
 ```ts
 const builder = await Builder({
   development: true, // Optional: Enforces overrides for all chains used
-  decimalAbstraction: true //Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT.
+  decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT.
+  xcmFormatCheck: true // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
   apiOverrides: {
     Hydration: // "wsEndpointString" | papiClient
     BridgeHubPolkadot: // "wsEndpointString" | papiClient

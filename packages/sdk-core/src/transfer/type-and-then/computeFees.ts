@@ -8,7 +8,7 @@ import type { createCustomXcm } from './createCustomXcm'
 import type { createRefundInstruction } from './utils'
 
 const FEE_PADDING_PERCENTAGE = 20
-const FEE_PADDING_HYDRATION = 150
+const FEE_PADDING_HYDRATION = 500
 
 const computeInstructionFee = async <TApi, TRes>(
   { chain, api }: TChainWithApi<TApi, TRes>,

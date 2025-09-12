@@ -40,7 +40,12 @@ import {
   type TPolkadotXCMTransferOptions,
   type TScenario
 } from '../../types'
-import { addXcmVersionHeader, assertHasLocation, assertIsForeign } from '../../utils'
+import {
+  addXcmVersionHeader,
+  assertHasLocation,
+  assertIsForeign,
+  assertSenderAddress
+} from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
@@ -107,9 +112,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       throw new BridgeHaltedError()
     }
 
-    if (senderAddress === undefined) {
-      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
-    }
+    assertSenderAddress(senderAddress)
 
     if (isTLocation(address)) {
       throw new InvalidParameterError('Location address is not supported for Ethereum transfers')

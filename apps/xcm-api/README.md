@@ -219,10 +219,12 @@ const response = await fetch("http://localhost:3001/v4/x-transfer", {
         to: "Ethereum",
         currency: {
           symbol: "USDC.e",
-          amount: "10000000"
+          amount: "10"
         },
         options: {
-          development: true,
+          development: true, // Optional: Enforces overrides for all chains used
+          decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          xcmFormatCheck: true // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
           apiOverrides: {
             Hydration: "wss://hydration.ibp.network",
             AssetHubPolkadot: "wss://dot-rpc.stakeworld.io/assethub"

@@ -404,7 +404,8 @@ const XcmTransfer = () => {
 
     let result;
     if (useApi) {
-      const { useApi, currencies, ...safeFormValues } = formValues;
+      const { useApi, currencies, useXcmFormatCheck, ...safeFormValues } =
+        formValues;
       result = await fetchFromApi(
         {
           ...safeFormValues,
@@ -463,6 +464,7 @@ const XcmTransfer = () => {
       address,
       ahAddress,
       useApi,
+      useXcmFormatCheck,
     } = formValues;
 
     if (submitType === 'delete') {
@@ -567,6 +569,10 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             ...safeFormValues,
+            options: {
+              abstractDecimals: true,
+              xcmFormatCheck: useXcmFormatCheck,
+            },
             feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
               currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
@@ -581,6 +587,7 @@ const XcmTransfer = () => {
       } else {
         const builder = Builder({
           abstractDecimals: true,
+          xcmFormatCheck: useXcmFormatCheck,
         })
           .from(from)
           .to(to)

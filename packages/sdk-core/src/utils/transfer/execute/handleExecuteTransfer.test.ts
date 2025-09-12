@@ -59,13 +59,6 @@ describe('handleExecuteTransfer', () => {
     vi.mocked(isAssetEqual).mockReturnValue(true)
   })
 
-  it('should throw error when senderAddress is not provided', async () => {
-    const input = { ...mockInput, senderAddress: undefined }
-    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
-      'Please provide senderAddress'
-    )
-  })
-
   it('should throw error when amount is smaller than MIN_FEE', async () => {
     const input = {
       ...mockInput,

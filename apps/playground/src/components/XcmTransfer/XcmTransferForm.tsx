@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Button,
+  Checkbox,
   Fieldset,
   Group,
   Menu,
@@ -59,6 +60,7 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
+  useXcmFormatCheck: boolean;
 };
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
@@ -109,6 +111,7 @@ const XcmTransferForm: FC<Props> = ({
       address: DEFAULT_ADDRESS,
       ahAddress: '',
       useApi: false,
+      useXcmFormatCheck: false,
     },
 
     validate: {
@@ -427,9 +430,16 @@ const XcmTransferForm: FC<Props> = ({
             />
           )}
 
-          <XcmApiCheckbox
-            {...form.getInputProps('useApi', { type: 'checkbox' })}
-          />
+          <Stack gap="xs">
+            <XcmApiCheckbox
+              {...form.getInputProps('useApi', { type: 'checkbox' })}
+            />
+
+            <Checkbox
+              label="Use XCM Format Check ✅"
+              {...form.getInputProps('useXcmFormatCheck', { type: 'checkbox' })}
+            />
+          </Stack>
 
           {selectedAccount ? (
             <Button.Group>

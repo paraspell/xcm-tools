@@ -49,7 +49,7 @@ describe('getOriginFeeDetails', () => {
       senderAddress: vi.fn().mockReturnThis(),
       ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue(mockTx)
+      buildInternal: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
@@ -101,7 +101,7 @@ describe('getOriginFeeDetails', () => {
       senderAddress: vi.fn().mockReturnThis(),
       ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue(mockTx)
+      buildInternal: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
@@ -153,7 +153,7 @@ describe('getOriginFeeDetails', () => {
       senderAddress: vi.fn().mockReturnThis(),
       ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue(mockTx)
+      buildInternal: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)

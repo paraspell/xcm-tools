@@ -32,7 +32,7 @@ vi.mock('../../builder', () => ({
     address: mockAddress,
     senderAddress: mockSenderAddress,
     currency: mockCurrency,
-    build: mockBuild
+    buildInternal: mockBuild
   }))
 }))
 

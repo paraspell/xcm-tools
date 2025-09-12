@@ -7,7 +7,7 @@ import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, getRelayChainOf } from '../..'
+import { assertAddressIsString, assertSenderAddress, getRelayChainOf } from '../..'
 import { padFeeBy } from '../../fees/padFee'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
@@ -38,10 +38,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     version
   } = options
 
-  if (!senderAddress) {
-    throw new InvalidParameterError('Please provide senderAddress')
-  }
-
+  assertSenderAddress(senderAddress)
   assertAddressIsString(address)
 
   const checkAmount = (fee: bigint) => {

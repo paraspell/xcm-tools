@@ -18,7 +18,7 @@ import {
   type TPolkadotXCMTransferOptions,
   type TSerializedApiCall
 } from '../../types'
-import { assertAddressIsString, assertHasLocation } from '../../utils'
+import { assertAddressIsString, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
@@ -36,10 +36,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
 
   assertHasLocation(asset)
   assertAddressIsString(address)
-
-  if (!senderAddress) {
-    throw new InvalidCurrencyError(`Sender address is required for Mythos transfer`)
-  }
+  assertSenderAddress(senderAddress)
 
   if (!isForeignAsset(asset) || !asset.assetId) {
     throw new InvalidCurrencyError(

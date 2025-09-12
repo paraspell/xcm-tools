@@ -53,7 +53,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
     mockBuilder = {
       currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockReturnValue({} as unknown)
+      buildInternal: vi.fn().mockReturnValue({} as unknown)
     } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions>
   })
 
@@ -89,7 +89,8 @@ describe('getMinTransferableAmountInternal', () => {
     } as TGetXcmFeeResult)
 
     const currencySpy = vi.spyOn(mockBuilder, 'currency')
-    const buildSpy = vi.spyOn(mockBuilder, 'build').mockResolvedValue({} as unknown)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const buildSpy = vi.spyOn(mockBuilder as any, 'buildInternal').mockResolvedValue({} as unknown)
 
     const res = await mod.getMinTransferableAmountInternal({
       api,

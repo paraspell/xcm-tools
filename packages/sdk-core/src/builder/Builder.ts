@@ -12,7 +12,7 @@ import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { BYPASS_CURRENCY_AMOUNT } from '../constants'
-import { InvalidParameterError } from '../errors'
+import { DryRunFailedError, InvalidParameterError } from '../errors'
 import {
   getMinTransferableAmount,
   getOriginXcmFee,
@@ -33,7 +33,7 @@ import type {
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress
 } from '../types'
-import { assertAddressIsString, assertToIsString, isConfig } from '../utils'
+import { assertAddressIsString, assertSenderAddress, assertToIsString, isConfig } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
@@ -205,12 +205,23 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
+  protected buildInternal(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
+    return this.buildCommon(true)
+  }
+
   /**
    * Builds and returns the transfer extrinsic.
    *
    * @returns A Promise that resolves to the transfer extrinsic.
    */
   async build(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
+    return this.buildCommon()
+  }
+
+  private async buildCommon(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
+    isCalledInternally = false
+  ) {
     if (!this.batchManager.isEmpty()) {
       throw new InvalidParameterError(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
@@ -223,7 +234,39 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
-    return send({ api: this.api, ...this._options })
+    const tx = await send({ api: this.api, ...this._options })
+
+    await this.maybePerformXcmFormatCheck(tx, this._options, isCalledInternally)
+
+    return tx
+  }
+
+  private async maybePerformXcmFormatCheck(
+    tx: TRes,
+    options: TSendBaseOptions,
+    isCalledInternally: boolean
+  ) {
+    const { senderAddress } = options
+
+    const config = this.api.getConfig()
+    if (isConfig(config) && config.xcmFormatCheck && !isCalledInternally) {
+      assertSenderAddress(senderAddress)
+      const dryRunResult = await buildDryRun(
+        this.api,
+        tx,
+        {
+          ...options,
+          senderAddress
+        },
+        {
+          sentAssetMintMode: 'bypass'
+        }
+      )
+
+      if (dryRunResult.failureReason) {
+        throw new DryRunFailedError(dryRunResult.failureReason, dryRunResult.failureChain)
+      }
+    }
   }
 
   protected computeOverridenAmount(
@@ -249,11 +292,11 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       amount: this.computeOverridenAmount()
     })
 
-    return modifiedBuilder.build()
+    return modifiedBuilder.buildInternal()
   }
 
   async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const tx = await this.build()
+    const tx = await this.buildInternal()
     return buildDryRun(this.api, tx, this._options)
   }
 
@@ -261,7 +304,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     options?: TDryRunPreviewOptions
   ) {
-    const tx = await this.build()
+    const tx = await this.buildInternal()
     return buildDryRun(this.api, tx, this._options, {
       sentAssetMintMode: 'preview',
       mintFeeAssets: options?.mintFeeAssets
@@ -345,7 +388,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.build()
+    const tx = await this.buildInternal()
 
     try {
       return await getXcmFeeEstimate({
@@ -374,7 +417,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    const tx = await this.build()
+    const tx = await this.buildInternal()
 
     try {
       return await getOriginXcmFeeEstimate({

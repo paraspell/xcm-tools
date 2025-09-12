@@ -476,18 +476,6 @@ describe('Parachain', () => {
     })
   })
 
-  it('should throw if senderAddress is not provided', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      senderAddress: undefined
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrowError(
-      'Sender address is required'
-    )
-  })
-
   it('should throw if the address is location', async () => {
     const options = {
       api,

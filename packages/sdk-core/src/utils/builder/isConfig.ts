@@ -9,4 +9,5 @@ export const isConfig = <TApi>(value: any): value is TBuilderConfig<TApi> =>
   (Object.keys(value).length < 3 ||
     'apiOverrides' in value ||
     'development' in value ||
-    'abstractDecimals' in value)
+    'abstractDecimals' in value ||
+    'xcmFormatCheck' in value)

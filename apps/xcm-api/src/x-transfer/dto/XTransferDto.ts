@@ -42,6 +42,7 @@ export const BuilderOptionsSchema = z
       .optional(),
     development: z.boolean().optional(),
     abstractDecimals: z.boolean().optional(),
+    xcmFormatCheck: z.boolean().optional(),
   })
   .strict();
 

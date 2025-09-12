@@ -11,7 +11,7 @@ import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation } from '../assertions'
+import { assertHasLocation, assertSenderAddress } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
@@ -33,10 +33,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   }
 
   assertHasLocation(asset)
-
-  if (!senderAddress) {
-    throw new InvalidParameterError(`Please provide senderAddress`)
-  }
+  assertSenderAddress(senderAddress)
 
   if (isChainEvm(origin) && !ahAddress) {
     throw new InvalidParameterError(`Please provide ahAddress`)
