@@ -24,7 +24,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
     .address(accountDestination)
     .senderAddress(account)
     .ahAddress(ahAddress)
-    .build()
+    ['buildInternal']()
 
   const xcmFee = await api.calculateTransactionFee(tx, account)
   const xcmFeeWithMargin = xcmFee + xcmFee / BigInt(feeMarginPercentage)

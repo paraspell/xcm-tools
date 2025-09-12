@@ -6,6 +6,7 @@ import { MAX_WEIGHT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { dryRunInternal, getXcmFee } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
+import { assertSenderAddress } from '../assertions'
 import { padFeeBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 
@@ -24,9 +25,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
     throw new InvalidParameterError('Location address is not supported for this scenario')
   }
 
-  if (!senderAddress) {
-    throw new InvalidParameterError(`Please provide senderAddress`)
-  }
+  assertSenderAddress(senderAddress)
 
   const dryRunResult = await dryRunInternal({
     api,

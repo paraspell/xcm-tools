@@ -38,7 +38,7 @@ export const getReverseTxFee = async <TApi, TRes>(
     .address(toAddress)
     .senderAddress(fromAddress)
     .currency({ ...currencyInput, amount: currency.amount })
-    .build()
+    ['buildInternal']()
 
   const rawFee = await api.calculateTransactionFee(tx, fromAddress)
   return padFee(rawFee, origin, destination, 'destination')

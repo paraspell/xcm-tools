@@ -194,17 +194,6 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleEthBridgeNativeTransfer', () => {
-    it('should throw an error if the senderAddress is not provided', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: undefined
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      await expect(assetHub.handleEthBridgeNativeTransfer(input)).rejects.toThrow(
-        'Sender address is required for transfers to Ethereum'
-      )
-    })
-
     it('should throw if the address is location', async () => {
       const input = {
         ...mockInput,

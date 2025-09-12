@@ -10,6 +10,7 @@ import { type TChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { DryRunFailedError } from '../errors'
 import {
   claimAssets,
   getMinTransferableAmount,
@@ -967,6 +968,122 @@ describe('Builder', () => {
       expect(getTransferInfo).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
+    })
+  })
+
+  describe('XCM format check', () => {
+    const mockTx = { method: 'transfer', args: [] }
+    const SENDER = 'sender-address'
+
+    beforeEach(() => {
+      vi.resetAllMocks()
+      vi.mocked(send).mockResolvedValue(mockTx)
+      vi.mocked(buildDryRun).mockResolvedValue({
+        origin: {
+          success: true,
+          fee: 1000n,
+          forwardedXcms: [],
+          destParaId: 0,
+          currency: 'DOT',
+          asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
+        },
+        hops: []
+      })
+      vi.spyOn(mockApi, 'getConfig').mockReturnValue({})
+    })
+
+    it('should skip dryRun when called internally', async () => {
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        ['buildInternal']()
+
+      expect(buildDryRun).not.toHaveBeenCalled()
+    })
+
+    it('should assert sender address before dryRun', async () => {
+      const spy = vi.spyOn(mockApi, 'getConfig')
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .build()
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it('should run dryRun when called externally and config is valid', async () => {
+      vi.mocked(isConfig).mockReturnValue(true)
+      vi.spyOn(mockApi, 'getConfig').mockReturnValue({
+        abstractDecimals: true,
+        xcmFormatCheck: true
+      })
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .build()
+
+      expect(buildDryRun).toHaveBeenCalledTimes(1)
+      expect(buildDryRun).toHaveBeenCalledWith(
+        mockApi,
+        { method: 'transfer', args: [] },
+        expect.objectContaining({
+          from: CHAIN,
+          to: CHAIN_2,
+          currency: CURRENCY,
+          address: ADDRESS,
+          senderAddress: SENDER
+        }),
+        {
+          sentAssetMintMode: 'bypass'
+        }
+      )
+    })
+
+    it('should throw DryRunFailedError when dryRun reports a failure', async () => {
+      vi.mocked(isConfig).mockReturnValue(true)
+      vi.mocked(buildDryRun).mockResolvedValueOnce({
+        failureReason: 'Bad XCM format',
+        failureChain: CHAIN_2
+      } as unknown as TDryRunResult)
+      vi.spyOn(mockApi, 'getConfig').mockReturnValue({
+        abstractDecimals: true,
+        xcmFormatCheck: true
+      })
+
+      await expect(
+        Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency(CURRENCY)
+          .address(ADDRESS)
+          .senderAddress(SENDER)
+          .build()
+      ).rejects.toBeInstanceOf(DryRunFailedError)
+    })
+
+    it('should skip dryRun when config is not recognized by isConfig', async () => {
+      vi.mocked(isConfig).mockReturnValue(false)
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .build()
+
+      expect(buildDryRun).not.toHaveBeenCalled()
     })
   })
 })

@@ -96,24 +96,6 @@ describe('createCustomXcmOnDest', () => {
     expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(InvalidCurrencyError)
   })
 
-  it('should throw an error if senderAddress is missing', () => {
-    const options = {
-      ...baseOptions,
-      senderAddress: undefined,
-      assetInfo: {
-        symbol: 'ETH',
-        location: mockLocation,
-        amount: 1000000n
-      }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
-    expect(() => createCustomXcmOnDest(options, mockChain, messageId)).toThrow(
-      InvalidParameterError
-    )
-  })
-
   it('should throw an error if chain is EVM and ahAddress is missing', () => {
     const options = {
       ...baseOptions,

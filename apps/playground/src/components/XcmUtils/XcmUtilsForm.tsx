@@ -63,6 +63,7 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
+  useXcmFormatCheck: boolean;
 };
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
@@ -111,6 +112,7 @@ const XcmUtilsForm: FC<Props> = ({
       address: DEFAULT_ADDRESS,
       ahAddress: '',
       useApi: false,
+      useXcmFormatCheck: false,
     },
 
     validate: {

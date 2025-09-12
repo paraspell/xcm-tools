@@ -60,6 +60,7 @@ import {
   assertAddressIsString,
   assertHasId,
   assertHasLocation,
+  assertSenderAddress,
   createBeneficiaryLocation,
   getChain,
   getRelayChainOf,
@@ -499,10 +500,7 @@ abstract class Parachain<TApi, TRes> {
 
     assertHasLocation(asset)
     assertAddressIsString(address)
-
-    if (senderAddress === undefined) {
-      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
-    }
+    assertSenderAddress(senderAddress)
 
     const ethAsset = createAsset(version, asset.amount, asset.location)
 

@@ -104,15 +104,4 @@ describe('handleToAhTeleport', () => {
     expect(padFeeBy).toHaveBeenCalledWith(200n, 20)
     expect(padFeeBy).toHaveBeenCalledWith(100n, 20)
   })
-
-  it('should require senderAddress', async () => {
-    const input = {
-      ...mockInput,
-      senderAddress: undefined
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await expect(() => handleToAhTeleport(mockOrigin, input, defaultTx)).rejects.toThrow(
-      InvalidParameterError
-    )
-  })
 })

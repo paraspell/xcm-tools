@@ -86,4 +86,5 @@ export type TBuilderConfig<TApi> = {
   apiOverrides?: Partial<Record<TChain, TApi>>
   development?: boolean
   abstractDecimals?: boolean
+  xcmFormatCheck?: boolean
 }

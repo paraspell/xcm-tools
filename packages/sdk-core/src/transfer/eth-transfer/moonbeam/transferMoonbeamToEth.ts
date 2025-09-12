@@ -17,7 +17,7 @@ import { getParaId } from '../../../chains/config'
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
 import { type TEvmBuilderOptions } from '../../../types'
-import { abstractDecimals } from '../../../utils'
+import { abstractDecimals, assertSenderAddress } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -85,9 +85,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   const senderAddress = signer.account?.address
 
-  if (!senderAddress) {
-    throw new InvalidParameterError('Unable to get sender address')
-  }
+  assertSenderAddress(senderAddress)
 
   await api.init(from, TX_CLIENT_TIMEOUT_MS)
 

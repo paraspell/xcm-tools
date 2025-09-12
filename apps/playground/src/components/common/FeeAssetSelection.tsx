@@ -13,7 +13,7 @@ import { isRelayChain } from '@paraspell/sdk';
 import type { FC } from 'react';
 import { useEffect } from 'react';
 
-import type { FormValues } from '../XcmTransfer/XcmTransferForm';
+import type { FormValues } from '../XcmUtils/XcmUtilsForm';
 
 type Props = {
   form: UseFormReturnType<FormValues>;

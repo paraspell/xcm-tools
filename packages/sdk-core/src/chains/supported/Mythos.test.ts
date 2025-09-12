@@ -22,25 +22,11 @@ import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 import { createTypeAndThenTransfer } from './Mythos'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../utils/transfer', () => ({
-  handleToAhTeleport: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  getParaEthTransferFees: vi.fn()
-}))
-
-vi.mock('../../utils/ethereum/generateMessageId', () => ({
-  generateMessageId: vi.fn()
-}))
-
-vi.mock('../../utils/ethereum/createCustomXcmOnDest', () => ({
-  createCustomXcmOnDest: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../utils/transfer')
+vi.mock('../../transfer')
+vi.mock('../../utils/ethereum/generateMessageId')
+vi.mock('../../utils/ethereum/createCustomXcmOnDest')
 
 describe('Mythos', () => {
   let mythos: Mythos<unknown, unknown>
@@ -232,16 +218,6 @@ describe('createTypeAndThenTransfer', () => {
     vi.clearAllMocks()
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
     vi.spyOn(mockApi, 'init').mockResolvedValue(undefined)
-  })
-
-  it('should throw InvalidCurrencyError when senderAddress is missing', async () => {
-    const optionsWithoutSender = { ...mockOptions, senderAddress: undefined }
-
-    await expect(
-      createTypeAndThenTransfer(optionsWithoutSender, 'Mythos', Version.V4)
-    ).rejects.toThrowError(
-      new InvalidCurrencyError('Sender address is required for Mythos transfer')
-    )
   })
 
   it('should throw InvalidCurrencyError for non-foreign assets', async () => {

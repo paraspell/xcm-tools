@@ -105,7 +105,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
 
   const dryRunResult = await dryRunInternal({
     api,
-    tx: await modifiedBuilder.build(),
+    tx: await modifiedBuilder['buildInternal'](),
     origin: chain,
     destination,
     senderAddress,

@@ -13,6 +13,16 @@ describe('isConfig', () => {
     expect(isConfig(input)).toBe(true)
   })
 
+  it('should return true for object with abstractDecimals', () => {
+    const input = { abstractDecimals: true }
+    expect(isConfig(input)).toBe(true)
+  })
+
+  it('should return true for object with xcmFormatCheck', () => {
+    const input = { xcmFormatCheck: true }
+    expect(isConfig(input)).toBe(true)
+  })
+
   it('should return false for null', () => {
     expect(isConfig(null)).toBe(false)
   })
