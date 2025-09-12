@@ -249,17 +249,6 @@
       }
     ]
   },
-  "EnergyWebXPaseo": {
-    "name": "PEX",
-    "info": "paseoEwx",
-    "paraId": 3345,
-    "providers": [
-      {
-        "name": "Energy Web",
-        "endpoint": "wss://public-rpc.testnet.energywebx.com/"
-      }
-    ]
-  },
   "Hydration": {
     "name": "Hydration",
     "info": "hydradx",
@@ -280,6 +269,17 @@
       {
         "name": "IBP2",
         "endpoint": "wss://hydration.dotters.network"
+      }
+    ]
+  },
+  "IntegriteePolkadot": {
+    "name": "Integritee Network",
+    "info": "integritee",
+    "paraId": 2039,
+    "providers": [
+      {
+        "name": "Integritee",
+        "endpoint": "wss://polkadot.api.integritee.network"
       }
     ]
   },
@@ -1336,6 +1336,17 @@
       {
         "name": "IBP2",
         "endpoint": "wss://coretime-paseo.dotters.network"
+      }
+    ]
+  },
+  "EnergyWebXPaseo": {
+    "name": "PEX",
+    "info": "paseoEwx",
+    "paraId": 3345,
+    "providers": [
+      {
+        "name": "Energy Web",
+        "endpoint": "wss://public-rpc.testnet.energywebx.com/"
       }
     ]
   },

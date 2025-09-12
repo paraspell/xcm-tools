@@ -40,7 +40,10 @@ export const CHAINS_DOT_RESERVE_AH = new Set<TChain>([
   'BifrostKusama',
   'PeoplePolkadot',
   'PeopleKusama',
-  'Ajuna'
+  'Ajuna',
+  'IntegriteePolkadot',
+  'IntegriteeKusama',
+  'IntegriteePaseo'
 ] as const)
 
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT

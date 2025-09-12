@@ -260,7 +260,14 @@ abstract class Parachain<TApi, TRes> {
 
       const isOtherParaToAh = destChain?.startsWith('AssetHub') && !isTrustedChain(this.chain)
 
-      if ((isAhToOtherPara || isOtherParaToAh) && shouldUseTeleport) {
+      const isAllowedAhTransfer = (chain: TChain | undefined) => chain?.startsWith('Integritee')
+
+      if (
+        (isAhToOtherPara || isOtherParaToAh) &&
+        shouldUseTeleport &&
+        !isAllowedAhTransfer(destChain) &&
+        !isAllowedAhTransfer(this.chain)
+      ) {
         throw new TransferToAhNotSupported(
           'Native asset transfers to or from AssetHub are temporarily disabled'
         )

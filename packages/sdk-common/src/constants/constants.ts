@@ -14,6 +14,7 @@ export const PARACHAINS = [
   'Darwinia',
   'EnergyWebX',
   'Hydration',
+  'IntegriteePolkadot',
   'Interlay',
   'Heima',
   'Jamton',

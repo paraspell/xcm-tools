@@ -38,6 +38,7 @@ import Hydration from '../chains/supported/Hydration'
 import HydrationPaseo from '../chains/supported/HydrationPaseo'
 import IntegriteeKusama from '../chains/supported/IntegriteeKusama'
 import IntegriteePaseo from '../chains/supported/IntegriteePaseo'
+import IntegriteePolkadot from '../chains/supported/IntegriteePolkadot'
 import Interlay from '../chains/supported/Interlay'
 import Jamton from '../chains/supported/Jamton'
 import Karura from '../chains/supported/Karura'
@@ -89,6 +90,7 @@ export const chains = <TApi, TRes>() => ({
   EnergyWebX: new EnergyWebX<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
   IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
+  IntegriteePolkadot: new IntegriteePolkadot<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
   Jamton: new Jamton<TApi, TRes>(),
