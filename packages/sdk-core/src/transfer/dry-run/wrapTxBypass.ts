@@ -4,7 +4,7 @@ import {
   findNativeAssetInfo,
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
-  isAssetEqual,
+  isAssetXcEqual,
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
@@ -138,7 +138,7 @@ const mintBonusForSent = (
       return true
     })
 
-  return preminted.some(a => isAssetEqual(a, sent))
+  return preminted.some(a => isAssetXcEqual(a, sent))
     ? parseUnits(MINT_AMOUNT.toString(), sent.decimals)
     : 0n
 }
@@ -159,7 +159,7 @@ export const wrapTxBypass = async <TApi, TRes>(
 
   const nativeInfo = mintFeeAssets ? findNativeAssetInfo(chain) : null
   const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency, null) : null
-  const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetEqual(nativeInfo, relayInfo))
+  const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetXcEqual(nativeInfo, relayInfo))
 
   const mintNativeAssetRes = mintFeeAssets
     ? await createRequiredMintTxs(

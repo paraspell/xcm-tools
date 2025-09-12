@@ -60,7 +60,7 @@ export type TDryRunBypassOptions<TApi, TRes> = WithApi<
 
 export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
 
-export type TDryRunXcmBaseOptions = {
+export type TDryRunXcmBaseOptions<TRes> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   originLocation: any
   /**
@@ -68,6 +68,8 @@ export type TDryRunXcmBaseOptions = {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xcm: any
+  /** The transaction to dry-run */
+  tx: TRes
   /**
    * The chain to dry-run on
    */
@@ -82,7 +84,7 @@ export type TDryRunXcmBaseOptions = {
   originFee: bigint
 }
 
-export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>
+export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions<TRes>, TApi, TRes>
 
 export type TDryRunResBase = {
   /** @deprecated Use `asset` property instead. */

@@ -64,7 +64,7 @@ export interface IPolkadotApi<TApi, TRes> {
   clone(): IPolkadotApi<TApi, TRes>
   createApiForChain(chain: TSubstrateChain): Promise<IPolkadotApi<TApi, TRes>>
   getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResult>
-  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunChainResult>
+  getDryRunXcm(options: TDryRunXcmBaseOptions<TRes>): Promise<TDryRunChainResult>
   getBridgeStatus(): Promise<TBridgeStatus>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean

@@ -78,7 +78,12 @@ describe('PapiApi', () => {
 
   beforeEach(async () => {
     mockTransaction = {
-      getEstimatedFees: vi.fn().mockResolvedValue(1000n)
+      getEstimatedFees: vi.fn().mockResolvedValue(1000n),
+      decodedCall: {
+        value: {
+          type: 'transfer_assets'
+        }
+      }
     } as unknown as TPapiTransaction
 
     mockDryRunResult = {
@@ -904,7 +909,7 @@ describe('PapiApi', () => {
       const mockTransaction = {
         decodedCall: {
           value: {
-            value: 'methodName'
+            type: 'methodName'
           }
         }
       } as unknown as TPapiTransaction
@@ -1433,10 +1438,11 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'USDT', location: {} } as TAssetInfo
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -1472,10 +1478,11 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         asset: { symbol: 'USDT' } as TAssetInfo,
         chain: 'AssetHubPolkadot',
         origin: 'Hydration'
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(result).toEqual({
         success: false,
@@ -1490,9 +1497,10 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          tx: mockTransaction,
           chain: 'Acala',
           origin: 'Hydration'
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).rejects.toThrow(ChainNotSupportedError)
     })
 
@@ -1502,9 +1510,10 @@ describe('PapiApi', () => {
       const testOriginFee = 100n
       const foreignAssetsIssuedAmount = 500n
 
-      const baseOptions: TDryRunXcmBaseOptions = {
+      const baseOptions: TDryRunXcmBaseOptions<TPapiTransaction> = {
         originLocation: { parents: 0, interior: { Here: null } } as TLocation,
         xcm: { some: 'xcm-payload' },
+        tx: mockTransaction,
         chain: 'AssetHubPolkadot',
         origin: 'AssetHubPolkadot',
         asset: mockAssetDetails,
@@ -1614,10 +1623,11 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         chain: 'AssetHubPolkadot',
         origin: 'Acala',
         asset: { symbol: 'AUSD' }
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -1652,10 +1662,11 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         asset: { symbol: 'AUSD' },
         chain: 'AssetHubPolkadot',
         origin: 'Acala'
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(result).toEqual({
         success: false,
@@ -1722,11 +1733,12 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'USDT' },
         amount: testAmount
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -1801,11 +1813,12 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
+        tx: mockTransaction,
         chain: 'AssetHubPolkadot',
         origin: 'Hydration',
         asset: { symbol: 'DOT' },
         amount: testAmount
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -1828,9 +1841,10 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          tx: mockTransaction,
           chain: 'Acala',
           origin: 'Acala'
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).rejects.toThrow(ChainNotSupportedError)
     })
 
@@ -1856,10 +1870,11 @@ describe('PapiApi', () => {
         await papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          tx: mockTransaction,
           asset: { symbol: 'USDT' },
           chain: 'AssetHubPolkadot',
           origin: 'Mythos'
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No fee event found',
@@ -1898,10 +1913,11 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          tx: mockTransaction,
           chain: 'Moonbeam',
           origin: 'Acala',
           asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } }
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).resolves.toEqual({
         success: true,
         fee: 100n,
@@ -1936,10 +1952,11 @@ describe('PapiApi', () => {
         papiApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
+          tx: mockTransaction,
           chain: 'Moonbeam',
           origin: 'Acala',
           asset: { symbol: 'AUSD' }
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).rejects.toThrow(InvalidCurrencyError)
     })
   })

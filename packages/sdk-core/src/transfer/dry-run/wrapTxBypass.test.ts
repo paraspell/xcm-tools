@@ -100,7 +100,7 @@ describe('wrapTxBypass (existing cases)', () => {
     })
     expect(result).toBeDefined()
 
-    expect(parseUnits).toHaveBeenCalledTimes(5)
+    expect(parseUnits).toHaveBeenCalledTimes(4)
     expect(parseUnits).toHaveBeenNthCalledWith(1, '1000', nativeAsset.decimals)
 
     const remainingDecs = vi

@@ -43,6 +43,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     address,
     feeAsset,
     originFee,
+    tx,
     disableFallback
   } = options
 
@@ -93,6 +94,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
 
   const dryRunResult = await api.getDryRunXcm({
     originLocation: addXcmVersionHeader(createOriginLocation(hopChain, destination), Version.V4),
+    tx,
     xcm: forwardedXcms[1][0],
     chain: destination,
     origin,

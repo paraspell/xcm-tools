@@ -112,6 +112,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
         },
         address,
         asset,
+        tx,
         originFee: originFee ?? 0n,
         senderAddress,
         disableFallback
@@ -179,6 +180,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       senderAddress,
       asset: currentAsset,
       feeAsset,
+      tx,
       originFee: originFee ?? 0n,
       disableFallback
     })
@@ -269,6 +271,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       },
       address,
       asset,
+      tx,
       originFee: originFee ?? 0n,
       senderAddress,
       disableFallback

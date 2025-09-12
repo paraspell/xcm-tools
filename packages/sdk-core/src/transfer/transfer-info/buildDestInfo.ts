@@ -14,7 +14,7 @@ export const buildDestInfo = async <TApi, TRes>({
   originFee,
   isFeeAssetAh,
   destFeeDetail,
-  assetHubFee,
+  totalHopFee,
   bridgeFee
 }: TBuildDestInfoOptions<TApi, TRes>) => {
   const destApi = api.clone()
@@ -24,8 +24,6 @@ export const buildDestInfo = async <TApi, TRes>({
   const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 
   const edDest = getEdFromAssetOrThrow(destAsset)
-
-  const edDestBn = BigInt(edDest)
 
   const destCurrency = destAsset.location
     ? { location: destAsset.location }
@@ -38,16 +36,12 @@ export const buildDestInfo = async <TApi, TRes>({
     currency: destCurrency
   })
 
-  const destAmount = isFeeAssetAh ? BigInt(currency.amount) - originFee : BigInt(currency.amount)
+  const destAmount = isFeeAssetAh ? currency.amount - originFee : currency.amount
 
-  let effectiveAmountForBalance = destAmount
-  if (destination === 'Ethereum' && assetHubFee !== undefined) {
-    effectiveAmountForBalance -= assetHubFee
-  }
+  const effectiveAmountForBalance = destAmount - totalHopFee
 
   const destBalanceSufficient =
-    effectiveAmountForBalance - (destFeeDetail.fee as bigint) >
-    (destBalance < edDestBn ? edDestBn : 0)
+    effectiveAmountForBalance - (destFeeDetail.fee as bigint) > (destBalance < edDest ? edDest : 0n)
 
   const destBalanceSufficientResult =
     destFeeDetail.currency !== destAsset.symbol && destination !== 'Ethereum'
@@ -88,7 +82,7 @@ export const buildDestInfo = async <TApi, TRes>({
           `bridgeFee is required for native asset transfer from ${origin} to ${destination} but was not provided.`
         )
       } else {
-        receivedAmount = BigInt(currency.amount) - originFee - bridgeFee
+        receivedAmount = currency.amount - originFee - bridgeFee
       }
     } else {
       receivedAmount = new UnableToComputeError(
@@ -131,7 +125,7 @@ export const buildDestInfo = async <TApi, TRes>({
       balanceAfter: destbalanceAfterResult,
       currencySymbol: destAsset.symbol,
       asset: destAsset,
-      existentialDeposit: edDestBn
+      existentialDeposit: edDest
     },
     xcmFee: {
       fee: destFeeDetail.fee as bigint,
