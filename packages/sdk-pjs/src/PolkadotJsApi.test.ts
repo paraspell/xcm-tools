@@ -1424,7 +1424,7 @@ describe('PolkadotJsApi', () => {
         asset: { symbol: 'DOT' } as TAssetInfo,
         chain: 'Astar',
         origin: 'Hydration'
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<Extrinsic>)
 
       expect(mockApiPromise.call.dryRunApi.dryRunXcm).toHaveBeenCalledWith(originLocation, dummyXcm)
       expect(result).toEqual({
@@ -1464,7 +1464,7 @@ describe('PolkadotJsApi', () => {
         asset: { symbol: 'DOT' } as TAssetInfo,
         chain: 'Astar',
         origin: 'Hydration'
-      } as TDryRunXcmBaseOptions)
+      } as TDryRunXcmBaseOptions<Extrinsic>)
 
       expect(result).toEqual({
         success: false,
@@ -1481,7 +1481,7 @@ describe('PolkadotJsApi', () => {
           xcm: dummyXcm,
           chain: 'Acala',
           origin: 'Hydration'
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<Extrinsic>)
       ).rejects.toThrow(ChainNotSupportedError)
     })
 
@@ -1511,7 +1511,7 @@ describe('PolkadotJsApi', () => {
           asset: { symbol: 'DOT' } as TAssetInfo,
           chain: 'AssetHubPolkadot',
           origin: 'Hydration'
-        } as TDryRunXcmBaseOptions)
+        } as TDryRunXcmBaseOptions<Extrinsic>)
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found',
