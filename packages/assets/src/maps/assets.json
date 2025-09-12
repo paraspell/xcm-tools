@@ -4758,8 +4758,8 @@
     "nativeAssetSymbol": "TEER",
     "isEVM": false,
     "ss58Prefix": 13,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "TEER",
