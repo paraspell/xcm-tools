@@ -471,7 +471,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     asset,
     chain,
     origin
-  }: TDryRunXcmBaseOptions): Promise<TDryRunChainResult> {
+  }: TDryRunXcmBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
