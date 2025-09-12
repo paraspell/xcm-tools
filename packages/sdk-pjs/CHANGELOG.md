@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.2...sdk-pjs-v11.5.0) (2025-09-12)
+
+
+### Features
+
+* **sdk-core:** Add min transferable amount function 🪄 ([5bf88e1](https://github.com/paraspell/xcm-tools/commit/5bf88e146bd63ef8fc6610efbbffed6fd74fac00))
+
 ## [11.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.4.1...sdk-pjs-v11.4.2) (2025-09-11)
 
 
