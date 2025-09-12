@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.5.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.4.2...assets-v11.5.0) (2025-09-12)
+
+
+### Features
+
+* **sdk-core:** Add min transferable amount function 🪄 ([5bf88e1](https://github.com/paraspell/xcm-tools/commit/5bf88e146bd63ef8fc6610efbbffed6fd74fac00))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([a9ac7a7](https://github.com/paraspell/xcm-tools/commit/a9ac7a7a0f20b07a1ba8e4fa961ef4c4193696f7))
+
 ## [11.4.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.4.1...assets-v11.4.2) (2025-09-11)
 
 
