@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.6.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.5.1...assets-v11.6.0) (2025-09-15)
+
+
+### Features
+
+* Add IntegriteePolkadot parachain 🪄 ([843d4d6](https://github.com/paraspell/xcm-tools/commit/843d4d68f21e9aaf52a95a8040085f1d75023358))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([82a5bad](https://github.com/paraspell/xcm-tools/commit/82a5bada23a9b4bcd42419a0965c59613f98ae55))
+
 ## [11.5.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.5.0...assets-v11.5.1) (2025-09-12)
 
 

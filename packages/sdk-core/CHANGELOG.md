@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.5.1...sdk-core-v11.6.0) (2025-09-15)
+
+
+### Features
+
+* Add IntegriteePolkadot parachain 🪄 ([843d4d6](https://github.com/paraspell/xcm-tools/commit/843d4d68f21e9aaf52a95a8040085f1d75023358))
+
 ## [11.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.5.0...sdk-core-v11.5.1) (2025-09-12)
 
 

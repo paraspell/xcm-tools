@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.5.1...sdk-v11.6.0) (2025-09-15)
+
+
+### Features
+
+* Add IntegriteePolkadot parachain 🪄 ([843d4d6](https://github.com/paraspell/xcm-tools/commit/843d4d68f21e9aaf52a95a8040085f1d75023358))
+
+
+### Build System
+
+* Update PAPI version 📦 ([61fc210](https://github.com/paraspell/xcm-tools/commit/61fc210568e1d4f1dff51aad1c6400435892bda7))
+
 ## [11.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-v11.5.0...sdk-v11.5.1) (2025-09-12)
 
 
