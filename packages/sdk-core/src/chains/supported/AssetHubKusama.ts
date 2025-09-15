@@ -34,21 +34,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
       return getChain('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
-    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
-
-    if (
-      scenario === 'ParaToPara' &&
-      asset.symbol === 'KSM' &&
-      !isForeignAsset(asset) &&
-      !isTrusted
-    ) {
-      throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
-        'Para to Para scenarios for KSM transfer from AssetHub are not supported, you have to transfer KSM to Relay chain and transfer to destination chain from Relay chain.'
-      )
-    }
-
     if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && !isForeignAsset(asset)) {
       throw new ScenarioNotSupportedError(
         this.chain,

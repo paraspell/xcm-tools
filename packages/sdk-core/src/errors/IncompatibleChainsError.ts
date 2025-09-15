@@ -9,6 +9,6 @@ export class IncompatibleChainsError extends Error {
    */
   constructor(message?: string) {
     super(message ?? 'Transactions between chains on different relaychains are not yet possible.')
-    this.name = 'IncompatibleChainsError'
+    this.name = 'IncompatibleChains'
   }
 }

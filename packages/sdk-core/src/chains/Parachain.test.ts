@@ -347,6 +347,53 @@ describe('Parachain', () => {
     expect(result).toBe('transferXTransfer called')
   })
 
+  it('throws when destination chain cannot receive from origin (canReceiveFrom=false)', async () => {
+    const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+
+    vi.mocked(resolveDestChain).mockReturnValue('Astar')
+
+    vi.mocked(getChain).mockReturnValue({
+      canReceiveFrom: () => false,
+      isReceivingTempDisabled: () => false
+    } as unknown as ReturnType<typeof chains<unknown, unknown>>['Acala'])
+
+    const options = {
+      api,
+      to: 'Astar',
+      assetInfo: { symbol: 'DOT', amount: 100n },
+      address: 'destinationAddress'
+    } as TSendInternalOptions<unknown, unknown>
+
+    await expect(chain.transfer(options)).rejects.toThrow(
+      'Receiving on Astar from Acala is not yet enabled'
+    )
+  })
+
+  it('proceeds when destination chain can receive from origin (canReceiveFrom=true)', async () => {
+    const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+
+    vi.mocked(resolveDestChain).mockReturnValue('Astar')
+
+    vi.mocked(getChain).mockReturnValue({
+      canReceiveFrom: () => true,
+      isReceivingTempDisabled: () => false
+    } as unknown as ReturnType<typeof chains<unknown, unknown>>['Acala'])
+
+    const options = {
+      api,
+      to: 'Astar',
+      assetInfo: { symbol: 'DOT', amount: 100n },
+      address: 'destinationAddress'
+    } as TSendInternalOptions<unknown, unknown>
+
+    const spy = vi.spyOn(chain, 'transferXTokens')
+
+    const result = await chain.transfer(options)
+
+    expect(spy).toHaveBeenCalled()
+    expect(result).toBe('transferXTokens called')
+  })
+
   it('should fail when transfering to Polimec and chain is not AssetHubPolkadot or Hydration', async () => {
     const options = {
       api,

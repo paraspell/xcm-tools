@@ -36,6 +36,7 @@ export const PARACHAINS = [
   'RobonomicsPolkadot',
   'PeoplePolkadot',
   'Unique',
+  'Xode',
   // Kusama chains
   'AssetHubKusama',
   'BridgeHubKusama',

@@ -23,18 +23,6 @@ describe('transferPolkadotXCM', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
-    const input = {
-      assetInfo: {
-        symbol: 'KSM'
-      },
-      scenario: 'ParaToPara',
-      destination: 'Karura'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
-  })
-
   it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
     const assetHub = getChain('AssetHubKusama')
     const input = {

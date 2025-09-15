@@ -89,13 +89,13 @@ class BifrostPolkadot<TApi, TRes>
     )
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { destination } = input
+  transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    const { destination } = options
     if (destination === 'Ethereum') {
-      return this.transferToEthereum(input)
+      return this.transferToEthereum(options)
     }
 
-    return this.transferToAssetHub(input)
+    return this.transferToAssetHub(options)
   }
 
   canUseXTokens({ assetInfo, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
