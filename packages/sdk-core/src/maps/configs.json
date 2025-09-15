@@ -718,6 +718,21 @@
       }
     ]
   },
+  "Xode": {
+    "name": "Xode",
+    "info": "xode",
+    "paraId": 3417,
+    "providers": [
+      {
+        "name": "XodeCommunity",
+        "endpoint": "wss://polkadot-rpcnode.xode.net"
+      },
+      {
+        "name": "Zeeve",
+        "endpoint": "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc"
+      }
+    ]
+  },
   "AssetHubKusama": {
     "name": "AssetHub",
     "info": "KusamaAssetHub",

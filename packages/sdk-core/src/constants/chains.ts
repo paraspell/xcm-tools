@@ -71,10 +71,12 @@ import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Subsocial from '../chains/supported/Subsocial'
 import Unique from '../chains/supported/Unique'
+import Xode from '../chains/supported/Xode'
 import Zeitgeist from '../chains/supported/Zeitgeist'
 import ZeitgeistPaseo from '../chains/supported/ZeitgeistPaseo'
 
 export const chains = <TApi, TRes>() => ({
+  // Polkadot chains
   AssetHubPolkadot: new AssetHubPolkadot<TApi, TRes>(),
   Acala: new Acala<TApi, TRes>(),
   Ajuna: new Ajuna<TApi, TRes>(),
@@ -83,21 +85,38 @@ export const chains = <TApi, TRes>() => ({
   Crust: new Crust<TApi, TRes>(),
   BifrostPolkadot: new BifrostPolkadot<TApi, TRes>(),
   BridgeHubPolkadot: new BridgeHubPolkadot<TApi, TRes>(),
-  BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
   Centrifuge: new Centrifuge<TApi, TRes>(),
   ComposableFinance: new ComposableFinance<TApi, TRes>(),
   Darwinia: new Darwinia<TApi, TRes>(),
   EnergyWebX: new EnergyWebX<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
-  IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
   IntegriteePolkadot: new IntegriteePolkadot<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
   Jamton: new Jamton<TApi, TRes>(),
   Moonbeam: new Moonbeam<TApi, TRes>(),
-  AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
-  CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes>(),
+  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),
+  PeoplePolkadot: new PeoplePolkadot<TApi, TRes>(),
+  Manta: new Manta<TApi, TRes>(),
+  Nodle: new Nodle<TApi, TRes>(),
+  NeuroWeb: new NeuroWeb<TApi, TRes>(),
+  Pendulum: new Pendulum<TApi, TRes>(),
+  Collectives: new Collectives<TApi, TRes>(),
+  Phala: new Phala<TApi, TRes>(),
+  Subsocial: new Subsocial<TApi, TRes>(),
+  KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),
+  Curio: new Curio<TApi, TRes>(),
+  Mythos: new Mythos<TApi, TRes>(),
+  Peaq: new Peaq<TApi, TRes>(),
+  Polimec: new Polimec<TApi, TRes>(),
+  Xode: new Xode<TApi, TRes>(),
+
+  // Kusama chains
+  AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
+  BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
+  CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
+  IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
   Encointer: new Encointer<TApi, TRes>(),
   Altair: new Altair<TApi, TRes>(),
   Amplitude: new Amplitude<TApi, TRes>(),
@@ -111,23 +130,10 @@ export const chains = <TApi, TRes>() => ({
   Laos: new Laos<TApi, TRes>(),
   Quartz: new Quartz<TApi, TRes>(),
   RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
-  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),
-  PeoplePolkadot: new PeoplePolkadot<TApi, TRes>(),
   PeopleKusama: new PeopleKusama<TApi, TRes>(),
   Shiden: new Shiden<TApi, TRes>(),
-  Manta: new Manta<TApi, TRes>(),
-  Nodle: new Nodle<TApi, TRes>(),
-  NeuroWeb: new NeuroWeb<TApi, TRes>(),
-  Pendulum: new Pendulum<TApi, TRes>(),
   Zeitgeist: new Zeitgeist<TApi, TRes>(),
-  Collectives: new Collectives<TApi, TRes>(),
-  Phala: new Phala<TApi, TRes>(),
-  Subsocial: new Subsocial<TApi, TRes>(),
-  KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),
-  Curio: new Curio<TApi, TRes>(),
-  Mythos: new Mythos<TApi, TRes>(),
-  Peaq: new Peaq<TApi, TRes>(),
-  Polimec: new Polimec<TApi, TRes>(),
+
   // Westend chains
   AssetHubWestend: new AssetHubWestend<TApi, TRes>(),
   BridgeHubWestend: new BridgeHubWestend<TApi, TRes>(),
@@ -135,6 +141,7 @@ export const chains = <TApi, TRes>() => ({
   CoretimeWestend: new CoretimeWestend<TApi, TRes>(),
   PeopleWestend: new PeopleWestend<TApi, TRes>(),
   Penpal: new Penpal<TApi, TRes>(),
+
   // Paseo chains
   AssetHubPaseo: new AssetHubPaseo<TApi, TRes>(),
   BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),

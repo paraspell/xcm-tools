@@ -29,6 +29,7 @@ import {
 import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
+  IncompatibleChainsError,
   InvalidAddressError,
   InvalidParameterError,
   TransferToAhNotSupported
@@ -148,6 +149,7 @@ abstract class Parachain<TApi, TRes> {
     const paraId = resolveParaId(paraIdTo, destination)
     const destChain = resolveDestChain(this.chain, paraId)
 
+    // TODO: Use canReceiveFrom for this condition
     if (
       destination === 'Polimec' &&
       this.chain !== 'AssetHubPolkadot' &&
@@ -165,6 +167,7 @@ abstract class Parachain<TApi, TRes> {
     }
 
     this.throwIfTempDisabled(sendOptions, destChain)
+    this.throwIfCantReceive(destChain)
 
     const isRelayAsset = deepEqual(asset.location, RELAY_LOCATION)
     const supportsTypeThen = await api.hasMethod(
@@ -295,6 +298,11 @@ abstract class Parachain<TApi, TRes> {
         isExternalAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset
 
       if (isExternalAssetViaAh || isExternalAssetToAh || useTypeAndThen) {
+        // Validate that the chain-specific transfer wouldn't reject this scenario.
+        if (useTypeAndThen && supportsPolkadotXCM(this)) {
+          await this.transferPolkadotXCM(options) // ignore result
+        }
+
         const call = await createTypeAndThenCall(this.chain, options)
         return api.callTxMethod(call)
       }
@@ -305,6 +313,17 @@ abstract class Parachain<TApi, TRes> {
     }
 
     throw new NoXCMSupportImplementedError(this._chain)
+  }
+
+  throwIfCantReceive(destChain: TChain | undefined): void {
+    if (destChain && !isRelayChain(destChain) && !isExternalChain(destChain)) {
+      const dest = getChain(destChain)
+      if (!dest.canReceiveFrom(this.chain)) {
+        throw new IncompatibleChainsError(
+          `Receiving on ${destChain} from ${this.chain} is not yet enabled`
+        )
+      }
+    }
   }
 
   throwIfTempDisabled(options: TSendInternalOptions<TApi, TRes>, destChain?: TChain): void {
@@ -329,6 +348,11 @@ abstract class Parachain<TApi, TRes> {
 
   isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
     return false
+  }
+
+  canReceiveFrom(_origin: TChain): boolean {
+    // Default: destination accepts from any origin
+    return true
   }
 
   shouldUseNativeAssetTeleport({

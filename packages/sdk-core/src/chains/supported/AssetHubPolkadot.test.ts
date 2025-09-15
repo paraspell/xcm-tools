@@ -259,21 +259,6 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('transferPolkadotXcm', () => {
-    it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', async () => {
-      const input = {
-        ...mockInput,
-        assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
-        scenario: 'ParaToPara',
-        destination: 'Acala'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-      await expect(() => assetHub.transferPolkadotXCM(input)).rejects.toThrow(
-        ScenarioNotSupportedError
-      )
-    })
-
     it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,

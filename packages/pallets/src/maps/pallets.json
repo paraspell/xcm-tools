@@ -1571,5 +1571,24 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Assets"]
+  },
+  "Xode": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "Balances",
+        "index": 10
+      },
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "Assets",
+        "index": 50
+      }
+    ],
+    "nativeAssets": "Balances",
+    "otherAssets": ["Assets"]
   }
 }

@@ -8,7 +8,7 @@ import {
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
-import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
   hasJunction,
   isTLocation,
@@ -310,32 +310,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     if (isExternalAsset) {
       const call = await createTypeAndThenCall(this.chain, options)
       return api.callTxMethod(call)
-    }
-
-    const CHAINS_SUPPORT_DOT_TRANSFER = new Set<TChain>([
-      'Hydration',
-      'Polimec',
-      'Moonbeam',
-      'BifrostPolkadot',
-      'PeoplePolkadot',
-      'Ajuna'
-    ] as const)
-
-    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
-    const isDotReserveAh = !isTLocation(destination) && CHAINS_SUPPORT_DOT_TRANSFER.has(destination)
-
-    if (
-      scenario === 'ParaToPara' &&
-      assetInfo.symbol === this.getNativeAssetSymbol() &&
-      !isForeignAsset(assetInfo) &&
-      !isDotReserveAh &&
-      !isTrusted
-    ) {
-      throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
-        'Some Parachains do not have a reserve for DOT on AssetHub. This can also include multihop transfers that have AssetHub as a hop chain and the call contains DOT. Chains that do not have a DOT reserve on AssetHub are not allowed to transfer DOT to it or through it because this transfer will result in asset loss.'
-      )
     }
 
     if (scenario === 'ParaToPara' && assetInfo.symbol === 'KSM' && !isForeignAsset(assetInfo)) {

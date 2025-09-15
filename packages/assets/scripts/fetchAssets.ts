@@ -42,6 +42,7 @@ import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 import { DEFAULT_SS58_PREFIX } from './consts'
+import { fetchXodeOtherAssets } from './fetchXodeAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAssetInfo[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -402,6 +403,10 @@ const fetchOtherAssets = async (
 
   if (chain === 'Interlay' || chain === 'Kintsugi') {
     otherAssets = await fetchInterlayAssets(api, query)
+  }
+
+  if (chain === 'Xode') {
+    otherAssets = await fetchXodeOtherAssets(api, query)
   }
 
   if (chain.includes('Hydration')) {

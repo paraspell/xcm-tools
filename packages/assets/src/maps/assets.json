@@ -2711,6 +2711,68 @@
     ],
     "otherAssets": []
   },
+  "Xode": {
+    "relaychainSymbol": "DOT",
+    "nativeAssetSymbol": "XON",
+    "isEVM": false,
+    "ss58Prefix": 280,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
+    "nativeAssets": [
+      {
+        "symbol": "XON",
+        "isNative": true,
+        "decimals": 12,
+        "existentialDeposit": "1000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3417
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "1984",
+        "symbol": "USDT",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      },
+      {
+        "assetId": "100000000",
+        "symbol": "DOT",
+        "decimals": 10,
+        "existentialDeposit": "10000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      }
+    ]
+  },
   "ComposableFinance": {
     "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "LAYR",
@@ -4771,7 +4833,7 @@
           "interior": {
             "X1": [
               {
-                "Parachain": 3359
+                "Parachain": 2039
               }
             ]
           }
@@ -5523,6 +5585,31 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "MOVR.mr",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "assetId": "112675423039561305557350799263187182338",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X3": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              },
+              {
+                "Parachain": 2023
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "xcibcMOVR",
