@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.5.1...xcm-api-v11.6.0) (2025-09-15)
+
+
+### Build System
+
+* Update PAPI version 📦 ([61fc210](https://github.com/paraspell/xcm-tools/commit/61fc210568e1d4f1dff51aad1c6400435892bda7))
+
 ## [11.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.5.0...xcm-api-v11.5.1) (2025-09-12)
 
 
