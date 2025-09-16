@@ -251,6 +251,20 @@ const XcmUtilsForm: FC<Props> = ({
 
   const onSubmitGetTransferInfo = () => {
     form.validate();
+
+    if (isChainEvm(form.values.from)) {
+      if (!form.values.ahAddress) {
+        form.setFieldError(
+          'ahAddress',
+          'AssetHub address is required for EVM origin.',
+        );
+        return;
+      } else if (!isValidPolkadotAddress(form.values.ahAddress)) {
+        form.setFieldError('ahAddress', 'Invalid Polkadot address');
+        return;
+      }
+    }
+
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), 'getTransferInfo');
     }
@@ -310,7 +324,8 @@ const XcmUtilsForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress = isChainEvm(from) && isChainEvm(to);
+  const showAhAddress =
+    (isChainEvm(from) && isChainEvm(to)) || isChainEvm(from);
 
   if (!isVisible) {
     return null;

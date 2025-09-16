@@ -6,7 +6,6 @@ import {
 } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
-import { DryRunFailedError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
@@ -119,7 +118,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
   })
 
   if (dryRunResult.failureReason) {
-    throw new DryRunFailedError('Not enough balance for XCM')
+    return 0n
   }
 
   return minAmount

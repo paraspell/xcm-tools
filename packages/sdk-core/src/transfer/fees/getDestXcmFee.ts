@@ -44,7 +44,8 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     feeAsset,
     originFee,
     tx,
-    disableFallback
+    disableFallback,
+    swapConfig
   } = options
 
   const resolvedFeeAsset = feeAsset
@@ -54,7 +55,9 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
   const calcPaymentInfoFee = async (): Promise<bigint> => {
     if (destination === 'Ethereum') return 0n
 
-    const originAsset = findAssetInfoOrThrow(origin, currency, destination)
+    const originAsset = swapConfig?.currencyTo
+      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, destination)
+      : findAssetInfoOrThrow(origin, currency, destination)
 
     if (originAsset.location) {
       try {

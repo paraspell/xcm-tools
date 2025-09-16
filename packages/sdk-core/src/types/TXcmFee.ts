@@ -34,10 +34,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   feeAsset?: TCurrencyInput
   disableFallback: TDisableFallback
   // Used when there is an asset swap on some hop
-  swapConfig?: {
-    currencyTo: TCurrencyCore
-    exchangeChain: TParachain
-  }
+  swapConfig?: TSwapConfig
 }
 
 export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
@@ -84,6 +81,11 @@ export type TAttemptDryRunFeeOptions<TApi, TRes> = Omit<
   builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
 }
 
+export type TSwapConfig = {
+  currencyTo: TCurrencyCore
+  exchangeChain: TParachain
+}
+
 export type TGetFeeForDestChainBaseOptions<TRes> = {
   prevChain: TSubstrateChain
   origin: TSubstrateChain
@@ -97,6 +99,7 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   originFee: bigint
   feeAsset?: TCurrencyInput
   disableFallback: boolean
+  swapConfig?: TSwapConfig
 }
 
 export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<

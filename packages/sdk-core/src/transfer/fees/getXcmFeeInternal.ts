@@ -115,7 +115,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
         tx,
         originFee: originFee ?? 0n,
         senderAddress,
-        disableFallback
+        disableFallback,
+        swapConfig
       })
 
       const result = {

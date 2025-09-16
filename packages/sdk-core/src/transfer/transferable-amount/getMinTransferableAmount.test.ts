@@ -11,7 +11,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
-import { DryRunFailedError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TDryRunResult, TGetXcmFeeResult, TSendBaseOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
@@ -202,31 +201,18 @@ describe('getMinTransferableAmountInternal', () => {
       failureReason: 'Nope'
     } as unknown as TDryRunResult)
 
-    await expect(
-      mod.getMinTransferableAmountInternal<unknown, unknown>({
-        api,
-        origin: 'Acala',
-        senderAddress: 'S1',
-        address: 'D1',
-        destination: 'Hydration',
-        currency: { symbol: 'ASSET', amount: 1n },
-        tx: {} as unknown,
-        builder: mockBuilder
-      })
-    ).rejects.toBeInstanceOf(DryRunFailedError)
+    const res = await mod.getMinTransferableAmountInternal<unknown, unknown>({
+      api,
+      origin: 'Acala',
+      senderAddress: 'S1',
+      address: 'D1',
+      destination: 'Hydration',
+      currency: { symbol: 'ASSET', amount: 1n },
+      tx: {} as unknown,
+      builder: mockBuilder
+    })
 
-    await expect(
-      mod.getMinTransferableAmountInternal<unknown, unknown>({
-        api,
-        origin: 'Acala',
-        senderAddress: 'S',
-        address: 'D',
-        destination: 'Hydration',
-        currency: { symbol: 'ASSET', amount: 1n },
-        tx: {} as unknown,
-        builder: mockBuilder
-      })
-    ).rejects.toThrow('Not enough balance for XCM')
+    expect(res).toBe(0n)
   })
 
   it('skips unrelated fees when assets differ; only ED + 1 when dest balance is 0', async () => {
