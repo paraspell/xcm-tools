@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  GeneralBuilder,
   getChainProviders,
   ChainNotSupportedError,
   Parents,
@@ -13,6 +12,7 @@ import {
   SUBSTRATE_CHAINS,
   TBuilderOptions
 } from '../src'
+import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
 import {

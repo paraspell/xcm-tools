@@ -1,11 +1,11 @@
 import type { IPolkadotApi, TChain, TCurrencyInputWithAmount } from '@paraspell/sdk-core'
+import type { TEvmChainFrom } from '@paraspell/sdk-core'
 import {
   InvalidParameterError,
   transferMoonbeamEvm,
   transferMoonbeamToEth
 } from '@paraspell/sdk-core'
 import { validateAddress } from '@paraspell/sdk-core'
-import type { TEvmChainFrom } from '@paraspell/sdk-core/src'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 

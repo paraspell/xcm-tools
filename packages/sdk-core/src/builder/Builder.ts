@@ -226,7 +226,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return send({ api: this.api, ...this._options })
   }
 
-  private computeOverridenAmount(
+  protected computeOverridenAmount(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   ) {
     const { from, to, currency } = this._options
@@ -241,7 +241,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     }
   }
 
-  private overrideTxAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+  protected overrideTxAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const { currency } = this._options
 
     const modifiedBuilder = this.currency({
