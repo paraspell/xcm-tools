@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.6.1...sdk-core-v11.7.0) (2025-09-16)
+
+
+### Features
+
+* Add xcm format check using dry-run 👨‍💻 ([0c80198](https://github.com/paraspell/xcm-tools/commit/0c801985aa489f7c233144a39385dc5d0a6f7e70))
+
 ## [11.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.6.0...sdk-core-v11.6.1) (2025-09-16)
 
 
