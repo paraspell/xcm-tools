@@ -1,11 +1,17 @@
 // Implements general builder pattern, this is Builder main file
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  type TCurrencyInput,
+  type TCurrencyInputWithAmount
+} from '@paraspell/assets'
 import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
+import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { BYPASS_CURRENCY_AMOUNT } from '../constants'
 import { InvalidParameterError } from '../errors'
 import {
   getMinTransferableAmount,
@@ -27,7 +33,7 @@ import type {
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress
 } from '../types'
-import { assertAddressIsString, assertToIsString } from '../utils'
+import { assertAddressIsString, assertToIsString, isConfig } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
@@ -220,6 +226,32 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return send({ api: this.api, ...this._options })
   }
 
+  private computeOverridenAmount(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  ) {
+    const { from, to, currency } = this._options
+
+    const config = this.api.getConfig()
+    if (isConfig(config) && config.abstractDecimals) {
+      return BYPASS_CURRENCY_AMOUNT
+    } else {
+      assertToIsString(to)
+      const asset = findAssetInfoOrThrow(from, currency, to)
+      return parseUnits(BYPASS_CURRENCY_AMOUNT, asset.decimals)
+    }
+  }
+
+  private overrideTxAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { currency } = this._options
+
+    const modifiedBuilder = this.currency({
+      ...currency,
+      amount: this.computeOverridenAmount()
+    })
+
+    return modifiedBuilder.build()
+  }
+
   async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const tx = await this.build()
     return buildDryRun(this.api, tx, this._options)
@@ -250,7 +282,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
 
@@ -284,7 +316,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     try {
       return await getOriginXcmFee({
@@ -368,7 +400,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     return getTransferableAmount({
       api: this.api,
@@ -394,7 +426,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     return getMinTransferableAmount({
       api: this.api,
@@ -420,7 +452,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     return verifyEdOnDestination({
       api: this.api,
@@ -445,7 +477,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.build()
+    const tx = await this.overrideTxAmount()
 
     return getTransferInfo({
       api: this.api,

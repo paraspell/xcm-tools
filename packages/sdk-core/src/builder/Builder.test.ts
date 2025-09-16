@@ -1,7 +1,11 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  getRelayChainSymbol,
+  type TCurrencyInputWithAmount
+} from '@paraspell/assets'
 import { type TChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -26,13 +30,14 @@ import type {
   TTransferInfo,
   TXcmFeeDetail
 } from '../types'
-import { assertAddressIsString, assertToIsString } from '../utils'
+import { assertAddressIsString, assertToIsString, isConfig } from '../utils'
 import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
 
 vi.mock('../transfer')
 vi.mock('../utils')
 vi.mock('./buildDryRun')
+vi.mock('@paraspell/assets')
 
 const CHAIN: TChain = 'Acala'
 const CHAIN_2: TChain = 'Hydration'
@@ -51,6 +56,7 @@ describe('Builder', () => {
     callBatchMethod: vi.fn(),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn(),
+    getConfig: vi.fn().mockReturnValue({ abstractDecimals: true }),
     clone: vi.fn().mockReturnValue({
       init: vi.fn(),
       setApi: vi.fn(),
@@ -63,12 +69,9 @@ describe('Builder', () => {
   }
 
   beforeEach(() => {
-    vi.resetAllMocks()
-    vi.spyOn(mockApi, 'clone').mockReturnValue({
-      init: vi.fn(),
-      setApi: vi.fn(),
-      clone: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>)
+    vi.clearAllMocks()
+    vi.mocked(isConfig).mockReturnValue(true)
+    vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
   })
 
   describe('Para to Para / Para to Relay / Relay to Para  transfer', () => {
@@ -852,6 +855,22 @@ describe('Builder', () => {
       expect(getXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
+    })
+
+    it('computes overridden amount when abstractDecimals=false', async () => {
+      mockApi.getConfig = vi.fn().mockReturnValue({ abstractDecimals: false })
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 12 } as unknown as TAssetInfo)
+      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+        .getXcmFee()
+
+      expect(getXcmFee).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch origin XCM fee estimate', async () => {
