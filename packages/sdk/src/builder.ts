@@ -1,6 +1,6 @@
 import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
+import type { TBuilderOptions } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
-import type { TBuilderOptions } from '@paraspell/sdk-core/src'
 import type { PolkadotClient } from 'polkadot-api'
 
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'

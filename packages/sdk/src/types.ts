@@ -1,5 +1,5 @@
 import type { TApiOrUrl } from '@paraspell/sdk-core'
-import type { TEvmChainFrom } from '@paraspell/sdk-core/src'
+import type { TEvmChainFrom } from '@paraspell/sdk-core'
 import type { PolkadotClient, UnsafeTransaction } from 'polkadot-api'
 
 export type TPapiApi = PolkadotClient
