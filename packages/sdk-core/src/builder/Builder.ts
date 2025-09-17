@@ -27,7 +27,13 @@ import type {
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress
 } from '../types'
-import { assertAddressIsString, assertSenderAddress, assertToIsString, isConfig } from '../utils'
+import {
+  assertAddressIsString,
+  assertSenderAddress,
+  assertToIsString,
+  createTxs,
+  isConfig
+} from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
@@ -279,6 +285,10 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     })
   }
 
+  private createTxs(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    return createTxs({ ...this._options, api: this.api }, this)
+  }
+
   /**
    * Returns the XCM fee for the transfer using dryRun or paymentInfo function.
    *
@@ -298,7 +308,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     try {
       return await getXcmFee({
         api: this.api,
-        builder: this,
+        txs: await this.createTxs(),
         origin: from,
         destination: to,
         senderAddress: senderAddress,
@@ -325,10 +335,12 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
+    const api = this.api
+
     try {
       return await getOriginXcmFee({
-        api: this.api,
-        builder: this,
+        api,
+        txs: await this.createTxs(),
         origin: from,
         destination: to,
         senderAddress: senderAddress,
@@ -407,9 +419,11 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
+    const api = this.api
+
     return getTransferableAmount({
-      api: this.api,
-      builder: this,
+      api,
+      txs: await this.createTxs(),
       origin: from,
       destination: to,
       senderAddress,
@@ -431,8 +445,11 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
+    const api = this.api
+
     return getMinTransferableAmount({
-      api: this.api,
+      api,
+      txs: await this.createTxs(),
       origin: from,
       destination: to,
       senderAddress,
@@ -456,7 +473,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return verifyEdOnDestination({
       api: this.api,
-      builder: this,
+      txs: await this.createTxs(),
       origin: from,
       destination: to,
       address,
@@ -479,7 +496,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return getTransferInfo({
       api: this.api,
-      builder: this,
+      txs: await this.createTxs(),
       origin: from,
       destination: to,
       address,

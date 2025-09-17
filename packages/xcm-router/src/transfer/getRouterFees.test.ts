@@ -1,4 +1,10 @@
-import type { TGetXcmFeeResult, TPapiTransaction, TParachain, TXcmFeeDetail } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TGetXcmFeeResult,
+  TPapiTransaction,
+  TParachain,
+  TXcmFeeDetail,
+} from '@paraspell/sdk';
 import { DryRunFailedError, getXcmFee, handleSwapExecuteTransfer } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,20 +13,15 @@ import type {
   TBuildTransactionsOptionsModified,
   TDestinationInfo,
   TOriginInfo,
+  TRouterXcmFeeHopInfo,
   TRouterXcmFeeResult,
 } from '../types';
 import { getSwapFee } from './fees';
 import { getRouterFees } from './getRouterFees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
-vi.mock('./fees', () => ({
-  getSwapFee: vi.fn(),
-}));
-
-vi.mock('./utils', () => ({
-  getToExchangeFee: vi.fn(),
-  getFromExchangeFee: vi.fn(),
-}));
+vi.mock('./fees');
+vi.mock('./utils');
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -215,5 +216,176 @@ describe('getRouterFees', () => {
       expect(result.failureReason).toBe('InsufficientBalance');
       expect(result.failureChain).toBe('origin');
     });
+  });
+
+  it('uses execute transfer for Hydration DEX with destination only (origin undefined)', async () => {
+    const hydrationDex = {
+      get chain() {
+        return 'Hydration';
+      },
+      getAmountOut: vi.fn().mockResolvedValue(5000n),
+    } as unknown as ExchangeChain;
+
+    const localOptions = {
+      ...options,
+      destination: { chain: 'Moonbeam' },
+    } as TBuildTransactionsOptionsModified;
+
+    const result = await getRouterFees(hydrationDex, localOptions);
+
+    expect(result.origin).toEqual(
+      expect.objectContaining({ currency: executeTransferResult.origin.currency }),
+    );
+    expect(result.origin.isExchange).toBe(true);
+    expect(result.destination.isExchange).toBeUndefined();
+    expect(
+      result.hops.some(
+        (h) =>
+          h.chain === localOptions.exchange.baseChain && (h as TRouterXcmFeeHopInfo).isExchange,
+      ),
+    ).toBe(true);
+  });
+
+  it('rethrows when execute transfer fails with a non-Filtered DryRunFailedError', async () => {
+    const assetHubDex = {
+      get chain() {
+        return 'AssetHubPolkadot';
+      },
+      getAmountOut: vi.fn().mockResolvedValue(5000n),
+    } as unknown as ExchangeChain;
+
+    const localOptions = {
+      ...options,
+      origin: { chain: 'Acala' },
+    } as TBuildTransactionsOptionsModified;
+
+    vi.mocked(handleSwapExecuteTransfer).mockRejectedValueOnce(
+      new DryRunFailedError('Other', 'origin'),
+    );
+
+    await expect(getRouterFees(assetHubDex, localOptions)).rejects.toBeInstanceOf(
+      DryRunFailedError,
+    );
+  });
+
+  it('passes two execute txs (real and bypass) into getXcmFee with correct shape', async () => {
+    const assetHubDex = {
+      get chain() {
+        return 'AssetHubPolkadot';
+      },
+      getAmountOut: vi.fn().mockResolvedValue(5000n),
+    } as unknown as ExchangeChain;
+
+    const localOptions = {
+      ...options,
+      origin: { chain: 'Acala' },
+      destination: { chain: 'Moonbeam' },
+    } as TBuildTransactionsOptionsModified;
+
+    const realTx = 'tx-real' as unknown as TPapiTransaction;
+    const bypassTx = 'tx-bypass' as unknown as TPapiTransaction;
+
+    vi.mocked(handleSwapExecuteTransfer)
+      .mockResolvedValueOnce(realTx)
+      .mockResolvedValueOnce(bypassTx);
+
+    await getRouterFees(assetHubDex, localOptions);
+
+    expect(getXcmFee).toHaveBeenCalledTimes(1);
+    const callArg = vi.mocked(getXcmFee).mock.calls[0][0];
+
+    expect(callArg).toEqual(
+      expect.objectContaining({
+        txs: { tx: realTx, txBypass: bypassTx },
+        origin: 'Acala',
+        destination: 'Moonbeam',
+        senderAddress: options.senderAddress,
+        address: options.senderAddress,
+        disableFallback: false,
+        swapConfig: expect.objectContaining({
+          exchangeChain: localOptions.exchange.baseChain,
+        }),
+      }),
+    );
+    expect(callArg.currency).toEqual(expect.objectContaining({ amount: BigInt(options.amount) }));
+  });
+
+  it('calculateMinAmountOut forwards amount and provided assetTo to dex.getAmountOut', async () => {
+    const assetHubDex = {
+      get chain() {
+        return 'AssetHubPolkadot';
+      },
+      getAmountOut: vi.fn().mockResolvedValue(999n),
+    } as unknown as ExchangeChain;
+
+    const localOptions = {
+      ...options,
+      origin: { chain: 'Acala' },
+    } as TBuildTransactionsOptionsModified;
+
+    vi.mocked(handleSwapExecuteTransfer)
+      .mockResolvedValueOnce('tx1' as unknown as TPapiTransaction)
+      .mockResolvedValueOnce('tx2' as unknown as TPapiTransaction);
+
+    const spy = vi.spyOn(assetHubDex, 'getAmountOut');
+
+    await getRouterFees(assetHubDex, localOptions);
+
+    const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {
+      calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<unknown>;
+    };
+
+    const customAssetTo = { symbol: 'USDC' } as TAssetInfo;
+    await arg.calculateMinAmountOut(123n, customAssetTo);
+
+    expect(spy).toHaveBeenLastCalledWith(
+      localOptions.exchange.api,
+      expect.objectContaining({
+        amount: '123',
+        papiApi: localOptions.exchange.apiPapi,
+        assetFrom: localOptions.exchange.assetFrom,
+        assetTo: customAssetTo,
+        slippagePct: '1',
+      }),
+    );
+  });
+
+  it('calculateMinAmountOut defaults assetTo to options.exchange.assetTo when not provided', async () => {
+    const hydrationDex = {
+      get chain() {
+        return 'Hydration';
+      },
+      getAmountOut: vi.fn().mockResolvedValue(111n),
+    } as unknown as ExchangeChain;
+
+    const localOptions = {
+      ...options,
+      destination: { chain: 'Moonbeam' },
+    } as TBuildTransactionsOptionsModified;
+
+    vi.mocked(handleSwapExecuteTransfer)
+      .mockResolvedValueOnce('tx1' as unknown as TPapiTransaction)
+      .mockResolvedValueOnce('tx2' as unknown as TPapiTransaction);
+
+    const spy = vi.spyOn(hydrationDex, 'getAmountOut');
+
+    await getRouterFees(hydrationDex, localOptions);
+
+    const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {
+      calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<unknown>;
+    };
+
+    await arg.calculateMinAmountOut(777n);
+
+    expect(spy).toHaveBeenLastCalledWith(
+      localOptions.exchange.api,
+      expect.objectContaining({
+        amount: '777',
+        papiApi: localOptions.exchange.apiPapi,
+        assetFrom: localOptions.exchange.assetFrom,
+        assetTo: localOptions.exchange.assetTo,
+        slippagePct: '1',
+      }),
+    );
   });
 });

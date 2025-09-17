@@ -3,7 +3,7 @@ import type { TChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 
 import type { WithApi } from './TApi'
-import type { TGetXcmFeeOptions } from './TXcmFee'
+import type { TSendOptions } from './TTransfer'
 
 export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
 
@@ -91,6 +91,6 @@ export type TBuilderConfig<TApi> = {
 }
 
 export type TCreateTxsOptions<TApi, TRes> = Pick<
-  TGetXcmFeeOptions<TApi, TRes>,
-  'api' | 'origin' | 'destination' | 'currency'
+  TSendOptions<TApi, TRes>,
+  'api' | 'from' | 'to' | 'currency'
 >

@@ -1,42 +1,30 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type { GeneralBuilder } from '../../builder'
-import type {
-  TGetXcmFeeOptions,
-  TGetXcmFeeResult,
-  TSendBaseOptionsWithSenderAddress
-} from '../../types'
-import { createTxs } from '../../utils/builder'
+import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getXcmFee } from './getXcmFee'
 import { getXcmFeeInternal } from './getXcmFeeInternal'
 
 vi.mock('./getXcmFeeInternal')
-vi.mock('../../utils/builder')
 
 describe('getXcmFee', () => {
   const mockApi = {
     disconnect: vi.fn().mockResolvedValue(undefined)
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const mockBuilder = {
-    buildInternal: vi.fn()
-  } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
-
-  const commonOptions = {
-    api: mockApi,
-    builder: mockBuilder
-  } as unknown as TGetXcmFeeOptions<unknown, unknown, boolean>
-
   const bypassTx = { kind: 'bypass' }
   const realTx = { kind: 'real' }
 
+  const commonOptions = {
+    api: mockApi,
+    txs: {
+      tx: realTx as unknown,
+      txBypass: bypassTx as unknown
+    }
+  } as TGetXcmFeeOptions<unknown, unknown, boolean>
+
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(createTxs).mockResolvedValue({
-      tx: realTx as unknown,
-      txBypassAmount: bypassTx as unknown
-    })
   })
 
   it('passes txBypassAmount to first internal call (useRootOrigin: true) and tx to second (useRootOrigin: false)', async () => {
@@ -57,8 +45,6 @@ describe('getXcmFee', () => {
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
     await getXcmFee(commonOptions)
-
-    expect(createTxs).toHaveBeenCalledWith(commonOptions, mockBuilder)
 
     expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
       1,

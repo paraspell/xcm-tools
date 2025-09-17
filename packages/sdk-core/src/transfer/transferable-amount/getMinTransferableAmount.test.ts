@@ -99,7 +99,11 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'DEST_ADDR',
       destination: 'Astar',
       currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder
+      builder: mockBuilder,
+      txs: {
+        tx: {} as unknown,
+        txBypass: {} as unknown
+      }
     })
 
     // 2 + 3 + 7 + 10 + 1 = 23
@@ -163,7 +167,11 @@ describe('getMinTransferableAmountInternal', () => {
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 123n },
       feeAsset: { symbol: 'FEE' } as TAssetInfo,
-      builder: mockBuilder
+      builder: mockBuilder,
+      txs: {
+        tx: {} as unknown,
+        txBypass: {} as unknown
+      }
     })
 
     // origin(5) + 0 + 0 + ED(0) + 1 = 6
@@ -204,7 +212,11 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'D1',
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder
+      builder: mockBuilder,
+      txs: {
+        tx: {} as unknown,
+        txBypass: {} as unknown
+      }
     })
 
     expect(res).toBe(0n)
@@ -234,7 +246,11 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'D',
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder
+      builder: mockBuilder,
+      txs: {
+        tx: {} as unknown,
+        txBypass: {} as unknown
+      }
     })
 
     // Only ED(4) + 1

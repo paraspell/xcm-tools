@@ -1,5 +1,4 @@
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
-import { createTxs } from '../../utils/builder'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 export const getOriginXcmFee = async <TApi, TRes>(
@@ -11,13 +10,11 @@ export const getOriginXcmFee = async <TApi, TRes>(
     destParaId?: number
   }
 > => {
-  const { builder } = options
-
-  const { tx, txBypassAmount } = await createTxs(options, builder)
+  const { tx, txBypass } = options.txs
 
   const forced = await getOriginXcmFeeInternal({
     ...options,
-    tx: txBypassAmount,
+    tx: txBypass,
     useRootOrigin: true
   })
   const real = await getOriginXcmFeeInternal({ ...options, tx, useRootOrigin: false })

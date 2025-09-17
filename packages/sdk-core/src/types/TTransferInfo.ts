@@ -2,10 +2,9 @@ import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
-import type { GeneralBuilder } from '../builder'
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
+import type { TTxPair } from './TTransfer'
 import type { TXcmFeeDetail } from './TXcmFee'
 
 export type THopTransferInfo = {
@@ -109,8 +108,8 @@ export type TOriginFeeDetails = {
   xcmFee: bigint
 }
 
-export type TGetTransferInfoOptionsBase<TApi, TRes> = {
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+export type TGetTransferInfoOptionsBase<TRes> = {
+  txs: TTxPair<TRes>
   origin: TSubstrateChain
   destination: TChain
   senderAddress: string
@@ -121,7 +120,7 @@ export type TGetTransferInfoOptionsBase<TApi, TRes> = {
 }
 
 export type TGetTransferInfoOptions<TApi, TRes> = WithApi<
-  TGetTransferInfoOptionsBase<TApi, TRes>,
+  TGetTransferInfoOptionsBase<TRes>,
   TApi,
   TRes
 >

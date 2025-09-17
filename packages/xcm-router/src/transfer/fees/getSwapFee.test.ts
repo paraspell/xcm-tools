@@ -1,5 +1,5 @@
 import type { TAssetInfo, TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
-import { getOriginXcmFee } from '@paraspell/sdk';
+import { applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -7,13 +7,8 @@ import type { TBuildTransactionsOptionsModified } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 import { getSwapFee } from './getSwapFee';
 
-vi.mock('../createSwapTx', () => ({
-  createSwapTx: vi.fn(),
-}));
-
-vi.mock('@paraspell/sdk', () => ({
-  getOriginXcmFee: vi.fn(),
-}));
+vi.mock('../createSwapTx');
+vi.mock('@paraspell/sdk');
 
 describe('getSwapFee', () => {
   const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
@@ -25,6 +20,7 @@ describe('getSwapFee', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(applyDecimalAbstraction).mockImplementation((amount) => BigInt(amount));
   });
 
   it('returns fee detail and amountOut on success', async () => {
@@ -44,12 +40,15 @@ describe('getSwapFee', () => {
     expect(createSwapTx).toHaveBeenCalledWith(exchange, options);
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: 'apiInstance',
-      tx: 'dummyTx',
+      txs: {
+        tx: 'dummyTx',
+        txBypass: 'dummyTx',
+      },
       origin: 'TEST_CHAIN',
       destination: 'TEST_CHAIN',
       senderAddress: '0xSender',
       disableFallback: false,
-      currency: { symbol: 'DOT', amount: '100' },
+      currency: { symbol: 'DOT', amount: 100n },
     });
 
     expect(result).toEqual({
