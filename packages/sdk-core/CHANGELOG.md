@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.7.0...sdk-core-v11.7.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix txs creation for bypass 🔧 ([bcfefc7](https://github.com/paraspell/xcm-tools/commit/bcfefc7764c2d25f5d4e51919591eb247d0dd0e2))
+
 ## [11.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.6.1...sdk-core-v11.7.0) (2025-09-16)
 
 
