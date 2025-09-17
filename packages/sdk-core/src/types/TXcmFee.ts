@@ -2,15 +2,14 @@
 import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSenderAddress, TWeight } from './TTransfer'
+import type { TTxPair, TWeight } from './TTransfer'
 
-export type TGetXcmFeeBaseOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = {
+export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
   /**
-   * The transaction to calculate the fee for
+   * The transactions
    */
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  txs: TTxPair<TRes>
   /**
    * The origin chain
    */
@@ -32,7 +31,7 @@ export type TGetXcmFeeBaseOptions<TApi, TRes, TDisableFallback extends boolean =
 }
 
 export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
-  TGetXcmFeeBaseOptions<TApi, TRes, TDisableFallback>,
+  TGetXcmFeeBaseOptions<TRes, TDisableFallback>,
   TApi,
   TRes
 >
@@ -41,7 +40,7 @@ export type TGetXcmFeeInternalOptions<
   TApi,
   TRes,
   TDisableFallback extends boolean = boolean
-> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'builder'> & {
+> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'txs'> & {
   tx: TRes
   useRootOrigin: boolean
 }
@@ -60,8 +59,11 @@ export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
 
-export type TGetOriginXcmFeeBaseOptions<TApi, TRes> = {
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+export type TGetOriginXcmFeeBaseOptions<TRes> = {
+  txs: {
+    tx: TRes
+    txBypass: TRes
+  }
   origin: TSubstrateChain
   destination: TChain
   senderAddress: string
@@ -72,14 +74,14 @@ export type TGetOriginXcmFeeBaseOptions<TApi, TRes> = {
 }
 
 export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
-  TGetOriginXcmFeeBaseOptions<TApi, TRes>,
+  TGetOriginXcmFeeBaseOptions<TRes>,
   TApi,
   TRes
 >
 
 export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
   TGetOriginXcmFeeOptions<TApi, TRes>,
-  'builder'
+  'txs'
 > & {
   tx: TRes
 }

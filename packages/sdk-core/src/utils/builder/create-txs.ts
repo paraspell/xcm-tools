@@ -8,14 +8,14 @@ import { assertToIsString } from '../assertions'
 import { isConfig } from './isConfig'
 
 export const computeOverridenAmount = <TApi, TRes>(options: TCreateTxsOptions<TApi, TRes>) => {
-  const { origin, destination, currency, api } = options
+  const { from, to, currency, api } = options
 
   const config = api.getConfig()
   if (isConfig(config) && config.abstractDecimals) {
     return BYPASS_CURRENCY_AMOUNT
   } else {
-    assertToIsString(destination)
-    const asset = findAssetInfoOrThrow(origin, currency, destination)
+    assertToIsString(to)
+    const asset = findAssetInfoOrThrow(from, currency, to)
     return parseUnits(BYPASS_CURRENCY_AMOUNT, asset.decimals)
   }
 }
@@ -38,7 +38,7 @@ export const createTxs = async <TApi, TRes>(
 ) => {
   // Let's create 2 tx, one with real amount and one with bypass amount
   const tx = await builder['buildInternal']()
-  const txBypassAmount = await overrideTxAmount(options, builder)
+  const txBypass = await overrideTxAmount(options, builder)
 
-  return { tx, txBypassAmount }
+  return { tx, txBypass }
 }

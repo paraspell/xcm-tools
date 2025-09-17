@@ -9,14 +9,9 @@ import { type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type { GeneralBuilder } from '../../builder'
 import { DryRunFailedError, UnableToComputeError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets'
-import type {
-  TGetXcmFeeResult,
-  TSendBaseOptionsWithSenderAddress,
-  TVerifyEdOnDestinationOptions
-} from '../../types'
+import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, createTxs, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
@@ -33,16 +28,20 @@ describe('verifyEdOnDestinationInternal', () => {
       init: vi.fn()
     })
   } as unknown as IPolkadotApi<unknown, unknown>
-  const mockBuilder = {} as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
   const mockOrigin = 'OriginChain' as TSubstrateChain
   const mockDestination = 'DestinationChain' as TChain
   const mockAddress = 'destinationAddress'
   const mockSenderAddress = 'senderAddress'
   const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }
 
+  const bypassTx = { kind: 'bypass' }
+  const realTx = { kind: 'real' }
+
+  const mockTxs = { tx: realTx as unknown, txBypass: bypassTx as unknown }
+
   const defaultOptions = {
     api: mockApi,
-    builder: mockBuilder,
+    txs: mockTxs,
     origin: mockOrigin,
     destination: mockDestination,
     address: mockAddress,
@@ -50,15 +49,9 @@ describe('verifyEdOnDestinationInternal', () => {
     currency: mockCurrency
   } as TVerifyEdOnDestinationOptions<unknown, unknown>
 
-  const bypassTx = { kind: 'bypass' }
-  const realTx = { kind: 'real' }
-
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(createTxs).mockResolvedValue({
-      tx: realTx as unknown,
-      txBypassAmount: bypassTx as unknown
-    })
+    vi.mocked(createTxs).mockResolvedValue(mockTxs)
     vi.mocked(validateAddress).mockImplementation(() => {})
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n)
@@ -77,7 +70,6 @@ describe('verifyEdOnDestinationInternal', () => {
   it('uses bypassTx for fee calc and realTx for method check', async () => {
     const getMethodSpy = vi.spyOn(mockApi, 'getMethod')
     await verifyEdOnDestinationInternal(defaultOptions)
-    expect(createTxs).toHaveBeenCalledWith(defaultOptions, mockBuilder)
     expect(getXcmFeeInternal).toHaveBeenCalledWith(
       expect.objectContaining({
         tx: bypassTx,

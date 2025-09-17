@@ -19,7 +19,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   origin: chain,
   destination,
   currency,
-  builder,
+  txs,
   feeAsset
 }: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
   validateAddress(senderAddress, chain, false)
@@ -53,7 +53,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   if (paysOriginInSendingAsset) {
     const { fee } = await getOriginXcmFee({
       api,
-      builder,
+      txs,
       origin: chain,
       destination: chain,
       senderAddress,

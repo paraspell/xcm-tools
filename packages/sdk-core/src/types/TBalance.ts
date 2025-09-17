@@ -9,7 +9,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
+import type { TSendBaseOptionsWithSenderAddress, TTxPair } from './TTransfer'
 
 /**
  * Retrieves the native asset balance for a given account on a specified chain.
@@ -126,7 +126,7 @@ export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
+export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The sender address of the account.
    */
@@ -144,27 +144,28 @@ export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
    */
   currency: WithAmount<TCurrencyCore>
   /**
-   * The transaction builder instance
+   * The transactions
    */
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  txs: TTxPair<TRes>
   feeAsset?: TCurrencyInput
 }
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase<TApi, TRes>,
+  TGetTransferableAmountOptionsBase<TRes>,
   TApi,
   TRes
 >
 
 export type TGetMinTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase<TApi, TRes> & {
+  TGetTransferableAmountOptionsBase<TRes> & {
     address: string
+    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   },
   TApi,
   TRes
 >
 
-export type TVerifyEdOnDestinationOptionsBase<TApi, TRes> = {
+export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
    * The origin chain.
    */
@@ -186,14 +187,14 @@ export type TVerifyEdOnDestinationOptionsBase<TApi, TRes> = {
    */
   currency: WithAmount<TCurrencyCore>
   /**
-   * The transaction builder instance
+   * The transactions
    */
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  txs: TTxPair<TRes>
   feeAsset?: TCurrencyInput
 }
 
 export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<
-  TVerifyEdOnDestinationOptionsBase<TApi, TRes>,
+  TVerifyEdOnDestinationOptionsBase<TRes>,
   TApi,
   TRes
 >

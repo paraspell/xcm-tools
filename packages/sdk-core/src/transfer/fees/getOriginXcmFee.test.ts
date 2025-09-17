@@ -1,36 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { GeneralBuilder } from '../../builder'
-import type {
-  TGetOriginXcmFeeOptions,
-  TSendBaseOptionsWithSenderAddress,
-  TXcmFeeDetail
-} from '../../types'
-import { createTxs } from '../../utils/builder'
+import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 vi.mock('./getOriginXcmFeeInternal')
-vi.mock('../../utils/builder')
 
 describe('getOriginXcmFee', () => {
-  const mockBuilder = {
-    buildInternal: vi.fn()
-  } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
-
-  const baseOptions = {
-    builder: mockBuilder
-  } as TGetOriginXcmFeeOptions<unknown, unknown>
-
   const bypassTx = { kind: 'bypass' }
   const realTx = { kind: 'real' }
 
+  const baseOptions = {
+    txs: {
+      tx: realTx as unknown,
+      txBypass: bypassTx as unknown
+    }
+  } as TGetOriginXcmFeeOptions<unknown, unknown>
+
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(createTxs).mockResolvedValue({
-      tx: realTx as unknown,
-      txBypassAmount: bypassTx as unknown
-    })
   })
 
   it('passes correct tx objects and merges sufficient from real', async () => {
@@ -45,7 +33,6 @@ describe('getOriginXcmFee', () => {
 
     const res = await getOriginXcmFee(options)
 
-    expect(createTxs).toHaveBeenCalledWith(options, mockBuilder)
     expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({

@@ -4,7 +4,7 @@ import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
-import { abstractDecimals, createTxs, validateAddress } from '../../utils'
+import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
@@ -24,7 +24,7 @@ export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
 export const verifyEdOnDestinationInternal = async <TApi, TRes>(
   options: TVerifyEdOnDestinationOptions<TApi, TRes>
 ) => {
-  const { api, builder, origin, destination, currency, address, senderAddress, feeAsset } = options
+  const { api, txs, origin, destination, currency, address, senderAddress, feeAsset } = options
 
   if (destination === 'Ethereum') return true
 
@@ -59,11 +59,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
     currency: destCurrency
   })
 
-  const { tx, txBypassAmount } = await createTxs(options, builder)
+  const { tx, txBypass } = txs
 
   const xcmFeeResult = await getXcmFeeInternal({
     api,
-    tx: txBypassAmount,
+    tx: txBypass,
     origin,
     destination,
     senderAddress,

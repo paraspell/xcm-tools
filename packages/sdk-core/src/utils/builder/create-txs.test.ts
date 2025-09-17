@@ -28,12 +28,12 @@ const makeApi = (cfg: TBuilderConfig<unknown>) =>
 
 const baseOptions = {
   api: makeApi({}),
-  origin: 'Acala',
-  destination: 'Hydration',
+  from: 'Acala',
+  to: 'Hydration',
   senderAddress: 'SENDER',
   address: 'DEST',
   currency: { symbol: 'DOT', amount: 123n }
-} as unknown as TCreateTxsOptions<unknown, unknown>
+} as TCreateTxsOptions<unknown, unknown>
 
 describe('computeOverridenAmount', () => {
   beforeEach(() => {
@@ -135,7 +135,7 @@ describe('createTxs', () => {
       expect.objectContaining({ amount: BYPASS_CURRENCY_AMOUNT })
     )
 
-    expect(res).toEqual({ tx: realTx, txBypassAmount: bypassTx })
+    expect(res).toEqual({ tx: realTx, txBypass: bypassTx })
   })
 
   it('when abstractDecimals is false, override path still uses computeOverridenAmount (parseUnits)', async () => {
@@ -162,6 +162,6 @@ describe('createTxs', () => {
     expect(parseUnits).toHaveBeenCalledWith(BYPASS_CURRENCY_AMOUNT, 10)
     expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 4242n }))
 
-    expect(res).toEqual({ tx: realTx, txBypassAmount: bypassTx })
+    expect(res).toEqual({ tx: realTx, txBypass: bypassTx })
   })
 })

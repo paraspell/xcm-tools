@@ -219,6 +219,11 @@ export type TDestWeight = {
   proof_size: bigint
 }
 
+export type TTxPair<TRes> = {
+  tx: TRes
+  txBypass: TRes
+}
+
 export type TXTransferMethod = 'transfer'
 
 export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'

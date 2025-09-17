@@ -1,6 +1,12 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/sdk';
-import { DryRunFailedError, getXcmFee, handleSwapExecuteTransfer } from '@paraspell/sdk';
+import {
+  applyDecimalAbstraction,
+  DryRunFailedError,
+  getXcmFee,
+  handleSwapExecuteTransfer,
+} from '@paraspell/sdk';
 
+import { SWAP_BYPASS_AMOUNT } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TRouterXcmFeeResult } from '../types';
 import { getSwapFee } from './fees';
@@ -31,31 +37,42 @@ export const getRouterFees = async (
         assetTo: exchange.assetTo,
       });
 
-      const tx = await handleSwapExecuteTransfer({
-        chain: origin?.chain,
-        exchangeChain: exchange.baseChain,
-        destChain: destination?.chain,
-        assetInfoFrom: {
-          ...(origin?.assetFrom ?? exchange.assetFrom),
-          amount: BigInt(amount),
-        } as WithAmount<TAssetInfo>,
-        assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-        currencyTo,
-        senderAddress: evmSenderAddress ?? senderAddress,
-        recipientAddress: recipientAddress ?? senderAddress,
-        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-          dex.getAmountOut(exchange.api, {
-            ...options,
-            amount: amountIn.toString(),
-            papiApi: options.exchange.apiPapi,
-            assetFrom: options.exchange.assetFrom,
-            assetTo: assetTo ?? options.exchange.assetTo,
-            slippagePct: '1',
-          }),
-      });
+      const buildExecuteTx = async (amount: bigint) =>
+        handleSwapExecuteTransfer({
+          chain: origin?.chain,
+          exchangeChain: exchange.baseChain,
+          destChain: destination?.chain,
+          assetInfoFrom: {
+            ...(origin?.assetFrom ?? exchange.assetFrom),
+            amount,
+          } as WithAmount<TAssetInfo>,
+          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+          currencyTo,
+          senderAddress: evmSenderAddress ?? senderAddress,
+          recipientAddress: recipientAddress ?? senderAddress,
+          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
+            dex.getAmountOut(exchange.api, {
+              ...options,
+              amount: amountIn.toString(),
+              papiApi: options.exchange.apiPapi,
+              assetFrom: options.exchange.assetFrom,
+              assetTo: assetTo ?? options.exchange.assetTo,
+              slippagePct: '1',
+            }),
+        });
+
+      const [tx, txBypass] = await Promise.all([
+        buildExecuteTx(BigInt(amount)),
+        buildExecuteTx(
+          applyDecimalAbstraction(SWAP_BYPASS_AMOUNT, exchange.assetFrom.decimals, true),
+        ),
+      ]);
 
       const executeResult = await getXcmFee({
-        tx,
+        txs: {
+          tx,
+          txBypass,
+        },
         origin: origin?.chain ?? exchange.baseChain,
         destination: destination?.chain ?? exchange.baseChain,
         senderAddress: evmSenderAddress ?? senderAddress,
