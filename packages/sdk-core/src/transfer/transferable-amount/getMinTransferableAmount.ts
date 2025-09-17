@@ -10,7 +10,7 @@ import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
-import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
+import { getXcmFee } from '../fees'
 import { resolveFeeAsset } from '../utils'
 
 export const getMinTransferableAmountInternal = async <TApi, TRes>({
@@ -21,7 +21,6 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
   origin: chain,
   destination,
   currency,
-  tx,
   feeAsset,
   builder
 }: TGetMinTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
@@ -60,24 +59,20 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
-  const result = await getXcmFeeInternal(
-    {
-      api,
-      origin,
-      destination,
-      tx,
-      senderAddress,
-      address,
-      currency: {
-        ...currency,
-        amount
-      },
-      feeAsset,
-      disableFallback: false
+  const result = await getXcmFee({
+    api,
+    origin,
+    destination,
+    builder,
+    senderAddress,
+    address,
+    currency: {
+      ...currency,
+      amount
     },
-    // Use dryRun bypass
-    true
-  )
+    feeAsset,
+    disableFallback: false
+  })
 
   const originFee =
     result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)

@@ -1,12 +1,11 @@
 import { getExistentialDepositOrThrow, normalizeSymbol } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
-import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
-import { abstractDecimals, validateAddress } from '../../utils'
-import { getXcmFee } from '../fees'
+import { abstractDecimals, createTxs, validateAddress } from '../../utils'
+import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
   let totalFee = 0n
@@ -22,16 +21,11 @@ export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
   return totalFee
 }
 
-export const verifyEdOnDestinationInternal = async <TApi, TRes>({
-  api,
-  tx,
-  origin,
-  destination,
-  address,
-  senderAddress,
-  feeAsset,
-  currency
-}: TVerifyEdOnDestinationOptions<TApi, TRes>) => {
+export const verifyEdOnDestinationInternal = async <TApi, TRes>(
+  options: TVerifyEdOnDestinationOptions<TApi, TRes>
+) => {
+  const { api, builder, origin, destination, currency, address, senderAddress, feeAsset } = options
+
   if (destination === 'Ethereum') return true
 
   validateAddress(address, destination)
@@ -65,9 +59,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     currency: destCurrency
   })
 
-  const xcmFeeResult = await getXcmFee({
+  const { tx, txBypassAmount } = await createTxs(options, builder)
+
+  const xcmFeeResult = await getXcmFeeInternal({
     api,
-    tx,
+    tx: txBypassAmount,
     origin,
     destination,
     senderAddress,
@@ -77,7 +73,8 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
       amount
     },
     feeAsset,
-    disableFallback: false
+    disableFallback: false,
+    useRootOrigin: true
   })
 
   const {
@@ -86,12 +83,6 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     bridgeHub: bridgeHubFeeResult,
     destination: { fee: destFee, currency: destFeeCurrency, dryRunError: destDryRunError }
   } = xcmFeeResult
-
-  if (destFee === undefined) {
-    throw new InvalidParameterError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${destination}.`
-    )
-  }
 
   if (dryRunError) {
     throw new DryRunFailedError(dryRunError, 'origin')

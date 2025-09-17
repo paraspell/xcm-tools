@@ -1,11 +1,16 @@
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
+import { createTxs } from '../../utils/builder'
 import { getXcmFeeInternal } from './getXcmFeeInternal'
 
 export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
   options: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
-  const forced = await getXcmFeeInternal(options, true)
-  const real = await getXcmFeeInternal(options, false)
+  const { builder } = options
+
+  const { tx, txBypassAmount } = await createTxs(options, builder)
+
+  const forced = await getXcmFeeInternal({ ...options, tx: txBypassAmount, useRootOrigin: true })
+  const real = await getXcmFeeInternal({ ...options, tx, useRootOrigin: false })
 
   const { api } = options
 

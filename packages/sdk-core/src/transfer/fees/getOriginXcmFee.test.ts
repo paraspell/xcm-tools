@@ -1,44 +1,85 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import type { GeneralBuilder } from '../../builder'
+import type {
+  TGetOriginXcmFeeOptions,
+  TSendBaseOptionsWithSenderAddress,
+  TXcmFeeDetail
+} from '../../types'
+import { createTxs } from '../../utils/builder'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 vi.mock('./getOriginXcmFeeInternal')
+vi.mock('../../utils/builder')
 
 describe('getOriginXcmFee', () => {
-  beforeEach(() => vi.clearAllMocks())
+  const mockBuilder = {
+    buildInternal: vi.fn()
+  } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
 
-  it('merges: keeps forced fields, overwrites sufficient from real, calls internal with true then false', async () => {
-    const options = {} as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
-    const forced = {} as TXcmFeeDetail & { forwardedXcms?: unknown; destParaId?: number }
+  const baseOptions = {
+    builder: mockBuilder
+  } as TGetOriginXcmFeeOptions<unknown, unknown>
+
+  const bypassTx = { kind: 'bypass' }
+  const realTx = { kind: 'real' }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(createTxs).mockResolvedValue({
+      tx: realTx as unknown,
+      txBypassAmount: bypassTx as unknown
+    })
+  })
+
+  it('passes correct tx objects and merges sufficient from real', async () => {
+    const options = baseOptions
+    const forced = { forwardedXcms: [], destParaId: 2000, sufficient: true } as TXcmFeeDetail & {
+      forwardedXcms?: unknown
+      destParaId?: number
+    }
     const real = { sufficient: false } as TXcmFeeDetail
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
     const res = await getOriginXcmFee(options)
 
+    expect(createTxs).toHaveBeenCalledWith(options, mockBuilder)
     expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
       1,
-      expect.objectContaining({ useRootOrigin: true })
+      expect.objectContaining({
+        tx: bypassTx,
+        useRootOrigin: true
+      })
     )
     expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({ useRootOrigin: false })
+      expect.objectContaining({
+        tx: realTx,
+        useRootOrigin: false
+      })
     )
-
     expect(res.sufficient).toBe(false)
+    expect(res).toEqual(expect.objectContaining({ forwardedXcms: [], destParaId: 2000 }))
   })
 
   it('sets sufficient to undefined when real.sufficient is undefined', async () => {
-    const options = {} as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
     const forced = { sufficient: true } as TXcmFeeDetail
     const real = {} as TXcmFeeDetail
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
 
-    const res = await getOriginXcmFee(options)
+    const res = await getOriginXcmFee(baseOptions)
 
+    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ tx: bypassTx, useRootOrigin: true })
+    )
+    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ tx: realTx, useRootOrigin: false })
+    )
     expect(res.sufficient).toBeUndefined()
   })
 })

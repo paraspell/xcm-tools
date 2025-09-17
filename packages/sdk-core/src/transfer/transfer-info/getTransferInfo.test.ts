@@ -10,10 +10,12 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import type { GeneralBuilder } from '../../builder'
 import { InvalidParameterError } from '../../errors'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
 import type {
   TGetTransferInfoOptions,
+  TSendBaseOptionsWithSenderAddress,
   TTransferInfo,
   TXcmFeeDetail,
   TXcmFeeHopInfo
@@ -50,6 +52,7 @@ describe('getTransferInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
   let mockTx: unknown
   let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown>, 'api' | 'tx'>
+  const mockBuilder = {} as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -62,6 +65,7 @@ describe('getTransferInfo', () => {
     mockTx = {}
 
     baseOptions = {
+      builder: mockBuilder,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       senderAddress: 'senderAlice',
@@ -149,7 +153,7 @@ describe('getTransferInfo', () => {
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
-      tx: mockTx,
+      builder: options.builder,
       origin: options.origin,
       destination: options.destination,
       senderAddress: options.senderAddress,
