@@ -12,7 +12,7 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
   HopProcessParams,
   TFeeType,
-  TGetXcmFeeOptions,
+  TGetXcmFeeInternalOptions,
   TGetXcmFeeResult,
   TXcmFeeChain,
   TXcmFeeDetail,
@@ -51,21 +51,21 @@ const getFailureInfo = (
   return {}
 }
 
-export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boolean>(
-  {
-    api,
-    tx,
-    origin,
-    destination,
-    senderAddress,
-    address,
-    currency,
-    feeAsset,
-    disableFallback,
-    swapConfig
-  }: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>,
-  useRootOrigin: boolean
-): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boolean>({
+  api,
+  tx,
+  origin,
+  destination,
+  senderAddress,
+  address,
+  currency,
+  feeAsset,
+  disableFallback,
+  swapConfig,
+  useRootOrigin
+}: TGetXcmFeeInternalOptions<TApi, TRes, TDisableFallback>): Promise<
+  TGetXcmFeeResult<TDisableFallback>
+> => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)

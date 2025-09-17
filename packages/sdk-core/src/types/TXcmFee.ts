@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  TAssetInfo,
-  TCurrencyCore,
-  TCurrencyInput,
-  WithAmount,
-  WithComplexAmount
-} from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptions, TWeight } from './TTransfer'
+import type { TSendBaseOptionsWithSenderAddress, TWeight } from './TTransfer'
 
-export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
+export type TGetXcmFeeBaseOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = {
   /**
    * The transaction to calculate the fee for
    */
-  tx: TRes
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   /**
    * The origin chain
    */
@@ -38,47 +32,56 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
 }
 
 export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
-  TGetXcmFeeBaseOptions<TRes, TDisableFallback>,
+  TGetXcmFeeBaseOptions<TApi, TRes, TDisableFallback>,
   TApi,
   TRes
 >
 
+export type TGetXcmFeeInternalOptions<
+  TApi,
+  TRes,
+  TDisableFallback extends boolean = boolean
+> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'builder'> & {
+  tx: TRes
+  useRootOrigin: boolean
+}
+
 export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
-  TGetXcmFeeOptions<TApi, TRes>,
-  'disableFallback'
+  TGetXcmFeeInternalOptions<TApi, TRes>,
+  'disableFallback' | 'useRootOrigin'
 >
 
 export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
-  TGetXcmFeeOptions<TApi, TRes>,
-  'disableFallback' | 'address'
+  TGetXcmFeeInternalOptions<TApi, TRes>,
+  'disableFallback' | 'address' | 'useRootOrigin'
 >
 
 export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
 
-export type TGetOriginXcmFeeBaseOptions<TRes> = {
-  tx: TRes
+export type TGetOriginXcmFeeBaseOptions<TApi, TRes> = {
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   origin: TSubstrateChain
   destination: TChain
   senderAddress: string
-  currency: WithComplexAmount<TCurrencyCore>
+  currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
   useRootOrigin?: boolean
 }
 
 export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
-  TGetOriginXcmFeeBaseOptions<TRes>,
+  TGetOriginXcmFeeBaseOptions<TApi, TRes>,
   TApi,
   TRes
 >
 
-export type TAttemptDryRunFeeOptions<TApi, TRes> = Omit<
+export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
   TGetOriginXcmFeeOptions<TApi, TRes>,
-  'tx'
+  'builder'
 > & {
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+  tx: TRes
 }
 
 export type TSwapConfig = {

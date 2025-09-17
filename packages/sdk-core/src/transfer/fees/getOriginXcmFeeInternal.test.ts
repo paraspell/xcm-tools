@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { padFee } from '../../utils/fees'
-import { getOriginXcmFee } from './getOriginXcmFee'
+import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 import { isSufficientOrigin } from './isSufficient'
 
 vi.mock('@paraspell/assets')
@@ -23,6 +23,7 @@ describe('getOriginXcmFeeInternal', () => {
   const mockSymbol = 'TOKEN'
   const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
   const mockAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockTx = {}
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -39,9 +40,9 @@ describe('getOriginXcmFeeInternal', () => {
     const dryRunCallSpy = vi.spyOn(api, 'getDryRunCall')
     const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getOriginXcmFee({
+    const res = await getOriginXcmFeeInternal({
       api,
-      tx: {},
+      tx: mockTx,
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
@@ -70,7 +71,7 @@ describe('getOriginXcmFeeInternal', () => {
     expect(dryRunCallSpy).not.toHaveBeenCalled()
   })
 
-  it('returns **dryRun** fee, forwardedXcms & destParaId when dry-run succeeds', async () => {
+  it('returns dryRun fee, forwardedXcms & destParaId when dry-run succeeds', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
 
     const api = createApi(0n)
@@ -86,9 +87,9 @@ describe('getOriginXcmFeeInternal', () => {
 
     const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getOriginXcmFee({
+    const res = await getOriginXcmFeeInternal({
       api,
-      tx: {},
+      tx: mockTx,
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
@@ -124,9 +125,9 @@ describe('getOriginXcmFeeInternal', () => {
 
     const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getOriginXcmFee({
+    const res = await getOriginXcmFeeInternal({
       api,
-      tx: {},
+      tx: mockTx,
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
@@ -156,9 +157,9 @@ describe('getOriginXcmFeeInternal', () => {
 
     const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getOriginXcmFee({
+    const res = await getOriginXcmFeeInternal({
       api,
-      tx: {},
+      tx: mockTx,
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',

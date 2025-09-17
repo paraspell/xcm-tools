@@ -1,11 +1,7 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  getRelayChainSymbol,
-  type TCurrencyInputWithAmount
-} from '@paraspell/assets'
+import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import { type TChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -31,7 +27,7 @@ import type {
   TTransferInfo,
   TXcmFeeDetail
 } from '../types'
-import { assertAddressIsString, assertToIsString, isConfig } from '../utils'
+import { assertAddressIsString, assertSenderAddress, assertToIsString, isConfig } from '../utils'
 import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
 
@@ -807,6 +803,8 @@ describe('Builder', () => {
 
       const SENDER = 'sender-address'
 
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
       const result = await Builder(mockApi)
         .from(CHAIN)
         .to(CHAIN_2)
@@ -819,12 +817,15 @@ describe('Builder', () => {
       expect(getXcmFee).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
+      expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch origin XCM fee', async () => {
       vi.mocked(getOriginXcmFee).mockResolvedValue({} as TXcmFeeDetail)
 
       const SENDER = 'sender-address'
+
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -837,12 +838,15 @@ describe('Builder', () => {
       expect(result).toEqual({})
       expect(getOriginXcmFee).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
+      expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch XCM fee estimate', async () => {
       vi.mocked(getXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateResult)
 
       const SENDER = 'sender-address'
+
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -856,28 +860,15 @@ describe('Builder', () => {
       expect(getXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-    })
-
-    it('computes overridden amount when abstractDecimals=false', async () => {
-      mockApi.getConfig = vi.fn().mockReturnValue({ abstractDecimals: false })
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 12 } as unknown as TAssetInfo)
-      vi.mocked(send).mockResolvedValue(mockExtrinsic)
-
-      await Builder(mockApi)
-        .from(CHAIN)
-        .to(CHAIN_2)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
-        .getXcmFee()
-
-      expect(getXcmFee).toHaveBeenCalledTimes(1)
+      expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch origin XCM fee estimate', async () => {
       vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateDetail)
 
       const SENDER = 'sender-address'
+
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -890,6 +881,7 @@ describe('Builder', () => {
       expect(result).toEqual({})
       expect(getOriginXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
+      expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch transferable amount', async () => {
@@ -1048,6 +1040,7 @@ describe('Builder', () => {
           sentAssetMintMode: 'bypass'
         }
       )
+      expect(assertSenderAddress).toHaveBeenCalledWith(SENDER)
     })
 
     it('should throw DryRunFailedError when dryRun reports a failure', async () => {

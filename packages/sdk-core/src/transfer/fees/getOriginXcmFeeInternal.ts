@@ -3,7 +3,7 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -19,7 +19,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
   feeAsset,
   currency,
   useRootOrigin = false
-}: TGetOriginXcmFeeOptions<TApi, TRes>): Promise<
+}: TGetOriginXcmFeeInternalOptions<TApi, TRes>): Promise<
   TXcmFeeDetail & {
     forwardedXcms?: any
     destParaId?: number

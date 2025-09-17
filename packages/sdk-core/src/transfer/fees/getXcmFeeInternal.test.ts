@@ -8,7 +8,12 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type { HopProcessParams, TGetXcmFeeOptions, TXcmFeeHopResult } from '../../types'
+import type {
+  HopProcessParams,
+  TGetXcmFeeInternalOptions,
+  TGetXcmFeeOptions,
+  TXcmFeeHopResult
+} from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
@@ -36,14 +41,15 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
       init: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() })
     } as unknown as IPolkadotApi<unknown, unknown>,
-    tx: {} as unknown,
+    builder: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
     senderAddress: '5Alice',
     address: '5Bob',
     currency: 'ACA',
+    useRootOrigin: false,
     ...overrides
-  }) as unknown as TGetXcmFeeOptions<unknown, unknown>
+  }) as unknown as TGetXcmFeeInternalOptions<unknown, unknown>
 
 describe('getXcmFeeInternal', () => {
   const xcmFeeResCurrency = {
@@ -78,7 +84,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res).toEqual({
       failureReason: 'Simulation failed',
@@ -120,7 +126,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res).toEqual({
       origin: {
@@ -165,7 +171,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(getDestXcmFee).not.toHaveBeenCalled()
 
@@ -231,7 +237,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res).toEqual({
       origin: {
@@ -317,7 +323,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
 
@@ -418,7 +424,7 @@ describe('getXcmFeeInternal', () => {
       sufficient: false
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.hops).toHaveLength(2)
     expect(res.hops).toEqual([
@@ -532,8 +538,7 @@ describe('getXcmFeeInternal', () => {
           exchangeChain: 'Hydration',
           currencyTo: { symbol: 'USDT' }
         }
-      }),
-      false
+      })
     )
 
     expect(res.hops).toHaveLength(2)
@@ -587,7 +592,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }), false)
+    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
 
     expect(res.destination).toMatchObject({
       fee: 0n,
@@ -640,7 +645,7 @@ describe('getXcmFeeInternal', () => {
       currency: 'DOT'
     })
 
-    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }), false)
+    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
 
     expect(res.hops[0].result.fee).toBe(1_000n)
     expect(res.bridgeHub?.fee).toBe(1_000n)
@@ -670,7 +675,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.origin).not.toHaveProperty('sufficient')
   })
@@ -699,7 +704,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.origin).toHaveProperty('weight')
     expect(res.origin.weight).toEqual({ refTime: 1000000n, proofSize: 5000n })
@@ -746,7 +751,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.failureChain).toBe('Quartz')
     expect(res.failureReason).toBe('Custom chain failed')
@@ -784,7 +789,7 @@ describe('getXcmFeeInternal', () => {
       dryRunError: 'BridgeHub failed'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.failureChain).toBe('bridgeHub')
     expect(res.failureReason).toBe('BridgeHub failed')
@@ -818,7 +823,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.failureChain).toBe('destination')
     expect(res.failureReason).toBe('Destination failed')
@@ -851,7 +856,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.failureChain).toBeUndefined()
     expect(res.failureReason).toBeUndefined()
@@ -885,7 +890,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.destination).toEqual({
       fee: 2_000n,
@@ -939,7 +944,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.hops[0].result).toEqual({
       currency: 'DOT',
@@ -984,7 +989,7 @@ describe('getXcmFeeInternal', () => {
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
 
-    await getXcmFeeInternal(createOptions({ api: mockApi }), false)
+    await getXcmFeeInternal(createOptions({ api: mockApi }))
 
     expect(cloneSpy).toHaveBeenCalled()
     expect(mockCloneApi.init).toHaveBeenCalled()
@@ -1056,7 +1061,7 @@ describe('getXcmFeeInternal', () => {
       sufficient: false
     })
 
-    const res = await getXcmFeeInternal(createOptions({ api: mockApi }), false)
+    const res = await getXcmFeeInternal(createOptions({ api: mockApi }))
 
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
     expect(mockCloneApi.init).toHaveBeenCalledWith('Moonbeam', expect.any(Number))
@@ -1131,8 +1136,7 @@ describe('getXcmFeeInternal', () => {
       createOptions({
         api: mockApi,
         destination: 'Ethereum'
-      }),
-      false
+      })
     )
 
     expect(mockCloneApi.init).not.toHaveBeenCalled()
@@ -1189,7 +1193,7 @@ describe('getXcmFeeInternal', () => {
 
     const mockApi = createOptions().api
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Acala', 'Moonbeam', 'ACA')
     expect(res.destination.currency).toBe('MAPPED_ACA')
@@ -1252,8 +1256,7 @@ describe('getXcmFeeInternal', () => {
           exchangeChain: 'Hydration',
           currencyTo: { symbol: 'USDT' }
         }
-      }),
-      false
+      })
     )
 
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Moonbeam', {
@@ -1303,7 +1306,7 @@ describe('getXcmFeeInternal', () => {
     }
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(updatedBridgeHubResult)
 
-    const res = await getXcmFeeInternal(createOptions(), false)
+    const res = await getXcmFeeInternal(createOptions())
 
     expect(res.hops[0].result.fee).toBe(5_000n)
     expect(res.bridgeHub?.fee).toBe(5_000n)
@@ -1352,7 +1355,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }), false)
+    await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
 
     expect(getNativeAssetSymbol).toHaveBeenCalledWith('Ethereum')
   })

@@ -8,8 +8,9 @@ import {
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import type { GeneralBuilder } from '../../builder'
 import { getAssetBalanceInternal } from '../../pallets/assets'
-import type { TXcmFeeDetail } from '../../types'
+import type { TSendBaseOptionsWithSenderAddress, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getOriginXcmFee } from '../fees'
 import { getTransferableAmount } from './getTransferableAmount'
@@ -25,7 +26,7 @@ describe('getTransferableAmount', () => {
     disconnect: vi.fn().mockResolvedValue(undefined)
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const mockTx = {} as unknown
+  const mockBuilder = {} as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -50,13 +51,13 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: 1000n },
-      tx: mockTx
+      builder: mockBuilder
     })
 
     expect(result).toBe(balance - ed - fee)
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: mockApi,
-      tx: mockTx,
+      builder: mockBuilder,
       origin: 'Astar',
       destination: 'Astar',
       senderAddress: 'validAddress',
@@ -80,7 +81,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'USDT', amount: 1000n },
-      tx: mockTx
+      builder: mockBuilder
     })
 
     expect(result).toBe(balance - ed)
@@ -105,7 +106,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: 1000n },
-      tx: mockTx
+      builder: mockBuilder
     })
 
     expect(result).toBe(0n)
@@ -126,7 +127,7 @@ describe('getTransferableAmount', () => {
         origin: 'Astar',
         destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT', amount: 1000n },
-        tx: mockTx
+        builder: mockBuilder
       })
     ).rejects.toThrow(
       'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on chain Astar.'
@@ -149,7 +150,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: 1000n },
-      tx: mockTx
+      builder: mockBuilder
     })
 
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
@@ -175,7 +176,7 @@ describe('getTransferableAmount', () => {
         origin: 'Astar',
         destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT', amount: 1000n },
-        tx: mockTx
+        builder: mockBuilder
       })
     ).rejects.toThrow()
 

@@ -12,10 +12,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
 import { getAssetBalanceInternal } from '../../pallets/assets'
-import type { TDryRunResult, TGetXcmFeeResult, TSendBaseOptions } from '../../types'
+import type {
+  TDryRunResult,
+  TGetXcmFeeResult,
+  TSendBaseOptionsWithSenderAddress
+} from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
-import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
+import { getXcmFee } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import * as mod from './getMinTransferableAmount'
 
@@ -29,7 +33,7 @@ vi.mock('@paraspell/assets', () => ({
 
 vi.mock('../../utils')
 vi.mock('../utils')
-vi.mock('../fees/getXcmFeeInternal')
+vi.mock('../fees')
 vi.mock('../dry-run')
 vi.mock('../../pallets/assets')
 
@@ -44,7 +48,7 @@ const makeApis = () => {
 }
 
 describe('getMinTransferableAmountInternal', () => {
-  let mockBuilder: GeneralBuilder<unknown, unknown, TSendBaseOptions>
+  let mockBuilder: GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -54,7 +58,7 @@ describe('getMinTransferableAmountInternal', () => {
     mockBuilder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockReturnValue({} as unknown)
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions>
+    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
   })
 
   afterEach(() => {
@@ -65,10 +69,7 @@ describe('getMinTransferableAmountInternal', () => {
     const { api, destApi } = makeApis()
 
     const asset = { symbol: 'ASSET', decimals: 12 } as TAssetInfo
-    const destAsset = {
-      symbol: 'ASSET',
-      location: {} as unknown
-    } as TAssetInfo
+    const destAsset = { symbol: 'ASSET', location: {} as unknown } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(asset)
@@ -78,8 +79,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
     // Fees: origin(A)=2 + hop(A)=3 + hop(B ignored)=5 + destination(A)=7
-
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'ASSET' }, fee: 2n },
       hops: [
         { result: { asset: { symbol: 'ASSET' }, fee: 3n } },
@@ -99,7 +99,6 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'DEST_ADDR',
       destination: 'Astar',
       currency: { symbol: 'ASSET', amount: 1n },
-      tx: {} as unknown,
       builder: mockBuilder
     })
 
@@ -118,12 +117,13 @@ describe('getMinTransferableAmountInternal', () => {
       })
     )
     expect(abstractDecimals).toHaveBeenCalledWith(1n, 12, api)
-    expect(getXcmFeeInternal).toHaveBeenCalledWith(
+    expect(getXcmFee).toHaveBeenCalledWith(
       expect.objectContaining({
+        origin: 'Acala',
+        destination: 'Astar',
         disableFallback: false,
         currency: expect.objectContaining({ amount: 100n })
-      }),
-      true
+      })
     )
     expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 23n }))
     expect(buildSpy).toHaveBeenCalled()
@@ -149,7 +149,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(resolveFeeAsset).mockReturnValue(resolvedFee)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(999n) // ignored due to balance>0
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'A' }, fee: 5n },
       hops: [],
       destination: {}
@@ -162,7 +162,6 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'D1',
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 123n },
-      tx: {} as unknown,
       feeAsset: { symbol: 'FEE' } as TAssetInfo,
       builder: mockBuilder
     })
@@ -178,22 +177,18 @@ describe('getMinTransferableAmountInternal', () => {
     expect(resolveFeeAsset).toHaveBeenCalled()
   })
 
-  it('throws DryRunFailedError when dryRun returns failureReason', async () => {
+  it('returns 0n when dryRun reports failureReason', async () => {
     const { api } = makeApis()
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'A'
-    } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'A',
       location: {} as unknown
     } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
-      symbol: 'A'
-    } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'A' }, fee: 1n },
       hops: [],
       destination: {}
@@ -209,7 +204,6 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'D1',
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
-      tx: {} as unknown,
       builder: mockBuilder
     })
 
@@ -219,19 +213,15 @@ describe('getMinTransferableAmountInternal', () => {
   it('skips unrelated fees when assets differ; only ED + 1 when dest balance is 0', async () => {
     const { api } = makeApis()
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'A'
-    } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
-      symbol: 'B'
-    } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'B' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'B',
       location: {} as unknown
     } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(4n)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'B' }, fee: 9n },
       hops: [{ result: { asset: { symbol: 'B' }, fee: 8n } }],
       destination: { asset: { symbol: 'B' }, fee: 7n }
@@ -244,7 +234,6 @@ describe('getMinTransferableAmountInternal', () => {
       address: 'D',
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
-      tx: {} as unknown,
       builder: mockBuilder
     })
 

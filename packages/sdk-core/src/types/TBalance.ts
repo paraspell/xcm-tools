@@ -9,7 +9,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptions } from './TTransfer'
+import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
 
 /**
  * Retrieves the native asset balance for a given account on a specified chain.
@@ -126,7 +126,7 @@ export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TGetTransferableAmountOptionsBase<TRes> = {
+export type TGetTransferableAmountOptionsBase<TApi, TRes> = {
   /**
    * The sender address of the account.
    */
@@ -144,28 +144,27 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
    */
   currency: WithAmount<TCurrencyCore>
   /**
-   * The transaction instance
+   * The transaction builder instance
    */
-  tx: TRes
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   feeAsset?: TCurrencyInput
 }
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase<TRes>,
+  TGetTransferableAmountOptionsBase<TApi, TRes>,
   TApi,
   TRes
 >
 
 export type TGetMinTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase<TRes> & {
+  TGetTransferableAmountOptionsBase<TApi, TRes> & {
     address: string
-    builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
   },
   TApi,
   TRes
 >
 
-export type TVerifyEdOnDestinationOptionsBase<TRes> = {
+export type TVerifyEdOnDestinationOptionsBase<TApi, TRes> = {
   /**
    * The origin chain.
    */
@@ -187,14 +186,14 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
    */
   currency: WithAmount<TCurrencyCore>
   /**
-   * The transaction to calculate the fee for
+   * The transaction builder instance
    */
-  tx: TRes
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   feeAsset?: TCurrencyInput
 }
 
 export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<
-  TVerifyEdOnDestinationOptionsBase<TRes>,
+  TVerifyEdOnDestinationOptionsBase<TApi, TRes>,
   TApi,
   TRes
 >
