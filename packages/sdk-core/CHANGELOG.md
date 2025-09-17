@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.7.1...sdk-core-v11.7.2) (2025-09-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix router fee bypass ⚙️ ([955f450](https://github.com/paraspell/xcm-tools/commit/955f450bfc49257edf26a289a5c94fbed654da5c))
+
 ## [11.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.7.0...sdk-core-v11.7.1) (2025-09-17)
 
 
