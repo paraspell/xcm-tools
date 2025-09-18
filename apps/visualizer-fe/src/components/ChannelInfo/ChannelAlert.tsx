@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelQuery } from '../../gql/graphql';
+import type { Ecosystem } from '../../types';
 import { getParachainById } from '../../utils/utils';
 
 type Props = {
@@ -41,8 +42,12 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
 
   const currentChannel = value === 'from' ? channelFrom : channelTo;
 
+  const getLinkByEcosystem = (ecosystem: Ecosystem): string => {
+    return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_message?page=1&time_dimension=date`;
+  };
+
   const generateExplorerLink = () => {
-    const baseUrl = 'https://polkadot.subscan.io/xcm_message?page=1&time_dimension=date';
+    const baseUrl = getLinkByEcosystem(selectedEcosystem);
     const fromChain = `&fromChain=${currentChannel?.sender}`;
     const toChain = `&toChain=${currentChannel?.recipient}`;
     const start = startDate ? `&date_start=${dayjs(startDate).format('YYYY-MM-DD')}` : '';

@@ -125,8 +125,12 @@ const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => 
   return getParachainId(label, ecosystem);
 };
 
-const generateExplorerLink = (from: number | undefined, date: string) => {
-  const baseUrl = 'https://polkadot.subscan.io/xcm_transfer?page=1';
+const getLinkByEcosystem = (ecosystem: Ecosystem): string => {
+  return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_transfer?page=1`;
+};
+
+const generateExplorerLink = (ecosystem: Ecosystem, from: number | undefined, date: string) => {
+  const baseUrl = getLinkByEcosystem(ecosystem);
   const fromChain = from ? `&fromChain=${from}` : '';
   const start = `&date_start=${dayjs(date).format('YYYY-MM-DD')}`;
   const end = `&date_end=${dayjs(date).format('YYYY-MM-DD')}`;
@@ -227,7 +231,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
       paraId = getParaId(selectedEcosystem, parachainName);
     }
 
-    const explorerLink = generateExplorerLink(paraId, label as string);
+    const explorerLink = generateExplorerLink(selectedEcosystem, paraId, label as string);
     if (parachainName !== 'Median') {
       items.push(
         <Box mt={2} mb="xs" key={`link-${parachainName}`} className="tooltip-explorer-link">
