@@ -43,6 +43,8 @@ import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
+import { fetchOtherAssetsAmplitude } from './fetchAmplitudeAssets'
+import { fetchNativeAssetsCurio, fetchOtherAssetsCurio } from './fetchCurioAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAssetInfo[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -219,96 +221,6 @@ const fetchOtherAssetsDefault = async (
   return results.filter(asset => asset.symbol !== null)
 }
 
-const fetchNativeAssetsCurio = async (
-  api: ApiPromise,
-  query: string
-): Promise<TNativeAssetInfo[]> => {
-  const [module, method] = query.split('.')
-  const res = await api.query[module][method].entries()
-  return res
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
-        return {
-          assetId: era.toHuman(),
-          symbol,
-          decimals: +decimals,
-          existentialDeposit
-        }
-      }
-    )
-    .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'Token')
-    .map(asset => ({
-      isNative: true,
-      symbol: asset.symbol,
-      decimals: asset.decimals,
-      existentialDeposit: asset.existentialDeposit
-    }))
-}
-
-const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
-  const [module, method] = query.split('.')
-  const res = await api.query[module][method].entries()
-  return res
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
-        return {
-          assetId: era.toHuman(),
-          symbol,
-          decimals: +decimals,
-          existentialDeposit
-        }
-      }
-    )
-    .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'ForeignAsset')
-    .map(asset => ({
-      assetId: Object.values(asset.assetId ?? {})[0],
-      symbol: asset.symbol,
-      decimals: asset.decimals,
-      existentialDeposit: asset.existentialDeposit
-    }))
-}
-
-const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
-  const [module, method] = query.split('.')
-  const res = await api.query[module][method].entries()
-  return res
-    .filter(
-      ([
-        {
-          args: [era]
-        }
-      ]) => Object.prototype.hasOwnProperty.call(era.toHuman(), 'XCM')
-    )
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
-        return {
-          assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
-          symbol,
-          decimals: +decimals,
-          existentialDeposit
-        }
-      }
-    )
-}
-
 const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
@@ -397,7 +309,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchAstarAssets(api, query)
   }
 
-  if (chain === 'Darwinia') {
+  if (chain === 'Darwinia' || chain.startsWith('Crust')) {
     otherAssets = await fetchDarwiniaAssets(api, query)
   }
 

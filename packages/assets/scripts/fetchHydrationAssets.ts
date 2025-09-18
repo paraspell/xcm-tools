@@ -34,5 +34,5 @@ export const fetchHydrationAssets = async (
     )
   )
 
-  return assets.filter(asset => asset.decimals && asset.decimals > 0)
+  return assets.filter(asset => asset.decimals && asset.decimals > 0 && asset.assetId !== '0')
 }
