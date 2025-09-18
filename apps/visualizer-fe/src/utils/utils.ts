@@ -9,13 +9,10 @@ import type { SelectedParachain } from '../context/SelectedParachain/SelectedPar
 import { Ecosystem } from '../types/types';
 
 export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosystem): number => {
-  if (parachain === 'Polkadot' || parachain === 'Kusama') return 0;
+  if (parachain === ecosystem.toString()) return 0;
 
   const paraId = findEndpointOption(ecosystem, parachain)?.paraId;
-
-  if (!paraId) throw new Error(`Parachain ${parachain} not found in ecosystem ${ecosystem}`);
-
-  return paraId;
+  return paraId ?? -1;
 };
 
 export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedParachain | null => {
@@ -26,7 +23,7 @@ export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedPara
 };
 
 export const getParachainColor = (parachain: SelectedParachain, ecosystem: Ecosystem): string => {
-  if (parachain === 'Polkadot' || parachain === 'Kusama') return 'blue.6';
+  if (parachain === ecosystem.toString()) return 'blue.6';
   return findEndpointOption(ecosystem, parachain)?.ui.color ?? 'gray.6';
 };
 
