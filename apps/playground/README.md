@@ -41,6 +41,6 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 - Message us on our [X](https://x.com/paraspell).
 - Support channel on [telegram](https://t.me/paraspell).
 
-## Other 
+## Other 
 
 Deployed on [Netfify](https://www.netlify.com/) ⚙️
