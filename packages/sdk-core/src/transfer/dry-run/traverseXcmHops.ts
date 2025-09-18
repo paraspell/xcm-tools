@@ -68,7 +68,12 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
     try {
       await hopApi.init(nextChain, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-      const isDestination = nextChain === destination
+      // true if this hop should be treated as the destination
+      // - normally when nextChain === destination
+      // - but if swap is required, only after (or on) the exchange hop      const isDestination =
+      const isDestination =
+        nextChain === destination &&
+        (!swapConfig || hasPassedExchange || nextChain === swapConfig.exchangeChain)
 
       const isAssetHub = nextChain === assetHubChain
       const isBridgeHub = nextChain === bridgeHubChain

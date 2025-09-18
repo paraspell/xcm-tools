@@ -536,7 +536,8 @@ describe('getXcmFeeInternal', () => {
       createOptions({
         swapConfig: {
           exchangeChain: 'Hydration',
-          currencyTo: { symbol: 'USDT' }
+          currencyTo: { symbol: 'USDT' },
+          amountOut: 1_000_000n
         }
       })
     )
@@ -1254,7 +1255,8 @@ describe('getXcmFeeInternal', () => {
       createOptions({
         swapConfig: {
           exchangeChain: 'Hydration',
-          currencyTo: { symbol: 'USDT' }
+          currencyTo: { symbol: 'USDT' },
+          amountOut: 1_000_000n
         }
       })
     )

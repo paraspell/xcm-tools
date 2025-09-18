@@ -1,6 +1,7 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from '@paraspell/assets'
 
 import { getParaId } from '../../../chains/config'
+import { AmountTooLowError } from '../../../errors'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
@@ -99,13 +100,15 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
 
   const assetFrom = createAsset(
     version,
-    BigInt(assetInfoFrom.amount),
+    assetInfoFrom.amount,
     localizeLocation(exchangeChain, assetInfoFrom.location)
   )
 
+  const MIN_FEE = 1000n
+
   // Exchange fee 0n means we are creating a dummy tx
   // Set want to 1000n to prevent NoDeal
-  const amountOut = chain && exchangeFee === 0n ? 1000n : BigInt(assetInfoTo.amount)
+  const amountOut = chain && exchangeFee === 0n ? MIN_FEE : assetInfoTo.amount
 
   const assetTo = createAsset(
     version,
@@ -134,6 +137,12 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
   )
 
   const exchangeInstructions = await createExchangeInstructions(options, assetFrom, assetTo)
+
+  if (assetInfoTo.amount < MIN_FEE) {
+    throw new AmountTooLowError(
+      'Amount to receive after swap is too low, Increase Currency From amount.'
+    )
+  }
 
   const exchangeToDestXcm = destChain
     ? createBaseExecuteXcm({

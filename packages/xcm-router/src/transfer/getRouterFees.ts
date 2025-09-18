@@ -30,15 +30,16 @@ export const getRouterFees = async (
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
-      const amountOut = await dex.getAmountOut(exchange.api, {
-        ...options,
-        papiApi: exchange.apiPapi,
-        assetFrom: exchange.assetFrom,
-        assetTo: exchange.assetTo,
-      });
+      const buildExecuteTx = async (amount: bigint) => {
+        const amountOut = await dex.getAmountOut(exchange.api, {
+          ...options,
+          amount: amount.toString(),
+          papiApi: exchange.apiPapi,
+          assetFrom: exchange.assetFrom,
+          assetTo: exchange.assetTo,
+        });
 
-      const buildExecuteTx = async (amount: bigint) =>
-        handleSwapExecuteTransfer({
+        const tx = await handleSwapExecuteTransfer({
           chain: origin?.chain,
           exchangeChain: exchange.baseChain,
           destChain: destination?.chain,
@@ -61,7 +62,10 @@ export const getRouterFees = async (
             }),
         });
 
-      const [tx, txBypass] = await Promise.all([
+        return { tx, amountOut };
+      };
+
+      const [{ tx, amountOut: mainAmountOut }, { tx: txBypass }] = await Promise.all([
         buildExecuteTx(BigInt(amount)),
         buildExecuteTx(
           applyDecimalAbstraction(SWAP_BYPASS_AMOUNT, exchange.assetFrom.decimals, true),
@@ -82,6 +86,7 @@ export const getRouterFees = async (
         swapConfig: {
           currencyTo: currencyTo as TCurrencyCore,
           exchangeChain: exchange.baseChain,
+          amountOut: mainAmountOut,
         },
       });
 

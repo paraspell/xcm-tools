@@ -59,21 +59,29 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, destination)
       : findAssetInfoOrThrow(origin, currency, destination)
 
+    const amount = swapConfig?.currencyTo ? swapConfig.amountOut : currency.amount
+
     if (originAsset.location) {
       try {
         return await getReverseTxFee(
           { ...options, destination },
-          { location: originAsset.location }
+          { location: originAsset.location, amount }
         )
       } catch (err: any) {
         if (err instanceof InvalidCurrencyError) {
-          return await getReverseTxFee({ ...options, destination }, { symbol: originAsset.symbol })
+          return await getReverseTxFee(
+            { ...options, destination },
+            { symbol: originAsset.symbol, amount }
+          )
         }
         throw err
       }
     }
 
-    return await getReverseTxFee({ ...options, destination }, { symbol: originAsset.symbol })
+    return await getReverseTxFee(
+      { ...options, destination },
+      { symbol: originAsset.symbol, amount }
+    )
   }
 
   if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {

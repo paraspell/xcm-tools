@@ -4,14 +4,13 @@ import { type TLocation } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer/dry-run/dryRunInternal'
 import type {
   TCreateSwapXcmInternalOptions,
   TCreateSwapXcmOptions,
   TDryRunOptions,
   TDryRunResult,
-  THopInfo,
   TSwapFeeEstimates,
   TWeight
 } from '../../../types'
@@ -24,11 +23,14 @@ const FEE_PADDING_PERCENTAGE = 20
 
 const validateAmount = (amount: bigint, requiredFee: bigint): void => {
   if (amount <= requiredFee) {
-    throw new InvalidParameterError(
+    throw new AmountTooLowError(
       `Asset amount is too low, please increase the amount or use a different fee asset.`
     )
   }
 }
+
+const calculateTotalFees = (chain: TSubstrateChain | undefined, fees: TSwapFeeEstimates): bigint =>
+  chain ? fees.originReserveFee + fees.exchangeFee : 0n
 
 const executeDryRun = async <TApi, TRes>(params: TDryRunOptions<TApi, TRes>) => {
   const result = await dryRunInternal(params)
@@ -42,7 +44,7 @@ const executeDryRun = async <TApi, TRes>(params: TDryRunOptions<TApi, TRes>) => 
 
 const findExchangeHopIndex = (
   chain: TSubstrateChain | undefined,
-  hops: THopInfo[],
+  dryRunResult: TDryRunResult,
   exchangeChain: TParachain,
   destChain?: TChain
 ): number => {
@@ -52,7 +54,7 @@ const findExchangeHopIndex = (
     return -1
   }
 
-  const index = hops.findIndex(hop => hop.chain === exchangeChain)
+  const index = dryRunResult.hops.findIndex(hop => hop.chain === exchangeChain)
 
   // If chain is defined but no exchange hop found, it might be because
   // the origin chain is the exchange chain (no hops needed)
@@ -191,7 +193,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
   await api.init(chain ?? exchangeChain)
 
-  validateAmount(BigInt(assetFrom.amount), MIN_FEE)
+  validateAmount(assetFrom.amount, MIN_FEE)
 
   const version = getChainVersion(chain ?? exchangeChain)
 
@@ -213,19 +215,25 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     },
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
-      exchangeChain
+      exchangeChain,
+      amountOut: assetTo.amount
     },
     useRootOrigin: true
   }
 
+  const fees: TSwapFeeEstimates = {
+    originReserveFee: MIN_FEE,
+    exchangeFee: 0n,
+    destReserveFee: MIN_FEE
+  }
+
+  const totalFeesPre = calculateTotalFees(chain, fees)
+  validateAmount(assetFrom.amount, totalFeesPre)
+
   // First dry run with dummy fees to extract actual fees
   const { call: initialCall } = await createXcmAndCall({
     ...internalOptions,
-    fees: {
-      originReserveFee: MIN_FEE,
-      exchangeFee: 0n,
-      destReserveFee: MIN_FEE
-    }
+    fees
   })
 
   const firstDryRunResult = await executeDryRun({
@@ -233,12 +241,13 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     tx: api.callTxMethod(initialCall)
   })
 
-  const exchangeHopIndex = findExchangeHopIndex(
-    chain,
-    firstDryRunResult.hops,
-    exchangeChain,
-    destChain
-  )
+  if (firstDryRunResult.failureReason === 'NotHoldingFees') {
+    throw new AmountTooLowError(
+      `Asset amount is too low to cover the fees, please increase the amount.`
+    )
+  }
+
+  const exchangeHopIndex = findExchangeHopIndex(chain, firstDryRunResult, exchangeChain, destChain)
 
   const extractedFees = extractFeesFromDryRun(
     chain,
@@ -253,17 +262,14 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     extractedFees.exchangeFee = MIN_FEE
   }
 
-  // Calculate actual amount available for swap
-  const totalFeesInFromAsset = chain
-    ? extractedFees.originReserveFee + extractedFees.exchangeFee
-    : 0n
+  const totalFees = calculateTotalFees(chain, extractedFees)
 
-  validateAmount(BigInt(assetFrom.amount), totalFeesInFromAsset)
+  validateAmount(assetFrom.amount, totalFees)
 
   let updatedAssetTo = assetTo
 
   if (chain) {
-    const amountAvailableForSwap = BigInt(assetFrom.amount) - totalFeesInFromAsset
+    const amountAvailableForSwap = assetFrom.amount - totalFees
 
     const recalculatedMinAmountOut = await calculateMinAmountOut(amountAvailableForSwap)
 
@@ -278,6 +284,5 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
   )
 
-  // If fees didn't change, use the second call
   return api.callTxMethod(finalCall)
 }

@@ -6,22 +6,12 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenCall } from '../../transfer'
-import type {
-  IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
-  TSerializedApiCall,
-  TTransferLocalOptions
-} from '../../types'
+import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
-class Ajuna<TApi, TRes>
-  extends Parachain<TApi, TRes>
-  implements IXTokensTransfer, IPolkadotXCMTransfer
-{
+class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
   constructor(
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
@@ -47,27 +37,8 @@ class Ajuna<TApi, TRes>
     return transferXTokens(input, this.getNativeAssetSymbol())
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TRes> {
-    const { api } = input
-    return api.callTxMethod(await createTypeAndThenCall(this.chain, input))
-  }
-
-  canUseXTokens({ assetInfo, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
-    return !(assetInfo.symbol === 'DOT' && destination === 'AssetHubPolkadot')
-  }
-
   transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
-  }
-
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return true
-  }
-
-  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return true
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

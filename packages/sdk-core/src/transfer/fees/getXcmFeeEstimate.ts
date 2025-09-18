@@ -85,8 +85,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
   const originFeeDetails = await getOriginXcmFeeEstimate(options)
 
   const currencyInput = originAsset.location
-    ? { location: originAsset.location }
-    : { symbol: originAsset.symbol }
+    ? { location: originAsset.location, amount }
+    : { symbol: originAsset.symbol, amount }
 
   const destinationFee =
     destination === 'Ethereum'
