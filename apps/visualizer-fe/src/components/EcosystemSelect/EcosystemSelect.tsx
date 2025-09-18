@@ -1,6 +1,7 @@
 import { Box, Combobox, Group, Input, InputBase, useCombobox } from '@mantine/core';
 import type { FC } from 'react';
 
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import KusamaLogo from '../../logos/icons/kusama.svg?react';
 import PaseoLogo from '../../logos/icons/paseo.svg?react';
 import PolkadotLogo from '../../logos/icons/polkadot.svg?react';
@@ -16,6 +17,8 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   });
+
+  const { setParachains } = useSelectedParachain();
 
   const getLogo = (ecosystem: string) => {
     switch (ecosystem) {
@@ -48,6 +51,7 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
       store={combobox}
       onOptionSubmit={val => {
         onChange(Ecosystem[val as keyof typeof Ecosystem]);
+        setParachains([]);
         combobox.closeDropdown();
       }}
     >

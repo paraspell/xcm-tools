@@ -47,7 +47,7 @@ const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
   return (
     <group ref={groupRef} name={`${ecosystem};Relaychain`} onClick={onClick}>
       <mesh ref={sphereRef} castShadow rotation={[0, Math.PI * 1.5, 0]}>
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[1.6, 32, 32]} />
         <meshStandardMaterial
           map={texture}
           emissive={isSelected ? new Color(0x222222) : new Color(0x000000)}
