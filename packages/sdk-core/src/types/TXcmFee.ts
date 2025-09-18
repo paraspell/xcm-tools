@@ -88,6 +88,7 @@ export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
 
 export type TSwapConfig = {
   currencyTo: TCurrencyCore
+  amountOut: bigint
   exchangeChain: TParachain
 }
 

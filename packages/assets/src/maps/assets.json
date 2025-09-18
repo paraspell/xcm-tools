@@ -738,8 +738,8 @@
     "nativeAssetSymbol": "AJUN",
     "isEVM": false,
     "ss58Prefix": 1328,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "AJUN",
@@ -769,7 +769,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "847713",

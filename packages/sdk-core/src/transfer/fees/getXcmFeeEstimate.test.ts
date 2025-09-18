@@ -182,7 +182,7 @@ describe('getXcmFeeEstimate', () => {
         destination: 'Hydration',
         currency: { symbol: 'ABC', amount: 5n }
       },
-      { symbol: 'ABC' }
+      { symbol: 'ABC', amount: 5n }
     )
 
     expect(res).toEqual({

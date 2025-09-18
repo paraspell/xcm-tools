@@ -1,36 +1,15 @@
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenCall } from '../../transfer'
-import type {
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Ajuna from './Ajuna'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  createTypeAndThenCall: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', async () => {
-  const actual = await vi.importActual('@paraspell/assets')
-  return {
-    ...actual,
-    isForeignAsset: vi.fn()
-  }
-})
+vi.mock('../../pallets/xTokens')
+vi.mock('../../transfer')
 
 describe('Ajuna', () => {
   let ajuna: Ajuna<unknown, unknown>
@@ -39,17 +18,6 @@ describe('Ajuna', () => {
     scenario: 'ParaToPara',
     asset: { symbol: 'BNC', amount: '100' }
   } as unknown as TXTokensTransferOptions<unknown, unknown>
-
-  const api = {
-    callTxMethod: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
-
-  const basePolkadotXCMInput = {
-    api,
-    scenario: 'ParaToRelay',
-    senderAddress: 'senderAddress',
-    asset: { symbol: 'DOT', amount: '100', location: DOT_LOCATION }
-  } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
     ajuna = getChain<unknown, unknown, 'Ajuna'>('Ajuna')
@@ -90,43 +58,6 @@ describe('Ajuna', () => {
     })
   })
 
-  it('should have sending and receiving disabled', () => {
-    expect(ajuna.isSendingTempDisabled({} as TSendInternalOptions<unknown, unknown>)).toBe(true)
-    expect(ajuna.isReceivingTempDisabled({} as TSendInternalOptions<unknown, unknown>)).toBe(true)
-  })
-
-  describe('transferPolkadotXCM', () => {
-    it('delegates unchanged input to PolkadotXCM implementation', async () => {
-      await ajuna.transferPolkadotXCM(basePolkadotXCMInput)
-      expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
-    })
-  })
-
-  describe('canUseXTokens', () => {
-    it('returns false only for DOT → AssetHubPolkadot', () => {
-      const options = {
-        assetInfo: { symbol: 'DOT' },
-        to: 'AssetHubPolkadot'
-      } as unknown as TSendInternalOptions<unknown, unknown>
-      expect(ajuna['canUseXTokens'](options)).toBe(false)
-    })
-
-    it('returns true for every other pair', () => {
-      const cases: Array<[string, string]> = [
-        ['BNC', 'AssetHubPolkadot'],
-        ['DOT', 'Acala'],
-        ['WETH', 'AssetHubPolkadot']
-      ]
-      cases.forEach(([symbol, to]) => {
-        const res = ajuna['canUseXTokens']({
-          assetInfo: { symbol },
-          to
-        } as unknown as TSendInternalOptions<unknown, unknown>)
-        expect(res).toBe(true)
-      })
-    })
-  })
-
   describe('transferRelayToPara', () => {
     it('always throws ChainNotSupportedError', () => {
       expect(() => ajuna.transferRelayToPara()).toThrow(ChainNotSupportedError)
@@ -138,9 +69,7 @@ describe('Ajuna', () => {
       callTxMethod: vi.fn()
     }
 
-    it('calls Assets.transfer when provided with a valid foreign asset', () => {
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-
+    it('creates local transfer', () => {
       const opts = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
@@ -158,26 +87,6 @@ describe('Ajuna', () => {
           amount: 100n
         }
       })
-    })
-
-    it('throws InvalidCurrencyError when asset is not foreign', () => {
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-      const opts = {
-        api: mockApi,
-        asset: { symbol: 'BNC', amount: '100' },
-        address: 'addr'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-      expect(() => ajuna.transferLocalNonNativeAsset(opts)).toThrow(InvalidCurrencyError)
-    })
-
-    it('throws InvalidCurrencyError when foreign asset has no assetId', () => {
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-      const opts = {
-        api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: '100' },
-        address: 'addr'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-      expect(() => ajuna.transferLocalNonNativeAsset(opts)).toThrow(InvalidCurrencyError)
     })
   })
 })

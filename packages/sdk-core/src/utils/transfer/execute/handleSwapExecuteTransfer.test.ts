@@ -5,7 +5,7 @@ import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
 import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
 import type { TCreateSwapXcmOptions } from '../../../types'
 import { type TDryRunResult } from '../../../types'
@@ -49,7 +49,7 @@ const baseOptions = {
   exchangeChain: 'B' as TParachain,
   destChain: 'C' as TChain,
   assetInfoFrom: {
-    amount: '2000',
+    amount: 2000n,
     location: {}
   },
   assetInfoTo: { location: {}, amount: '0' },
@@ -108,7 +108,7 @@ describe('handleSwapExecuteTransfer', () => {
       assetInfoFrom: { ...baseOptions.assetInfoFrom, amount: 500n }
     }
 
-    await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(InvalidParameterError)
+    await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(AmountTooLowError)
   })
 
   it('throws if dry run fails', async () => {

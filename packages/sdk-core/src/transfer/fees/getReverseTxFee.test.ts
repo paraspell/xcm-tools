@@ -1,6 +1,5 @@
-import type { TCurrencyInput } from '@paraspell/assets'
 import { isChainEvm } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -36,9 +35,7 @@ vi.mock('../../builder', () => ({
   }))
 }))
 
-vi.mock('./padFee', () => ({
-  padFee: vi.fn()
-}))
+vi.mock('./padFee')
 
 const mockCalculateTransactionFee = vi.fn()
 const mockApi = {
@@ -72,7 +69,7 @@ describe('getReverseTxFee', () => {
   })
 
   it('should correctly call Builder with flipped origin/destination for Substrate chains', async () => {
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
     const expectedCurrencyArg = {
       ...currencyInput,
       amount: mockAmount
@@ -90,7 +87,10 @@ describe('getReverseTxFee', () => {
   })
 
   it('should correctly call Builder with currencyInput as location', async () => {
-    const currencyInput: TCurrencyInput = { location: { parents: 1, interior: 'Here' } }
+    const currencyInput = {
+      location: { parents: 1, interior: 'Here' } as TLocation,
+      amount: mockAmount
+    }
     const expectedCurrencyArg = {
       ...currencyInput,
       amount: mockAmount
@@ -108,7 +108,7 @@ describe('getReverseTxFee', () => {
   })
 
   it('should call api.calculateTransactionFee with the built transaction and correct sender address', async () => {
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(mockCalculateTransactionFee).toHaveBeenCalledWith(
@@ -118,7 +118,7 @@ describe('getReverseTxFee', () => {
   })
 
   it('should call padFee with the raw fee and correct parameters', async () => {
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(padFee).toHaveBeenCalledWith(
@@ -130,18 +130,20 @@ describe('getReverseTxFee', () => {
   })
 
   it('should return the padded fee on successful execution', async () => {
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
     const result = await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(result).toBe(paddedFee)
   })
 
   it('should handle different currency amounts correctly', async () => {
+    const amount = 5000000000n
+
     const optionsWithDifferentAmount = {
       ...defaultOptions,
-      currency: { symbol: 'DOT', amount: 5000000000n }
+      currency: { symbol: 'DOT', amount }
     }
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount }
     const expectedCurrencyArg = {
       ...currencyInput,
       amount: optionsWithDifferentAmount.currency.amount
@@ -154,7 +156,7 @@ describe('getReverseTxFee', () => {
 
   it('should use EVM address when origin chain is EVM', async () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.origin)
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
@@ -168,7 +170,7 @@ describe('getReverseTxFee', () => {
 
   it('should use EVM address when destination chain is EVM', async () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
@@ -179,7 +181,7 @@ describe('getReverseTxFee', () => {
 
   it('should use correct addresses when both chains are EVM', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
@@ -193,7 +195,7 @@ describe('getReverseTxFee', () => {
       ...defaultOptions,
       address: 'substrate-style-address'
     }
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(optionsWithNonEvmAddress, currencyInput)
 
@@ -203,7 +205,7 @@ describe('getReverseTxFee', () => {
 
   it('should handle EVM to Substrate scenario correctly', async () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
+    const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(defaultOptions, currencyInput)
 

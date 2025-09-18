@@ -1,4 +1,4 @@
-import type { TCurrencyInput } from '@paraspell/assets'
+import type { TCurrencyInput, WithAmount } from '@paraspell/assets'
 import { isChainEvm } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
@@ -19,15 +19,8 @@ const determineAddress = (
 }
 
 export const getReverseTxFee = async <TApi, TRes>(
-  {
-    api,
-    origin,
-    destination,
-    senderAddress,
-    address,
-    currency
-  }: TGetReverseTxFeeOptions<TApi, TRes>,
-  currencyInput: TCurrencyInput
+  { api, origin, destination, senderAddress, address }: TGetReverseTxFeeOptions<TApi, TRes>,
+  currencyInput: WithAmount<TCurrencyInput>
 ) => {
   const toAddress = determineAddress(origin, address, senderAddress)
   const fromAddress = determineAddress(destination, address, senderAddress)
@@ -37,7 +30,7 @@ export const getReverseTxFee = async <TApi, TRes>(
     .to(origin)
     .address(toAddress)
     .senderAddress(fromAddress)
-    .currency({ ...currencyInput, amount: currency.amount })
+    .currency(currencyInput)
     ['buildInternal']()
 
   const rawFee = await api.calculateTransactionFee(tx, fromAddress)
