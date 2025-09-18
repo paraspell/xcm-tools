@@ -101,3 +101,5 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/apps/visualizer-fe/LICENSE).
+
+Deployed on [Netfify](https://www.netlify.com/) ⚙️
