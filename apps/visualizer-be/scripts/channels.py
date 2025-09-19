@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import json
+import time
+import random
+import threading
+from collections import deque
+
 import requests
 import psycopg2
 from psycopg2 import sql, extras
@@ -15,14 +19,80 @@ SUBSCAN_BASES = [
 ]
 
 
+class RateLimiter:
+    def __init__(self, max_calls: int, period_seconds: float):
+        self.max_calls = max_calls
+        self.period = period_seconds
+        self._calls = deque()
+        self._lock = threading.Lock()
+
+    def acquire(self):
+        with self._lock:
+            now = time.monotonic()
+            # drop timestamps outside of the current window
+            while self._calls and (now - self._calls[0]) > self.period:
+                self._calls.popleft()
+
+            if len(self._calls) >= self.max_calls:
+                sleep_for = self.period - (now - self._calls[0])
+                if sleep_for > 0:
+                    time.sleep(sleep_for)
+                # re-check window after sleeping
+                now = time.monotonic()
+                while self._calls and (now - self._calls[0]) > self.period:
+                    self._calls.popleft()
+
+            self._calls.append(now)
+
+
+RATE_LIMITER = RateLimiter(max_calls=5, period_seconds=1.0)
+
+
+def _rate_limited_post(url, headers, payload, timeout):
+    max_retries = 4
+    backoff_base = 0.5
+
+    for attempt in range(max_retries + 1):
+        RATE_LIMITER.acquire()
+        try:
+            r = requests.post(url, headers=headers, json=payload, timeout=timeout)
+        except requests.RequestException as e:
+            # network/transient error; retry with backoff
+            if attempt < max_retries:
+                time.sleep(backoff_base * (2**attempt) + random.uniform(0, 0.1))
+                continue
+            raise
+
+        # If not rate-limited, break out
+        if r.status_code not in (429, 500, 502, 503, 504):
+            r.raise_for_status()
+            return r
+
+        # Handle retryable statuses
+        if attempt < max_retries:
+            retry_after = r.headers.get("Retry-After")
+            if retry_after:
+                try:
+                    sleep_for = float(retry_after)
+                except ValueError:
+                    sleep_for = backoff_base * (2**attempt)
+            else:
+                sleep_for = backoff_base * (2**attempt)
+            time.sleep(sleep_for + random.uniform(0, 0.1))
+            continue
+
+        # Exhausted retries
+        r.raise_for_status()
+
+
 def get_xcm_channels(base_url, api_key=None):
     url = f"{base_url}/api/scan/xcm/channels"
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
     if api_key:
         headers["X-API-Key"] = api_key
     payload = {"row": 100, "page": 0}
-    r = requests.post(url, headers=headers, json=payload, timeout=30)
-    r.raise_for_status()
+
+    r = _rate_limited_post(url, headers, payload, timeout=30)
     data = r.json()
     if data.get("code", 0) != 0:
         raise RuntimeError(f"Subscan error ({base_url}): {data.get('message')}")
@@ -113,8 +183,8 @@ def _post_json(url, payload, api_key=None, timeout=30):
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
     if api_key:
         headers["X-API-Key"] = api_key
-    r = requests.post(url, headers=headers, json=payload, timeout=timeout)
-    r.raise_for_status()
+
+    r = _rate_limited_post(url, headers, payload, timeout)
     data = r.json()
     if data.get("code", 0) != 0:
         raise RuntimeError(f"Subscan error ({url}): {data.get('message')}")
