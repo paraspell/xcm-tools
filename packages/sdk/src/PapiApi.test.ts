@@ -17,6 +17,7 @@ import {
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
+  isSystemChain,
   MissingChainApiError,
   type TLocation,
   type TSerializedApiCall,
@@ -66,7 +67,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
   wrapTxBypass: vi.fn(),
-  findNativeAssetInfoOrThrow: vi.fn()
+  findNativeAssetInfoOrThrow: vi.fn(),
+  isSystemChain: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -1048,6 +1050,51 @@ describe('PapiApi', () => {
         forwardedXcms: [{ type: 'V4', value: { interior: { type: 'Here' } } }],
         destParaId: 0
       })
+    })
+
+    it('skips XcmPaymentApi on system chains (falls back to computeFeeFromDryRun)', async () => {
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+      vi.mocked(isSystemChain).mockReturnValue(true)
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT',
+        location: { parents: 1, interior: { Here: null } }
+      } as unknown as TAssetInfo)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const successWithLocalXcm = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
+          },
+          local_xcm: { type: 'V4', value: [] },
+          forwarded_xcms: []
+        }
+      }
+      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(successWithLocalXcm)
+
+      const xcmPaymentSpy = vi.spyOn(papiApi, 'getXcmPaymentApiFee')
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: 'some_address',
+        chain: 'Polkadot',
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        currency: 'DOT',
+        asset: expect.objectContaining({ symbol: 'DOT' }),
+        weight: { refTime: 10n, proofSize: 20n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+
+      expect(xcmPaymentSpy).not.toHaveBeenCalled()
     })
 
     it('should retry with version and still fail if retry attempt also fails', async () => {

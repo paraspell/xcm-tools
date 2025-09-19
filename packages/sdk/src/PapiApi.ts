@@ -39,6 +39,7 @@ import {
   isConfig,
   isForeignAsset,
   isRelayChain,
+  isSystemChain,
   localizeLocation,
   MissingChainApiError,
   padFeeBy,
@@ -577,8 +578,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       hasXcmPaymentApiSupport(chain) &&
       result.value.local_xcm &&
       hasLocation &&
-      chain !== 'AssetHubPolkadot' &&
-      chain !== 'Kusama'
+      !isSystemChain(chain)
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
