@@ -1,26 +1,35 @@
+import { AmountTooLowError } from '../../errors'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import { getBypassResultWithRetries } from './getBypassResult'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 export const getOriginXcmFee = async <TApi, TRes>(
   options: TGetOriginXcmFeeOptions<TApi, TRes>
 ): Promise<
   TXcmFeeDetail & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    forwardedXcms?: any
+    forwardedXcms?: unknown
     destParaId?: number
   }
 > => {
-  const { tx, txBypass } = options.txs
+  const { buildTx } = options
 
-  const forced = await getOriginXcmFeeInternal({
-    ...options,
-    tx: txBypass,
-    useRootOrigin: true
-  })
-  const real = await getOriginXcmFeeInternal({ ...options, tx, useRootOrigin: false })
+  try {
+    const tx = await buildTx()
+    const real = await getOriginXcmFeeInternal({ ...options, tx, useRootOrigin: false })
+    const forced = await getBypassResultWithRetries(options, getOriginXcmFeeInternal, tx)
 
-  return {
-    ...forced,
-    sufficient: real.sufficient
+    return {
+      ...forced,
+      sufficient: real.sufficient
+    }
+  } catch (e: unknown) {
+    if (!(e instanceof AmountTooLowError)) throw e
+
+    const forced = await getBypassResultWithRetries(options, getOriginXcmFeeInternal)
+
+    return {
+      ...forced,
+      sufficient: false
+    }
   }
 }

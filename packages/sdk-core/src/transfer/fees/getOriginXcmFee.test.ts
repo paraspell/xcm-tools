@@ -1,72 +1,128 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AmountTooLowError } from '../../errors'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import { getBypassResultWithRetries } from './getBypassResult'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 vi.mock('./getOriginXcmFeeInternal')
+vi.mock('./getBypassResult')
 
 describe('getOriginXcmFee', () => {
-  const bypassTx = { kind: 'bypass' }
-  const realTx = { kind: 'real' }
+  const realTx = { kind: 'real' } as unknown
 
-  const baseOptions = {
-    txs: {
-      tx: realTx as unknown,
-      txBypass: bypassTx as unknown
-    }
-  } as TGetOriginXcmFeeOptions<unknown, unknown>
+  const makeOptions = () =>
+    ({
+      // eslint-disable-next-line @typescript-eslint/require-await
+      buildTx: vi.fn(async () => realTx)
+    }) as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('passes correct tx objects and merges sufficient from real', async () => {
-    const options = baseOptions
-    const forced = { forwardedXcms: [], destParaId: 2000, sufficient: true } as TXcmFeeDetail & {
-      forwardedXcms?: unknown
-      destParaId?: number
-    }
-    const real = { sufficient: false } as TXcmFeeDetail
+  it('builds real tx, calls real internal, then forced via getBypassResultWithRetries, and merges sufficient from real', async () => {
+    const options = makeOptions()
 
-    vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
+    const forced = {
+      fee: 1n,
+      feeType: 'dryRun',
+      currency: 'DOT',
+      sufficient: true,
+      forwardedXcms: [],
+      destParaId: 2000
+    } as TXcmFeeDetail & { forwardedXcms?: unknown; destParaId?: number }
+
+    const real = {
+      fee: 0n,
+      feeType: 'dryRun',
+      currency: 'DOT',
+      sufficient: false
+    } as TXcmFeeDetail
+
+    vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(real)
+
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
     const res = await getOriginXcmFee(options)
 
-    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        tx: bypassTx,
-        useRootOrigin: true
-      })
+    expect(options.buildTx).toHaveBeenCalledTimes(1)
+    expect(options.buildTx).toHaveBeenCalledWith()
+
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledTimes(1)
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledWith(
+      expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
-    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        tx: realTx,
-        useRootOrigin: false
-      })
+
+    expect(getBypassResultWithRetries).toHaveBeenCalledTimes(1)
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(
+      options,
+      getOriginXcmFeeInternal,
+      realTx
     )
+
     expect(res.sufficient).toBe(false)
     expect(res).toEqual(expect.objectContaining({ forwardedXcms: [], destParaId: 2000 }))
   })
 
   it('sets sufficient to undefined when real.sufficient is undefined', async () => {
-    const forced = { sufficient: true } as TXcmFeeDetail
-    const real = {} as TXcmFeeDetail
+    const options = makeOptions()
 
-    vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
+    const forced = {
+      fee: 1n,
+      feeType: 'dryRun',
+      currency: 'DOT',
+      sufficient: true
+    } as TXcmFeeDetail
 
-    const res = await getOriginXcmFee(baseOptions)
+    const real = {
+      fee: 0n,
+      feeType: 'dryRun',
+      currency: 'DOT'
+    } as TXcmFeeDetail
 
-    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ tx: bypassTx, useRootOrigin: true })
-    )
-    expect(getOriginXcmFeeInternal).toHaveBeenNthCalledWith(
-      2,
+    vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
+
+    const res = await getOriginXcmFee(options)
+
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledWith(
       expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(
+      options,
+      getOriginXcmFeeInternal,
+      realTx
+    )
     expect(res.sufficient).toBeUndefined()
+  })
+
+  it('when buildTx throws AmountTooLowError, runs forced via helper (without initialTx) and returns sufficient=false', async () => {
+    const options = {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      buildTx: vi.fn(async () => {
+        throw new AmountTooLowError()
+      })
+    } as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
+
+    const forced = {
+      fee: 5n,
+      feeType: 'dryRun',
+      currency: 'DOT',
+      sufficient: true
+    } as TXcmFeeDetail
+
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
+
+    const res = await getOriginXcmFee(options)
+
+    expect(options.buildTx).toHaveBeenCalledTimes(1)
+
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getOriginXcmFeeInternal)
+
+    expect(res.sufficient).toBe(false)
+    expect(res.fee).toBe(5n)
+    expect(res.currency).toEqual('DOT')
   })
 })

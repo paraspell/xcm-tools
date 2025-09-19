@@ -1,44 +1,51 @@
+import type { TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { parseUnits } from 'viem'
 
 import type { GeneralBuilder } from '../../builder'
-import { BYPASS_CURRENCY_AMOUNT } from '../../constants'
 import type { TCreateTxsOptions, TSendBaseOptionsWithSenderAddress } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from './isConfig'
 
-export const computeOverridenAmount = <TApi, TRes>(options: TCreateTxsOptions<TApi, TRes>) => {
+export const computeOverridenAmount = <TApi, TRes>(
+  options: TCreateTxsOptions<TApi, TRes>,
+  increaseAmount: string
+) => {
   const { from, to, currency, api } = options
+
+  const amount = (options.currency as WithComplexAmount<TCurrencyCore>).amount
 
   const config = api.getConfig()
   if (isConfig(config) && config.abstractDecimals) {
-    return BYPASS_CURRENCY_AMOUNT
+    return BigInt(increaseAmount) + BigInt(amount)
   } else {
     assertToIsString(to)
     const asset = findAssetInfoOrThrow(from, currency, to)
-    return parseUnits(BYPASS_CURRENCY_AMOUNT, asset.decimals)
+    return parseUnits(increaseAmount, asset.decimals) + BigInt(amount)
   }
 }
 
 export const overrideTxAmount = <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+  amount: string
 ) => {
   const modifiedBuilder = builder.currency({
     ...options.currency,
-    amount: computeOverridenAmount(options)
+    amount: computeOverridenAmount(options, amount)
   })
 
   return modifiedBuilder['buildInternal']()
 }
 
-export const createTxs = async <TApi, TRes>(
+export const createTx = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+  amount: string | undefined
 ) => {
-  // Let's create 2 tx, one with real amount and one with bypass amount
-  const tx = await builder['buildInternal']()
-  const txBypass = await overrideTxAmount(options, builder)
+  if (amount === undefined) {
+    return await builder['buildInternal']()
+  }
 
-  return { tx, txBypass }
+  return await overrideTxAmount(options, builder, amount)
 }

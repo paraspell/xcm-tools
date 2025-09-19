@@ -6,7 +6,6 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../../chains/config'
-import { AmountTooLowError } from '../../../errors'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
@@ -72,7 +71,7 @@ describe('createSwapExecuteXcm', () => {
     expect(result[1]).toBe('P1')
     expect(result[2]).toMatchObject({
       ExchangeAsset: {
-        maximal: true,
+        maximal: false,
         give: expect.any(Object),
         want: expect.any(Array)
       }
@@ -122,33 +121,5 @@ describe('createSwapExecuteXcm', () => {
     )
     expect(createBaseExecuteXcm).toHaveBeenCalledTimes(2)
     expect(result).toEqual(['HEAD', 'PFX', 'X2'])
-  })
-
-  it('throws AmountTooLowError when amountOut is below MIN_FEE', async () => {
-    vi.mocked(assertHasLocation).mockImplementation(() => {})
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(isMultiHopSwap).mockReturnValue(false)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ location: {} } as TAssetInfo)
-    vi.mocked(createAsset).mockReturnValue({} as any)
-    vi.mocked(localizeLocation).mockReturnValue({} as any)
-    vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
-      prefix: ['P1'] as any,
-      depositInstruction: 'D1' as any
-    })
-
-    const options = {
-      api: {} as any,
-      chain: undefined,
-      exchangeChain: 'Hydration' as any,
-      destChain: undefined,
-      assetInfoFrom: { amount: 2000n, location: {} } as any,
-      assetInfoTo: { amount: 999n, location: {} } as any,
-      fees: { originReserveFee: 10n, exchangeFee: 0n, destReserveFee: 20n },
-      recipientAddress: 'addr1',
-      version: 3,
-      paraIdTo: 42
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown>
-
-    await expect(createSwapExecuteXcm(options)).rejects.toThrowError(AmountTooLowError)
   })
 })

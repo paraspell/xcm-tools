@@ -51,6 +51,8 @@ describe('getTransferInfo', () => {
   let mockTx: unknown
   let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown>, 'api' | 'tx'>
 
+  const buildTx = vi.fn(async () => Promise.resolve(mockTx))
+
   beforeEach(() => {
     vi.clearAllMocks()
 
@@ -62,7 +64,7 @@ describe('getTransferInfo', () => {
     mockTx = {}
 
     baseOptions = {
-      txs: { tx: mockTx, txBypass: mockTx },
+      buildTx,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       senderAddress: 'senderAlice',
@@ -150,7 +152,7 @@ describe('getTransferInfo', () => {
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
-      txs: options.txs,
+      buildTx,
       origin: options.origin,
       destination: options.destination,
       senderAddress: options.senderAddress,

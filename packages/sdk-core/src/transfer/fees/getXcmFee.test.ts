@@ -1,36 +1,40 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { AmountTooLowError } from '../../errors'
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
+import { getBypassResultWithRetries } from './getBypassResult'
 import { getXcmFee } from './getXcmFee'
 import { getXcmFeeInternal } from './getXcmFeeInternal'
 
 vi.mock('./getXcmFeeInternal')
+vi.mock('./getBypassResult')
 
 describe('getXcmFee', () => {
   const mockApi = {
     disconnect: vi.fn().mockResolvedValue(undefined)
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const bypassTx = { kind: 'bypass' }
-  const realTx = { kind: 'real' }
+  const realTx = { kind: 'real' } as const
 
-  const commonOptions = {
-    api: mockApi,
-    txs: {
-      tx: realTx as unknown,
-      txBypass: bypassTx as unknown
-    }
-  } as TGetXcmFeeOptions<unknown, unknown, boolean>
+  const makeOptions = () =>
+    ({
+      api: mockApi,
+      // eslint-disable-next-line @typescript-eslint/require-await
+      buildTx: vi.fn(async () => realTx)
+    }) as unknown as TGetXcmFeeOptions<unknown, unknown, boolean>
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('passes txBypassAmount to first internal call (useRootOrigin: true) and tx to second (useRootOrigin: false)', async () => {
+  it('builds real tx, calls real internal, then forced via helper, and merges `sufficient` from real', async () => {
+    const options = makeOptions()
+
     const forced = {
-      origin: { currency: 'DOT', fee: 1n, sufficient: true },
-      destination: { currency: 'ACA', fee: 2n, sufficient: true },
+      origin: { currency: 'DOT', fee: 1n, feeType: 'dryRun', sufficient: true },
+      destination: { currency: 'ACA', fee: 2n, feeType: 'paymentInfo', sufficient: true },
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
@@ -40,42 +44,21 @@ describe('getXcmFee', () => {
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
-    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+    const res = await getXcmFee(options)
 
-    await getXcmFee(commonOptions)
+    expect(options.buildTx).toHaveBeenCalledTimes(1)
+    expect(options.buildTx).toHaveBeenCalledWith()
 
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ tx: bypassTx, useRootOrigin: true })
-    )
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      2,
+    expect(getXcmFeeInternal).toHaveBeenCalledTimes(1)
+    expect(getXcmFeeInternal).toHaveBeenCalledWith(
       expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
 
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('overwrites only `sufficient` for origin/destination and keeps other fields from forced', async () => {
-    const forced = {
-      origin: { currency: 'DOT', fee: 1n, feeType: 'dryRun', sufficient: true },
-      destination: { currency: 'ACA', fee: 2n, feeType: 'paymentInfo', sufficient: true },
-      hops: []
-    } as unknown as TGetXcmFeeResult<boolean>
-
-    const real = {
-      origin: { currency: 'DOT', fee: 999n, sufficient: false },
-      destination: { currency: 'ACA', fee: 999n, sufficient: false },
-      hops: []
-    } as unknown as TGetXcmFeeResult<boolean>
-
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
-
-    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-    const res = await getXcmFee(commonOptions)
+    expect(getBypassResultWithRetries).toHaveBeenCalledTimes(1)
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeInternal, realTx)
 
     expect(res.origin.sufficient).toBe(false)
     expect(res.destination.sufficient).toBe(false)
@@ -84,23 +67,17 @@ describe('getXcmFee', () => {
     expect(res.destination.fee).toBe(2n)
     expect(res.destination.feeType).toBe('paymentInfo')
 
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ tx: bypassTx, useRootOrigin: true })
-    )
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ tx: realTx, useRootOrigin: false })
-    )
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
+    expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
   })
 
   it('handles assetHub/bridgeHub presence based on forced; pulls `sufficient` from real', async () => {
+    const options = makeOptions()
+
     const forced = {
       origin: { currency: 'DOT', sufficient: true },
       destination: { currency: 'ACA', sufficient: true },
-      assetHub: { currency: 'AH', fee: 3n, sufficient: true },
-      bridgeHub: { currency: 'BH', fee: 4n, sufficient: true },
+      assetHub: { currency: 'AH', fee: 3n, feeType: 'dryRun', sufficient: true },
+      bridgeHub: { currency: 'BH', fee: 4n, feeType: 'dryRun', sufficient: true },
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
@@ -112,11 +89,10 @@ describe('getXcmFee', () => {
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
-    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-    const res = await getXcmFee(commonOptions)
+    const res = await getXcmFee(options)
 
     expect(res.assetHub?.currency).toBe('AH')
     expect(res.assetHub?.fee).toBe(3n)
@@ -138,24 +114,31 @@ describe('getXcmFee', () => {
       bridgeHub: { currency: 'BH', sufficient: false }
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal)
-      .mockResolvedValueOnce(forcedNoHubs)
-      .mockResolvedValueOnce(realWithHubs)
+    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(realWithHubs)
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forcedNoHubs)
 
-    const res2 = await getXcmFee(commonOptions)
-
+    const res2 = await getXcmFee(options)
     expect(res2.assetHub).toBeUndefined()
     expect(res2.bridgeHub).toBeUndefined()
-    expect(disconnectSpy).toHaveBeenCalledTimes(2)
+
+    expect(mockApi.disconnect).toHaveBeenCalledTimes(2)
   })
 
   it('merges hop `sufficient` by index; missing real hops set `sufficient` to undefined', async () => {
+    const options = makeOptions()
+
     const forced = {
       origin: { currency: 'DOT', sufficient: true },
       destination: { currency: 'ACA', sufficient: true },
       hops: [
-        { chain: 'AssetHubPolkadot', result: { currency: 'DOT', fee: 10n, sufficient: true } },
-        { chain: 'Acala', result: { currency: 'ACA', fee: 20n, sufficient: true } }
+        {
+          chain: 'AssetHubPolkadot',
+          result: { currency: 'DOT', fee: 10n, feeType: 'dryRun', sufficient: true }
+        },
+        {
+          chain: 'Acala',
+          result: { currency: 'ACA', fee: 20n, feeType: 'dryRun', sufficient: true }
+        }
       ]
     } as unknown as TGetXcmFeeResult<boolean>
 
@@ -165,28 +148,53 @@ describe('getXcmFee', () => {
       hops: [{ chain: 'AssetHubPolkadot', result: { currency: 'DOT', sufficient: false } }]
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(forced).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
-    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-    const res = await getXcmFee(commonOptions)
+    const res = await getXcmFee(options)
 
     expect(res.hops).toHaveLength(2)
     expect(res.hops[0].chain).toBe('AssetHubPolkadot')
     expect(res.hops[0].result.fee).toBe(10n)
     expect(res.hops[0].result.sufficient).toBe(false)
+
     expect(res.hops[1].chain).toBe('Acala')
     expect(res.hops[1].result.fee).toBe(20n)
     expect(res.hops[1].result.sufficient).toBeUndefined()
 
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ tx: bypassTx, useRootOrigin: true })
-    )
-    expect(getXcmFeeInternal).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ tx: realTx, useRootOrigin: false })
-    )
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
+    expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
+  })
+
+  it('when buildTx throws AmountTooLowError, uses forced via helper (without initialTx) and sets all `sufficient` to false', async () => {
+    const options = {
+      api: mockApi,
+      // eslint-disable-next-line @typescript-eslint/require-await
+      buildTx: vi.fn(async () => {
+        throw new AmountTooLowError()
+      })
+    } as unknown as TGetXcmFeeOptions<unknown, unknown, boolean>
+
+    const forced = {
+      origin: { currency: 'DOT', fee: 1n, feeType: 'dryRun', sufficient: true },
+      destination: { currency: 'ACA', fee: 2n, feeType: 'paymentInfo', sufficient: true },
+      hops: [
+        {
+          chain: 'AssetHubPolkadot',
+          result: { currency: 'DOT', fee: 10n, feeType: 'dryRun', sufficient: true }
+        }
+      ]
+    } as TGetXcmFeeResult<boolean>
+
+    vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
+
+    const res = await getXcmFee(options)
+
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeInternal)
+
+    expect(res.origin.sufficient).toBe(false)
+    expect(res.destination.sufficient).toBe(false)
+    expect(res.hops[0].result.sufficient).toBe(false)
+
+    expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
   })
 })

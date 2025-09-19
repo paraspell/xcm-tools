@@ -31,7 +31,7 @@ import {
   assertAddressIsString,
   assertSenderAddress,
   assertToIsString,
-  createTxs,
+  createTx,
   isConfig
 } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
@@ -285,8 +285,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     })
   }
 
-  private createTxs(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    return createTxs({ ...this._options, api: this.api }, this)
+  private createTxFactory(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    return (amount: string | undefined) =>
+      createTx({ ...this._options, api: this.api }, this, amount)
   }
 
   /**
@@ -308,7 +309,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     try {
       return await getXcmFee({
         api: this.api,
-        txs: await this.createTxs(),
+        buildTx: this.createTxFactory(),
         origin: from,
         destination: to,
         senderAddress: senderAddress,
@@ -340,7 +341,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     try {
       return await getOriginXcmFee({
         api,
-        txs: await this.createTxs(),
+        buildTx: this.createTxFactory(),
         origin: from,
         destination: to,
         senderAddress: senderAddress,
@@ -423,7 +424,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return getTransferableAmount({
       api,
-      txs: await this.createTxs(),
+      buildTx: this.createTxFactory(),
       origin: from,
       destination: to,
       senderAddress,
@@ -449,7 +450,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return getMinTransferableAmount({
       api,
-      txs: await this.createTxs(),
+      buildTx: this.createTxFactory(),
       origin: from,
       destination: to,
       senderAddress,
@@ -473,7 +474,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return verifyEdOnDestination({
       api: this.api,
-      txs: await this.createTxs(),
+      buildTx: this.createTxFactory(),
       origin: from,
       destination: to,
       address,
@@ -496,7 +497,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     return getTransferInfo({
       api: this.api,
-      txs: await this.createTxs(),
+      buildTx: this.createTxFactory(),
       origin: from,
       destination: to,
       address,

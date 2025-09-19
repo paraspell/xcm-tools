@@ -1,7 +1,6 @@
 import type { TXcmFeeDetail } from '@paraspell/sdk';
-import { applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
+import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
 
-import { SWAP_BYPASS_AMOUNT } from '../../consts';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified } from '../../types';
 import { createSwapTx } from '../createSwapTx';
@@ -15,11 +14,18 @@ export const getSwapFee = async (
     exchange: { assetFrom },
     amount,
   } = options;
-  const { txs, amountOut } = await createSwapTx(exchange, options);
-  const { txs: txsBypass } = await createSwapTx(exchange, {
-    ...options,
-    amount: applyDecimalAbstraction(SWAP_BYPASS_AMOUNT, assetFrom.decimals, true).toString(),
-  });
+  let txs: unknown[];
+  let amountOut: string;
+
+  try {
+    const swapResult = await createSwapTx(exchange, options);
+    txs = swapResult.txs;
+    amountOut = swapResult.amountOut;
+  } catch (e: unknown) {
+    if (!(e instanceof AmountTooLowError)) throw e;
+    txs = [null];
+    amountOut = '0';
+  }
 
   const currency = assetFrom.location
     ? {
@@ -31,9 +37,20 @@ export const getSwapFee = async (
         amount: BigInt(amount),
       };
 
+  const buildTx = async (overrideAmount?: string) => {
+    const txOptions = {
+      ...options,
+      ...(overrideAmount
+        ? { amount: applyDecimalAbstraction(overrideAmount, assetFrom.decimals, true).toString() }
+        : {}),
+    };
+    const { txs } = await createSwapTx(exchange, txOptions);
+    return txs[0];
+  };
+
   const result = await getOriginXcmFee({
     api: options.exchange.apiPapi,
-    txs: { tx: txs[0], txBypass: txsBypass[0] },
+    buildTx,
     origin: exchange.chain,
     destination: exchange.chain,
     senderAddress: senderAddress,
