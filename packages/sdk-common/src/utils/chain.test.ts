@@ -69,7 +69,8 @@ describe('isSystemChain', () => {
     'CoretimeWestend',
     'CoretimePaseo',
     'Collectives',
-    'CollectivesWestend'
+    'CollectivesWestend',
+    'Encointer'
   ]
 
   systemChains.forEach(chain => {

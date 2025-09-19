@@ -44,6 +44,7 @@ export const isSystemChain = (chain: TChain): boolean => {
     'CoretimeWestend',
     'CoretimePaseo',
     'Collectives',
+    'Encointer',
     'CollectivesWestend'
   ]
 
