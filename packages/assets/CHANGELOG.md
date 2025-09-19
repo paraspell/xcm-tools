@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.8.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.7.2...assets-v11.8.0) (2025-09-19)
+
+
+### Features
+
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix router getXcmFee edge case ⚙️ ([3c52c66](https://github.com/paraspell/xcm-tools/commit/3c52c66840226c367e6ef374c288040a2c08839a))
+
+
+### Build System
+
+* **assets:** Add some missing locations to chains 🔧 ([9164bb2](https://github.com/paraspell/xcm-tools/commit/9164bb209fcefbe49639a4044c7257223c413a1f))
+
 ## [11.7.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.7.1...assets-v11.7.2) (2025-09-17)
 
 

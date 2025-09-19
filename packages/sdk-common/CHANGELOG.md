@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v11.7.2...sdk-common-v11.8.0) (2025-09-19)
+
+
+### Features
+
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+
+
+### Bug Fixes
+
+* Override XCM Payment API on System chains ([aedb287](https://github.com/paraspell/xcm-tools/commit/aedb2874c72538e6ac41b07d48a8c96cea19a540))
+
 ## [11.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-common-v11.7.1...sdk-common-v11.7.2) (2025-09-17)
 
 
