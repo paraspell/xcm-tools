@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.7.2...xcm-router-v11.8.0) (2025-09-19)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix router getXcmFee edge case ⚙️ ([3c52c66](https://github.com/paraspell/xcm-tools/commit/3c52c66840226c367e6ef374c288040a2c08839a))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([2147bce](https://github.com/paraspell/xcm-tools/commit/2147bce8ef94a931141b07ecc70cf728989a0250))
+
 ## [11.7.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.7.1...xcm-router-v11.7.2) (2025-09-17)
 
 

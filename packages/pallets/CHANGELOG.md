@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.0](https://github.com/paraspell/xcm-tools/compare/pallets-v11.7.2...pallets-v11.8.0) (2025-09-19)
+
+
+### Features
+
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+
 ## [11.7.2](https://github.com/paraspell/xcm-tools/compare/pallets-v11.7.1...pallets-v11.7.2) (2025-09-17)
 
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.7.2...sdk-core-v11.8.0) (2025-09-19)
+
+
+### Features
+
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+
+
+### Bug Fixes
+
+* Override XCM Payment API on System chains ([aedb287](https://github.com/paraspell/xcm-tools/commit/aedb2874c72538e6ac41b07d48a8c96cea19a540))
+* **xcm-router:** Fix router getXcmFee edge case ⚙️ ([3c52c66](https://github.com/paraspell/xcm-tools/commit/3c52c66840226c367e6ef374c288040a2c08839a))
+
 ## [11.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.7.1...sdk-core-v11.7.2) (2025-09-17)
 
 
