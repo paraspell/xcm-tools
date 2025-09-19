@@ -887,7 +887,19 @@
       {
         "symbol": "HDX",
         "decimals": 12,
-        "assetId": "0"
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "GeneralIndex": 0
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "CRU",
@@ -1290,6 +1302,30 @@
         "symbol": "2-Pool",
         "decimals": 18,
         "assetId": "102"
+      },
+      {
+        "symbol": "SUI",
+        "decimals": 9,
+        "assetId": "1000753",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x484ecce6775143d3335ed2c7bcb22151c53b9f49"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "AAVE",
