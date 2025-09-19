@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.8.0...xcm-router-v11.8.1) (2025-09-19)
+
+
+### Bug Fixes
+
+* Add dynamic bypass amount calculations ⚙️ ([21369d1](https://github.com/paraspell/xcm-tools/commit/21369d19870140327f08f74c83dc41dde6c0d23d))
+
 ## [11.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.7.2...xcm-router-v11.8.0) (2025-09-19)
 
 
