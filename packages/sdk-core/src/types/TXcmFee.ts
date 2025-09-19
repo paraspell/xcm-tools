@@ -3,13 +3,15 @@ import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@par
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
-import type { TTxPair, TWeight } from './TTransfer'
+import type { TWeight } from './TTransfer'
+
+export type TTxFactory<TRes> = (amount?: string) => Promise<TRes>
 
 export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
   /**
-   * The transactions
+   * The transaction factory
    */
-  txs: TTxPair<TRes>
+  buildTx: TTxFactory<TRes>
   /**
    * The origin chain
    */
@@ -40,19 +42,19 @@ export type TGetXcmFeeInternalOptions<
   TApi,
   TRes,
   TDisableFallback extends boolean = boolean
-> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'txs'> & {
+> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'buildTx'> & {
   tx: TRes
   useRootOrigin: boolean
 }
 
 export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeInternalOptions<TApi, TRes>,
-  'disableFallback' | 'useRootOrigin'
+  'disableFallback' | 'useRootOrigin' | 'buildTx'
 >
 
 export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeInternalOptions<TApi, TRes>,
-  'disableFallback' | 'address' | 'useRootOrigin'
+  'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx'
 >
 
 export type TGetXcmFeeBuilderOptions = {
@@ -60,10 +62,7 @@ export type TGetXcmFeeBuilderOptions = {
 }
 
 export type TGetOriginXcmFeeBaseOptions<TRes> = {
-  txs: {
-    tx: TRes
-    txBypass: TRes
-  }
+  buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
   senderAddress: string
@@ -81,7 +80,7 @@ export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
 
 export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
   TGetOriginXcmFeeOptions<TApi, TRes>,
-  'txs'
+  'buildTx'
 > & {
   tx: TRes
 }

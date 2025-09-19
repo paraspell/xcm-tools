@@ -93,7 +93,9 @@ export const createBaseExecuteXcm = (
                 BuyExecution: {
                   fees: updateAsset(
                     assetLocalizedToDest,
-                    amount - (feeAsset ? reserveFee : originFee + reserveFee)
+                    reserveFee === 1000n
+                      ? amount / 2n
+                      : amount - (feeAsset ? reserveFee : originFee + reserveFee)
                   ),
                   weight_limit: 'Unlimited'
                 }

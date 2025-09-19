@@ -22,7 +22,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
   destination,
   currency,
   feeAsset,
-  txs,
+  buildTx,
   builder
 }: TGetMinTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
   validateAddress(senderAddress, chain, false)
@@ -64,7 +64,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
     api,
     origin,
     destination,
-    txs,
+    buildTx,
     senderAddress,
     address,
     currency: {

@@ -5,7 +5,7 @@ import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
-import { getXcmFeeInternal } from '../fees/getXcmFeeInternal'
+import { getXcmFee } from '../fees'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
   let totalFee = 0n
@@ -24,7 +24,7 @@ export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
 export const verifyEdOnDestinationInternal = async <TApi, TRes>(
   options: TVerifyEdOnDestinationOptions<TApi, TRes>
 ) => {
-  const { api, txs, origin, destination, currency, address, senderAddress, feeAsset } = options
+  const { api, buildTx, origin, destination, currency, address, senderAddress, feeAsset } = options
 
   if (destination === 'Ethereum') return true
 
@@ -59,11 +59,9 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
     currency: destCurrency
   })
 
-  const { tx, txBypass } = txs
-
-  const xcmFeeResult = await getXcmFeeInternal({
+  const xcmFeeResult = await getXcmFee({
     api,
-    tx: txBypass,
+    buildTx,
     origin,
     destination,
     senderAddress,
@@ -73,8 +71,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
       amount
     },
     feeAsset,
-    disableFallback: false,
-    useRootOrigin: true
+    disableFallback: false
   })
 
   const {
@@ -109,6 +106,8 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
        This limitation restricts support to transfers involving the native asset of the Destination chain only.`
     )
   }
+
+  const tx = await buildTx()
 
   const totalFee = calculateTotalXcmFee(xcmFeeResult)
   const method = api.getMethod(tx)

@@ -50,6 +50,9 @@ const makeApis = () => {
 describe('getMinTransferableAmountInternal', () => {
   let mockBuilder: GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
 
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const buildTx = vi.fn(async () => ({}) as unknown)
+
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(abstractDecimals).mockReturnValue(100n)
@@ -100,10 +103,7 @@ describe('getMinTransferableAmountInternal', () => {
       destination: 'Astar',
       currency: { symbol: 'ASSET', amount: 1n },
       builder: mockBuilder,
-      txs: {
-        tx: {} as unknown,
-        txBypass: {} as unknown
-      }
+      buildTx
     })
 
     // 2 + 3 + 7 + 10 + 1 = 23
@@ -168,10 +168,7 @@ describe('getMinTransferableAmountInternal', () => {
       currency: { symbol: 'ASSET', amount: 123n },
       feeAsset: { symbol: 'FEE' } as TAssetInfo,
       builder: mockBuilder,
-      txs: {
-        tx: {} as unknown,
-        txBypass: {} as unknown
-      }
+      buildTx
     })
 
     // origin(5) + 0 + 0 + ED(0) + 1 = 6
@@ -213,10 +210,7 @@ describe('getMinTransferableAmountInternal', () => {
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
       builder: mockBuilder,
-      txs: {
-        tx: {} as unknown,
-        txBypass: {} as unknown
-      }
+      buildTx
     })
 
     expect(res).toBe(0n)
@@ -247,10 +241,7 @@ describe('getMinTransferableAmountInternal', () => {
       destination: 'Hydration',
       currency: { symbol: 'ASSET', amount: 1n },
       builder: mockBuilder,
-      txs: {
-        tx: {} as unknown,
-        txBypass: {} as unknown
-      }
+      buildTx
     })
 
     // Only ED(4) + 1

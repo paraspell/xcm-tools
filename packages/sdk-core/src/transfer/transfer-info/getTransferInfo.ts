@@ -19,7 +19,7 @@ import { buildHopInfo } from './buildHopInfo'
 
 export const getTransferInfo = async <TApi, TRes>({
   api,
-  txs,
+  buildTx,
   origin,
   destination,
   senderAddress,
@@ -75,7 +75,7 @@ export const getTransferInfo = async <TApi, TRes>({
       hops
     } = await getXcmFee({
       api,
-      txs,
+      buildTx,
       origin,
       destination,
       senderAddress,

@@ -9,7 +9,8 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSenderAddress, TTxPair } from './TTransfer'
+import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
+import type { TTxFactory } from './TXcmFee'
 
 /**
  * Retrieves the native asset balance for a given account on a specified chain.
@@ -146,7 +147,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The transactions
    */
-  txs: TTxPair<TRes>
+  buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput
 }
 
@@ -189,7 +190,7 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
    * The transactions
    */
-  txs: TTxPair<TRes>
+  buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput
 }
 

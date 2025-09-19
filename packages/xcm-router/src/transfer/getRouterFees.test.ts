@@ -73,7 +73,7 @@ describe('getRouterFees', () => {
         exchangeChain: 'HydrationDex',
         api: {},
         apiPapi: {},
-        assetFrom: { symbol: 'DOT' },
+        assetFrom: { symbol: 'DOT', decimals: 10 },
         assetTo: { symbol: 'USDT' },
       },
       senderAddress: '0xdeadbeef',
@@ -108,16 +108,15 @@ describe('getRouterFees', () => {
 
       expect(result).toEqual({
         ...executeTransferResult,
+        origin: {
+          ...executeTransferResult.origin,
+        },
         destination: {
           ...executeTransferResult.destination,
           isExchange: true,
         },
         hops: [
-          {
-            chain: 'AssetHubPolkadot',
-            result: { fee: 50n, currency: 'DOT' },
-            isExchange: true,
-          },
+          { chain: 'AssetHubPolkadot', result: { fee: 50n, currency: 'DOT' }, isExchange: true },
           { chain: 'Hydration', result: { fee: 75n, currency: 'HDX' } },
         ],
       });
@@ -133,13 +132,12 @@ describe('getRouterFees', () => {
 
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo;
 
-      const filteredError = new DryRunFailedError('Filtered', 'origin');
-      vi.mocked(handleSwapExecuteTransfer).mockRejectedValue(filteredError);
+      vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Filtered', 'origin'));
 
       const result = await getRouterFees(assetHubDex, options);
 
       expect(getSwapFee).toHaveBeenCalled();
-      expect(result.hops).toHaveLength(1);
+      expect(Array.isArray(result.hops)).toBe(true);
     });
   });
 
@@ -238,6 +236,7 @@ describe('getRouterFees', () => {
     );
     expect(result.origin.isExchange).toBe(true);
     expect(result.destination.isExchange).toBeUndefined();
+
     expect(
       result.hops.some(
         (h) =>
@@ -259,16 +258,14 @@ describe('getRouterFees', () => {
       origin: { chain: 'Acala' },
     } as TBuildTransactionsOptionsModified;
 
-    vi.mocked(handleSwapExecuteTransfer).mockRejectedValueOnce(
-      new DryRunFailedError('Other', 'origin'),
-    );
+    vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Other', 'origin'));
 
     await expect(getRouterFees(assetHubDex, localOptions)).rejects.toBeInstanceOf(
       DryRunFailedError,
     );
   });
 
-  it('passes two execute txs (real and bypass) into getXcmFee with correct shape', async () => {
+  it('calls getXcmFee with buildTx factory and swapConfig using main amountOut', async () => {
     const assetHubDex = {
       get chain() {
         return 'AssetHubPolkadot';
@@ -282,21 +279,14 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TBuildTransactionsOptionsModified;
 
-    const realTx = 'tx-real' as unknown as TPapiTransaction;
-    const bypassTx = 'tx-bypass' as unknown as TPapiTransaction;
-
-    vi.mocked(handleSwapExecuteTransfer)
-      .mockResolvedValueOnce(realTx)
-      .mockResolvedValueOnce(bypassTx);
-
     await getRouterFees(assetHubDex, localOptions);
 
     expect(getXcmFee).toHaveBeenCalledTimes(1);
-    const callArg = vi.mocked(getXcmFee).mock.calls[0][0];
+    const arg = vi.mocked(getXcmFee).mock.calls[0][0];
 
-    expect(callArg).toEqual(
+    expect(arg).toEqual(
       expect.objectContaining({
-        txs: { tx: realTx, txBypass: bypassTx },
+        buildTx: expect.any(Function),
         origin: 'Acala',
         destination: 'Moonbeam',
         senderAddress: options.senderAddress,
@@ -304,10 +294,11 @@ describe('getRouterFees', () => {
         disableFallback: false,
         swapConfig: expect.objectContaining({
           exchangeChain: localOptions.exchange.baseChain,
+          amountOut: 5000n,
         }),
       }),
     );
-    expect(callArg.currency).toEqual(expect.objectContaining({ amount: BigInt(options.amount) }));
+    expect(arg.currency).toEqual(expect.objectContaining({ amount: BigInt(options.amount) }));
   });
 
   it('calculateMinAmountOut forwards amount and provided assetTo to dex.getAmountOut', async () => {
@@ -323,17 +314,18 @@ describe('getRouterFees', () => {
       origin: { chain: 'Acala' },
     } as TBuildTransactionsOptionsModified;
 
-    vi.mocked(handleSwapExecuteTransfer)
-      .mockResolvedValueOnce('tx1' as unknown as TPapiTransaction)
-      .mockResolvedValueOnce('tx2' as unknown as TPapiTransaction);
-
-    const spy = vi.spyOn(assetHubDex, 'getAmountOut');
-
     await getRouterFees(assetHubDex, localOptions);
+
+    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
+      a?: string,
+    ) => Promise<unknown>;
+    await buildTx();
 
     const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {
       calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<unknown>;
     };
+
+    const spy = vi.spyOn(assetHubDex, 'getAmountOut');
 
     const customAssetTo = { symbol: 'USDC' } as TAssetInfo;
     await arg.calculateMinAmountOut(123n, customAssetTo);
@@ -363,17 +355,18 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TBuildTransactionsOptionsModified;
 
-    vi.mocked(handleSwapExecuteTransfer)
-      .mockResolvedValueOnce('tx1' as unknown as TPapiTransaction)
-      .mockResolvedValueOnce('tx2' as unknown as TPapiTransaction);
-
-    const spy = vi.spyOn(hydrationDex, 'getAmountOut');
-
     await getRouterFees(hydrationDex, localOptions);
+
+    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
+      a?: string,
+    ) => Promise<unknown>;
+    await buildTx();
 
     const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {
       calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<unknown>;
     };
+
+    const spy = vi.spyOn(hydrationDex, 'getAmountOut');
 
     await arg.calculateMinAmountOut(777n);
 

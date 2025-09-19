@@ -6,7 +6,6 @@ import {
   handleSwapExecuteTransfer,
 } from '@paraspell/sdk';
 
-import { SWAP_BYPASS_AMOUNT } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptionsModified, TRouterXcmFeeResult } from '../types';
 import { getSwapFee } from './fees';
@@ -30,10 +29,14 @@ export const getRouterFees = async (
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
-      const buildExecuteTx = async (amount: bigint) => {
+      const buildTx = async (overrideAmount?: string) => {
+        const amt =
+          overrideAmount !== undefined
+            ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true).toString()
+            : amount.toString();
         const amountOut = await dex.getAmountOut(exchange.api, {
           ...options,
-          amount: amount.toString(),
+          amount: amt,
           papiApi: exchange.apiPapi,
           assetFrom: exchange.assetFrom,
           assetTo: exchange.assetTo,
@@ -45,7 +48,7 @@ export const getRouterFees = async (
           destChain: destination?.chain,
           assetInfoFrom: {
             ...(origin?.assetFrom ?? exchange.assetFrom),
-            amount,
+            amount: BigInt(amt),
           } as WithAmount<TAssetInfo>,
           assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
           currencyTo,
@@ -62,21 +65,19 @@ export const getRouterFees = async (
             }),
         });
 
-        return { tx, amountOut };
+        return tx;
       };
 
-      const [{ tx, amountOut: mainAmountOut }, { tx: txBypass }] = await Promise.all([
-        buildExecuteTx(BigInt(amount)),
-        buildExecuteTx(
-          applyDecimalAbstraction(SWAP_BYPASS_AMOUNT, exchange.assetFrom.decimals, true),
-        ),
-      ]);
+      const mainAmountOut = await dex.getAmountOut(exchange.api, {
+        ...options,
+        amount: amount.toString(),
+        papiApi: exchange.apiPapi,
+        assetFrom: exchange.assetFrom,
+        assetTo: exchange.assetTo,
+      });
 
       const executeResult = await getXcmFee({
-        txs: {
-          tx,
-          txBypass,
-        },
+        buildTx,
         origin: origin?.chain ?? exchange.baseChain,
         destination: destination?.chain ?? exchange.baseChain,
         senderAddress: evmSenderAddress ?? senderAddress,

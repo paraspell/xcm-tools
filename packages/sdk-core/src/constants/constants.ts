@@ -58,4 +58,3 @@ export const MAX_U64 = (1n << 64n) - 1n
 export const MAX_WEIGHT: TWeight = { proofSize: MAX_U64, refTime: MAX_U64 }
 
 export const BYPASS_MINT_AMOUNT = '1000'
-export const BYPASS_CURRENCY_AMOUNT = '800'

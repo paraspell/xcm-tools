@@ -10,7 +10,7 @@ import { getLocationTokenId } from './getLocationTokenId'
 export const computeFeeFromDryRun = (
   dryRun: any,
   chain: TSubstrateChain,
-  _executionFee: bigint,
+  executionFee: bigint,
   isFeeAsset = false
 ): bigint => {
   // Extract delivery fees from emitted events
@@ -49,6 +49,6 @@ export const computeFeeFromDryRun = (
     const totalDeliveryFees = deliveryFees
       .filter(df => df.tokenSymbol === nativeAssetSymbol)
       .reduce((acc, df) => acc + df.plancks, 0n)
-    return totalDeliveryFees
+    return totalDeliveryFees + executionFee
   }
 }

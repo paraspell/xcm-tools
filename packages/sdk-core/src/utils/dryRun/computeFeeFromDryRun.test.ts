@@ -48,7 +48,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
 
-    expect(result).toBe(500n) // 500 (delivery fee)
+    expect(result).toBe(700n) // 500 (delivery fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
     expect(getLocationTokenId).toHaveBeenCalledTimes(2)
   })
@@ -76,7 +76,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
 
-    expect(result).toBe(0n)
+    expect(result).toBe(200n)
     expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockChain)
   })
 
@@ -108,7 +108,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
 
-    expect(result).toBe(300n) // 300 (delivery fee)
+    expect(result).toBe(500n) // 300 (delivery fee)
   })
 
   it('should return 0 if no matching events are found', () => {
@@ -145,7 +145,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 300n
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
 
-    expect(result).toBe(0n)
+    expect(result).toBe(300n)
   })
 
   it('should return assetConversionFee if isFeeAsset is true and assetConversionFee is > 0, skipping final delivery fee calculation', () => {
@@ -282,7 +282,7 @@ describe('computeFeeFromDryRun', () => {
 
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
 
-    expect(result).toBe(500n)
+    expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
     expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockChain)
   })
@@ -324,7 +324,7 @@ describe('computeFeeFromDryRun', () => {
 
     const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
 
-    expect(result).toBe(500n)
+    expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
     expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockChain)
   })

@@ -4,8 +4,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../api'
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
-import type { TTxPair } from './TTransfer'
-import type { TXcmFeeDetail } from './TXcmFee'
+import type { TTxFactory, TXcmFeeDetail } from './TXcmFee'
 
 export type THopTransferInfo = {
   chain: TChain
@@ -109,7 +108,7 @@ export type TOriginFeeDetails = {
 }
 
 export type TGetTransferInfoOptionsBase<TRes> = {
-  txs: TTxPair<TRes>
+  buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
   senderAddress: string
