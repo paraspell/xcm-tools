@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.1...sdk-core-v11.8.2) (2025-09-22)
+
+
+### Bug Fixes
+
+* Add delivery fees fetching ⚙️ ([e8a2193](https://github.com/paraspell/xcm-tools/commit/e8a2193734c998e8f9535da39b0ecb872d5a3d56))
+* Fix reverse tx creation 🔧 ([778e210](https://github.com/paraspell/xcm-tools/commit/778e2102b46ffdcff62a0f45aba8b94414d8e101))
+
 ## [11.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.0...sdk-core-v11.8.1) (2025-09-19)
 
 
