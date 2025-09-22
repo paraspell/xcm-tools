@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.8.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.8.1...xcm-router-v11.8.2) (2025-09-22)
+
+
+### Bug Fixes
+
+* Fix reverse tx creation 🔧 ([778e210](https://github.com/paraspell/xcm-tools/commit/778e2102b46ffdcff62a0f45aba8b94414d8e101))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([36eb2de](https://github.com/paraspell/xcm-tools/commit/36eb2deaed633200d16dadd7fa32277eca68de36))
+
 ## [11.8.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.8.0...xcm-router-v11.8.1) (2025-09-19)
 
 
