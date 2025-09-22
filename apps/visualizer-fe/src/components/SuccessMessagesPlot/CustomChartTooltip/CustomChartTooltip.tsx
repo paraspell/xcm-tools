@@ -219,7 +219,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
         {items}
         <Box mt={4}>
           <Anchor size="xs" href={explorerLink} target="_blank" rel="noreferrer">
-            {t('showInExplorer')}
+            {t('main.actions.showInExplorer')}
           </Anchor>
         </Box>
       </div>

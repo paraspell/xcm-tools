@@ -101,7 +101,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
       series={[
         ...series,
         {
-          name: t('median'),
+          name: t('charts.amounts.median'),
           color: 'gray.6'
         }
       ]}
@@ -113,7 +113,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
           const extendedPayload = (payload as Payload[]).reduce<Payload[]>((acc, item) => {
-            if (item.name === t('median')) {
+            if (item.name === t('charts.amounts.median')) {
               acc.push(item);
               return acc;
             }
@@ -121,18 +121,18 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
               item.name === 'Total'
                 ? {
                     ...item,
-                    name: t('total'),
+                    name: t('charts.common.total'),
                     value: item.value,
                     color: item.color,
                     parachain: item.name
                   }
                 : {
                     ...item,
-                    name: `${item.name} ${t('total')}`,
+                    name: `${item.name} ${t('charts.common.total')}`,
                     dataKey: item.name,
                     payload: {
-                      category: `${item.name} ${t('total')}`,
-                      [`${item.name} ${t('total')}`]: item.value
+                      category: `${item.name} ${t('charts.common.total')}`,
+                      [`${item.name} ${t('charts.common.total')}`]: item.value
                     },
                     value: 0,
                     color: item.color,
@@ -140,11 +140,12 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
                   };
             const success = {
               ...item,
-              name: `${item.name} ${t('success')}`,
+              name: `${item.name} ${t('status.success')}`,
               dataKey: `${item.name} Success`,
               payload: {
-                category: `${item.name} ${t('success')}`,
-                [`${item.name} ${t('success')}`]: item.payload[`${item.name} ${t('success')}`]
+                category: `${item.name} ${t('status.success')}`,
+                [`${item.name} ${t('status.success')}`]:
+                  item.payload[`${item.name} ${t('status.success')}`]
               },
               value: 0,
               color: 'green',
@@ -152,11 +153,12 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
             };
             const failed = {
               ...item,
-              name: `${item.name} ${t('failed')}`,
+              name: `${item.name} ${t('status.failed')}`,
               dataKey: `${item.name} Failed`,
               payload: {
-                category: `${item.name} ${t('failed')}`,
-                [`${item.name} ${t('failed')}`]: item.payload[`${item.name} ${t('failed')}`]
+                category: `${item.name} ${t('status.failed')}`,
+                [`${item.name} ${t('status.failed')}`]:
+                  item.payload[`${item.name} ${t('status.failed')}`]
               },
               value: 0,
               color: 'red',

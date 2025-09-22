@@ -18,9 +18,7 @@ type FormValues = {
 };
 
 const SkyboxUploadForm = () => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'options'
-  });
+  const { t } = useTranslation();
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -32,12 +30,12 @@ const SkyboxUploadForm = () => {
       back: null
     },
     validate: {
-      right: value => (value ? undefined : t('imageRequired')),
-      left: value => (value ? undefined : t('imageRequired')),
-      top: value => (value ? undefined : t('imageRequired')),
-      bottom: value => (value ? undefined : t('imageRequired')),
-      front: value => (value ? undefined : t('imageRequired')),
-      back: value => (value ? undefined : t('imageRequired'))
+      right: value => (value ? undefined : t('settings.skybox.imageRequired')),
+      left: value => (value ? undefined : t('settings.skybox.imageRequired')),
+      top: value => (value ? undefined : t('settings.skybox.imageRequired')),
+      bottom: value => (value ? undefined : t('settings.skybox.imageRequired')),
+      front: value => (value ? undefined : t('settings.skybox.imageRequired')),
+      back: value => (value ? undefined : t('settings.skybox.imageRequired'))
     }
   });
   const { setSkyboxTrigger } = useSelectedParachain();
@@ -45,16 +43,16 @@ const SkyboxUploadForm = () => {
 
   const showSuccessNotification = () => {
     notifications.show({
-      title: t('skyboxSaved'),
-      message: t('skyboxSaveSuccess'),
+      title: t('settings.skybox.messages.saved'),
+      message: t('settings.skybox.messages.saveSuccess'),
       color: 'green'
     });
   };
 
   const showErrorNotification = () => {
     notifications.show({
-      title: t('error'),
-      message: t('skyboxSaveError'),
+      title: t('status.error'),
+      message: t('settings.skybox.messages.saveError'),
       color: 'red'
     });
   };
@@ -72,13 +70,13 @@ const SkyboxUploadForm = () => {
               resolve(true);
             } catch (error) {
               showErrorNotification();
-              reject(new Error('Failed to save image to DB: ' + String(error)));
+              reject(new Error(t('errors.imageSave') + String(error)));
             }
           } else {
-            reject(new Error('File could not be read'));
+            reject(new Error(t('errors.fileRead')));
           }
         };
-        reader.onerror = () => reject(new Error('Error reading file'));
+        reader.onerror = () => reject(new Error(t('errors.fileError')));
         reader.readAsDataURL(file!);
       });
     });
@@ -91,7 +89,7 @@ const SkyboxUploadForm = () => {
       .catch(error => {
         showErrorNotification();
         // eslint-disable-next-line no-console
-        console.error('An error occurred while saving images:', error);
+        console.error(t('errors.image'), error);
       })
       .finally(() => {
         setLoading(false);
@@ -106,53 +104,53 @@ const SkyboxUploadForm = () => {
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('rightImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.right')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('right')}
         />
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('leftImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.left')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('left')}
         />
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('topImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.top')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('top')}
         />
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('bottomImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.bottom')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('bottom')}
         />
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('frontImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.front')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('front')}
         />
         <FileInput
           leftSection={icon}
           accept="image/png,image/jpeg"
-          label={t('backImageLabel')}
-          placeholder={t('imagePlaceholder')}
+          label={t('settings.skybox.faces.back')}
+          placeholder={t('settings.skybox.imagePlaceholder')}
           required
           {...form.getInputProps('back')}
         />
         <Button type="submit" loading={loading}>
-          {t('saveSkyboxButton')}
+          {t('settings.skybox.saveButton')}
         </Button>
       </Stack>
     </form>

@@ -1,78 +1,146 @@
 {
-  "accounts": "Accounts",
-  "amountByDay": "Daily Transferred Amount",
-  "amounts": "Amounts",
-  "amountsChartInfo": "Click a day to view detailed values",
-  "arrangement": "Arrangement",
-  "assets": "Assets",
-  "assetsTransfered": "Assets Transferred",
-  "byBoth": "By Both",
-  "byDestination": "By Destination",
-  "byOrigin": "By Origin",
-  "cannotBeCalculated": "Not Available",
-  "channelInfo": "Channel Details",
-  "dateRange": "Date Range",
-  "downloadSvgTooltip": "Download chart (SVG)",
-  "downloadZipTooltip": "Download chart data (ZIP)",
-  "error": "Error",
-  "failed": "Failed",
-  "highlightedChannelColor": "Highlighted Channel",
-  "idHash": "ID (Hash): <b>{{address}}</b><br>Messages: <b>{{count}}</b>",
-  "median": "Median",
-  "messageCount": "Messages",
-  "openChannels": "Open Channels",
-  "options": {
-    "animationSettingsTitle": "Animation Settings",
-    "backImageLabel": "Back Face",
-    "bottomImageLabel": "Bottom Face",
-    "customSkyboxDesc": "Upload a custom skybox. Each image represents one face of the cubemap. Ensure all images align seamlessly. Click “Save Skybox” to apply.",
-    "customSkyboxTitle": "Skybox Customization",
-    "floatingAnimationDesc": "Enable Floating Animation",
-    "frontImageLabel": "Front Face",
-    "generalOptionsDesc": "Customize channel colors or change the parachain layout. Changes apply immediately.",
-    "generalTitle": "General",
-    "imagePlaceholder": "Select image",
-    "imageRequired": "This image is required",
-    "leftImageLabel": "Left Face",
-    "rightImageLabel": "Right Face",
-    "saveSkyboxButton": "Save Skybox",
-    "skyboxSaved": "Skybox Saved",
-    "skyboxSaveError": "Failed to save skybox to browser storage.",
-    "skyboxSaveSuccess": "Skybox applied successfully.",
-    "title": "Settings",
-    "topImageLabel": "Top Face"
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Select Threshold"
+    },
+    "amounts": {
+      "median": "Median",
+      "title": "Daily Transferred Amount"
+    },
+    "assets": {
+      "title": "Assets Transferred"
+    },
+    "calls": {
+      "title": "XCM Call Volume"
+    },
+    "common": {
+      "amountsChartInfo": "Click a day to view detailed values",
+      "downloads": {
+        "downloadSvgTooltip": "Download chart (SVG)",
+        "downloadZipTooltip": "Download chart data (ZIP)"
+      },
+      "messageCount": "Messages",
+      "total": "Total"
+    },
+    "tabs": {
+      "accounts": "Accounts",
+      "amounts": "Amounts",
+      "assets": "Assets",
+      "success": "Success"
+    }
   },
-  "parachains": "Parachains",
-  "primaryChannelColor": "Primary Channel",
-  "resources": "Tools",
-  "secondaryChannelColor": "Secondary Channel",
-  "select": "Select…",
-  "selectArrangement": "Select Arrangement",
-  "selectColor": "Select Color",
-  "selectDateRange": "Select Date Range:",
-  "selectedChannelActiveAt": "Activated at",
-  "selectedChannelColor": "Selected Channel",
-  "selectOne": "Select One",
-  "selectParachains": "Select Parachains:",
-  "selectThreshold": "Select Threshold",
-  "sendXcm": "Send XCM",
-  "sendXcmForm": {
-    "amount": "Transfer Amount",
-    "assetSymbol": "Asset",
-    "connectWallet": "Connect Wallet",
-    "noAccountSelected": "No account selected. Connect your wallet first.",
-    "noWalletExtensionFound": "No wallet extension detected. Please install one to connect.",
-    "pickValue": "Pick value",
-    "recipientAddress": "Recipient Address",
-    "recipientParachain": "Destination Parachain",
-    "selectAccount": "Select Account",
-    "senderParachain": "Source Parachain",
-    "submitTransaction": "Send Transaction",
-    "title": "Send XCM Message",
-    "transactionSuccess": "Transaction Successful!"
+  "errors": {
+    "fileError": "Error reading file.",
+    "fileRead": "File could not be read.",
+    "image": "An error occurred while saving images: ",
+    "imageSave": "Failed to save image to DB: ",
+    "noAccount": "Account not found.",
+    "noDownloadData": "Could not download data."
   },
-  "showInExplorer": "Show in Explorer",
-  "success": "Success",
-  "successfulFailedXcmCalls": "XCM Call Volume",
-  "total": "Total"
+  "filters": {
+    "byBoth": "By Both",
+    "byDestination": "By Destination",
+    "byOrigin": "By Origin",
+    "select": "Select…",
+    "selectOne": "Select One"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Transfer Amount",
+      "assetSymbol": "Asset",
+      "connectWallet": "Connect Wallet",
+      "noAccountSelected": "No account selected. Connect your wallet first.",
+      "pickValue": "Pick value",
+      "recipientAddress": "Recipient Address",
+      "recipientParachain": "Destination Parachain",
+      "selectAccount": "Select Account",
+      "senderParachain": "Source Parachain",
+      "submitTransaction": "Send Transaction",
+      "title": "Send XCM Message",
+      "transactionSuccess": "Transaction Successful!",
+      "wallet": {
+        "noAccounts": "No accounts found in the selected wallet.",
+        "noChange": "Failed to change account.",
+        "noConnection": "Failed to connect wallet.",
+        "noExtensionFound": "No wallet extension detected. Please install one to connect."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "Send XCM",
+      "showInExplorer": "Show in Explorer"
+    },
+    "bottomBar": {
+      "dateRange": "Date Range",
+      "parachains": "Parachains",
+      "resources": "Tools",
+      "selectDateRange": "Select Date Range:",
+      "selectParachains": "Select Parachains:"
+    },
+    "network": {
+      "channelInfo": "Channel Details",
+      "idHash": "ID (Hash): <b>{{address}}</b><br>Messages: <b>{{count}}</b>",
+      "openChannels": "Open Channels",
+      "selected": {
+        "activatedAt": "Activated at",
+        "color": "Selected Channel"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Accounts",
+      "arrangement": "Arrangement",
+      "assets": "Assets",
+      "assetsTransfered": "Assets Transferred",
+      "parachains": "Parachains"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Enable Floating Animation",
+      "title": "Animation Settings"
+    },
+    "colors": {
+      "highlightedChannelColor": "Highlighted Channel",
+      "primaryChannelColor": "Primary Channel",
+      "secondaryChannelColor": "Secondary Channel",
+      "selectColor": "Select Color",
+      "selectedChannelColor": "Selected Channel"
+    },
+    "general": {
+      "description": "Customize channel colors or change the parachain layout. Changes apply immediately.",
+      "title": "General"
+    },
+    "layout": {
+      "arrangement": "Arrangement",
+      "selectArrangement": "Select Arrangement"
+    },
+    "skybox": {
+      "description": "Upload a custom skybox. Each image represents one face of the cubemap. Ensure all images align seamlessly. Click “Save Skybox” to apply.",
+      "faces": {
+        "back": "Back Face",
+        "bottom": "Bottom Face",
+        "front": "Front Face",
+        "left": "Left Face",
+        "right": "Right Face",
+        "top": "Top Face"
+      },
+      "imagePlaceholder": "Select image",
+      "imageRequired": "This image is required",
+      "messages": {
+        "saved": "Skybox Saved",
+        "saveError": "Failed to save skybox to browser storage.",
+        "saveSuccess": "Skybox applied successfully."
+      },
+      "saveButton": "Save Skybox",
+      "title": "Skybox Customization"
+    },
+    "title": "Settings"
+  },
+  "status": {
+    "cannotBeCalculated": "Not Available",
+    "error": "Error",
+    "failed": "Failed",
+    "success": "Success"
+  }
 }

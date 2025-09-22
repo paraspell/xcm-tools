@@ -61,7 +61,7 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
   return (
     <Box pos="absolute" top={0} left={0} p="xl">
       <Alert
-        title={t('channelInfo')}
+        title={t('main.network.channelInfoo')}
         withCloseButton
         onClose={onClose}
         w="100%"
@@ -106,20 +106,20 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
           </Flex>
 
           <Group align="center" gap="xs">
-            <Text size="md">{t('messageCount')}:</Text>
+            <Text size="md">{t('charts.common.messageCount')}:</Text>
             <Text fw="bold" size="md">
               {currentChannel?.message_count}
             </Text>
           </Group>
           <Group align="center" gap="xs">
-            <Text size="md">{t('selectedChannelActiveAt')}:</Text>
+            <Text size="md">{t('main.network.selected.activatedAt')}:</Text>
             <Text fw="bold" size="md">
               {dayjs((currentChannel?.active_at ?? 0) * 1000).format('YYYY/MM/DD')}{' '}
             </Text>
           </Group>
           <Group>
             <Button component="a" target="_blank" size="xs" href={explorerLink}>
-              {t('showInExplorer')}
+              {t('main.actions.showInExplorer')}
             </Button>
           </Group>
         </Stack>

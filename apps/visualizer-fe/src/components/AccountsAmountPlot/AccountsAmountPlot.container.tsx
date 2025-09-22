@@ -39,7 +39,7 @@ const AccountsAmountPlotContainer = () => {
   });
 
   const onDownloadZipClick = () => {
-    if (!data) throw new Error('Could not download data.');
+    if (!data) throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<AccountCountsQuery['accountCounts'][number], '__typename'>)[] = [
       'id',
@@ -57,7 +57,7 @@ const AccountsAmountPlotContainer = () => {
   if (error) {
     return (
       <Center h="100%" w="100%">
-        {t('error')}
+        {t('status.error')}
       </Center>
     );
   }

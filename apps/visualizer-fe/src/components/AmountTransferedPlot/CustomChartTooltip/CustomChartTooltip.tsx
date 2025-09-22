@@ -236,7 +236,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
       items.push(
         <Box mt={2} mb="xs" key={`link-${parachainName}`} className="tooltip-explorer-link">
           <Anchor size="xs" href={explorerLink} target="_blank" rel="noreferrer">
-            {t('showInExplorer')}
+            {t('main.actions.showInExplorer')}
           </Anchor>
         </Box>
       );

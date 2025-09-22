@@ -44,7 +44,7 @@ const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
   if (channelFromQuery.error || channelToQuery.error) {
     return (
       <div>
-        {t('error')}: {channelFromQuery.error?.message ?? channelToQuery.error?.message}
+        {t('status.error')}: {channelFromQuery.error?.message ?? channelToQuery.error?.message}
       </div>
     );
   }

@@ -17,7 +17,7 @@ const Footer = () => {
     <Box pos="absolute" bottom={0} left={0} p="xl" w="100%">
       <Flex gap="md" align="end" w="100%">
         <Paper p="md" radius="md" bg="rgba(255,255,255,0.8)" flex="0 0 auto">
-          <Input.Label>{t('resources')}</Input.Label>
+          <Input.Label>{t('main.bottomBar.resources')}</Input.Label>
           <Group gap="sm" wrap="nowrap">
             <ActionIcon
               component="a"
@@ -45,7 +45,7 @@ const Footer = () => {
             <ParachainSelector value={parachains} onCustomChange={setParachains} flex={1} />
             <DateRangePicker value={dateRange} setValue={setDateRange} />
             <OptionsModal opened={opened} close={close} />
-            <Button onClick={open}>{t('options.title')}</Button>
+            <Button onClick={open}>{t('settings.title')}</Button>
           </Group>
         </Paper>
       </Flex>

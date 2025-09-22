@@ -36,7 +36,7 @@ const AmountTransferedPlotContainer = () => {
   });
 
   const onDownloadZipClick = () => {
-    if (!data) throw new Error('Could not download data.');
+    if (!data) throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<
       MessageCountsByDayQuery['messageCountsByDay'][number],
@@ -62,7 +62,7 @@ const AmountTransferedPlotContainer = () => {
   if (error) {
     return (
       <Center h="100%" w="100%">
-        {t('error')}
+        {t('status.error')}
       </Center>
     );
   }
@@ -71,7 +71,7 @@ const AmountTransferedPlotContainer = () => {
     <Stack gap="xl" w="100%" h="100%" pl="xl" pr="xl">
       <Group>
         <Title order={2} ta="center" flex={1}>
-          {t('amountByDay')}
+          {t('charts.amounts.title')}
         </Title>
         <DownloadButtons
           onDownloadZipClick={onDownloadZipClick}
@@ -80,11 +80,17 @@ const AmountTransferedPlotContainer = () => {
       </Group>
       <Group justify="space-between">
         <Checkbox
-          label={t('median')}
+          label={t('charts.amounts.median')}
           onChange={() => setShowMedian(value => !value)}
           checked={showMedian}
         />
-        <Tooltip label={t('amountsChartInfo')} position="right" withArrow multiline w={220}>
+        <Tooltip
+          label={t('charts.common.amountsChartInfo')}
+          position="right"
+          withArrow
+          multiline
+          w={220}
+        >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <IconInfoCircle size={16} />
           </div>

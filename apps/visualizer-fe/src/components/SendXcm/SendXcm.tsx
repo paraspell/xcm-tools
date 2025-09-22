@@ -17,7 +17,7 @@ import TransferForm from './SendXcmForm';
 import { submitTransaction } from './utils';
 
 const SendXcm = () => {
-  const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
+  const { t } = useTranslation('translation', { keyPrefix: 'forms.sendXcmForm' });
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const [extensions, setExtensions] = useState<string[]>([]);
@@ -42,8 +42,8 @@ const SendXcm = () => {
     const extensions = getInjectedExtensions();
 
     if (!extensions) {
-      alert(t('noWalletExtensionFound'));
-      throw Error(t('noWalletExtensionFound'));
+      alert(t('wallet.noExtensionFound'));
+      throw Error(t('wallet.noExtensionFound'));
     }
 
     setExtensions(extensions);
@@ -131,7 +131,7 @@ const SendXcm = () => {
       initExtensions();
       openWalletSelectModal();
     } catch (_e) {
-      alert('Failed to connect wallet');
+      alert(t('wallet.noConnection'));
     }
   };
 
@@ -144,8 +144,8 @@ const SendXcm = () => {
       const accounts = selectedExtension.getAccounts();
 
       if (!accounts.length) {
-        alert('No accounts found in the selected wallet');
-        throw Error('No accounts found in the selected wallet');
+        alert(t('wallet.noAccounts'));
+        throw Error(t('wallet.noAccounts'));
       }
 
       setAccounts(
@@ -160,7 +160,7 @@ const SendXcm = () => {
       closeWalletSelectModal();
       openAccountsModal();
     } catch (_e) {
-      alert('Failed to connect to wallet');
+      alert(t('wallet.noConnection'));
       closeWalletSelectModal();
     }
   };
@@ -172,7 +172,7 @@ const SendXcm = () => {
       }
       openWalletSelectModal();
     } catch (_e) {
-      alert('Failed to change account');
+      alert(t('wallet.noChange'));
     }
   };
 

@@ -30,25 +30,25 @@ const TabNavigator: FC<Props> = ({ defaultValue = PageRoute.SCENE_2D_MSG_SUCCESS
           value={PageRoute.SCENE_2D_MSG_SUCCESS_CHART}
           leftSection={<IconCheck style={iconStyle} />}
         >
-          {t('success')}
+          {t('status.success')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_ASSETS_CHART}
           leftSection={<IconAsset style={iconStyle} />}
         >
-          {t('assets')}
+          {t('charts.tabs.assets')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_AMOUNTS_BY_DAY}
           leftSection={<IconClock style={iconStyle} />}
         >
-          {t('amounts')}
+          {t('charts.tabs.amounts')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_BUBBLE_PLOT}
           leftSection={<IconChartBubble style={iconStyle} />}
         >
-          {t('accounts')}
+          {t('charts.tabs.accounts')}
         </Tabs.Tab>
       </Tabs.List>
 

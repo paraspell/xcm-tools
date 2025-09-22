@@ -19,7 +19,7 @@ type Props = {
 };
 
 const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
+  const { t } = useTranslation('translation', { keyPrefix: 'forms.sendXcmForm' });
   const form = useForm<FormValues>({
     initialValues: {
       from: 'Astar',
