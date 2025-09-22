@@ -149,8 +149,7 @@ describe('dryRunInternal', () => {
       assetHub: {
         success: true,
         fee: 3_000n,
-        currency: 'DOT',
-        asset: { symbol: 'DOT' }
+        currency: 'ACA'
       },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
@@ -248,8 +247,7 @@ describe('dryRunInternal', () => {
       assetHub: {
         success: true,
         fee: 2_000n,
-        currency: 'DOT',
-        asset: { symbol: 'DOT' }
+        currency: 'ACA'
       },
       destination: { success: true, fee: 4_000n, currency: 'ACA' },
       hops: [
@@ -680,8 +678,6 @@ describe('dryRunInternal', () => {
           destination: 'Ethereum'
         })
       )
-
-      expect(getNativeAssetSymbol).toHaveBeenCalledWith('AssetHubPolkadot')
     })
   })
 })

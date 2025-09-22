@@ -19,6 +19,7 @@ const computeInstructionFee = async <TApi, TRes>(
     await api.getXcmPaymentApiFee(
       chain,
       addXcmVersionHeader(xcm, version),
+      [],
       { location: DOT_LOCATION } as TAssetInfo,
       true
     ),

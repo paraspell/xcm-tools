@@ -188,14 +188,6 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
-  const assetHubWithCurrency = traversalResult.assetHub?.success
-    ? {
-        ...traversalResult.assetHub,
-        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubChain),
-        asset: resolvedFeeAsset ?? findNativeAssetInfoOrThrow(assetHubChain)
-      }
-    : traversalResult.assetHub
-
   const bridgeHubWithCurrency = processedBridgeHub?.success
     ? {
         ...processedBridgeHub,
@@ -207,7 +199,7 @@ export const dryRunInternal = async <TApi, TRes>(
   const { failureReason, failureChain } = getFailureInfo(
     {
       destination: traversalResult.destination,
-      assetHub: assetHubWithCurrency,
+      assetHub: traversalResult.assetHub,
       bridgeHub: bridgeHubWithCurrency
     },
     traversalResult.hops
@@ -217,7 +209,7 @@ export const dryRunInternal = async <TApi, TRes>(
     failureReason,
     failureChain,
     origin: originDryRun,
-    assetHub: assetHubWithCurrency,
+    assetHub: traversalResult.assetHub,
     bridgeHub: bridgeHubWithCurrency,
     destination: traversalResult.destination,
     hops: traversalResult.hops

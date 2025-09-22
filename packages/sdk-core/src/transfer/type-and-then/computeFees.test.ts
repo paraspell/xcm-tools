@@ -71,6 +71,7 @@ describe('computeAllFees', () => {
     expect(spy).toHaveBeenCalledWith(
       'Polkadot',
       mockXcmWithHeader,
+      [],
       { location: DOT_LOCATION },
       true
     )
@@ -120,6 +121,7 @@ describe('computeAllFees', () => {
       2,
       'Polkadot',
       mockXcmWithHeader,
+      [],
       { location: DOT_LOCATION },
       true
     )
@@ -132,7 +134,13 @@ describe('computeAllFees', () => {
 
     expect(spy).toHaveBeenCalledTimes(2)
 
-    expect(spy).toHaveBeenCalledWith('Acala', mockXcmWithHeader, { location: DOT_LOCATION }, true)
+    expect(spy).toHaveBeenCalledWith(
+      'Acala',
+      mockXcmWithHeader,
+      [],
+      { location: DOT_LOCATION },
+      true
+    )
 
     expect(result).toEqual({
       reserveFee: 0n,

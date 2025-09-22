@@ -17,7 +17,9 @@ import {
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
+  isAssetXcEqual,
   isSystemChain,
+  localizeLocation,
   MissingChainApiError,
   type TLocation,
   type TSerializedApiCall,
@@ -68,7 +70,9 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   getChainProviders: vi.fn(),
   wrapTxBypass: vi.fn(),
   findNativeAssetInfoOrThrow: vi.fn(),
-  isSystemChain: vi.fn()
+  isSystemChain: vi.fn(),
+  localizeLocation: vi.fn(),
+  isAssetXcEqual: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -830,6 +834,101 @@ describe('PapiApi', () => {
       await papiApi.disconnect(false)
 
       expect(destroySpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getXcmPaymentApiFee', () => {
+    const chain: TSubstrateChain = 'Moonbeam'
+    const localXcm = { type: 'V4', value: [] }
+    const baseAsset: TAssetInfo = {
+      symbol: 'GLMR',
+      location: { parents: 0, interior: { Here: null } } as TLocation
+    } as TAssetInfo
+
+    beforeEach(() => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
+        .fn()
+        .mockResolvedValue({ value: 100n })
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        value: { ref_time: 100n, proof_size: 200n }
+      })
+      unsafeApi.apis.XcmPaymentApi.query_delivery_fees = vi.fn().mockResolvedValue({
+        value: { value: [{ fun: { value: 7n } }] }
+      })
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR',
+        location: { parents: 0, interior: { Here: null } } as TLocation
+      } as TAssetInfo)
+
+      vi.mocked(localizeLocation).mockImplementation((_, loc: TLocation) => loc)
+
+      vi.mocked(isAssetXcEqual)?.mockReturnValue(true)
+    })
+
+    it('adds delivery fee directly when asset is native', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const forwardedXcm = [
+        {
+          /* msg */
+        },
+        [
+          {
+            /* dest */
+          }
+        ]
+      ]
+
+      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
+
+      expect(unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee).toHaveBeenCalled()
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalled()
+      // 100 (exec) + 7 (delivery) = 107
+      expect(res).toBe(107n)
+    })
+
+    it('converts delivery fee via quoteAhPrice when asset is NOT native', async () => {
+      const forwardedXcm = [{}, [{}]]
+      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+
+      const quoteSpy = vi.spyOn(papiApi, 'quoteAhPrice').mockResolvedValue(5n)
+
+      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, {
+        symbol: 'USDC',
+        location: { parents: 1, interior: { X1: { Parachain: 1000 } } } as TLocation
+      } as TAssetInfo)
+
+      expect(quoteSpy).toHaveBeenCalled()
+      // 100 (exec) + 5 (converted delivery)
+      expect(res).toBe(105n)
+    })
+
+    it('returns only exec fee when forwardedXcm is empty (no delivery fee)', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const forwardedXcm: any = []
+      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
+      // deliveryFeeResolved = 0n, asset is native => total 100n
+      expect(res).toBe(100n)
+    })
+
+    it('falls back to 0 delivery fee when quoteAhPrice throws the runtime-entry error', async () => {
+      const forwardedXcm = [{}, [{}]]
+      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+
+      vi.spyOn(papiApi, 'quoteAhPrice').mockRejectedValue(
+        new Error(
+          'Runtime entry RuntimeCall(AssetConversionApi.quote_price_exact_tokens_for_tokens) not found'
+        )
+      )
+
+      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, {
+        symbol: 'USDT',
+        location: { parents: 1, interior: { X1: { Parachain: 1001 } } } as TLocation
+      } as TAssetInfo)
+
+      // exec (100n) + delivery (0n due to error)
+      expect(res).toBe(100n)
     })
   })
 

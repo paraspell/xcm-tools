@@ -70,7 +70,7 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
 
       // true if this hop should be treated as the destination
       // - normally when nextChain === destination
-      // - but if swap is required, only after (or on) the exchange hop      const isDestination =
+      // - but if swap is required, only after (or on) the exchange hop
       const isDestination =
         nextChain === destination &&
         (!swapConfig || hasPassedExchange || nextChain === swapConfig.exchangeChain)

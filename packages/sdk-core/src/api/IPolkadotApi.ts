@@ -41,7 +41,9 @@ export interface IPolkadotApi<TApi, TRes> {
   getXcmPaymentApiFee(
     chain: TSubstrateChain,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    xcm: any,
+    localXcm: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    forwardedXcm: any,
     asset: TAssetInfo,
     transformXcm: boolean
   ): Promise<bigint>
