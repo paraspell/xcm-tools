@@ -5,7 +5,12 @@ import type {
   TParachain,
   TXcmFeeDetail,
 } from '@paraspell/sdk';
-import { DryRunFailedError, getXcmFee, handleSwapExecuteTransfer } from '@paraspell/sdk';
+import {
+  DryRunFailedError,
+  getXcmFee,
+  handleSwapExecuteTransfer,
+  InvalidParameterError,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -380,5 +385,48 @@ describe('getRouterFees', () => {
         slippagePct: '1',
       }),
     );
+  });
+
+  it('throws InvalidParameterError when getXcmFee returns NoDeal on HydrationDex', async () => {
+    const dex = {
+      chain: 'Hydration',
+      getAmountOut: vi.fn().mockResolvedValue(1234n),
+    } as unknown as ExchangeChain;
+
+    const options = {
+      origin: { chain: 'Moonbeam' },
+      destination: { chain: 'Moonbeam' },
+      exchange: {
+        baseChain: 'HydrationDex',
+        exchangeChain: 'HydrationDex',
+        api: {} as unknown,
+        apiPapi: {} as unknown,
+        assetFrom: { symbol: 'USDC', decimals: 6 } as TAssetInfo,
+        assetTo: { symbol: 'DOT', decimals: 10 } as TAssetInfo,
+      },
+      currencyFrom: { symbol: 'USDC' },
+      currencyTo: { symbol: 'DOT' },
+      amount: 1n,
+      senderAddress: 'addr',
+    } as unknown as TBuildTransactionsOptionsModified;
+
+    vi.mocked(getXcmFee).mockResolvedValue({
+      failureReason: 'NoDeal',
+      hops: [],
+      origin: {
+        fee: 0n,
+        feeType: 'dryRun',
+        asset: { symbol: 'USDC', decimals: 6 } as TAssetInfo,
+        currency: 'USDC',
+      },
+      destination: {
+        fee: 0n,
+        feeType: 'dryRun',
+        asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo,
+        currency: 'DOT',
+      },
+    } as TRouterXcmFeeResult);
+
+    await expect(getRouterFees(dex, options)).rejects.toBeInstanceOf(InvalidParameterError);
   });
 });

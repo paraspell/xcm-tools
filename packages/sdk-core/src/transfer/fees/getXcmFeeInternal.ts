@@ -183,7 +183,9 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       feeAsset,
       tx,
       originFee: originFee ?? 0n,
-      disableFallback
+      disableFallback,
+      hasPassedExchange,
+      swapConfig
     })
 
     let hopAsset: TAssetInfo
@@ -275,7 +277,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       tx,
       originFee: originFee ?? 0n,
       senderAddress,
-      disableFallback
+      disableFallback,
+      swapConfig
     })
 
     destFee = destFallback.fee
