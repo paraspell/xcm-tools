@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type { TCurrencyCore } from '@paraspell/assets'
 import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
@@ -53,35 +54,45 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     : undefined
 
   const calcPaymentInfoFee = async (): Promise<bigint> => {
-    if (destination === 'Ethereum') return 0n
-
-    const originAsset = swapConfig?.currencyTo
-      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, destination)
-      : findAssetInfoOrThrow(origin, currency, destination)
-
-    const amount = swapConfig?.currencyTo ? swapConfig.amountOut : currency.amount
-
-    if (originAsset.location) {
-      try {
-        return await getReverseTxFee(
-          { ...options, destination },
-          { location: originAsset.location, amount }
-        )
-      } catch (err: any) {
-        if (err instanceof InvalidCurrencyError) {
-          return await getReverseTxFee(
-            { ...options, destination },
-            { symbol: originAsset.symbol, amount }
-          )
-        }
-        throw err
-      }
+    if (destination === 'Ethereum') {
+      return 0n
     }
 
-    return await getReverseTxFee(
-      { ...options, destination },
-      { symbol: originAsset.symbol, amount }
-    )
+    const attempt = async (chain: TChain | TSubstrateChain, curr: TCurrencyCore, amt: bigint) => {
+      const assetInfo = findAssetInfoOrThrow(chain, curr, destination)
+
+      if (assetInfo.location) {
+        try {
+          return await getReverseTxFee(
+            { ...options, destination },
+            { location: assetInfo.location, amount: amt }
+          )
+        } catch (err: unknown) {
+          if (err instanceof InvalidCurrencyError) {
+            return await getReverseTxFee(
+              { ...options, destination },
+              { symbol: assetInfo.symbol, amount: amt }
+            )
+          }
+          throw err
+        }
+      }
+
+      return await getReverseTxFee(
+        { ...options, destination },
+        { symbol: assetInfo.symbol, amount: amt }
+      )
+    }
+
+    try {
+      return await attempt(origin, currency, currency.amount)
+    } catch (err: unknown) {
+      if (!(err instanceof InvalidCurrencyError) || !swapConfig) {
+        throw err
+      }
+
+      return await attempt(swapConfig.exchangeChain, swapConfig.currencyTo, swapConfig.amountOut)
+    }
   }
 
   if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {

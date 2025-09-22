@@ -207,7 +207,7 @@ describe('getDestXcmFee', () => {
     })
   })
 
-  it('returnserror variant (only `dryRunError`) when fallback is disabled', async () => {
+  it('returns error variant (only `dryRunError`) when fallback is disabled', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const api = createApi({
       success: false,
@@ -230,5 +230,103 @@ describe('getDestXcmFee', () => {
 
     expect(res).toEqual({ dryRunError: 'boom' })
     expect('fee' in res).toBe(false)
+  })
+
+  it('falls back to swapConfig.currencyTo when origin currency is unsupported (uses location)', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    const api = createApi()
+
+    vi.mocked(findAssetInfoOrThrow)
+      .mockImplementationOnce(() => {
+        throw new InvalidCurrencyError('nope')
+      })
+      .mockReturnValueOnce({
+        symbol: 'USDC',
+        decimals: 6,
+        location: DOT_LOCATION
+      } as TAssetInfo)
+
+    vi.mocked(getReverseTxFee).mockResolvedValue(321n)
+
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Astar',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'UNIT', amount: 1n },
+      asset: { symbol: 'UNIT' },
+      disableFallback: false,
+      swapConfig: {
+        exchangeChain: 'AssetHubPolkadot',
+        currencyTo: { symbol: 'USDC' },
+        amountOut: 5000n
+      }
+    } as TGetFeeForDestChainOptions<unknown, unknown>
+
+    const res = await getDestXcmFee(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { location: DOT_LOCATION, amount: 5000n })
+    expect(res).toEqual({ fee: 321n, feeType: 'paymentInfo', sufficient: true })
+  })
+
+  it('falls back to swapConfig.currencyTo when origin currency is unsupported (uses symbol)', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    const api = createApi()
+
+    vi.mocked(findAssetInfoOrThrow)
+      .mockImplementationOnce(() => {
+        throw new InvalidCurrencyError('nope')
+      })
+      .mockReturnValueOnce({
+        symbol: 'USDC',
+        decimals: 6
+      } as TAssetInfo)
+
+    vi.mocked(getReverseTxFee).mockResolvedValue(777n)
+
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Astar',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'UNIT', amount: 1n },
+      asset: { symbol: 'UNIT' },
+      disableFallback: false,
+      swapConfig: {
+        exchangeChain: 'AssetHubPolkadot',
+        currencyTo: { symbol: 'USDC' },
+        amountOut: 1234n
+      }
+    } as TGetFeeForDestChainOptions<unknown, unknown>
+
+    const res = await getDestXcmFee(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'USDC', amount: 1234n })
+    expect(res).toEqual({ fee: 777n, feeType: 'paymentInfo', sufficient: true })
+  })
+
+  it('returns 0n when destination is Ethereum', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    const api = createApi()
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Ethereum',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'UNIT', amount: 1n },
+      asset: { symbol: 'UNIT' },
+      disableFallback: false
+    } as TGetFeeForDestChainOptions<unknown, unknown>
+
+    const res = await getDestXcmFee(options)
+
+    expect(res).toEqual({ fee: 0n, feeType: 'paymentInfo', sufficient: true })
+    expect(getReverseTxFee).not.toHaveBeenCalled()
   })
 })

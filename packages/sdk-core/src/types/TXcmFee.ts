@@ -104,6 +104,7 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   originFee: bigint
   feeAsset?: TCurrencyInput
   disableFallback: boolean
+  hasPassedExchange?: boolean
   swapConfig?: TSwapConfig
 }
 

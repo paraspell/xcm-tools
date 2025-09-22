@@ -4,6 +4,7 @@ import {
   DryRunFailedError,
   getXcmFee,
   handleSwapExecuteTransfer,
+  InvalidParameterError,
 } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -90,6 +91,12 @@ export const getRouterFees = async (
           amountOut: mainAmountOut,
         },
       });
+
+      if (executeResult.failureReason === 'NoDeal' && exchange.exchangeChain === 'HydrationDex') {
+        throw new InvalidParameterError(
+          'An error occured, either this route is not registered for swap on exchange chain, or the amount out was not able to be calculated.',
+        );
+      }
 
       const transformedHops = executeResult.hops.map((hop) => {
         if (hop.chain === exchange.baseChain) {
