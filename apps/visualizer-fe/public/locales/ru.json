@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Выбрать порог"
+    },
+    "amounts": {
+      "median": "Медиана",
+      "title": "Ежедневно переведённая сумма"
+    },
+    "assets": {
+      "amounts": "Суммы",
+      "title": "Переданные активы"
+    },
+    "calls": {
+      "title": "Объём вызовов XCM"
+    },
+    "common": {
+      "amountsChartInfo": "Нажмите на день, чтобы посмотреть подробные значения",
+      "downloads": {
+        "downloadSvgTooltip": "Скачать диаграмму (SVG)",
+        "downloadZipTooltip": "Скачать данные диаграммы (ZIP)"
+      },
+      "messageCount": "Сообщения",
+      "total": "Итого"
+    },
+    "tabs": {
+      "accounts": "Аккаунты",
+      "amounts": "Суммы",
+      "assets": "Активы",
+      "success": "Успех"
+    }
+  },
+  "errors": {
+    "fileError": "Ошибка при чтении файла.",
+    "fileRead": "Не удалось прочитать файл.",
+    "image": "Произошла ошибка при сохранении изображений: ",
+    "imageSave": "Не удалось сохранить изображение в БД: ",
+    "noAccount": "Аккаунт не найден.",
+    "noDownloadData": "Нет данных для загрузки."
+  },
+  "filters": {
+    "byBoth": "По обоим",
+    "byDestination": "По назначению",
+    "byOrigin": "По источнику",
+    "select": "Выбрать…",
+    "selectOne": "Выберите вариант"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Сумма перевода",
+      "assetSymbol": "Актив",
+      "connectWallet": "Подключить кошелёк",
+      "noAccountSelected": "Аккаунт не выбран. Сначала подключите кошелёк.",
+      "pickValue": "Выберите значение",
+      "recipientAddress": "Адрес получателя",
+      "recipientParachain": "Целевой парачейн",
+      "selectAccount": "Выбрать аккаунт",
+      "senderParachain": "Исходный парачейн",
+      "submitTransaction": "Отправить транзакцию",
+      "title": "Отправить XCM-сообщение",
+      "transactionSuccess": "Транзакция успешно выполнена!",
+      "wallet": {
+        "noAccounts": "В выбранном кошельке аккаунты не найдены.",
+        "noChange": "Не удалось сменить аккаунт.",
+        "noConnection": "Не удалось подключить кошелёк.",
+        "noExtensionFound": "Расширение кошелька не обнаружено. Установите его, чтобы подключиться."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "Отправить XCM",
+      "showInExplorer": "Показать в обозревателе"
+    },
+    "bottomBar": {
+      "dateRange": "Период",
+      "parachains": "Парачейны",
+      "resources": "Инструменты",
+      "selectDateRange": "Выберите период:",
+      "selectParachains": "Выберите парачейны:"
+    },
+    "network": {
+      "channelInfo": "Сведения о канале",
+      "idHash": "ID (хеш): <b>{{address}}</b><br>Сообщения: <b>{{count}}</b>",
+      "openChannels": "Открытые каналы",
+      "selected": {
+        "activatedAt": "Активирован",
+        "color": "Выбранный канал"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Аккаунты",
+      "arrangement": "Расположение",
+      "assets": "Активы",
+      "assetsTransfered": "Переданные активы",
+      "parachains": "Парачейны"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Включить плавающую анимацию",
+      "title": "Настройки анимации"
+    },
+    "colors": {
+      "highlightedChannelColor": "Выделенный канал",
+      "primaryChannelColor": "Основной канал",
+      "secondaryChannelColor": "Вторичный канал",
+      "selectColor": "Выбрать цвет",
+      "selectedChannelColor": "Выбранный канал"
+    },
+    "general": {
+      "description": "Настройте цвета каналов или измените расположение парачейнов. Изменения применяются сразу.",
+      "title": "Общие"
+    },
+    "layout": {
+      "arrangement": "Расположение",
+      "selectArrangement": "Выберите расположение"
+    },
+    "localisation": {
+      "language": "Язык",
+      "selectLanguage": "Выбрать язык"
+    },
+    "skybox": {
+      "description": "Загрузите пользовательский skybox. Каждое изображение представляет одну грань куба. Убедитесь, что все изображения стыкуются без швов. Нажмите «Сохранить skybox», чтобы применить.",
+      "faces": {
+        "back": "Задняя грань",
+        "bottom": "Нижняя грань",
+        "front": "Передняя грань",
+        "left": "Левая грань",
+        "right": "Правая грань",
+        "top": "Верхняя грань"
+      },
+      "imagePlaceholder": "Выбрать изображение",
+      "imageRequired": "Это изображение обязательно",
+      "messages": {
+        "saved": "Skybox сохранён",
+        "saveError": "Не удалось сохранить skybox в хранилище браузера.",
+        "saveSuccess": "Skybox успешно применён."
+      },
+      "saveButton": "Сохранить skybox",
+      "title": "Настройка skybox"
+    },
+    "title": "Настройки"
+  },
+  "status": {
+    "cannotBeCalculated": "Недоступно",
+    "error": "Ошибка",
+    "failed": "Сбой",
+    "success": "Успех"
+  }
+}

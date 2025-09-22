@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "اختيار العتبة"
+    },
+    "amounts": {
+      "median": "الوسيط",
+      "title": "المبلغ المُحوَّل يوميًا"
+    },
+    "assets": {
+      "amounts": "المبالغ",
+      "title": "الأصول المنقولة"
+    },
+    "calls": {
+      "title": "حجم استدعاءات XCM"
+    },
+    "common": {
+      "amountsChartInfo": "انقر على يوم لعرض القيم التفصيلية",
+      "downloads": {
+        "downloadSvgTooltip": "تنزيل المخطط (SVG)",
+        "downloadZipTooltip": "تنزيل بيانات المخطط (ZIP)"
+      },
+      "messageCount": "الرسائل",
+      "total": "الإجمالي"
+    },
+    "tabs": {
+      "accounts": "الحسابات",
+      "amounts": "المبالغ",
+      "assets": "الأصول",
+      "success": "نجاح"
+    }
+  },
+  "errors": {
+    "fileError": "حدث خطأ أثناء قراءة الملف.",
+    "fileRead": "تعذر قراءة الملف.",
+    "image": "حدث خطأ أثناء حفظ الصور: ",
+    "imageSave": "تعذر حفظ الصورة في قاعدة البيانات: ",
+    "noAccount": "لم يتم العثور على حساب.",
+    "noDownloadData": "لا توجد بيانات متاحة للتنزيل."
+  },
+  "filters": {
+    "byBoth": "حسب كلاهما",
+    "byDestination": "حسب الوجهة",
+    "byOrigin": "حسب المصدر",
+    "select": "اختيار…",
+    "selectOne": "اختر خيارًا"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "قيمة التحويل",
+      "assetSymbol": "الأصل",
+      "connectWallet": "ربط المحفظة",
+      "noAccountSelected": "لم يتم اختيار حساب. يُرجى ربط المحفظة أولًا.",
+      "pickValue": "اختر قيمة",
+      "recipientAddress": "عنوان المستلم",
+      "recipientParachain": "باراشين الوجهة",
+      "selectAccount": "اختيار الحساب",
+      "senderParachain": "باراشين المصدر",
+      "submitTransaction": "إرسال المعاملة",
+      "title": "إرسال رسالة XCM",
+      "transactionSuccess": "تمت العملية بنجاح!",
+      "wallet": {
+        "noAccounts": "لا توجد حسابات في المحفظة المحددة.",
+        "noChange": "فشل تغيير الحساب.",
+        "noConnection": "تعذر ربط المحفظة.",
+        "noExtensionFound": "لم يتم اكتشاف إضافة محفظة. يرجى تثبيت واحدة للاتصال."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "إرسال XCM",
+      "showInExplorer": "العرض في المستكشف"
+    },
+    "bottomBar": {
+      "dateRange": "النطاق الزمني",
+      "parachains": "الباراشين",
+      "resources": "الأدوات",
+      "selectDateRange": "اختر النطاق الزمني:",
+      "selectParachains": "اختر الباراشين:"
+    },
+    "network": {
+      "channelInfo": "تفاصيل القناة",
+      "idHash": "المعرّف (Hash): <b>{{address}}</b><br>الرسائل: <b>{{count}}</b>",
+      "openChannels": "القنوات المفتوحة",
+      "selected": {
+        "activatedAt": "تم التفعيل في",
+        "color": "القناة المحددة"
+      }
+    },
+    "taxonomy": {
+      "accounts": "الحسابات",
+      "arrangement": "الترتيب",
+      "assets": "الأصول",
+      "assetsTransfered": "الأصول المنقولة",
+      "parachains": "الباراشين"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "تفعيل حركة التعويم",
+      "title": "إعدادات الحركة"
+    },
+    "colors": {
+      "highlightedChannelColor": "القناة المميّزة",
+      "primaryChannelColor": "القناة الأساسية",
+      "secondaryChannelColor": "القناة الثانوية",
+      "selectColor": "اختيار اللون",
+      "selectedChannelColor": "القناة المحددة"
+    },
+    "general": {
+      "description": "خصّص ألوان القنوات أو غيّر مخطط الباراشين. تُطبَّق التغييرات فورًا.",
+      "title": "عام"
+    },
+    "layout": {
+      "arrangement": "الترتيب",
+      "selectArrangement": "اختر الترتيب"
+    },
+    "localisation": {
+      "language": "اللغة",
+      "selectLanguage": "اختر اللغة"
+    },
+    "skybox": {
+      "description": "حمّل Skybox مخصصًا. تمثل كل صورة وجهًا من المكعّب. تأكد من توافق الصور دون فواصل. انقر «حفظ Skybox» للتطبيق.",
+      "faces": {
+        "back": "الجهة الخلفية",
+        "bottom": "الجهة السفلية",
+        "front": "الجهة الأمامية",
+        "left": "الجهة اليسرى",
+        "right": "الجهة اليمنى",
+        "top": "الجهة العلوية"
+      },
+      "imagePlaceholder": "اختيار صورة",
+      "imageRequired": "هذه الصورة مطلوبة",
+      "messages": {
+        "saved": "تم حفظ Skybox",
+        "saveError": "فشل حفظ Skybox في تخزين المتصفح.",
+        "saveSuccess": "تم تطبيق Skybox بنجاح."
+      },
+      "saveButton": "حفظ Skybox",
+      "title": "تخصيص Skybox"
+    },
+    "title": "الإعدادات"
+  },
+  "status": {
+    "cannotBeCalculated": "غير متاح",
+    "error": "خطأ",
+    "failed": "فشل",
+    "success": "نجاح"
+  }
+}
