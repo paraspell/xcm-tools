@@ -998,6 +998,30 @@
         }
       },
       {
+        "symbol": "USDC",
+        "decimals": 6,
+        "assetId": "21",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "WUD",
         "decimals": 10,
         "assetId": "1000085",
@@ -1429,30 +1453,6 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x06e605775296e851ff43b4daa541bb0984e9d6fd"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "USDC",
-        "decimals": 6,
-        "assetId": "21",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 2004
-              },
-              {
-                "PalletInstance": 110
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
                 }
               }
             ]
