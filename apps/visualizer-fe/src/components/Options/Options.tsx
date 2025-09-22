@@ -6,7 +6,7 @@ import SkyboxUploadForm from './SkyboxUploadForm';
 
 const Options = () => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'options'
+    keyPrefix: 'settings'
   });
   return (
     <Grid gutter="xl">
@@ -17,10 +17,10 @@ const Options = () => {
         }}
       >
         <Title order={5} mb="xs" pr="lg">
-          {t('generalTitle')}
+          {t('general.title')}
         </Title>
         <Text size="sm" mb="md" c="dimmed" pr="lg">
-          {t('generalOptionsDesc')}
+          {t('general.description')}
         </Text>
         <GeneralOptions />
       </Grid.Col>
@@ -31,10 +31,10 @@ const Options = () => {
         }}
       >
         <Title order={5} mb="xs">
-          {t('customSkyboxTitle')}
+          {t('skybox.title')}
         </Title>
         <Text size="sm" mb="md" c="dimmed">
-          {t('customSkyboxDesc')}
+          {t('skybox.description')}
         </Text>
         <SkyboxUploadForm />
       </Grid.Col>

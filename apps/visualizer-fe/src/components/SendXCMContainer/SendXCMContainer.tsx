@@ -13,7 +13,7 @@ const SendXCMContainer = () => {
         <SendXcm />
       </Modal>
       <Button pos="absolute" right={24} top={24} onClick={open}>
-        {t('sendXcm')}
+        {t('main.actions.sendXcm')}
       </Button>
     </>
   );

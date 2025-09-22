@@ -1,5 +1,6 @@
 import { Button, Modal, Stack } from '@mantine/core';
 import { type FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { TWalletAccount } from '../../types';
 import { AccountSelector } from '../AccountSelector/AccountSelector';
@@ -24,6 +25,8 @@ const AccountSelectModal: FC<Props> = ({
 }) => {
   const [value, setValue] = useState<string | null>(null);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     setValue(accounts[0]?.address ?? null);
   }, [accounts]);
@@ -31,7 +34,7 @@ const AccountSelectModal: FC<Props> = ({
   const onConfirmClick = () => {
     const account = accounts.find(account => account.address === value);
     if (!account) {
-      throw new Error('Account not found');
+      throw new Error(t('errors.noAccount'));
     }
 
     onAccountSelect(account);

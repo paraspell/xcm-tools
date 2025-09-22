@@ -15,7 +15,7 @@ const SliderInput: FC<Props> = ({ value, onCustomChange, min, max, ...props }) =
   return (
     <Stack gap={4} {...props}>
       <Text size="sm" fw={500}>
-        {t('selectThreshold')}
+        {t('charts.accounts.selectThreshold')}
       </Text>
       <Slider min={min} max={max} value={value} onChange={onCustomChange} />
     </Stack>

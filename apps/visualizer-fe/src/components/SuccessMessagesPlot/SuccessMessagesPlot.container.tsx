@@ -44,12 +44,12 @@ const SuccessMessagesPlotContainer = () => {
   if (error) {
     return (
       <Center h="100%" w="100%">
-        {t('error')}
+        {t('status.error')}
       </Center>
     );
   }
   const onDownloadZipClick = () => {
-    if (!data) throw new Error('Could not download data.');
+    if (!data) throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<MessageCountsQuery['messageCounts'][number], '__typename'>)[] = [
       'paraId',
@@ -69,7 +69,7 @@ const SuccessMessagesPlotContainer = () => {
     <Stack gap="xl" pl="xl" pr="xl" flex={1}>
       <Group>
         <Title order={2} ta="center" flex={1}>
-          {t('successfulFailedXcmCalls')}
+          {t('charts.calls.title')}
         </Title>
         <DownloadButtons
           onDownloadZipClick={onDownloadZipClick}

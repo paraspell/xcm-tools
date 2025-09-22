@@ -28,49 +28,49 @@ const Options = () => {
   return (
     <Stack gap="sm" pr="lg">
       <ColorInput
-        label={t('primaryChannelColor')}
-        placeholder={t('selectColor')}
+        label={t('settings.colors.primaryChannelColor')}
+        placeholder={t('settings.colors.selectColor')}
         value={primaryChannelColor}
         onChange={setPrimaryChannelColor}
       />
       <ColorInput
-        label={t('highlightedChannelColor')}
-        placeholder={t('selectColor')}
+        label={t('settings.colors.highlightedChannelColor')}
+        placeholder={t('settings.colors.selectColor')}
         value={highlightedChannelColor}
         onChange={setHighlightedChannelColor}
       />
       <ColorInput
-        label={t('secondaryChannelColor')}
-        placeholder={t('selectColor')}
+        label={t('settings.colors.secondaryChannelColor')}
+        placeholder={t('settings.colors.selectColor')}
         value={secondaryChannelColor}
         onChange={setSecondaryChannelColor}
       />
       <ColorInput
-        label={t('selectedChannelColor')}
-        placeholder={t('selectColor')}
+        label={t('settings.colors.selectedChannelColor')}
+        placeholder={t('settings.colors.selectColor')}
         value={selectedChannelColor}
         onChange={setSelectedChannelColor}
       />
       <Select
-        label={t('arrangement')}
-        placeholder={t('selectArrangement')}
+        label={t('settings.layout.arrangement')}
+        placeholder={t('settings.layout.selectArrangement')}
         data={[
-          { value: CountOption.ORIGIN, label: t('byOrigin') },
-          { value: CountOption.DESTINATION, label: t('byDestination') },
-          { value: CountOption.BOTH, label: t('byBoth') }
+          { value: CountOption.ORIGIN, label: t('filters.byOrigin') },
+          { value: CountOption.DESTINATION, label: t('filters.byDestination') },
+          { value: CountOption.BOTH, label: t('filters.byBoth') }
         ]}
         value={parachainArrangement}
         onChange={onParachainArrangementChange}
       />
       <Stack gap={0}>
         <Text size="sm" fw="500">
-          {t('options.animationSettingsTitle')}
+          {t('settings.animation.title')}
         </Text>
         <Group mt="xs">
           <Switch
             checked={animationEnabled}
             onChange={event => setAnimationEnabled(event.currentTarget.checked)}
-            label={t('options.floatingAnimationDesc')}
+            label={t('settings.animation.enableFloatingDesc')}
           />
         </Group>
       </Stack>

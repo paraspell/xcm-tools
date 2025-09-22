@@ -12,12 +12,12 @@ const DownloadButtons: FC<Props> = ({ onDownloadZipClick, onDownloadSvgClick }) 
   const { t } = useTranslation();
   return (
     <Group gap="xs">
-      <Tooltip label={t('downloadZipTooltip')}>
+      <Tooltip label={t('charts.common.downloads.downloadZipTooltip')}>
         <ActionIcon onClick={onDownloadZipClick} variant="outline" size="sm">
           <IconDownload style={{ width: '70%', height: '70%' }} stroke={1.5} />
         </ActionIcon>
       </Tooltip>
-      <Tooltip label={t('downloadSvgTooltip')}>
+      <Tooltip label={t('charts.common.downloads.downloadSvgTooltip')}>
         <ActionIcon onClick={onDownloadSvgClick} variant="outline" size="sm">
           <IconPhotoDown style={{ width: '70%', height: '70%' }} stroke={1.5} />
         </ActionIcon>

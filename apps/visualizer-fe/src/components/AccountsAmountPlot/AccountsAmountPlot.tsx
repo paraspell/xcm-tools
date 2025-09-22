@@ -58,7 +58,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
           encodedAddress = address;
         }
 
-        return `${t('idHash', { address, count: point.value })} <br> <a target="_blank" href="https://subscan.io/account/${encodedAddress}">${t('showInExplorer')}</a>`;
+        return `${t('main.network.idHash', { address, count: point.value })} <br> <a target="_blank" href="https://subscan.io/account/${encodedAddress}">${t('main.actions.showInExplorer')}</a>`;
       }
     },
     plotOptions: {

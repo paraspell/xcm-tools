@@ -34,7 +34,7 @@ const AssetsTransferedPlotContainer = () => {
   });
 
   const onDownloadZipClick = () => {
-    if (!data) throw new Error('Could not download data.');
+    if (!data) throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<
       AssetCountsBySymbolQuery['assetCountsBySymbol'][number],
@@ -60,7 +60,7 @@ const AssetsTransferedPlotContainer = () => {
   if (error) {
     return (
       <Center h="100%" w="100%">
-        {t('error')}
+        {t('status.error')}
       </Center>
     );
   }
@@ -69,7 +69,7 @@ const AssetsTransferedPlotContainer = () => {
     <Stack gap="xl" w="100%" h="100%" pl="xl" pr="xl">
       <Group>
         <Title order={2} ta="center" flex={1}>
-          {t('assetsTransfered')}
+          {t('charts.assets.title')}
         </Title>
         <DownloadButtons
           onDownloadZipClick={onDownloadZipClick}

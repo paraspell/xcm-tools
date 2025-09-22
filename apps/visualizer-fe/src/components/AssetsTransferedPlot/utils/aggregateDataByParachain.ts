@@ -10,7 +10,7 @@ export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TA
   counts.forEach(asset => {
     const parachainKey = asset.paraId
       ? getParachainById(asset.paraId, selectedEcosystem) || `ID ${asset.paraId}`
-      : t('total');
+      : t('charts.common.total');
     if (!accumulator[parachainKey]) {
       accumulator[parachainKey] = { parachain: parachainKey, counts: {} };
     }

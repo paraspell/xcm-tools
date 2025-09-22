@@ -23,8 +23,8 @@ const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
 
   return (
     <MultiSelect
-      label={t('parachains')}
-      placeholder={t('select')}
+      label={t('main.taxonomy.parachains')}
+      placeholder={t('filters.select')}
       data={[...getChainsByEcosystem(Ecosystem.POLKADOT), 'Polkadot']}
       onChange={onChangeInternal}
       searchable

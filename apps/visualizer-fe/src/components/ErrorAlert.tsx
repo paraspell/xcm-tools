@@ -14,7 +14,7 @@ const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => {
   const { t } = useTranslation();
   return (
     <Alert
-      title={t('error')}
+      title={t('status.error')}
       icon={alertIcon}
       withCloseButton
       onClose={onAlertCloseClick}
