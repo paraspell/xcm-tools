@@ -36,6 +36,7 @@ import {
   hasXcmPaymentApiSupport,
   InvalidParameterError,
   isAssetEqual,
+  isAssetXcEqual,
   isConfig,
   isForeignAsset,
   isRelayChain,
@@ -583,6 +584,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,
+        forwardedXcms,
         feeAsset ?? nativeAsset
       )
 
@@ -627,31 +629,65 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   async getXcmPaymentApiFee(
     chain: TSubstrateChain,
-    xcm: any,
+    localXcm: any,
+    forwardedXcm: any,
     asset: TAssetInfo,
     transformXcm = false
   ): Promise<bigint> {
-    const weight = await this.api
-      .getUnsafeApi()
-      .apis.XcmPaymentApi.query_xcm_weight(transformXcm ? transform(xcm) : xcm)
+    const transformedXcm = transformXcm ? transform(localXcm) : localXcm
+
+    const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(transformedXcm)
 
     assertHasLocation(asset)
 
-    const localizedLocation =
-      chain.startsWith('AssetHub') || isRelayChain(chain)
-        ? localizeLocation(chain, asset.location)
-        : asset.location
+    const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
-    const transformedLocation = transform(localizedLocation)
+    const transformedAssetLoc = transform(assetLocalizedLoc)
 
-    const feeResult = await this.api
+    const execFeeRes = await this.api
       .getUnsafeApi()
       .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
         type: Version.V4,
-        value: transformedLocation
+        value: transformedAssetLoc
       })
 
-    return feeResult.value
+    const deliveryFeeRes =
+      forwardedXcm.length > 0
+        ? await this.api
+            .getUnsafeApi()
+            .apis.XcmPaymentApi.query_delivery_fees(forwardedXcm[0], forwardedXcm[1][0])
+        : undefined
+
+    const deliveryFeeResolved =
+      deliveryFeeRes?.value?.value.length > 0 ? deliveryFeeRes?.value?.value[0].fun.value : 0n
+
+    const nativeAsset = findNativeAssetInfoOrThrow(chain)
+
+    let deliveryFee: bigint
+    if (isAssetXcEqual(asset, nativeAsset)) {
+      deliveryFee = deliveryFeeResolved
+    } else {
+      try {
+        assertHasLocation(nativeAsset)
+
+        const res = await this.quoteAhPrice(
+          localizeLocation(chain, nativeAsset.location),
+          assetLocalizedLoc,
+          deliveryFeeResolved,
+          false
+        )
+
+        deliveryFee = res ?? 0n
+      } catch (e) {
+        if (e instanceof Error && /Runtime entry RuntimeCall\(.+\) not found/.test(e.message)) {
+          deliveryFee = 0n
+        } else {
+          deliveryFee = 0n
+        }
+      }
+    }
+
+    return execFeeRes.value + deliveryFee
   }
 
   async getDryRunXcm({
@@ -660,7 +696,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     chain,
     origin,
     asset,
-    tx,
     feeAsset,
     originFee,
     amount
@@ -701,16 +736,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const txMethod = this.getMethod(tx)
-
-    if (
-      hasXcmPaymentApiSupport(chain) &&
-      asset &&
-      // Do not use XcmPaymentApi if method is `execute` on AssetHub or Polkadot
-      // as fee calculation would be incorrect
-      (txMethod !== 'execute' || (chain !== 'AssetHubPolkadot' && chain !== 'Polkadot'))
-    ) {
-      const fee = await this.getXcmPaymentApiFee(chain, xcm, asset)
+    if (hasXcmPaymentApiSupport(chain) && asset) {
+      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset)
 
       if (typeof fee === 'bigint') {
         return {
