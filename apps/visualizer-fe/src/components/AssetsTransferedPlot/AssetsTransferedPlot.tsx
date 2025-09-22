@@ -21,7 +21,7 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
 
   const aggregatedData = useMemo(() => {
     return Object.values(aggregateDataByParachain(counts, t, selectedEcosystem));
-  }, [counts]);
+  }, [counts, t]);
 
   const series = useMemo(() => {
     return generateSeries(counts);

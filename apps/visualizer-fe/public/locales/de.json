@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Schwellwert auswählen"
+    },
+    "amounts": {
+      "median": "Median",
+      "title": "Täglich übertragene Summe"
+    },
+    "assets": {
+      "amounts": "Beträge",
+      "title": "Übertragene Assets"
+    },
+    "calls": {
+      "title": "XCM-Aufrufvolumen"
+    },
+    "common": {
+      "amountsChartInfo": "Klicken Sie auf einen Tag, um Detailwerte anzuzeigen",
+      "downloads": {
+        "downloadSvgTooltip": "Diagramm herunterladen (SVG)",
+        "downloadZipTooltip": "Diagrammdaten herunterladen (ZIP)"
+      },
+      "messageCount": "Nachrichten",
+      "total": "Gesamt"
+    },
+    "tabs": {
+      "accounts": "Konten",
+      "amounts": "Beträge",
+      "assets": "Assets",
+      "success": "Erfolg"
+    }
+  },
+  "errors": {
+    "fileError": "Fehler beim Lesen der Datei.",
+    "fileRead": "Datei konnte nicht gelesen werden.",
+    "image": "Beim Speichern von Bildern ist ein Fehler aufgetreten: ",
+    "imageSave": "Bild konnte nicht in der DB gespeichert werden: ",
+    "noAccount": "Konto nicht gefunden.",
+    "noDownloadData": "Daten zum Herunterladen sind nicht verfügbar."
+  },
+  "filters": {
+    "byBoth": "Nach beiden",
+    "byDestination": "Nach Ziel",
+    "byOrigin": "Nach Ursprung",
+    "select": "Auswählen…",
+    "selectOne": "Eine Option wählen"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Überweisungsbetrag",
+      "assetSymbol": "Asset",
+      "connectWallet": "Wallet verbinden",
+      "noAccountSelected": "Kein Konto ausgewählt. Verbinden Sie zuerst Ihre Wallet.",
+      "pickValue": "Wert auswählen",
+      "recipientAddress": "Empfängeradresse",
+      "recipientParachain": "Ziel-Parachain",
+      "selectAccount": "Konto auswählen",
+      "senderParachain": "Quell-Parachain",
+      "submitTransaction": "Transaktion senden",
+      "title": "XCM-Nachricht senden",
+      "transactionSuccess": "Transaktion erfolgreich!",
+      "wallet": {
+        "noAccounts": "In der ausgewählten Wallet wurden keine Konten gefunden.",
+        "noChange": "Kontowechsel fehlgeschlagen.",
+        "noConnection": "Wallet konnte nicht verbunden werden.",
+        "noExtensionFound": "Keine Wallet-Erweiterung erkannt. Bitte installieren Sie eine, um sich zu verbinden."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "XCM senden",
+      "showInExplorer": "Im Explorer anzeigen"
+    },
+    "bottomBar": {
+      "dateRange": "Zeitraum",
+      "parachains": "Parachains",
+      "resources": "Werkzeuge",
+      "selectDateRange": "Zeitraum auswählen:",
+      "selectParachains": "Parachains auswählen:"
+    },
+    "network": {
+      "channelInfo": "Kanal-Details",
+      "idHash": "ID (Hash): <b>{{address}}</b><br>Nachrichten: <b>{{count}}</b>",
+      "openChannels": "Offene Kanäle",
+      "selected": {
+        "activatedAt": "Aktiviert am",
+        "color": "Ausgewählter Kanal"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Konten",
+      "arrangement": "Anordnung",
+      "assets": "Assets",
+      "assetsTransfered": "Übertragene Assets",
+      "parachains": "Parachains"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Schwebende Animation aktivieren",
+      "title": "Animationseinstellungen"
+    },
+    "colors": {
+      "highlightedChannelColor": "Hervorgehobener Kanal",
+      "primaryChannelColor": "Primärer Kanal",
+      "secondaryChannelColor": "Sekundärer Kanal",
+      "selectColor": "Farbe auswählen",
+      "selectedChannelColor": "Ausgewählter Kanal"
+    },
+    "general": {
+      "description": "Passen Sie die Kanalfarben an oder ändern Sie das Parachain-Layout. Änderungen werden sofort angewendet.",
+      "title": "Allgemein"
+    },
+    "layout": {
+      "arrangement": "Anordnung",
+      "selectArrangement": "Anordnung auswählen"
+    },
+    "localisation": {
+      "language": "Sprache",
+      "selectLanguage": "Sprache auswählen"
+    },
+    "skybox": {
+      "description": "Laden Sie eine benutzerdefinierte Skybox hoch. Jedes Bild entspricht einer Seite der Cube-Map. Stellen Sie sicher, dass alle Bilder nahtlos anschließen. Klicken Sie auf „Skybox speichern“, um anzuwenden.",
+      "faces": {
+        "back": "Rückseite",
+        "bottom": "Unterseite",
+        "front": "Vorderseite",
+        "left": "Linke Seite",
+        "right": "Rechte Seite",
+        "top": "Oberseite"
+      },
+      "imagePlaceholder": "Bild auswählen",
+      "imageRequired": "Dieses Bild ist erforderlich",
+      "messages": {
+        "saved": "Skybox gespeichert",
+        "saveError": "Skybox konnte nicht im Browser-Speicher gespeichert werden.",
+        "saveSuccess": "Skybox wurde erfolgreich angewendet."
+      },
+      "saveButton": "Skybox speichern",
+      "title": "Skybox-Anpassung"
+    },
+    "title": "Einstellungen"
+  },
+  "status": {
+    "cannotBeCalculated": "Nicht verfügbar",
+    "error": "Fehler",
+    "failed": "Fehlgeschlagen",
+    "success": "Erfolg"
+  }
+}

@@ -39,11 +39,11 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
       }
       const parachainKey = item.paraId
         ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
-        : 'Total';
+        : t('charts.common.total');
 
       acc[item.date][parachainKey] = Number(acc[item.date][parachainKey] || 0) + item.messageCount;
-      acc[item.date][`${parachainKey} Success`] = item.messageCountSuccess;
-      acc[item.date][`${parachainKey} Failed`] = item.messageCountFailed;
+      acc[item.date][`${parachainKey} ${t('status.success')}`] = item.messageCountSuccess;
+      acc[item.date][`${parachainKey} ${t('status.failed')}`] = item.messageCountFailed;
       return acc;
     }, {});
 
@@ -52,7 +52,12 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
     if (showMedian) {
       data = data.map(day => {
         const values = Object.keys(day)
-          .filter(key => !key.includes('Success') && !key.includes('Failed') && key !== 'date')
+          .filter(
+            key =>
+              !key.includes(t('status.success')) &&
+              !key.includes(t('status.failed')) &&
+              key !== 'date'
+          )
           .map(key => Number(day[key]));
 
         if (values.length > 0) {
@@ -74,13 +79,13 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
     counts.reduce<Record<string, boolean>>((result, item) => {
       const key = item.paraId
         ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
-        : 'Total';
+        : t('charts.common.total');
       result[key] = true;
       return result;
     }, {})
   ).map(key => ({
     name: key,
-    color: key === 'Total' ? 'blue.6' : getParachainColor(key, selectedEcosystem)
+    color: key === t('charts.common.total') ? 'blue.6' : getParachainColor(key, selectedEcosystem)
   }));
 
   const onTooltipClose = () => {
@@ -118,10 +123,10 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
               return acc;
             }
             const total =
-              item.name === 'Total'
+              item.name === t('charts.common.total')
                 ? {
                     ...item,
-                    name: t('charts.common.total'),
+                    name: item.name,
                     value: item.value,
                     color: item.color,
                     parachain: item.name

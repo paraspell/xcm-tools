@@ -13,15 +13,19 @@ type Props = {
   counts: MessageCountsQuery['messageCounts'];
 };
 
-const getParachainByIdInternal = (id: number | null, ecosystem: Ecosystem) => {
-  return id ? getParachainById(id, ecosystem) : 'Total';
+const getParachainByIdInternal = (id: number | null, ecosystem: Ecosystem, total: string) => {
+  return id ? getParachainById(id, ecosystem) : total;
 };
 
 const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
   const { selectedEcosystem } = useSelectedParachain();
   const chartData = counts.map(count => ({
-    category: getParachainByIdInternal(count.paraId ?? 0, selectedEcosystem),
+    category: getParachainByIdInternal(
+      count.paraId ?? 0,
+      selectedEcosystem,
+      t('charts.common.total')
+    ),
     Success: count.success,
     Failed: count.failed
   }));

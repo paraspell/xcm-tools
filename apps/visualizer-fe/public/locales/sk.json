@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Vyberte prah"
+    },
+    "amounts": {
+      "median": "Medián",
+      "title": "Denná prenesená suma"
+    },
+    "assets": {
+      "amounts": "Sumy",
+      "title": "Prenesené aktíva"
+    },
+    "calls": {
+      "title": "Objem XCM volaní"
+    },
+    "common": {
+      "amountsChartInfo": "Kliknite na deň pre zobrazenie detailných hodnôt",
+      "downloads": {
+        "downloadSvgTooltip": "Stiahnuť graf (SVG)",
+        "downloadZipTooltip": "Stiahnuť dáta grafu (ZIP)"
+      },
+      "messageCount": "Správy",
+      "total": "Spolu"
+    },
+    "tabs": {
+      "accounts": "Účty",
+      "amounts": "Sumy",
+      "assets": "Aktíva",
+      "success": "Úspech"
+    }
+  },
+  "errors": {
+    "fileError": "Chyba pri čítaní súboru.",
+    "fileRead": "Súbor sa nepodarilo prečítať.",
+    "image": "Pri ukladaní obrázkov nastala chyba: ",
+    "imageSave": "Obrázok sa nepodarilo uložiť do DB: ",
+    "noAccount": "Účet sa nenašiel.",
+    "noDownloadData": "Dáta na stiahnutie nie sú k dispozícii."
+  },
+  "filters": {
+    "byBoth": "Podľa oboch",
+    "byDestination": "Podľa cieľa",
+    "byOrigin": "Podľa zdroja",
+    "select": "Vybrať…",
+    "selectOne": "Vyberte možnosť"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Suma prevodu",
+      "assetSymbol": "Aktívum",
+      "connectWallet": "Pripojiť peňaženku",
+      "noAccountSelected": "Nie je vybraný účet. Najprv pripojte peňaženku.",
+      "pickValue": "Vyberte hodnotu",
+      "recipientAddress": "Adresa príjemcu",
+      "recipientParachain": "Cieľový parachain",
+      "selectAccount": "Vybrať účet",
+      "senderParachain": "Zdrojový parachain",
+      "submitTransaction": "Odoslať transakciu",
+      "title": "Odoslať XCM správu",
+      "transactionSuccess": "Transakcia úspešná!",
+      "wallet": {
+        "noAccounts": "V zvolenej peňaženke sa nenašli žiadne účty.",
+        "noChange": "Nepodarilo sa zmeniť účet.",
+        "noConnection": "Nepodarilo sa pripojiť peňaženku.",
+        "noExtensionFound": "Nenašlo sa žiadne rozšírenie peňaženky. Nainštalujte ho, aby ste sa mohli pripojiť."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "Odoslať XCM",
+      "showInExplorer": "Zobraziť v Exploreri"
+    },
+    "bottomBar": {
+      "dateRange": "Obdobie",
+      "parachains": "Parachainy",
+      "resources": "Nástroje",
+      "selectDateRange": "Vyberte obdobie:",
+      "selectParachains": "Vyberte parachainy:"
+    },
+    "network": {
+      "channelInfo": "Detaily kanála",
+      "idHash": "ID (Hash): <b>{{address}}</b><br>Správy: <b>{{count}}</b>",
+      "openChannels": "Otvorené kanály",
+      "selected": {
+        "activatedAt": "Aktivované dňa",
+        "color": "Vybraný kanál"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Účty",
+      "arrangement": "Usporiadanie",
+      "assets": "Aktíva",
+      "assetsTransfered": "Prenesené aktíva",
+      "parachains": "Parachainy"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Povoliť plávajúcu animáciu",
+      "title": "Nastavenia animácie"
+    },
+    "colors": {
+      "highlightedChannelColor": "Zvýraznený kanál",
+      "primaryChannelColor": "Primárny kanál",
+      "secondaryChannelColor": "Sekundárny kanál",
+      "selectColor": "Vybrať farbu",
+      "selectedChannelColor": "Vybraný kanál"
+    },
+    "general": {
+      "description": "Prispôsobte farby kanálov alebo zmeňte rozloženie parachainov. Zmeny sa aplikujú okamžite.",
+      "title": "Všeobecné"
+    },
+    "layout": {
+      "arrangement": "Usporiadanie",
+      "selectArrangement": "Vyberte usporiadanie"
+    },
+    "localisation": {
+      "language": "Jazyk",
+      "selectLanguage": "Vybrať jazyk"
+    },
+    "skybox": {
+      "description": "Nahrajte vlastný skybox. Každý obrázok predstavuje jednu stranu kocky. Uistite sa, že sa všetky obrázky bezchybne spájajú. Kliknutím na „Uložiť skybox“ použijete zmeny.",
+      "faces": {
+        "back": "Zadná strana",
+        "bottom": "Spodná strana",
+        "front": "Predná strana",
+        "left": "Ľavá strana",
+        "right": "Pravá strana",
+        "top": "Horná strana"
+      },
+      "imagePlaceholder": "Vybrať obrázok",
+      "imageRequired": "Tento obrázok je povinný",
+      "messages": {
+        "saved": "Skybox uložený",
+        "saveError": "Skybox sa nepodarilo uložiť do úložiska prehliadača.",
+        "saveSuccess": "Skybox bol úspešne aplikovaný."
+      },
+      "saveButton": "Uložiť skybox",
+      "title": "Prispôsobenie skyboxu"
+    },
+    "title": "Nastavenia"
+  },
+  "status": {
+    "cannotBeCalculated": "Nie je k dispozícii",
+    "error": "Chyba",
+    "failed": "Zlyhalo",
+    "success": "Úspech"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "しきい値を選択"
+    },
+    "amounts": {
+      "median": "中央値",
+      "title": "1日あたりの転送額"
+    },
+    "assets": {
+      "amounts": "金額",
+      "title": "転送済み資産"
+    },
+    "calls": {
+      "title": "XCM 呼び出し数"
+    },
+    "common": {
+      "amountsChartInfo": "日付をクリックすると詳細値を表示します",
+      "downloads": {
+        "downloadSvgTooltip": "グラフをダウンロード（SVG）",
+        "downloadZipTooltip": "グラフデータをダウンロード（ZIP）"
+      },
+      "messageCount": "メッセージ",
+      "total": "合計"
+    },
+    "tabs": {
+      "accounts": "アカウント",
+      "amounts": "金額",
+      "assets": "資産",
+      "success": "成功"
+    }
+  },
+  "errors": {
+    "fileError": "ファイルの読み取り中にエラーが発生しました。",
+    "fileRead": "ファイルを読み取れませんでした。",
+    "image": "画像の保存中にエラーが発生しました：",
+    "imageSave": "画像をデータベースに保存できませんでした：",
+    "noAccount": "アカウントが見つかりません。",
+    "noDownloadData": "ダウンロード可能なデータがありません。"
+  },
+  "filters": {
+    "byBoth": "両方で絞り込み",
+    "byDestination": "宛先で絞り込み",
+    "byOrigin": "送信元で絞り込み",
+    "select": "選択…",
+    "selectOne": "オプションを選択"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "転送額",
+      "assetSymbol": "資産",
+      "connectWallet": "ウォレットを接続",
+      "noAccountSelected": "アカウントが選択されていません。先にウォレットを接続してください。",
+      "pickValue": "値を選択",
+      "recipientAddress": "受取人アドレス",
+      "recipientParachain": "宛先パラチェーン",
+      "selectAccount": "アカウントを選択",
+      "senderParachain": "送信元パラチェーン",
+      "submitTransaction": "トランザクションを送信",
+      "title": "XCM メッセージを送信",
+      "transactionSuccess": "トランザクションが成功しました！",
+      "wallet": {
+        "noAccounts": "選択したウォレットにアカウントが見つかりません。",
+        "noChange": "アカウントの切り替えに失敗しました。",
+        "noConnection": "ウォレットに接続できませんでした。",
+        "noExtensionFound": "ウォレット拡張機能が検出されませんでした。接続するにはインストールしてください。"
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "XCM を送信",
+      "showInExplorer": "エクスプローラーで表示"
+    },
+    "bottomBar": {
+      "dateRange": "期間",
+      "parachains": "パラチェーン",
+      "resources": "ツール",
+      "selectDateRange": "期間を選択：",
+      "selectParachains": "パラチェーンを選択："
+    },
+    "network": {
+      "channelInfo": "チャネルの詳細",
+      "idHash": "ID（ハッシュ）：<b>{{address}}</b><br>メッセージ：<b>{{count}}</b>",
+      "openChannels": "開いているチャネル",
+      "selected": {
+        "activatedAt": "有効化日時",
+        "color": "選択されたチャネル"
+      }
+    },
+    "taxonomy": {
+      "accounts": "アカウント",
+      "arrangement": "配置",
+      "assets": "資産",
+      "assetsTransfered": "転送済み資産",
+      "parachains": "パラチェーン"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "フローティングアニメーションを有効化",
+      "title": "アニメーション設定"
+    },
+    "colors": {
+      "highlightedChannelColor": "強調表示チャネル",
+      "primaryChannelColor": "プライマリチャネル",
+      "secondaryChannelColor": "セカンダリチャネル",
+      "selectColor": "色を選択",
+      "selectedChannelColor": "選択されたチャネル"
+    },
+    "general": {
+      "description": "チャネルの色をカスタマイズしたり、パラチェーンのレイアウトを変更できます。変更は即時に適用されます。",
+      "title": "一般"
+    },
+    "layout": {
+      "arrangement": "配置",
+      "selectArrangement": "配置を選択"
+    },
+    "localisation": {
+      "language": "言語",
+      "selectLanguage": "言語を選択"
+    },
+    "skybox": {
+      "description": "カスタムスカイボックスをアップロードします。各画像はキューブマップの各面を表します。すべての画像がシームレスに合うようにしてください。「スカイボックスを保存」をクリックして適用します。",
+      "faces": {
+        "back": "背面",
+        "bottom": "下面",
+        "front": "前面",
+        "left": "左面",
+        "right": "右面",
+        "top": "上面"
+      },
+      "imagePlaceholder": "画像を選択",
+      "imageRequired": "この画像は必須です",
+      "messages": {
+        "saved": "スカイボックスを保存しました",
+        "saveError": "スカイボックスをブラウザストレージに保存できませんでした。",
+        "saveSuccess": "スカイボックスを適用しました。"
+      },
+      "saveButton": "スカイボックスを保存",
+      "title": "スカイボックスのカスタマイズ"
+    },
+    "title": "設定"
+  },
+  "status": {
+    "cannotBeCalculated": "利用不可",
+    "error": "エラー",
+    "failed": "失敗",
+    "success": "成功"
+  }
+}

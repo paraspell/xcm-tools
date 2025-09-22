@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Selecionar limite"
+    },
+    "amounts": {
+      "median": "Mediana",
+      "title": "Valor transferido diariamente"
+    },
+    "assets": {
+      "amounts": "Valores",
+      "title": "Ativos transferidos"
+    },
+    "calls": {
+      "title": "Volume de chamadas XCM"
+    },
+    "common": {
+      "amountsChartInfo": "Clique em um dia para ver valores detalhados",
+      "downloads": {
+        "downloadSvgTooltip": "Baixar gráfico (SVG)",
+        "downloadZipTooltip": "Baixar dados do gráfico (ZIP)"
+      },
+      "messageCount": "Mensagens",
+      "total": "Total"
+    },
+    "tabs": {
+      "accounts": "Contas",
+      "amounts": "Valores",
+      "assets": "Ativos",
+      "success": "Sucesso"
+    }
+  },
+  "errors": {
+    "fileError": "Erro ao ler o arquivo.",
+    "fileRead": "Não foi possível ler o arquivo.",
+    "image": "Ocorreu um erro ao salvar as imagens: ",
+    "imageSave": "Não foi possível salvar a imagem no banco de dados: ",
+    "noAccount": "Conta não encontrada.",
+    "noDownloadData": "Não há dados disponíveis para download."
+  },
+  "filters": {
+    "byBoth": "Por ambos",
+    "byDestination": "Por destino",
+    "byOrigin": "Por origem",
+    "select": "Selecionar…",
+    "selectOne": "Selecione uma opção"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Valor da transferência",
+      "assetSymbol": "Ativo",
+      "connectWallet": "Conectar carteira",
+      "noAccountSelected": "Nenhuma conta selecionada. Conecte sua carteira primeiro.",
+      "pickValue": "Escolher valor",
+      "recipientAddress": "Endereço do destinatário",
+      "recipientParachain": "Parachain de destino",
+      "selectAccount": "Selecionar conta",
+      "senderParachain": "Parachain de origem",
+      "submitTransaction": "Enviar transação",
+      "title": "Enviar mensagem XCM",
+      "transactionSuccess": "Transação bem-sucedida!",
+      "wallet": {
+        "noAccounts": "Nenhuma conta encontrada na carteira selecionada.",
+        "noChange": "Falha ao trocar de conta.",
+        "noConnection": "Não foi possível conectar a carteira.",
+        "noExtensionFound": "Nenhuma extensão de carteira detectada. Instale uma para se conectar."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "Enviar XCM",
+      "showInExplorer": "Exibir no explorador"
+    },
+    "bottomBar": {
+      "dateRange": "Período",
+      "parachains": "Parachains",
+      "resources": "Ferramentas",
+      "selectDateRange": "Selecionar período:",
+      "selectParachains": "Selecionar parachains:"
+    },
+    "network": {
+      "channelInfo": "Detalhes do canal",
+      "idHash": "ID (Hash): <b>{{address}}</b><br>Mensagens: <b>{{count}}</b>",
+      "openChannels": "Canais abertos",
+      "selected": {
+        "activatedAt": "Ativado em",
+        "color": "Canal selecionado"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Contas",
+      "arrangement": "Disposição",
+      "assets": "Ativos",
+      "assetsTransfered": "Ativos transferidos",
+      "parachains": "Parachains"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Ativar animação de flutuação",
+      "title": "Configurações de animação"
+    },
+    "colors": {
+      "highlightedChannelColor": "Canal destacado",
+      "primaryChannelColor": "Canal primário",
+      "secondaryChannelColor": "Canal secundário",
+      "selectColor": "Selecionar cor",
+      "selectedChannelColor": "Canal selecionado"
+    },
+    "general": {
+      "description": "Personalize as cores dos canais ou altere o layout dos parachains. As alterações são aplicadas imediatamente.",
+      "title": "Geral"
+    },
+    "layout": {
+      "arrangement": "Disposição",
+      "selectArrangement": "Selecionar disposição"
+    },
+    "localisation": {
+      "language": "Idioma",
+      "selectLanguage": "Selecionar idioma"
+    },
+    "skybox": {
+      "description": "Envie uma skybox personalizada. Cada imagem representa uma face do cubo. Certifique-se de que todas as imagens se alinhem perfeitamente. Clique em “Salvar skybox” para aplicar.",
+      "faces": {
+        "back": "Face traseira",
+        "bottom": "Face inferior",
+        "front": "Face frontal",
+        "left": "Face esquerda",
+        "right": "Face direita",
+        "top": "Face superior"
+      },
+      "imagePlaceholder": "Selecionar imagem",
+      "imageRequired": "Esta imagem é obrigatória",
+      "messages": {
+        "saved": "Skybox salva",
+        "saveError": "Falha ao salvar a skybox no armazenamento do navegador.",
+        "saveSuccess": "Skybox aplicada com sucesso."
+      },
+      "saveButton": "Salvar skybox",
+      "title": "Personalização de skybox"
+    },
+    "title": "Configurações"
+  },
+  "status": {
+    "cannotBeCalculated": "Indisponível",
+    "error": "Erro",
+    "failed": "Falhou",
+    "success": "Sucesso"
+  }
+}

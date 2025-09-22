@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "选择阈值"
+    },
+    "amounts": {
+      "median": "中位数",
+      "title": "每日转移金额"
+    },
+    "assets": {
+      "amounts": "金额",
+      "title": "已转移资产"
+    },
+    "calls": {
+      "title": "XCM 调用量"
+    },
+    "common": {
+      "amountsChartInfo": "点击某一天以查看详细数值",
+      "downloads": {
+        "downloadSvgTooltip": "下载图表（SVG）",
+        "downloadZipTooltip": "下载图表数据（ZIP）"
+      },
+      "messageCount": "消息",
+      "total": "总计"
+    },
+    "tabs": {
+      "accounts": "账户",
+      "amounts": "金额",
+      "assets": "资产",
+      "success": "成功"
+    }
+  },
+  "errors": {
+    "fileError": "读取文件时出错。",
+    "fileRead": "无法读取文件。",
+    "image": "保存图像时发生错误：",
+    "imageSave": "无法将图像保存到数据库：",
+    "noAccount": "未找到账户。",
+    "noDownloadData": "无可下载的数据。"
+  },
+  "filters": {
+    "byBoth": "按双方",
+    "byDestination": "按目标",
+    "byOrigin": "按来源",
+    "select": "选择…",
+    "selectOne": "请选择一项"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "转账金额",
+      "assetSymbol": "资产",
+      "connectWallet": "连接钱包",
+      "noAccountSelected": "未选择账户。请先连接钱包。",
+      "pickValue": "选择数值",
+      "recipientAddress": "收款地址",
+      "recipientParachain": "目标 Parachain",
+      "selectAccount": "选择账户",
+      "senderParachain": "源 Parachain",
+      "submitTransaction": "提交交易",
+      "title": "发送 XCM 消息",
+      "transactionSuccess": "交易成功！",
+      "wallet": {
+        "noAccounts": "在所选钱包中未找到任何账户。",
+        "noChange": "切换账户失败。",
+        "noConnection": "无法连接钱包。",
+        "noExtensionFound": "未检测到钱包扩展。请安装后再连接。"
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "发送 XCM",
+      "showInExplorer": "在区块浏览器中查看"
+    },
+    "bottomBar": {
+      "dateRange": "日期范围",
+      "parachains": "平行链",
+      "resources": "工具",
+      "selectDateRange": "选择日期范围：",
+      "selectParachains": "选择平行链："
+    },
+    "network": {
+      "channelInfo": "通道详情",
+      "idHash": "ID（哈希）：<b>{{address}}</b><br>消息：<b>{{count}}</b>",
+      "openChannels": "已打开的通道",
+      "selected": {
+        "activatedAt": "激活时间",
+        "color": "已选通道"
+      }
+    },
+    "taxonomy": {
+      "accounts": "账户",
+      "arrangement": "布局",
+      "assets": "资产",
+      "assetsTransfered": "已转移资产",
+      "parachains": "平行链"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "启用漂浮动画",
+      "title": "动画设置"
+    },
+    "colors": {
+      "highlightedChannelColor": "高亮通道",
+      "primaryChannelColor": "主通道",
+      "secondaryChannelColor": "次通道",
+      "selectColor": "选择颜色",
+      "selectedChannelColor": "已选通道"
+    },
+    "general": {
+      "description": "自定义通道颜色或更改平行链布局。更改会立即生效。",
+      "title": "常规"
+    },
+    "layout": {
+      "arrangement": "布局",
+      "selectArrangement": "选择布局"
+    },
+    "localisation": {
+      "language": "语言",
+      "selectLanguage": "选择语言"
+    },
+    "skybox": {
+      "description": "上传自定义天幕（Skybox）。每张图片代表立方体的一面。请确保所有图片无缝对齐。点击“保存天幕”以应用。",
+      "faces": {
+        "back": "背面",
+        "bottom": "底面",
+        "front": "正面",
+        "left": "左侧",
+        "right": "右侧",
+        "top": "顶面"
+      },
+      "imagePlaceholder": "选择图片",
+      "imageRequired": "此图片为必填项",
+      "messages": {
+        "saved": "天幕已保存",
+        "saveError": "无法将天幕保存到浏览器存储。",
+        "saveSuccess": "天幕已成功应用。"
+      },
+      "saveButton": "保存天幕",
+      "title": "天幕自定义"
+    },
+    "title": "设置"
+  },
+  "status": {
+    "cannotBeCalculated": "不可用",
+    "error": "错误",
+    "failed": "失败",
+    "success": "成功"
+  }
+}

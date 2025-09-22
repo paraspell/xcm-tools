@@ -1,0 +1,151 @@
+{
+  "charts": {
+    "accounts": {
+      "selectThreshold": "Sélectionner le seuil"
+    },
+    "amounts": {
+      "median": "Médiane",
+      "title": "Montant transféré quotidien"
+    },
+    "assets": {
+      "amounts": "Montants",
+      "title": "Actifs transférés"
+    },
+    "calls": {
+      "title": "Volume des appels XCM"
+    },
+    "common": {
+      "amountsChartInfo": "Cliquez un jour pour afficher les valeurs détaillées",
+      "downloads": {
+        "downloadSvgTooltip": "Télécharger le graphique (SVG)",
+        "downloadZipTooltip": "Télécharger les données du graphique (ZIP)"
+      },
+      "messageCount": "Messages",
+      "total": "Total"
+    },
+    "tabs": {
+      "accounts": "Comptes",
+      "amounts": "Montants",
+      "assets": "Actifs",
+      "success": "Succès"
+    }
+  },
+  "errors": {
+    "fileError": "Erreur lors de la lecture du fichier.",
+    "fileRead": "Impossible de lire le fichier.",
+    "image": "Une erreur est survenue lors de l’enregistrement des images : ",
+    "imageSave": "Impossible d’enregistrer l’image dans la base de données : ",
+    "noAccount": "Compte introuvable.",
+    "noDownloadData": "Aucune donnée disponible au téléchargement."
+  },
+  "filters": {
+    "byBoth": "Par les deux",
+    "byDestination": "Par destination",
+    "byOrigin": "Par origine",
+    "select": "Sélectionner…",
+    "selectOne": "Choisissez une option"
+  },
+  "forms": {
+    "sendXcmForm": {
+      "amount": "Montant du transfert",
+      "assetSymbol": "Actif",
+      "connectWallet": "Connecter le portefeuille",
+      "noAccountSelected": "Aucun compte sélectionné. Connectez d’abord votre portefeuille.",
+      "pickValue": "Choisir une valeur",
+      "recipientAddress": "Adresse du destinataire",
+      "recipientParachain": "Parachain de destination",
+      "selectAccount": "Sélectionner un compte",
+      "senderParachain": "Parachain source",
+      "submitTransaction": "Envoyer la transaction",
+      "title": "Envoyer un message XCM",
+      "transactionSuccess": "Transaction réussie !",
+      "wallet": {
+        "noAccounts": "Aucun compte trouvé dans le portefeuille sélectionné.",
+        "noChange": "Échec du changement de compte.",
+        "noConnection": "Impossible de connecter le portefeuille.",
+        "noExtensionFound": "Aucune extension de portefeuille détectée. Veuillez en installer une pour vous connecter."
+      }
+    }
+  },
+  "main": {
+    "actions": {
+      "sendXcm": "Envoyer XCM",
+      "showInExplorer": "Afficher dans l’explorateur"
+    },
+    "bottomBar": {
+      "dateRange": "Plage de dates",
+      "parachains": "Parachains",
+      "resources": "Outils",
+      "selectDateRange": "Sélectionner la plage de dates :",
+      "selectParachains": "Sélectionner les parachains :"
+    },
+    "network": {
+      "channelInfo": "Détails du canal",
+      "idHash": "ID (Hash) : <b>{{address}}</b><br>Messages : <b>{{count}}</b>",
+      "openChannels": "Canaux ouverts",
+      "selected": {
+        "activatedAt": "Activé le",
+        "color": "Canal sélectionné"
+      }
+    },
+    "taxonomy": {
+      "accounts": "Comptes",
+      "arrangement": "Agencement",
+      "assets": "Actifs",
+      "assetsTransfered": "Actifs transférés",
+      "parachains": "Parachains"
+    }
+  },
+  "settings": {
+    "animation": {
+      "enableFloatingDesc": "Activer l’animation flottante",
+      "title": "Paramètres d’animation"
+    },
+    "colors": {
+      "highlightedChannelColor": "Canal en surbrillance",
+      "primaryChannelColor": "Canal principal",
+      "secondaryChannelColor": "Canal secondaire",
+      "selectColor": "Sélectionner une couleur",
+      "selectedChannelColor": "Canal sélectionné"
+    },
+    "general": {
+      "description": "Personnalisez les couleurs des canaux ou modifiez la disposition des parachains. Les changements s’appliquent immédiatement.",
+      "title": "Général"
+    },
+    "layout": {
+      "arrangement": "Agencement",
+      "selectArrangement": "Sélectionner un agencement"
+    },
+    "localisation": {
+      "language": "Langue",
+      "selectLanguage": "Sélectionner la langue"
+    },
+    "skybox": {
+      "description": "Téléversez une skybox personnalisée. Chaque image représente une face du cube. Assurez-vous que toutes les images s’alignent parfaitement. Cliquez sur « Enregistrer la skybox » pour appliquer.",
+      "faces": {
+        "back": "Face arrière",
+        "bottom": "Face inférieure",
+        "front": "Face avant",
+        "left": "Face gauche",
+        "right": "Face droite",
+        "top": "Face supérieure"
+      },
+      "imagePlaceholder": "Sélectionner une image",
+      "imageRequired": "Cette image est obligatoire",
+      "messages": {
+        "saved": "Skybox enregistrée",
+        "saveError": "Échec de l’enregistrement de la skybox dans le stockage du navigateur.",
+        "saveSuccess": "Skybox appliquée avec succès."
+      },
+      "saveButton": "Enregistrer la skybox",
+      "title": "Personnalisation de la skybox"
+    },
+    "title": "Paramètres"
+  },
+  "status": {
+    "cannotBeCalculated": "Non disponible",
+    "error": "Erreur",
+    "failed": "Échec",
+    "success": "Succès"
+  }
+}

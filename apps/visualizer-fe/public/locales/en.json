@@ -116,6 +116,10 @@
       "arrangement": "Arrangement",
       "selectArrangement": "Select Arrangement"
     },
+    "localisation": {
+      "language": "Language",
+      "selectLanguage": "Select Language"
+    },
     "skybox": {
       "description": "Upload a custom skybox. Each image represents one face of the cubemap. Ensure all images align seamlessly. Click “Save Skybox” to apply.",
       "faces": {

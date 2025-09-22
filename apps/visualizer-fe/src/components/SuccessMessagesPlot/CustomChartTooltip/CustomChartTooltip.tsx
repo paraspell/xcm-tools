@@ -114,8 +114,8 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => {
-  if (!label || label === 'Total') return undefined;
+const getParaId = (ecosystem: Ecosystem, label?: string, total?: string): number | undefined => {
+  if (!label || label === total) return undefined;
   return getParachainId(label, ecosystem);
 };
 
@@ -206,7 +206,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
 
   const { dateRange, selectedEcosystem } = useSelectedParachain();
 
-  const paraId = getParaId(selectedEcosystem, label as string);
+  const paraId = getParaId(selectedEcosystem, label as string, t('charts.common.total'));
 
   const [startDate, endDate] = dateRange;
 
