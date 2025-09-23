@@ -333,8 +333,24 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return res.data.free as bigint
   }
 
-  async getBalanceForeignPolkadotXcm(address: string, id?: string) {
-    const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
+  async getBalanceForeignPolkadotXcm(chain: TSubstrateChain, address: string, asset: TAssetInfo) {
+    if (chain.startsWith('Kilt')) {
+      assertHasLocation(asset)
+      const res = await this.api
+        .getUnsafeApi()
+        .query.Fungibles.Account.getValue(transform(asset.location), address)
+
+      return res && res.balance ? BigInt(res.balance) : 0n
+    }
+
+    assertHasId(asset)
+
+    const res = await this.api
+      .getUnsafeApi()
+      .query.Assets.Account.getValue(
+        chain === 'NeuroWeb' ? BigInt(asset.assetId) : asset.assetId,
+        address
+      )
 
     return res && res.balance ? BigInt(res.balance) : 0n
   }
@@ -390,6 +406,35 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     if (chain === 'Centrifuge' || chain === 'Altair') {
       pallet = 'OrmlTokens'
+    }
+
+    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust') {
+      assertHasId(asset)
+      const response = await this.api
+        .getUnsafeApi()
+        .query.Assets.Account.getValue(
+          chain === 'Manta' || chain === 'Crust' ? BigInt(asset.assetId) : asset.assetId,
+          address
+        )
+      return response ? BigInt(response.free.toString()) : 0n
+    }
+
+    if (chain === 'Unique') {
+      assertHasLocation(asset)
+      assertHasId(asset)
+      const unsafeApi = this.api.getUnsafeApi()
+
+      const collectionId = await unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue(
+        transform(asset.location)
+      )
+
+      const balance = await unsafeApi.apis.UniqueApi.balance(
+        collectionId,
+        { type: 'Substrate', value: address },
+        asset.assetId
+      )
+
+      return balance.success ? BigInt(balance.value) : 0n
     }
 
     if (chain === 'Hydration') {
@@ -530,6 +575,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     let failureOutputReason = ''
 
     result = await performDryRunCall(false)
+
     isSuccess = getExecutionSuccessFromResult(result)
 
     if (!isSuccess) {

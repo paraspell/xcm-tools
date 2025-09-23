@@ -326,7 +326,11 @@ describe('PolkadotJsApi', () => {
       const id = '1'
       const parsedId = new u32(mockApiPromise.registry, id)
 
-      const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
+      const balance = await polkadotApi.getBalanceForeignPolkadotXcm('AssetHubPolkadot', address, {
+        symbol: 'DOT',
+        assetId: id,
+        decimals: 10
+      })
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
       expect(balance).toBe(3000n)
@@ -345,7 +349,11 @@ describe('PolkadotJsApi', () => {
         mockResponse as unknown as VoidFn
       )
 
-      const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
+      const balance = await polkadotApi.getBalanceForeignPolkadotXcm('Hydration', address, {
+        symbol: 'DOT',
+        assetId: id,
+        decimals: 10
+      })
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
       expect(balance).toBe(0n)

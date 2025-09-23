@@ -113,10 +113,12 @@ const AssetClaim = () => {
         });
         tx = await builder
           .claimFrom(from)
-          .currency({
-            location: { parents: Parents.ONE, interior: { Here: null } },
-            amount,
-          })
+          .currency([
+            {
+              location: { parents: Parents.ONE, interior: { Here: null } },
+              amount,
+            },
+          ])
           .address(address)
           .build();
         api = builder.getApi();

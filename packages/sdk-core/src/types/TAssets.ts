@@ -1,4 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
@@ -9,8 +10,9 @@ export type TSetBalanceRes = {
   balanceTx: TSerializedApiCall
 }
 
-export interface IAssetsPallet {
-  mint<TApi, TRes>(
+export abstract class BaseAssetsPallet {
+  constructor(protected palletName: TPallet) {}
+  abstract mint<TApi, TRes>(
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,

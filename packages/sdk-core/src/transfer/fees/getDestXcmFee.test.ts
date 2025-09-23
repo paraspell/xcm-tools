@@ -65,6 +65,52 @@ describe('getDestXcmFee', () => {
     })
   })
 
+  it('returns 0n when paymentInfo attempt throws a non-InvalidCurrencyError', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      symbol: 'UNIT',
+      decimals: 12,
+      location: DOT_LOCATION
+    } as TAssetInfo)
+
+    vi.mocked(getReverseTxFee).mockRejectedValue(new Error('boom'))
+
+    const api = createApi()
+
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Astar',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'UNIT', amount: 1n },
+      asset: { symbol: 'UNIT' },
+      disableFallback: false
+    } as TGetFeeForDestChainOptions<unknown, unknown>
+
+    const res = await getDestXcmFee(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { location: DOT_LOCATION, amount: 1n })
+
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api,
+      'Astar',
+      'dest',
+      1n,
+      { symbol: 'UNIT' },
+      0n
+    )
+    expect(res).toEqual({
+      fee: 0n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
+  })
+
   it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has location', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)

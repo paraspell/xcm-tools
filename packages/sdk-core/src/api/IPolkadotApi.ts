@@ -50,7 +50,11 @@ export interface IPolkadotApi<TApi, TRes> {
   getEvmStorage(contract: string, slot: string): Promise<string>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
-  getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>
+  getBalanceForeignPolkadotXcm(
+    chain: TSubstrateChain,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint>
   getMythosForeignBalance(address: string): Promise<bigint>
   getBalanceForeignAssetsPallet(address: string, location: TLocation): Promise<bigint>
   getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>

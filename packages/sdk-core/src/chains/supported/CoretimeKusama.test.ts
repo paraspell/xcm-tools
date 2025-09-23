@@ -1,18 +1,13 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type CoretimeKusama from './CoretimeKusama'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  constructRelayToParaParameters: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('CoretimeKusama', () => {
   let chain: CoretimeKusama<unknown, unknown>
@@ -32,13 +27,9 @@ describe('CoretimeKusama', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {
-    await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+  it('throws ScenarioNotSupportedError for ParaToPara scenario', () => {
+    expect(() => chain.transferPolkadotXCM(mockInput)).toThrow(ScenarioNotSupportedError)
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {

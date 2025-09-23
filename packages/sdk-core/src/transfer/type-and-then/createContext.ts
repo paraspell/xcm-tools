@@ -2,7 +2,7 @@ import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
-import { assertHasLocation, getAssetReserveChain } from '../../utils'
+import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(
   chain: TSubstrateChain,
@@ -18,9 +18,13 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     )
   }
 
-  const reserveChain = isRelayChain(destChain)
-    ? destChain
-    : getAssetReserveChain(chain, chain, assetInfo.location)
+  const reserveChain =
+    // Paseo ecosystem migrated reserves to AssetHub
+    getRelayChainOf(chain) === 'Paseo'
+      ? getAssetReserveChain(chain, chain, assetInfo.location)
+      : isRelayChain(destChain)
+        ? destChain
+        : getAssetReserveChain(chain, chain, assetInfo.location)
 
   const destApi = api.clone()
   await destApi.init(destChain)

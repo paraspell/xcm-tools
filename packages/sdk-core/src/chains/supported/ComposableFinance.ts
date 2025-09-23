@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TSendInternalOptions } from '../../types'
+import type { TScenario, TSendInternalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
@@ -25,7 +25,7 @@ class ComposableFinance<TApi, TRes> extends Parachain<TApi, TRes> implements IXT
     return true
   }
 
-  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
     return true
   }
 }

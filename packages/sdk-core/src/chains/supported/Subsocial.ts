@@ -8,6 +8,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
+  TScenario,
   TSendInternalOptions
 } from '../../types'
 import Parachain from '../Parachain'
@@ -37,7 +38,7 @@ class Subsocial<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
     return true
   }
 
-  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
     return true
   }
 }

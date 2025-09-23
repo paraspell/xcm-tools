@@ -45,7 +45,8 @@ export const isSystemChain = (chain: TChain): boolean => {
     'CoretimePaseo',
     'Collectives',
     'Encointer',
-    'CollectivesWestend'
+    'CollectivesWestend',
+    'PAssetHub'
   ]
 
   return systemChains.includes(chain) || isRelayChain(chain)

@@ -294,11 +294,11 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     }
 
     if (destination === 'AssetHubKusama') {
-      return this.handleBridgeTransfer<TApi, TRes>(options, 'Kusama')
+      return this.handleBridgeTransfer(options, 'Kusama')
     }
 
     if (destination === 'Ethereum') {
-      return this.handleEthBridgeTransfer<TApi, TRes>(options)
+      return this.handleEthBridgeTransfer(options)
     }
 
     if (destination === 'Mythos') {

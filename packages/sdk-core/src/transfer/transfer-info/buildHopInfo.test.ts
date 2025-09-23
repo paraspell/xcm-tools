@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
 
@@ -30,7 +30,7 @@ vi.mock('../../../errors', () => ({
 }))
 
 vi.mock('../balance')
-vi.mock('../../pallets/assets')
+vi.mock('../../pallets/assets/balance')
 
 describe('buildHopInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>

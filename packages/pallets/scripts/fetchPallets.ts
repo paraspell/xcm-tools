@@ -13,7 +13,8 @@ const otherAssetPalletsByPriority = [
   'Tokens',
   'Assets',
   'ForeignAssets',
-  'AssetManager'
+  'AssetManager',
+  'Fungibles'
 ] as const
 
 const fetchPallets = async (api: ApiPromise): Promise<TPalletDetails[]> => {

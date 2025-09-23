@@ -58,6 +58,6 @@ describe('Subsocial', () => {
   })
 
   it('isReceivingTempDisabled should return true', () => {
-    expect(chain.isReceivingTempDisabled(sendOptions)).toBe(true)
+    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 })

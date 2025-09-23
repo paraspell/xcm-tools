@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DryRunFailedError, UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFee } from '../fees'
@@ -18,8 +18,8 @@ import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../utils')
-vi.mock('../../pallets/assets')
-vi.mock('../fees') // <-- now mocking getXcmFee
+vi.mock('../../pallets/assets/balance')
+vi.mock('../fees')
 
 describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {

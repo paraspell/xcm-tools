@@ -12,7 +12,7 @@ describe('AssetManagerPallet.setBalance', () => {
   })
 
   it('builds updateBalance tx with ForeignAsset currency and calls assertHasId', async () => {
-    const pallet = new AssetManagerPallet()
+    const pallet = new AssetManagerPallet('AssetManager')
     const address = 'Alice'
     const asset = { assetId: '42', amount: 123n } as WithAmount<TAssetInfo>
 

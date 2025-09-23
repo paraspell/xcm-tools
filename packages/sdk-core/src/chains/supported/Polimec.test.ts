@@ -9,6 +9,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
+  TSendInternalOptions,
   TTransferLocalOptions
 } from '../../types'
 import { getChain } from '../../utils'
@@ -18,9 +19,7 @@ vi.mock('../../pallets/assets', () => ({
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Polimec', () => {
   let polimec: Polimec<unknown, unknown>
@@ -76,6 +75,19 @@ describe('Polimec', () => {
 
     expect(spy).toHaveBeenCalled()
     expect(result).toBe('mocked result')
+  })
+
+  it('isSendingTempDisabled returns true for native asset and false otherwise', () => {
+    vi.spyOn(polimec, 'getNativeAssetSymbol').mockReturnValue('PLMC')
+
+    const nativeOpts = { assetInfo: { symbol: 'PLMC' } } as TSendInternalOptions<unknown, unknown>
+    const nonNativeOpts = { assetInfo: { symbol: 'USDC' } } as TSendInternalOptions<
+      unknown,
+      unknown
+    >
+
+    expect(polimec.isSendingTempDisabled(nativeOpts)).toBe(true)
+    expect(polimec.isSendingTempDisabled(nonNativeOpts)).toBe(false)
   })
 
   it('should use default version when version is undefined in transferPolkadotXCM', async () => {

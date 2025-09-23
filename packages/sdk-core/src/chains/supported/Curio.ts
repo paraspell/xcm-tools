@@ -4,7 +4,7 @@ import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TForeignOrTokenAsset, TSendInternalOptions } from '../../types'
+import type { TForeignOrTokenAsset, TScenario, TSendInternalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import Parachain from '../Parachain'
 
@@ -25,7 +25,7 @@ class Curio<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     return true
   }
 
-  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
     return true
   }
 }

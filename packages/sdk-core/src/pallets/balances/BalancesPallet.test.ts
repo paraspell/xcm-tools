@@ -12,7 +12,7 @@ describe('BalancesPallet.setBalance', () => {
   })
 
   it('uses address string for Hydration chains', async () => {
-    const pallet = new BalancesPallet()
+    const pallet = new BalancesPallet('Balances')
     const address = 'Alice'
     const chain = 'HydrationPaseo' as TSubstrateChain
     const asset = { amount: 111n } as WithAmount<TAssetInfo>
@@ -28,7 +28,7 @@ describe('BalancesPallet.setBalance', () => {
   })
 
   it('uses address string for Basilisk', async () => {
-    const pallet = new BalancesPallet()
+    const pallet = new BalancesPallet('Balances')
     const address = 'Alice'
     const chain = 'Basilisk' as TSubstrateChain
     const asset = { amount: 222n } as WithAmount<TAssetInfo>
@@ -42,7 +42,7 @@ describe('BalancesPallet.setBalance', () => {
   })
 
   it('uses address string when chain is EVM', async () => {
-    const pallet = new BalancesPallet()
+    const pallet = new BalancesPallet('Balances')
     const address = '0xAlice'
     const chain = 'Moonbeam' as TSubstrateChain
     const asset = { amount: 333n } as WithAmount<TAssetInfo>
@@ -56,7 +56,7 @@ describe('BalancesPallet.setBalance', () => {
   })
 
   it('uses { Id: address } for other non-EVM chains', async () => {
-    const pallet = new BalancesPallet()
+    const pallet = new BalancesPallet('Balances')
     const address = '5FbrsAddr'
     const chain = 'Acala' as TSubstrateChain
     const asset = { amount: 444n } as WithAmount<TAssetInfo>

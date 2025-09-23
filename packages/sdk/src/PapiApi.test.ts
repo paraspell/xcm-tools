@@ -127,6 +127,9 @@ describe('PapiApi', () => {
           },
           CurrenciesApi: {
             account: vi.fn().mockResolvedValue(null)
+          },
+          UniqueApi: {
+            balance: vi.fn()
           }
         },
         tx: {
@@ -161,6 +164,11 @@ describe('PapiApi', () => {
               })
             }
           },
+          Fungibles: {
+            Account: {
+              getValue: vi.fn()
+            }
+          },
           Assets: {
             Account: {
               getValue: vi.fn().mockResolvedValue({
@@ -180,6 +188,9 @@ describe('PapiApi', () => {
               getValue: vi.fn().mockResolvedValue({
                 balance: 5000n
               })
+            },
+            ForeignAssetToCollection: {
+              getValue: vi.fn()
             }
           },
           Tokens: {
@@ -533,7 +544,11 @@ describe('PapiApi', () => {
     it('should return the foreign balance as bigint when balance exists', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
       await papiApi.init(mockChain)
-      const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
+      const balance = await papiApi.getBalanceForeignPolkadotXcm(
+        'AssetHubPolkadot',
+        'some_address',
+        { symbol: 'KSM', assetId: 'asset_id' } as TAssetInfo
+      )
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(
@@ -543,11 +558,51 @@ describe('PapiApi', () => {
       expect(balance).toBe(3000n)
     })
 
+    it('getBalanceForeignPolkadotXcm uses Fungibles on Kilt* chains (by location)', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.query.Fungibles.Account.getValue = vi.fn().mockResolvedValue({ balance: 4321n })
+
+      const loc: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
+      const bal = await papiApi.getBalanceForeignPolkadotXcm('KiltPaseo', 'addr', {
+        symbol: 'KILT',
+        location: loc
+      } as TAssetInfo)
+
+      expect(unsafeApi.query.Fungibles.Account.getValue).toHaveBeenCalledWith(
+        transform(loc),
+        'addr'
+      )
+      expect(bal).toBe(4321n)
+    })
+
+    it('getBalanceForeignPolkadotXcm uses BigInt(assetId) on NeuroWeb', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue({ balance: 999n })
+
+      const bal = await papiApi.getBalanceForeignPolkadotXcm('NeuroWeb', 'addr', {
+        symbol: 'USDT',
+        assetId: '42'
+      } as TAssetInfo)
+
+      expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(42n, 'addr')
+      expect(bal).toBe(999n)
+    })
+
     it('should return null when balance does not exist', async () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue({})
 
-      const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
+      const balance = await papiApi.getBalanceForeignPolkadotXcm('Hydration', 'some_address', {
+        symbol: 'aUSDT',
+        assetId: '1002'
+      } as TAssetInfo)
 
       expect(balance).toBe(0n)
     })
@@ -643,6 +698,104 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getEntries).toHaveBeenCalledWith('some_address')
       expect(balance).toBe(6000n)
+    })
+
+    it('getBalanceForeignXTokens (Unique) resolves collection and returns balance when success', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue = vi
+        .fn()
+        .mockResolvedValue(123)
+
+      unsafeApi.apis.UniqueApi = {
+        balance: vi.fn().mockResolvedValue({ success: true, value: '4242' })
+      }
+
+      const asset = {
+        symbol: 'uUSDC',
+        assetId: '55',
+        location: { parents: 1, interior: { X1: { Parachain: 2037 } } }
+      } as unknown as TAssetInfo
+
+      const balance = await papiApi.getBalanceForeignXTokens('Unique', 'addr-ss58', asset)
+
+      expect(unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue).toHaveBeenCalledWith(
+        transform(asset.location)
+      )
+      expect(unsafeApi.apis.UniqueApi.balance).toHaveBeenCalledWith(
+        123,
+        { type: 'Substrate', value: 'addr-ss58' },
+        '55'
+      )
+      expect(balance).toBe(4242n)
+    })
+
+    it('getBalanceForeignXTokens (Unique) returns 0n when UniqueApi.balance is not successful', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue = vi
+        .fn()
+        .mockResolvedValue(999)
+
+      unsafeApi.apis.UniqueApi = {
+        balance: vi.fn().mockResolvedValue({ success: false, value: '0' })
+      }
+
+      const asset = {
+        symbol: 'uUSDT',
+        assetId: '77',
+        location: { parents: 1, interior: { X1: { Parachain: 2037 } } }
+      } as unknown as TAssetInfo
+
+      const balance = await papiApi.getBalanceForeignXTokens('Unique', 'addr-ss58', asset)
+
+      expect(unsafeApi.apis.UniqueApi.balance).toHaveBeenCalled()
+      expect(balance).toBe(0n)
+    })
+
+    it('getBalanceForeignXTokens (Manta) reads Assets pallet with BigInt(assetId)', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue({
+        free: { toString: () => '7777' }
+      })
+
+      const bal = await papiApi.getBalanceForeignXTokens('Manta', 'addr', {
+        symbol: 'USDC',
+        assetId: '100'
+      } as TAssetInfo)
+
+      expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(100n, 'addr')
+      expect(bal).toBe(7777n)
+    })
+
+    it('getBalanceForeignXTokens (Altair) reads OrmlTokens entries and matches by symbol', async () => {
+      papiApi = new PapiApi(mockPolkadotClient)
+      await papiApi.init(mockChain)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.OrmlTokens.Accounts.getEntries = vi.fn().mockResolvedValue([
+        {
+          keyArgs: ['addr', { toString: vi.fn().mockReturnValue('DOT') }],
+          value: { free: { toString: vi.fn().mockReturnValue('12345') } }
+        }
+      ])
+
+      const bal = await papiApi.getBalanceForeignXTokens('Altair', 'addr', {
+        symbol: 'DOT',
+        assetId: 'ignored-in-this-case'
+      } as TAssetInfo)
+
+      expect(unsafeApi.query.OrmlTokens.Accounts.getEntries).toHaveBeenCalledWith('addr')
+      expect(bal).toBe(12345n)
     })
 
     it('should return the balance when asset matches object by id', async () => {
