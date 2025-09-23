@@ -15,4 +15,7 @@ export class AssetCount {
 
   @Field(returnInt)
   count: number;
+
+  @Field()
+  amount: string;
 }

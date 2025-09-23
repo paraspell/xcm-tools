@@ -61,6 +61,7 @@ export const assetCountsBySymbolQueryDocument = graphql(`
       paraId
       symbol
       count
+      amount
     }
   }
 `);

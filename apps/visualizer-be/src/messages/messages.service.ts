@@ -249,33 +249,58 @@ export class MessageService {
 
     if (paraIds.length > 0) {
       query = `
-        SELECT origin_para_id, symbol, COUNT(symbol) as count
-        FROM (
-          SELECT origin_para_id, (jsonb_array_elements(assets)->>'symbol') AS symbol
-          FROM messages
-          WHERE 
-            ecosystem = $1
-            AND origin_block_timestamp BETWEEN $2 AND $3
-            AND origin_para_id = ANY($4)
-        ) as assets_symbols
-        WHERE symbol IS NOT NULL
-          AND symbol <> ''
+        WITH asset_rows AS (
+          SELECT
+            m.origin_para_id,
+            (a.elem->>'symbol')                    AS symbol,
+            NULLIF(a.elem->>'decimals','')::int    AS decimals,
+            NULLIF(a.elem->>'amount','')::numeric  AS amount_num
+          FROM messages m
+          CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
+          WHERE
+            m.ecosystem = $1
+            AND m.origin_block_timestamp BETWEEN $2 AND $3
+            AND m.origin_para_id = ANY($4)
+        )
+        SELECT
+          origin_para_id,
+          symbol,
+          MAX(decimals)                                            AS decimals,
+          COUNT(*)                                                 AS count,
+          SUM(amount_num) / POWER(10::numeric, MAX(decimals))      AS amount
+        FROM asset_rows
+        WHERE
+          symbol IS NOT NULL AND symbol <> ''
+          AND decimals IS NOT NULL
+          AND amount_num IS NOT NULL
         GROUP BY origin_para_id, symbol
         ORDER BY count DESC, origin_para_id;
       `;
       queryParameters.push(paraIds);
     } else {
       query = `
-        SELECT symbol, COUNT(symbol) as count
-        FROM (
-          SELECT (jsonb_array_elements(assets)->>'symbol') AS symbol
-          FROM messages
-          WHERE 
-            ecosystem = $1
-            AND origin_block_timestamp BETWEEN $2 AND $3
-        ) as assets_symbols
-        WHERE symbol IS NOT NULL
-          AND symbol <> ''
+        WITH asset_rows AS (
+          SELECT
+            m.origin_para_id,
+            (a.elem->>'symbol')                    AS symbol,
+            NULLIF(a.elem->>'decimals','')::int    AS decimals,
+            NULLIF(a.elem->>'amount','')::numeric  AS amount_num
+          FROM messages m
+          CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
+          WHERE
+            m.ecosystem = $1
+            AND m.origin_block_timestamp BETWEEN $2 AND $3
+        )
+        SELECT
+          symbol,
+          MAX(decimals)                                            AS decimals,
+          COUNT(*)                                                 AS count,
+          SUM(amount_num) / POWER(10::numeric, MAX(decimals))      AS amount
+        FROM asset_rows
+        WHERE
+          symbol IS NOT NULL AND symbol <> ''
+          AND decimals IS NOT NULL
+          AND amount_num IS NOT NULL
         GROUP BY symbol
         ORDER BY count DESC;
       `;
@@ -292,11 +317,13 @@ export class MessageService {
             paraId: result.origin_para_id,
             symbol: result.symbol,
             count: parseInt(result.count),
+            amount: result.amount,
           }
         : {
             ecosystem,
             symbol: result.symbol,
             count: parseInt(result.count),
+            amount: result.amount,
           },
     );
   }

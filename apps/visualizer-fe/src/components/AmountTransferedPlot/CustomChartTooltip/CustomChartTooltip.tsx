@@ -126,7 +126,7 @@ const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => 
 };
 
 const getLinkByEcosystem = (ecosystem: Ecosystem): string => {
-  return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_transfer?page=1`;
+  return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_message?page=1`;
 };
 
 const generateExplorerLink = (ecosystem: Ecosystem, from: number | undefined, date: string) => {

@@ -40,6 +40,7 @@ export type Asset = {
 
 export type AssetCount = {
   __typename?: 'AssetCount';
+  amount: Scalars['String']['output'];
   count: Scalars['Int']['output'];
   ecosystem: Scalars['String']['output'];
   paraId?: Maybe<Scalars['Int']['output']>;
@@ -263,6 +264,7 @@ export type AssetCountsBySymbolQuery = {
     paraId?: number | null;
     symbol: string;
     count: number;
+    amount: string;
   }>;
 };
 
@@ -747,7 +749,8 @@ export const AssetCountsBySymbolDocument = {
                 { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'symbol' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'count' } }
+                { kind: 'Field', name: { kind: 'Name', value: 'count' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'amount' } }
               ]
             }
           }
