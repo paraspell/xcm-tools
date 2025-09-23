@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Anchor,
   Button,
   Container,
   Group,
@@ -15,7 +16,13 @@ import classes from "./Footer.module.css";
 
 const data = [
   {
-    links,
+    links: [
+      ...links,
+      {
+        label: "Code of Conduct",
+        link: "https://www.netlify.com/code-of-conduct/",
+      },
+    ],
   },
 ];
 
@@ -57,7 +64,15 @@ export const Footer = () => {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="sm">
-          © 2025 lightspell.xyz
+          © 2025 lightspell.xyz · Powered by{" "}
+          <Anchor
+            href="https://www.netlify.com"
+            target="_blank"
+            size="sm"
+            c="dimmed"
+          >
+            Netlify
+          </Anchor>
         </Text>
 
         <Group
