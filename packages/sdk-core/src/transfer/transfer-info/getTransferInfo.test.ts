@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type {
   TGetTransferInfoOptions,
   TTransferInfo,
@@ -40,7 +40,7 @@ vi.mock('@paraspell/assets', async importOriginal => {
 
 vi.mock('../../errors')
 vi.mock('../../utils')
-vi.mock('../../pallets/assets')
+vi.mock('../../pallets/assets/balance')
 vi.mock('../utils')
 vi.mock('../fees')
 vi.mock('./buildDestInfo')

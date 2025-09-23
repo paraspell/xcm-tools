@@ -333,8 +333,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return res.data.free as bigint
   }
 
-  async getBalanceForeignPolkadotXcm(address: string, id?: string) {
-    const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
+  async getBalanceForeignPolkadotXcm(chain: TSubstrateChain, address: string, assetId: string) {
+    const res = await this.api
+      .getUnsafeApi()
+      .query[
+        chain.startsWith('KiltPaseo') ? 'BondedFungibles' : 'Assets'
+      ].Account.getValue(chain === 'NeuroWeb' ? BigInt(assetId) : assetId, address)
 
     return res && res.balance ? BigInt(res.balance) : 0n
   }
@@ -390,6 +394,28 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     if (chain === 'Centrifuge' || chain === 'Altair') {
       pallet = 'OrmlTokens'
+    }
+
+    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust') {
+      pallet = 'Assets'
+    }
+
+    if (chain === 'Unique') {
+      assertHasLocation(asset)
+      assertHasId(asset)
+      const unsafeApi = this.api.getUnsafeApi()
+
+      const collectionId = await unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue(
+        transform(asset.location)
+      )
+
+      const balance = await unsafeApi.apis.UniqueApi.balance(
+        collectionId,
+        { type: 'Substrate', value: address },
+        asset.assetId
+      )
+
+      return balance.success ? BigInt(balance.value) : 0n
     }
 
     if (chain === 'Hydration') {

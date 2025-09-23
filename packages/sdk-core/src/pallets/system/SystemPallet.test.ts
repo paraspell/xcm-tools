@@ -30,7 +30,7 @@ describe('SystemPallet.setBalance', () => {
   })
 
   it('builds set_storage with encoded amount at the calculated slot', async () => {
-    const pallet = new SystemPallet()
+    const pallet = new SystemPallet('System')
     const address = '0xAlice'
     const chain = 'Moonbeam' as TSubstrateChain
     const asset = { assetId: '123', amount: 321n } as unknown as WithAmount<TAssetInfo>

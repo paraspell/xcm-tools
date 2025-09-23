@@ -7,11 +7,11 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 
 vi.mock('@paraspell/assets')
-vi.mock('../../pallets/assets')
+vi.mock('../../pallets/assets/balance')
 
 describe('isSufficientOrigin', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>

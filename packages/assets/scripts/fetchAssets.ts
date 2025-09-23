@@ -413,6 +413,8 @@ export const fetchAllChainsAssets = async (assetsMapJson: any) => {
   for (const [chain, query] of typedEntries(chainToQuery)) {
     console.log(`Fetching assets for ${chain}...`)
 
+    if (chain !== 'ZeitgeistPaseo') continue
+
     let newData
 
     newData = await fetchTryMultipleProvidersWithTimeout(chain, getChainProviders, api =>

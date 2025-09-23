@@ -33,6 +33,8 @@ const fetchAssets = async (
 
         const locationJson = value.toJSON() as any
 
+        console.log(locationJson)
+
         const location =
           locationJson.location !== null && locationJson.location !== undefined
             ? capitalizeLocation(

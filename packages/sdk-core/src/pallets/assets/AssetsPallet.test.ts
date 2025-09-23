@@ -14,7 +14,7 @@ describe('AssetsPallet.setBalance', () => {
   })
 
   it('uses BigInt id and raw address for Moonbeam/Astar/Shiden and returns correct txs', async () => {
-    const pallet = new AssetsPallet()
+    const pallet = new AssetsPallet('Assets')
     const address = '0xAlice'
     const chain = 'Moonbeam' as TSubstrateChain
     const asset = { assetId: '123', amount: 999n } as WithAmount<TAssetInfo>
@@ -45,7 +45,7 @@ describe('AssetsPallet.setBalance', () => {
   })
 
   it('uses Number id and { Id: address } on non-EVM chains and returns correct txs', async () => {
-    const pallet = new AssetsPallet()
+    const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'
     const chain = 'Acala' as TSubstrateChain
     const asset = { assetId: '45', amount: 500n } as WithAmount<TAssetInfo>

@@ -12,7 +12,7 @@ describe('ForeignAssetsPallet.setBalance', () => {
   })
 
   it('returns force_asset_status and mint with correct params', async () => {
-    const pallet = new ForeignAssetsPallet()
+    const pallet = new ForeignAssetsPallet('ForeignAssets')
     const address = 'Alice'
     const location = { parents: 1, interior: { Here: null } }
     const asset = { location, amount: 123n } as WithAmount<TAssetInfo>

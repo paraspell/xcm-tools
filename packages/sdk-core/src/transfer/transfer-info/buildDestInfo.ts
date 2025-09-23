@@ -2,7 +2,7 @@ import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
 import { UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TBuildDestInfoOptions } from '../../types'
 
 export const buildDestInfo = async <TApi, TRes>({

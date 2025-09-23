@@ -1,9 +1,9 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
-import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasLocation } from '../../utils'
 
-export class ForeignAssetsPallet implements IAssetsPallet {
+export class ForeignAssetsPallet extends BaseAssetsPallet {
   mint(address: string, asset: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
     assertHasLocation(asset)
 
@@ -11,7 +11,7 @@ export class ForeignAssetsPallet implements IAssetsPallet {
 
     return Promise.resolve({
       assetStatusTx: {
-        module: 'ForeignAssets',
+        module: this.palletName,
         method: 'force_asset_status',
         parameters: {
           id: location,
@@ -25,7 +25,7 @@ export class ForeignAssetsPallet implements IAssetsPallet {
         }
       },
       balanceTx: {
-        module: 'ForeignAssets',
+        module: this.palletName,
         method: 'mint',
         parameters: {
           id: location,

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
 import { buildDestInfo } from './buildDestInfo'
 
@@ -24,7 +24,7 @@ vi.mock('../../../errors', () => ({
 }))
 
 vi.mock('../balance')
-vi.mock('../../pallets/assets')
+vi.mock('../../pallets/assets/balance')
 
 describe('buildDestInfo', () => {
   let mockApi: IPolkadotApi<unknown, unknown>

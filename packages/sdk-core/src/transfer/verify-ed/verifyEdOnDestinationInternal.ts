@@ -2,7 +2,7 @@ import { getExistentialDepositOrThrow, normalizeSymbol } from '@paraspell/assets
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
 
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFee } from '../fees'

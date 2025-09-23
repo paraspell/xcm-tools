@@ -665,12 +665,16 @@
         "index": 14
       },
       {
+        "name": "ForeignAssets",
+        "index": 16
+      },
+      {
         "name": "PolkadotXcm",
         "index": 31
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
+    "otherAssets": ["Assets", "ForeignAssets"]
   },
   "Pendulum": {
     "defaultPallet": "XTokens",
@@ -1253,7 +1257,7 @@
     "otherAssets": []
   },
   "AjunaPaseo": {
-    "defaultPallet": "PolkadotXcm",
+    "defaultPallet": "XTokens",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1262,6 +1266,10 @@
       {
         "name": "PolkadotXcm",
         "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 35
       },
       {
         "name": "Assets",
@@ -1352,12 +1360,16 @@
         "index": 6
       },
       {
+        "name": "BondedFungibles",
+        "index": 50
+      },
+      {
         "name": "PolkadotXcm",
         "index": 83
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["BondedFungibles"]
   },
   "LaosPaseo": {
     "defaultPallet": "PolkadotXcm",

@@ -1,9 +1,9 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
-import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
-export class AssetManagerPallet implements IAssetsPallet {
+export class AssetManagerPallet extends BaseAssetsPallet {
   mint(address: string, asset: WithAmount<TAssetInfo>, balance: bigint): Promise<TSetBalanceRes> {
     assertHasId(asset)
 
@@ -11,7 +11,7 @@ export class AssetManagerPallet implements IAssetsPallet {
 
     return Promise.resolve({
       balanceTx: {
-        module: 'AssetManager',
+        module: this.palletName,
         method: 'updateBalance',
         parameters: {
           who: { Id: address },

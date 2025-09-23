@@ -12,7 +12,7 @@ describe('CurrenciesPallet.setBalance', () => {
   })
 
   it('builds update_balance with numeric currency_id from string assetId', async () => {
-    const pallet = new CurrenciesPallet()
+    const pallet = new CurrenciesPallet('Currencies')
     const address = '5FbrsAddr'
     const asset = { assetId: '45', amount: 999n } as WithAmount<TAssetInfo>
 
@@ -31,7 +31,7 @@ describe('CurrenciesPallet.setBalance', () => {
   })
 
   it('builds update_balance with numeric currency_id from numeric assetId', async () => {
-    const pallet = new CurrenciesPallet()
+    const pallet = new CurrenciesPallet('Currencies')
     const address = '5FbrsAddr'
     const asset = { assetId: '7', amount: 1n } as WithAmount<TAssetInfo>
 
@@ -45,7 +45,7 @@ describe('CurrenciesPallet.setBalance', () => {
   })
 
   it('throws when assertHasId fails', () => {
-    const pallet = new CurrenciesPallet()
+    const pallet = new CurrenciesPallet('Currencies')
     const address = '5FbrsAddr'
     const asset = { amount: 1n } as WithAmount<TAssetInfo>
 

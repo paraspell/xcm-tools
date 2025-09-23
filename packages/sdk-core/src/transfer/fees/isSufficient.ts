@@ -7,7 +7,7 @@ import {
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets/balance'
 
 export const isSufficientOrigin = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

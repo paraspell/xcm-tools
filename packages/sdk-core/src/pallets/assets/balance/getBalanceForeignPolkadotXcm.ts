@@ -1,5 +1,5 @@
 import { type TAssetInfo } from '@paraspell/assets'
-import type { TChain } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { hasJunction } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
@@ -8,7 +8,7 @@ import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  chain: TChain,
+  chain: TSubstrateChain,
   address: string,
   asset: TAssetInfo
 ): Promise<bigint> => {
@@ -44,5 +44,7 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
     return api.getBalanceForeignAssetsPallet(address, asset.location)
   }
 
-  return api.getBalanceForeignPolkadotXcm(address, asset.assetId)
+  assertHasId(asset)
+
+  return api.getBalanceForeignPolkadotXcm(chain, address, asset.assetId)
 }

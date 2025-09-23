@@ -7,7 +7,7 @@ import {
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'

@@ -7,7 +7,8 @@ export const ASSETS_PALLETS = [
   'Assets',
   'ForeignAssets',
   'AssetManager',
-  'System'
+  'System',
+  'BondedFungibles'
 ] as const
 
 export const OTHER_PALLETS = ['Utility'] as const

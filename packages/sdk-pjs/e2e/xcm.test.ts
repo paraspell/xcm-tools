@@ -12,6 +12,7 @@ generateE2eTests(
   signer,
   signer,
   validateTx,
+  () => Promise.resolve(),
   [...SUBSTRATE_CHAINS],
   true
 )

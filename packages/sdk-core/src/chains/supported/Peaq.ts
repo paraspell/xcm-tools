@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Peaq Parachain
 
+import type { TChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -27,6 +28,10 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
     assertHasId(asset)
 
     return transferXTokens(input, BigInt(asset.assetId))
+  }
+
+  canReceiveFrom(origin: TChain): boolean {
+    return origin !== 'BifrostPolkadot'
   }
 
   transferRelayToPara(): Promise<TSerializedApiCall> {

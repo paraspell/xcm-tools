@@ -9,7 +9,7 @@ import {
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals, getRelayChainOf } from '../../utils'
 import { getXcmFee } from '../fees'

@@ -36,7 +36,7 @@ export const CHAINS_DOT_RESERVE_AH = new Set<TChain>([
   'AssetHubKusama',
   'AssetHubWestend',
   'AssetHubPaseo',
-  'BifrostPolkadot',
+
   'BifrostKusama',
   'PeoplePolkadot',
   'PeopleKusama',

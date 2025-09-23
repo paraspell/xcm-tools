@@ -5,8 +5,9 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import { SUBSTRATE_CHAINS, TPallet, TPapiTransaction, TSerializedApiCall } from '../src'
+import { SUBSTRATE_CHAINS, TPallet, TPapiApi, TPapiTransaction, TSerializedApiCall } from '../src'
 import { expect } from 'vitest'
+import { GeneralBuilder, TSendBaseOptionsWithSenderAddress } from '@paraspell/sdk-core'
 
 export const createSr25519Signer = () => {
   const miniSecret = entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE))
@@ -61,6 +62,16 @@ export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) =
   expect(hex).toBeDefined()
   const serialized = serializeTx(tx)
   expect(serialized).toMatchSnapshot()
+}
+
+export const validateTransfer = async (
+  builder: GeneralBuilder<TPapiApi, TPapiTransaction, TSendBaseOptionsWithSenderAddress>,
+  signer: PolkadotSigner
+) => {
+  const tx = await builder.build()
+  await validateTx(tx, signer)
+  const feeRes = await builder.getXcmFee()
+  expect(feeRes.failureReason).toBeUndefined()
 }
 
 export const filteredChains = SUBSTRATE_CHAINS.filter(
