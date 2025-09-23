@@ -330,8 +330,20 @@ describe('MessageService', () => {
 
     it('should return asset counts by symbol for each paraId when paraIds are provided', async () => {
       const mockResult = [
-        { ecosystem, origin_para_id: 101, symbol: 'GOLD', count: '3' },
-        { ecosystem, origin_para_id: 102, symbol: 'SILVER', count: '5' },
+        {
+          ecosystem,
+          origin_para_id: 101,
+          symbol: 'GOLD',
+          count: '3',
+          amount: '69',
+        },
+        {
+          ecosystem,
+          origin_para_id: 102,
+          symbol: 'SILVER',
+          count: '5',
+          amount: '420',
+        },
       ];
       mockRepository.query.mockResolvedValue(mockResult);
 
@@ -343,8 +355,8 @@ describe('MessageService', () => {
       );
 
       expect(results).toEqual([
-        { ecosystem, paraId: 101, symbol: 'GOLD', count: 3 },
-        { ecosystem, paraId: 102, symbol: 'SILVER', count: 5 },
+        { ecosystem, paraId: 101, symbol: 'GOLD', count: 3, amount: '69' },
+        { ecosystem, paraId: 102, symbol: 'SILVER', count: 5, amount: '420' },
       ]);
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
         ecosystem,
@@ -356,8 +368,8 @@ describe('MessageService', () => {
 
     it('should return asset counts by symbol when no paraIds are provided', async () => {
       const mockResult = [
-        { ecosystem, symbol: 'GOLD', count: '10' },
-        { ecosystem, symbol: 'SILVER', count: '7' },
+        { ecosystem, symbol: 'GOLD', count: '10', amount: '69' },
+        { ecosystem, symbol: 'SILVER', count: '7', amount: '420' },
       ];
       mockRepository.query.mockResolvedValue(mockResult);
 
@@ -369,8 +381,8 @@ describe('MessageService', () => {
       );
 
       expect(results).toEqual([
-        { ecosystem, symbol: 'GOLD', count: 10 },
-        { ecosystem, symbol: 'SILVER', count: 7 },
+        { ecosystem, symbol: 'GOLD', count: 10, amount: '69' },
+        { ecosystem, symbol: 'SILVER', count: 7, amount: '420' },
       ]);
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
         ecosystem,

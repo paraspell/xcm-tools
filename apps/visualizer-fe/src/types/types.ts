@@ -15,6 +15,7 @@ export type TAssetCounts = AssetCountsBySymbolQuery['assetCountsBySymbol'];
 export type TAggregatedData = {
   parachain: string;
   counts: { [symbol: string]: number };
+  amounts: { [symbol: string]: number };
 };
 
 export enum Ecosystem {

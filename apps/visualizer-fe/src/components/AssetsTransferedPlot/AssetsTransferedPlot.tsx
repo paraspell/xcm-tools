@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { TAssetCounts } from '../../types/types';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
@@ -10,25 +11,35 @@ import { generateSeries } from './utils/generateSeries';
 
 type Props = {
   counts: TAssetCounts;
+  showAmounts?: boolean;
 };
 
-const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
+const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showAmounts }, ref) => {
   const { t } = useTranslation();
 
+  const { selectedEcosystem } = useSelectedParachain();
+
   const aggregatedData = useMemo(() => {
-    return Object.values(aggregateDataByParachain(counts, t));
-  }, [counts, t]);
+    return Object.values(aggregateDataByParachain(counts, t, selectedEcosystem));
+  }, [counts]);
 
   const series = useMemo(() => {
     return generateSeries(counts);
   }, [counts]);
 
-  const transformedData = useMemo(() => {
-    return aggregatedData.map(data => ({
-      parachain: data.parachain,
-      ...data.counts
-    }));
-  }, [aggregatedData]);
+  const transformedData = useMemo(
+    () =>
+      aggregatedData.map(d => ({
+        parachain: d.parachain,
+        ...(showAmounts ? d.amounts : d.counts)
+      })),
+    [aggregatedData, showAmounts]
+  );
+
+  const formatNumber = useMemo(() => {
+    const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 20 });
+    return (v: number) => (typeof v === 'number' ? nf.format(v) : v);
+  }, []);
 
   return (
     <BarChart
@@ -44,9 +55,16 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
           const sortedPayload = payload.sort((a, b) => b.value - a.value);
-          return <CustomChartTooltip label={label as ReactNode} payload={sortedPayload} />;
+          return (
+            <CustomChartTooltip
+              label={label as ReactNode}
+              payload={sortedPayload}
+              valueFormatter={formatNumber}
+            />
+          );
         }
       }}
+      valueFormatter={formatNumber}
     />
   );
 });

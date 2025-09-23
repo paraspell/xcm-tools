@@ -12,12 +12,14 @@ export type ParaIdAssetCountResult = {
   origin_para_id: number;
   symbol: string;
   count: string;
+  amount: string;
 };
 
 export type AssetCountResult = {
   ecosystem: string;
   symbol: string;
   count: string;
+  amount: string;
 };
 
 export type AccountXcmCountResult = {

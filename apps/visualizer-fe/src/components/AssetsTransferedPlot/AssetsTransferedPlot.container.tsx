@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { Center, Group, Loader, Stack, Title } from '@mantine/core';
-import { useRef } from 'react';
+import { Center, Checkbox, Group, Loader, Stack, Title } from '@mantine/core';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { assetCountsBySymbolQueryDocument } from '../../api/messages';
@@ -22,6 +22,8 @@ const AssetsTransferedPlotContainer = () => {
 
   const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
 
+  const [showAmounts, setShowAmounts] = useState(false);
+
   const [start, end] = dateRange;
 
   const { data, loading, error } = useQuery(assetCountsBySymbolQueryDocument, {
@@ -39,7 +41,7 @@ const AssetsTransferedPlotContainer = () => {
     const headers: (keyof Omit<
       AssetCountsBySymbolQuery['assetCountsBySymbol'][number],
       '__typename'
-    >)[] = ['paraId', 'symbol', 'count'];
+    >)[] = ['paraId', 'symbol', 'count', 'amount'];
     const csvData = convertToCsv(data.assetCountsBySymbol, headers);
     void downloadZip(data.assetCountsBySymbol, csvData);
   };
@@ -76,7 +78,18 @@ const AssetsTransferedPlotContainer = () => {
           onDownloadSvgClick={onDownloadSvgClick}
         />
       </Group>
-      <AssetsTransferedPlot ref={ref} counts={data?.assetCountsBySymbol ?? []} />
+      <Group justify="space-between">
+        <Checkbox
+          label={t('charts.assets.amounts')}
+          onChange={() => setShowAmounts(value => !value)}
+          checked={showAmounts}
+        />
+      </Group>
+      <AssetsTransferedPlot
+        ref={ref}
+        counts={data?.assetCountsBySymbol ?? []}
+        showAmounts={showAmounts}
+      />
     </Stack>
   );
 };
