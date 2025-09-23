@@ -6,6 +6,7 @@ import {
   findAssetInfoByLoc,
   getNativeAssetSymbol,
   getOtherAssets,
+  getRelayChainSymbol,
   InvalidCurrencyError,
   isChainEvm,
   isForeignAsset,
@@ -169,7 +170,9 @@ abstract class Parachain<TApi, TRes> {
     this.throwIfTempDisabled(sendOptions, destChain)
     this.throwIfCantReceive(destChain)
 
-    const isRelayAsset = deepEqual(asset.location, RELAY_LOCATION)
+    const isRelayAsset =
+      deepEqual(asset.location, RELAY_LOCATION) &&
+      isSymbolMatch(getRelayChainSymbol(this.chain), asset.symbol)
     const supportsTypeThen = await api.hasMethod(
       'PolkadotXcm',
       'transfer_assets_using_type_and_then'
@@ -332,11 +335,13 @@ abstract class Parachain<TApi, TRes> {
       throw new InvalidParameterError(`Sending from ${this.chain} is temporarily disabled`)
     }
 
+    const scenario = resolveScenario(this.chain, options.to)
+
     const isReceivingDisabled =
       destChain &&
       !isRelayChain(destChain) &&
       !isExternalChain(destChain) &&
-      getChain(destChain).isReceivingTempDisabled(options)
+      getChain(destChain).isReceivingTempDisabled(scenario)
     if (isReceivingDisabled) {
       throw new InvalidParameterError(`Receiving on ${destChain} is temporarily disabled`)
     }
@@ -346,7 +351,7 @@ abstract class Parachain<TApi, TRes> {
     return false
   }
 
-  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
     return false
   }
 
@@ -397,6 +402,10 @@ abstract class Parachain<TApi, TRes> {
       method: methodOverride
     } = options
     const { method, includeFee } = this.getRelayToParaOverrides()
+
+    if (this.isReceivingTempDisabled('RelayToPara')) {
+      throw new InvalidParameterError(`Receiving on ${this.chain} is temporarily disabled`)
+    }
 
     const customMethod = methodOverride ?? method
 

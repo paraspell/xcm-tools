@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
 
-import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
+import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -27,6 +27,10 @@ class CoretimePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     }
 
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
+  }
+
+  canReceiveFrom(origin: TChain): boolean {
+    return origin !== 'Hydration' && origin !== 'Moonbeam'
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

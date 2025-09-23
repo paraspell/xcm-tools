@@ -21,7 +21,7 @@ describe('TokensPallet.setBalance', () => {
   })
 
   it('non-Bifrost: uses assetId, calls assertHasId twice, formats tx correctly', async () => {
-    const pallet = new TokensPallet()
+    const pallet = new TokensPallet('Tokens')
     const address = 'Alice'
     const chain = 'Acala' as TSubstrateChain
     const asset = { assetId: '123', amount: 777n } as WithAmount<TAssetInfo>
@@ -44,7 +44,7 @@ describe('TokensPallet.setBalance', () => {
   })
 
   it('Bifrost: uses getCurrencySelection and does not call assertHasId', async () => {
-    const pallet = new TokensPallet()
+    const pallet = new TokensPallet('Tokens')
     const address = 'Alice'
     const chain = 'BifrostKusama' as TSubstrateChain
     const asset = { amount: 5n } as WithAmount<TAssetInfo>

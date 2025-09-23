@@ -1,10 +1,10 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
-export class TokensPallet implements IAssetsPallet {
+export class TokensPallet extends BaseAssetsPallet {
   mint(
     address: string,
     asset: WithAmount<TAssetInfo>,
@@ -23,7 +23,7 @@ export class TokensPallet implements IAssetsPallet {
 
     return Promise.resolve({
       balanceTx: {
-        module: 'Tokens',
+        module: this.palletName,
         method: 'set_balance',
         parameters: {
           who: { Id: address },

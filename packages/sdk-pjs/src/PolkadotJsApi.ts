@@ -21,6 +21,7 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
+  assertHasId,
   assertHasLocation,
   BatchMode,
   ChainNotSupportedError,
@@ -185,8 +186,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return (response.data.free as UInt).toBigInt()
   }
 
-  async getBalanceForeignPolkadotXcm(address: string, id?: string) {
-    const parsedId = new u32(this.api.registry, id)
+  async getBalanceForeignPolkadotXcm(_chain: TSubstrateChain, address: string, asset: TAssetInfo) {
+    assertHasId(asset)
+    const parsedId = new u32(this.api.registry, asset.assetId)
     const response: Codec = await this.api.query.assets.account(parsedId, address)
     const obj = response.toJSON() as TBalanceResponse
     return obj.balance ? BigInt(obj.balance) : 0n

@@ -3,7 +3,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { concat, getAddress, keccak256, pad, toHex } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
-import type { IAssetsPallet, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 import { formatAssetIdToERC20 } from '../assets/balance'
 
@@ -18,7 +18,7 @@ const calculateMappingSlot = (key: string) => {
   return keccak256(encoded)
 }
 
-export class SystemPallet implements IAssetsPallet {
+export class SystemPallet extends BaseAssetsPallet {
   async mint<TApi, TRes>(
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
@@ -35,7 +35,7 @@ export class SystemPallet implements IAssetsPallet {
 
     return {
       balanceTx: {
-        module: 'System',
+        module: this.palletName,
         method: 'set_storage',
         parameters: {
           items: [[storageKey, amountEncoded]]

@@ -6,7 +6,7 @@ import {
 } from '@paraspell/assets'
 
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { BuildHopInfoOptions, TTransferInfo } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes>({

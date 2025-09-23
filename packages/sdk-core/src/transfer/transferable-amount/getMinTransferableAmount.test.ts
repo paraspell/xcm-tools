@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
-import { getAssetBalanceInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type {
   TDryRunResult,
   TGetXcmFeeResult,
@@ -35,7 +35,7 @@ vi.mock('../../utils')
 vi.mock('../utils')
 vi.mock('../fees')
 vi.mock('../dry-run')
-vi.mock('../../pallets/assets')
+vi.mock('../../pallets/assets/balance')
 
 const makeApis = () => {
   const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>

@@ -41,6 +41,7 @@ export const getAssetReserveChain = (
       interior: { Here: null }
     })
   ) {
+    if (relaychain === 'Paseo') return ahChain
     return CHAINS_DOT_RESERVE_AH.has(destChain) ? ahChain : relaychain
   }
 

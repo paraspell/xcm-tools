@@ -2,6 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
@@ -13,11 +14,13 @@ class CoretimeKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    // TESTED block hash on Rococo: 0x78ace0f1bf7cac9a42e56143321b617d98327e2750f795efb0abb833025c9082
     const { scenario } = input
-    const method =
-      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return transferPolkadotXcm(input, method, 'Unlimited')
+
+    if (scenario === 'ParaToPara') {
+      throw new ScenarioNotSupportedError(this.chain, scenario)
+    }
+
+    return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

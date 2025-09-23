@@ -88,7 +88,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       return await attempt(origin, currency, currency.amount)
     } catch (err: unknown) {
       if (!(err instanceof InvalidCurrencyError) || !swapConfig) {
-        throw err
+        return 0n
       }
 
       return await attempt(swapConfig.exchangeChain, swapConfig.currencyTo, swapConfig.amountOut)

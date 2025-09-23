@@ -6,7 +6,7 @@ import {
 } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
-import { getAssetBalanceInternal } from '../../pallets/assets'
+import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'

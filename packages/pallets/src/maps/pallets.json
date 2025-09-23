@@ -795,12 +795,16 @@
         "index": 6
       },
       {
+        "name": "Fungibles",
+        "index": 49
+      },
+      {
         "name": "PolkadotXcm",
         "index": 83
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["Fungibles"]
   },
   "Curio": {
     "defaultPallet": "XTokens",
@@ -1376,12 +1380,16 @@
         "index": 6
       },
       {
+        "name": "Fungibles",
+        "index": 49
+      },
+      {
         "name": "PolkadotXcm",
         "index": 83
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["Fungibles"]
   },
   "LaosPaseo": {
     "defaultPallet": "PolkadotXcm",

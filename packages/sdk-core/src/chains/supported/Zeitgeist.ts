@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
 import { type TAssetInfo } from '@paraspell/assets'
-import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
+import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -37,6 +37,10 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return transferXTokens(input, currencySelection)
+  }
+
+  canReceiveFrom(origin: TChain): boolean {
+    return origin !== 'Astar'
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

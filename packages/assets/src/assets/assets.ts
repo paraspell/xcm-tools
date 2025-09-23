@@ -147,7 +147,9 @@ export const getAssetDecimals = (chain: TChain, symbol: string): number | null =
 }
 
 export const hasDryRunSupport = (chain: TChain): boolean => {
-  return getAssetsObject(chain).supportsDryRunApi
+  // These chains have DryRun but it's not working
+  const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
+  return getAssetsObject(chain).supportsDryRunApi && !DISABLED_CHAINS.includes(chain)
 }
 
 export const hasXcmPaymentApiSupport = (chain: TChain): boolean => {

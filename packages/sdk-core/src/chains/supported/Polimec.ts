@@ -4,6 +4,7 @@ import {
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isForeignAsset,
+  isSymbolMatch,
   type TAssetInfo
 } from '@paraspell/assets'
 import { isTLocation, Parents, replaceBigInt, type TLocation, Version } from '@paraspell/sdk-common'
@@ -19,6 +20,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
   TScenario,
+  TSendInternalOptions,
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
@@ -208,6 +210,10 @@ class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMT
 
     const call = createTypeAndThenTransfer(input, version, 'Teleport')
     return api.callTxMethod(call)
+  }
+
+  isSendingTempDisabled({ assetInfo }: TSendInternalOptions<TApi, TRes>): boolean {
+    return isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol())
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): Promise<TSerializedApiCall> {

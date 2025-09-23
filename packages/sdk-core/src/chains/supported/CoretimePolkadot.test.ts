@@ -31,6 +31,11 @@ describe('CoretimePolkadot', () => {
     expect(() => chain.transferPolkadotXCM(input)).toThrowError(ScenarioNotSupportedError)
   })
 
+  it('canReceiveFrom returns false for Hydration and Moonbeam', () => {
+    expect(chain.canReceiveFrom('Hydration')).toBe(false)
+    expect(chain.canReceiveFrom('Moonbeam')).toBe(false)
+  })
+
   it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
     const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
 

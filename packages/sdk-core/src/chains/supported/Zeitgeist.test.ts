@@ -28,6 +28,11 @@ describe('Zeitgeist', () => {
     expect(zeitgeist.version).toBe(Version.V4)
   })
 
+  it('canReceiveFrom returns false for Astar and true for other chains', () => {
+    expect(zeitgeist.canReceiveFrom('Astar')).toBe(false)
+    expect(zeitgeist.canReceiveFrom('Acala')).toBe(true)
+  })
+
   it('should call transferXTokens with native asset "Ztg" when currency matches native asset', () => {
     vi.spyOn(zeitgeist, 'getNativeAssetSymbol').mockReturnValue('ZTG')
 

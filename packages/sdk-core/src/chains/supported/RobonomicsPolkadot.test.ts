@@ -1,28 +1,39 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions, TScenario, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import RobonomicsPolkadot from './RobonomicsPolkadot'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('RobonomicsPolkadot', () => {
   let robonomics: RobonomicsPolkadot<unknown, unknown>
 
   beforeEach(() => {
+    vi.clearAllMocks()
     robonomics = getChain<unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
   })
 
-  it('should be instantiated correctly', () => {
+  it('constructs with correct metadata', () => {
     expect(robonomics).toBeInstanceOf(RobonomicsPolkadot)
+    expect(robonomics.chain).toBe('RobonomicsPolkadot')
+    expect(robonomics.info).toBe('robonomics')
+    expect(robonomics.ecosystem).toBe('Polkadot')
+    expect(robonomics.version).toBe(Version.V3)
   })
 
   describe('transferPolkadotXCM', () => {
-    it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
+    it('throws ScenarioNotSupportedError for ParaToPara', () => {
+      const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
+      expect(() => robonomics.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+      expect(transferPolkadotXcm).not.toHaveBeenCalled()
+    })
+
+    it('uses limited_reserve_transfer_assets otherwise', async () => {
       const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
       await robonomics.transferPolkadotXCM(input)
       expect(transferPolkadotXcm).toHaveBeenCalledWith(
@@ -33,59 +44,62 @@ describe('RobonomicsPolkadot', () => {
     })
   })
 
+  describe('isReceivingTempDisabled', () => {
+    it('returns false only for RelayToPara; true for other scenarios', () => {
+      const all: TScenario[] = ['RelayToPara', 'ParaToRelay', 'ParaToPara']
+      const results = all.map(s => [s, robonomics.isReceivingTempDisabled(s)] as const)
+
+      expect(results).toEqual([
+        ['RelayToPara', false],
+        ['ParaToRelay', true],
+        ['ParaToPara', true]
+      ])
+    })
+  })
+
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw an error when asset is not a foreign asset', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
+    it('throws when options are missing assetInfo (undefined)', () => {
+      const mockApi = { callTxMethod: vi.fn() }
+      const bad: unknown = {
+        api: mockApi,
+        address: 'addr'
       }
 
-      const mockOptions = {
-        api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      expect(() => robonomics.transferLocalNonNativeAsset(mockOptions)).toThrow(
-        InvalidCurrencyError
-      )
+      expect(() =>
+        robonomics.transferLocalNonNativeAsset(bad as TTransferLocalOptions<unknown, unknown>)
+      ).toThrow(InvalidCurrencyError)
+      expect(mockApi.callTxMethod).not.toHaveBeenCalled()
     })
 
-    it('should throw an error when assetId is undefined', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
+    it('throws when assetId is missing in assetInfo', () => {
+      const mockApi = { callTxMethod: vi.fn() }
+      const bad = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
+        assetInfo: { symbol: 'ACA', amount: 100n },
+        address: 'addr'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => robonomics.transferLocalNonNativeAsset(mockOptions)).toThrow(
-        InvalidCurrencyError
-      )
+      expect(() => robonomics.transferLocalNonNativeAsset(bad)).toThrow(InvalidCurrencyError)
+      expect(mockApi.callTxMethod).not.toHaveBeenCalled()
     })
 
-    it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
+    it('calls Assets.transfer with BigInt(assetId) & correct params', () => {
+      const mockApi = { callTxMethod: vi.fn() }
+      const ok = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        address: 'addr123'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      robonomics.transferLocalNonNativeAsset(mockOptions)
+      robonomics.transferLocalNonNativeAsset(ok)
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
         parameters: {
-          target: { Id: mockOptions.address },
           id: 1n,
-          amount: BigInt(mockOptions.assetInfo.amount)
+          target: { Id: 'addr123' },
+          amount: 100n
         }
       })
     })
