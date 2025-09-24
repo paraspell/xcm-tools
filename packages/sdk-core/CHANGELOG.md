@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.2...sdk-core-v11.8.3) (2025-09-24)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix sufficient param calculations ⚙️ ([81327c5](https://github.com/paraspell/xcm-tools/commit/81327c50765dd71574af00dc66159a210b1cf6d4))
+
 ## [11.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.1...sdk-core-v11.8.2) (2025-09-22)
 
 
