@@ -61,7 +61,7 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
       destApi,
       destination,
       address,
-      BigInt(currency.amount),
+      currency.amount,
       originAsset,
       fixedDestinationFee
     )

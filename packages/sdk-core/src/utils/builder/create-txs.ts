@@ -16,8 +16,8 @@ export const computeOverridenAmount = <TApi, TRes>(
   const amount = (options.currency as WithComplexAmount<TCurrencyCore>).amount
 
   const config = api.getConfig()
-  if (isConfig(config) && config.abstractDecimals) {
-    return BigInt(increaseAmount) + BigInt(amount)
+  if (isConfig(config) && config.abstractDecimals && typeof amount !== 'bigint') {
+    return Number(increaseAmount) + Number(amount)
   } else {
     assertToIsString(to)
     const asset = findAssetInfoOrThrow(from, currency, to)

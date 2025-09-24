@@ -102,7 +102,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       api,
       destination,
       address,
-      BigInt(currency.amount),
+      currency.amount,
       asset,
       fee
     )
@@ -110,7 +110,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     return {
       fee,
       feeType: 'paymentInfo',
-      sufficient: !hasDryRunSupport(destination) ? sufficient : false
+      sufficient
     } as TDestXcmFeeDetail<TDisableFallback>
   }
 
@@ -123,7 +123,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     asset,
     originFee,
     feeAsset: resolvedFeeAsset,
-    amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount)
+    amount: currency.amount < 2n ? 2n : currency.amount
   })
 
   if (!dryRunResult.success) {
