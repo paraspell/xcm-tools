@@ -1,11 +1,11 @@
 {
   "packages/xcm-analyser": "2.0.1",
-  "packages/xcm-router": "11.8.3",
-  "packages/sdk": "11.8.3",
-  "packages/sdk-core": "11.8.3",
-  "packages/sdk-pjs": "11.8.3",
-  "packages/sdk-common": "11.8.3",
-  "packages/assets": "11.8.3",
-  "packages/pallets": "11.8.3",
-  "apps/xcm-api": "11.8.3"
+  "packages/xcm-router": "11.8.4",
+  "packages/sdk": "11.8.4",
+  "packages/sdk-core": "11.8.4",
+  "packages/sdk-pjs": "11.8.4",
+  "packages/sdk-common": "11.8.4",
+  "packages/assets": "11.8.4",
+  "packages/pallets": "11.8.4",
+  "apps/xcm-api": "11.8.4"
 }
