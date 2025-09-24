@@ -52,7 +52,7 @@ const baseOptions = {
     amount: 2000n,
     location: {}
   },
-  assetInfoTo: { location: {}, amount: '0' },
+  assetInfoTo: { location: {}, amount: 0n },
   senderAddress: 'alice',
   recipientAddress: 'bob',
   calculateMinAmountOut: vi.fn().mockResolvedValue(1500n)

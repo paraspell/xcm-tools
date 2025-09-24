@@ -31,7 +31,7 @@ const baseOptions = {
   to: 'Hydration',
   senderAddress: 'SENDER',
   address: 'DEST',
-  currency: { symbol: 'DOT', amount: 123n }
+  currency: { symbol: 'DOT', amount: '123' }
 } as TCreateTxsOptions<unknown, unknown>
 
 describe('computeOverridenAmount', () => {
@@ -44,7 +44,7 @@ describe('computeOverridenAmount', () => {
     vi.mocked(isConfig).mockReturnValue(true)
 
     const out = computeOverridenAmount(options, '100')
-    expect(out).toBe(223n) // 123n + 100n
+    expect(out).toBe(223) // 123 + 100
     expect(assertToIsString).not.toHaveBeenCalled()
     expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
     expect(parseUnits).not.toHaveBeenCalled()
@@ -96,7 +96,7 @@ describe('overrideTxAmount', () => {
 
     expect(builder.currency).toHaveBeenCalledWith(
       expect.objectContaining({
-        amount: 173n // 123n + 50n
+        amount: 173 // 123 + 50
       })
     )
     expect(out).toBe(builtTx)
@@ -135,7 +135,7 @@ describe('createTx', () => {
     const res = await createTx(options, builder, '200')
 
     expect(builder.currency).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: 323n }) // 123n + 200n
+      expect.objectContaining({ amount: 323 }) // 123 + 200
     )
     expect(builder['buildInternal']).toHaveBeenCalledTimes(1)
     expect(res).toBe(tx)

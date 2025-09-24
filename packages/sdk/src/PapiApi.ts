@@ -40,7 +40,6 @@ import {
   isConfig,
   isForeignAsset,
   isRelayChain,
-  isSystemChain,
   localizeLocation,
   MissingChainApiError,
   padFeeBy,
@@ -575,12 +574,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
-    if (
-      hasXcmPaymentApiSupport(chain) &&
-      result.value.local_xcm &&
-      hasLocation &&
-      !isSystemChain(chain)
-    ) {
+    if (hasXcmPaymentApiSupport(chain) && result.value.local_xcm && hasLocation && feeAsset) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,

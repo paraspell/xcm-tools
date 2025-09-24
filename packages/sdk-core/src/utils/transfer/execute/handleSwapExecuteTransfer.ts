@@ -233,6 +233,11 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
   // First dry run with dummy fees to extract actual fees
   const { call: initialCall } = await createXcmAndCall({
     ...internalOptions,
+    assetInfoTo: {
+      ...assetTo,
+      // Use half of the amountOut in initial dryRun to prevent NoDeal error in dry run
+      amount: assetTo.amount / 2n
+    },
     fees
   })
 
