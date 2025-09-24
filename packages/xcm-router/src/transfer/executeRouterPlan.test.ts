@@ -152,6 +152,7 @@ describe('executeRouterPlan', () => {
     expect(calculateTxFeeDryRun).toHaveBeenCalledWith(
       plan[0].api,
       'BifrostPolkadot',
+      'Astar',
       'txBifrost',
       mockSenderAddress,
     );

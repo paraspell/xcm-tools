@@ -22,6 +22,7 @@ vi.mock('@paraspell/sdk', async () => {
 describe('calculateTxFeeDryRun', () => {
   const api = {} as unknown as TPapiApi;
   const chain = 'BifrostPolkadot';
+  const destination = 'Polkadot';
   const tx = {} as unknown as TPapiTransaction;
   const address = 'test-address';
 
@@ -38,10 +39,11 @@ describe('calculateTxFeeDryRun', () => {
     } as unknown as TDryRunChainResult;
     const getDryRunSpy = vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
     const expectedFee = new BigNumber(fee.toString()).multipliedBy(DRY_RUN_FEE_BUFFER);
-    const result = await calculateTxFeeDryRun(api, chain, tx, address);
+    const result = await calculateTxFeeDryRun(api, chain, destination, tx, address);
     expect(getDryRunSpy).toHaveBeenCalledWith({
       api,
       chain,
+      destination,
       tx,
       asset: {},
       address,
@@ -59,7 +61,7 @@ describe('calculateTxFeeDryRun', () => {
       failureReason,
     } as TDryRunChainResult;
     vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
-    await expect(calculateTxFeeDryRun(api, chain, tx, address)).rejects.toThrow(
+    await expect(calculateTxFeeDryRun(api, chain, destination, tx, address)).rejects.toThrow(
       `Failed to calculate fee using dry run. Chain: ${chain} Error: ${failureReason}`,
     );
   });

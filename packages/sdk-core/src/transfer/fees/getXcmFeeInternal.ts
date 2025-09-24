@@ -6,7 +6,7 @@ import {
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
+import { Parents, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
@@ -167,6 +167,23 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       hasPassedExchange
     } = params
 
+    let hopAsset: TAssetInfo
+    if (!(currentAsset.location && currentAsset.location.parents === Parents.TWO)) {
+      if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
+        hopAsset = findAssetOnDestOrThrow(
+          swapConfig.exchangeChain,
+          currentChain,
+          swapConfig.currencyTo
+        )
+      } else if (destination === currentChain) {
+        hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
+      } else {
+        hopAsset = currentAsset
+      }
+    } else {
+      hopAsset = findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
+    }
+
     const hopResult = await getDestXcmFee({
       api: hopApi,
       forwardedXcms,
@@ -179,7 +196,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       },
       address,
       senderAddress,
-      asset: currentAsset,
+      asset: hopAsset,
       feeAsset,
       tx,
       originFee: originFee ?? 0n,
@@ -188,34 +205,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       swapConfig
     })
 
-    let hopAsset: TAssetInfo
-    if (
-      hopResult.feeType === 'dryRun' &&
-      !(
-        destination === 'Ethereum' &&
-        (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
-      )
-    ) {
-      if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-        hopAsset = findAssetOnDestOrThrow(
-          swapConfig.exchangeChain,
-          currentChain,
-          swapConfig.currencyTo
-        )
-      } else if (destination === currentChain) {
-        hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
-      } else {
-        hopAsset = asset
-      }
-    } else {
-      hopAsset = findNativeAssetInfoOrThrow(currentChain)
-    }
-
-    return {
-      ...hopResult,
-      currency: hopAsset.symbol,
-      asset: hopAsset
-    }
+    return hopResult
   }
 
   const traversalResult = await traverseXcmHops({
@@ -258,9 +248,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     // We failed before reaching destination, use fallback
     const destApi = api.clone()
 
-    if (destination !== 'Ethereum') {
-      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-    }
+    await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
 
     const destFallback = await getDestXcmFee({
       api: destApi,

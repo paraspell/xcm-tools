@@ -56,7 +56,13 @@ describe('getDestXcmFee', () => {
       },
       130n
     )
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 130n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has location', async () => {
@@ -95,7 +101,13 @@ describe('getDestXcmFee', () => {
       },
       130n
     )
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 130n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported, and fails with ML', async () => {
@@ -136,7 +148,13 @@ describe('getDestXcmFee', () => {
       },
       130n
     )
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 130n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
   })
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
@@ -159,6 +177,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
+      asset: { symbol: 'UNIT' },
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown>)
@@ -168,7 +187,9 @@ describe('getDestXcmFee', () => {
       feeType: 'dryRun',
       sufficient: true,
       forwardedXcms: [[{ x: 1 }]],
-      destParaId: 3320
+      destParaId: 3320,
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT'
     })
     expect(isSufficientDestination).not.toHaveBeenCalled()
   })
@@ -192,6 +213,7 @@ describe('getDestXcmFee', () => {
       destination: 'Astar',
       address: 'dest',
       senderAddress: 'sender',
+      asset: { symbol: 'UNIT' },
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown>
@@ -203,6 +225,8 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       dryRunError: 'fail',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
       sufficient: false
     })
   })
@@ -268,7 +292,13 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { location: DOT_LOCATION, amount: 5000n })
-    expect(res).toEqual({ fee: 321n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 321n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
   })
 
   it('falls back to swapConfig.currencyTo when origin currency is unsupported (uses symbol)', async () => {
@@ -306,7 +336,13 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'USDC', amount: 1234n })
-    expect(res).toEqual({ fee: 777n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 777n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
   })
 
   it('returns 0n when destination is Ethereum', async () => {
@@ -326,7 +362,13 @@ describe('getDestXcmFee', () => {
 
     const res = await getDestXcmFee(options)
 
-    expect(res).toEqual({ fee: 0n, feeType: 'paymentInfo', sufficient: true })
+    expect(res).toEqual({
+      fee: 0n,
+      feeType: 'paymentInfo',
+      asset: { symbol: 'UNIT' },
+      currency: 'UNIT',
+      sufficient: true
+    })
     expect(getReverseTxFee).not.toHaveBeenCalled()
   })
 })

@@ -6,12 +6,13 @@ import { createBeneficiaryLocation } from '../../utils'
 export const createRefundInstruction = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   senderAddress: string,
-  version: Version
+  version: Version,
+  assetCount: number
 ) => ({
   SetAppendix: [
     {
       DepositAsset: {
-        assets: { Wild: 'All' },
+        assets: { Wild: { AllCounted: assetCount } },
         beneficiary: createBeneficiaryLocation({
           api,
           address: senderAddress,

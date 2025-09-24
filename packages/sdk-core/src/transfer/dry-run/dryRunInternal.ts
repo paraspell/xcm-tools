@@ -10,7 +10,7 @@ import {
   hasDryRunSupport
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { Version } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChain, TDryRunChainResult, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
@@ -71,6 +71,7 @@ export const dryRunInternal = async <TApi, TRes>(
   const originDryRun = await api.getDryRunCall({
     tx,
     chain: origin,
+    destination,
     address: senderAddress,
     asset: {
       ...asset,
@@ -104,11 +105,8 @@ export const dryRunInternal = async <TApi, TRes>(
     } = params
 
     let hopAsset: TAssetInfo
-    if (
-      destination === 'Ethereum' &&
-      (currentChain.includes('AssetHub') || currentChain.includes('BridgeHub'))
-    ) {
-      hopAsset = findNativeAssetInfoOrThrow(currentChain)
+    if (asset.location && asset.location.parents === Parents.TWO) {
+      hopAsset = findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
     } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
       hopAsset = findAssetOnDestOrThrow(
         swapConfig.exchangeChain,
@@ -139,7 +137,7 @@ export const dryRunInternal = async <TApi, TRes>(
       xcm: forwardedXcms[1][0],
       chain: currentChain,
       origin: currentOrigin,
-      asset: currentAsset,
+      asset: hopAsset,
       feeAsset: resolvedFeeAsset,
       originFee: originDryRun.fee,
       amount

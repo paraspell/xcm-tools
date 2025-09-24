@@ -319,6 +319,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
       asset: { symbol: 'GLMR', decimals: 12 } as TAssetInfo,
+      currency: 'GLMR',
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -1078,71 +1079,6 @@ describe('getXcmFeeInternal', () => {
     })
   })
 
-  it('covers Ethereum destination does not init API', async () => {
-    const mockCloneApi = {
-      init: vi.fn().mockResolvedValue(undefined),
-      setDisconnectAllowed: vi.fn(),
-      disconnect: vi.fn().mockResolvedValue(undefined)
-    }
-
-    const mockApi = {
-      setDisconnectAllowed: vi.fn(),
-      disconnect: vi.fn().mockResolvedValue(undefined),
-      clone: vi.fn().mockReturnValue(mockCloneApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-
-    vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'dryRun',
-      dryRunError: undefined,
-      forwardedXcms: [null, [{ key: 'value' }]],
-      destParaId: 1000
-    })
-
-    vi.mocked(traverseXcmHops).mockResolvedValue({
-      hops: [
-        {
-          chain: 'BridgeHubPolkadot',
-          result: {
-            fee: 2_000n,
-            feeType: 'dryRun',
-            currency: 'DOT',
-            dryRunError: 'Failed at BridgeHub'
-          }
-        }
-      ],
-      lastProcessedChain: 'BridgeHubPolkadot',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: {
-        fee: 2_000n,
-        feeType: 'dryRun',
-        currency: 'DOT',
-        dryRunError: 'Failed at BridgeHub'
-      }
-    })
-
-    vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
-
-    vi.mocked(getDestXcmFee).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'noFeeRequired'
-    })
-
-    await getXcmFeeInternal(
-      createOptions({
-        api: mockApi,
-        destination: 'Ethereum'
-      })
-    )
-
-    expect(mockCloneApi.init).not.toHaveBeenCalled()
-  })
-
   it('covers processHop currency logic: destination equals currentChain', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'MAPPED_ACA' } as TAssetInfo)
@@ -1197,7 +1133,7 @@ describe('getXcmFeeInternal', () => {
     const res = await getXcmFeeInternal(createOptions())
 
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Acala', 'Moonbeam', 'ACA')
-    expect(res.destination.currency).toBe('MAPPED_ACA')
+    expect(res.destination.asset).toEqual({ symbol: 'ACA', decimals: 12 })
   })
 
   it('covers processHop currency logic: hasPassedExchange with swapConfig', async () => {

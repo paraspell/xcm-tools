@@ -9,7 +9,7 @@ import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
 import type { WithApi } from './TApi'
-import type { TWeight } from './TTransfer'
+import type { TDestination, TWeight } from './TTransfer'
 
 export type TDryRunBaseOptions<TRes> = {
   tx: TRes
@@ -40,6 +40,10 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   chain: TSubstrateChain
   /**
+   * The destination chain
+   */
+  destination: TDestination
+  /**
    * The address to dry-run with
    */
   address: string
@@ -53,7 +57,7 @@ export type TDryRunCallBaseOptions<TRes> = {
 }
 
 export type TDryRunBypassOptions<TApi, TRes> = WithApi<
-  Omit<TDryRunCallBaseOptions<TRes>, 'useRootOrigin'>,
+  Omit<TDryRunCallBaseOptions<TRes>, 'useRootOrigin' | 'destination'>,
   TApi,
   TRes
 >

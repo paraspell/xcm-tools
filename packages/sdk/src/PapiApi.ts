@@ -449,7 +449,15 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getDryRunCall(
     options: TDryRunCallBaseOptions<TPapiTransaction>
   ): Promise<TDryRunChainResult> {
-    const { tx, chain, address, feeAsset, bypassOptions, useRootOrigin = false } = options
+    const {
+      tx,
+      chain,
+      destination,
+      address,
+      feeAsset,
+      bypassOptions,
+      useRootOrigin = false
+    } = options
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -574,7 +582,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
-    if (hasXcmPaymentApiSupport(chain) && result.value.local_xcm && hasLocation && feeAsset) {
+    if (
+      hasXcmPaymentApiSupport(chain) &&
+      result.value.local_xcm &&
+      hasLocation &&
+      (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))
+    ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,

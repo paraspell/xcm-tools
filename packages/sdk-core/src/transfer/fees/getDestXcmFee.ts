@@ -110,8 +110,10 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     return {
       fee,
       feeType: 'paymentInfo',
-      sufficient
-    } as TDestXcmFeeDetail<TDisableFallback>
+      sufficient,
+      asset,
+      currency: asset.symbol
+    }
   }
 
   const dryRunResult = await api.getDryRunXcm({
@@ -130,7 +132,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     if (disableFallback) {
       return {
         dryRunError: dryRunResult.failureReason
-      } as TDestXcmFeeDetail<false>
+      } as TDestXcmFeeDetail<TDisableFallback>
     }
 
     const fee = await calcPaymentInfoFee()
@@ -139,8 +141,10 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       fee,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
-      sufficient: false
-    } as TDestXcmFeeDetail<TDisableFallback>
+      sufficient: false,
+      asset,
+      currency: asset.symbol
+    }
   }
 
   const { fee, forwardedXcms: newForwardedXcms, destParaId } = dryRunResult
@@ -150,6 +154,8 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     feeType: 'dryRun',
     sufficient: true,
     forwardedXcms: newForwardedXcms,
-    destParaId
-  } as TDestXcmFeeDetail<TDisableFallback>
+    destParaId,
+    asset,
+    currency: asset.symbol
+  }
 }

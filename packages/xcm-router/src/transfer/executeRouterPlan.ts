@@ -1,3 +1,4 @@
+import type { TChain } from '@paraspell/sdk';
 import { getBalanceNative, InvalidParameterError, isChainEvm } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
@@ -30,7 +31,13 @@ export const executeRouterPlan = async (
     if (type === 'TRANSFER' && destination === destinationChain) {
       const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
       if (isBifrost) {
-        const fee = await calculateTxFeeDryRun(api, chain, tx, senderAddress);
+        const fee = await calculateTxFeeDryRun(
+          api,
+          chain,
+          destination as TChain,
+          tx,
+          senderAddress,
+        );
         const nativeBalance = await getBalanceNative({
           api,
           address: senderAddress,

@@ -51,7 +51,7 @@ const createMintTxs = <TApi, TRes>(
   const otherPallets = getOtherAssetsPallets(chain)
   const isMainNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(chain))
   const pallet =
-    isForeignAsset(asset) || !isMainNativeAsset
+    (isForeignAsset(asset) && chain !== 'Mythos') || !isMainNativeAsset
       ? pickOtherPallet(asset, otherPallets)
       : nativePallet
 

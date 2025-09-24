@@ -66,6 +66,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
   const dryRunResult = await api.getDryRunCall({
     tx,
     chain: origin,
+    destination,
     address: senderAddress,
     asset: {
       ...asset,
