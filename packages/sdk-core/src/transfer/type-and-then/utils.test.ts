@@ -21,7 +21,9 @@ describe('createRefundInstruction', () => {
   })
 
   it('should create refund instruction with correct structure', () => {
-    const result = createRefundInstruction(mockApi, mockSenderAddress, mockVersion)
+    const assetCount = 1
+
+    const result = createRefundInstruction(mockApi, mockSenderAddress, mockVersion, assetCount)
 
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
@@ -33,7 +35,7 @@ describe('createRefundInstruction', () => {
       SetAppendix: [
         {
           DepositAsset: {
-            assets: { Wild: 'All' },
+            assets: { Wild: { AllCounted: assetCount } },
             beneficiary: mockBeneficiaryLocation
           }
         }

@@ -13,9 +13,9 @@ import type { HopTraversalConfig, HopTraversalResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
 
-export async function traverseXcmHops<TApi, TRes, THopResult>(
+export const traverseXcmHops = async <TApi, TRes, THopResult>(
   config: HopTraversalConfig<TApi, TRes, THopResult>
-): Promise<HopTraversalResult<THopResult>> {
+): Promise<HopTraversalResult<THopResult>> => {
   const {
     api,
     origin,

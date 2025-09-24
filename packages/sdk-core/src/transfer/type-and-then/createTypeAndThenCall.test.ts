@@ -83,7 +83,7 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
 
-    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion)
+    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 1)
 
     expect(computeAllFees).toHaveBeenCalledWith(
       dotContext,

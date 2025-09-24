@@ -40,6 +40,7 @@ describe('getDryRunOrigin', () => {
     const result = await dryRunOrigin({
       api: apiMock,
       chain,
+      destination: 'Kusama',
       address,
       asset: {} as WithAmount<TAssetInfo>,
       tx: {}

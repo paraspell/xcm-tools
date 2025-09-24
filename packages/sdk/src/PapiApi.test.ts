@@ -1063,6 +1063,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         asset: {
           symbol: 'GLMR'
         } as WithAmount<TAssetInfo>
@@ -1123,6 +1124,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'AssetHubPolkadot',
+        destination: 'Acala',
         asset: {
           symbol: 'DOT'
         } as WithAmount<TAssetInfo>
@@ -1180,6 +1182,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: 'some_address',
         chain: 'Polkadot',
+        destination: 'Acala',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1227,6 +1230,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Kusama',
+        destination: 'Acala',
         asset: {
           symbol: 'KSM'
         } as WithAmount<TAssetInfo>
@@ -1271,6 +1275,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1306,6 +1311,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1340,6 +1346,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         useRootOrigin: true,
         asset: {
           symbol: 'GLMR'
@@ -1382,6 +1389,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1401,6 +1409,7 @@ describe('PapiApi', () => {
           tx: mockTransaction,
           address: testAddress,
           chain: 'Acala',
+          destination: 'Acala',
           asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow(ChainNotSupportedError)
@@ -1439,6 +1448,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         chain: 'Moonbeam',
+        destination: 'Acala',
         asset: {} as WithAmount<TAssetInfo>
       })
 
@@ -1493,7 +1503,8 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         asset: {} as WithAmount<TAssetInfo>,
         address: testAddress,
-        chain: 'Moonbeam'
+        chain: 'Moonbeam',
+        destination: 'Acala'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)

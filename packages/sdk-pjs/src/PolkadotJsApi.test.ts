@@ -1066,6 +1066,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1096,6 +1097,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1122,6 +1124,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1145,6 +1148,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1167,6 +1171,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1196,6 +1201,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1228,6 +1234,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1259,6 +1266,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1288,6 +1296,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1314,6 +1323,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1331,6 +1341,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain,
+        destination: 'Hydration',
         asset: asset as WithAmount<TAssetInfo>,
         feeAsset
       })
@@ -1347,6 +1358,7 @@ describe('PolkadotJsApi', () => {
           tx: mockTransaction,
           address,
           chain: 'Acala',
+          destination: 'Hydration',
           asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow(ChainNotSupportedError)

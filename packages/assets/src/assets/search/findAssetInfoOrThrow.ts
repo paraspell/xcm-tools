@@ -11,7 +11,9 @@ export const findAssetInfoOrThrow = (
 ): TAssetInfo => {
   const asset =
     findAssetInfo(chain, currency, destination) ??
-    (chain === 'AssetHubPolkadot' ? findAssetInfo('Ethereum', currency, null) : null)
+    (chain === 'AssetHubPolkadot' || chain === 'Mythos'
+      ? findAssetInfo('Ethereum', currency, null)
+      : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(

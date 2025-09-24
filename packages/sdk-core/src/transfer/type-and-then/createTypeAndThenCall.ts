@@ -65,8 +65,10 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   const customXcm = createCustomXcm(context, isDotAsset)
 
+  const assetCount = isDotAsset ? 1 : 2
+
   const refundInstruction = senderAddress
-    ? createRefundInstruction(api, senderAddress, version)
+    ? createRefundInstruction(api, senderAddress, version, assetCount)
     : null
 
   const fees = await computeAllFees(context, customXcm, isDotAsset, refundInstruction)

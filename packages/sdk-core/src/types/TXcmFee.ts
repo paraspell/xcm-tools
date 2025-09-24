@@ -164,13 +164,11 @@ export type TXcmFeeHopResult = {
 export type TConditionalXcmFeeDetail<TDisableFallback extends boolean> =
   TDisableFallback extends false ? TXcmFeeDetailWithFallback : TXcmFeeDetail
 
-export type TDestXcmFeeDetail<TDisableFallback extends boolean> = Omit<
-  TConditionalXcmFeeDetail<TDisableFallback>,
-  'currency'
-> & {
-  forwardedXcms?: any
-  destParaId?: number
-}
+export type TDestXcmFeeDetail<TDisableFallback extends boolean> =
+  TConditionalXcmFeeDetail<TDisableFallback> & {
+    forwardedXcms?: any
+    destParaId?: number
+  }
 
 export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
   chain: TChain
