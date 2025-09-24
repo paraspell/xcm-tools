@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.3...sdk-core-v11.8.4) (2025-09-24)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix BridgeHub fees 💰 ([e9c4d87](https://github.com/paraspell/xcm-tools/commit/e9c4d87b750b5c1ce506e49ef78d35c09a29ad35))
+
 ## [11.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.2...sdk-core-v11.8.3) (2025-09-24)
 
 
