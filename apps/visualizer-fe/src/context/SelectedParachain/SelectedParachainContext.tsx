@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+// SelectedParachainProvider.tsx
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import type { ChannelsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
@@ -43,9 +46,47 @@ interface SelectedParachainProviderProps {
   children: ReactNode;
 }
 
+// --- tiny helpers ---
+const encodeList = (list: string[]) => (list.length ? list.join(',') : undefined);
+const decodeList = (s: string | null) => (s ? s.split(',').filter(Boolean) : []);
+
+const encodeDate = (d: Date | null | undefined) => (d ? d.toISOString() : undefined);
+const decodeDate = (s: string | null) => {
+  if (!s) return null;
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+const decodeEcosystem = (s: string | null, fallback: Ecosystem) => {
+  if (!s) return fallback;
+  const v = s.toLowerCase();
+  for (const k of Object.keys(Ecosystem) as (keyof typeof Ecosystem)[]) {
+    const val = Ecosystem[k];
+    if (String(val).toLowerCase() === v) return val;
+  }
+  return fallback;
+};
+
 const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
-  const [parachains, setParachains] = useState<SelectedParachain[]>([]);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialParachains = useMemo(() => decodeList(searchParams.get('pcs')), []);
+  const initialStart = useMemo(() => decodeDate(searchParams.get('start')), []);
+  const initialEnd = useMemo(() => decodeDate(searchParams.get('end')), []);
+  const initialEco = useMemo(
+    () => decodeEcosystem(searchParams.get('eco'), Ecosystem.POLKADOT),
+    []
+  );
+
+  // --- URL-synced states (only the three you asked for) ---
+  const [parachains, setParachains] = useState<SelectedParachain[]>(initialParachains ?? []);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    initialStart ?? null,
+    initialEnd ?? null
+  ]);
+  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(initialEco);
+
+  // --- other local states unchanged ---
   const [selectedChannel, setSelectedChannel] = useState<ChannelsQuery['channels'][number]>();
   const [primaryChannelColor, setPrimaryChannelColor] = useState<string>();
   const [highlightedChannelColor, setHighlightedChannelColor] = useState<string>();
@@ -53,25 +94,60 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [selectedChannelColor, setSelectedChannelColor] = useState<string>();
   const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
-  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
   const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
   const [skyboxTrigger, setSkyboxTrigger] = useState(0);
   const [animationEnabled, setAnimationEnabled] = useState(true);
 
-  const toggleParachain = (parachain: SelectedParachain) => {
-    if (parachains.includes(parachain)) {
-      setParachains(parachains.filter(p => p !== parachain));
-    } else {
-      setParachains([...parachains, parachain]);
+  // --- write to URL when these three states change ---
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+
+    // pcs
+    const pcs = encodeList(parachains);
+    pcs == null ? next.delete('pcs') : next.set('pcs', pcs);
+
+    // eco
+    const eco = String(selectedEcosystem).toLowerCase();
+    eco ? next.set('eco', eco) : next.delete('eco');
+
+    // start/end
+    const [start, end] = dateRange;
+    const s = encodeDate(start);
+    const e = encodeDate(end);
+    s == null ? next.delete('start') : next.set('start', s);
+    e == null ? next.delete('end') : next.set('end', e);
+
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
     }
+  }, [parachains, selectedEcosystem, dateRange]);
+
+  // --- react to back/forward (URL changed externally) ---
+  useEffect(() => {
+    const pcsNow = decodeList(searchParams.get('pcs'));
+    const ecoNow = decodeEcosystem(searchParams.get('eco'), Ecosystem.POLKADOT);
+    const startNow = decodeDate(searchParams.get('start'));
+    const endNow = decodeDate(searchParams.get('end'));
+
+    if (JSON.stringify(pcsNow) !== JSON.stringify(parachains)) setParachains(pcsNow);
+    if (ecoNow !== selectedEcosystem) setSelectedEcosystem(ecoNow);
+    if (
+      (startNow?.toISOString() ?? null) !== (dateRange[0]?.toISOString() ?? null) ||
+      (endNow?.toISOString() ?? null) !== (dateRange[1]?.toISOString() ?? null)
+    ) {
+      setDateRange([startNow, endNow]);
+    }
+  }, [searchParams]);
+
+  // --- tiny togglers (unchanged) ---
+  const toggleParachain = (parachain: SelectedParachain) => {
+    setParachains(prev =>
+      prev.includes(parachain) ? prev.filter(p => p !== parachain) : [...prev, parachain]
+    );
   };
 
   const toggleActiveEditParachain = (parachain: SelectedParachain | null) => {
-    if (activeEditParachain === parachain) {
-      setActiveEditParachain(null);
-    } else {
-      setActiveEditParachain(parachain);
-    }
+    setActiveEditParachain(prev => (prev === parachain ? null : parachain));
   };
 
   return (

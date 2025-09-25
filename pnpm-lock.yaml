@@ -105,7 +105,7 @@ importers:
         version: 7.0.1(postcss@8.5.6)
       vite:
         specifier: ^7.1.3
-        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
 
   apps/playground:
     dependencies:
@@ -232,7 +232,7 @@ importers:
         version: 0.11.4
       vite:
         specifier: ^7.1.3
-        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
       vite-plugin-node-polyfills:
         specifier: ^0.24.0
         version: 0.24.0(rollup@4.50.0)(vite@7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0))
@@ -305,7 +305,7 @@ importers:
         version: 7.0.1(postcss@8.5.6)
       vite:
         specifier: ^7.1.3
-        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
 
   apps/visualizer-be:
     dependencies:
@@ -493,6 +493,9 @@ importers:
       react-i18next:
         specifier: ^15.7.3
         version: 15.7.3(i18next@25.4.2(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
+      react-router-dom:
+        specifier: ^7.8.2
+        version: 7.8.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       three:
         specifier: ^0.179.1
         version: 0.179.1
@@ -526,7 +529,7 @@ importers:
         version: 3.6.2
       vite:
         specifier: ^7.1.3
-        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+        version: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
       vite-plugin-svgr:
         specifier: ^4.5.0
         version: 4.5.0(rollup@4.50.0)(typescript@5.9.2)(vite@7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0))
@@ -20179,7 +20182,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.34
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -26401,7 +26404,7 @@ snapshots:
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -26420,7 +26423,7 @@ snapshots:
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.50.0)
       node-stdlib-browser: 1.3.1
-      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - rollup
 
@@ -26429,7 +26432,7 @@ snapshots:
       '@rollup/pluginutils': 5.2.0(rollup@4.50.0)
       '@svgr/core': 8.1.0(typescript@5.9.2)
       '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.9.2))
-      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -26437,7 +26440,7 @@ snapshots:
 
   vite-plugin-wasm@3.5.0(vite@7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)):
     dependencies:
-      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
 
   vite@7.0.0(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0):
     dependencies:
@@ -26455,7 +26458,7 @@ snapshots:
       terser: 5.40.0
       yaml: 2.8.0
 
-  vite@7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0):
+  vite@7.1.3(@types/node@24.3.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.5
       fdir: 6.5.0(picomatch@4.0.3)
