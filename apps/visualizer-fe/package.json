@@ -45,6 +45,7 @@
     "react-apollo-network-status": "^5.3.1",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.3",
+    "react-router-dom": "^7.8.2",
     "three": "^0.179.1"
   },
   "devDependencies": {

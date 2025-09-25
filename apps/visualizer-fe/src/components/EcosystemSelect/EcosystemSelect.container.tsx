@@ -1,10 +1,13 @@
 import { Box } from '@mantine/core';
 
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { useFilterSync } from '../../hooks/useFilterSync';
 import EcosystemSelect from './EcosystemSelect';
 
 const EcosystemSelectContainer = () => {
   const { selectedEcosystem, setSelectedEcosystem } = useSelectedParachain();
+  useFilterSync();
+
   return (
     <Box
       pos="absolute"

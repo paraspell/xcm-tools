@@ -1,8 +1,10 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { createContext, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import type { ChannelsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
+import { decodeDate, decodeEcosystem, decodeList } from '../../routes/urlFilters';
 import { Ecosystem } from '../../types/types';
 
 export type SelectedParachain = string;
@@ -44,8 +46,19 @@ interface SelectedParachainProviderProps {
 }
 
 const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
-  const [parachains, setParachains] = useState<SelectedParachain[]>([]);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  // Set defaults from url params
+  const [searchParams] = useSearchParams();
+  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(
+    decodeEcosystem(searchParams.get('ecosystem'), Ecosystem.POLKADOT)
+  );
+  const [parachains, setParachains] = useState<SelectedParachain[]>(
+    decodeList(searchParams.get('parachains'))
+  );
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    decodeDate(searchParams.get('from')),
+    decodeDate(searchParams.get('to'))
+  ]);
+
   const [selectedChannel, setSelectedChannel] = useState<ChannelsQuery['channels'][number]>();
   const [primaryChannelColor, setPrimaryChannelColor] = useState<string>();
   const [highlightedChannelColor, setHighlightedChannelColor] = useState<string>();
@@ -53,7 +66,6 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [selectedChannelColor, setSelectedChannelColor] = useState<string>();
   const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
-  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
   const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
   const [skyboxTrigger, setSkyboxTrigger] = useState(0);
   const [animationEnabled, setAnimationEnabled] = useState(true);
