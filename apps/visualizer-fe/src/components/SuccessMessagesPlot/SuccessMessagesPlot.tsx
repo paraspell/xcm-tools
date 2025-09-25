@@ -20,15 +20,17 @@ const getParachainByIdInternal = (id: number | null, ecosystem: Ecosystem, total
 const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
   const { selectedEcosystem } = useSelectedParachain();
-  const chartData = counts.map(count => ({
-    category: getParachainByIdInternal(
-      count.paraId ?? 0,
-      selectedEcosystem,
-      t('charts.common.total')
-    ),
-    Success: count.success,
-    Failed: count.failed
+
+  const chartData = counts.map(c => ({
+    category: getParachainByIdInternal(c.paraId ?? 0, selectedEcosystem, t('charts.common.total')),
+    success: c.success,
+    failed: c.failed
   }));
+
+  const series = [
+    { name: 'success', label: t('status.success'), color: 'green' },
+    { name: 'failed', label: t('status.failed'), color: 'red' }
+  ];
 
   return (
     <BarChart
@@ -39,42 +41,15 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
       dataKey="category"
       tooltipAnimationDuration={200}
       minBarSize={3}
-      series={[
-        { name: t('status.success'), color: 'green' },
-        { name: t('status.failed'), color: 'red' }
-      ]}
+      series={series}
       tickLine="y"
       tooltipProps={{
         content: ({ label, payload }) => (
           <CustomChartTooltip
             label={label as ReactNode}
-            payload={
-              payload && payload.length > 0
-                ? [
-                    {
-                      className: 'mantine-BarChart-bar',
-                      style: {},
-                      name: 'Total',
-                      fill: 'var(--mantine-color-blue-filled)',
-                      stroke: 'var(--mantine-color-blue-filled)',
-                      fillOpacity: 1,
-                      strokeOpacity: 0,
-                      dataKey: 'Total',
-                      color: 'var(--mantine-color-blue-filled)',
-                      value: 0,
-                      payload: {
-                        category: 'Total',
-                        Success: 558651,
-                        Total:
-                          (payload[0].payload as (typeof chartData)[number]).Success +
-                          (payload[1].payload as (typeof chartData)[number]).Failed
-                      },
-                      hide: false
-                    },
-                    ...payload
-                  ]
-                : []
-            }
+            payload={payload ?? []}
+            series={series}
+            withTotal
           />
         )
       }}

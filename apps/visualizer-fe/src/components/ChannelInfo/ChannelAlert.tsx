@@ -61,7 +61,7 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
   return (
     <Box pos="absolute" top={0} left={0} p="xl">
       <Alert
-        title={t('main.network.channelInfoo')}
+        title={t('main.network.channelInfo')}
         withCloseButton
         onClose={onClose}
         w="100%"

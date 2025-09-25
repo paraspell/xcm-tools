@@ -79,18 +79,15 @@ export function getFilteredChartTooltipPayload(payload: Record<string, any>[], s
   return duplicatesFilter.filter(item => item.name === segmentId);
 }
 
+// IMPORTANT: read by dataKey (series key), fall back to name
 function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter') {
   if (type === 'radial' || type === 'scatter') {
-    if (Array.isArray(item.value)) {
-      return item.value[1] - item.value[0];
-    }
+    if (Array.isArray(item.value)) return item.value[1] - item.value[0];
     return item.value;
   }
-
-  if (Array.isArray(item.payload[item.dataKey])) {
-    return item.payload[item.dataKey][1] - item.payload[item.dataKey][0];
-  }
-  return item.payload[item.name];
+  const key = (item.dataKey ?? item.name) as string;
+  if (Array.isArray(item.payload[key])) return item.payload[key][1] - item.payload[key][0];
+  return item.payload[key];
 }
 
 export type ChartTooltipStylesNames =
@@ -104,14 +101,15 @@ export type ChartTooltipStylesNames =
   | 'tooltipBody';
 
 export type ChartTooltipFactory = Factory<{
-  props: ChartTooltipProps;
+  props: ChartTooltipProps & { withTotal?: boolean };
   ref: HTMLDivElement;
   stylesNames: ChartTooltipStylesNames;
 }>;
 
-const defaultProps: Partial<ChartTooltipProps> = {
+const defaultProps: Partial<ChartTooltipProps & { withTotal?: boolean }> = {
   type: 'area',
-  showColor: true
+  showColor: true,
+  withTotal: false
 };
 
 const getParaId = (ecosystem: Ecosystem, label?: string, total?: string): number | undefined => {
@@ -155,10 +153,13 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     series,
     valueFormatter,
     showColor,
+    withTotal,
     ...others
   } = props;
 
   const theme = useMantineTheme();
+  const { t } = useTranslation();
+  const { dateRange, selectedEcosystem } = useSelectedParachain();
 
   const getStyles = useStyles<ChartTooltipFactory>({
     name: 'ChartTooltip',
@@ -175,41 +176,70 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     return null;
   }
 
-  const filteredPayload = getFilteredChartTooltipPayload(payload, segmentId);
+  let filteredPayload = getFilteredChartTooltipPayload(payload, segmentId);
   const scatterLabel = type === 'scatter' ? payload[0]?.payload?.name : null;
   const labels = getSeriesLabels(series);
   const _label = label || scatterLabel;
 
-  const items = filteredPayload.map(item => (
-    <div key={item?.key ?? item.name} data-type={type} {...getStyles('tooltipItem')}>
-      <div {...getStyles('tooltipItemBody')}>
-        {showColor && (
-          <ColorSwatch
-            color={getThemeColor(item.color, theme)}
-            size={12}
-            {...getStyles('tooltipItemColor')}
-            withShadow={false}
-          />
-        )}
-        <div {...getStyles('tooltipItemName')}>{labels[item.name] || item.name}</div>
-      </div>
-      <div {...getStyles('tooltipItemData')}>
-        {typeof valueFormatter === 'function'
-          ? valueFormatter(getData(item, type!))
-          : getData(item, type!)}
-        {unit || item.unit}
-      </div>
-    </div>
-  ));
+  if (withTotal && filteredPayload.length > 0) {
+    const datum = filteredPayload[0]?.payload ?? {};
+    const total = (datum.success ?? 0) + (datum.failed ?? 0);
 
-  const { t } = useTranslation();
+    const totalRow = {
+      ...filteredPayload[0],
+      name: 'total',
+      dataKey: 'total',
+      value: total,
+      payload: { ...datum, total },
+      color: 'var(--mantine-color-blue-filled)',
+      fill: 'var(--mantine-color-blue-filled)',
+      stroke: 'var(--mantine-color-blue-filled)',
+      fillOpacity: 1,
+      strokeOpacity: 0
+    };
 
-  const { dateRange, selectedEcosystem } = useSelectedParachain();
+    filteredPayload = [totalRow, ...filteredPayload];
+  }
+
+  const displayNameFor = (raw: string) => {
+    if (labels[raw]) return labels[raw];
+    if (raw === 'success') return t('status.success');
+    if (raw === 'failed') return t('status.failed');
+    if (raw === 'total') return t('charts.common.total');
+    return raw;
+  };
+
+  const items = filteredPayload.map(item => {
+    const swatchColor =
+      (typeof item.color === 'string' && item.color) ||
+      (typeof item.fill === 'string' && item.fill) ||
+      'gray.6';
+
+    return (
+      <div key={item?.key ?? item.name} data-type={type} {...getStyles('tooltipItem')}>
+        <div {...getStyles('tooltipItemBody')}>
+          {showColor && (
+            <ColorSwatch
+              color={getThemeColor(swatchColor, theme)}
+              size={12}
+              {...getStyles('tooltipItemColor')}
+              withShadow={false}
+            />
+          )}
+          <div {...getStyles('tooltipItemName')}>{displayNameFor(item.name)}</div>
+        </div>
+        <div {...getStyles('tooltipItemData')}>
+          {typeof valueFormatter === 'function'
+            ? valueFormatter(getData(item, type!))
+            : getData(item, type!)}
+          {unit || item.unit}
+        </div>
+      </div>
+    );
+  });
 
   const paraId = getParaId(selectedEcosystem, label as string, t('charts.common.total'));
-
   const [startDate, endDate] = dateRange;
-
   const explorerLink = generateExplorerLink(selectedEcosystem, paraId, startDate, endDate);
 
   return (
