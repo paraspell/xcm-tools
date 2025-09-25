@@ -3,6 +3,7 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { Box, Flex, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
+import { BrowserRouter } from 'react-router-dom';
 
 import LeftPanel from './components/LeftPanel';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
@@ -29,20 +30,22 @@ export const client = new ApolloClient({
 
 const App = () => (
   <ApolloProvider client={client}>
-    <WalletProvider>
-      <SelectedParachainProvider>
-        <MantineProvider forceColorScheme="light">
-          <Box pos="relative" h="100%">
-            <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
-            <Notifications />
-            <Flex h="100%">
-              <LeftPanel />
-              <RightPanel />
-            </Flex>
-          </Box>
-        </MantineProvider>
-      </SelectedParachainProvider>
-    </WalletProvider>
+    <BrowserRouter>
+      <WalletProvider>
+        <SelectedParachainProvider>
+          <MantineProvider forceColorScheme="light">
+            <Box pos="relative" h="100%">
+              <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+              <Notifications />
+              <Flex h="100%">
+                <LeftPanel />
+                <RightPanel />
+              </Flex>
+            </Box>
+          </MantineProvider>
+        </SelectedParachainProvider>
+      </WalletProvider>
+    </BrowserRouter>
   </ApolloProvider>
 );
 
