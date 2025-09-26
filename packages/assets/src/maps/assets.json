@@ -3133,6 +3133,52 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1113",
+        "symbol": "HUSDe",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x52e1311e26610e6662a1e5b5bd113130b6815213"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "222",
+        "symbol": "HOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "420",
         "symbol": "GETH",
         "decimals": 18,
@@ -3154,6 +3200,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "110",
+        "symbol": "2-Pool-HUSDC",
+        "decimals": 18,
+        "existentialDeposit": "1000"
       },
       {
         "assetId": "10",
@@ -3195,6 +3247,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x02639ec01313c8775fae74f2dad1118c8a8a86da"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1111",
+        "symbol": "HUSDT",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x1806860d27ee903c1ec7586d4f7d598d7591f124"
                 }
               }
             ]
@@ -3459,6 +3534,35 @@
         "symbol": "3-Pool",
         "decimals": 18,
         "existentialDeposit": "20000000000000000"
+      },
+      {
+        "assetId": "111",
+        "symbol": "2-Pool-HUSDT",
+        "decimals": 18,
+        "existentialDeposit": "1000"
+      },
+      {
+        "assetId": "1112",
+        "symbol": "HUSDS",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "1000099",
@@ -4237,6 +4341,12 @@
         "alias": "USDC3"
       },
       {
+        "assetId": "112",
+        "symbol": "2-Pool-HUSDS",
+        "decimals": 18,
+        "existentialDeposit": "1000"
+      },
+      {
         "assetId": "1005",
         "symbol": "avDOT",
         "decimals": 10,
@@ -4372,6 +4482,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1110",
+        "symbol": "HUSDC",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x35774c305aaf441a102d47988d35f0f5428471b3"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000100",
         "symbol": "LDOT",
         "decimals": 10,
@@ -4471,6 +4604,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "113",
+        "symbol": "2-Pool-HUSDe",
+        "decimals": 18,
+        "existentialDeposit": "1000"
       },
       {
         "assetId": "1",
@@ -8514,6 +8653,21 @@
         },
         "existentialDeposit": "1",
         "alias": "LINK2"
+      },
+      {
+        "symbol": "NEURO",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2043
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000000"
       },
       {
         "symbol": "AAVE",
@@ -12734,6 +12888,33 @@
         "existentialDeposit": "1"
       },
       {
+        "symbol": "USDC",
+        "decimals": 6,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X4": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              },
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDC3"
+      },
+      {
         "symbol": "SKY",
         "decimals": 18,
         "location": {
@@ -13038,6 +13219,33 @@
           }
         },
         "existentialDeposit": "1"
+      },
+      {
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X4": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              },
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDt3"
       },
       {
         "symbol": "MOVR",
