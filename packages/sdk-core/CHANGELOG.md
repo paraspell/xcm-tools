@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.4...sdk-core-v11.8.5) (2025-09-26)
+
+
+### Bug Fixes
+
+* **sdk-core:** Display fee in MYTH on AH hop when Mythos -&gt; Ethereum 🔧 ([8042f13](https://github.com/paraspell/xcm-tools/commit/8042f1346a0a0506a354ea0e5630fae26d8cca3a))
+
 ## [11.8.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.3...sdk-core-v11.8.4) (2025-09-24)
 
 
