@@ -15,6 +15,7 @@ import type {
   TXcmFeeHopResult
 } from '../../types'
 import { getRelayChainOf } from '../../utils'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
@@ -31,6 +32,8 @@ vi.mock('../../utils')
 vi.mock('../dry-run')
 vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
+
+vi.mock('../../utils/fees/getMythosOriginFee')
 
 const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>) =>
   ({
@@ -104,6 +107,52 @@ describe('getXcmFeeInternal', () => {
         asset: { symbol: 'ACA' }
       }
     })
+  })
+
+  it('Mythos → Ethereum: adds origin surcharge and does NOT call addEthereumBridgeFees', async () => {
+    vi.mocked(getMythosOriginFee).mockResolvedValue(500n)
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'MYTH', decimals: 18 } as TAssetInfo)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ETH' } as TAssetInfo)
+
+    vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
+      fee: 1000n,
+      feeType: 'dryRun',
+      dryRunError: undefined,
+      forwardedXcms: [null, [{}]],
+      destParaId: 1000,
+      currency: 'MYTH',
+      asset: { symbol: 'MYTH' } as TAssetInfo
+    })
+
+    vi.mocked(traverseXcmHops).mockResolvedValue({
+      hops: [],
+      lastProcessedChain: 'Mythos',
+      destination: undefined,
+      assetHub: undefined,
+      bridgeHub: undefined
+    })
+
+    const bridgeSpy = vi.mocked(addEthereumBridgeFees)
+
+    const res = await getXcmFeeInternal(
+      createOptions({
+        origin: 'Mythos',
+        destination: 'Ethereum',
+        currency: { symbol: 'MYTH', amount: 1_000n }
+      })
+    )
+
+    expect(res.origin.fee).toBe(1500n)
+
+    expect(res.destination).toMatchObject({
+      fee: 0n,
+      feeType: 'noFeeRequired',
+      currency: 'ETH'
+    })
+
+    expect(bridgeSpy).not.toHaveBeenCalled()
   })
 
   it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {

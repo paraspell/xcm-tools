@@ -15,6 +15,7 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import type { HopProcessParams, TDryRunChain, TDryRunChainResult, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
@@ -91,7 +92,16 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
-  const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryRun
+  const isMythosToEthereum = origin === 'Mythos' && destination === 'Ethereum'
+
+  const originDryModified = isMythosToEthereum
+    ? {
+        ...originDryRun,
+        fee: originDryRun.fee + (await getMythosOriginFee(api))
+      }
+    : originDryRun
+
+  const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryModified
 
   const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TDryRunChainResult> => {
     const {
@@ -139,7 +149,7 @@ export const dryRunInternal = async <TApi, TRes>(
       origin: currentOrigin,
       asset: hopAsset,
       feeAsset: resolvedFeeAsset,
-      originFee: originDryRun.fee,
+      originFee: originDryModified.fee,
       amount
     })
 
@@ -165,9 +175,13 @@ export const dryRunInternal = async <TApi, TRes>(
   // Process Ethereum bridge fees
   const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
   const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-  const processedBridgeHub = traversalResult.bridgeHub?.success
-    ? await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
-    : traversalResult.bridgeHub
+
+  // For Mythos → Ethereum, we skip additional Ethereum bridge fees (aligns with getXcmFeeInternal)
+  const processedBridgeHub = isMythosToEthereum
+    ? traversalResult.bridgeHub
+    : traversalResult.bridgeHub?.success
+      ? await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
+      : traversalResult.bridgeHub
 
   // Update bridge hub in hops if needed
   if (
@@ -206,7 +220,7 @@ export const dryRunInternal = async <TApi, TRes>(
   return {
     failureReason,
     failureChain,
-    origin: originDryRun,
+    origin: originDryModified,
     assetHub: traversalResult.assetHub,
     bridgeHub: bridgeHubWithCurrency,
     destination: traversalResult.destination,
