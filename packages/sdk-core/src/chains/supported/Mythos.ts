@@ -1,18 +1,12 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
-import { getNativeAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt, Version } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION } from '../../constants'
-import {
-  ChainNotSupportedError,
-  InvalidParameterError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
-import { getParaEthTransferFees } from '../../transfer'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -22,7 +16,7 @@ import { assertAddressIsString, assertHasLocation, assertSenderAddress } from '.
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { padFeeBy } from '../../utils/fees'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { handleToAhTeleport } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
@@ -53,22 +47,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
     asset.amount
   )
 
-  const ahApi = api.clone()
-  await ahApi.init('AssetHubPolkadot')
-
-  const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi)
-
-  const feeConverted = await ahApi.quoteAhPrice(
-    DOT_LOCATION,
-    getNativeAssets(chain)[0].location as TLocation,
-    bridgeFee + ahExecutionFee
-  )
-
-  if (!feeConverted) {
-    throw new InvalidParameterError(`Pool DOT -> ${asset.symbol} not found.`)
-  }
-
-  const nativeMythAmount = padFeeBy(feeConverted, 10)
+  const nativeMythAmount = await getMythosOriginFee(api)
 
   return {
     module: 'PolkadotXcm',

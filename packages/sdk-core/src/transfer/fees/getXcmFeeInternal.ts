@@ -20,6 +20,7 @@ import type {
   TXcmFeeHopResult
 } from '../../types'
 import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
@@ -71,7 +72,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
   const {
-    fee: originFee,
+    fee: originFeeRaw,
     currency: originCurrency,
     asset: originAsset,
     feeType: originFeeType,
@@ -91,6 +92,11 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     disableFallback,
     useRootOrigin
   })
+
+  const isMythosToEthereum = origin === 'Mythos' && destination === 'Ethereum'
+  const originFee = isMythosToEthereum
+    ? (await getMythosOriginFee(api)) + (originFeeRaw ?? 0n)
+    : originFeeRaw
 
   // If origin dry run failed or we only have paymentInfo, handle fallback
   if (originDryRunError || originFeeType === 'paymentInfo') {
@@ -284,12 +290,10 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
 
   // Process Ethereum bridge fees
   const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
-  const processedBridgeHub = await addEthereumBridgeFees(
-    api,
-    traversalResult.bridgeHub,
-    destination,
-    assetHubChain
-  )
+
+  const processedBridgeHub = isMythosToEthereum
+    ? traversalResult.bridgeHub
+    : await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
 
   // Update bridge hub fee in hops if needed
   if (

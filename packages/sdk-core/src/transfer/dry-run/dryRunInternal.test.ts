@@ -11,6 +11,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { HopProcessParams, HopTraversalResult, TDryRunOptions } from '../../types'
 import { getRelayChainOf } from '../../utils'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { dryRunInternal } from './dryRunInternal'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
@@ -19,6 +20,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
+
+vi.mock('../../utils/fees/getMythosOriginFee')
 
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
@@ -107,6 +110,62 @@ describe('dryRunInternal', () => {
       destination: { success: true, fee: 2_000n, currency: 'ACA' },
       hops: []
     })
+  })
+
+  it('Mythos → Ethereum: adds origin surcharge and passes it to hop dry run', async () => {
+    vi.mocked(getMythosOriginFee).mockResolvedValue(500n)
+    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'MYTH', decimals: 18 } as TAssetInfo)
+
+    const originOk = {
+      success: true,
+      fee: 1_000n,
+      forwardedXcms: [null, [[{ dummy: 'xcm' }]]],
+      destParaId: 1000,
+      currency: 'MYTH',
+      asset: { symbol: 'MYTH' } as TAssetInfo
+    }
+
+    const getDryRunXcmSpy = vi.fn().mockResolvedValue({ success: true, fee: 2_000n })
+
+    let capturedProcessHop: (p: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    vi.mocked(traverseXcmHops).mockImplementation(async params => {
+      capturedProcessHop = params.processHop
+
+      const mockHopApi = {
+        getDryRunXcm: getDryRunXcmSpy
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const hopResult = await capturedProcessHop({
+        api: mockHopApi,
+        currentChain: 'AssetHubPolkadot',
+        currentOrigin: 'Mythos',
+        currentAsset: { symbol: 'MYTH' } as TAssetInfo,
+        forwardedXcms: originOk.forwardedXcms,
+        hasPassedExchange: false,
+        isDestination: false
+      } as HopProcessParams<unknown, unknown>)
+
+      return {
+        hops: [{ chain: 'AssetHubPolkadot', result: hopResult }],
+        assetHub: hopResult
+      } as unknown as HopTraversalResult<unknown>
+    })
+
+    const api = createFakeApi(originOk)
+    const res = await dryRunInternal(
+      createOptions(api, {
+        origin: 'Mythos',
+        destination: 'Ethereum',
+        currency: { symbol: 'MYTH', amount: 1_000n }
+      })
+    )
+
+    if (res.origin.success) {
+      expect(res.origin.fee).toBe(1500n)
+    }
+
+    expect(getDryRunXcmSpy).toHaveBeenCalledTimes(1)
   })
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
