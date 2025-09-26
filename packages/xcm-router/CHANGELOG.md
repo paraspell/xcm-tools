@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.5](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.8.4...xcm-router-v11.8.5) (2025-09-26)
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([2e3c184](https://github.com/paraspell/xcm-tools/commit/2e3c184dc665a658f564113e091fb1db54fc441e))
+
 ## [11.8.4](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.8.3...xcm-router-v11.8.4) (2025-09-24)
 
 
