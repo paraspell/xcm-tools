@@ -636,6 +636,31 @@
         }
       },
       {
+        "symbol": "USDC",
+        "decimals": 6,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X4": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              },
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "DOT",
         "decimals": 10,
         "location": {
@@ -660,6 +685,31 @@
             "X1": [
               {
                 "Parachain": 2123
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X4": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              },
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
               }
             ]
           }
@@ -1054,35 +1104,107 @@
       },
       {
         "symbol": "2-Pool-HUSDC",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "110"
       },
       {
         "symbol": "HUSDC",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "1110",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x35774c305aaf441a102d47988d35f0f5428471b3"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "2-Pool-HUSDT",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "111"
       },
       {
         "symbol": "HUSDT",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "1111",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x1806860d27ee903c1ec7586d4f7d598d7591f124"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "2-Pool-HUSDS",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "112"
       },
       {
         "symbol": "HUSDS",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "1112",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "2-Pool-HUSDe",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "113"
       },
       {
         "symbol": "HUSDe",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "1113",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x52e1311e26610e6662a1e5b5bd113130b6815213"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "HDX",
@@ -1685,7 +1807,24 @@
       },
       {
         "symbol": "HOLLAR",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "222",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "iBTC",
