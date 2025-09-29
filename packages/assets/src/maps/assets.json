@@ -12912,6 +12912,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDC3"
       },
       {
@@ -13245,6 +13246,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDt3"
       },
       {
