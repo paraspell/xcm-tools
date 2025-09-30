@@ -35,12 +35,9 @@ export const createSwapTx = async (
   );
 
   const txs = await Promise.all(
-    swapResult.txs.map((tx) => {
-      if (!isPjsExtrinsic(tx)) {
-        return tx;
-      }
-      return convertTxToPapi(tx, options.exchange.apiPapi);
-    }),
+    swapResult.txs.map((tx) =>
+      isPjsExtrinsic(tx) ? convertTxToPapi(tx, options.exchange.apiPapi) : Promise.resolve(tx),
+    ),
   );
 
   return { txs, amountOut: swapResult.amountOut };

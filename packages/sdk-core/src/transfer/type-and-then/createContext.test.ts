@@ -92,22 +92,25 @@ describe('createTypeAndThenCallContext', () => {
     })
   })
 
-  it('should use destApi for reserve when reserveChain equals origin chain', async () => {
+  it('should use origin api for reserve when reserveChain equals origin chain', async () => {
     vi.mocked(getAssetReserveChain).mockReturnValue(mockChain)
 
     const destApiClone = { init: vi.fn().mockResolvedValue(undefined) } as unknown as IPolkadotApi<
       unknown,
       unknown
     >
-    const cloneSpy = vi.spyOn(mockApi, 'clone').mockReturnValueOnce(destApiClone)
-    const initSpy = vi.spyOn(destApiClone, 'init')
+    vi.spyOn(mockApi, 'clone').mockReturnValueOnce(destApiClone)
+
+    const destInitSpy = vi.spyOn(destApiClone, 'init')
+    const reserveInitSpy = vi.spyOn(mockApi, 'init')
 
     const result = await createTypeAndThenCallContext(mockChain, mockOptions)
 
-    expect(cloneSpy).toHaveBeenCalledTimes(1)
-    expect(initSpy).toHaveBeenCalledTimes(2)
+    expect(destInitSpy).toHaveBeenCalledWith(mockDestChain)
+    expect(reserveInitSpy).toHaveBeenCalledWith(mockChain)
+
     expect(result.dest.api).toBe(destApiClone)
-    expect(result.reserve.api).toBe(destApiClone)
+    expect(result.reserve.api).toBe(mockApi)
     expect(result.reserve.chain).toBe(mockChain)
   })
 

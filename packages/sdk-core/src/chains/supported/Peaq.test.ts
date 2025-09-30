@@ -4,34 +4,38 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import type {
+  TSendInternalOptions,
+  TTransferLocalOptions,
+  TXTokensTransferOptions
+} from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Peaq from './Peaq'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Peaq', () => {
-  let peaq: Peaq<unknown, unknown>
+  let chain: Peaq<unknown, unknown>
   const mockInput = {
     asset: { assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 
+  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+
   beforeEach(() => {
-    peaq = getChain<unknown, unknown, 'Peaq'>('Peaq')
+    chain = getChain<unknown, unknown, 'Peaq'>('Peaq')
   })
 
   it('should initialize with correct values', () => {
-    expect(peaq.chain).toBe('Peaq')
-    expect(peaq.info).toBe('peaq')
-    expect(peaq.ecosystem).toBe('Polkadot')
-    expect(peaq.version).toBe(Version.V4)
+    expect(chain.chain).toBe('Peaq')
+    expect(chain.info).toBe('peaq')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with valid scenario', () => {
-    peaq.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123n)
   })
 
@@ -41,11 +45,11 @@ describe('Peaq', () => {
       unknown
     >
 
-    expect(() => peaq.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
+    expect(() => chain.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })
 
   it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => peaq.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrowError(ChainNotSupportedError)
   })
 
   describe('transferLocalNonNativeAsset', () => {
@@ -60,7 +64,7 @@ describe('Peaq', () => {
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => peaq.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
@@ -74,7 +78,7 @@ describe('Peaq', () => {
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => peaq.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
@@ -88,7 +92,7 @@ describe('Peaq', () => {
         address: 'address'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      peaq.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
@@ -100,5 +104,13 @@ describe('Peaq', () => {
         }
       })
     })
+  })
+
+  it('isSendingTempDisabled should return true', () => {
+    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
+  })
+
+  it('isReceivingTempDisabled should return true', () => {
+    expect(chain.isReceivingTempDisabled(sendOptions)).toBe(true)
   })
 })

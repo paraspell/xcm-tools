@@ -5,7 +5,11 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TSendInternalOptions
+} from '../../types'
 import Parachain from '../Parachain'
 
 class Subsocial<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -27,6 +31,14 @@ class Subsocial<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
     }
 
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
   }
 }
 

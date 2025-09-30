@@ -12,7 +12,7 @@ import Parachain from '../Parachain'
 class Heima<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Heima',
-    info: string = 'litentry',
+    info: string = 'heima',
     ecosystem: TRelaychain = 'Polkadot',
     version: Version = Version.V5
   ) {

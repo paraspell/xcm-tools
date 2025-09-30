@@ -25,7 +25,9 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   const destApi = api.clone()
   await destApi.init(destChain)
 
-  const reserveApi = reserveChain !== chain ? api.clone() : destApi
+  const reserveApi =
+    reserveChain === chain ? api : reserveChain === destChain ? destApi : api.clone()
+
   await reserveApi.init(reserveChain)
 
   return {

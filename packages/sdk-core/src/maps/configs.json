@@ -1,6 +1,6 @@
 {
   "AssetHubPolkadot": {
-    "name": "AssetHub",
+    "name": "Asset Hub",
     "info": "PolkadotAssetHub",
     "paraId": 1000,
     "providers": [
@@ -102,10 +102,6 @@
         "endpoint": "wss://rpc.astar.network"
       },
       {
-        "name": "Automata 1RPC",
-        "endpoint": "wss://1rpc.io/astr"
-      },
-      {
         "name": "Blast",
         "endpoint": "wss://astar.public.blastapi.io"
       },
@@ -143,15 +139,11 @@
       {
         "name": "LiebiEU",
         "endpoint": "wss://eu.bifrost-polkadot-rpc.liebi.com/ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bifrost.public.curie.radiumblock.co/ws"
       }
     ]
   },
   "BridgeHubPolkadot": {
-    "name": "BridgeHub",
+    "name": "Bridge Hub",
     "info": "polkadotBridgeHub",
     "paraId": 1002,
     "providers": [
@@ -300,16 +292,16 @@
   },
   "Heima": {
     "name": "Heima",
-    "info": "litentry",
+    "info": "heima",
     "paraId": 2013,
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://litentry-rpc.dwellir.com"
+        "endpoint": "wss://heima-rpc.n.dwellir.com"
       },
       {
-        "name": "Litentry",
-        "endpoint": "wss://rpc.litentry-parachain.litentry.io"
+        "name": "Heima",
+        "endpoint": "wss://rpc.heima-parachain.heima.network"
       }
     ]
   },
@@ -734,7 +726,7 @@
     ]
   },
   "AssetHubKusama": {
-    "name": "AssetHub",
+    "name": "Asset Hub",
     "info": "KusamaAssetHub",
     "paraId": 1000,
     "providers": [
@@ -777,7 +769,7 @@
     ]
   },
   "BridgeHubKusama": {
-    "name": "BridgeHub",
+    "name": "Bridge Hub",
     "info": "kusamaBridgeHub",
     "paraId": 1002,
     "providers": [
@@ -1080,10 +1072,6 @@
         "endpoint": "wss://ws-quartz.unique.network"
       },
       {
-        "name": "Unique Asia",
-        "endpoint": "wss://asia-ws-quartz.unique.network"
-      },
-      {
         "name": "Unique Europe",
         "endpoint": "wss://eu-ws-quartz.unique.network"
       }
@@ -1174,7 +1162,7 @@
     ]
   },
   "AssetHubWestend": {
-    "name": "AssetHub",
+    "name": "Asset Hub",
     "info": "WestendAssetHub",
     "paraId": 1000,
     "providers": [
@@ -1197,7 +1185,7 @@
     ]
   },
   "BridgeHubWestend": {
-    "name": "BridgeHub",
+    "name": "Bridge Hub",
     "info": "westendBridgeHub",
     "paraId": 1002,
     "providers": [
@@ -1287,7 +1275,7 @@
     ]
   },
   "AssetHubPaseo": {
-    "name": "AssetHub",
+    "name": "Asset Hub",
     "info": "PaseoAssetHub",
     "paraId": 1000,
     "providers": [
@@ -1325,7 +1313,7 @@
     ]
   },
   "BridgeHubPaseo": {
-    "name": "BridgeHub",
+    "name": "Bridge Hub",
     "info": "PaseoBridgeHub",
     "paraId": 1002,
     "providers": [
@@ -1492,7 +1480,7 @@
     ]
   },
   "Polkadot": {
-    "name": "Polkadot",
+    "name": "Polkadot Relay",
     "info": "polkadot",
     "paraId": 0,
     "providers": [
@@ -1555,7 +1543,7 @@
     ]
   },
   "Kusama": {
-    "name": "Kusama",
+    "name": "Kusama Relay",
     "info": "kusama",
     "paraId": 0,
     "providers": [
@@ -1606,7 +1594,7 @@
     ]
   },
   "Westend": {
-    "name": "Westend",
+    "name": "Westend Relay",
     "info": "westend",
     "paraId": 0,
     "providers": [
@@ -1633,7 +1621,7 @@
     ]
   },
   "Paseo": {
-    "name": "Paseo",
+    "name": "Paseo Relay",
     "info": "paseo",
     "paraId": 0,
     "providers": [
