@@ -3,16 +3,18 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TForeignOrTokenAsset, TXTokensTransferOptions } from '../../types'
+import type {
+  TForeignOrTokenAsset,
+  TSendInternalOptions,
+  TXTokensTransferOptions
+} from '../../types'
 import { getChain } from '../../utils'
 import type Curio from './Curio'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Curio', () => {
-  let curio: Curio<unknown, unknown>
+  let chain: Curio<unknown, unknown>
   const mockInput = {
     asset: {
       symbol: 'CUR',
@@ -21,19 +23,21 @@ describe('Curio', () => {
     }
   } as TXTokensTransferOptions<unknown, unknown>
 
+  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+
   beforeEach(() => {
-    curio = getChain<unknown, unknown, 'Curio'>('Curio')
+    chain = getChain<unknown, unknown, 'Curio'>('Curio')
   })
 
   it('should initialize with correct values', () => {
-    expect(curio.chain).toBe('Curio')
-    expect(curio.info).toBe('curio')
-    expect(curio.ecosystem).toBe('Kusama')
-    expect(curio.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Curio')
+    expect(chain.info).toBe('curio')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    curio.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
       ForeignAsset: 123
     } as TForeignOrTokenAsset)
@@ -49,10 +53,18 @@ describe('Curio', () => {
       } as WithAmount<TNativeAssetInfo>
     }
 
-    curio.transferXTokens(inputWithoutCurrencyID)
+    chain.transferXTokens(inputWithoutCurrencyID)
 
     expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'CUR'
     } as TForeignOrTokenAsset)
+  })
+
+  it('isSendingTempDisabled should return true', () => {
+    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
+  })
+
+  it('isReceivingTempDisabled should return true', () => {
+    expect(chain.isReceivingTempDisabled(sendOptions)).toBe(true)
   })
 })

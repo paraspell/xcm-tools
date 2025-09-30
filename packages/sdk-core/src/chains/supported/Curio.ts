@@ -4,7 +4,7 @@ import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TForeignOrTokenAsset } from '../../types'
+import type { TForeignOrTokenAsset, TSendInternalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import Parachain from '../Parachain'
 
@@ -19,6 +19,14 @@ class Curio<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
       ? { ForeignAsset: Number(asset.assetId) }
       : { Token: asset.symbol }
     return transferXTokens(input, currencySelection)
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
   }
 }
 

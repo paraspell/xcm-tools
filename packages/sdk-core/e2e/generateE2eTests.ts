@@ -347,6 +347,14 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   }
                 }
 
+                if (
+                  chain === 'AssetHubPolkadot' &&
+                  destChain === 'Mythos' &&
+                  asset.symbol === 'MYTH'
+                ) {
+                  return { symbol: ForeignAbstract('MYTH1') }
+                }
+
                 return { symbol: asset.symbol }
               }
 

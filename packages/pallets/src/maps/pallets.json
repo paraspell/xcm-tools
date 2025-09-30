@@ -217,12 +217,24 @@
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
+        "name": "Balances",
+        "index": 10
+      },
+      {
         "name": "PolkadotXcm",
         "index": 51
+      },
+      {
+        "name": "Assets",
+        "index": 56
+      },
+      {
+        "name": "AssetManager",
+        "index": 64
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["Assets", "AssetManager"]
   },
   "Moonbeam": {
     "defaultPallet": "PolkadotXcm",
@@ -665,12 +677,16 @@
         "index": 14
       },
       {
+        "name": "ForeignAssets",
+        "index": 16
+      },
+      {
         "name": "PolkadotXcm",
         "index": 31
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
+    "otherAssets": ["Assets", "ForeignAssets"]
   },
   "Pendulum": {
     "defaultPallet": "XTokens",
@@ -995,7 +1011,7 @@
     "otherAssets": []
   },
   "Ajuna": {
-    "defaultPallet": "PolkadotXcm",
+    "defaultPallet": "XTokens",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1004,6 +1020,10 @@
       {
         "name": "PolkadotXcm",
         "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 35
       },
       {
         "name": "Assets",
@@ -1253,7 +1273,7 @@
     "otherAssets": []
   },
   "AjunaPaseo": {
-    "defaultPallet": "PolkadotXcm",
+    "defaultPallet": "XTokens",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1262,6 +1282,10 @@
       {
         "name": "PolkadotXcm",
         "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 35
       },
       {
         "name": "Assets",

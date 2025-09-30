@@ -26,7 +26,7 @@ describe('Heima', () => {
 
     it('should initialize with correct values', () => {
       expect(heima.chain).toBe('Heima')
-      expect(heima.info).toBe('litentry')
+      expect(heima.info).toBe('heima')
       expect(heima.ecosystem).toBe('Polkadot')
       expect(heima.version).toBe(Version.V5)
     })

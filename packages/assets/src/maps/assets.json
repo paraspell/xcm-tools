@@ -5510,7 +5510,17 @@
         "symbol": "HEI",
         "isNative": true,
         "decimals": 18,
-        "existentialDeposit": "100000000000000000"
+        "existentialDeposit": "100000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2013
+              }
+            ]
+          }
+        }
       }
     ],
     "otherAssets": []
