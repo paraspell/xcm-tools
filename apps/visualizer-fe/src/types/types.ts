@@ -32,3 +32,12 @@ export type TWalletAccount = {
     source?: string;
   };
 };
+
+export type LiveXcmMsg = {
+  ecosystem: string;
+  status: string;
+  hash: string;
+  timestamp: number;
+  from: number;
+  to: number;
+};

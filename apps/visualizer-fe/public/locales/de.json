@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "Schwebende Animation aktivieren",
+      "liveData": "Live-XCM-Daten verwenden",
       "title": "Animationseinstellungen"
     },
     "colors": {

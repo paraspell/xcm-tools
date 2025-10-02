@@ -1,6 +1,7 @@
 import { ColorInput, Group, Select, Stack, Switch, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
+import { useLiveData } from '../../context/LiveData/useLiveData';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
 import LanguageSelect from './LanguageSelect';
@@ -21,6 +22,7 @@ const Options = () => {
     animationEnabled,
     setAnimationEnabled
   } = useSelectedParachain();
+  const { liveDataEnabled, setLiveDataEnabled } = useLiveData();
 
   const onParachainArrangementChange = (value: string | null) => {
     setParachainArrangement(value as CountOption);
@@ -72,6 +74,11 @@ const Options = () => {
             checked={animationEnabled}
             onChange={event => setAnimationEnabled(event.currentTarget.checked)}
             label={t('settings.animation.enableFloatingDesc')}
+          />
+          <Switch
+            checked={liveDataEnabled}
+            onChange={event => setLiveDataEnabled(event.currentTarget.checked)}
+            label={t('settings.animation.liveData')}
           />
         </Group>
       </Stack>

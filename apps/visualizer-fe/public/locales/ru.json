@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "Включить плавающую анимацию",
+      "liveData": "Использовать живые данные XCM",
       "title": "Настройки анимации"
     },
     "colors": {
