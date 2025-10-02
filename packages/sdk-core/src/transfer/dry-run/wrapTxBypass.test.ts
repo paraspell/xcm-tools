@@ -13,7 +13,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { getPalletInstance } from '../../pallets'
 import { getAssetBalanceInternal } from '../../pallets/assets'
-import { getCurrencySelection, wrapTxBypass } from './wrapTxBypass'
+import { getCurrencySelection } from '../../utils/asset'
+import { wrapTxBypass } from './wrapTxBypass'
 
 vi.mock('@paraspell/assets', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/assets')>()),

@@ -769,7 +769,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
-      const failureReason = result.value.execution_result.value.error.type
+      const failureReason =
+        result.value.execution_result.value.error.type ?? result.value.execution_result.type
       return Promise.resolve({ success: false, failureReason, currency: symbol, asset })
     }
 
@@ -938,6 +939,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     return Promise.resolve()
+  }
+
+  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
+    const res = await this.api
+      .getUnsafeApi()
+      .apis.LocationToAccountApi.convert_location({ type: Version.V4, value: transform(location) })
+
+    return res.success ? res.value : undefined
   }
 }
 

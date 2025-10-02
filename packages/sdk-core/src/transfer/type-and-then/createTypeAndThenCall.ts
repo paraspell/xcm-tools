@@ -40,11 +40,12 @@ const buildAssets = (
  */
 export const createTypeAndThenCall = async <TApi, TRes>(
   chain: TSubstrateChain,
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+  overrideReserve?: TSubstrateChain
 ): Promise<TSerializedApiCall> => {
   const { api, senderAddress, version } = options
 
-  const context = await createTypeAndThenCallContext(chain, options)
+  const context = await createTypeAndThenCallContext(chain, options, overrideReserve)
 
   const { assetInfo } = context
 

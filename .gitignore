@@ -7,3 +7,4 @@ dist
 coverage
 _PipelineMapping/
 .env
+.github/copilot-instructions.md
