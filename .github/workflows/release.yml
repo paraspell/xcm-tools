@@ -40,7 +40,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: pnpm publish -r --no-git-checks --access=public
 
-  deploy_xcm_api:
+  deploy_xcm_api_and_visualizer_be:
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: self-hosted
@@ -48,7 +48,10 @@ jobs:
       - run: git pull
       - run: pnpm install
       - run: pnpm --filter xcm-api... build
+      - run: pnpm --filter visualizer-be... build
       - name: Restart PM2 process
-        run: pm2 restart xcm-api
+        run: |
+          pm2 restart xcm-api
+          pm2 restart visualizer-be
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2
