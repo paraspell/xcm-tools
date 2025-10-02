@@ -75,4 +75,8 @@ export interface IPolkadotApi<TApi, TRes> {
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
   disconnect(force?: boolean): Promise<void>
+  /**
+   * Convert a location to a chain account address using the runtime LocationToAccount API, if available.
+   */
+  convertLocationToAccount(location: TLocation): Promise<string | undefined>
 }

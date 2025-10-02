@@ -6,7 +6,7 @@ import { MAX_WEIGHT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { dryRunInternal, getXcmFeeInternal } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { assertSenderAddress } from '../assertions'
+import { assertSenderAddress, assertToIsString } from '../assertions'
 import { padFeeBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 
@@ -17,9 +17,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
 ): Promise<TRes> => {
   const { api, destination, address, senderAddress, assetInfo: asset, currency } = input
 
-  if (isTLocation(destination)) {
-    throw new InvalidParameterError('Location destination is not supported for this scenario')
-  }
+  assertToIsString(destination, 'Location destination is not supported for AH teleport.')
 
   if (isTLocation(address)) {
     throw new InvalidParameterError('Location address is not supported for this scenario')

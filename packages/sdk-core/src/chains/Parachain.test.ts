@@ -17,7 +17,7 @@ import {
   TransferToAhNotSupported
 } from '../errors'
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
-import { createTypeAndThenCall } from '../transfer'
+import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions, TSerializedApiCall, TTransferLocalOptions } from '../types'
 import {
@@ -84,6 +84,7 @@ vi.mock('./config', () => ({
 
 vi.mock('../transfer', () => ({
   createTypeAndThenCall: vi.fn(),
+  createTypeThenAutoReserve: vi.fn(),
   getParaEthTransferFees: vi.fn().mockReturnValue('fee')
 }))
 
@@ -693,6 +694,7 @@ describe('Parachain', () => {
       vi.resetAllMocks()
       vi.mocked(resolveDestChain).mockReturnValue('Acala')
       vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
+      vi.mocked(createTypeThenAutoReserve).mockResolvedValue(mockCall)
       vi.mocked(constructRelayToParaParameters).mockReturnValue(
         'parameters' as unknown as Record<string, unknown>
       )
@@ -706,7 +708,7 @@ describe('Parachain', () => {
         method: 'transfer_assets_using_type_and_then'
       })
 
-      expect(createTypeAndThenCall).toHaveBeenCalledOnce()
+      expect(createTypeThenAutoReserve).toHaveBeenCalledOnce()
       expect(result).toBe(mockCall)
     })
 

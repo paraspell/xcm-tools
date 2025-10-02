@@ -21,6 +21,7 @@ import {
   isSystemChain,
   localizeLocation,
   MissingChainApiError,
+  Parents,
   type TLocation,
   type TSerializedApiCall,
   type TSubstrateChain,
@@ -113,6 +114,9 @@ describe('PapiApi', () => {
       destroy: vi.fn(),
       getUnsafeApi: vi.fn().mockReturnValue({
         apis: {
+          LocationToAccountApi: {
+            convert_location: vi.fn()
+          },
           DryRunApi: {
             dry_run_call: vi.fn().mockResolvedValue(mockDryRunResult)
           },
@@ -334,6 +338,30 @@ describe('PapiApi', () => {
       expect(getWsProvider).toHaveBeenCalledWith(wsUrl)
       expect(createClient).toHaveBeenCalledOnce()
       vi.resetAllMocks()
+    })
+  })
+
+  describe('convertLocationToAccount', () => {
+    it('returns the address when runtime conversion succeeds', async () => {
+      const convertLocationMock = vi
+        .fn()
+        .mockResolvedValue({ success: true, value: '5FConvertedAddress' })
+
+      const unsafe = papiApi.getApi().getUnsafeApi()
+
+      unsafe.apis.LocationToAccountApi.convert_location = convertLocationMock
+
+      const location = {
+        parents: Parents.ZERO,
+        interior: {
+          Here: null
+        }
+      }
+
+      const res = await papiApi.convertLocationToAccount(location)
+
+      expect(res).toBe('5FConvertedAddress')
+      expect(convertLocationMock).toHaveBeenCalledTimes(1)
     })
   })
 

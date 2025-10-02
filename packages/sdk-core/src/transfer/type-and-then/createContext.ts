@@ -6,7 +6,8 @@ import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(
   chain: TSubstrateChain,
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+  overrideReserve?: TSubstrateChain
 ): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
   const { api, destChain, assetInfo } = options
 
@@ -19,12 +20,14 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   }
 
   const reserveChain =
-    // Paseo ecosystem migrated reserves to AssetHub
-    getRelayChainOf(chain) === 'Paseo'
-      ? getAssetReserveChain(chain, chain, assetInfo.location)
-      : isRelayChain(destChain)
-        ? destChain
-        : getAssetReserveChain(chain, chain, assetInfo.location)
+    overrideReserve !== undefined
+      ? overrideReserve
+      : // Paseo ecosystem migrated reserves to AssetHub
+        getRelayChainOf(chain) === 'Paseo'
+        ? getAssetReserveChain(chain, chain, assetInfo.location)
+        : isRelayChain(destChain)
+          ? destChain
+          : getAssetReserveChain(chain, chain, assetInfo.location)
 
   const destApi = api.clone()
   await destApi.init(destChain)

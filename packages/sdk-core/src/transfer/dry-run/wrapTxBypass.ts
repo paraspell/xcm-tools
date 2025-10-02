@@ -21,16 +21,7 @@ import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
-
-export const getCurrencySelection = (asset: TAssetInfo): TCurrencyCore => {
-  if (asset.location) return { location: asset.location }
-
-  if (isForeignAsset(asset) && asset.assetId) {
-    return { id: asset.assetId }
-  }
-
-  return { symbol: asset.symbol }
-}
+import { getCurrencySelection } from '../../utils/asset'
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   if (isForeignAsset(asset) && (!asset.assetId || asset.assetId.startsWith('0x'))) {

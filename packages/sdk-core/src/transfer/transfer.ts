@@ -101,6 +101,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       origin,
       destination: destination as TRelayToParaDestination,
       address,
+      senderAddress,
       assetInfo: {
         ...asset,
         amount: finalAmount

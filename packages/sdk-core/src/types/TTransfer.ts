@@ -173,6 +173,10 @@ type TRelayToParaBaseOptions = {
    */
   address: TAddress
   /**
+   * The sender address. A SS58 or H160 format.
+   */
+  senderAddress?: string
+  /**
    * The optional destination parachain ID
    */
   paraIdTo?: number
