@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "フローティングアニメーションを有効化",
+      "liveData": "ライブXCMデータを使用",
       "title": "アニメーション設定"
     },
     "colors": {

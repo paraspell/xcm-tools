@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "Ativar animação de flutuação",
+      "liveData": "Usar dados XCM ao vivo",
       "title": "Configurações de animação"
     },
     "colors": {

@@ -1,0 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { io } from 'socket.io-client';
+
+const socket = io('', {
+  path: '/socket.io',
+  transports: ['websocket'],
+  autoConnect: false
+});
+
+let currentHandler: ((data: any) => void) | null = null;
+const EVENT = 'liveXcmData';
+
+export function setSocketHandler(handler: (data: any) => void) {
+  if (currentHandler) socket.off(EVENT, currentHandler);
+  currentHandler = handler;
+  socket.on(EVENT, currentHandler);
+}
+
+export function connectSocket() {
+  if (!socket.connected) socket.connect();
+}
+
+export function disconnectSocket() {
+  if (socket.connected) socket.disconnect();
+}
+
+export function isSocketConnected() {
+  return socket.connected;
+}
+
+export { socket as _liveSocket };

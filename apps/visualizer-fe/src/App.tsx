@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 import LeftPanel from './components/LeftPanel';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import RightPanel from './components/RightPanel';
+import LiveDataProvider from './context/LiveData/LiveDataContext';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 import WalletProvider from './providers/WalletProvider';
 
@@ -33,16 +34,18 @@ const App = () => (
     <BrowserRouter>
       <WalletProvider>
         <SelectedParachainProvider>
-          <MantineProvider forceColorScheme="light">
-            <Box pos="relative" h="100%">
-              <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
-              <Notifications />
-              <Flex h="100%">
-                <LeftPanel />
-                <RightPanel />
-              </Flex>
-            </Box>
-          </MantineProvider>
+          <LiveDataProvider>
+            <MantineProvider forceColorScheme="light">
+              <Box pos="relative" h="100%">
+                <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+                <Notifications />
+                <Flex h="100%">
+                  <LeftPanel />
+                  <RightPanel />
+                </Flex>
+              </Box>
+            </MantineProvider>
+          </LiveDataProvider>
         </SelectedParachainProvider>
       </WalletProvider>
     </BrowserRouter>
