@@ -11,5 +11,14 @@ export default defineConfig({
     esbuildOptions: {
       target: 'esnext'
     }
+  },
+  server: {
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:4201',
+        ws: true,
+        changeOrigin: true
+      }
+    }
   }
 });

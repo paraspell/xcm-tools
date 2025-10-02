@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "启用漂浮动画",
+      "liveData": "使用实时 XCM 数据",
       "title": "动画设置"
     },
     "colors": {

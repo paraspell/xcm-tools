@@ -8,7 +8,7 @@ import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
 import type { Ecosystem } from '../../types/types';
 import { getChainsByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
-import LineBetween from '../LineBetween';
+import LineBetween from '../LineBetween/LineBetween';
 import Parachain from '../Parachain/Parachain';
 import Relaychain from '../Relaychain/Relaychain';
 
@@ -192,6 +192,9 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
               isSelected={isSelected}
               isSecondary={isSecondary}
               onClick={onChannelClick(channel)}
+              ecosystem={ecosystem}
+              fromParaId={channel.sender}
+              toParaId={channel.recipient}
             />
           );
         })}

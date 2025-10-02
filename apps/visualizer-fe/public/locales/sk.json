@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "Povoliť plávajúcu animáciu",
+      "liveData": "Použiť údaje XCM v reálnom čase",
       "title": "Nastavenia animácie"
     },
     "colors": {

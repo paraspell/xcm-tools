@@ -7,6 +7,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { Channel } from '../channels/channel.entity';
 import { ChannelModule } from '../channels/channels.module';
+import { LiveDataModule } from '../livedata/livedata.module';
 import { Asset, Message } from '../messages/message.entity';
 import { MessageModule } from '../messages/messages.module';
 
@@ -37,6 +38,7 @@ const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
     }),
     MessageModule,
     ChannelModule,
+    LiveDataModule,
   ],
 })
 export class AppModule {}
