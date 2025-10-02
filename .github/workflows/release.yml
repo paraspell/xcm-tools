@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
+      sdk_core_released: ${{ steps.release.outputs['packages/sdk-core--release_created'] }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v4
@@ -42,7 +43,7 @@ jobs:
 
   deploy_xcm_api_and_visualizer_be:
     needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
+    if: needs.release-please.outputs.sdk_core_released == 'true'
     runs-on: self-hosted
     steps:
       - run: git pull
