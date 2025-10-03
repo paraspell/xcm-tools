@@ -4,7 +4,7 @@ import { getRelayChainSymbol, isSymbolMatch, type TAssetInfo } from '@paraspell/
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION } from '../../constants'
+import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type {
@@ -71,17 +71,31 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo, address } = options
+    const { api, assetInfo: asset, address } = options
 
-    assertHasId(assetInfo)
+    assertHasId(asset)
+
+    const assetId = BigInt(asset.assetId)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest: address,
+          amount: asset.amount
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(assetInfo.assetId),
+        id: assetId,
         target: address,
-        amount: assetInfo.amount
+        amount: asset.amount
       }
     })
   }

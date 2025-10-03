@@ -2,6 +2,7 @@ import type { TAmount } from '@paraspell/assets'
 import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
+import { AMOUNT_ALL } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { isConfig } from '..'
 
@@ -9,7 +10,7 @@ export const abstractDecimals = <TApi, TRes>(
   amount: TAmount,
   decimals: number | undefined,
   api: IPolkadotApi<TApi, TRes>
-): bigint => {
+): bigint | typeof AMOUNT_ALL => {
   const config = api.getConfig()
   const abstractDecimals = isConfig(config) && config.abstractDecimals ? true : false
 
@@ -20,9 +21,9 @@ export const applyDecimalAbstraction = (
   amount: TAmount,
   decimals: number | undefined,
   shouldAbstract: boolean
-): bigint => {
+): bigint | typeof AMOUNT_ALL => {
   // If amount is already bigint, return as-is
-  if (typeof amount === 'bigint') {
+  if (typeof amount === 'bigint' || amount === AMOUNT_ALL) {
     return amount
   }
 

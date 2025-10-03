@@ -42,7 +42,7 @@ describe('Basilisk', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    it('should call api.callTxMethod with correct parameters', () => {
+    it('should call api.callTxMethod with correct parameters', async () => {
       const mockApi = {
         callTxMethod: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
@@ -55,7 +55,7 @@ describe('Basilisk', () => {
 
       const spy = vi.spyOn(mockApi, 'callTxMethod')
 
-      basilisk.transferLocalNativeAsset(mockInput)
+      await basilisk.transferLocalNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',

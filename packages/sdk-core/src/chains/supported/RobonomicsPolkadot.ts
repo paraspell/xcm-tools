@@ -2,6 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TScenario, TTransferLocalOptions } from '../../types'
@@ -33,12 +34,27 @@ class RobonomicsPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
 
     assertHasId(asset)
 
+    const assetId = BigInt(asset.assetId)
+    const dest = { Id: address }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest,
+          amount: asset.amount
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
-        target: { Id: address },
+        id: assetId,
+        target: dest,
         amount: asset.amount
       }
     })

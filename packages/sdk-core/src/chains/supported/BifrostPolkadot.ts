@@ -11,6 +11,7 @@ import {
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -112,12 +113,27 @@ class BifrostPolkadot<TApi, TRes>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, address } = options
 
+    const dest = { Id: address }
+    const currencyId = this.getCurrencySelection(asset)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
-        dest: { Id: address },
-        currency_id: this.getCurrencySelection(asset),
+        dest,
+        currency_id: currencyId,
         amount: asset.amount
       }
     })

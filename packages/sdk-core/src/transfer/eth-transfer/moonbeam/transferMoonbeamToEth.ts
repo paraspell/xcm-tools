@@ -59,6 +59,10 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
+  if (amount === 'ALL') {
+    throw new InvalidParameterError('Transfer amount ALL is not supported for EVM transfers')
+  }
+
   if (!isForeignAsset(foundAsset) || !foundAsset.location) {
     throw new InvalidCurrencyError('Currency must be a foreign asset with a valid location')
   }

@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
+import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
@@ -205,6 +205,30 @@ describe('Moonbeam', () => {
           target: mockOptions.address,
           id: 1n,
           amount: BigInt(mockOptions.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should call transfer_all when amount is ALL', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          dest: mockOptions.address,
+          id: 1n,
+          amount: AMOUNT_ALL
         }
       })
     })

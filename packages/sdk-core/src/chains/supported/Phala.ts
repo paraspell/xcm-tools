@@ -1,6 +1,7 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTransfer } from '../../pallets/xTransfer'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../types'
@@ -27,12 +28,27 @@ class Phala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTransferTrans
 
     assertHasId(asset)
 
+    const assetId = BigInt(asset.assetId)
+    const dest = { Id: address }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest,
+          amount: asset.amount
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
-        target: { Id: address },
+        id: assetId,
+        target: dest,
         amount: asset.amount
       }
     })

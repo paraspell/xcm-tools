@@ -18,7 +18,7 @@ import {
   Version
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { AMOUNT_ALL, DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
@@ -373,13 +373,39 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     assertIsForeign(asset)
 
     if (asset.assetId !== undefined) {
+      const assetId = Number(asset.assetId)
+      const dest = { Id: address }
+      if (asset.amount === AMOUNT_ALL) {
+        return api.callTxMethod({
+          module: 'Assets',
+          method: 'transfer_all',
+          parameters: {
+            id: assetId,
+            dest,
+            keep_alive: false
+          }
+        })
+      }
+
       return api.callTxMethod({
         module: 'Assets',
         method: 'transfer',
         parameters: {
-          id: Number(asset.assetId),
-          target: { Id: address },
+          id: assetId,
+          target: dest,
           amount: asset.amount
+        }
+      })
+    }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        parameters: {
+          id: asset.location,
+          target: { Id: address },
+          keep_alive: false
         }
       })
     }

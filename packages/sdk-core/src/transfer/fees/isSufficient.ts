@@ -7,6 +7,7 @@ import {
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
+import { AMOUNT_ALL } from '../../constants'
 import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets/balance'
 
 export const isSufficientOrigin = async <TApi, TRes>(
@@ -62,13 +63,13 @@ export const isSufficientDestination = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   destination: TChain,
   address: string,
-  amount: bigint,
+  amount: bigint | typeof AMOUNT_ALL,
   asset: TAssetInfo,
   feeNative: bigint
 ): Promise<boolean | undefined> => {
   const isNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))
 
-  if (!isNativeAsset) {
+  if (!isNativeAsset || amount === AMOUNT_ALL) {
     return undefined
   }
 

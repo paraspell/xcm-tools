@@ -48,6 +48,12 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
+  if (amount === 'ALL') {
+    throw new InvalidParameterError(
+      'Transfer with amount ALL is only supported for local transfers'
+    )
+  }
+
   const destCurrency = asset.location ? { location: asset.location } : { symbol: asset.symbol }
 
   const ed = getExistentialDepositOrThrow(destination, destCurrency)

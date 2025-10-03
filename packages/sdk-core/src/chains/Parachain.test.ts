@@ -537,7 +537,7 @@ describe('Parachain', () => {
   })
 
   describe('transferLocal', () => {
-    it('should throw an error if the address is location', () => {
+    it('should throw an error if the address is location', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
@@ -545,10 +545,10 @@ describe('Parachain', () => {
         address: DOT_LOCATION
       } as TSendInternalOptions<unknown, unknown>
 
-      expect(() => chain.transferLocal(options)).toThrow(InvalidAddressError)
+      await expect(chain.transferLocal(options)).rejects.toThrow(InvalidAddressError)
     })
 
-    it('should call transferLocalNativeAsset when asset is native', () => {
+    it('should call transferLocalNativeAsset when asset is native', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
@@ -561,12 +561,12 @@ describe('Parachain', () => {
 
       const transferLocalNativeSpy = vi.spyOn(chain, 'transferLocalNativeAsset')
 
-      chain.transferLocal(options)
+      await chain.transferLocal(options)
 
       expect(transferLocalNativeSpy).toHaveBeenCalled()
     })
 
-    it('should call transferLocalNonNativeAsset when asset is foreign', () => {
+    it('should call transferLocalNonNativeAsset when asset is foreign', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
@@ -578,14 +578,14 @@ describe('Parachain', () => {
 
       const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
 
-      chain.transferLocal(options)
+      await chain.transferLocal(options)
 
       expect(transferLocalNonNativeSpy).toHaveBeenCalled()
     })
   })
 
   describe('transferLocalNativeAsset', () => {
-    it('should create an API call', () => {
+    it('should create an API call', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
@@ -595,7 +595,7 @@ describe('Parachain', () => {
 
       const spy = vi.spyOn(options.api, 'callTxMethod')
 
-      chain.transferLocalNativeAsset(options)
+      await chain.transferLocalNativeAsset(options)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',

@@ -152,7 +152,7 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes>
-  assetInfo: WithAmount<TAssetInfo>
+  assetInfo: WithAmount<TAssetInfo, bigint | 'ALL'>
   feeAsset?: TAssetInfo
   feeCurrency?: TCurrencyInput
   overriddenAsset?: TLocation | TAssetWithFee[]
@@ -265,6 +265,7 @@ export type TTransferLocalOptions<TApi, TRes> = Omit<
   'address'
 > & {
   address: string
+  balance: bigint
 }
 
 export type TTransferFeeEstimates = {

@@ -9,7 +9,7 @@ import {
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION } from '../../constants'
+import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -200,17 +200,32 @@ class Hydration<TApi, TRes>
     )
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
     const { api, assetInfo: asset, address } = options
 
-    return api.callTxMethod({
-      module: 'Balances',
-      method: 'transfer_keep_alive',
-      parameters: {
-        dest: address,
-        value: asset.amount
-      }
-    })
+    if (asset.amount === AMOUNT_ALL) {
+      return Promise.resolve(
+        api.callTxMethod({
+          module: 'Balances',
+          method: 'transfer_all',
+          parameters: {
+            dest: address,
+            keep_alive: false
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.callTxMethod({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest: address,
+          value: asset.amount
+        }
+      })
+    )
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
@@ -218,12 +233,26 @@ class Hydration<TApi, TRes>
 
     assertHasId(asset)
 
+    const currencyId = Number(asset.assetId)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: address,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
         dest: address,
-        currency_id: Number(asset.assetId),
+        currency_id: currencyId,
         amount: asset.amount
       }
     })
