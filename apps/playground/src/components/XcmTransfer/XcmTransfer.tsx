@@ -411,14 +411,14 @@ const XcmTransfer = () => {
           ...safeFormValues,
           options: {
             abstractDecimals: true,
+            ...(submitType === 'dryRunPreview'
+              ? { mintFeeAssets: true }
+              : undefined),
           },
           senderAddress: selectedAccount.address,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
-          ...(submitType === 'dryRunPreview'
-            ? { mintFeeAssets: true }
-            : undefined),
         },
         submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
         'POST',
