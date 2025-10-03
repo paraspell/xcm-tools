@@ -4,6 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -28,19 +29,33 @@ class Kintsugi<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return this.transferLocalNonNativeAsset(options)
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+    return Promise.resolve(this.transferLocalNonNativeAsset(options))
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, address } = options
+
+    const currencyId = this.getCurrencySelection(asset)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: address,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
         dest: address,
-        currency_id: this.getCurrencySelection(asset),
+        currency_id: currencyId,
         value: asset.amount
       }
     })

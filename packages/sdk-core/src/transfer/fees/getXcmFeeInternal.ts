@@ -8,7 +8,7 @@ import {
 } from '@paraspell/assets'
 import { Parents, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
+import { AMOUNT_ALL, DRY_RUN_CLIENT_TIMEOUT_MS, MIN_AMOUNT } from '../../constants'
 import type {
   HopProcessParams,
   TFeeType,
@@ -70,6 +70,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
+  const finalAmount = amount === AMOUNT_ALL ? MIN_AMOUNT : amount
 
   const {
     fee: originFeeRaw,
@@ -114,7 +115,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
         destination,
         currency: {
           ...currency,
-          amount
+          amount: finalAmount
         },
         address,
         asset,
@@ -198,7 +199,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       destination: currentChain,
       currency: {
         ...currency,
-        amount
+        amount: finalAmount
       },
       address,
       senderAddress,
@@ -264,7 +265,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       destination,
       currency: {
         ...currency,
-        amount
+        amount: finalAmount
       },
       address,
       asset,

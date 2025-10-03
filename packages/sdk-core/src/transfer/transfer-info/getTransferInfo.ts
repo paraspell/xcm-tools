@@ -8,6 +8,7 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL, MIN_AMOUNT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
@@ -43,6 +44,8 @@ export const getTransferInfo = async <TApi, TRes>({
     const originAsset = findAssetInfoOrThrow(origin, currency, destination)
 
     const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
+
+    const finalAmount = amount === AMOUNT_ALL ? MIN_AMOUNT : amount
 
     const originBalanceFee =
       feeAsset && resolvedFeeAsset
@@ -90,10 +93,10 @@ export const getTransferInfo = async <TApi, TRes>({
       resolvedFeeAsset &&
       isAssetEqual(resolvedFeeAsset, originAsset)
 
-    const originBalanceAfter = originBalance - amount
+    const originBalanceAfter = originBalance - finalAmount
 
     const originBalanceFeeAfter = isFeeAssetAh
-      ? originBalanceFee - amount
+      ? originBalanceFee - finalAmount
       : originBalanceFee - originFee
 
     const originBalanceNativeSufficient = originBalanceFee >= originFee
@@ -164,7 +167,7 @@ export const getTransferInfo = async <TApi, TRes>({
       address,
       currency: {
         ...currency,
-        amount
+        amount: finalAmount
       },
       originFee,
       isFeeAssetAh: !!isFeeAssetAh,

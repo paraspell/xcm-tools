@@ -12,6 +12,7 @@ import {
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 
+import { MIN_AMOUNT } from '../../constants'
 import type { HopProcessParams, TDryRunChain, TDryRunChainResult, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
@@ -150,7 +151,7 @@ export const dryRunInternal = async <TApi, TRes>(
       asset: hopAsset,
       feeAsset: resolvedFeeAsset,
       originFee: originDryModified.fee,
-      amount
+      amount: amount === 'ALL' ? MIN_AMOUNT : amount
     })
 
     return { ...hopDryRun, currency: hopAsset.symbol, asset: hopAsset }

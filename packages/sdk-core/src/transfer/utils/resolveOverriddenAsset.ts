@@ -11,6 +11,7 @@ import {
 } from '@paraspell/assets'
 import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL, MIN_AMOUNT } from '../../constants'
 import type { TSendOptions } from '../../types'
 import { abstractDecimals, assertHasLocation, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
@@ -80,9 +81,11 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
       const abstractedAmount = abstractDecimals(currency.amount, asset.decimals, api)
 
+      const finalAbstractedAmount = abstractedAmount === AMOUNT_ALL ? MIN_AMOUNT : abstractedAmount
+
       return {
         isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
-        ...createAsset(version, abstractedAmount, asset.location)
+        ...createAsset(version, finalAbstractedAmount, asset.location)
       }
     })
 

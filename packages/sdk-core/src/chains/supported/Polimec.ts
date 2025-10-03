@@ -10,6 +10,7 @@ import {
 import { isTLocation, Parents, replaceBigInt, type TLocation, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
+import { AMOUNT_ALL } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination } from '../../pallets/xcmPallet/utils'
@@ -236,6 +237,18 @@ class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMT
 
     assertIsForeign(asset)
     assertHasLocation(asset)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        parameters: {
+          id: asset.location,
+          target: { Id: address },
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'ForeignAssets',

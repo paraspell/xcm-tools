@@ -16,7 +16,7 @@ class Karura<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
     return getChain<TApi, TRes, 'Acala'>('Acala').transferXTokens(input)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
     return getChain<TApi, TRes, 'Acala'>('Acala').transferLocalNativeAsset(options)
   }
 

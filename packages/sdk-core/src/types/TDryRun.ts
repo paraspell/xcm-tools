@@ -8,6 +8,7 @@ import type {
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
+import type { AMOUNT_ALL } from '../constants'
 import type { WithApi } from './TApi'
 import type { TDestination, TWeight } from './TTransfer'
 
@@ -51,7 +52,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    * Whether to use the root origin
    */
   useRootOrigin?: boolean
-  asset: WithAmount<TAssetInfo>
+  asset: WithAmount<TAssetInfo, bigint | typeof AMOUNT_ALL>
   bypassOptions?: TBypassOptions
   feeAsset?: TAssetInfo
 }

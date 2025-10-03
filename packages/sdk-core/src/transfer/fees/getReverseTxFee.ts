@@ -4,6 +4,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import { Builder } from '../../builder'
+import type { AMOUNT_ALL } from '../../constants'
 import type { TGetReverseTxFeeOptions } from '../../types'
 import { padFee } from '../../utils/fees'
 
@@ -20,7 +21,7 @@ const determineAddress = (
 
 export const getReverseTxFee = async <TApi, TRes>(
   { api, origin, destination, senderAddress, address }: TGetReverseTxFeeOptions<TApi, TRes>,
-  currencyInput: WithAmount<TCurrencyInput>
+  currencyInput: WithAmount<TCurrencyInput, bigint | typeof AMOUNT_ALL>
 ) => {
   const toAddress = determineAddress(origin, address, senderAddress)
   const fromAddress = determineAddress(destination, address, senderAddress)

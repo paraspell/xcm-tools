@@ -6,6 +6,7 @@ import {
 } from '@paraspell/assets'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
+import { MIN_AMOUNT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetTransferableAmountOptions } from '../../types'
@@ -60,7 +61,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
       feeAsset,
       currency: {
         ...currency,
-        amount
+        amount: amount === 'ALL' ? MIN_AMOUNT : amount
       },
       disableFallback: false
     })

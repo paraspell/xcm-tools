@@ -1,6 +1,6 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetInfo,
   findAssetInfoByLoc,
@@ -27,7 +27,7 @@ import {
   type TParachain
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
+import { AMOUNT_ALL, DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   IncompatibleChainsError,
@@ -36,6 +36,7 @@ import {
   TransferToAhNotSupported
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
+import { getAssetBalanceInternal } from '../pallets/assets'
 import {
   constructRelayToParaParameters,
   createDestination,
@@ -171,6 +172,12 @@ abstract class Parachain<TApi, TRes> {
       return this.transferLocal(sendOptions)
     }
 
+    if (asset.amount === AMOUNT_ALL) {
+      throw new InvalidParameterError(
+        'Transfer with amount ALL is only supported for local transfers'
+      )
+    }
+
     this.throwIfTempDisabled(sendOptions, destChain)
     this.throwIfCantReceive(destChain)
 
@@ -202,7 +209,10 @@ abstract class Parachain<TApi, TRes> {
 
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
-        asset,
+        asset: {
+          ...asset,
+          amount: asset.amount
+        },
         address,
         origin: this.chain,
         scenario,
@@ -222,7 +232,10 @@ abstract class Parachain<TApi, TRes> {
     } else if (supportsXTransfer(this)) {
       return this.transferXTransfer({
         api,
-        asset,
+        asset: {
+          ...asset,
+          amount: asset.amount
+        },
         recipientAddress: address,
         paraIdTo: paraId,
         origin: this.chain,
@@ -249,7 +262,10 @@ abstract class Parachain<TApi, TRes> {
           overriddenAsset !== undefined
         ),
         overriddenAsset,
-        assetInfo: asset,
+        assetInfo: {
+          ...asset,
+          amount: asset.amount
+        },
         currency,
         feeAssetInfo: feeAsset,
         feeCurrency,
@@ -472,8 +488,8 @@ abstract class Parachain<TApi, TRes> {
     return getNativeAssetSymbol(this.chain)
   }
 
-  transferLocal(options: TSendInternalOptions<TApi, TRes>): TRes {
-    const { assetInfo: asset, address } = options
+  async transferLocal(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, senderAddress, currency } = options
 
     if (isTLocation(address)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
@@ -483,24 +499,59 @@ abstract class Parachain<TApi, TRes> {
 
     const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && !isForeignAsset(asset)
 
-    if (isNativeAsset) {
-      return this.transferLocalNativeAsset(validatedOptions)
+    let balance: bigint
+    if (asset.amount === AMOUNT_ALL) {
+      assertSenderAddress(senderAddress)
+      balance = await getAssetBalanceInternal({
+        api,
+        chain: this.chain,
+        address: senderAddress,
+        currency: currency as TCurrencyCore
+      })
     } else {
-      return this.transferLocalNonNativeAsset(validatedOptions)
+      balance = MIN_AMOUNT
+    }
+
+    const localOptions = {
+      ...validatedOptions,
+      balance
+    }
+
+    if (isNativeAsset) {
+      return this.transferLocalNativeAsset(localOptions)
+    } else {
+      return this.transferLocalNonNativeAsset(localOptions)
     }
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
     const { api, assetInfo: asset, address } = options
 
-    return api.callTxMethod({
-      module: 'Balances',
-      method: 'transfer_keep_alive',
-      parameters: {
-        dest: isChainEvm(this.chain) ? address : { Id: address },
-        value: asset.amount
-      }
-    })
+    const dest = isChainEvm(this.chain) ? address : { Id: address }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return Promise.resolve(
+        api.callTxMethod({
+          module: 'Balances',
+          method: 'transfer_all',
+          parameters: {
+            dest,
+            keep_alive: false
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.callTxMethod({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest,
+          value: asset.amount
+        }
+      })
+    )
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
@@ -508,12 +559,27 @@ abstract class Parachain<TApi, TRes> {
 
     assertHasId(asset)
 
+    const dest = { Id: address }
+    const currencyId = BigInt(asset.assetId)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
-        dest: { Id: address },
-        currency_id: BigInt(asset.assetId),
+        dest,
+        currency_id: currencyId,
         amount: asset.amount
       }
     })

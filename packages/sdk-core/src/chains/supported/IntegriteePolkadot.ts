@@ -3,6 +3,7 @@
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { ChainNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -37,12 +38,27 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
 
     assertHasId(asset)
 
+    const assetId = Number(asset.assetId)
+    const dest = { Id: address }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest,
+          amount: asset.amount
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: Number(asset.assetId),
-        target: { Id: address },
+        id: assetId,
+        target: dest,
         amount: asset.amount
       }
     })

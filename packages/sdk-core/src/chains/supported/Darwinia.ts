@@ -3,6 +3,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -50,11 +51,25 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
 
     assertHasId(asset)
 
+    const assetId = BigInt(asset.assetId)
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest: address,
+          amount: asset.amount
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
+        id: assetId,
         target: address,
         amount: asset.amount
       }

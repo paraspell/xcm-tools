@@ -6,6 +6,7 @@ import {
 } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
+import { MIN_AMOUNT } from '../../constants'
 import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
@@ -69,7 +70,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
     address,
     currency: {
       ...currency,
-      amount
+      amount: amount === 'ALL' ? MIN_AMOUNT : amount
     },
     feeAsset,
     disableFallback: false

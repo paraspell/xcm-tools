@@ -4,6 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL, MIN_AMOUNT } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -11,6 +12,7 @@ import {
   type TForeignOrTokenAsset,
   type TXTokensTransferOptions
 } from '../../types'
+import { assertSenderAddress } from '../../utils'
 import Parachain from '../Parachain'
 
 class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
@@ -29,25 +31,40 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+  async transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, balance, senderAddress } = options
 
-    return api.callTxMethod({
-      module: 'Currencies',
-      method: 'transfer_native_currency',
-      parameters: {
-        dest: { Id: address },
-        amount: asset.amount
-      }
-    })
+    const createTx = (amount: bigint) =>
+      api.callTxMethod({
+        module: 'Currencies',
+        method: 'transfer_native_currency',
+        parameters: {
+          dest: { Id: address },
+          amount
+        }
+      })
+
+    let amount: bigint
+
+    if (asset.amount === AMOUNT_ALL) {
+      assertSenderAddress(senderAddress)
+      const fee = await api.calculateTransactionFee(createTx(MIN_AMOUNT), senderAddress)
+      amount = balance - fee
+    } else {
+      amount = asset.amount
+    }
+
+    return createTx(amount)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, balance } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
       throw new InvalidCurrencyError('LcDOT local transfers are not supported')
     }
+
+    const amount = asset.amount === AMOUNT_ALL ? balance : asset.amount
 
     return api.callTxMethod({
       module: 'Currencies',
@@ -55,7 +72,7 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: asset.amount
+        amount
       }
     })
   }

@@ -4,6 +4,7 @@ import { type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -44,9 +45,11 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, balance } = options
 
     assertHasId(asset)
+
+    const amount = asset.amount === AMOUNT_ALL ? balance : asset.amount
 
     return api.callTxMethod({
       module: 'AssetManager',
@@ -54,7 +57,7 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: asset.amount
+        amount
       }
     })
   }

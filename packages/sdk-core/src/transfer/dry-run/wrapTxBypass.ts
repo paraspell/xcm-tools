@@ -15,7 +15,7 @@ import { Parents } from '@paraspell/sdk-common'
 import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
-import { BYPASS_MINT_AMOUNT } from '../../constants'
+import { AMOUNT_ALL, BYPASS_MINT_AMOUNT } from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
@@ -183,11 +183,13 @@ export const wrapTxBypass = async <TApi, TRes>(
 
   const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets)
 
+  const finalAmount = asset.amount === AMOUNT_ALL ? balance : asset.amount
+
   let mintAmount: bigint | null
   if (options?.sentAssetMintMode === 'bypass') {
-    mintAmount = parseUnits(BYPASS_MINT_AMOUNT, asset.decimals) + asset.amount
+    mintAmount = parseUnits(BYPASS_MINT_AMOUNT, asset.decimals) + finalAmount
   } else {
-    const missing = calcPreviewMintAmount(balance, asset.amount) ?? 0n
+    const missing = calcPreviewMintAmount(balance, finalAmount) ?? 0n
     const total = missing + bonus
     mintAmount = total > 0n ? total : null
   }

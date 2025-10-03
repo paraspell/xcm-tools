@@ -408,7 +408,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       pallet = 'OrmlTokens'
     }
 
-    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust') {
+    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust' || chain === 'Ajuna') {
       assertHasId(asset)
       const response = await this.api
         .getUnsafeApi()

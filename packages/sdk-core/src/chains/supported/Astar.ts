@@ -3,6 +3,7 @@
 import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
@@ -47,12 +48,27 @@ class Astar<TApi, TRes>
 
     assertHasId(asset)
 
+    const assetId = Number(asset.assetId)
+    const dest = { Id: address }
+
+    if (asset.amount === AMOUNT_ALL) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest,
+          amount: asset.amount
+        }
+      })
+    }
+
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: Number(asset.assetId),
-        target: { Id: address },
+        id: assetId,
+        target: dest,
         amount: asset.amount
       }
     })

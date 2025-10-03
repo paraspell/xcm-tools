@@ -2,6 +2,7 @@ import type { TAmount, TCurrencyCore } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isTAsset, type TAsset } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL, MIN_AMOUNT } from '../../constants'
 import type { TAssetClaimOptions } from '../../types'
 import { abstractDecimals, assertHasLocation, createAsset, localizeLocation } from '../../utils'
 
@@ -13,7 +14,8 @@ export const resolveAssets = <TApi, TRes>(
     const asset = findAssetInfoOrThrow(chain, currency, null)
     assertHasLocation(asset)
     const abstracted = abstractDecimals(amount, asset.decimals, api)
-    return createAsset(version, abstracted, localizeLocation(chain, asset.location))
+    const finalAbstracted = abstracted === AMOUNT_ALL ? MIN_AMOUNT : abstracted
+    return createAsset(version, finalAbstracted, localizeLocation(chain, asset.location))
   }
 
   if (Array.isArray(currency)) {

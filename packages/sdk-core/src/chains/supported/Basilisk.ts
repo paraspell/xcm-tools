@@ -21,7 +21,7 @@ class Basilisk<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
     return transferXTokens(input, Number(asset.assetId))
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
     return getChain<TApi, TRes, 'Hydration'>('Hydration').transferLocalNativeAsset(options)
   }
 
