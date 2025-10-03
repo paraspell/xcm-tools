@@ -192,6 +192,7 @@ abstract class Parachain<TApi, TRes> {
       isRelayAsset &&
       supportsTypeThen &&
       destChain &&
+      !feeAsset &&
       (!isTrustedChain(this.chain) || !isTrustedChain(destChain))
 
     if (supportsXTokens(this) && this.canUseXTokens(sendOptions) && !useTypeAndThen) {

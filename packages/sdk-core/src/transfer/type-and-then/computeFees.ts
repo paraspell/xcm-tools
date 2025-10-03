@@ -32,7 +32,7 @@ export const computeAllFees = async <TApi, TRes>(
   isDotAsset: boolean,
   refundInstruction: ReturnType<typeof createRefundInstruction> | null
 ): Promise<TTypeAndThenFees> =>
-  'DepositReserveAsset' in customXcm
+  'DepositReserveAsset' in customXcm || 'InitiateTeleport' in customXcm
     ? {
         reserveFee: await computeInstructionFee(reserve, version, [customXcm]),
         refundFee: refundInstruction
@@ -41,7 +41,7 @@ export const computeAllFees = async <TApi, TRes>(
         destFee: await computeInstructionFee(
           hasXcmPaymentApiSupport(dest.chain) ? dest : reserve,
           version,
-          customXcm.DepositReserveAsset.xcm
+          (customXcm?.DepositReserveAsset ?? customXcm.InitiateTeleport).xcm
         )
       }
     : {

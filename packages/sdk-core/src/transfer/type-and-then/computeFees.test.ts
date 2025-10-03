@@ -38,9 +38,15 @@ describe('computeAllFees', () => {
     }
   } as TTypeAndThenCallContext<unknown, unknown>
 
+  const mockXcm = [{ Mock: 'Instruction' }]
+
   const mockDepositReserveXcm = {
-    DepositReserveAsset: {}
-  } as ReturnType<typeof createCustomXcm>
+    DepositReserveAsset: {
+      assets: { Wild: 'All' },
+      dest: {},
+      xcm: mockXcm
+    }
+  } as unknown as Extract<ReturnType<typeof createCustomXcm>, { DepositReserveAsset: unknown }>
 
   const mockSimpleXcm = {
     DepositAsset: {}
