@@ -99,6 +99,7 @@
   "settings": {
     "animation": {
       "enableFloatingDesc": "تفعيل حركة التعويم",
+      "liveData": "استخدام بيانات XCM المباشرة",
       "title": "إعدادات الحركة"
     },
     "colors": {

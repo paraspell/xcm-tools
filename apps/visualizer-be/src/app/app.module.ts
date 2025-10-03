@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { LiveDataGateway } from 'src/livedata/livedata.gateway';
 
 import { Channel } from '../channels/channel.entity';
 import { ChannelModule } from '../channels/channels.module';
@@ -38,5 +39,6 @@ const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
     MessageModule,
     ChannelModule,
   ],
+  providers: [LiveDataGateway],
 })
 export class AppModule {}
