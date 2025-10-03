@@ -1,7 +1,8 @@
 import type { TAssetWithLocation, WithAmount } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import * as sdkCommon from '@paraspell/sdk-common'
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { MIN_FEE, RELAY_LOCATION } from '../../constants'
@@ -32,6 +33,8 @@ describe('createCustomXcm', () => {
   const mockAddress = '0x123'
   const mockVersion = Version.V3
 
+  const isSystemChainSpy = vi.spyOn(sdkCommon, 'isSystemChain')
+
   const mockContext = {
     origin: { chain: 'AssetHubPolkadot', api: mockApi } as TChainWithApi<unknown, unknown>,
     dest: { chain: 'Acala' } as TChainWithApi<unknown, unknown>,
@@ -46,12 +49,17 @@ describe('createCustomXcm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    isSystemChainSpy.mockImplementation(() => false)
     vi.mocked(createBeneficiaryLocation).mockImplementation(
       ({ api, address, version }) =>
         ({
           mockBeneficiary: { api, address, version }
         }) as unknown as TLocation
     )
+  })
+
+  afterAll(() => {
+    isSystemChainSpy.mockRestore()
   })
 
   describe('DepositReserveAsset (different chains)', () => {
@@ -79,11 +87,12 @@ describe('createCustomXcm', () => {
       expect(result).not.toHaveProperty('DepositAsset')
 
       if ('DepositReserveAsset' in result) {
-        expect(result.DepositReserveAsset.assets).toEqual({ Wild: 'All' })
-        expect(result.DepositReserveAsset).toHaveProperty('dest')
-        expect(result.DepositReserveAsset.xcm).toHaveLength(2)
-        expect(result.DepositReserveAsset.xcm[0]).toHaveProperty('BuyExecution')
-        expect(result.DepositReserveAsset.xcm[1]).toHaveProperty('DepositAsset')
+        const depositReserveAsset = result.DepositReserveAsset!
+        expect(depositReserveAsset.assets).toEqual({ Wild: 'All' })
+        expect(depositReserveAsset).toHaveProperty('dest')
+        expect(depositReserveAsset.xcm).toHaveLength(2)
+        expect(depositReserveAsset.xcm[0]).toHaveProperty('BuyExecution')
+        expect(depositReserveAsset.xcm[1]).toHaveProperty('DepositAsset')
       }
     })
 
@@ -110,11 +119,47 @@ describe('createCustomXcm', () => {
       expect(result).toHaveProperty('DepositReserveAsset')
 
       if ('DepositReserveAsset' in result) {
-        expect(result.DepositReserveAsset.assets).toHaveProperty('Definite')
-        const definiteAssets = result.DepositReserveAsset.assets.Definite
+        const depositReserveAsset = result.DepositReserveAsset!
+        expect(depositReserveAsset.assets).toHaveProperty('Definite')
+        const definiteAssets = depositReserveAsset.assets.Definite
         expect(definiteAssets).toHaveLength(2)
         expect(definiteAssets?.[0].fun).toEqual({ Fungible: 300n }) // reserveFee + refundFee
         expect(definiteAssets?.[1].fun).toEqual({ Fungible: 1000000n })
+      }
+    })
+
+    it('returns InitiateTeleport when destination is a system chain', () => {
+      isSystemChainSpy.mockImplementation(chain => chain === 'Kusama')
+
+      const origin = { chain: 'AssetHubPolkadot', api: mockApi } as TChainWithApi<unknown, unknown>
+      const dest = { chain: 'Kusama' } as TChainWithApi<unknown, unknown>
+      const reserve = { chain: 'Hydration' } as TChainWithApi<unknown, unknown>
+
+      const result = createCustomXcm(
+        {
+          ...mockContext,
+          origin,
+          dest,
+          reserve
+        },
+        false,
+        {
+          reserveFee: 100n,
+          refundFee: 50n,
+          destFee: 200n
+        }
+      )
+
+      expect(result).toHaveProperty('InitiateTeleport')
+      expect(result).not.toHaveProperty('DepositReserveAsset')
+
+      if ('InitiateTeleport' in result) {
+        const initiateTeleport = result.InitiateTeleport!
+        expect(initiateTeleport.assets).toHaveProperty('Definite')
+        expect(initiateTeleport.dest).toBeDefined()
+        expect(initiateTeleport.xcm).toHaveLength(2)
+        expect(initiateTeleport.xcm[0]).toHaveProperty('BuyExecution')
+        expect(initiateTeleport.xcm[1]).toHaveProperty('DepositAsset')
       }
     })
 
@@ -126,8 +171,9 @@ describe('createCustomXcm', () => {
       })
 
       if ('DepositReserveAsset' in result) {
-        expect(result.DepositReserveAsset.assets.Definite).toHaveLength(1)
-        expect(result.DepositReserveAsset.assets.Definite?.[0].fun).toEqual({ Fungible: 1000000n })
+        const depositReserveAsset = result.DepositReserveAsset!
+        expect(depositReserveAsset.assets.Definite).toHaveLength(1)
+        expect(depositReserveAsset.assets.Definite?.[0].fun).toEqual({ Fungible: 1000000n })
       }
     })
 
@@ -138,8 +184,8 @@ describe('createCustomXcm', () => {
         destFee: 200n
       })
 
-      if ('DepositReserveAsset' in result && 'BuyExecution' in result.DepositReserveAsset.xcm[0]) {
-        const buyExecution = result.DepositReserveAsset.xcm[0].BuyExecution
+      if ('DepositReserveAsset' in result && 'BuyExecution' in result.DepositReserveAsset!.xcm[0]) {
+        const buyExecution = result.DepositReserveAsset!.xcm[0].BuyExecution
         expect(buyExecution.fees.fun.Fungible).toBe(200n)
         expect(buyExecution.fees.id).toEqual(RELAY_LOCATION)
         expect(buyExecution.weight_limit).toBe('Unlimited')
@@ -153,8 +199,8 @@ describe('createCustomXcm', () => {
         destFee: 200n
       })
 
-      if ('DepositReserveAsset' in result && 'BuyExecution' in result.DepositReserveAsset.xcm[0]) {
-        const buyExecution = result.DepositReserveAsset.xcm[0].BuyExecution
+      if ('DepositReserveAsset' in result && 'BuyExecution' in result.DepositReserveAsset!.xcm[0]) {
+        const buyExecution = result.DepositReserveAsset!.xcm[0].BuyExecution
         expect(buyExecution.fees.fun.Fungible).toBe(999850n) // amount - refundFee - destFee
         expect(buyExecution.fees.id).toEqual(RELAY_LOCATION)
       }
@@ -164,10 +210,11 @@ describe('createCustomXcm', () => {
       const result = createCustomXcm(mockContext, false)
 
       if ('DepositReserveAsset' in result) {
-        expect(result.DepositReserveAsset.assets).toEqual({ Wild: 'All' })
+        const depositReserveAsset = result.DepositReserveAsset!
+        expect(depositReserveAsset.assets).toEqual({ Wild: 'All' })
 
-        if ('BuyExecution' in result.DepositReserveAsset.xcm[0]) {
-          expect(result.DepositReserveAsset.xcm[0].BuyExecution.fees.fun.Fungible).toBe(MIN_FEE)
+        if ('BuyExecution' in depositReserveAsset.xcm[0]) {
+          expect(depositReserveAsset.xcm[0].BuyExecution.fees.fun.Fungible).toBe(MIN_FEE)
         }
       }
     })

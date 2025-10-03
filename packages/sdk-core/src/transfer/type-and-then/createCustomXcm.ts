@@ -1,3 +1,5 @@
+import { isSystemChain } from '@paraspell/sdk-common'
+
 import { MIN_FEE, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
@@ -58,24 +60,38 @@ export const createCustomXcm = <TApi, TRes>(
 
     if (buyExecutionAmount < 0n) throw new AmountTooLowError()
 
+    const filter =
+      fees.destFee === MIN_FEE
+        ? { Wild: 'All' }
+        : {
+            Definite: assetsFilter
+          }
+
+    const buyExecution = {
+      BuyExecution: {
+        fees: createAsset(version, buyExecutionAmount, feeAssetLocation),
+        weight_limit: 'Unlimited'
+      }
+    }
+
+    const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
+
+    // If destination is a system chain, use teleport instead of reserve deposit
+    if (isSystemChain(dest.chain)) {
+      return {
+        InitiateTeleport: {
+          assets: filter,
+          dest: destLoc,
+          xcm: [buyExecution, depositInstruction]
+        }
+      }
+    }
+
     return {
       DepositReserveAsset: {
-        assets:
-          fees.destFee === MIN_FEE
-            ? { Wild: 'All' }
-            : {
-                Definite: assetsFilter
-              },
-        dest: createDestination(version, origin.chain, destination, paraIdTo),
-        xcm: [
-          {
-            BuyExecution: {
-              fees: createAsset(version, buyExecutionAmount, feeAssetLocation),
-              weight_limit: 'Unlimited'
-            }
-          },
-          depositInstruction
-        ]
+        assets: filter,
+        dest: destLoc,
+        xcm: [buyExecution, depositInstruction]
       }
     }
   }

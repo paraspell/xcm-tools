@@ -131,6 +131,29 @@ const isHex = (str: string) => {
   return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
 }
 
+const extractDryRunXcmFailureReason = (result: any): string => {
+  const executionResult = result?.value?.execution_result
+
+  const error = executionResult?.value?.error
+
+  const failureType =
+    error?.error?.type ??
+    error?.value?.error?.type ??
+    error?.value?.value?.type ??
+    error?.value?.type ??
+    error?.type
+
+  if (typeof failureType === 'string') {
+    return failureType
+  }
+
+  if (typeof executionResult?.type === 'string') {
+    return executionResult.type
+  }
+
+  return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
+}
+
 class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private _config?: TBuilderOptions<TPapiApiOrUrl>
   private api: TPapiApi
@@ -769,9 +792,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
-      const failureReason =
-        result.value.execution_result.value.error.type ?? result.value.execution_result.type
-      return Promise.resolve({ success: false, failureReason, currency: symbol, asset })
+      const failureReason = extractDryRunXcmFailureReason(result)
+
+      return { success: false, failureReason, currency: symbol, asset }
     }
 
     const actualWeight = result.value.execution_result.value.used

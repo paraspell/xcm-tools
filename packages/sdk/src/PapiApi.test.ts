@@ -1830,6 +1830,39 @@ describe('PapiApi', () => {
       })
     })
 
+    it('should fallback to execution_result.type when no nested error is present', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Incomplete',
+            value: {
+              error: {}
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        tx: mockTransaction,
+        asset: { symbol: 'USDT' } as TAssetInfo,
+        chain: 'AssetHubPolkadot',
+        origin: 'Hydration'
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'Incomplete',
+        currency: 'USDT',
+        asset: { symbol: 'USDT' } as TAssetInfo
+      })
+    })
+
     it('should throw error for unsupported chain', async () => {
       await expect(
         papiApi.getDryRunXcm({
@@ -2009,6 +2042,45 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeXcmError',
+        currency: 'AUSD',
+        asset: { symbol: 'AUSD' } as TAssetInfo
+      })
+    })
+
+    it('should unwrap nested failure reason when dry run returns dispatch error payload', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Incomplete',
+            value: {
+              error: {
+                error: {
+                  type: 'NotHoldingFees',
+                  value: undefined
+                },
+                index: 2
+              }
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        tx: mockTransaction,
+        asset: { symbol: 'AUSD' },
+        chain: 'AssetHubPolkadot',
+        origin: 'Acala'
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'NotHoldingFees',
         currency: 'AUSD',
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
