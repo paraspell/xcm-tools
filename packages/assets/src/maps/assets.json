@@ -8639,6 +8639,25 @@
         "alias": "USDT2"
       },
       {
+        "symbol": "NEURO",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2043
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000",
+        "alias": "NEURO2"
+      },
+      {
         "symbol": "LINK",
         "decimals": 18,
         "location": {
@@ -8677,7 +8696,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000000000"
+        "existentialDeposit": "1000000000000000",
+        "alias": "NEURO1"
       },
       {
         "symbol": "AAVE",
@@ -10073,8 +10093,8 @@
     "nativeAssetSymbol": "KAR",
     "isEVM": false,
     "ss58Prefix": 8,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KAR",
