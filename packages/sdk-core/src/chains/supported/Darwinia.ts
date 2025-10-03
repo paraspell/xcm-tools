@@ -46,15 +46,29 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
+
+    const assetId = BigInt(asset.assetId)
+
+    if (isAmountAll) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest: address,
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
+        id: assetId,
         target: address,
         amount: asset.amount
       }

@@ -6,6 +6,7 @@ import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { MIN_AMOUNT } from '../constants'
 import { DryRunFailedError, InvalidParameterError } from '../errors'
 import {
   getMinTransferableAmount,
@@ -21,6 +22,7 @@ import {
 import type {
   TAddress,
   TBatchOptions,
+  TBuildInternalRes,
   TDestination,
   TDryRunPreviewOptions,
   TGetXcmFeeBuilderOptions,
@@ -37,6 +39,7 @@ import {
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
+import { normalizeAmountAll } from './normalizeAmountAll'
 
 /**
  * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
@@ -185,7 +188,14 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   addToBatch(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptions>
   ): GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }> {
-    this.batchManager.addTransaction({ api: this.api, ...this._options })
+    const buildTx = this.createTxFactory()
+
+    this.batchManager.addTransaction({
+      api: this.api,
+      ...this._options,
+      buildTx
+    })
+
     return new GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }>(
       this.api,
       this.batchManager,
@@ -205,8 +215,10 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
-  protected buildInternal(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
-    return this.buildCommon(true)
+  protected buildInternal<TOptions extends TSendBaseOptions>(
+    this: GeneralBuilder<TApi, TRes, TOptions>
+  ): Promise<TBuildInternalRes<TApi, TRes, TOptions>> {
+    return this.buildCommon<TOptions>(true)
   }
 
   /**
@@ -214,15 +226,16 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    *
    * @returns A Promise that resolves to the transfer extrinsic.
    */
-  async build(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
-    return this.buildCommon()
+  async build(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>): Promise<TRes> {
+    const { tx } = await this.buildCommon()
+    return tx
   }
 
-  private async buildCommon(
-    this: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
+  private async buildCommon<TOptions extends TSendBaseOptions>(
+    this: GeneralBuilder<TApi, TRes, TOptions>,
     isCalledInternally = false
-  ) {
-    if (!this.batchManager.isEmpty()) {
+  ): Promise<TBuildInternalRes<TApi, TRes, TOptions>> {
+    if (!this.batchManager.isEmpty() && !isCalledInternally) {
       throw new InvalidParameterError(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
       )
@@ -234,11 +247,19 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
-    const tx = await send({ api: this.api, ...this._options })
+    const builder = this.currency({
+      ...this._options.currency,
+      amount: MIN_AMOUNT.toString()
+    })
+    const createTx = builder.createTxFactory()
 
-    await this.maybePerformXcmFormatCheck(tx, this._options, isCalledInternally)
+    const normalizedOptions = await normalizeAmountAll(this.api, createTx, this._options)
 
-    return tx
+    const tx = await send(normalizedOptions)
+
+    await this.maybePerformXcmFormatCheck(tx, normalizedOptions, isCalledInternally)
+
+    return { tx, options: normalizedOptions }
   }
 
   private async maybePerformXcmFormatCheck(
@@ -270,22 +291,22 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const tx = await this.buildInternal()
-    return buildDryRun(this.api, tx, this._options)
+    const { tx, options } = await this.buildInternal()
+    return buildDryRun(this.api, tx, options)
   }
 
   async dryRunPreview(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
-    options?: TDryRunPreviewOptions
+    dryRunOptions?: TDryRunPreviewOptions
   ) {
-    const tx = await this.buildInternal()
-    return buildDryRun(this.api, tx, this._options, {
+    const { tx, options } = await this.buildInternal()
+    return buildDryRun(this.api, tx, options, {
       sentAssetMintMode: 'preview',
-      mintFeeAssets: options?.mintFeeAssets
+      mintFeeAssets: dryRunOptions?.mintFeeAssets
     })
   }
 
-  private createTxFactory(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+  private createTxFactory(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
     return (amount: string | undefined) =>
       createTx({ ...this._options, api: this.api }, this, amount)
   }
@@ -365,7 +386,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const tx = await this.buildInternal()
+    const { tx } = await this.buildInternal()
 
     try {
       return await getXcmFeeEstimate({
@@ -394,7 +415,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    const tx = await this.buildInternal()
+    const { tx } = await this.buildInternal()
 
     try {
       return await getOriginXcmFeeEstimate({

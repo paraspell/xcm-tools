@@ -1,6 +1,6 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetInfo,
   findAssetInfoByLoc,
@@ -27,7 +27,7 @@ import {
   type TParachain
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
+import { DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   IncompatibleChainsError,
@@ -36,6 +36,7 @@ import {
   TransferToAhNotSupported
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
+import { getAssetBalanceInternal } from '../pallets/assets'
 import {
   constructRelayToParaParameters,
   createDestination,
@@ -473,8 +474,8 @@ abstract class Parachain<TApi, TRes> {
     return getNativeAssetSymbol(this.chain)
   }
 
-  transferLocal(options: TSendInternalOptions<TApi, TRes>): TRes {
-    const { assetInfo: asset, address } = options
+  async transferLocal(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, senderAddress, currency, isAmountAll } = options
 
     if (isTLocation(address)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
@@ -484,37 +485,87 @@ abstract class Parachain<TApi, TRes> {
 
     const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && !isForeignAsset(asset)
 
-    if (isNativeAsset) {
-      return this.transferLocalNativeAsset(validatedOptions)
+    let balance: bigint
+    if (isAmountAll) {
+      assertSenderAddress(senderAddress)
+      balance = await getAssetBalanceInternal({
+        api,
+        chain: this.chain,
+        address: senderAddress,
+        currency: currency as TCurrencyCore
+      })
     } else {
-      return this.transferLocalNonNativeAsset(validatedOptions)
+      balance = MIN_AMOUNT
+    }
+
+    const localOptions = {
+      ...validatedOptions,
+      balance
+    }
+
+    if (isNativeAsset) {
+      return this.transferLocalNativeAsset(localOptions)
+    } else {
+      return this.transferLocalNonNativeAsset(localOptions)
     }
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
-    return api.callTxMethod({
-      module: 'Balances',
-      method: 'transfer_keep_alive',
-      parameters: {
-        dest: isChainEvm(this.chain) ? address : { Id: address },
-        value: asset.amount
-      }
-    })
+    const dest = isChainEvm(this.chain) ? address : { Id: address }
+
+    if (isAmountAll) {
+      return Promise.resolve(
+        api.callTxMethod({
+          module: 'Balances',
+          method: 'transfer_all',
+          parameters: {
+            dest,
+            keep_alive: false
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.callTxMethod({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest,
+          value: asset.amount
+        }
+      })
+    )
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
+
+    const dest = { Id: address }
+    const currencyId = BigInt(asset.assetId)
+
+    if (isAmountAll) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
-        dest: { Id: address },
-        currency_id: BigInt(asset.assetId),
+        dest,
+        currency_id: currencyId,
         amount: asset.amount
       }
     })

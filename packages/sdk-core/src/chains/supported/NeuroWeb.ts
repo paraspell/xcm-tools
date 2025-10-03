@@ -4,7 +4,9 @@ import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
+import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
 class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -19,6 +21,54 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+  }
+
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, isAmountAll } = options
+
+    if (isAmountAll) {
+      return Promise.resolve(
+        api.callTxMethod({
+          module: 'Balances',
+          method: 'transfer_all',
+          parameters: {
+            dest: address,
+            keep_alive: false
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.callTxMethod({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest: address,
+          value: asset.amount
+        }
+      })
+    )
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, assetInfo: asset, address, balance, isAmountAll } = options
+
+    assertHasId(asset)
+
+    const assetId = BigInt(asset.assetId)
+
+    const amount = isAmountAll ? balance : asset.amount
+
+    return api.callTxMethod({
+      module: 'Assets',
+      method: 'transfer',
+      parameters: {
+        id: assetId,
+        target: address,
+        amount
+      }
+    })
   }
 }
 

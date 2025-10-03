@@ -2,6 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AMOUNT_ALL } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TScenario, TTransferLocalOptions } from '../../types'
@@ -100,6 +101,28 @@ describe('RobonomicsPolkadot', () => {
           id: 1n,
           target: { Id: 'addr123' },
           amount: 100n
+        }
+      })
+    })
+
+    it('calls Assets.transfer_all when amount is ALL', () => {
+      const mockApi = { callTxMethod: vi.fn() }
+      const ok = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'addr123',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      robonomics.transferLocalNonNativeAsset(ok)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: 1n,
+          dest: { Id: 'addr123' },
+          keep_alive: false
         }
       })
     })

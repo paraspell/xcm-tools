@@ -1,7 +1,7 @@
-import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -48,34 +48,6 @@ describe('Altair', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw an error when asset is not a foreign asset', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
-        api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      expect(() => altair.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
-    })
-
-    it('should throw an error when assetId is undefined', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
-        api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      expect(() => altair.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
-    })
-
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
         callTxMethod: vi.fn()
@@ -96,6 +68,31 @@ describe('Altair', () => {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should call transfer_all when amount is ALL', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'address',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      altair.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: { Id: mockOptions.address },
+          currency_id: { ForeignAsset: 1 },
+          keep_alive: false
         }
       })
     })

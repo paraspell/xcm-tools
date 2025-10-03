@@ -79,13 +79,15 @@ describe('Builder', () => {
     it('should initiate a para to para transfer with currency symbol', async () => {
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: CURRENCY,
-        address: ADDRESS,
-        to: CHAIN_2
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
@@ -96,13 +98,15 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: CURRENCY,
-        address: ADDRESS,
-        to: CHAIN_2
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
       expect(tx).toEqual(mockExtrinsic)
     })
 
@@ -114,14 +118,16 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: CURRENCY,
-        address: ADDRESS,
-        to: CHAIN_2,
-        paraIdTo: PARA_ID_TO
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: ADDRESS,
+          to: CHAIN_2,
+          paraIdTo: PARA_ID_TO
+        })
+      )
     })
 
     it('should initiate a transfer with assetHub address', async () => {
@@ -134,15 +140,17 @@ describe('Builder', () => {
         .ahAddress(ASSET_HUB_ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: CURRENCY,
-        address: ADDRESS,
-        ahAddress: ASSET_HUB_ADDRESS,
-        to: CHAIN_2,
-        paraIdTo: PARA_ID_TO
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: ADDRESS,
+          ahAddress: ASSET_HUB_ADDRESS,
+          to: CHAIN_2,
+          paraIdTo: PARA_ID_TO
+        })
+      )
     })
 
     it('should initiate a para to para transfer with specified asset ID', async () => {
@@ -157,17 +165,19 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: {
-          id: ASSET_ID,
-          amount: AMOUNT
-        },
-        address: ADDRESS,
-        to: CHAIN_2,
-        paraIdTo: PARA_ID_TO
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: {
+            id: ASSET_ID,
+            amount: AMOUNT
+          },
+          address: ADDRESS,
+          to: CHAIN_2,
+          paraIdTo: PARA_ID_TO
+        })
+      )
     })
 
     it('should initiate a para to para transfer with overriden version', async () => {
@@ -181,15 +191,17 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: CURRENCY,
-        address: ADDRESS,
-        to: CHAIN_2,
-        paraIdTo: PARA_ID_TO,
-        version
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: ADDRESS,
+          to: CHAIN_2,
+          paraIdTo: PARA_ID_TO,
+          version
+        })
+      )
     })
 
     it('should initiate a para to para transfer with currency id', async () => {
@@ -200,13 +212,15 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency: { id: CURRENCY_ID, amount: AMOUNT },
-        address: ADDRESS,
-        to: CHAIN_2
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: { id: CURRENCY_ID, amount: AMOUNT },
+          address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
     })
 
     it('should initiate a para to para transfer with fee asset', async () => {
@@ -217,13 +231,15 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency,
-        address: ADDRESS,
-        to: CHAIN_2
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency,
+          address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
     })
 
     it('should initiate a para to para transfer with two overriden multi asset', async () => {
@@ -268,13 +284,15 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        currency,
-        address: ADDRESS,
-        to: CHAIN_2
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency,
+          address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
     })
 
     it('should initiate a para to relay transfer with currency symbol', async () => {
@@ -287,16 +305,18 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: {
-          symbol: currency,
-          amount: AMOUNT
-        },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: currency,
+            amount: AMOUNT
+          },
+          address: ADDRESS
+        })
+      )
     })
 
     it('should initiate a para to relay transfer', async () => {
@@ -307,16 +327,18 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: {
-          symbol: getRelayChainSymbol(CHAIN),
-          amount: AMOUNT
-        },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: getRelayChainSymbol(CHAIN),
+            amount: AMOUNT
+          },
+          address: ADDRESS
+        })
+      )
       expect(tx).toEqual(mockExtrinsic)
     })
 
@@ -330,16 +352,18 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: {
-          symbol: currency,
-          amount: AMOUNT
-        },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: currency,
+            amount: AMOUNT
+          },
+          address: ADDRESS
+        })
+      )
     })
 
     it('should initiate a para to relay transfer with fee asset', async () => {
@@ -360,14 +384,16 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency,
-        feeAsset,
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency,
+          feeAsset,
+          address: ADDRESS
+        })
+      )
     })
 
     it('should initiate a para to relay transfer with overriden version', async () => {
@@ -382,17 +408,19 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: {
-          symbol: currency,
-          amount: AMOUNT
-        },
-        address: ADDRESS,
-        version
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: currency,
+            amount: AMOUNT
+          },
+          address: ADDRESS,
+          version
+        })
+      )
     })
 
     it('should initiate a para to relay transfer with fee asset and overriden version', async () => {
@@ -415,15 +443,17 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: currency,
-        feeAsset,
-        address: ADDRESS,
-        version
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency,
+          feeAsset,
+          address: ADDRESS,
+          version
+        })
+      )
     })
 
     it('should request a para to para transfer api call with currency id', async () => {
@@ -451,16 +481,18 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: 'Polkadot',
-        currency: {
-          symbol: getRelayChainSymbol(CHAIN),
-          amount: AMOUNT
-        },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: getRelayChainSymbol(CHAIN),
+            amount: AMOUNT
+          },
+          address: ADDRESS
+        })
+      )
 
       expect(send).toHaveBeenCalledTimes(2)
     })
@@ -474,13 +506,15 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: CHAIN_2,
-        currency: CURRENCY,
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: CHAIN_2,
+          currency: CURRENCY,
+          address: ADDRESS
+        })
+      )
     })
 
     it('should initiate a double para to para transfer using batching', async () => {
@@ -497,13 +531,15 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: CHAIN,
-        to: CHAIN_2,
-        currency: CURRENCY,
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: CHAIN_2,
+          currency: CURRENCY,
+          address: ADDRESS
+        })
+      )
 
       expect(send).toHaveBeenCalledTimes(2)
     })
@@ -534,13 +570,15 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: 'Polkadot',
-        to: CHAIN,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Polkadot',
+          to: CHAIN,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          address: ADDRESS
+        })
+      )
     })
 
     it('should initiate a relay to para transfer with custom paraId', async () => {
@@ -551,14 +589,16 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: 'Polkadot',
-        to: CHAIN,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS,
-        paraIdTo: PARA_ID_TO
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Polkadot',
+          to: CHAIN,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          address: ADDRESS,
+          paraIdTo: PARA_ID_TO
+        })
+      )
     })
 
     it('should initiate a relay to para transfer with overriden version', async () => {
@@ -572,15 +612,17 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: 'Polkadot',
-        to: CHAIN,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS,
-        paraIdTo: PARA_ID_TO,
-        version
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Polkadot',
+          to: CHAIN,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          address: ADDRESS,
+          paraIdTo: PARA_ID_TO,
+          version
+        })
+      )
     })
 
     it('should initiate a relay to para transfer with overriden version', async () => {
@@ -594,15 +636,17 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: 'Polkadot',
-        to: CHAIN,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS,
-        paraIdTo: PARA_ID_TO,
-        version
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Polkadot',
+          to: CHAIN,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          address: ADDRESS,
+          paraIdTo: PARA_ID_TO,
+          version
+        })
+      )
     })
 
     it('should fail to initiate a relay to para transfer to ethereum', () => {
@@ -641,13 +685,15 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith({
-        api: mockApi,
-        from: 'Polkadot',
-        to: CHAIN_2,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS
-      })
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Polkadot',
+          to: CHAIN_2,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          address: ADDRESS
+        })
+      )
 
       expect(send).toHaveBeenCalledTimes(2)
     })

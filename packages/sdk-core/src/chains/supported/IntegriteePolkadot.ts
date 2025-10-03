@@ -33,16 +33,31 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
+
+    const assetId = Number(asset.assetId)
+    const dest = { Id: address }
+
+    if (isAmountAll) {
+      return api.callTxMethod({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: assetId,
+          dest,
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: Number(asset.assetId),
-        target: { Id: address },
+        id: assetId,
+        target: dest,
         amount: asset.amount
       }
     })

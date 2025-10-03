@@ -232,10 +232,22 @@ class Polimec<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMT
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertIsForeign(asset)
     assertHasLocation(asset)
+
+    if (isAmountAll) {
+      return api.callTxMethod({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        parameters: {
+          id: asset.location,
+          target: { Id: address },
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'ForeignAssets',

@@ -136,7 +136,9 @@ export type TSendBaseOptions = {
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes>
+export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes> & {
+  isAmountAll: boolean
+}
 
 export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   /**
@@ -157,6 +159,7 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   feeCurrency?: TCurrencyInput
   overriddenAsset?: TLocation | TAssetWithFee[]
   version: Version
+  isAmountAll: boolean
 }
 
 type TRelayToParaBaseOptions = {
@@ -265,6 +268,7 @@ export type TTransferLocalOptions<TApi, TRes> = Omit<
   'address'
 > & {
   address: string
+  balance: bigint
 }
 
 export type TTransferFeeEstimates = {

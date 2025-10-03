@@ -2,6 +2,7 @@ import type { TNativeAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TForeignOrTokenAsset,
@@ -61,7 +62,7 @@ describe('Interlay', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    it('should call transferLocalNonNativeAsset', () => {
+    it('should call transferLocalNonNativeAsset', async () => {
       const mockApi = {
         callTxMethod: vi.fn()
       }
@@ -73,7 +74,7 @@ describe('Interlay', () => {
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(interlay, 'transferLocalNonNativeAsset')
-      interlay.transferLocalNativeAsset(mockOptions)
+      await interlay.transferLocalNativeAsset(mockOptions)
       expect(spy).toHaveBeenCalledWith(mockOptions)
     })
   })
@@ -99,6 +100,31 @@ describe('Interlay', () => {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },
           value: BigInt(mockOptions.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should call transfer_all when amount is ALL', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'address',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      interlay.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: mockOptions.address,
+          currency_id: { ForeignAsset: 1 },
+          keep_alive: false
         }
       })
     })

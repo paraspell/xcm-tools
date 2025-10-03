@@ -23,17 +23,22 @@ class Phala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTransferTrans
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
+
+    const assetId = BigInt(asset.assetId)
+    const dest = { Id: address }
+
+    const amount = isAmountAll ? options.balance : asset.amount
 
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
-        target: { Id: address },
-        amount: asset.amount
+        id: assetId,
+        target: dest,
+        amount
       }
     })
   }

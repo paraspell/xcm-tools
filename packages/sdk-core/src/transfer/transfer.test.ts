@@ -462,7 +462,8 @@ describe('send', () => {
       from: 'Polkadot',
       to: 'Manta',
       currency: { symbol: 'DOT', amount: 100 },
-      address: 'some-address'
+      address: 'some-address',
+      isAmountAll: true
     })
 
     expect(getChainVersion).toHaveBeenCalledWith('Polkadot')

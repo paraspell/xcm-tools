@@ -5,6 +5,7 @@ import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Parents, type TLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type {
@@ -13,7 +14,7 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, assertHasLocation, localizeLocation } from '../../utils'
+import { assertHasLocation, localizeLocation } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import Parachain from '../Parachain'
 
@@ -70,20 +71,12 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo, address } = options
-
-    assertHasId(assetInfo)
-
-    return api.callTxMethod({
-      module: 'Assets',
-      method: 'transfer',
-      parameters: {
-        id: BigInt(assetInfo.assetId),
-        target: address,
-        amount: assetInfo.amount
-      }
-    })
+  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
+    throw new ScenarioNotSupportedError(
+      this.chain,
+      'ParaToPara',
+      `${this.chain} local transfers are temporarily disabled`
+    )
   }
 }
 

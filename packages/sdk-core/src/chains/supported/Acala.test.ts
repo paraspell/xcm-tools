@@ -1,6 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -54,18 +55,20 @@ describe('Acala', () => {
     })
   })
 
-  it('should call transferLocalNativeAsset', () => {
+  it('should call transferLocalNativeAsset', async () => {
     const mockApi = {
-      callTxMethod: vi.fn()
+      callTxMethod: vi.fn(),
+      calculateTransactionFee: vi.fn()
     }
 
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n },
-      address: 'address'
+      address: 'address',
+      balance: 1000n
     } as unknown as TTransferLocalOptions<unknown, unknown>
 
-    acala.transferLocalNativeAsset(mockOptions)
+    await acala.transferLocalNativeAsset(mockOptions)
 
     expect(mockApi.callTxMethod).toHaveBeenCalledWith({
       module: 'Currencies',
@@ -73,6 +76,33 @@ describe('Acala', () => {
       parameters: {
         dest: { Id: 'address' },
         amount: 100n
+      }
+    })
+  })
+
+  it('should transfer balance minus fee when amount is ALL', async () => {
+    const mockApi = {
+      callTxMethod: vi.fn(),
+      calculateTransactionFee: vi.fn().mockResolvedValue(10n)
+    }
+
+    const mockOptions = {
+      api: mockApi,
+      assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL },
+      address: 'address',
+      balance: 1000n,
+      senderAddress: 'sender',
+      isAmountAll: true
+    } as unknown as TTransferLocalOptions<unknown, unknown>
+
+    await acala.transferLocalNativeAsset(mockOptions)
+
+    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      module: 'Currencies',
+      method: 'transfer_native_currency',
+      parameters: {
+        dest: { Id: 'address' },
+        amount: 990n
       }
     })
   })
@@ -85,7 +115,8 @@ describe('Acala', () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-      address: 'address'
+      address: 'address',
+      balance: 1000n
     } as unknown as TTransferLocalOptions<unknown, unknown>
 
     acala.transferLocalNonNativeAsset(mockOptions)
@@ -97,6 +128,32 @@ describe('Acala', () => {
         dest: { Id: 'address' },
         currency_id: { ForeignAsset: 1 },
         amount: 100n
+      }
+    })
+  })
+
+  it('should call transfer with balance when amount is ALL', () => {
+    const mockApi = {
+      callTxMethod: vi.fn()
+    }
+
+    const mockOptions = {
+      api: mockApi,
+      assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+      address: 'address',
+      balance: 500n,
+      isAmountAll: true
+    } as unknown as TTransferLocalOptions<unknown, unknown>
+
+    acala.transferLocalNonNativeAsset(mockOptions)
+
+    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      module: 'Currencies',
+      method: 'transfer',
+      parameters: {
+        dest: { Id: 'address' },
+        currency_id: { ForeignAsset: 1 },
+        amount: 500n
       }
     })
   })

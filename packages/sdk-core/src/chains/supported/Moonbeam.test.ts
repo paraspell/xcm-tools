@@ -1,4 +1,3 @@
-import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -10,13 +9,8 @@ import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../t
 import { getChain } from '../../utils'
 import type Moonbeam from './Moonbeam'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  createTypeAndThenCall: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../transfer')
 
 type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
   transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
@@ -157,56 +151,10 @@ describe('Moonbeam', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw an error when asset is not a foreign asset', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
-        api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
-    })
-
-    it('should throw an error when assetId is undefined', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
-        api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
-    })
-
-    it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        callTxMethod: vi.fn()
-      }
-
-      const mockOptions = {
-        api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      chain.transferLocalNonNativeAsset(mockOptions)
-
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
-        module: 'Assets',
-        method: 'transfer',
-        parameters: {
-          target: mockOptions.address,
-          id: 1n,
-          amount: BigInt(mockOptions.assetInfo.amount)
-        }
-      })
+    it('should throw error', () => {
+      expect(() =>
+        chain.transferLocalNonNativeAsset({} as TTransferLocalOptions<unknown, unknown>)
+      ).toThrowError(`${chain.chain} local transfers are temporarily disabled`)
     })
   })
 })

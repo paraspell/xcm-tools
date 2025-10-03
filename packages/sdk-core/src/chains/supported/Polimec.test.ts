@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
+import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -268,6 +268,31 @@ describe('Polimec', () => {
           id: {},
           target: { Id: mockOptions.address },
           amount: BigInt(mockOptions.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should call transfer_all when amount is ALL', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1', location: {} },
+        address: 'address',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      polimec.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        parameters: {
+          id: {},
+          target: { Id: mockOptions.address },
+          keep_alive: false
         }
       })
     })
