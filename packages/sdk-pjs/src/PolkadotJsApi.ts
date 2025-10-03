@@ -568,6 +568,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.disconnectAllowed
   }
 
+  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
+    const res = await this.api.call.locationToAccountApi.convertLocation(location)
+    const jsonRes = res.toJSON() as any
+    return jsonRes.ok ? jsonRes.ok.toString() : undefined
+  }
+
   async disconnect(force = false) {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return

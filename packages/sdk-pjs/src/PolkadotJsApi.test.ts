@@ -50,6 +50,9 @@ describe('PolkadotJsApi', () => {
           dryRunCall: vi.fn(),
           dryRunXcm: vi.fn()
         },
+        locationToAccountApi: {
+          convertLocation: vi.fn()
+        },
         xcmPaymentApi: {
           queryXcmWeight: vi.fn(),
           queryWeightToAssetFee: vi.fn()
@@ -1643,6 +1646,41 @@ describe('PolkadotJsApi', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()
       expect(status).toEqual('Normal')
+    })
+  })
+
+  describe('convertLocationToAccount', () => {
+    const location: TLocation = {
+      parents: 1,
+      interior: {
+        X1: { Parachain: 1000 }
+      }
+    }
+
+    it('returns account string when API responds with ok', async () => {
+      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ ok: '5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y' })
+      } as unknown as Codec)
+
+      const res = await polkadotApi.convertLocationToAccount(location)
+
+      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
+        location
+      )
+      expect(res).toBe('5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y')
+    })
+
+    it('returns undefined when API responds without ok', async () => {
+      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ err: 'NotFound' })
+      } as unknown as Codec)
+
+      const res = await polkadotApi.convertLocationToAccount(location)
+
+      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
+        location
+      )
+      expect(res).toBeUndefined()
     })
   })
 })
