@@ -565,7 +565,8 @@ const XcmTransfer = () => {
       let tx: Extrinsic | TPapiTransaction | undefined;
       if (useApi) {
         api = await Sdk.createChainClient(from);
-        const { useApi, currencies, ...safeFormValues } = formValues;
+        const { useApi, useXcmFormatCheck, currencies, ...safeFormValues } =
+          formValues;
         tx = await getTxFromApi(
           {
             ...safeFormValues,
