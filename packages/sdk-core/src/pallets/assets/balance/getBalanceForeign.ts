@@ -25,7 +25,7 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
 
   if (defaultPallet === 'XTokens') {
     return getBalanceForeignXTokens(api, chain, address, asset)
-  } else if (defaultPallet === 'PolkadotXcm') {
+  } else if (defaultPallet === 'PolkadotXcm' || defaultPallet === 'XTransfer') {
     return getBalanceForeignPolkadotXcm(api, chain, address, asset)
   }
 

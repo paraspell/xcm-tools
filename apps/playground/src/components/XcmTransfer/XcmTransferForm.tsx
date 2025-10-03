@@ -36,7 +36,6 @@ import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
-import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TCurrencyEntry = {
@@ -44,6 +43,7 @@ export type TCurrencyEntry = {
   customCurrency: string;
   amount: string;
   isCustomCurrency: boolean;
+  isMax?: boolean;
   customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
   customCurrencySymbolSpecifier?:
     | 'auto'
@@ -56,7 +56,7 @@ export type FormValues = {
   from: TSubstrateChain;
   to: TChain;
   currencies: TCurrencyEntry[];
-  feeAsset: Omit<TCurrencyEntry, 'amount'>;
+  feeAsset: Omit<TCurrencyEntry, 'amount' | 'isMax'>;
   address: string;
   ahAddress: string;
   useApi: boolean;
@@ -97,6 +97,7 @@ const XcmTransferForm: FC<Props> = ({
           customCurrency: '',
           amount: '10',
           isCustomCurrency: false,
+          isMax: false,
           customCurrencyType: 'id',
           customCurrencySymbolSpecifier: 'auto',
         },
@@ -143,7 +144,10 @@ const XcmTransferForm: FC<Props> = ({
           }
           return null;
         },
-        amount: (value) => {
+        amount: (value, values, path) => {
+          // Skip validation when MAX is selected for this currency
+          const index = Number(path.split('.')[1]);
+          if (values.currencies?.[index]?.isMax) return null;
           return Number(value) > 0 ? null : 'Amount must be greater than 0';
         },
       },
@@ -196,18 +200,30 @@ const XcmTransferForm: FC<Props> = ({
     _event: FormEvent<HTMLFormElement> | undefined,
     submitType: TSubmitType = 'default',
   ) => {
+    // If MAX is selected for a local transfer, convert amount to 'ALL'
+    const normalizedValues: FormValues = {
+      ...values,
+      currencies: values.currencies.map((c) =>
+        c.isMax ? { ...c, amount: 'ALL' } : c,
+      ),
+    };
+
     // Transform each currency entry
-    const transformedCurrencies = values.currencies.map((entry) =>
+    const transformedCurrencies = normalizedValues.currencies.map((entry) =>
       transformCurrency(entry, currencyMap),
     );
 
     const transformedFeeAsset =
-      values.feeAsset.currencyOptionId || values.feeAsset.isCustomCurrency
-        ? transformCurrency(values.feeAsset as TCurrencyEntry, feeCurrencyMap)
+      normalizedValues.feeAsset.currencyOptionId ||
+      normalizedValues.feeAsset.isCustomCurrency
+        ? transformCurrency(
+            normalizedValues.feeAsset as TCurrencyEntry,
+            feeCurrencyMap,
+          )
         : undefined;
 
     const transformedValues: FormValuesTransformed = {
-      ...values,
+      ...normalizedValues,
       currencies: transformedCurrencies,
       transformedFeeAsset,
     };
@@ -304,7 +320,7 @@ const XcmTransferForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress = isChainEvm(from) && isChainEvm(to);
+  const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
 
   if (!isVisible) {
     return null;
@@ -359,15 +375,41 @@ const XcmTransferForm: FC<Props> = ({
                       index={index}
                       currencyOptions={currencyOptions}
                     />
-                    <TextInput
-                      label="Amount"
-                      rightSection={<CurrencyInfo />}
-                      placeholder="0"
-                      size={currencies.length > 1 ? 'xs' : 'sm'}
-                      required
-                      data-testid={`input-amount-${index}`}
-                      {...form.getInputProps(`currencies.${index}.amount`)}
-                    />
+                    <Group gap="xs" wrap="nowrap">
+                      <TextInput
+                        label="Amount"
+                        rightSectionWidth={80}
+                        rightSection={
+                          <Group>
+                            <Checkbox
+                              label="MAX"
+                              labelPosition="left"
+                              size={currencies.length > 1 ? 'xs' : 'sm'}
+                              {...form.getInputProps(
+                                `currencies.${index}.isMax`,
+                                {
+                                  type: 'checkbox',
+                                },
+                              )}
+                            />
+                          </Group>
+                        }
+                        placeholder="0"
+                        size={currencies.length > 1 ? 'xs' : 'sm'}
+                        required
+                        disabled={Boolean(
+                          form.values.currencies?.[index]?.isMax,
+                        )}
+                        data-testid={`input-amount-${index}`}
+                        {...form.getInputProps(`currencies.${index}.amount`)}
+                        value={
+                          form.values.currencies?.[index]?.isMax
+                            ? 'MAX'
+                            : form.values.currencies?.[index]?.amount
+                        }
+                        style={{ flex: 1 }}
+                      />
+                    </Group>
                   </Stack>
                   {form.values.currencies.length > 1 && (
                     <ActionIcon
@@ -396,6 +438,7 @@ const XcmTransferForm: FC<Props> = ({
                   customCurrency: '',
                   amount: '10000000000000000000',
                   isCustomCurrency: false,
+                  isMax: false,
                   customCurrencyType: 'id',
                 })
               }

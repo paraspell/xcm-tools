@@ -11,6 +11,7 @@ import {
 } from '@paraspell/assets'
 import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
 
+import { AMOUNT_ALL } from '../../constants'
 import type { TSendOptions } from '../../types'
 import { abstractDecimals, assertHasLocation, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
@@ -60,6 +61,10 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
     // MultiAsset is an array of TCurrencyCore, search for assets
     const assets = currency.map(currency => {
+      if (currency.amount === AMOUNT_ALL) {
+        throw new InvalidCurrencyError('Multi assets cannot use amount all. Please specify amount.')
+      }
+
       const asset = findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
 
       if (!asset) {

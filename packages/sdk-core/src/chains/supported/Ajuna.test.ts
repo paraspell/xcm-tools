@@ -2,6 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AMOUNT_ALL } from '../../constants'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
@@ -85,6 +86,27 @@ describe('Ajuna', () => {
           id: 1,
           target: { Id: 'addr' },
           amount: 100n
+        }
+      })
+    })
+
+    it('calls transfer_all when amount is ALL', () => {
+      const opts = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'addr',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      ajuna.transferLocalNonNativeAsset(opts)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer_all',
+        parameters: {
+          id: 1,
+          dest: { Id: 'addr' },
+          keep_alive: false
         }
       })
     })

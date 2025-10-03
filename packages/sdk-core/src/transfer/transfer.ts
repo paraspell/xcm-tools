@@ -3,7 +3,7 @@
 import { normalizeLocation, type TNativeAssetInfo } from '@paraspell/assets'
 import { isDotKsmBridge, isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
-import { TX_CLIENT_TIMEOUT_MS } from '../constants'
+import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { abstractDecimals, getChain, validateAddress } from '../utils'
@@ -35,7 +35,8 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     senderAddress,
     ahAddress,
     pallet,
-    method
+    method,
+    isAmountAll
   } = options
 
   validateCurrency(currency, feeAsset)
@@ -56,12 +57,12 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     : undefined
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-  const amount: bigint = Array.isArray(currency)
+  const amount = Array.isArray(currency)
     ? 0n
     : abstractDecimals(currency.amount, asset?.decimals, api)
 
   // Ensure amount is at least 2 to avoid Rust panic (only for non-array currencies)
-  const finalAmount = !Array.isArray(currency) && amount < 2n ? 2n : amount
+  const finalAmount = !Array.isArray(currency) && amount < MIN_AMOUNT ? MIN_AMOUNT : amount
 
   const originVersion = getChainVersion(origin)
 
@@ -86,14 +87,25 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       }
 
       await api.init(origin, TX_CLIENT_TIMEOUT_MS)
-      return api.callTxMethod({
-        module: 'Balances',
-        method: 'transfer_keep_alive',
-        parameters: {
-          dest: { Id: address },
-          value: finalAmount
-        }
-      })
+      return api.callTxMethod(
+        isAmountAll
+          ? {
+              module: 'Balances',
+              method: 'transfer_all',
+              parameters: {
+                dest: { Id: address },
+                keepAlive: true
+              }
+            }
+          : {
+              module: 'Balances',
+              method: 'transfer_keep_alive',
+              parameters: {
+                dest: { Id: address },
+                value: finalAmount
+              }
+            }
+      )
     }
 
     return transferRelayToPara({
@@ -157,6 +169,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     senderAddress,
     ahAddress,
     pallet,
-    method
+    method,
+    isAmountAll
   })
 }

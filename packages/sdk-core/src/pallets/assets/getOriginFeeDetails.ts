@@ -17,7 +17,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
 }: TGetOriginFeeDetailsOptions<TApi, TRes>): Promise<TOriginFeeDetails> => {
   await api.init(origin)
 
-  const tx = await Builder<TApi, TRes>(api)
+  const { tx } = await Builder(api)
     .from(origin)
     .to(destination)
     .currency(currency)

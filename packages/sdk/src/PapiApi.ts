@@ -431,7 +431,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       pallet = 'OrmlTokens'
     }
 
-    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust') {
+    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust' || chain === 'Ajuna') {
       assertHasId(asset)
       const response = await this.api
         .getUnsafeApi()
@@ -587,7 +587,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       const erroredEvent = findFailingEvent(result)
 
       if (erroredEvent) {
-        return erroredEvent.value.value.result.value.value.value.type
+        const result = erroredEvent.value.value.result
+        return result.value.value.value?.type ?? result.value.value.type
       }
 
       return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
@@ -645,7 +646,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const executionFee = await this.calculateTransactionFee(resolvedTx, address)
+    const executionFee = await this.calculateTransactionFee(tx, address)
 
     const nativeAsset = findNativeAssetInfoOrThrow(chain)
 

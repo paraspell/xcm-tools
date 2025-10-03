@@ -44,9 +44,11 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, balance, isAmountAll } = options
 
     assertHasId(asset)
+
+    const amount = isAmountAll ? balance : asset.amount
 
     return api.callTxMethod({
       module: 'AssetManager',
@@ -54,7 +56,7 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
-        amount: asset.amount
+        amount
       }
     })
   }

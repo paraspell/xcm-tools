@@ -63,7 +63,7 @@ describe('getReverseTxFee', () => {
 
     vi.mocked(isAddress).mockImplementation((addr: string) => addr.startsWith('0x'))
 
-    mockBuild.mockResolvedValue(mockTxObject)
+    mockBuild.mockResolvedValue({ tx: mockTxObject, options: {} as never })
     mockCalculateTransactionFee.mockResolvedValue(rawFee)
     vi.mocked(padFee).mockReturnValue(paddedFee)
   })

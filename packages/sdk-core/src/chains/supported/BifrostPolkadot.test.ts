@@ -3,6 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { AMOUNT_ALL } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -162,6 +163,31 @@ describe('BifrostPolkadot', () => {
           dest: { Id: mockOptions.address },
           currency_id: { Token2: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should call transfer_all when amount is ALL', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        address: 'address',
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      bifrostPolkadot.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: { Id: mockOptions.address },
+          currency_id: { Token2: 1 },
+          keep_alive: false
         }
       })
     })

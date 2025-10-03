@@ -1506,6 +1506,60 @@ describe('PapiApi', () => {
       })
     })
 
+    it('should extract failure reason from dispatched Utility event result type fallback', async () => {
+      const failingEvent = {
+        type: 'Utility',
+        value: {
+          type: 'DispatchedAs',
+          value: {
+            result: {
+              success: false,
+              value: {
+                value: {
+                  type: 'DispatchError'
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 0n, proof_size: 0n } }
+          },
+          emitted_events: [failingEvent],
+          forwarded_xcms: []
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+
+      const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Moonbeam',
+        destination: 'Acala',
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'DispatchError',
+        currency: 'GLMR',
+        asset: nativeAsset
+      })
+    })
+
     it('should wrap tx if useRootOrigin is true', async () => {
       const successResponse = {
         success: true,

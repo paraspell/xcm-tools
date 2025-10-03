@@ -4,13 +4,14 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidParameterError } from '../errors'
 import { send } from '../transfer'
-import type { TSendOptions } from '../types'
+import type { TBatchedSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
+import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes> {
-  transactionOptions: TSendOptions<TApi, TRes>[] = []
+  transactionOptions: TBatchedSendOptions<TApi, TRes>[] = []
 
-  addTransaction(options: TSendOptions<TApi, TRes>) {
+  addTransaction(options: TBatchedSendOptions<TApi, TRes>) {
     this.transactionOptions.push(options)
   }
 
@@ -36,8 +37,14 @@ class BatchTransactionManager<TApi, TRes> {
       throw new InvalidParameterError('All transactions must have the same origin.')
     }
 
-    const results = this.transactionOptions.map(options => send(options))
-    const txs = await Promise.all(results)
+    const normalized = await Promise.all(
+      this.transactionOptions.map(async opts => {
+        const { buildTx } = opts
+        return normalizeAmountAll(api, buildTx, opts)
+      })
+    )
+
+    const txs = await Promise.all(normalized.map(o => send(o)))
 
     return api.callBatchMethod(txs, mode)
   }

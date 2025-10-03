@@ -1,25 +1,31 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId } from '../../utils'
+import { assertHasId, getChain } from '../../utils'
 
 export class CurrenciesPallet extends BaseAssetsPallet {
   mint(
     address: string,
-    assetInfo: WithAmount<TAssetInfo>,
-    balance: bigint
+    asset: WithAmount<TAssetInfo>,
+    balance: bigint,
+    chain: TSubstrateChain
   ): Promise<TSetBalanceRes> {
-    assertHasId(assetInfo)
+    const isKarura = chain.startsWith('Karura')
 
-    const { assetId, amount } = assetInfo
+    const id = isKarura
+      ? getChain('Karura').getCurrencySelection(asset)
+      : (assertHasId(asset), Number(asset.assetId))
+
+    const { amount } = asset
 
     return Promise.resolve({
       balanceTx: {
         module: this.palletName,
         method: 'update_balance',
         parameters: {
-          who: address,
-          currency_id: Number(assetId),
+          who: isKarura ? { Id: address } : address,
+          currency_id: id,
           amount: balance + amount
         }
       }

@@ -3,7 +3,7 @@ import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { parseUnits } from 'viem'
 
 import type { GeneralBuilder } from '../../builder'
-import type { TCreateTxsOptions, TSendBaseOptionsWithSenderAddress } from '../../types'
+import type { TCreateTxsOptions, TSendBaseOptions } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from './isConfig'
 
@@ -25,9 +25,9 @@ export const computeOverridenAmount = <TApi, TRes>(
   }
 }
 
-export const overrideTxAmount = <TApi, TRes>(
+export const overrideTxAmount = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
   amount: string
 ) => {
   const modifiedBuilder = builder.currency({
@@ -35,16 +35,18 @@ export const overrideTxAmount = <TApi, TRes>(
     amount: computeOverridenAmount(options, amount)
   })
 
-  return modifiedBuilder['buildInternal']()
+  const { tx } = await modifiedBuilder['buildInternal']()
+  return tx
 }
 
 export const createTx = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
   amount: string | undefined
-) => {
+): Promise<TRes> => {
   if (amount === undefined) {
-    return await builder['buildInternal']()
+    const { tx } = await builder['buildInternal']()
+    return tx
   }
 
   return await overrideTxAmount(options, builder, amount)

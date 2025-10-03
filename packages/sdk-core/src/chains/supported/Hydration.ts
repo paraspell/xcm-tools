@@ -200,30 +200,59 @@ class Hydration<TApi, TRes>
     )
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
-    return api.callTxMethod({
-      module: 'Balances',
-      method: 'transfer_keep_alive',
-      parameters: {
-        dest: address,
-        value: asset.amount
-      }
-    })
+    if (isAmountAll) {
+      return Promise.resolve(
+        api.callTxMethod({
+          module: 'Balances',
+          method: 'transfer_all',
+          parameters: {
+            dest: address,
+            keep_alive: false
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.callTxMethod({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest: address,
+          value: asset.amount
+        }
+      })
+    )
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
+
+    const currencyId = Number(asset.assetId)
+
+    if (isAmountAll) {
+      return api.callTxMethod({
+        module: 'Tokens',
+        method: 'transfer_all',
+        parameters: {
+          dest: address,
+          currency_id: currencyId,
+          keep_alive: false
+        }
+      })
+    }
 
     return api.callTxMethod({
       module: 'Tokens',
       method: 'transfer',
       parameters: {
         dest: address,
-        currency_id: Number(asset.assetId),
+        currency_id: currencyId,
         amount: asset.amount
       }
     })

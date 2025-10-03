@@ -25,7 +25,7 @@ export const getReverseTxFee = async <TApi, TRes>(
   const toAddress = determineAddress(origin, address, senderAddress)
   const fromAddress = determineAddress(destination, address, senderAddress)
 
-  const tx = await Builder(api)
+  const { tx } = await Builder(api)
     .from(destination)
     .to(origin)
     .address(toAddress)

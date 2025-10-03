@@ -1,8 +1,9 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import type NeuroWeb from './NeuroWeb'
 
@@ -34,5 +35,120 @@ describe('NeuroWeb', () => {
       'limited_reserve_transfer_assets',
       'Unlimited'
     )
+  })
+
+  describe('transferLocalNativeAsset', () => {
+    let mockApi: IPolkadotApi<unknown, unknown>
+    let callTxMethod: ReturnType<typeof vi.fn>
+
+    beforeEach(() => {
+      callTxMethod = vi.fn()
+      mockApi = {
+        callTxMethod
+      } as unknown as IPolkadotApi<unknown, unknown>
+    })
+
+    it('should call transfer_keep_alive when not sending entire balance', async () => {
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'NEURO', amount: 123n },
+        address: '5F3sa2TYSF9Kxxxxx',
+        balance: 999n,
+        isAmountAll: false
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      await neuroweb.transferLocalNativeAsset(mockOptions)
+
+      expect(callTxMethod).toHaveBeenCalledWith({
+        module: 'Balances',
+        method: 'transfer_keep_alive',
+        parameters: {
+          dest: mockOptions.address,
+          value: mockOptions.assetInfo.amount
+        }
+      })
+    })
+
+    it('should call transfer_all when sending entire balance', async () => {
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'NEURO', amount: 123n },
+        address: '5F3sa2TYSF9Kxxxxx',
+        balance: 456n,
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      await neuroweb.transferLocalNativeAsset(mockOptions)
+
+      expect(callTxMethod).toHaveBeenCalledWith({
+        module: 'Balances',
+        method: 'transfer_all',
+        parameters: {
+          dest: mockOptions.address,
+          keep_alive: false
+        }
+      })
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    let mockApi: IPolkadotApi<unknown, unknown>
+    let callTxMethod: ReturnType<typeof vi.fn>
+
+    beforeEach(() => {
+      callTxMethod = vi.fn()
+      mockApi = {
+        callTxMethod
+      } as unknown as IPolkadotApi<unknown, unknown>
+    })
+
+    it('should call Assets.transfer with asset amount when not sending entire balance', () => {
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'USDT', assetId: '42', amount: 321n },
+        address: '5CLocalDest',
+        balance: 999n,
+        isAmountAll: false
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      neuroweb.transferLocalNonNativeAsset(mockOptions)
+
+      expect(callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer',
+        parameters: {
+          id: 42n,
+          target: mockOptions.address,
+          amount: mockOptions.assetInfo.amount
+        }
+      })
+    })
+
+    it('should call Assets.transfer with full balance when isAmountAll is true', () => {
+      const expectedResult = Symbol('transfer-result')
+
+      callTxMethod.mockReturnValue(expectedResult)
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'USDT', assetId: '7', amount: 321n },
+        address: '5CLocalDest',
+        balance: 777n,
+        isAmountAll: true
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const result = neuroweb.transferLocalNonNativeAsset(mockOptions)
+
+      expect(callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer',
+        parameters: {
+          id: 7n,
+          target: mockOptions.address,
+          amount: mockOptions.balance
+        }
+      })
+      expect(result).toBe(expectedResult)
+    })
   })
 })

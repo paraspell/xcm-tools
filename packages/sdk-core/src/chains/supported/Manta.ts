@@ -35,17 +35,21 @@ class Manta<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, address, balance, isAmountAll } = options
 
     assertHasId(asset)
+
+    const assetId = BigInt(asset.assetId)
+
+    const amount = isAmountAll ? balance : asset.amount
 
     return api.callTxMethod({
       module: 'Assets',
       method: 'transfer',
       parameters: {
-        id: BigInt(asset.assetId),
+        id: assetId,
         target: { Id: address },
-        amount: asset.amount
+        amount
       }
     })
   }
