@@ -1,5 +1,23 @@
 # Changelog
 
+## [11.8.6](https://github.com/paraspell/xcm-tools/compare/assets-v11.8.5...assets-v11.8.6) (2025-10-06)
+
+
+### Bug Fixes
+
+* Perform a monthly check ⚙️ ([e5fba54](https://github.com/paraspell/xcm-tools/commit/e5fba54c4b724b716c20f26ae92e7a0f8d9b0524))
+
+
+### Tests
+
+* **sdk:** Add dry run bypass E2E tests 🧪 ([36fe5a9](https://github.com/paraspell/xcm-tools/commit/36fe5a9203542334525b34d22d0c8a698ff8cdf3))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([cdd5eb7](https://github.com/paraspell/xcm-tools/commit/cdd5eb73c45a4b4c3646976416ae09c770853659))
+* Update assets map 📋 ([aee28f6](https://github.com/paraspell/xcm-tools/commit/aee28f6104e17f29975b396175a2f3fc637d46b6))
+
 ## [11.8.5](https://github.com/paraspell/xcm-tools/compare/assets-v11.8.4...assets-v11.8.5) (2025-09-26)
 
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.8.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.5...sdk-core-v11.8.6) (2025-10-06)
+
+
+### Bug Fixes
+
+* Fix type then teleport to system chains 🔧 ([f0d9cf1](https://github.com/paraspell/xcm-tools/commit/f0d9cf1f574451ea706330b1a59438a319ae9839))
+* Perform a monthly check ⚙️ ([e5fba54](https://github.com/paraspell/xcm-tools/commit/e5fba54c4b724b716c20f26ae92e7a0f8d9b0524))
+* **sdk-core:** Add relay asset reserve auto-select ✨ ([a7fb4b4](https://github.com/paraspell/xcm-tools/commit/a7fb4b4bd6c18448a70a9fef75e951870c30ae51))
+
+
+### Tests
+
+* **sdk:** Add dry run bypass E2E tests 🧪 ([36fe5a9](https://github.com/paraspell/xcm-tools/commit/36fe5a9203542334525b34d22d0c8a698ff8cdf3))
+
 ## [11.8.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.4...sdk-core-v11.8.5) (2025-09-26)
 
 
