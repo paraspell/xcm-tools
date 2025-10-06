@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.8.6](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.8.5...xcm-api-v11.8.6) (2025-10-06)
+
+
+### Bug Fixes
+
+* Perform a monthly check ⚙️ ([e5fba54](https://github.com/paraspell/xcm-tools/commit/e5fba54c4b724b716c20f26ae92e7a0f8d9b0524))
+
 ## [11.8.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.8.4...xcm-api-v11.8.5) (2025-09-26)
 
 
