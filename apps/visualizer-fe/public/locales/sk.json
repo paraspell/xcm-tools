@@ -23,10 +23,14 @@
       "messageCount": "Správy",
       "total": "Spolu"
     },
+    "liveData": {
+      "notAvailable": "Nie sú k dispozícii žiadne živé dáta. Prosím, povoľte ich."
+    },
     "tabs": {
       "accounts": "Účty",
       "amounts": "Sumy",
       "assets": "Aktíva",
+      "liveData": "Živé XCM dáta",
       "success": "Úspech"
     }
   },

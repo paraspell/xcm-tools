@@ -23,10 +23,14 @@
       "messageCount": "Messages",
       "total": "Total"
     },
+    "liveData": {
+      "notAvailable": "Aucune donnée en direct disponible. Veuillez activer"
+    },
     "tabs": {
       "accounts": "Comptes",
       "amounts": "Montants",
       "assets": "Actifs",
+      "liveData": "Données XCM en direct",
       "success": "Succès"
     }
   },

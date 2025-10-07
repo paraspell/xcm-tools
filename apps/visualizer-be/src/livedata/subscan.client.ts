@@ -38,6 +38,8 @@ export class SubscanClient {
       message_hash: x.message_hash,
       unique_id: x.unique_id,
       relayed_block_timestamp: x.relayed_block_timestamp,
+      origin_block_timestamp: x.origin_block_timestamp,
+      confirm_block_timestamp: x.confirm_block_timestamp,
       status: x.status,
       from_chain: x.from_chain,
       origin_para_id: x.origin_para_id,

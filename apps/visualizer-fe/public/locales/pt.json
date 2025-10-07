@@ -23,10 +23,14 @@
       "messageCount": "Mensagens",
       "total": "Total"
     },
+    "liveData": {
+      "notAvailable": "Não há dados ao vivo disponíveis. Por favor, ative"
+    },
     "tabs": {
       "accounts": "Contas",
       "amounts": "Valores",
       "assets": "Ativos",
+      "liveData": "Dados XCM ao vivo",
       "success": "Sucesso"
     }
   },

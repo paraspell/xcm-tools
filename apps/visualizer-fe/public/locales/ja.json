@@ -23,10 +23,14 @@
       "messageCount": "メッセージ",
       "total": "合計"
     },
+    "liveData": {
+      "notAvailable": "利用可能なライブデータがありません。有効にしてください"
+    },
     "tabs": {
       "accounts": "アカウント",
       "amounts": "金額",
       "assets": "資産",
+      "liveData": "ライブ XCM データ",
       "success": "成功"
     }
   },

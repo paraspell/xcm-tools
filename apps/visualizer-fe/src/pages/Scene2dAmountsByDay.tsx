@@ -1,4 +1,4 @@
-import AmountTransferedPlotContainer from '../components/AmountTransferedPlot/AmountTransferedPlot.container';
+import AmountTransferedPlotContainer from '../components/Plots/AmountTransferedPlot/AmountTransferedPlot.container';
 
 const Scene2dAmountsByDay = () => <AmountTransferedPlotContainer />;
 

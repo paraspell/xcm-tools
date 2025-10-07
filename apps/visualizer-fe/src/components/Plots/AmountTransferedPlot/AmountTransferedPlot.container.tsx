@@ -4,14 +4,14 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { messageCountsByDayQueryDocument } from '../../api/messages';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { MessageCountsByDayQuery } from '../../gql/graphql';
-import convertToCsv from '../../utils/convertToCsv';
-import downloadSvg from '../../utils/downloadSvg';
-import { downloadZip } from '../../utils/downloadZip';
-import { getParachainId } from '../../utils/utils';
-import DownloadButtons from '../DownloadButtons';
+import { messageCountsByDayQueryDocument } from '../../../api/messages';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { MessageCountsByDayQuery } from '../../../gql/graphql';
+import convertToCsv from '../../../utils/convertToCsv';
+import downloadSvg from '../../../utils/downloadSvg';
+import { downloadZip } from '../../../utils/downloadZip';
+import { getParachainId } from '../../../utils/utils';
+import DownloadButtons from '../../DownloadButtons';
 import AmountTransferedPlot from './AmountTransferedPlot';
 
 const now = Date.now();

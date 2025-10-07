@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { MessageCountsQuery } from '../../gql/graphql';
-import type { Ecosystem } from '../../types/types';
-import { getParachainById } from '../../utils/utils';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { MessageCountsQuery } from '../../../gql/graphql';
+import type { Ecosystem } from '../../../types/types';
+import { getParachainById } from '../../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {

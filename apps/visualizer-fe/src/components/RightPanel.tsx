@@ -21,10 +21,26 @@ const RightPanel = () => {
     <AnimatedDiv style={props}>
       <Stack h="100%" w="100%" pos="relative" bg="white">
         <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} />
-        <Flex flex={1} w="100%" justify="center">
+        <Flex
+          flex={1}
+          w="100%"
+          justify="center"
+          align="stretch"
+          h="50%"
+          mih={0}
+          style={{ overflow: 'hidden' }}
+        >
           <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
         </Flex>
-        <Flex flex={1} w="100%" justify="center">
+        <Flex
+          flex={1}
+          w="100%"
+          justify="center"
+          align="stretch"
+          h="50%"
+          mih={0}
+          style={{ overflow: 'hidden' }}
+        >
           <TabNavigator />
         </Flex>
       </Stack>

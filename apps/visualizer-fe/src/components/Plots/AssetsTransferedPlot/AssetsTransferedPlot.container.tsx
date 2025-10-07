@@ -3,14 +3,14 @@ import { Center, Checkbox, Group, Loader, Stack, Title } from '@mantine/core';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { assetCountsBySymbolQueryDocument } from '../../api/messages';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { AssetCountsBySymbolQuery } from '../../gql/graphql';
-import convertToCsv from '../../utils/convertToCsv';
-import downloadSvg from '../../utils/downloadSvg';
-import { downloadZip } from '../../utils/downloadZip';
-import { getParachainId } from '../../utils/utils';
-import DownloadButtons from '../DownloadButtons';
+import { assetCountsBySymbolQueryDocument } from '../../../api/messages';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { AssetCountsBySymbolQuery } from '../../../gql/graphql';
+import convertToCsv from '../../../utils/convertToCsv';
+import downloadSvg from '../../../utils/downloadSvg';
+import { downloadZip } from '../../../utils/downloadZip';
+import { getParachainId } from '../../../utils/utils';
+import DownloadButtons from '../../DownloadButtons';
 import AssetsTransferedPlot from './AssetsTransferedPlot';
 
 const now = Date.now();

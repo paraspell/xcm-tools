@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { TAssetCounts } from '../../types/types';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { TAssetCounts } from '../../../types/types';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
 import { generateSeries } from './utils/generateSeries';

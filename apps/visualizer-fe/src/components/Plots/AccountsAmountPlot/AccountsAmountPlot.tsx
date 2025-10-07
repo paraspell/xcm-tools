@@ -6,8 +6,8 @@ import { FixedSizeBinary } from 'polkadot-api';
 import type { FC, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { AccountCountsQuery } from '../../gql/graphql';
-import type { ChartDataItem, CustomPoint } from '../../types/types';
+import type { AccountCountsQuery } from '../../../gql/graphql';
+import type { ChartDataItem, CustomPoint } from '../../../types/types';
 
 import 'highcharts/highcharts-more';
 
