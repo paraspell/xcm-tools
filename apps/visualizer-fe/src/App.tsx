@@ -24,7 +24,7 @@ export const client = new ApolloClient({
   }),
   link: link.concat(
     createHttpLink({
-      uri: import.meta.env.VITE_API_URL as string
+      uri: `${import.meta.env.VITE_API_URL}/graphql`
     })
   )
 });
