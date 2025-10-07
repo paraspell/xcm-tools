@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
 
-import { SubscanXcmItem } from './livedata.types';
+import { LiveXcmData, SubscanXcmItem } from './livedata.types';
 import { SubscanClient } from './subscan.client';
 
 @WebSocketGateway({ cors: { origin: true } })
@@ -23,7 +23,7 @@ export class LiveDataGateway
   private seen = new Set<string>();
   private seenQueue: string[] = [];
 
-  private ECOSYSTEMS: string[] = ['polkadot', 'kusama', 'westend', 'paseo'];
+  private ECOSYSTEMS: string[] = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
   private INTERVAL = 5_000; // 5 seconds
   private REQUEST_ROWS = 5;
   private MAX_SIZE = (this.ECOSYSTEMS.length + 1) * this.REQUEST_ROWS;
@@ -52,11 +52,19 @@ export class LiveDataGateway
     this.poll().catch((e: Error) => this.printError(e));
 
     this.timer = setInterval(() => {
-      if (this.clients.size === 0) {
-        this.stopPolling();
-        return;
-      }
-      this.poll().catch((e: Error) => this.printError(e));
+      void (async () => {
+        if (this.clients.size === 0) {
+          this.stopPolling();
+          return;
+        }
+        const data = await this.poll().catch((e: Error) => {
+          this.printError(e);
+          return [];
+        });
+        for (const item of data) {
+          this.server.emit('liveXcmData', item);
+        }
+      })();
     }, this.INTERVAL);
 
     this.timer?.unref?.();
@@ -69,7 +77,7 @@ export class LiveDataGateway
     }
   }
 
-  private async poll() {
+  private async poll(): Promise<LiveXcmData[]> {
     const fresh: SubscanXcmItem[] = [];
 
     for (const ecosystem of this.ECOSYSTEMS) {
@@ -79,28 +87,25 @@ export class LiveDataGateway
       });
       if (!Array.isArray(list) || list.length === 0) continue;
 
-      // collect only new items
       for (const item of list) {
         const id = `${item.status}:${item.message_hash}`;
-        if (this.addSeen(id)) {
-          fresh.push(item);
-        }
+        if (!this.addSeen(id)) continue;
+
+        item.from_chain = ecosystem;
+        fresh.push(item);
       }
     }
 
-    if (fresh.length === 0) return;
-
-    // emit oldest first
-    for (const item of fresh.reverse()) {
-      this.server.emit('liveXcmData', {
-        ecosystem: item.from_chain,
-        status: item.status,
-        hash: item.message_hash,
-        timestamp: item.relayed_block_timestamp,
-        from: item.origin_para_id,
-        to: item.dest_para_id,
-      });
-    }
+    return fresh.map((item) => ({
+      ecosystem: item.from_chain,
+      status: item.status,
+      hash: item.message_hash,
+      id: item.unique_id,
+      originTimestamp: item.origin_block_timestamp,
+      confirmTimestamp: item.confirm_block_timestamp,
+      from: Number(item.origin_para_id),
+      to: Number(item.dest_para_id),
+    }));
   }
 
   private addSeen(id: string): boolean {

@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { MessageCountsByDayQuery } from '../../gql/graphql';
-import { getParachainById, getParachainColor } from '../../utils/utils';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { MessageCountsByDayQuery } from '../../../gql/graphql';
+import { getParachainById, getParachainColor } from '../../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Payload = {

@@ -23,10 +23,14 @@
       "messageCount": "Сообщения",
       "total": "Итого"
     },
+    "liveData": {
+      "notAvailable": "Нет доступных живых данных. Пожалуйста, включите"
+    },
     "tabs": {
       "accounts": "Аккаунты",
       "amounts": "Суммы",
       "assets": "Активы",
+      "liveData": "Живые данные XCM",
       "success": "Успех"
     }
   },

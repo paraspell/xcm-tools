@@ -1,7 +1,7 @@
 import type { Server, Socket } from 'socket.io';
 
 import { LiveDataGateway } from './livedata.gateway';
-import type { SubscanXcmItem } from './livedata.types';
+import type { LiveXcmData, SubscanXcmItem } from './livedata.types';
 
 jest.mock('./subscan.client', () => ({
   __esModule: true,
@@ -78,6 +78,8 @@ describe('LiveDataGateway', () => {
         message_hash: '0xaaa',
         unique_id: 'unique-1',
         relayed_block_timestamp: 111,
+        origin_block_timestamp: 110,
+        confirm_block_timestamp: 115,
         status: 'Completed',
         from_chain: 'polkadot',
         origin_para_id: 1000,
@@ -87,6 +89,8 @@ describe('LiveDataGateway', () => {
         message_hash: '0xbbb',
         unique_id: 'unique-2',
         relayed_block_timestamp: 222,
+        origin_block_timestamp: 220,
+        confirm_block_timestamp: 225,
         status: 'Pending',
         from_chain: 'polkadot',
         origin_para_id: 1001,
@@ -95,42 +99,53 @@ describe('LiveDataGateway', () => {
     ];
 
     clientInstance.fetchLatestXcmList.mockImplementation(({ ecosystem }) => {
-      if (ecosystem === 'polkadot') {
+      if (ecosystem === 'Polkadot') {
         return Promise.resolve(items);
       }
       return Promise.resolve<SubscanXcmItem[]>([]);
     });
 
-    await (gateway as unknown as { poll: () => Promise<void> }).poll();
+    const gatewayWithPoll = gateway as unknown as {
+      poll: () => Promise<LiveXcmData[]>;
+    };
+
+    const firstBatch = await gatewayWithPoll.poll();
 
     expect(clientInstance.fetchLatestXcmList).toHaveBeenCalledTimes(4);
     expect(clientInstance.fetchLatestXcmList).toHaveBeenCalledWith({
       row: 5,
-      ecosystem: 'polkadot',
+      ecosystem: 'Polkadot',
     });
 
-    expect(emit).toHaveBeenCalledTimes(2);
-    expect(emit).toHaveBeenNthCalledWith(1, 'liveXcmData', {
-      ecosystem: 'polkadot',
-      status: 'Pending',
-      hash: '0xbbb',
-      timestamp: 222,
-      from: 1001,
-      to: 2001,
-    });
-    expect(emit).toHaveBeenNthCalledWith(2, 'liveXcmData', {
-      ecosystem: 'polkadot',
-      status: 'Completed',
-      hash: '0xaaa',
-      timestamp: 111,
-      from: 1000,
-      to: 2000,
-    });
+    expect(firstBatch).toHaveLength(2);
+    expect(firstBatch).toEqual(
+      expect.arrayContaining<LiveXcmData>([
+        {
+          ecosystem: 'Polkadot',
+          status: 'Pending',
+          hash: '0xbbb',
+          id: 'unique-2',
+          originTimestamp: 220,
+          confirmTimestamp: 225,
+          from: 1001,
+          to: 2001,
+        },
+        {
+          ecosystem: 'Polkadot',
+          status: 'Completed',
+          hash: '0xaaa',
+          id: 'unique-1',
+          originTimestamp: 110,
+          confirmTimestamp: 115,
+          from: 1000,
+          to: 2000,
+        },
+      ]),
+    );
 
-    emit.mockClear();
+    const secondBatch = await gatewayWithPoll.poll();
 
-    await (gateway as unknown as { poll: () => Promise<void> }).poll();
-
+    expect(secondBatch).toHaveLength(0);
     expect(emit).not.toHaveBeenCalled();
   });
 

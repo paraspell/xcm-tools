@@ -23,10 +23,14 @@
       "messageCount": "الرسائل",
       "total": "الإجمالي"
     },
+    "liveData": {
+      "notAvailable": "لا توجد بيانات متاحة للتنزيل. يُرجى التفعيل"
+    },
     "tabs": {
       "accounts": "الحسابات",
       "amounts": "المبالغ",
       "assets": "الأصول",
+      "liveData": "بيانات XCM المباشرة",
       "success": "نجاح"
     }
   },

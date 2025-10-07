@@ -23,10 +23,14 @@
       "messageCount": "Nachrichten",
       "total": "Gesamt"
     },
+    "liveData": {
+      "notAvailable": "Keine Live-Daten verfügbar. Bitte aktivieren Sie diese"
+    },
     "tabs": {
       "accounts": "Konten",
       "amounts": "Beträge",
       "assets": "Assets",
+      "liveData": "Live-XCM-Daten",
       "success": "Erfolg"
     }
   },

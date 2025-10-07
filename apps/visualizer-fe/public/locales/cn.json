@@ -23,10 +23,14 @@
       "messageCount": "消息",
       "total": "总计"
     },
+    "liveData": {
+      "notAvailable": "无可用的实时数据。请启用"
+    },
     "tabs": {
       "accounts": "账户",
       "amounts": "金额",
       "assets": "资产",
+      "liveData": "实时 XCM 数据",
       "success": "成功"
     }
   },

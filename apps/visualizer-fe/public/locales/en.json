@@ -23,10 +23,14 @@
       "messageCount": "Messages",
       "total": "Total"
     },
+    "liveData": {
+      "notAvailable": "No live data available. Please enable 'Use Live XCM Data'."
+    },
     "tabs": {
       "accounts": "Accounts",
       "amounts": "Amounts",
       "assets": "Assets",
+      "liveData": "Live XCM Data",
       "success": "Success"
     }
   },

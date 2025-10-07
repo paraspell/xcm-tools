@@ -46,9 +46,19 @@ export default function LiveDataProvider({ children }: { children: ReactNode }) 
   useEffect(() => {
     setSocketHandler((msg: LiveXcmMsg) => {
       setLiveData(prev => {
-        const next = [...prev, msg];
-        if (next.length > maxQueue) next.shift();
-        return next;
+        // update existing messages
+        const idx = prev.findIndex(x => x.hash === msg.hash);
+        if (idx !== -1) {
+          const current = prev[idx];
+          const next = prev.slice();
+          next[idx] = { ...current, ...msg };
+          return next;
+        }
+
+        if (prev.length >= maxQueue) {
+          return [...prev.slice(1), msg];
+        }
+        return [...prev, msg];
       });
 
       // Per-connection queue

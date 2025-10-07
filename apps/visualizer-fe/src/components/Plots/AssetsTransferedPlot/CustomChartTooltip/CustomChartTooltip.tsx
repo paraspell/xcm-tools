@@ -19,14 +19,13 @@ import {
 } from '@mantine/core';
 import dayjs from 'dayjs';
 
-import subscanLogo from '../../../assets/subscan.png';
-import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
-import type { Ecosystem } from '../../../types/types';
-import { getParachainId } from '../../../utils/utils';
+import subscanLogo from '../../../../assets/subscan.png';
+import { useSelectedParachain } from '../../../../context/SelectedParachain/useSelectedParachain';
+import type { Ecosystem } from '../../../../types/types';
+import { getParachainId } from '../../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
-
 export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesLabels {
   if (!series) {
     return {};

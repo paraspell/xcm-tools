@@ -1,4 +1,4 @@
-import AssetsTransferedPlotContainer from '../components/AssetsTransferedPlot/AssetsTransferedPlot.container';
+import AssetsTransferedPlotContainer from '../components/Plots/AssetsTransferedPlot/AssetsTransferedPlot.container';
 
 const Scene2dAssetsChart = () => <AssetsTransferedPlotContainer />;
 

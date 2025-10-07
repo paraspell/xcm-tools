@@ -4,15 +4,15 @@ import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { accountXcmCountsQueryDocument } from '../../api/messages';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { AccountCountsQuery } from '../../gql/graphql';
-import convertToCsv from '../../utils/convertToCsv';
-import downloadSvg from '../../utils/downloadSvg';
-import { downloadZip } from '../../utils/downloadZip';
-import { getParachainId } from '../../utils/utils';
-import DownloadButtons from '../DownloadButtons';
-import SliderInput from '../SliderInput';
+import { accountXcmCountsQueryDocument } from '../../../api/messages';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
+import type { AccountCountsQuery } from '../../../gql/graphql';
+import convertToCsv from '../../../utils/convertToCsv';
+import downloadSvg from '../../../utils/downloadSvg';
+import { downloadZip } from '../../../utils/downloadZip';
+import { getParachainId } from '../../../utils/utils';
+import DownloadButtons from '../../DownloadButtons';
+import SliderInput from '../../SliderInput';
 import AccountsAmountPlot from './AccountsAmountPlot';
 
 const now = Date.now();
