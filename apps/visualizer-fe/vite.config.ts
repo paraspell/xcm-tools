@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/socket.io': {
-          target: loadEnv(mode, process.cwd(), '').VITE_API_URL,
+          target: loadEnv(mode, process.cwd(), '').VITE_SOCKET_URL,
           ws: true,
           changeOrigin: true
         }
