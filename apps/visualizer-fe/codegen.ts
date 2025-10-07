@@ -1,20 +1,20 @@
-import { CodegenConfig } from "@graphql-codegen/cli";
+import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: process.env.VITE_API_URL,
-  documents: ["./src/**/*.{ts,tsx}"],
+  schema: `${process.env.VITE_API_URL}/graphql`,
+  documents: ['./src/**/*.{ts,tsx}'],
   ignoreNoDocuments: true,
   generates: {
-    "./src/gql/": {
-      preset: "client",
+    './src/gql/': {
+      preset: 'client',
       plugins: [],
       config: {
         namingConvention: {
-          enumValues: "keep",
-        },
-      },
-    },
-  },
+          enumValues: 'keep'
+        }
+      }
+    }
+  }
 };
 
 export default config;
