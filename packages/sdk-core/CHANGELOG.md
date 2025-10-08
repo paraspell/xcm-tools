@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.6...sdk-core-v11.9.0) (2025-10-08)
+
+
+### Features
+
+* **sdk-core:** Add support for ALL amount for local transfers ✨ ([4d06874](https://github.com/paraspell/xcm-tools/commit/4d06874e7365cb55e9522e7b42433118992d7551))
+
 ## [11.8.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.5...sdk-core-v11.8.6) (2025-10-06)
 
 
