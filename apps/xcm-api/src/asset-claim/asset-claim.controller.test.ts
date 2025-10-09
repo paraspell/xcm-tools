@@ -46,9 +46,10 @@ describe('AssetClaimController', () => {
       user: { id: '123', requestLimit: 100 },
     } as unknown as RequestWithUser;
 
+    const mockClaimResult = '0x1234567890abcdef';
     const spyClaimAssets = vi
       .spyOn(assetClaimService, 'claimAssets')
-      .mockResolvedValue('success');
+      .mockResolvedValue(mockClaimResult);
     const spyTrack = vi.spyOn(analyticsService, 'track');
 
     const result = await controller.claimAssets(bodyParams, req);
@@ -60,6 +61,6 @@ describe('AssetClaimController', () => {
       assetLength: 1,
     });
 
-    expect(result).toEqual('success');
+    expect(result).toEqual(mockClaimResult);
   });
 });

@@ -8,5 +8,5 @@ export const createChainClient = async <TApi, TRes>(
   chain: TSubstrateChain
 ): Promise<TApi> => {
   const wsUrl = getChainProviders(chain)
-  return api.createApiInstance(wsUrl)
+  return api.createApiInstance(wsUrl, chain)
 }

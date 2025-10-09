@@ -20,22 +20,24 @@ const mockApi = {
 
 describe('createChainClient', () => {
   it('should create an ApiPromise instance with single url', async () => {
+    const chain = 'Polkadot'
     const urls = ['wss://polkadot-rpc.publicnode.com']
     vi.mocked(getChainProviders).mockReturnValueOnce(urls)
-    const result = await createChainClient(mockApi, 'Polkadot')
+    const result = await createChainClient(mockApi, chain)
 
-    expect(getChainProviders).toHaveBeenCalledWith('Polkadot')
-    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls)
+    expect(getChainProviders).toHaveBeenCalledWith(chain)
+    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls, chain)
     expect(result).toBe(mockApiPromise)
   })
 
   it('should create an ApiPromise instance with multiple urls', async () => {
+    const chain = 'Altair'
     const urls = ['wss://altair-rpc.publicnode.com', 'wss://altair-rpc.publicnode.com']
     vi.mocked(getChainProviders).mockReturnValueOnce(urls)
-    const result = await createChainClient(mockApi, 'Altair')
+    const result = await createChainClient(mockApi, chain)
 
-    expect(getChainProviders).toHaveBeenCalledWith('Altair')
-    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls)
+    expect(getChainProviders).toHaveBeenCalledWith(chain)
+    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls, chain)
     expect(result).toBe(mockApiPromise)
   })
 })
