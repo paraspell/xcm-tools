@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.9.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.9.0...xcm-api-v11.9.1) (2025-10-09)
+
+
+### Documentation
+
+* Add "ALL" to docs ([602e896](https://github.com/paraspell/xcm-tools/commit/602e8965f0f0e72f72bc8d0a2b507089f1a1ada0))
+
 ## [11.9.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.8.6...xcm-api-v11.9.0) (2025-10-08)
 
 

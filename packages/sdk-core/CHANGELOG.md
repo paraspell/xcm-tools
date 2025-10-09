@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.9.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.9.0...sdk-core-v11.9.1) (2025-10-09)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add amount all handling for fee functions ✨ ([ceead0e](https://github.com/paraspell/xcm-tools/commit/ceead0ef919080f18123f6289e1d3b2a7f33663c))
+
 ## [11.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.8.6...sdk-core-v11.9.0) (2025-10-08)
 
 
