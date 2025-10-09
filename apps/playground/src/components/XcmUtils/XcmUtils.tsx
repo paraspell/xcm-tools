@@ -183,7 +183,7 @@ const XcmUtils = () => {
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
-      amount: c.amount,
+      amount: c.isMax ? 'ALL' : c.amount,
     }));
 
     const body = {
@@ -312,7 +312,7 @@ const XcmUtils = () => {
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
-      amount: c.amount,
+      amount: c.isMax ? 'ALL' : c.amount,
     }));
 
     const body = {

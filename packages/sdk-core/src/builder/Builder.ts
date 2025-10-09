@@ -27,7 +27,9 @@ import type {
   TDryRunPreviewOptions,
   TGetXcmFeeBuilderOptions,
   TSendBaseOptions,
-  TSendBaseOptionsWithSenderAddress
+  TSendBaseOptionsWithSenderAddress,
+  TSendOptions,
+  TTxFactory
 } from '../types'
 import {
   assertAddressIsString,
@@ -221,6 +223,24 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return this.buildCommon<TOptions>(true)
   }
 
+  private async prepareNormalizedOptions<TOptions extends TSendBaseOptions>(
+    this: GeneralBuilder<TApi, TRes, TOptions>,
+    options: TOptions
+  ): Promise<{
+    normalizedOptions: TSendOptions<TApi, TRes> & TOptions
+    buildTx: TTxFactory<TRes>
+  }> {
+    const builder = this.currency({
+      ...options.currency,
+      amount: MIN_AMOUNT.toString()
+    })
+    const buildTx = builder.createTxFactory()
+
+    const normalizedOptions = await normalizeAmountAll(this.api, buildTx, options)
+
+    return { normalizedOptions, buildTx }
+  }
+
   /**
    * Builds and returns the transfer extrinsic.
    *
@@ -247,13 +267,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
-    const builder = this.currency({
-      ...this._options.currency,
-      amount: MIN_AMOUNT.toString()
-    })
-    const createTx = builder.createTxFactory()
-
-    const normalizedOptions = await normalizeAmountAll(this.api, createTx, this._options)
+    const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
 
     const tx = await send(normalizedOptions)
 
@@ -306,7 +320,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     })
   }
 
-  private createTxFactory(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
+  private createTxFactory<TOptions extends TSendBaseOptions>(
+    this: GeneralBuilder<TApi, TRes, TOptions>
+  ) {
     return (amount: string | undefined) =>
       createTx({ ...this._options, api: this.api }, this, amount)
   }
@@ -320,21 +336,23 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
-    const { from, to, address, senderAddress, feeAsset, currency } = this._options
+    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
+
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, senderAddress, address, currency, feeAsset } = normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
-
     try {
       return await getXcmFee({
-        api: this.api,
-        buildTx: this.createTxFactory(),
+        api,
+        buildTx,
         origin: from,
         destination: to,
-        senderAddress: senderAddress,
-        address: address,
+        senderAddress,
+        address,
         currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
@@ -353,19 +371,19 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
-    const { from, to, senderAddress, currency, feeAsset } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, senderAddress, currency, feeAsset } = normalizedOptions
 
     assertToIsString(to)
-
-    const api = this.api
 
     try {
       return await getOriginXcmFee({
         api,
-        buildTx: this.createTxFactory(),
+        buildTx,
         origin: from,
         destination: to,
-        senderAddress: senderAddress,
+        senderAddress,
         currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
@@ -381,21 +399,23 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns An origin and destination fee estimate.
    */
   async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, senderAddress, currency } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, address, senderAddress, currency } = normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const { tx } = await this.buildInternal()
+    const tx = await buildTx()
 
     try {
       return await getXcmFeeEstimate({
-        api: this.api,
+        api,
         tx,
         origin: from,
         destination: to,
-        address: address,
-        senderAddress: senderAddress,
+        address,
+        senderAddress,
         currency: currency as WithAmount<TCurrencyCore>
       })
     } finally {
@@ -411,20 +431,22 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getOriginXcmFeeEstimate(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   ) {
-    const { from, to, senderAddress, currency } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, senderAddress, currency } = normalizedOptions
 
     assertToIsString(to)
 
-    const { tx } = await this.buildInternal()
+    const tx = await buildTx()
 
     try {
       return await getOriginXcmFeeEstimate({
-        api: this.api,
+        api,
         tx,
         origin: from,
         destination: to,
         currency: currency as WithAmount<TCurrencyCore>,
-        senderAddress: senderAddress
+        senderAddress
       })
     } finally {
       await this.api.disconnect()
@@ -437,15 +459,15 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The max transferable amount.
    */
   async getTransferableAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, senderAddress, currency, feeAsset } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, senderAddress, currency, feeAsset } = normalizedOptions
 
     assertToIsString(to)
 
-    const api = this.api
-
     return getTransferableAmount({
       api,
-      buildTx: this.createTxFactory(),
+      buildTx,
       origin: from,
       destination: to,
       senderAddress,
@@ -462,16 +484,16 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getMinTransferableAmount(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   ) {
-    const { from, to, senderAddress, address, currency, feeAsset } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, senderAddress, address, currency, feeAsset } = normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(address)
 
-    const api = this.api
-
     return getMinTransferableAmount({
       api,
-      buildTx: this.createTxFactory(),
+      buildTx,
       origin: from,
       destination: to,
       senderAddress,
@@ -488,14 +510,16 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The max transferable amount.
    */
   async verifyEdOnDestination(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, currency, senderAddress, feeAsset } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, address, currency, senderAddress, feeAsset } = normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(address)
 
     return verifyEdOnDestination({
-      api: this.api,
-      buildTx: this.createTxFactory(),
+      api,
+      buildTx,
       origin: from,
       destination: to,
       address,
@@ -511,14 +535,17 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The transfer info.
    */
   async getTransferInfo(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, currency, ahAddress, senderAddress, feeAsset } = this._options
+    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
+
+    const { api, from, to, address, currency, ahAddress, senderAddress, feeAsset } =
+      normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(address)
 
     return getTransferInfo({
-      api: this.api,
-      buildTx: this.createTxFactory(),
+      api,
+      buildTx,
       origin: from,
       destination: to,
       address,
