@@ -48,19 +48,18 @@ import {
   Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
+import { withLegacy } from '@polkadot-api/legacy-provider'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
+import { getWsProvider } from 'polkadot-api/ws-provider'
 import { isAddress } from 'viem'
 
+import { DEFAULT_TTL_MS, EXTENSION_MS, LEGACY_CHAINS, MAX_CLIENTS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
 import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import { findFailingEvent } from './utils'
-
-const DEFAULT_TTL_MS = 60_000 // 1 minute
-const MAX_CLIENTS = 100
-const EXTENSION_MS = 5 * 60_000 // 5 minutes
 
 const clientPool = createClientCache(
   MAX_CLIENTS,
@@ -74,23 +73,18 @@ const keyFromWs = (ws: string | string[]): TClientKey => {
   return Array.isArray(ws) ? JSON.stringify(ws) : ws
 }
 
-const createPolkadotClient = async (ws: string | string[]): Promise<TPapiApi> => {
-  const isNodeJs = typeof window === 'undefined'
-
-  const { getWsProvider } = isNodeJs
-    ? await import('polkadot-api/ws-provider/node')
-    : await import('polkadot-api/ws-provider/web')
-
-  const provider = Array.isArray(ws) ? getWsProvider(ws) : getWsProvider(ws)
+const createPolkadotClient = (ws: string | string[], useLegacy: boolean): TPapiApi => {
+  const options = useLegacy ? { innerEnhancer: withLegacy() } : {}
+  const provider = getWsProvider(ws, options)
   return createClient(withPolkadotSdkCompat(provider))
 }
 
-const leasePolkadotClient = async (ws: string | string[], ttlMs: number) => {
+const leasePolkadotClient = (ws: string | string[], ttlMs: number, useLegacy: boolean) => {
   const key = keyFromWs(ws)
   let entry = clientPool.peek(key)
 
   if (!entry) {
-    entry = { client: await createPolkadotClient(ws), refs: 0, destroyWanted: false }
+    entry = { client: createPolkadotClient(ws, useLegacy), refs: 0, destroyWanted: false }
     clientPool.set(key, entry, ttlMs)
   }
 
@@ -116,16 +110,6 @@ const releasePolkadotClient = (ws: string | string[]) => {
     clientPool.delete(key)
   }
 }
-
-const unsupportedChains: TChain[] = [
-  'ComposableFinance',
-  'Interlay',
-  'CrustShadow',
-  'Kintsugi',
-  'RobonomicsKusama',
-  'Pendulum',
-  'Subsocial'
-]
 
 const isHex = (str: string) => {
   return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
@@ -179,12 +163,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return
     }
 
-    if (unsupportedChains.includes(chain)) {
-      throw new ChainNotSupportedError(
-        `The chain ${chain} is not yet supported by the Polkadot API.`
-      )
-    }
-
     this._ttlMs = clientTtlMs
     this._chain = chain
 
@@ -216,14 +194,15 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
-      return this.createApiInstance(apiConfig)
+      return this.createApiInstance(apiConfig, chain)
     }
 
     return apiConfig
   }
 
-  async createApiInstance(wsUrl: string | string[]) {
-    return leasePolkadotClient(wsUrl, this._ttlMs)
+  createApiInstance(wsUrl: string | string[], chain: TSubstrateChain) {
+    const useLegacy = LEGACY_CHAINS.includes(chain)
+    return Promise.resolve(leasePolkadotClient(wsUrl, this._ttlMs, useLegacy))
   }
 
   accountToHex(address: string, isPrefixed = true) {

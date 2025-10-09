@@ -73,17 +73,3 @@ export const validateTransfer = async (
   const feeRes = await builder.getXcmFee()
   expect(feeRes.failureReason).toBeUndefined()
 }
-
-export const filteredChains = SUBSTRATE_CHAINS.filter(
-  chain =>
-    // PAPI UNSUPPORTED CHAINS START
-    chain !== 'ComposableFinance' &&
-    chain !== 'Interlay' &&
-    chain !== 'CrustShadow' &&
-    chain !== 'Kintsugi' &&
-    chain !== 'RobonomicsKusama' &&
-    chain !== 'RobonomicsPolkadot' &&
-    chain !== 'Pendulum' &&
-    chain !== 'Subsocial' &&
-    chain !== 'Darwinia'
-)

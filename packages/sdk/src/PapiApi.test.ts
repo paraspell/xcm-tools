@@ -29,8 +29,7 @@ import {
 } from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
-import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
-import { getWsProvider } from 'polkadot-api/ws-provider/node'
+import { getWsProvider } from 'polkadot-api/ws-provider'
 import type { Mock } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -38,7 +37,7 @@ import PapiApi from './PapiApi'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
 
-vi.mock('polkadot-api/ws-provider/node', () => ({
+vi.mock('polkadot-api/ws-provider', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
     send: vi.fn(),
     disconnect: vi.fn()
@@ -46,7 +45,7 @@ vi.mock('polkadot-api/ws-provider/node', () => ({
 }))
 
 vi.mock('polkadot-api/polkadot-sdk-compat', () => ({
-  withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider)
+  withPolkadotSdkCompat: vi.fn().mockImplementation((provider: unknown) => provider)
 }))
 
 vi.mock('polkadot-api')
@@ -84,6 +83,8 @@ describe('PapiApi', () => {
   const mockChain = 'Acala'
 
   beforeEach(async () => {
+    vi.clearAllMocks()
+
     mockTransaction = {
       getEstimatedFees: vi.fn().mockResolvedValue(1000n),
       decodedCall: {
@@ -274,19 +275,6 @@ describe('PapiApi', () => {
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
 
-    it('should throw ChainNotSupportedError for unsupported chains', async () => {
-      papiApi = new PapiApi()
-
-      await expect(papiApi.init('ComposableFinance')).rejects.toThrow(
-        new ChainNotSupportedError(
-          'The chain ComposableFinance is not yet supported by the Polkadot API.'
-        )
-      )
-
-      await expect(papiApi.init('Interlay')).rejects.toThrow(ChainNotSupportedError)
-      await expect(papiApi.init('Kintsugi')).rejects.toThrow(ChainNotSupportedError)
-    })
-
     it('should use apiOverrides when provided in config', async () => {
       const customClient = {
         ...mockPolkadotClient,
@@ -332,10 +320,10 @@ describe('PapiApi', () => {
     it('should create a PolkadotClient instance', async () => {
       const wsUrl = 'ws://localhost:9944'
 
-      const apiInstance = await papiApi.createApiInstance(wsUrl)
+      const apiInstance = await papiApi.createApiInstance(wsUrl, mockChain)
 
       expect(apiInstance).toBe(mockPolkadotClient)
-      expect(getWsProvider).toHaveBeenCalledWith(wsUrl)
+      expect(getWsProvider).toHaveBeenCalledWith(wsUrl, {})
       expect(createClient).toHaveBeenCalledOnce()
       vi.resetAllMocks()
     })

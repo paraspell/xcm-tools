@@ -55,7 +55,7 @@ describe('XTransferController', () => {
         address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = 'hash';
+      const mockResult = '0x1234567890abcdef';
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
@@ -89,7 +89,7 @@ describe('XTransferController', () => {
         ],
         options: { mode: BatchMode.BATCH },
       };
-      const mockResult = 'hash';
+      const mockResult = '0x1234567890abcdef';
       const spy = vi
         .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);

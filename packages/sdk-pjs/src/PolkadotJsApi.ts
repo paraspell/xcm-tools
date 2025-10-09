@@ -111,13 +111,13 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
-      return this.createApiInstance(apiConfig)
+      return this.createApiInstance(apiConfig, chain)
     }
 
     return apiConfig
   }
 
-  async createApiInstance(wsUrl: string | string[]) {
+  async createApiInstance(wsUrl: string | string[], _chain: TSubstrateChain) {
     const wsProvider = new WsProvider(wsUrl)
     return ApiPromise.create({ provider: wsProvider })
   }

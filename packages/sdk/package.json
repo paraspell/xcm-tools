@@ -37,11 +37,12 @@
   },
   "dependencies": {
     "@noble/hashes": "^1.8.0",
+    "@polkadot-api/legacy-provider": "^0.3.3",
     "@paraspell/sdk-core": "workspace:*",
     "viem": "^2.37.9"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.19.1 < 2"
+    "polkadot-api": ">= 1.20.0 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
