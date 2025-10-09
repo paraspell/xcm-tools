@@ -91,7 +91,7 @@ For full documentation with examples on this feature head over to [official docu
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
       .from(CHAIN)
       .to(CHAIN /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..])
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]) 
       .address(address | Location object /*If you are sending through xTokens, you need to pass the destination and address Location in one object (x2)*/)
       .senderAddress(address) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
       /*.ahAddress(ahAddress) - OPTIONAL - used when origin is EVM chain and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address eg. origin: Moonbeam & destination: Ethereum (Multihop goes from Moonbeam > AssetHub > BridgeHub > Ethereum)
@@ -127,7 +127,7 @@ await builder.disconnect()
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
       .from(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
       .to(CHAIN/*,customParaId - optional*/ | Location object)
-      .currency({symbol: 'DOT', amount: amount})
+      .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
       .address(address | Location object)
       /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
       .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
@@ -160,7 +160,7 @@ await builder.disconnect()
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
       .from(CHAIN)
       .to(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
-      .currency({symbol: 'DOT', amount: amount})
+      .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
       .address(address | Location object)
       /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
         .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
@@ -193,7 +193,7 @@ await builder.disconnect()
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
       .from(CHAIN)
       .to(CHAIN) //Has to be the same as the origin (from)
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..])
+      .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address)
 
 const tx = await builder.build()
@@ -248,7 +248,7 @@ await builder.disconnect()
 //Claim XCM trapped assets from the selected chain
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
       .claimFrom(CHAIN)
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount}, {currencySelection}, ..]
+      .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]
 )
       .address(address | Location object)
       /*.xcmVersion(Version.V3) Optional parameter, by default chain specific version. XCM Version ENUM if a different XCM version is needed (Supported V3 & V4 & V5). Requires importing Version enum.*/
@@ -265,7 +265,7 @@ await builder.disconnect()
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
         .from(CHAIN)
         .to(CHAIN_2)
-        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}]})
+        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(ADDRESS)
         .senderAddress(SENDER_ADDRESS)
@@ -285,7 +285,7 @@ More on this feature in [official documentation](https://paraspell.github.io/doc
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
         .from(CHAIN)
         .to(CHAIN_2)
-        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}]})
+        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(ADDRESS)
         .senderAddress(SENDER_ADDRESS)
@@ -309,7 +309,7 @@ const builder = await Builder({
 })
   .from(CHAIN)
   .to(CHAIN)
-  .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} | {location: Override('Custom Location'), amount: amount} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount}])
+  .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}])
   .address(address)
 
 const tx = await builder.build()
