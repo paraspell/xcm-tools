@@ -6,6 +6,7 @@ import { type TChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { DryRunFailedError } from '../errors'
 import {
   claimAssets,
@@ -13,6 +14,7 @@ import {
   getOriginXcmFee,
   getOriginXcmFeeEstimate,
   getTransferableAmount,
+  getTransferableAmountInternal,
   getTransferInfo,
   getXcmFee,
   getXcmFeeEstimate,
@@ -1006,6 +1008,212 @@ describe('Builder', () => {
       expect(getTransferInfo).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
+    })
+
+    describe('when currency amount equals AMOUNT_ALL', () => {
+      const NORMALIZED_AMOUNT = 987_654n
+
+      beforeEach(() => {
+        vi.mocked(getTransferableAmountInternal).mockResolvedValue(NORMALIZED_AMOUNT)
+      })
+
+      it('normalizes the amount for getXcmFee', async () => {
+        const feeResult = {} as TGetXcmFeeResult
+        vi.mocked(getXcmFee).mockResolvedValue(feeResult)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getXcmFee()
+
+        expect(result).toBe(feeResult)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getXcmFee).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getOriginXcmFee', async () => {
+        const feeDetail = {} as TXcmFeeDetail
+        vi.mocked(getOriginXcmFee).mockResolvedValue(feeDetail)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getOriginXcmFee()
+
+        expect(result).toBe(feeDetail)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getOriginXcmFee).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getXcmFeeEstimate', async () => {
+        const feeEstimate = {} as TGetXcmFeeEstimateResult
+        vi.mocked(getXcmFeeEstimate).mockResolvedValue(feeEstimate)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getXcmFeeEstimate()
+
+        expect(result).toBe(feeEstimate)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getXcmFeeEstimate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getOriginXcmFeeEstimate', async () => {
+        const originFeeEstimate = {} as TGetXcmFeeEstimateDetail
+        vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue(originFeeEstimate)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getOriginXcmFeeEstimate()
+
+        expect(result).toBe(originFeeEstimate)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getOriginXcmFeeEstimate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getTransferableAmount', async () => {
+        const transferableAmount = 321n
+        vi.mocked(getTransferableAmount).mockResolvedValue(transferableAmount)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getTransferableAmount()
+
+        expect(result).toBe(transferableAmount)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getTransferableAmount).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getMinTransferableAmount', async () => {
+        const minTransferable = 654n
+        vi.mocked(getMinTransferableAmount).mockResolvedValue(minTransferable)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getMinTransferableAmount()
+
+        expect(result).toBe(minTransferable)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getMinTransferableAmount).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for verifyEdOnDestination', async () => {
+        vi.mocked(verifyEdOnDestination).mockResolvedValue(true)
+
+        await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .verifyEdOnDestination()
+
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(verifyEdOnDestination).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
+
+      it('normalizes the amount for getTransferInfo', async () => {
+        const transferInfo = {} as TTransferInfo
+        vi.mocked(getTransferInfo).mockResolvedValue(transferInfo)
+
+        const result = await Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
+          .address(ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getTransferInfo()
+
+        expect(result).toBe(transferInfo)
+        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: MIN_AMOUNT })
+          })
+        )
+        expect(getTransferInfo).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
+          })
+        )
+      })
     })
   })
 

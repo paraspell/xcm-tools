@@ -20,6 +20,8 @@ export const createCustomXcm = <TApi, TRes>(
 
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
+  const feeLocLocalized = localizeLocation(dest.chain, feeAssetLocation)
+
   const asset = createAsset(
     version,
     assetInfo.amount,
@@ -69,7 +71,7 @@ export const createCustomXcm = <TApi, TRes>(
 
     const buyExecution = {
       BuyExecution: {
-        fees: createAsset(version, buyExecutionAmount, feeAssetLocation),
+        fees: createAsset(version, buyExecutionAmount, feeLocLocalized),
         weight_limit: 'Unlimited'
       }
     }
