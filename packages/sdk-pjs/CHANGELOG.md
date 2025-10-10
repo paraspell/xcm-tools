@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.9.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.9.2...sdk-pjs-v11.9.3) (2025-10-10)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Fix PJS dry run & fees implementation 🛠️ ([ac107a9](https://github.com/paraspell/xcm-tools/commit/ac107a91ea5191ee34cdf4d9a364180d2f94183f))
+
 ## [11.9.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.9.1...sdk-pjs-v11.9.2) (2025-10-10)
 
 
