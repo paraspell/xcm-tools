@@ -28,11 +28,13 @@ import {
   createChainClient,
   findNativeAssetInfoOrThrow,
   getChain,
+  hasXcmPaymentApiSupport,
   InvalidParameterError,
+  isAssetXcEqual,
   isConfig,
-  isRelayChain,
   localizeLocation,
-  Version
+  Version,
+  wrapTxBypass
 } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
@@ -146,7 +148,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   callDispatchAsMethod(call: Extrinsic, address: string): Extrinsic {
-    return this.api.tx.utility.dispatchAs(address, call)
+    const origin = { system: { Signed: address } }
+    return this.api.tx.utility.dispatchAs(origin, call)
   }
 
   objectToHex(obj: unknown, typeName: string) {
@@ -305,12 +308,16 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return api
   }
 
-  async getDryRunCall({
-    tx,
-    address,
-    feeAsset,
-    chain
-  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
+  async getDryRunCall(options: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
+    const {
+      tx,
+      address,
+      feeAsset,
+      chain,
+      destination,
+      useRootOrigin = false,
+      bypassOptions
+    } = options
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -319,13 +326,25 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const DEFAULT_XCM_VERSION = 3
 
+    const basePayload = useRootOrigin ? { system: { Root: null } } : { system: { Signed: address } }
+
+    const resolvedTx = useRootOrigin
+      ? await wrapTxBypass(
+          {
+            ...options,
+            api: this
+          },
+          bypassOptions
+        )
+      : tx
+
     const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
     const usedSymbol = usedAsset.symbol
 
     const performDryRunCall = async (includeVersion: boolean) => {
       return this.api.call.dryRunApi.dryRunCall(
-        { system: { Signed: address } },
-        tx,
+        basePayload,
+        resolvedTx,
         ...(includeVersion ? [DEFAULT_XCM_VERSION] : [])
       )
     }
@@ -408,8 +427,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       }
     }
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
-    const fee = computeFeeFromDryRunPjs(resultHuman, chain, executionFee)
+    const forwardedXcms =
+      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
 
     const actualWeight = resultJson.ok.executionResult.ok.actualWeight
 
@@ -420,8 +439,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         }
       : undefined
 
-    const forwardedXcms =
-      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
+    const nativeAsset = findNativeAssetInfoOrThrow(chain)
+
+    const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
 
     const destParaId =
       forwardedXcms.length === 0
@@ -429,6 +449,35 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         : (i => (i.here === null ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
             Object.values<any>(forwardedXcms[0])[0].interior
           )
+
+    if (
+      hasXcmPaymentApiSupport(chain) &&
+      resultJson.ok.local_xcm &&
+      hasLocation &&
+      (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))
+    ) {
+      const xcmFee = await this.getXcmPaymentApiFee(
+        chain,
+        resultJson.ok.local_xcm,
+        forwardedXcms,
+        feeAsset ?? nativeAsset
+      )
+
+      if (typeof xcmFee === 'bigint') {
+        return Promise.resolve({
+          success: true,
+          fee: xcmFee,
+          currency: usedSymbol,
+          asset: usedAsset,
+          weight,
+          forwardedXcms,
+          destParaId
+        })
+      }
+    }
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+    const fee = computeFeeFromDryRunPjs(resultHuman, chain, executionFee)
 
     return {
       success: true,
@@ -441,24 +490,61 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
   }
 
-  async getXcmPaymentApiFee(chain: TSubstrateChain, xcm: any, asset: TAssetInfo): Promise<bigint> {
-    const weight = await this.getXcmWeight(xcm)
+  async getXcmPaymentApiFee(
+    chain: TSubstrateChain,
+    localXcm: any,
+    forwardedXcm: any,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    const weight = await this.getXcmWeight(localXcm)
 
     assertHasLocation(asset)
 
-    const localizedLocation =
-      chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama' || isRelayChain(chain)
-        ? localizeLocation(chain, asset.location)
-        : asset.location
+    const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
     const feeResult = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weight,
-      addXcmVersionHeader(localizedLocation, Version.V4)
+      addXcmVersionHeader(assetLocalizedLoc, Version.V4)
     )
 
-    const res = feeResult.toJSON() as any
+    const execFeeRes = feeResult.toJSON() as any
+    const execFee = BigInt(execFeeRes.ok)
 
-    return BigInt(res.ok)
+    const deliveryFeeRes =
+      forwardedXcm.length > 0
+        ? await this.api.call.xcmPaymentApi.queryDeliveryFees(forwardedXcm[0], forwardedXcm[1][0])
+        : undefined
+
+    const deliveryFeeResJson = deliveryFeeRes?.toJSON() as any
+
+    const deliveryFeeResolved =
+      deliveryFeeRes && (deliveryFeeResJson.ok?.v4 ?? deliveryFeeResJson.ok?.v3)?.length > 0
+        ? BigInt((deliveryFeeResJson?.ok?.v4 ?? deliveryFeeResJson?.ok?.v3)?.[0]?.fun?.fungible)
+        : 0n
+
+    const nativeAsset = findNativeAssetInfoOrThrow(chain)
+
+    let deliveryFee: bigint
+    if (isAssetXcEqual(asset, nativeAsset)) {
+      deliveryFee = deliveryFeeResolved
+    } else {
+      try {
+        assertHasLocation(nativeAsset)
+
+        const res = await this.quoteAhPrice(
+          localizeLocation(chain, nativeAsset.location),
+          assetLocalizedLoc,
+          deliveryFeeResolved,
+          false
+        )
+
+        deliveryFee = res ?? 0n
+      } catch (_e) {
+        deliveryFee = 0n
+      }
+    }
+
+    return execFee + deliveryFee
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {
@@ -492,6 +578,41 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!isSuccess) {
       const failureReason = result.Ok.executionResult.Incomplete.error
       return { success: false, failureReason, currency: symbol, asset }
+    }
+
+    const forwardedXcms =
+      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
+
+    const actualWeight = resultJson.ok.executionResult.used
+
+    const weight: TWeight | undefined = actualWeight
+      ? {
+          refTime: BigInt(actualWeight.refTime as string),
+          proofSize: BigInt(actualWeight.proofSize as string)
+        }
+      : undefined
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : (i => (i.Here ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
+            Object.values<any>(forwardedXcms[0])[0].interior
+          )
+
+    if (hasXcmPaymentApiSupport(chain) && asset) {
+      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset)
+
+      if (typeof fee === 'bigint') {
+        return {
+          success: true,
+          fee,
+          currency: symbol,
+          asset,
+          weight,
+          forwardedXcms,
+          destParaId
+        }
+      }
     }
 
     const emitted = result.Ok.emittedEvents
@@ -532,25 +653,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       feeEvent.section === 'assetConversion' ? feeEvent.data.amountIn : feeEvent.data.amount
 
     const fee = BigInt(feeAmount.replace(/,/g, ''))
-
-    const actualWeight = resultJson.ok.executionResult.used
-
-    const weight: TWeight | undefined = actualWeight
-      ? {
-          refTime: BigInt(actualWeight.refTime as string),
-          proofSize: BigInt(actualWeight.proofSize as string)
-        }
-      : undefined
-
-    const forwardedXcms =
-      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
-
-    const destParaId =
-      forwardedXcms.length === 0
-        ? undefined
-        : (i => (i.Here ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
-            Object.values<any>(forwardedXcms[0])[0].interior
-          )
 
     return { success: true, fee, currency: symbol, asset, weight, forwardedXcms, destParaId }
   }
