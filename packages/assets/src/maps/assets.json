@@ -3413,11 +3413,65 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "39",
+        "symbol": "PAXG",
+        "decimals": 18,
+        "existentialDeposit": "41209923349543",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "101",
         "symbol": "2-Pool",
         "decimals": 18,
         "existentialDeposit": "1000",
         "alias": "2-Pool1"
+      },
+      {
+        "assetId": "38",
+        "symbol": "ENA",
+        "decimals": 18,
+        "existentialDeposit": "17337031900138700",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x57e114b691db790c35207b2e685d4a43181e6061"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "34",
@@ -3904,6 +3958,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x514910771af9ca656af840dff83e8264ecf986ca"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "40",
+        "symbol": "jitoSOL",
+        "decimals": 9,
+        "existentialDeposit": "2651",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xe9f9a2e3deae4093c00fbc57b22bb51a4c05ad88"
                 }
               }
             ]
@@ -8655,6 +8732,7 @@
           }
         },
         "existentialDeposit": "1000000000",
+        "isFeeAsset": true,
         "alias": "NEURO2"
       },
       {

@@ -471,6 +471,23 @@
         }
       },
       {
+        "symbol": "NEURO",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2043
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "AJUN",
         "decimals": 12,
         "location": {
