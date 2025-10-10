@@ -625,8 +625,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
-
     const nativeAsset = findNativeAssetInfoOrThrow(chain)
 
     const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
@@ -657,6 +655,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
+    const executionFee = await this.calculateTransactionFee(tx, address)
     const fee = computeFeeFromDryRun(result, chain, executionFee, !!feeAsset)
 
     return Promise.resolve({

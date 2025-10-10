@@ -5,9 +5,11 @@ import {
   computeFeeFromDryRunPjs,
   createChainClient,
   findNativeAssetInfoOrThrow,
+  hasXcmPaymentApiSupport,
   MissingChainApiError,
   type TLocation,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  wrapTxBypass
 } from '@paraspell/sdk-core'
 import { ApiPromise } from '@polkadot/api'
 import type { VoidFn } from '@polkadot/api/types'
@@ -24,7 +26,9 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
   createChainClient: vi.fn().mockResolvedValue({} as ApiPromise),
   resolveModuleError: vi.fn().mockReturnValue('ModuleError'),
-  findNativeAssetInfoOrThrow: vi.fn()
+  findNativeAssetInfoOrThrow: vi.fn(),
+  hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
+  wrapTxBypass: vi.fn()
 }))
 
 vi.mock('@polkadot/api', () => ({
@@ -55,7 +59,8 @@ describe('PolkadotJsApi', () => {
         },
         xcmPaymentApi: {
           queryXcmWeight: vi.fn(),
-          queryWeightToAssetFee: vi.fn()
+          queryWeightToAssetFee: vi.fn(),
+          queryDeliveryFees: vi.fn()
         },
         assetConversionApi: {
           quotePriceExactTokensForTokens: vi.fn().mockResolvedValue({
@@ -118,6 +123,38 @@ describe('PolkadotJsApi', () => {
     vi.spyOn(ApiPromise, 'create').mockResolvedValue(mockApiPromise)
     polkadotApi = new PolkadotJsApi(mockApiPromise)
     await polkadotApi.init(mockChain)
+
+    vi.mocked(findNativeAssetInfoOrThrow).mockReset()
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+      symbol: 'DOT',
+      decimals: 10,
+      location: {
+        parents: 0,
+        interior: {
+          Here: null
+        }
+      }
+    } as TAssetInfo)
+
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockReset()
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
+      toJSON: vi.fn().mockReturnValue({
+        ok: {
+          refTime: '0',
+          proofSize: '0'
+        }
+      })
+    } as unknown as Codec)
+
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockReset()
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
+      toJSON: vi.fn().mockReturnValue({ ok: 0 })
+    } as unknown as Codec)
+
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockReset()
+    vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockResolvedValue({
+      toJSON: vi.fn().mockReturnValue({ ok: { v4: [] } })
+    } as unknown as Codec)
   })
 
   it('should set and get the api', async () => {
@@ -257,7 +294,14 @@ describe('PolkadotJsApi', () => {
 
       const result = polkadotApi.callDispatchAsMethod(tx, address)
 
-      expect(mockApiPromise.tx.utility.dispatchAs).toHaveBeenCalledWith(address, tx)
+      expect(mockApiPromise.tx.utility.dispatchAs).toHaveBeenCalledWith(
+        {
+          system: {
+            Signed: address
+          }
+        },
+        tx
+      )
       expect(result).toBe('mocked_utility_extrinsic')
     })
   })
@@ -656,6 +700,7 @@ describe('PolkadotJsApi', () => {
   describe('getXcmPaymentApiFee', () => {
     it('should return the XCM payment fee for AssetHub chains', async () => {
       const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
       const asset: TAssetInfo = {
         symbol: 'DOT',
         decimals: 10,
@@ -687,7 +732,12 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'AssetHubPolkadot',
+        xcm,
+        forwardedXcm,
+        asset
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -701,6 +751,7 @@ describe('PolkadotJsApi', () => {
 
     it('should return the XCM payment fee for regular chains', async () => {
       const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
       const asset: TAssetInfo = {
         symbol: 'KSM',
         decimals: 12,
@@ -730,13 +781,16 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, forwardedXcm, asset)
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
         weight,
         expect.objectContaining({
-          V4: asset.location
+          V4: expect.objectContaining({
+            parents: 0,
+            interior: 'Here'
+          })
         })
       )
       expect(fee).toBe(10000n)
@@ -750,12 +804,13 @@ describe('PolkadotJsApi', () => {
       } as TAssetInfo
 
       await expect(
-        polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, asset)
+        polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, [], asset)
       ).rejects.toThrow()
     })
 
     it('should handle relaychains', async () => {
       const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
       const asset: TAssetInfo = {
         symbol: 'DOT',
         decimals: 10,
@@ -787,7 +842,7 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Polkadot', xcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee('Polkadot', xcm, forwardedXcm, asset)
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -801,6 +856,7 @@ describe('PolkadotJsApi', () => {
 
     it('should handle AssetHubKusama chain', async () => {
       const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
       const asset: TAssetInfo = {
         symbol: 'KSM',
         decimals: 12,
@@ -829,7 +885,7 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubKusama', xcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubKusama', xcm, forwardedXcm, asset)
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -838,11 +894,12 @@ describe('PolkadotJsApi', () => {
           V4: expect.any(Object)
         })
       )
-      expect(fee).toBe(15000n)
+      expect(fee).toBe(15001n)
     })
 
     it('should handle Kusama relay chain', async () => {
       const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
       const asset: TAssetInfo = {
         symbol: 'KSM',
         decimals: 12,
@@ -869,7 +926,7 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Kusama', xcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee('Kusama', xcm, forwardedXcm, asset)
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -1061,6 +1118,7 @@ describe('PolkadotJsApi', () => {
         paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
       } as unknown as Extrinsic
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockReset()
+      vi.mocked(wrapTxBypass).mockReset()
     })
 
     it('simple success (no version), returns weight and forwardedXcms', async () => {
@@ -1228,6 +1286,125 @@ describe('PolkadotJsApi', () => {
         forwardedXcms: [],
         destParaId: undefined
       })
+    })
+
+    it('returns fee from XCM payment API when supported and feeAsset provided', async () => {
+      const forwarded = hereForwarded
+      const expectedForwarded = forwarded[0] as object[]
+      const resp = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Ok: true } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              ok: {
+                actualWeight: { refTime: '555', proofSize: '666' }
+              }
+            },
+            local_xcm: { instructions: [] },
+            forwardedXcms: forwarded
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT',
+        location: {
+          parents: 0,
+          interior: {
+            Here: null
+          }
+        },
+        decimals: 10
+      } as TAssetInfo)
+
+      const feeAsset: TAssetInfo = {
+        symbol: 'USDT',
+        decimals: 6,
+        location: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: 2000
+            }
+          }
+        }
+      }
+
+      const xcmFee = 7777n
+      const xcmFeeSpy = vi.spyOn(polkadotApi, 'getXcmPaymentApiFee').mockResolvedValueOnce(xcmFee)
+      const paymentInfoSpy = vi.spyOn(mockExtrinsic, 'paymentInfo')
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        feeAsset,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(xcmFeeSpy).toHaveBeenCalledWith(
+        chain,
+        { instructions: [] },
+        expectedForwarded,
+        feeAsset
+      )
+      expect(paymentInfoSpy).not.toHaveBeenCalled()
+      expect(result).toEqual({
+        success: true,
+        fee: xcmFee,
+        currency: 'USDT',
+        asset: feeAsset,
+        weight: { refTime: 555n, proofSize: 666n },
+        forwardedXcms: expectedForwarded,
+        destParaId: undefined
+      })
+
+      paymentInfoSpy.mockRestore()
+      xcmFeeSpy.mockRestore()
+    })
+
+    it('wraps the transaction when useRootOrigin is enabled', async () => {
+      const wrappedExtrinsic = {
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 2000n } })
+      } as unknown as Extrinsic
+
+      vi.mocked(wrapTxBypass).mockResolvedValueOnce(wrappedExtrinsic)
+
+      const resp = makeSuccessResponse()
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'DOT'
+      } as TAssetInfo)
+
+      const bypassOptions = { mintFeeAssets: true }
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        useRootOrigin: true,
+        bypassOptions,
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(wrapTxBypass).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tx: mockExtrinsic,
+          api: polkadotApi
+        }),
+        bypassOptions
+      )
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
+        { system: { Root: null } },
+        wrappedExtrinsic
+      )
+      expect(result.success).toBe(true)
     })
 
     it('retries after VersionedConversionFailed and returns failure when second attempt also fails', async () => {
@@ -1441,6 +1618,10 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(computeFeeFromDryRunPjs).mockReturnValue(555n)
 
+      const xcmPaymentSpy = vi
+        .spyOn(polkadotApi, 'getXcmPaymentApiFee')
+        .mockResolvedValueOnce(1000n)
+
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
         xcm: dummyXcm,
@@ -1448,6 +1629,8 @@ describe('PolkadotJsApi', () => {
         chain: 'Astar',
         origin: 'Hydration'
       } as TDryRunXcmBaseOptions<Extrinsic>)
+
+      xcmPaymentSpy.mockRestore()
 
       expect(mockApiPromise.call.dryRunApi.dryRunXcm).toHaveBeenCalledWith(originLocation, dummyXcm)
       expect(result).toEqual({
@@ -1480,6 +1663,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValueOnce(false)
 
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
@@ -1520,12 +1704,14 @@ describe('PolkadotJsApi', () => {
           ok: {
             executionResult: {
               used: { refTime: '111', proofSize: '222' }
-            }
+            },
+            forwardedXcms: []
           }
         })
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValueOnce(false)
 
       expect(
         await polkadotApi.getDryRunXcm({
