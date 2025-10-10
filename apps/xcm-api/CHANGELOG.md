@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.9.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.9.1...xcm-api-v11.9.2) (2025-10-10)
+
+
+### Bug Fixes
+
+* **sdk:** Add PAPI support for legacy chains 🔧 ([5388409](https://github.com/paraspell/xcm-tools/commit/538840978eb132b36ba78e93c19927d553781d11))
+
 ## [11.9.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.9.0...xcm-api-v11.9.1) (2025-10-09)
 
 
