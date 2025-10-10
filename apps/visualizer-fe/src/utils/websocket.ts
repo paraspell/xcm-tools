@@ -2,7 +2,9 @@ import { io } from 'socket.io-client';
 
 import type { LiveXcmMsg } from '../types';
 
-const socket = io('', {
+const URL = import.meta.env.VITE_SOCKET_URL as string;
+
+const socket = io(URL, {
   path: '/socket.io',
   transports: ['websocket'],
   autoConnect: false
