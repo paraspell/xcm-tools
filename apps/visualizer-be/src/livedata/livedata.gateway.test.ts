@@ -255,6 +255,45 @@ describe('LiveDataGateway', () => {
     jest.useRealTimers();
   });
 
+  it('logs and recovers when poll rejects inside the interval loop', async () => {
+    jest.useFakeTimers();
+
+    const { gateway, emit } = instantiateGateway();
+    const gatewayAny = gateway as unknown as {
+      poll: () => Promise<LiveXcmData[]>;
+      printError: (error: Error) => void;
+      INTERVAL: number;
+    };
+
+    const error = new Error('poll failed');
+
+    const pollSpy = jest
+      .spyOn(gatewayAny, 'poll')
+      .mockResolvedValueOnce([])
+      .mockRejectedValueOnce(error);
+
+    const printErrorSpy = jest
+      .spyOn(gatewayAny, 'printError')
+      .mockImplementation(() => {});
+
+    gateway.handleConnection({ id: 'client-1' } as unknown as Socket);
+
+    await Promise.resolve();
+
+    jest.advanceTimersByTime(gatewayAny.INTERVAL);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(printErrorSpy).toHaveBeenCalledWith(error);
+    expect(emit).not.toHaveBeenCalled();
+
+    gateway.handleDisconnect({ id: 'client-1' } as unknown as Socket);
+
+    pollSpy.mockRestore();
+    printErrorSpy.mockRestore();
+    jest.useRealTimers();
+  });
+
   it('printError logs the formatted message', () => {
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as { printError: (e: Error) => void };
