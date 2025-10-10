@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.9.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.9.1...xcm-router-v11.9.2) (2025-10-10)
+
+
+### Bug Fixes
+
+* **sdk:** Add PAPI support for legacy chains 🔧 ([5388409](https://github.com/paraspell/xcm-tools/commit/538840978eb132b36ba78e93c19927d553781d11))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([6d3fd87](https://github.com/paraspell/xcm-tools/commit/6d3fd8758cd5b8f20b8b4bebe44d0fbfca404627))
+
 ## [11.9.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.9.0...xcm-router-v11.9.1) (2025-10-09)
 
 
