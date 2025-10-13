@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.10.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.9.3...assets-v11.10.0) (2025-10-13)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
 ## [11.9.3](https://github.com/paraspell/xcm-tools/compare/assets-v11.9.2...assets-v11.9.3) (2025-10-10)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.10.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.9.3...xcm-api-v11.10.0) (2025-10-13)
+
+
+### Features
+
+* **xcm-router:** Add support for apiOverrides ✨ ([12ac6b8](https://github.com/paraspell/xcm-tools/commit/12ac6b8cdea3479fc486535036bb68253eb09238))
+
 ## [11.9.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.9.2...xcm-api-v11.9.3) (2025-10-10)
 
 
