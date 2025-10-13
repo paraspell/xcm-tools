@@ -1480,11 +1480,6 @@
         }
       },
       {
-        "symbol": "4-Pool",
-        "decimals": 18,
-        "assetId": "100"
-      },
-      {
         "symbol": "KSM",
         "decimals": 12,
         "assetId": "1000771",
@@ -1500,6 +1495,11 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "4-Pool",
+        "decimals": 18,
+        "assetId": "100"
       },
       {
         "symbol": "GLMR",
