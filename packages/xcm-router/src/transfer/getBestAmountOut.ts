@@ -16,7 +16,7 @@ export const getBestAmountOut = async (
 ): Promise<TGetBestAmountOutResult> => {
   const { exchange, amount, from } = options;
 
-  const originApi = from ? await createChainClient(from) : undefined;
+  const originApi = from ? await createChainClient(from, builderOptions) : undefined;
 
   const isExchangeAutoSelect = exchange === undefined || Array.isArray(exchange);
 
@@ -27,14 +27,20 @@ export const getBestAmountOut = async (
   const { assetFromOrigin, assetFromExchange: assetFrom, assetTo } = resolveAssets(dex, options);
 
   if (!isExchangeAutoSelect) {
-    const res = await canBuildToExchangeTx(options, dex.chain, originApi, assetFromOrigin);
+    const res = await canBuildToExchangeTx(
+      options,
+      dex.chain,
+      originApi,
+      assetFromOrigin,
+      builderOptions,
+    );
     if (!res.success) {
       throw res.error;
     }
   }
 
-  const api = await dex.createApiInstance();
-  const papiApi = await dex.createApiInstancePapi();
+  const api = await dex.createApiInstance(builderOptions);
+  const papiApi = await dex.createApiInstancePapi(builderOptions);
 
   return {
     exchange: dex.exchangeChain,

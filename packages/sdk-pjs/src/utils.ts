@@ -1,4 +1,4 @@
-import type { IPolkadotApi, TSubstrateChain } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 import type { Contract, Signer } from 'ethers'
 import type { Abi, GetContractReturnType, WalletClient } from 'viem'
@@ -6,8 +6,11 @@ import type { Abi, GetContractReturnType, WalletClient } from 'viem'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 
-export const createChainClient = (chain: TSubstrateChain) => {
-  const pjsApi = new PolkadotJsApi()
+export const createChainClient = (
+  chain: TSubstrateChain,
+  builderOptions?: TBuilderOptions<TPjsApiOrUrl>
+) => {
+  const pjsApi = new PolkadotJsApi(builderOptions)
   return createChainClientInternal<TPjsApi, Extrinsic>(pjsApi, chain)
 }
 

@@ -545,6 +545,7 @@ Possible parameters:
 - `slippagePct`: (required): Specifies the slippage percentage.
 - `recipientAddress`: (required): Specifies the recipient's address.
 - `senderAddress`: (required): Specifies the sender's address.
+- `options`: (optional): Configuration options for the API (Find out more in docs)
 
 ```ts
 const response = await fetch('http://localhost:3001/v4/router', {

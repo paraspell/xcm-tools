@@ -1,43 +1,40 @@
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { getChainProviders } from '../chains/config'
 import { createChainClient } from './createChainClient'
 
-vi.mock('../chains/config', () => ({
-  getChainProviders: vi.fn((chain: TSubstrateChain) => {
-    if (chain === 'Polkadot') return 'wss://polkadot-rpc.publicnode.com'
-    if (chain === 'Kusama') return 'wss://kusama-rpc.publicnode.com'
-    return 'wss://some-other-node-rpc.com'
-  })
-}))
+const mockApiInstance = {}
 
-const mockApiPromise = {}
-const mockApi = {
-  createApiInstance: vi.fn().mockResolvedValue(mockApiPromise)
-} as unknown as IPolkadotApi<unknown, unknown>
+const createMockApi = () => {
+  const init = vi.fn().mockResolvedValue(undefined)
+  const getApi = vi.fn().mockReturnValue(mockApiInstance)
+
+  const api = {
+    init,
+    getApi
+  } as unknown as IPolkadotApi<unknown, unknown>
+
+  return { api, init, getApi }
+}
 
 describe('createChainClient', () => {
-  it('should create an ApiPromise instance with single url', async () => {
-    const chain = 'Polkadot'
-    const urls = ['wss://polkadot-rpc.publicnode.com']
-    vi.mocked(getChainProviders).mockReturnValueOnce(urls)
-    const result = await createChainClient(mockApi, chain)
+  it('initializes the provided api and returns the underlying instance', async () => {
+    const { api, init, getApi } = createMockApi()
 
-    expect(getChainProviders).toHaveBeenCalledWith(chain)
-    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls, chain)
-    expect(result).toBe(mockApiPromise)
+    const result = await createChainClient(api, 'Polkadot')
+
+    expect(init).toHaveBeenCalledWith('Polkadot')
+    expect(getApi).toHaveBeenCalledTimes(1)
+    expect(result).toBe(mockApiInstance)
   })
 
-  it('should create an ApiPromise instance with multiple urls', async () => {
-    const chain = 'Altair'
-    const urls = ['wss://altair-rpc.publicnode.com', 'wss://altair-rpc.publicnode.com']
-    vi.mocked(getChainProviders).mockReturnValueOnce(urls)
-    const result = await createChainClient(mockApi, chain)
+  it('returns the api after awaiting initialization for another chain', async () => {
+    const { api, init, getApi } = createMockApi()
 
-    expect(getChainProviders).toHaveBeenCalledWith(chain)
-    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls, chain)
-    expect(result).toBe(mockApiPromise)
+    const result = await createChainClient(api, 'Moonbeam')
+
+    expect(init).toHaveBeenCalledWith('Moonbeam')
+    expect(getApi).toHaveBeenCalledTimes(1)
+    expect(result).toBe(mockApiInstance)
   })
 })

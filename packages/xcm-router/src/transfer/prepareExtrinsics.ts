@@ -20,6 +20,7 @@ export const prepareExtrinsics = async (
     evmSenderAddress,
     senderAddress,
     recipientAddress,
+    builderOptions,
   } = options;
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
@@ -31,27 +32,30 @@ export const prepareExtrinsics = async (
         assetTo: exchange.assetTo,
       });
 
-      const tx = await handleSwapExecuteTransfer({
-        chain: origin?.chain,
-        exchangeChain: exchange.baseChain,
-        destChain: destination?.chain,
-        assetInfoFrom: {
-          ...(origin?.assetFrom ?? exchange.assetFrom),
-          amount: BigInt(amount),
-        } as WithAmount<TAssetInfo>,
-        assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-        senderAddress: evmSenderAddress ?? senderAddress,
-        currencyTo,
-        recipientAddress: recipientAddress ?? senderAddress,
-        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-          dex.getAmountOut(exchange.api, {
-            ...options,
-            amount: amountIn.toString(),
-            papiApi: options.exchange.apiPapi,
-            assetFrom: options.exchange.assetFrom,
-            assetTo: assetTo ?? options.exchange.assetTo,
-          }),
-      });
+      const tx = await handleSwapExecuteTransfer(
+        {
+          chain: origin?.chain,
+          exchangeChain: exchange.baseChain,
+          destChain: destination?.chain,
+          assetInfoFrom: {
+            ...(origin?.assetFrom ?? exchange.assetFrom),
+            amount: BigInt(amount),
+          } as WithAmount<TAssetInfo>,
+          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+          senderAddress: evmSenderAddress ?? senderAddress,
+          currencyTo,
+          recipientAddress: recipientAddress ?? senderAddress,
+          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
+            dex.getAmountOut(exchange.api, {
+              ...options,
+              amount: amountIn.toString(),
+              papiApi: options.exchange.apiPapi,
+              assetFrom: options.exchange.assetFrom,
+              assetTo: assetTo ?? options.exchange.assetTo,
+            }),
+        },
+        builderOptions,
+      );
 
       return { swapTxs: [tx], isExecute: true, amountOut };
     } catch (error) {
@@ -85,6 +89,7 @@ export const prepareExtrinsics = async (
           destination,
           amount: amountOut,
           senderAddress,
+          builderOptions,
         })
       : undefined;
 

@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 import { validateAmount } from '../../utils/validateAmount.js';
-import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
+import {
+  BuilderOptionsSchema,
+  CurrencyCoreSchema,
+} from '../../x-transfer/dto/XTransferDto.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string(),
@@ -35,11 +38,7 @@ export const RouterDtoSchema = z.object({
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   slippagePct: z.string().optional(),
-  options: z
-    .object({
-      abstractDecimals: z.boolean(),
-    })
-    .optional(),
+  options: BuilderOptionsSchema.omit({ xcmFormatCheck: true }).optional(),
 });
 
 export const RouterBestAmountOutSchema = RouterDtoSchema.pick({

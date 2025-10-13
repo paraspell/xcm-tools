@@ -26,6 +26,7 @@ export const getRouterFees = async (
     recipientAddress,
     evmSenderAddress,
     senderAddress,
+    builderOptions,
   } = options;
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
@@ -43,28 +44,31 @@ export const getRouterFees = async (
           assetTo: exchange.assetTo,
         });
 
-        const tx = await handleSwapExecuteTransfer({
-          chain: origin?.chain,
-          exchangeChain: exchange.baseChain,
-          destChain: destination?.chain,
-          assetInfoFrom: {
-            ...(origin?.assetFrom ?? exchange.assetFrom),
-            amount: BigInt(amt),
-          } as WithAmount<TAssetInfo>,
-          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-          currencyTo,
-          senderAddress: evmSenderAddress ?? senderAddress,
-          recipientAddress: recipientAddress ?? senderAddress,
-          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-            dex.getAmountOut(exchange.api, {
-              ...options,
-              amount: amountIn.toString(),
-              papiApi: options.exchange.apiPapi,
-              assetFrom: options.exchange.assetFrom,
-              assetTo: assetTo ?? options.exchange.assetTo,
-              slippagePct: '1',
-            }),
-        });
+        const tx = await handleSwapExecuteTransfer(
+          {
+            chain: origin?.chain,
+            exchangeChain: exchange.baseChain,
+            destChain: destination?.chain,
+            assetInfoFrom: {
+              ...(origin?.assetFrom ?? exchange.assetFrom),
+              amount: BigInt(amt),
+            } as WithAmount<TAssetInfo>,
+            assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+            currencyTo,
+            senderAddress: evmSenderAddress ?? senderAddress,
+            recipientAddress: recipientAddress ?? senderAddress,
+            calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
+              dex.getAmountOut(exchange.api, {
+                ...options,
+                amount: amountIn.toString(),
+                papiApi: options.exchange.apiPapi,
+                assetFrom: options.exchange.assetFrom,
+                assetTo: assetTo ?? options.exchange.assetTo,
+                slippagePct: '1',
+              }),
+          },
+          builderOptions,
+        );
 
         return tx;
       };
@@ -77,20 +81,23 @@ export const getRouterFees = async (
         assetTo: exchange.assetTo,
       });
 
-      const executeResult = await getXcmFee({
-        buildTx,
-        origin: origin?.chain ?? exchange.baseChain,
-        destination: destination?.chain ?? exchange.baseChain,
-        senderAddress: evmSenderAddress ?? senderAddress,
-        address: recipientAddress ?? senderAddress,
-        currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
-        disableFallback: false,
-        swapConfig: {
-          currencyTo: currencyTo as TCurrencyCore,
-          exchangeChain: exchange.baseChain,
-          amountOut: mainAmountOut,
+      const executeResult = await getXcmFee(
+        {
+          buildTx,
+          origin: origin?.chain ?? exchange.baseChain,
+          destination: destination?.chain ?? exchange.baseChain,
+          senderAddress: evmSenderAddress ?? senderAddress,
+          address: recipientAddress ?? senderAddress,
+          currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
+          disableFallback: false,
+          swapConfig: {
+            currencyTo: currencyTo as TCurrencyCore,
+            exchangeChain: exchange.baseChain,
+            amountOut: mainAmountOut,
+          },
         },
-      });
+        builderOptions,
+      );
 
       if (executeResult.failureReason === 'NoDeal' && exchange.exchangeChain === 'HydrationDex') {
         throw new InvalidParameterError(
@@ -151,6 +158,7 @@ export const getRouterFees = async (
           destination,
           amount: amountOut,
           senderAddress,
+          builderOptions,
         })
       : undefined;
 

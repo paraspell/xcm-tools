@@ -17,13 +17,14 @@ export const getCurrencySelection = (chain: TSubstrateChain, asset: TAssetInfo):
 };
 
 const createToExchangeBuilder = ({
-  origin: { api, chain: from, assetFrom },
+  origin: { chain: from, assetFrom },
   exchange: { baseChain },
   senderAddress,
   evmSenderAddress,
   amount,
+  builderOptions,
 }: TBuildToExchangeTxOptions) =>
-  Builder(api)
+  Builder(builderOptions)
     .from(from)
     .to(baseChain)
     .currency({
@@ -44,8 +45,15 @@ export const createFromExchangeBuilder = ({
   destination: { chain, address },
   amount,
   senderAddress,
+  builderOptions,
 }: TBuildFromExchangeTxOptions) =>
-  Builder(apiPapi)
+  Builder({
+    ...builderOptions,
+    apiOverrides: {
+      ...builderOptions?.apiOverrides,
+      [baseChain]: apiPapi,
+    },
+  })
     .from(baseChain)
     .to(chain)
     .currency({

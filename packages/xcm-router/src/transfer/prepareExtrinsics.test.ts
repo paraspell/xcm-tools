@@ -8,14 +8,9 @@ import * as createSwapTxModule from './createSwapTx';
 import { prepareExtrinsics } from './prepareExtrinsics';
 import * as utils from './utils';
 
-vi.mock('./utils', () => ({
-  buildToExchangeExtrinsic: vi.fn(),
-  buildFromExchangeExtrinsic: vi.fn(),
-}));
+vi.mock('./utils');
 
-vi.mock('./createSwapTx', () => ({
-  createSwapTx: vi.fn(),
-}));
+vi.mock('./createSwapTx');
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -165,25 +160,26 @@ describe('prepareExtrinsics', () => {
       isExecute: true,
     });
 
-    expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({
-      chain: optionsWithAssetHub.origin?.chain,
-      exchangeChain: optionsWithAssetHub.exchange.baseChain,
-      destChain: optionsWithAssetHub.destination?.chain,
-      assetInfoFrom: {
-        ...optionsWithAssetHub.exchange.assetFrom,
-        amount: BigInt(optionsWithAssetHub.amount),
+    expect(handleSwapExecuteTransfer).toHaveBeenCalledWith(
+      {
+        chain: optionsWithAssetHub.origin?.chain,
+        exchangeChain: optionsWithAssetHub.exchange.baseChain,
+        destChain: optionsWithAssetHub.destination?.chain,
+        assetInfoFrom: {
+          ...optionsWithAssetHub.exchange.assetFrom,
+          amount: BigInt(optionsWithAssetHub.amount),
+        },
+        assetInfoTo: {
+          ...optionsWithAssetHub.exchange.assetTo,
+          amount: 500n,
+        },
+        senderAddress: optionsWithAssetHub.senderAddress,
+        recipientAddress: optionsWithAssetHub.recipientAddress,
+        calculateMinAmountOut: expect.any(Function),
       },
-      assetInfoTo: {
-        ...optionsWithAssetHub.exchange.assetTo,
-        amount: 500n,
-      },
-      senderAddress: optionsWithAssetHub.senderAddress,
-      recipientAddress: optionsWithAssetHub.recipientAddress,
-      calculateMinAmountOut: expect.any(Function),
-    });
+      undefined,
+    );
   });
-
-  // Add these test cases to your existing describe block
 
   test('throws error when handleSwapExecuteTransfer fails with non-DryRunFailedError', async () => {
     const assetHubDexChain = {

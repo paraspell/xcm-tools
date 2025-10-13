@@ -17,7 +17,7 @@ export const prepareTransformedOptions = async <
 ): Promise<{ dex: ExchangeChain; options: T & TAdditionalTransferOptions }> => {
   const { from, to, exchange, senderAddress, recipientAddress, amount } = options;
 
-  const originApi = from ? await createChainClient(from) : undefined;
+  const originApi = from ? await createChainClient(from, builderOptions) : undefined;
 
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
@@ -51,8 +51,8 @@ export const prepareTransformedOptions = async <
           }
         : undefined,
     exchange: {
-      api: await dex.createApiInstance(),
-      apiPapi: await dex.createApiInstancePapi(),
+      api: await dex.createApiInstance(builderOptions),
+      apiPapi: await dex.createApiInstancePapi(builderOptions),
       baseChain: dex.chain,
       exchangeChain: dex.exchangeChain,
       assetFrom: assetFromExchange,
@@ -66,6 +66,7 @@ export const prepareTransformedOptions = async <
           }
         : undefined,
     feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
+    builderOptions,
   };
 
   return {

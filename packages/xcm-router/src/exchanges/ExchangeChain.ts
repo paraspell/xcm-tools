@@ -1,6 +1,6 @@
-import type { TPapiApi } from '@paraspell/sdk';
+import type { TBuilderOptions, TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
-import type { TParachain } from '@paraspell/sdk-pjs';
+import type { TParachain, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
@@ -53,12 +53,12 @@ abstract class ExchangeChain {
 
   abstract getDexConfig(api: ApiPromise): Promise<TDexConfig>;
 
-  async createApiInstance(): Promise<ApiPromise> {
-    return createChainClient(this.chain);
+  async createApiInstance(builderOptions?: TBuilderOptions<TPjsApiOrUrl>): Promise<ApiPromise> {
+    return createChainClient(this.chain, builderOptions);
   }
 
-  async createApiInstancePapi(): Promise<TPapiApi> {
-    return createChainClientPapi(this.chain);
+  async createApiInstancePapi(builderOptions?: TBuilderOptions<TPapiApiOrUrl>): Promise<TPapiApi> {
+    return createChainClientPapi(this.chain, builderOptions);
   }
 }
 

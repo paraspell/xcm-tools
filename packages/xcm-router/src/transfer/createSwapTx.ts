@@ -6,13 +6,14 @@ import { calculateTxFee, isPjsExtrinsic } from '../utils';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
-  const { exchange, destination, amount, feeCalcAddress, senderAddress } = options;
+  const { exchange, destination, amount, feeCalcAddress, senderAddress, builderOptions } = options;
   if (!destination || destination.chain === exchange.baseChain) return BigNumber(0);
   const tx = await buildFromExchangeExtrinsic({
     exchange,
     destination,
     amount,
     senderAddress,
+    builderOptions,
   });
   return calculateTxFee(tx, feeCalcAddress);
 };

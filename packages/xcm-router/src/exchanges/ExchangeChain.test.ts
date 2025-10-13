@@ -29,7 +29,7 @@ describe('ExchangeChain', () => {
     const mockChain: TChain = 'BifrostPolkadot';
     const exchangeChain = new BifrostExchange(mockChain, 'BifrostPolkadotDex');
     const apiInstance = await exchangeChain.createApiInstance();
-    expect(createChainClient).toHaveBeenCalledWith(mockChain);
+    expect(createChainClient).toHaveBeenCalledWith(mockChain, undefined);
     expect(apiInstance).toBe('mockApiPromise');
   });
 

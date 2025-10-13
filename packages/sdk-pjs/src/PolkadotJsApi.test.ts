@@ -3,8 +3,8 @@ import {
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRunPjs,
-  createChainClient,
   findNativeAssetInfoOrThrow,
+  getChainProviders,
   hasXcmPaymentApiSupport,
   MissingChainApiError,
   type TLocation,
@@ -24,7 +24,7 @@ import type { Extrinsic, TPjsApi } from './types'
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
-  createChainClient: vi.fn().mockResolvedValue({} as ApiPromise),
+  getChainProviders: vi.fn(),
   resolveModuleError: vi.fn().mockReturnValue('ModuleError'),
   findNativeAssetInfoOrThrow: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
@@ -44,6 +44,7 @@ describe('PolkadotJsApi', () => {
   const mockChain = 'Acala'
 
   beforeEach(async () => {
+    vi.mocked(getChainProviders).mockReset()
     mockApiPromise = {
       createType: vi.fn().mockReturnValue({
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
@@ -158,41 +159,54 @@ describe('PolkadotJsApi', () => {
   })
 
   it('should set and get the api', async () => {
-    const newApi = {} as TPjsApi
+    const newApi = {
+      call: {},
+      tx: {},
+      query: {}
+    } as unknown as TPjsApi
     const polkadotApi = new PolkadotJsApi(newApi)
     expect(polkadotApi.getConfig()).toBe(newApi)
     await polkadotApi.init('Acala')
     const api = polkadotApi.getApi()
-    expect(api).toStrictEqual(newApi)
+    expect(api).toBe(newApi)
   })
 
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
-      const mockApi = {} as TPjsApi
+      const mockApi = {
+        call: {},
+        tx: {},
+        query: {}
+      } as unknown as TPjsApi
       const polkadotApi = new PolkadotJsApi(mockApi)
       await polkadotApi.init('Acala')
-      expect(polkadotApi.getApi()).toStrictEqual(mockApi)
+      expect(polkadotApi.getApi()).toBe(mockApi)
     })
 
     it('should create api instance when _api is undefined', async () => {
       const polkadotApi = new PolkadotJsApi()
-      const mockCreateChainClient = vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
+      const wsUrl = ['wss://acala.example']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(polkadotApi, 'createApiInstance')
+        .mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(mockCreateChainClient).toHaveBeenCalledWith(polkadotApi, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
 
-      mockCreateChainClient.mockRestore()
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
-      vi.mocked(createChainClient)
+      const createApiInstanceSpy = vi.spyOn(polkadotApi, 'createApiInstance')
 
       await polkadotApi.init('Moonbeam')
 
-      expect(createChainClient).not.toHaveBeenCalled()
+      expect(createApiInstanceSpy).not.toHaveBeenCalled()
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should use apiOverrides when provided in config', async () => {
@@ -201,10 +215,12 @@ describe('PolkadotJsApi', () => {
           Moonbeam: mockApiPromise
         }
       })
+      const createApiInstanceSpy = vi.spyOn(polkadotApi, 'createApiInstance')
       await polkadotApi.init('Moonbeam')
 
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
-      expect(vi.mocked(createChainClient)).not.toHaveBeenCalled()
+      expect(createApiInstanceSpy).not.toHaveBeenCalled()
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should throw MissingChainApiError in development mode when no override provided', async () => {
@@ -223,12 +239,17 @@ describe('PolkadotJsApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       const polkadotApi = new PolkadotJsApi()
-      vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
+      const wsUrl = ['wss://auto.acala']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(polkadotApi, 'createApiInstance')
+        .mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(createChainClient).toHaveBeenCalledWith(polkadotApi, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      createApiInstanceSpy.mockRestore()
     })
   })
 
@@ -942,14 +963,18 @@ describe('PolkadotJsApi', () => {
   describe('createApiForChain', () => {
     it('should create a new PolkadotJsApi instance and call init with the provided chain', async () => {
       const chain = 'Acala'
-      const mockCreateChainClient = vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
+      const wsUrl = ['wss://create.acala']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(PolkadotJsApi.prototype, 'createApiInstance')
+        .mockResolvedValue(mockApiPromise)
 
       const newApi = await polkadotApi.createApiForChain(chain)
 
       expect(newApi).toBeInstanceOf(PolkadotJsApi)
       expect(newApi.getApi()).toBe(mockApiPromise)
 
-      mockCreateChainClient.mockRestore()
+      createApiInstanceSpy.mockRestore()
     })
   })
 
@@ -967,7 +992,11 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should disconnect the api when _api is not provided', async () => {
-      vi.mocked(createChainClient).mockResolvedValue(mockApiPromise)
+      const wsUrl = ['wss://disconnect.acala']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(PolkadotJsApi.prototype, 'createApiInstance')
+        .mockResolvedValue(mockApiPromise)
 
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect')
 
@@ -977,6 +1006,7 @@ describe('PolkadotJsApi', () => {
 
       expect(mockDisconnect).toHaveBeenCalled()
 
+      createApiInstanceSpy.mockRestore()
       mockDisconnect.mockRestore()
     })
 
