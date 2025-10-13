@@ -28,7 +28,6 @@ import {
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRun,
-  createChainClient,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChain,
@@ -190,7 +189,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     chain: TSubstrateChain
   ): Promise<TPapiApi> {
     if (!apiConfig) {
-      return createChainClient<TPapiApi, TPapiTransaction>(this, chain)
+      const wsUrl = getChainProviders(chain)
+      return this.createApiInstance(wsUrl, chain)
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {

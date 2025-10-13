@@ -95,7 +95,7 @@ import { transfer,
 If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
  ```js
-await RouterBuilder(/*{abstractDecimals: true} - optional*/)
+await RouterBuilder(/*builder config - optional (More info in docs)*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
         .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
@@ -123,7 +123,7 @@ await RouterBuilder(/*{abstractDecimals: true} - optional*/)
 If you wish to have specific exchanges selection and select the best one among them based on the best price outcome, you can opt for the whitelist automatic exchange selection method. This method can be selected by **using** `.exchange()` parameter in the call and feeding it with **array of exchanges**. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
 ```ts
-await RouterBuilder(/*{abstractDecimals: true} - optional*/)
+await RouterBuilder(/*builder config - optional (More info in docs)*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange(['HydrationDex','AcalaDex','AssetHubPolkadotDex'])    //Exchange Parachains
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
@@ -152,7 +152,7 @@ await RouterBuilder(/*{abstractDecimals: true} - optional*/)
 If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice.
 
  ```js
-await RouterBuilder(/*{abstractDecimals: true} - optional*/)
+await RouterBuilder(/*builder config - optional (More info in docs)*/)
         .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange('HydraDDex')    //Exchange Parachain
         .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
@@ -181,7 +181,7 @@ await RouterBuilder(/*{abstractDecimals: true} - optional*/)
 To retrieve exchange amount, that you receive for your desired asset pair you can use following function. This function returns 2 parameters. Name of best fitting DEX (Automatic selection - can be further used for manual selection) and Amount out
 
 ```ts
-const result = await RouterBuilder(/*{abstractDecimals: true} - optional*/)
+const result = await RouterBuilder(/*builder config - optional (More info in docs)*/)
       .from('Astar') //Optional parameter based on scenario
       .to('Acala') //Optional parameter based on scenario
       .exchange('Hydration') //Optional parameter based on scenario
@@ -199,7 +199,7 @@ console.log(result.exchange)
 You can retrieve fees for all operations XCM Router performs. Keep in mind that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dry run in that scenario). Find out the example output of this function in the [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-router-fees).
 
 ```ts
-const fees = await RouterBuilder(/*{abstractDecimals: true} - optional*/)
+const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
       .from(from) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .to(to) //Optional parameter based on scenario

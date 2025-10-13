@@ -9,7 +9,6 @@ import {
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRun,
-  createChainClient,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChainProviders,
@@ -55,10 +54,6 @@ vi.mock('./PapiXcmTransformer', () => ({
 }))
 
 vi.mock('../utils/dryRun/computeFeeFromDryRun')
-
-vi.mock('../utils/createChainClient', () => ({
-  createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient)
-}))
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
@@ -251,28 +246,30 @@ describe('PapiApi', () => {
 
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
-      const mockCreateChainClient = vi
-        .mocked(createChainClient)
+      const wsUrl = ['ws://some-chain:9944']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(papiApi, 'createApiInstance')
         .mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('SomeChain' as TSubstrateChain)
 
-      expect(mockCreateChainClient).toHaveBeenCalledWith(papiApi, 'SomeChain')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'SomeChain')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
 
-      mockCreateChainClient.mockRestore()
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
+      const createApiInstanceSpy = vi.spyOn(papiApi, 'createApiInstance')
       await papiApi.init('Acala')
-
-      vi.mocked(createChainClient)
 
       await papiApi.init('Moonbeam')
 
-      expect(createChainClient).not.toHaveBeenCalled()
+      expect(createApiInstanceSpy).not.toHaveBeenCalled()
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should use apiOverrides when provided in config', async () => {
@@ -287,10 +284,13 @@ describe('PapiApi', () => {
         }
       })
 
+      const createApiInstanceSpy = vi.spyOn(papiApi, 'createApiInstance')
+
       await papiApi.init('Moonbeam')
 
       expect(papiApi.getApi()).toBe(customClient)
-      expect(vi.mocked(createChainClient)).not.toHaveBeenCalled()
+      expect(createApiInstanceSpy).not.toHaveBeenCalled()
+      createApiInstanceSpy.mockRestore()
     })
 
     it('should throw MissingChainApiError in development mode when no override provided', async () => {
@@ -307,12 +307,17 @@ describe('PapiApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       papiApi = new PapiApi()
-      vi.mocked(createChainClient).mockResolvedValue(mockPolkadotClient)
+      const wsUrl = ['ws://auto-chain:9944']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(papiApi, 'createApiInstance')
+        .mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('Acala')
 
-      expect(createChainClient).toHaveBeenCalledWith(papiApi, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
+      createApiInstanceSpy.mockRestore()
     })
   })
 

@@ -90,7 +90,13 @@ export const selectBestExchangeCommon = async <
 
     Logger.log(`Checking ${exchangeChain}...`);
 
-    const res = await canBuildToExchangeTx(options, dex.chain, originApi, assetFromOrigin);
+    const res = await canBuildToExchangeTx(
+      options,
+      dex.chain,
+      originApi,
+      assetFromOrigin,
+      builderOptions,
+    );
     if (!res.success) {
       errors.set(dex.chain, res.error);
       continue;

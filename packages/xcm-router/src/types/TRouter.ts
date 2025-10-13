@@ -12,6 +12,7 @@ import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
 import type { EXCHANGE_CHAINS } from '../consts';
+import type { TRouterBuilderOptions } from './TRouterBuilder';
 
 export type TExchangeChain = (typeof EXCHANGE_CHAINS)[number];
 
@@ -186,6 +187,7 @@ export type TAdditionalTransferOptions = {
   exchange: TExchangeInfo;
   destination?: TDestinationInfo;
   feeCalcAddress: string;
+  builderOptions?: TRouterBuilderOptions;
 };
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
@@ -263,6 +265,7 @@ export type TBuildToExchangeTxOptions = {
   senderAddress: string;
   evmSenderAddress?: string;
   amount: string;
+  builderOptions?: TRouterBuilderOptions;
 };
 
 export type TBuildFromExchangeTxOptions = {
@@ -270,4 +273,5 @@ export type TBuildFromExchangeTxOptions = {
   destination: TDestinationInfo;
   amount: string;
   senderAddress: string;
+  builderOptions?: TRouterBuilderOptions;
 };

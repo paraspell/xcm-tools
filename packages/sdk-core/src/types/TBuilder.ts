@@ -84,12 +84,12 @@ export type TDryRunPreviewOptions = {
 
 export type TBuilderOptions<TApi> = TApi | TBuilderConfig<TApi>
 
-export type TBuilderConfig<TApi> = {
-  apiOverrides?: Partial<Record<TChain, TApi>>
-  development?: boolean
-  abstractDecimals?: boolean
-  xcmFormatCheck?: boolean
-}
+export type TBuilderConfig<TApi> = Partial<{
+  apiOverrides: Partial<Record<TChain, TApi>>
+  development: boolean
+  abstractDecimals: boolean
+  xcmFormatCheck: boolean
+}>
 
 export type TCreateTxsOptions<TApi, TRes> = Pick<
   TSendOptions<TApi, TRes>,

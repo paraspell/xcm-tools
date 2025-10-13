@@ -2,7 +2,12 @@ import type { TAssetInfo, TPapiApi, TParachain } from '@paraspell/sdk';
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk';
 
 import { FALLBACK_FEE_CALC_ADDRESS, FALLBACK_FEE_CALC_EVM_ADDRESS } from '../consts';
-import type { TCommonTransferOptions, TExchangeInfo, TGetBestAmountOutOptions } from '../types';
+import type {
+  TCommonTransferOptions,
+  TExchangeInfo,
+  TGetBestAmountOutOptions,
+  TRouterBuilderOptions,
+} from '../types';
 import { buildToExchangeExtrinsic } from './utils';
 
 export const canBuildToExchangeTx = async (
@@ -10,6 +15,7 @@ export const canBuildToExchangeTx = async (
   exchangeChain: TParachain,
   originApi: TPapiApi | undefined,
   assetFromOrigin: TAssetInfo | null | undefined,
+  builderOptions?: TRouterBuilderOptions,
 ): Promise<{ success: true } | { success: false; error: Error }> => {
   // Try building the to exchange extrinsic to see if it will succeed for this exchange
 
@@ -28,6 +34,7 @@ export const canBuildToExchangeTx = async (
               assetFrom: assetFromOrigin,
             },
             exchange: { baseChain: exchangeChain } as TExchangeInfo,
+            builderOptions,
           })
         : undefined;
   } catch (e) {

@@ -23,6 +23,7 @@ import {
 import type {
   TExchangeChain,
   TExchangeInput,
+  TRouterBuilderOptions,
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
@@ -50,6 +51,10 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import { TransferStepper } from './TransferStepper';
+
+const builderOptions: TRouterBuilderOptions = {
+  abstractDecimals: true,
+};
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -155,7 +160,7 @@ export const XcmRouter = () => {
       evmSigner,
     } = formValues;
 
-    await RouterBuilder({ abstractDecimals: true })
+    await RouterBuilder(builderOptions)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -205,6 +210,7 @@ export const XcmRouter = () => {
           currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
           senderAddress,
+          options: builderOptions,
         },
         {
           timeout: 120000,
@@ -298,18 +304,14 @@ export const XcmRouter = () => {
           {
             ...formValues,
             senderAddress: selectedAccount?.address,
-            options: {
-              abstractDecimals: true,
-            },
+            options: builderOptions,
           },
           '/router/xcm-fees',
           'POST',
           true,
         );
       } else {
-        result = await RouterBuilder({
-          abstractDecimals: true,
-        })
+        result = await RouterBuilder(builderOptions)
           .from(from)
           .exchange(exchange)
           .to(to)
@@ -371,18 +373,14 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            options: {
-              abstractDecimals: true,
-            },
+            options: builderOptions,
           },
           '/router/best-amount-out',
           'POST',
           true,
         );
       } else {
-        result = await RouterBuilder({
-          abstractDecimals: true,
-        })
+        result = await RouterBuilder(builderOptions)
           .from(from)
           .exchange(exchange)
           .to(to)

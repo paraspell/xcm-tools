@@ -25,9 +25,9 @@ import {
   assertHasLocation,
   BatchMode,
   ChainNotSupportedError,
-  createChainClient,
   findNativeAssetInfoOrThrow,
   getChain,
+  getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidParameterError,
   isAssetXcEqual,
@@ -109,7 +109,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     chain: TSubstrateChain
   ): Promise<TPjsApi> {
     if (!apiConfig) {
-      return createChainClient<TPjsApi, Extrinsic>(this, chain)
+      const wsUrl = getChainProviders(chain)
+      return this.createApiInstance(wsUrl, chain)
     }
 
     if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
