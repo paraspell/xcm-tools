@@ -1,5 +1,6 @@
-import { ApolloProvider } from '@apollo/client';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { HttpLink } from '@apollo/client/link/http';
+import { ApolloProvider } from '@apollo/client/react';
 import { Box, Flex, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
@@ -23,7 +24,7 @@ export const client = new ApolloClient({
     }
   }),
   link: link.concat(
-    createHttpLink({
+    new HttpLink({
       uri: `${import.meta.env.VITE_GRAPHQL_URL}`
     })
   )
