@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Center, Flex, Group, Loader, Stack } from '@mantine/core';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import { useRef, useState } from 'react';
