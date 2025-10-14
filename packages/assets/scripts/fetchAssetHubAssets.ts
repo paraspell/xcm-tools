@@ -1,35 +1,7 @@
 import type { ApiPromise } from '@polkadot/api'
 import { getAllAssetsSymbols, type TForeignAssetInfo } from '../src'
-import { getParaId, CHAINS, TLocation } from '../../sdk-core/src'
+import { getParaId, CHAINS } from '../../sdk-core/src'
 import { capitalizeLocation } from './utils'
-
-const buildEthereumLocation = (address: string): TLocation => ({
-  parents: 2,
-  interior: {
-    X2: [
-      { GlobalConsensus: { Ethereum: { chainId: 1 } } },
-      { AccountKey20: { network: null, key: address } }
-    ]
-  }
-})
-
-const STATIC_FOREIGN_ASSETS = [
-  {
-    symbol: 'wstETH',
-    decimals: 18,
-    address: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0'
-  },
-  {
-    symbol: 'tBTC',
-    decimals: 18,
-    address: '0x18084fba666a33d37592fa2633fd49a74dd93a88'
-  },
-  {
-    symbol: 'PEPE',
-    decimals: 18,
-    address: '0x6982508145454ce325ddbe47a25d4ec3d2311933'
-  }
-]
 
 export const fetchAssetHubAssets = async (
   api: ApiPromise,
@@ -103,20 +75,5 @@ export const fetchAssetHubAssets = async (
     })
   )
 
-  const parsedStaticAssets = await Promise.all(
-    STATIC_FOREIGN_ASSETS.map(async asset => {
-      const location = buildEthereumLocation(asset.address)
-      const assetDetail = await api.query.foreignAssets.asset(location)
-      const existentialDeposit = (assetDetail.toHuman() as any).minBalance.replace(/,/g, '')
-
-      return {
-        symbol: asset.symbol,
-        decimals: asset.decimals,
-        location,
-        existentialDeposit
-      }
-    })
-  )
-
-  return [...parsedRegularAssets, ...parsedForeignAssets, ...parsedStaticAssets]
+  return [...parsedRegularAssets, ...parsedForeignAssets]
 }
