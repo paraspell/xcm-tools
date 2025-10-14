@@ -99,7 +99,7 @@ const fetchAssets = async (
   api: ApiPromise,
   query: string,
   isNative: boolean,
-  key: string
+  key: string[]
 ): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
@@ -112,7 +112,7 @@ const fetchAssets = async (
             args: [era]
           }
         ]) => {
-          return Object.prototype.hasOwnProperty.call(era.toHuman(), key)
+          return key.some(k => Object.prototype.hasOwnProperty.call(era.toHuman(), k))
         }
       )
       .map(
@@ -139,15 +139,17 @@ const fetchAssets = async (
 
           const assetId = Object.values(era.toHuman() ?? {})[0].replaceAll(',', '')
 
-          const locationRes = await api.query[module].foreignAssetLocations(Number(assetId))
-
-          const location =
-            locationRes.toJSON() !== null ? capitalizeLocation(locationRes.toJSON()) : undefined
+          const fetchLocation = async () => {
+            const locationRes = await api.query[module].foreignAssetLocations(Number(assetId))
+            return locationRes.toJSON() !== null
+              ? capitalizeLocation(locationRes.toJSON())
+              : undefined
+          }
 
           return {
             ...baseAsset,
             assetId,
-            location
+            location: assetId.startsWith('0x') ? undefined : await fetchLocation()
           }
         }
       )
@@ -159,7 +161,7 @@ export const fetchAcalaNativeAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TNativeAssetInfo[]> => {
-  return (await fetchAssets(chain, api, query, true, 'NativeAssetId')).map(asset => ({
+  return (await fetchAssets(chain, api, query, true, ['NativeAssetId'])).map(asset => ({
     ...asset,
     isNative: true
   }))
@@ -169,5 +171,7 @@ export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAssetInfo[]> => {
-  return fetchAssets('Acala', api, query, false, 'ForeignAssetId') as Promise<TForeignAssetInfo[]>
+  return fetchAssets('Acala', api, query, false, ['ForeignAssetId', 'Erc20']) as Promise<
+    TForeignAssetInfo[]
+  >
 }

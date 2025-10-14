@@ -10,8 +10,7 @@ export type THopTransferInfo = {
   chain: TChain
   result: {
     xcmFee: TXcmFeeBase
-    balance?: bigint
-    existentialDeposit?: bigint
+    existentialDeposit: bigint
     /** @deprecated use `asset` property instead */
     currencySymbol: string
     asset: TAssetInfo
@@ -20,7 +19,6 @@ export type THopTransferInfo = {
 
 export type TXcmFeeBase = {
   fee: bigint
-  balance: bigint
   /** @deprecated use `asset` property instead */
   currencySymbol: string
   asset: TAssetInfo
@@ -40,11 +38,11 @@ export type TTransferInfo = {
     }
     xcmFee: TXcmFeeBase & {
       sufficient: boolean
+      balance: bigint
       balanceAfter: bigint
     }
   }
   assetHub?: {
-    balance: bigint
     /** @deprecated use `asset` property instead */
     currencySymbol: string
     asset: TAssetInfo

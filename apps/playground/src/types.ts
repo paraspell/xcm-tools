@@ -54,6 +54,7 @@ export type TSubmitType =
   | 'getOriginXcmFeeEstimate'
   | 'getTransferableAmount'
   | 'getMinTransferableAmount'
+  | 'getReceivableAmount'
   | 'verifyEdOnDestination'
   | 'getTransferInfo'
   | 'addToBatch';

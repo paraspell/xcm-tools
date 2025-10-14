@@ -15,6 +15,7 @@ import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
 import { CHAINS, isChainEvm, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import {
   IconArrowBarDown,
+  IconArrowBarToRight,
   IconArrowBarUp,
   IconChecks,
   IconChevronDown,
@@ -217,6 +218,27 @@ const XcmUtilsForm: FC<Props> = ({
     onSubmit(transformedValues, submitType);
   };
 
+  const validateEvmOriginRequirements = () => {
+    if (!isChainEvm(form.values.from)) {
+      return true;
+    }
+
+    if (!form.values.ahAddress) {
+      form.setFieldError(
+        'ahAddress',
+        'AssetHub address is required for EVM origin.',
+      );
+      return false;
+    }
+
+    if (!isValidPolkadotAddress(form.values.ahAddress)) {
+      form.setFieldError('ahAddress', 'Invalid Polkadot address');
+      return false;
+    }
+
+    return true;
+  };
+
   const onSubmitGetXcmFee = () => {
     form.validate();
     if (form.isValid()) {
@@ -269,21 +291,20 @@ const XcmUtilsForm: FC<Props> = ({
   const onSubmitGetTransferInfo = () => {
     form.validate();
 
-    if (isChainEvm(form.values.from)) {
-      if (!form.values.ahAddress) {
-        form.setFieldError(
-          'ahAddress',
-          'AssetHub address is required for EVM origin.',
-        );
-        return;
-      } else if (!isValidPolkadotAddress(form.values.ahAddress)) {
-        form.setFieldError('ahAddress', 'Invalid Polkadot address');
-        return;
-      }
-    }
+    if (!validateEvmOriginRequirements()) return;
 
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), 'getTransferInfo');
+    }
+  };
+
+  const onSubmitGetReceivableAmount = () => {
+    form.validate();
+
+    if (!validateEvmOriginRequirements()) return;
+
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getReceivableAmount');
     }
   };
 
@@ -557,6 +578,12 @@ const XcmUtilsForm: FC<Props> = ({
                   onClick={onSubmitGetTransferInfo}
                 >
                   Get Transfer Info
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconArrowBarToRight size={16} />}
+                  onClick={onSubmitGetReceivableAmount}
+                >
+                  Get Receivable Amount
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>

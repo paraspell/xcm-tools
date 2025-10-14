@@ -7,7 +7,7 @@ import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { MIN_AMOUNT } from '../constants'
-import { DryRunFailedError, InvalidParameterError } from '../errors'
+import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../errors'
 import {
   getMinTransferableAmount,
   getOriginXcmFee,
@@ -554,6 +554,26 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       currency: currency as WithAmount<TCurrencyCore>,
       feeAsset: feeAsset as TCurrencyCore
     })
+  }
+
+  /**
+   * Returns the receivable amount on the destination after the transfer
+   *
+   * @returns The computed receivable amount.
+   * @throws \{UnableToComputeError\} Thrown when the receivable amount cannot be determined.
+   */
+  async getReceivableAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const {
+      destination: {
+        receivedCurrency: { receivedAmount }
+      }
+    } = await this.getTransferInfo()
+
+    if (receivedAmount instanceof UnableToComputeError) {
+      throw receivedAmount
+    }
+
+    return receivedAmount
   }
 
   /**

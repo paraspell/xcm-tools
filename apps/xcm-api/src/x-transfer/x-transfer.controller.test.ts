@@ -15,10 +15,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import type {
-  XTransferDto,
-  XTransferDtoWSenderAddress,
-} from './dto/XTransferDto.js';
+import type { XTransferDtoWSenderAddress } from './dto/XTransferDto.js';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
 
@@ -43,18 +40,20 @@ describe('XTransferController', () => {
     service = module.get<XTransferService>(XTransferService);
   });
 
+  const bodyParams: XTransferDtoWSenderAddress = {
+    from: 'Acala',
+    to: 'Basilisk',
+    address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    currency: { symbol: 'DOT', amount: 100 },
+  };
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: XTransferDto = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = '0x1234567890abcdef';
       const spy = vi
         .spyOn(service, 'generateXcmCall')
@@ -106,13 +105,6 @@ describe('XTransferController', () => {
 
   describe('dryRun', () => {
     it('should dry run call with correct params', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = {} as TDryRunResult;
       const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
 
@@ -125,13 +117,6 @@ describe('XTransferController', () => {
 
   describe('dryRunPreview', () => {
     it('should dry run call with correct params', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = {} as TDryRunResult;
       const spy = vi
         .spyOn(service, 'dryRunPreview')
@@ -149,13 +134,6 @@ describe('XTransferController', () => {
 
   describe('getXcmFee', () => {
     it('should call service.getXcmFee and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = { origin: {}, destination: {} } as TGetXcmFeeResult;
       const spy = vi.spyOn(service, 'getXcmFee').mockResolvedValue(mockResult);
 
@@ -168,13 +146,6 @@ describe('XTransferController', () => {
 
   describe('getOriginXcmFee', () => {
     it('should call service.getOriginXcmFee and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = {} as TXcmFeeDetail;
       const spy = vi
         .spyOn(service, 'getOriginXcmFee')
@@ -191,13 +162,6 @@ describe('XTransferController', () => {
 
   describe('getXcmFeeEstimate', () => {
     it('should call service.getXcmFeeEstimate and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = {
         origin: {},
         destination: {},
@@ -218,13 +182,6 @@ describe('XTransferController', () => {
 
   describe('getOriginXcmFeeEstimate', () => {
     it('should call service.getOriginXcmFeeEstimate and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = {} as TGetXcmFeeEstimateDetail;
       const spy = vi
         .spyOn(service, 'getOriginXcmFeeEstimate')
@@ -242,13 +199,6 @@ describe('XTransferController', () => {
 
   describe('getTransferableAmount', () => {
     it('should call service.getTransferableAmount and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = 1000n;
       const spy = vi
         .spyOn(service, 'getTransferableAmount')
@@ -266,13 +216,6 @@ describe('XTransferController', () => {
 
   describe('getMinTransferableAmount', () => {
     it('should call service.getMinTransferableAmount and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = 500n;
       const spy = vi
         .spyOn(service, 'getMinTransferableAmount')
@@ -290,13 +233,6 @@ describe('XTransferController', () => {
 
   describe('verifyEdOnDestination', () => {
     it('should call service.verifyEdOnDestination and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
       const mockResult = true;
       const spy = vi
         .spyOn(service, 'verifyEdOnDestination')
@@ -314,14 +250,6 @@ describe('XTransferController', () => {
 
   describe('getTransferInfo', () => {
     it('should call service.getTransferInfo and returns its value', async () => {
-      const bodyParams: XTransferDtoWSenderAddress = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
-
       const mockResult = {} as TTransferInfo;
 
       const spy = vi
@@ -331,6 +259,23 @@ describe('XTransferController', () => {
         bodyParams,
         mockRequestObject,
       );
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('getReceivableAmount', () => {
+    it('should call service.getReceivableAmount and returns its value', async () => {
+      const mockResult = 950n;
+      const spy = vi
+        .spyOn(service, 'getReceivableAmount')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getReceivableAmount(
+        bodyParams,
+        mockRequestObject,
+      );
+
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
     });

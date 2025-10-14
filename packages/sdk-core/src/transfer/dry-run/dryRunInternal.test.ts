@@ -1,5 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
+  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -413,7 +414,7 @@ describe('dryRunInternal', () => {
       const api = createFakeApi(originOk)
       await dryRunInternal(createOptions(api))
 
-      expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Acala', 'Moonbeam', {
+      expect(findAssetInfoOnDest).toHaveBeenCalledWith('Acala', 'Moonbeam', {
         symbol: 'ACA',
         amount: 1_000n
       })

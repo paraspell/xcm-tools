@@ -1,12 +1,9 @@
 import {
   findAssetOnDestOrThrow,
-  getExistentialDeposit,
-  getNativeAssetSymbol,
-  isChainEvm
+  getExistentialDepositOrThrow,
+  getNativeAssetSymbol
 } from '@paraspell/assets'
 
-import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { BuildHopInfoOptions, TTransferInfo } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes>({
@@ -15,29 +12,16 @@ export const buildHopInfo = async <TApi, TRes>({
   feeData,
   originChain,
   asset,
-  currency,
-  senderAddress,
-  ahAddress
-}: BuildHopInfoOptions<TApi, TRes>): Promise<TTransferInfo['assetHub']> => {
+  currency
+}: BuildHopInfoOptions<TApi, TRes>) => {
   const hopApi = api.clone()
   await hopApi.init(chain)
   hopApi.setDisconnectAllowed(false)
 
   try {
-    const resolvedAddress = isChainEvm(originChain) && ahAddress ? ahAddress : senderAddress
-
-    const nativeBalanceOnHop = await getBalanceNativeInternal({
-      api: hopApi,
-      address: resolvedAddress,
-      chain
-    })
-
-    const nativeAssetSymbolOnHop = getNativeAssetSymbol(chain)
-
     const xcmFeeDetails = {
       fee: feeData.fee,
-      balance: nativeBalanceOnHop,
-      currencySymbol: nativeAssetSymbolOnHop,
+      currencySymbol: asset.symbol,
       asset
     }
 
@@ -55,25 +39,12 @@ export const buildHopInfo = async <TApi, TRes>({
         ? { location: hopAsset.location }
         : { symbol: hopAsset.symbol }
 
-      const balance = await getAssetBalanceInternal({
-        api: hopApi,
-        address: resolvedAddress,
-        chain,
-        currency: hopCurrencyPayload
-      })
-
-      const ed = getExistentialDeposit(chain, hopCurrencyPayload)
-      if (!ed) {
-        throw new InvalidParameterError(
-          `Existential deposit not found for chain ${chain} with currency ${JSON.stringify(hopCurrencyPayload)}`
-        )
-      }
+      const ed = getExistentialDepositOrThrow(chain, hopCurrencyPayload)
 
       return {
-        balance: balance,
         currencySymbol: hopAsset.symbol,
         asset: hopAsset,
-        existentialDeposit: BigInt(ed),
+        existentialDeposit: ed,
         xcmFee: xcmFeeDetails
       }
     }

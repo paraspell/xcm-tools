@@ -432,6 +432,12 @@
         }
       },
       {
+        "symbol": "CRUet",
+        "decimals": 18,
+        "existentialDeposit": "12000000000000000",
+        "assetId": "0xa72206fdf839c785b3073870013f2fd57ba10b63"
+      },
+      {
         "symbol": "WETHah",
         "decimals": 18,
         "existentialDeposit": "500000000000000",
@@ -454,6 +460,12 @@
         }
       },
       {
+        "symbol": "USDCet",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "assetId": "0x07df96d1341a7d16ba1ad431e2c847d978bc2bce"
+      },
+      {
         "symbol": "ASTR",
         "decimals": 18,
         "existentialDeposit": "100000000000000000",
@@ -468,6 +480,12 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "TAI",
+        "decimals": 12,
+        "existentialDeposit": "10000000000",
+        "assetId": "0x892ddd9387dbdecedaef878bd7acf8603109227f"
       },
       {
         "symbol": "LOTY",
@@ -530,6 +548,18 @@
         }
       },
       {
+        "symbol": "APE",
+        "decimals": 18,
+        "existentialDeposit": "3000000000000000",
+        "assetId": "0xf4c723e61709d90f89939c1852f516e373d418a8"
+      },
+      {
+        "symbol": "Nemo",
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "assetId": "0xfa904c86b73fd041d6cc2aeed9e6ec0148fd51da"
+      },
+      {
         "symbol": "GLMR",
         "decimals": 18,
         "existentialDeposit": "100000000000000000",
@@ -568,7 +598,14 @@
               }
             ]
           }
-        }
+        },
+        "alias": "WBTC2"
+      },
+      {
+        "symbol": "LDO",
+        "decimals": 18,
+        "existentialDeposit": "4500000000000000",
+        "assetId": "0xd1729649ee6d5e3740ee2f9254c4226aabd0dc5b"
       },
       {
         "symbol": "HDX",
@@ -588,6 +625,12 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "DAI",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "assetId": "0x54a37a01cd75b616d63e0ab665bffdb0143c52ae"
       },
       {
         "symbol": "PINK",
@@ -612,6 +655,24 @@
         }
       },
       {
+        "symbol": "SHIB",
+        "decimals": 18,
+        "existentialDeposit": "1266000000000000000000",
+        "assetId": "0xaf6997a70feb868df863d5380c3ab93da4297edc"
+      },
+      {
+        "symbol": "USDTet",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "assetId": "0x492f4e41bd378d6dbd92ab645ac4020b01784db3"
+      },
+      {
+        "symbol": "LINK",
+        "decimals": 18,
+        "existentialDeposit": "1700000000000000",
+        "assetId": "0x604cae74cdc395a8824557d422fccf8db6809a2f"
+      },
+      {
         "symbol": "CRU",
         "decimals": 12,
         "existentialDeposit": "10000000000",
@@ -626,6 +687,12 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "JitoSOL",
+        "decimals": 9,
+        "existentialDeposit": "10000",
+        "assetId": "0xa7fb00459f5896c3bd4df97870b44e868ae663d7"
       },
       {
         "symbol": "USDT",
@@ -648,6 +715,30 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "ARB",
+        "decimals": 18,
+        "existentialDeposit": "9000000000000000",
+        "assetId": "0xd53e4ba478cca5080c47435769ff82f41e5e4cd0"
+      },
+      {
+        "symbol": "WETH",
+        "decimals": 18,
+        "existentialDeposit": "8500000000000",
+        "assetId": "0x5a4d6acdc4e3e5ab15717f407afe957f7a242578"
+      },
+      {
+        "symbol": "BUSDbs",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "assetId": "0x7d52316b1132c26626670fbf52aa7f5ce6f9b388"
+      },
+      {
+        "symbol": "MATICpo",
+        "decimals": 18,
+        "existentialDeposit": "12500000000000000",
+        "assetId": "0x19eba3efa7d0e02956678c5f3c63c46beda2d7d8"
       },
       {
         "symbol": "EQ",
@@ -686,6 +777,19 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "UNI",
+        "decimals": 18,
+        "existentialDeposit": "2000000000000000",
+        "assetId": "0x13fe490489204abde3265bfd81179e6ddd2020c3"
+      },
+      {
+        "symbol": "WBTC",
+        "decimals": 8,
+        "existentialDeposit": "60",
+        "assetId": "0xc80084af223c8b598536178d9361dc55bfda6818",
+        "alias": "WBTC1"
       },
       {
         "symbol": "CFG",

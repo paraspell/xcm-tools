@@ -48,5 +48,6 @@ export enum EventName {
   GET_EXCHANGE_PAIRS = 'Get Exchange Pairs',
   CLAIM_ASSETS = 'Claim assets',
   GET_TRANSFER_INFO = 'Get Transfer Info',
+  GET_RECEIVABLE_AMOUNT = 'Get Receivable Amount',
   XCM_ANALYSER = 'XCM Analyser',
 }
