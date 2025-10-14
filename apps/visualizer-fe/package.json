@@ -15,9 +15,7 @@
     "format:write": "prettier --write src"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.9",
-    "@graphql-codegen/cli": "^5.0.7",
-    "@graphql-typed-document-node/core": "^3.2.0",
+    "@apollo/client": "^4.0.7",
     "@mantine/charts": "^8.3.2",
     "@mantine/core": "^8.3.2",
     "@mantine/dates": "^8.3.2",
@@ -42,14 +40,19 @@
     "jszip": "^3.10.1",
     "polkadot-api": "^1.20.0",
     "react": "^19.1.1",
-    "react-apollo-network-status": "^5.3.1",
+    "react-apollo-network-status": "^6.0.0",
     "react-dom": "^19.1.1",
-    "react-i18next": "^15.7.3",
+    "react-i18next": "^16.1.0",
     "react-router-dom": "^7.9.3",
+    "rxjs": "^7.8.2",
     "socket.io-client": "^4.8.1",
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.15.0",
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/schema-ast": "^5.0.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@types/d3-ease": "^3.0.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
