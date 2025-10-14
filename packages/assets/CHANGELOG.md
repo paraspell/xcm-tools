@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.11.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.10.0...assets-v11.11.0) (2025-10-14)
+
+
+### Features
+
+* **sdk-core:** Add getReceivableAmount func to builder 🧱 ([6691a0d](https://github.com/paraspell/xcm-tools/commit/6691a0d294b9df3c4a05e8557ea45d36ff46c0a6))
+
+
+### Bug Fixes
+
+* **assets:** Remove AH static assets logic 🧹 ([5ddcb21](https://github.com/paraspell/xcm-tools/commit/5ddcb2191fdfec88235ab356b7885c58ae1d4415))
+
 ## [11.10.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.9.3...assets-v11.10.0) (2025-10-13)
 
 
