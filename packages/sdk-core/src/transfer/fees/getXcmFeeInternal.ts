@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
 import {
+  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -181,10 +182,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
           currentChain,
           swapConfig.currencyTo
         )
-      } else if (destination === currentChain) {
-        hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
       } else {
-        hopAsset = currentAsset
+        hopAsset = findAssetInfoOnDest(origin, currentChain, currency) ?? currentAsset
       }
     } else {
       hopAsset = findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))

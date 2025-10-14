@@ -90,6 +90,7 @@ const builderMock = {
   getMinTransferableAmount: vi.fn().mockResolvedValue(amountResult),
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
   getTransferInfo: vi.fn().mockResolvedValue({}),
+  getReceivableAmount: vi.fn().mockResolvedValue(amountResult),
   disconnect: vi.fn(),
 };
 
@@ -449,6 +450,14 @@ describe('XTransferService', () => {
       const res = await service.getTransferInfo(xTransferDto);
       expect(res).toEqual({});
       expect(builderMock.getTransferInfo).toHaveBeenCalled();
+    });
+  });
+
+  describe('getReceivableAmount', () => {
+    it('delegates to builder.getReceivableAmount', async () => {
+      const res = await service.getReceivableAmount(xTransferDto);
+      expect(res).toBe(amountResult);
+      expect(builderMock.getReceivableAmount).toHaveBeenCalled();
     });
   });
 

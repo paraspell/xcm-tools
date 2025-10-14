@@ -99,13 +99,11 @@ describe('getTransferInfo', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(buildHopInfo).mockResolvedValue({
-      balance: 0n,
       currencySymbol: 'DOT',
       asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo,
       existentialDeposit: 0n,
       xcmFee: {
         fee: 0n,
-        balance: 0n,
         currencySymbol: 'DOT',
         asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo
       }

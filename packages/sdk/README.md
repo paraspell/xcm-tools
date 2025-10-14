@@ -358,6 +358,18 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
           .getMinTransferableAmount()
 ```
 
+#### Receivable amount
+```ts
+const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getReceivableAmount()
+```
+
 #### Verify ED on destination
 ```ts
 const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)

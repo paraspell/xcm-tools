@@ -3,6 +3,7 @@
 
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
+  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -110,8 +111,7 @@ export const dryRunInternal = async <TApi, TRes>(
       currentOrigin,
       currentAsset,
       forwardedXcms,
-      hasPassedExchange,
-      isDestination
+      hasPassedExchange
     } = params
 
     let hopAsset: TAssetInfo
@@ -123,10 +123,9 @@ export const dryRunInternal = async <TApi, TRes>(
         currentChain,
         swapConfig.currencyTo
       )
-    } else if (isDestination) {
-      hopAsset = findAssetOnDestOrThrow(origin, currentChain, currency)
     } else {
       hopAsset = asset
+      hopAsset = findAssetInfoOnDest(origin, currentChain, currency) ?? asset
     }
 
     if (!hasDryRunSupport(currentChain)) {

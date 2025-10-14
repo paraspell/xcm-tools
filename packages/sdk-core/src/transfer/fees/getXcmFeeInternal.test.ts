@@ -1,5 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
+  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -1181,7 +1182,7 @@ describe('getXcmFeeInternal', () => {
 
     const res = await getXcmFeeInternal(createOptions())
 
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Acala', 'Moonbeam', 'ACA')
+    expect(findAssetInfoOnDest).toHaveBeenCalledWith('Acala', 'Moonbeam', 'ACA')
     expect(res.destination.asset).toEqual({ symbol: 'ACA', decimals: 12 })
   })
 

@@ -185,6 +185,12 @@ export class XTransferService {
     );
   }
 
+  getReceivableAmount(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getReceivableAmount(),
+    );
+  }
+
   async generateBatchXcmCall(batchDto: BatchXTransferDto) {
     const { transfers, options } = batchDto;
 

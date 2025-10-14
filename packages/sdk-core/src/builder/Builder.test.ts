@@ -1010,6 +1010,30 @@ describe('Builder', () => {
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
     })
 
+    it('should call getTransferInfo when fetching receivable amount', async () => {
+      const builder = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+
+      const receivedAmount = 123n
+
+      const getTransferInfoSpy = vi.spyOn(builder, 'getTransferInfo').mockResolvedValue({
+        destination: {
+          receivedCurrency: {
+            receivedAmount
+          }
+        }
+      } as unknown as TTransferInfo)
+
+      const result = await builder.getReceivableAmount()
+
+      expect(getTransferInfoSpy).toHaveBeenCalledTimes(1)
+      expect(result).toBe(receivedAmount)
+    })
+
     describe('when currency amount equals AMOUNT_ALL', () => {
       const NORMALIZED_AMOUNT = 987_654n
 

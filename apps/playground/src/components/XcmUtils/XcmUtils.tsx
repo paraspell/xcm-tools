@@ -344,6 +344,10 @@ const XcmUtils = () => {
         apiEndpoint = '/min-transferable-amount';
         successMessage = 'Minimum transferable amount retrieved';
         break;
+      case 'getReceivableAmount':
+        apiEndpoint = '/receivable-amount';
+        successMessage = 'Receivable amount retrieved';
+        break;
       case 'verifyEdOnDestination':
         apiEndpoint = '/verify-ed-on-destination';
         successMessage = 'ED verification result retrieved';
@@ -397,6 +401,9 @@ const XcmUtils = () => {
           case 'getMinTransferableAmount':
             result = await builder.getMinTransferableAmount();
             break;
+          case 'getReceivableAmount':
+            result = await builder.getReceivableAmount();
+            break;
           case 'verifyEdOnDestination':
             result = await builder.verifyEdOnDestination();
             break;
@@ -439,6 +446,7 @@ const XcmUtils = () => {
       getOriginXcmFeeEstimate: 'Getting Origin XCM fee estimate...',
       getTransferableAmount: 'Getting transferable amount...',
       verifyEdOnDestination: 'Verifying ED on destination...',
+      getReceivableAmount: 'Getting receivable amount...',
       getTransferInfo: 'Getting transfer info...',
     };
     const loadingMessage = opTextMap[submitType] ?? 'Processing request...';
@@ -460,6 +468,7 @@ const XcmUtils = () => {
       } else if (
         submitType === 'getTransferableAmount' ||
         submitType === 'getMinTransferableAmount' ||
+        submitType === 'getReceivableAmount' ||
         submitType === 'verifyEdOnDestination' ||
         submitType === 'getTransferInfo'
       ) {
