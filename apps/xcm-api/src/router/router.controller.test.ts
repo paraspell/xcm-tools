@@ -145,6 +145,35 @@ describe('RouterController', () => {
     });
   });
 
+  describe('getTransferableAmount', () => {
+    it('should call getTransferableAmount service method with correct parameters and return result', async () => {
+      const queryParams: RouterDto = {
+        from: 'Astar',
+        exchange: 'AcalaDex',
+        to: 'Moonbeam',
+        currencyFrom: { symbol: 'ASTR' },
+        currencyTo: { symbol: 'GLMR' },
+        amount: '1000000000000000000',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      };
+
+      const mockResult = 123n;
+
+      const spy = vi
+        .spyOn(service, 'getTransferableAmount')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getTransferableAmount(
+        queryParams,
+        {} as unknown as Request,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
+
   describe('getExchangePairs', () => {
     it('should call getExchangePairs service method with correct parameters and return result', () => {
       const params = { exchange: 'AcalaDex' };

@@ -60,6 +60,13 @@ export class RouterController {
     return this.routerService.getBestAmountOut(params);
   }
 
+  @Post('transferable-amount')
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
+  getTransferableAmount(@Body() params: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GET_ROUTER_TRANSFERABLE_AMOUNT, req, params);
+    return this.routerService.getTransferableAmount(params);
+  }
+
   @Post('pairs')
   @UsePipes(new ZodValidationPipe(ExchangePairsSchema))
   getExchangePairs(
