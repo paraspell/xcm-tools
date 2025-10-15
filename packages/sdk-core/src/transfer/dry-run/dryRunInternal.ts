@@ -13,34 +13,14 @@ import {
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 
-import type { HopProcessParams, TDryRunChain, TDryRunChainResult, THopInfo } from '../../types'
+import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
+import { getFailureInfo } from './getFailureInfo'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
-
-const getFailureInfo = (
-  results: Partial<Record<TDryRunChain, TDryRunChainResult | undefined>>,
-  hops: THopInfo[]
-): { failureReason?: string; failureChain?: TDryRunChain } => {
-  // Check standard chains first for backwards compatibility
-  for (const chain of ['destination', 'assetHub', 'bridgeHub'] as TDryRunChain[]) {
-    const res = results[chain]
-    if (res && !res.success && res.failureReason) {
-      return { failureReason: res.failureReason, failureChain: chain }
-    }
-  }
-
-  for (const hop of hops) {
-    if (!hop.result.success && hop.result.failureReason) {
-      return { failureReason: hop.result.failureReason, failureChain: hop.chain }
-    }
-  }
-
-  return {}
-}
 
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
@@ -207,22 +187,16 @@ export const dryRunInternal = async <TApi, TRes>(
       }
     : processedBridgeHub
 
-  const { failureReason, failureChain } = getFailureInfo(
-    {
-      destination: traversalResult.destination,
-      assetHub: traversalResult.assetHub,
-      bridgeHub: bridgeHubWithCurrency
-    },
-    traversalResult.hops
-  )
-
-  return {
-    failureReason,
-    failureChain,
+  const result: TDryRunResult = {
     origin: originDryModified,
     assetHub: traversalResult.assetHub,
     bridgeHub: bridgeHubWithCurrency,
     destination: traversalResult.destination,
     hops: traversalResult.hops
+  }
+
+  return {
+    ...getFailureInfo(result),
+    ...result
   }
 }

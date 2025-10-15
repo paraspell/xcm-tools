@@ -65,4 +65,5 @@ export type TRouterSubmitType =
   | 'default'
   | 'getBestAmountOut'
   | 'getXcmFee'
-  | 'getTransferableAmount';
+  | 'getTransferableAmount'
+  | 'dryRun';

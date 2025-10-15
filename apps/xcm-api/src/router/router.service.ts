@@ -213,6 +213,57 @@ export class RouterService {
     }
   }
 
+  async dryRun(input: RouterDto) {
+    const {
+      from,
+      exchange,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      senderAddress,
+      evmSenderAddress,
+      recipientAddress,
+      slippagePct = '1',
+      options,
+    } = input;
+
+    const fromChain = from as TSubstrateChain;
+    const exchangeChain = exchange as TExchangeChain;
+    const toChain = to as TChain;
+
+    validateChainsAndExchange(from, exchange, to);
+
+    if (!isValidWalletAddress(senderAddress)) {
+      throw new BadRequestException('Invalid sender wallet address.');
+    }
+
+    if (evmSenderAddress && !isValidWalletAddress(evmSenderAddress)) {
+      throw new BadRequestException('Invalid EVM sender wallet address.');
+    }
+
+    if (!isValidWalletAddress(recipientAddress)) {
+      throw new BadRequestException('Invalid recipient wallet address.');
+    }
+
+    try {
+      return await RouterBuilder(options)
+        .from(fromChain)
+        .exchange(exchangeChain)
+        .to(toChain)
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(amount.toString())
+        .senderAddress(senderAddress)
+        .evmSenderAddress(evmSenderAddress)
+        .recipientAddress(recipientAddress)
+        .slippagePct(slippagePct)
+        .dryRun();
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
+  }
+
   async getTransferableAmount(input: RouterDto) {
     const {
       from,

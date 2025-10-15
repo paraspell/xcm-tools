@@ -121,6 +121,7 @@ describe('buildTransactions', () => {
         destinationChain: 'Crust',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
+        amountOut: 1000n,
       },
     ]);
   });
@@ -152,6 +153,7 @@ describe('buildTransactions', () => {
         destinationChain: 'Crust',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
+        amountOut: 1000n,
       },
     ]);
   });

@@ -36,14 +36,15 @@ export const buildTransactions = async (
       destinationChain: destination?.chain,
       tx: batchedTx,
       type: 'SWAP_AND_TRANSFER',
+      amountOut,
     });
   } else {
     if (swapTxs.length === 1) {
       transactions.push({
-        api: exchange.apiPapi,
+        api: isExecute ? (origin?.api ?? exchange.apiPapi) : exchange.apiPapi,
         chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
         tx: swapTxs[0],
-        amountOut: BigInt(amountOut),
+        amountOut,
         type: 'SWAP',
       });
     } else {
@@ -55,7 +56,7 @@ export const buildTransactions = async (
         api: exchange.apiPapi,
         chain: dex.chain,
         tx: batchedSwapTx,
-        amountOut: BigInt(amountOut),
+        amountOut,
         type: 'SWAP',
       });
     }

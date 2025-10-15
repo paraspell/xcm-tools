@@ -3,6 +3,7 @@ import type { PolkadotSigner } from 'polkadot-api';
 
 import {
   buildApiTransactions,
+  dryRunRouter,
   getBestAmountOut,
   getTransferableAmount,
   getXcmFees,
@@ -13,6 +14,7 @@ import type {
   TExchangeInput,
   TGetBestAmountOutOptions,
   TRouterBuilderOptions,
+  TRouterDryRunResult,
   TRouterXcmFeeResult,
   TStatusChangeCallback,
   TTransferOptions,
@@ -218,6 +220,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    */
   buildTransactions(this: RouterBuilderCore<TBuildTransactionsOptions>) {
     return buildApiTransactions(this._options, this._builderOptions);
+  }
+
+  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TRouterDryRunResult> {
+    return dryRunRouter(this._options, this._builderOptions);
   }
 
   getBestAmountOut(this: RouterBuilderCore<TGetBestAmountOutOptions>) {

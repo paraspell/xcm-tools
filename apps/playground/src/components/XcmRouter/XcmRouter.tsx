@@ -445,6 +445,89 @@ export const XcmRouter = () => {
     }
   };
 
+  const submitDryRun = async (
+    formValues: TRouterFormValuesTransformed,
+    exchange: TExchangeChain | undefined,
+    senderAddress: string,
+  ) => {
+    const {
+      useApi,
+      from,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      recipientAddress,
+      evmInjectorAddress: evmSenderAddress,
+      slippagePct,
+    } = formValues;
+
+    setLoading(true);
+
+    try {
+      let result;
+      if (useApi) {
+        result = await fetchFromApi(
+          {
+            ...formValues,
+            exchange,
+            senderAddress,
+            options: builderOptions,
+          },
+          '/router/dry-run',
+          'POST',
+          true,
+        );
+      } else {
+        result = await RouterBuilder(builderOptions)
+          .from(from)
+          .exchange(exchange)
+          .to(to)
+          .currencyFrom(
+            determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+          )
+          .currencyTo(
+            determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+          )
+          .amount(amount)
+          .senderAddress(senderAddress)
+          .recipientAddress(recipientAddress)
+          .evmSenderAddress(evmSenderAddress)
+          .slippagePct(slippagePct)
+          .onStatusChange(onStatusChange)
+          .dryRun();
+      }
+
+      setOutput(JSON.stringify(result, replaceBigInt, 2));
+      openOutputAlert();
+      closeAlert();
+      showSuccessNotification(undefined, 'Success', 'Dry run completed');
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        showErrorNotification(e.message);
+        setError(e);
+        openAlert();
+        setShowStepper(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeChain | undefined,
@@ -543,6 +626,11 @@ export const XcmRouter = () => {
 
     if (submitType === 'getXcmFee') {
       await submitGetXcmFee(formValues, exchange, selectedAccount.address);
+      return;
+    }
+
+    if (submitType === 'dryRun') {
+      await submitDryRun(formValues, exchange, selectedAccount.address);
       return;
     }
 

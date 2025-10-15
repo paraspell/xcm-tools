@@ -1,5 +1,6 @@
 export * from './dryRun'
 export * from './dryRunInternal'
 export * from './dryRunOrigin'
+export * from './getFailureInfo'
 export * from './traverseXcmHops'
 export * from './wrapTxBypass'
