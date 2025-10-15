@@ -60,6 +60,13 @@ export class RouterController {
     return this.routerService.getBestAmountOut(params);
   }
 
+  @Post('dry-run')
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
+  dryRun(@Body() params: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.ROUTER_DRY_RUN, req, params);
+    return this.routerService.dryRun(params);
+  }
+
   @Post('transferable-amount')
   @UsePipes(new ZodValidationPipe(RouterDtoSchema))
   getTransferableAmount(@Body() params: RouterDto, @Req() req: Request) {

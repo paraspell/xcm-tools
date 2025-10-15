@@ -46,6 +46,7 @@ export enum EventName {
   GET_ROUTER_XCM_FEES = 'Get router xcm fees',
   GET_BEST_AMOUNT_OUT = 'Get Best Amount Out',
   GET_ROUTER_TRANSFERABLE_AMOUNT = 'Get Router Transferable Amount',
+  ROUTER_DRY_RUN = 'Router Dry Run',
   GET_EXCHANGE_PAIRS = 'Get Exchange Pairs',
   CLAIM_ASSETS = 'Claim assets',
   GET_TRANSFER_INFO = 'Get Transfer Info',

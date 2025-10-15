@@ -1,8 +1,6 @@
 import type { TGetXcmFeeResult, TXcmFeeDetail, TXcmFeeHopInfo } from '@paraspell/sdk';
 
-type TWithExchange<T> = T & {
-  isExchange?: boolean;
-};
+import type { TWithExchange } from './TRouter';
 
 export type TRouterXcmFeeHopInfo = TWithExchange<TXcmFeeHopInfo>;
 

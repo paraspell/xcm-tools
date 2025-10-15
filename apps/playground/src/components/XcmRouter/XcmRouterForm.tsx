@@ -29,6 +29,7 @@ import {
   IconChevronDown,
   IconCoinFilled,
   IconInfoCircle,
+  IconLocationCheck,
 } from '@tabler/icons-react';
 import { ethers } from 'ethers';
 import type { PolkadotSigner } from 'polkadot-api';
@@ -390,6 +391,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   };
 
+  const onSubmitDryRun = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'dryRun');
+    }
+  };
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -566,6 +574,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
                     onClick={onSubmitGetTransferableAmount}
                   >
                     Get transferable amount
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconLocationCheck size={16} />}
+                    onClick={onSubmitDryRun}
+                  >
+                    Dry run
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

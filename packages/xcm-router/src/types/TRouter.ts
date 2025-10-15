@@ -233,12 +233,16 @@ export type TSwapTransaction = TBaseTransaction & {
   type: 'SWAP';
   amountOut: bigint;
 };
-
-export type TNonSwapTransaction = TBaseTransaction & {
-  type: 'TRANSFER' | 'SWAP_AND_TRANSFER';
+type TTransferTransaction = TBaseTransaction & {
+  type: 'TRANSFER';
 };
 
-export type TTransaction = TSwapTransaction | TNonSwapTransaction;
+export type TSwapAndTransferTransaction = TBaseTransaction & {
+  type: 'SWAP_AND_TRANSFER';
+  amountOut: bigint;
+};
+
+export type TTransaction = TSwapTransaction | TSwapAndTransferTransaction | TTransferTransaction;
 
 export type TRouterPlan = TTransaction[];
 
@@ -274,4 +278,8 @@ export type TBuildFromExchangeTxOptions = {
   amount: string;
   senderAddress: string;
   builderOptions?: TRouterBuilderOptions;
+};
+
+export type TWithExchange<T> = T & {
+  isExchange?: boolean;
 };

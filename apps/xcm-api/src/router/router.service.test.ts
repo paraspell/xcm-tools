@@ -6,7 +6,10 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TChain, TLocation } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
+import type {
+  TRouterDryRunResult,
+  TRouterXcmFeeResult,
+} from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -46,6 +49,11 @@ const serializedExtrinsics = [
   },
 ];
 
+const dryRunResponse = {
+  origin: { chain: 'Astar' },
+  hops: [],
+} as unknown as TRouterDryRunResult;
+
 const builderMock = {
   from: vi.fn().mockReturnThis(),
   exchange: vi.fn().mockReturnThis(),
@@ -61,6 +69,7 @@ const builderMock = {
   getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
   getXcmFees: vi.fn().mockResolvedValue({} as TRouterXcmFeeResult),
   getTransferableAmount: vi.fn().mockResolvedValue(123n),
+  dryRun: vi.fn().mockResolvedValue(dryRunResponse),
 };
 
 vi.mock('@paraspell/xcm-router', async () => {
@@ -108,6 +117,82 @@ describe('RouterService', () => {
     }).compile();
 
     service = module.get<RouterService>(RouterService);
+  });
+
+  describe('dryRun', () => {
+    it('should return dry run result', async () => {
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.dryRun(options);
+
+      expect(result).toBe(dryRunResponse);
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+      expect(builderMock.dryRun).toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid sender address', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        senderAddress: invalidChain,
+      };
+
+      await expect(service.dryRun(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid from chain', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        from: invalidChain as TChain,
+      };
+
+      await expect(service.dryRun(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerError when unknown error occurs', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        dryRun: vi.fn().mockImplementation(() => {
+          throw new Error('Unknown error');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.dryRun(options)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw BadRequestException when InvalidCurrencyError occurs', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        dryRun: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.dryRun(options)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
   });
 
   it('should be defined', () => {

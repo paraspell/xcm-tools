@@ -1,7 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TLocation } from '@paraspell/sdk';
-import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
+import type {
+  TRouterDryRunResult,
+  TRouterXcmFeeResult,
+} from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -165,6 +168,33 @@ describe('RouterController', () => {
         .mockResolvedValue(mockResult);
 
       const result = await controller.getTransferableAmount(
+        queryParams,
+        {} as unknown as Request,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
+
+  describe('dryRun', () => {
+    it('should call dryRun service method with correct parameters and return result', async () => {
+      const queryParams: RouterDto = {
+        from: 'Astar',
+        exchange: 'AcalaDex',
+        to: 'Moonbeam',
+        currencyFrom: { symbol: 'ASTR' },
+        currencyTo: { symbol: 'GLMR' },
+        amount: '1000000000000000000',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      };
+
+      const mockResult = {} as TRouterDryRunResult;
+
+      const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
+
+      const result = await controller.dryRun(
         queryParams,
         {} as unknown as Request,
       );
