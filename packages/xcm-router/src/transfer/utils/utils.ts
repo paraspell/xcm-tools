@@ -16,7 +16,7 @@ export const getCurrencySelection = (chain: TSubstrateChain, asset: TAssetInfo):
   return { symbol: asset.symbol };
 };
 
-const createToExchangeBuilder = ({
+export const createToExchangeBuilder = ({
   origin: { chain: from, assetFrom },
   exchange: { baseChain },
   senderAddress,

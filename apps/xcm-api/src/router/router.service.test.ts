@@ -60,6 +60,7 @@ const builderMock = {
   buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
   getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
   getXcmFees: vi.fn().mockResolvedValue({} as TRouterXcmFeeResult),
+  getTransferableAmount: vi.fn().mockResolvedValue(123n),
 };
 
 vi.mock('@paraspell/xcm-router', async () => {
@@ -361,6 +362,52 @@ describe('RouterService', () => {
 
       await expect(service.getXcmFees(options)).rejects.toThrow(
         BadRequestException,
+      );
+    });
+  });
+
+  describe('getTransferableAmount', () => {
+    it('should return transferable amount', async () => {
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.getTransferableAmount(options);
+
+      expect(result).toBe(123n);
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+      expect(builderMock.getTransferableAmount).toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid sender address', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        senderAddress: invalidChain,
+      };
+
+      await expect(
+        service.getTransferableAmount(modifiedOptions),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerError when unknown error occurs in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getTransferableAmount: vi.fn().mockImplementation(() => {
+          throw new Error('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getTransferableAmount(options)).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });

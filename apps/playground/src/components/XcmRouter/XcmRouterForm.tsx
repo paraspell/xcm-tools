@@ -25,6 +25,7 @@ import type { TExchangeChain, TExchangeInput } from '@paraspell/xcm-router';
 import { EXCHANGE_CHAINS } from '@paraspell/xcm-router';
 import {
   Icon123,
+  IconArrowBarUp,
   IconChevronDown,
   IconCoinFilled,
   IconInfoCircle,
@@ -382,6 +383,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   };
 
+  const onSubmitGetTransferableAmount = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'getTransferableAmount');
+    }
+  };
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -551,6 +559,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
                     onClick={onSubmitGetXcmFee}
                   >
                     Get XCM fees
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconArrowBarUp size={16} />}
+                    onClick={onSubmitGetTransferableAmount}
+                  >
+                    Get transferable amount
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

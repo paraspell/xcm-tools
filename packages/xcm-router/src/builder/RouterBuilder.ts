@@ -1,7 +1,13 @@
 import type { TChain, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import { buildApiTransactions, getBestAmountOut, getXcmFees, transfer } from '../transfer';
+import {
+  buildApiTransactions,
+  getBestAmountOut,
+  getTransferableAmount,
+  getXcmFees,
+  transfer,
+} from '../transfer';
 import type {
   TBuildTransactionsOptions,
   TExchangeInput,
@@ -192,6 +198,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
     this: RouterBuilderCore<TBuildTransactionsOptions>,
   ): Promise<TRouterXcmFeeResult> {
     return getXcmFees(this._options, this._builderOptions);
+  }
+
+  async getTransferableAmount(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<bigint> {
+    return getTransferableAmount(this._options, this._builderOptions);
   }
 
   /**
