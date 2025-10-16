@@ -212,6 +212,60 @@ const fees = await RouterBuilder(/*builder config - optional (More info in docs)
       .getXcmFees();
 ```
 
+## Dryrun router call
+
+You can find out whether router dryrun call will execute correctly (works for 2 signature transfers also).
+
+```ts
+const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
+      .from(from) //Optional parameter based on scenario
+      .exchange(exchange) //Optional parameter based on scenario
+      .to(to) //Optional parameter based on scenario
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .dryRun();
+```
+
+## Get minimal transferable amount
+
+You can find out minimal amount you need to transfer in order to get the currency swapped (Does not guarantee it will be enough after swap).
+
+```ts
+const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
+      .from(from) //Optional parameter based on scenario
+      .exchange(exchange) //Optional parameter based on scenario
+      .to(to) //Optional parameter based on scenario
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .getMinTransferableAmount();
+```
+
+## Get maximal transferable amount
+
+You can find out maximal amount of specific currency you can transfer while staying above existential deposit and leaving enough to cover execution fees on origin (If needed).
+
+```ts
+const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
+      .from(from) //Optional parameter based on scenario
+      .exchange(exchange) //Optional parameter based on scenario
+      .to(to) //Optional parameter based on scenario
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .getTransferableAmount();
+```
+
 ## Helpful functions
 
 Below, you can find helpful functions that are exported from XCM Router to help you enhance front end usability of XCM Router.

@@ -177,6 +177,35 @@ describe('RouterController', () => {
     });
   });
 
+  describe('getMinTransferableAmount', () => {
+    it('should call getMinTransferableAmount service method with correct parameters and return result', async () => {
+      const queryParams: RouterDto = {
+        from: 'Astar',
+        exchange: 'AcalaDex',
+        to: 'Moonbeam',
+        currencyFrom: { symbol: 'ASTR' },
+        currencyTo: { symbol: 'GLMR' },
+        amount: '1000000000000000000',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      };
+
+      const mockResult = 0n;
+
+      const spy = vi
+        .spyOn(service, 'getMinTransferableAmount')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getMinTransferableAmount(
+        queryParams,
+        {} as unknown as Request,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
+
   describe('dryRun', () => {
     it('should call dryRun service method with correct parameters and return result', async () => {
       const queryParams: RouterDto = {

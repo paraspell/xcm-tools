@@ -69,6 +69,7 @@ const builderMock = {
   getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
   getXcmFees: vi.fn().mockResolvedValue({} as TRouterXcmFeeResult),
   getTransferableAmount: vi.fn().mockResolvedValue(123n),
+  getMinTransferableAmount: vi.fn().mockResolvedValue(0n),
   dryRun: vi.fn().mockResolvedValue(dryRunResponse),
 };
 
@@ -492,6 +493,52 @@ describe('RouterService', () => {
       );
 
       await expect(service.getTransferableAmount(options)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+  });
+
+  describe('getMinTransferableAmount', () => {
+    it('should return min transferable amount', async () => {
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.getMinTransferableAmount(options);
+
+      expect(result).toBe(0n);
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+      expect(builderMock.getMinTransferableAmount).toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid sender address', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        senderAddress: invalidChain,
+      };
+
+      await expect(
+        service.getMinTransferableAmount(modifiedOptions),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerError when unknown error occurs in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getMinTransferableAmount: vi.fn().mockImplementation(() => {
+          throw new Error('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getMinTransferableAmount(options)).rejects.toThrow(
         InternalServerErrorException,
       );
     });

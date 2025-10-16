@@ -74,6 +74,17 @@ export class RouterController {
     return this.routerService.getTransferableAmount(params);
   }
 
+  @Post('min-transferable-amount')
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
+  getMinTransferableAmount(@Body() params: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(
+      EventName.GET_ROUTER_MIN_TRANSFERABLE_AMOUNT,
+      req,
+      params,
+    );
+    return this.routerService.getMinTransferableAmount(params);
+  }
+
   @Post('pairs')
   @UsePipes(new ZodValidationPipe(ExchangePairsSchema))
   getExchangePairs(

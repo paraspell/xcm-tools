@@ -5,6 +5,7 @@ import {
   buildApiTransactions,
   dryRunRouter,
   getBestAmountOut,
+  getMinTransferableAmount,
   getTransferableAmount,
   getXcmFees,
   transfer,
@@ -204,6 +205,12 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
 
   async getTransferableAmount(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<bigint> {
     return getTransferableAmount(this._options, this._builderOptions);
+  }
+
+  async getMinTransferableAmount(
+    this: RouterBuilderCore<TBuildTransactionsOptions>,
+  ): Promise<bigint> {
+    return getMinTransferableAmount(this._options, this._builderOptions);
   }
 
   /**
