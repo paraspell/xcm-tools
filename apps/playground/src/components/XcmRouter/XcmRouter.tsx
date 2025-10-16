@@ -445,6 +445,92 @@ export const XcmRouter = () => {
     }
   };
 
+  const submitGetMinTransferableAmount = async (
+    formValues: TRouterFormValuesTransformed,
+    exchange: TExchangeChain | undefined,
+    senderAddress: string,
+  ) => {
+    const {
+      useApi,
+      from,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      recipientAddress,
+      evmInjectorAddress: evmSenderAddress,
+      slippagePct,
+    } = formValues;
+
+    setLoading(true);
+
+    try {
+      let result;
+      if (useApi) {
+        result = await fetchFromApi(
+          {
+            ...formValues,
+            exchange,
+            senderAddress,
+            options: builderOptions,
+          },
+          '/router/min-transferable-amount',
+          'POST',
+          true,
+        );
+      } else {
+        result = await RouterBuilder(builderOptions)
+          .from(from)
+          .exchange(exchange)
+          .to(to)
+          .currencyFrom(
+            determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+          )
+          .currencyTo(
+            determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+          )
+          .amount(amount)
+          .senderAddress(senderAddress)
+          .recipientAddress(recipientAddress)
+          .evmSenderAddress(evmSenderAddress)
+          .slippagePct(slippagePct)
+          .getMinTransferableAmount();
+      }
+
+      setOutput(JSON.stringify(result, replaceBigInt, 2));
+      openOutputAlert();
+      closeAlert();
+      showSuccessNotification(
+        undefined,
+        'Success',
+        'Min transferable amount calculated',
+      );
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        showErrorNotification(e.message);
+        setError(e);
+        openAlert();
+        setShowStepper(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitDryRun = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeChain | undefined,
@@ -612,6 +698,15 @@ export const XcmRouter = () => {
 
     if (submitType === 'getBestAmountOut') {
       await submitGetBestAmountOut(formValues, exchange);
+      return;
+    }
+
+    if (submitType === 'getMinTransferableAmount') {
+      await submitGetMinTransferableAmount(
+        formValues,
+        exchange,
+        selectedAccount.address,
+      );
       return;
     }
 
