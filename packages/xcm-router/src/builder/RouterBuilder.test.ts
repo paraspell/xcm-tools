@@ -1,7 +1,13 @@
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { buildApiTransactions, getBestAmountOut, getXcmFees, transfer } from '../transfer';
+import {
+  buildApiTransactions,
+  getBestAmountOut,
+  getMinTransferableAmount,
+  getXcmFees,
+  transfer,
+} from '../transfer';
 import type { TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
@@ -9,6 +15,7 @@ vi.mock('../transfer', () => ({
   buildApiTransactions: vi.fn(),
   transfer: vi.fn(),
   getBestAmountOut: vi.fn(),
+  getMinTransferableAmount: vi.fn(),
   getXcmFees: vi.fn(),
 }));
 
@@ -42,6 +49,7 @@ describe('Builder', () => {
   let transferSpy: MockInstance;
   let buildApiTransactionsSpy: MockInstance;
   let getBestAmountOutSpy: MockInstance;
+  let getMinTransferableAmountSpy: MockInstance;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -50,6 +58,7 @@ describe('Builder', () => {
     getBestAmountOutSpy = vi
       .mocked(getBestAmountOut)
       .mockResolvedValue({ amountOut: 900000000n, exchange: 'AcalaDex' });
+    getMinTransferableAmountSpy = vi.mocked(getMinTransferableAmount).mockResolvedValue(123n);
   });
 
   it('should construct transactions using RouterBuilder', async () => {
@@ -191,6 +200,36 @@ describe('Builder', () => {
       .getXcmFees();
 
     expect(getXcmFees).toHaveBeenCalledWith(
+      {
+        from,
+        exchange,
+        to,
+        currencyFrom,
+        currencyTo,
+        amount,
+        senderAddress,
+        recipientAddress,
+        slippagePct,
+      },
+      undefined,
+    );
+  });
+
+  it('should get min transferable amount', async () => {
+    const result = await RouterBuilder()
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .getMinTransferableAmount();
+
+    expect(result).toBe(123n);
+    expect(getMinTransferableAmountSpy).toHaveBeenCalledWith(
       {
         from,
         exchange,
