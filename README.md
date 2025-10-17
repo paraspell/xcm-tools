@@ -91,8 +91,6 @@ Afterwards, you should be able to use any of the following commands (from reposi
 
 - Run asset update script for XCM SDK from the root using `pnpm run:updateAssets`
 
-- Run the existential deposit update script for XCM SDK from the root using `run:updateEds`
-
 - Run the pallet update script for XCM SDK from the root using `pnpm run:updatePallets`
 
 - Run asset update script for XCM Router from the root using `pnpm run:updateRouterAssets`
