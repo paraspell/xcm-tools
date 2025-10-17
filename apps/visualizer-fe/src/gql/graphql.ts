@@ -1,25 +1,21 @@
 /* eslint-disable */
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
+export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-  [_ in K]?: never;
-};
-export type Incremental<T> =
-  | T
-  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: { input: any; output: any };
+  Timestamp: { input: any; output: any; }
 };
 
 export type AccountXcmCountType = {
@@ -105,6 +101,7 @@ export type Query = {
   totalMessageCounts: Array<MessageCount>;
 };
 
+
 export type QueryAccountCountsArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
@@ -113,6 +110,7 @@ export type QueryAccountCountsArgs = {
   threshold: Scalars['Int']['input'];
 };
 
+
 export type QueryAssetCountsBySymbolArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
@@ -120,21 +118,25 @@ export type QueryAssetCountsBySymbolArgs = {
   startTime: Scalars['Timestamp']['input'];
 };
 
+
 export type QueryChannelArgs = {
   ecosystem: Scalars['String']['input'];
   recipient: Scalars['Int']['input'];
   sender: Scalars['Int']['input'];
 };
 
+
 export type QueryChannelsArgs = {
   ecosystem: Scalars['String']['input'];
 };
+
 
 export type QueryChannelsInIntervalArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
   startTime: Scalars['Timestamp']['input'];
 };
+
 
 export type QueryMessageCountsArgs = {
   ecosystem: Scalars['String']['input'];
@@ -143,12 +145,14 @@ export type QueryMessageCountsArgs = {
   startTime: Scalars['Timestamp']['input'];
 };
 
+
 export type QueryMessageCountsByDayArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
   paraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   startTime: Scalars['Timestamp']['input'];
 };
+
 
 export type QueryTotalMessageCountsArgs = {
   countBy?: CountOption;
@@ -161,18 +165,8 @@ export type ChannelsQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
 }>;
 
-export type ChannelsQuery = {
-  __typename?: 'Query';
-  channels: Array<{
-    __typename?: 'Channel';
-    id: number;
-    ecosystem: string;
-    sender: number;
-    recipient: number;
-    transfer_count: number;
-    message_count: number;
-  }>;
-};
+
+export type ChannelsQuery = { __typename?: 'Query', channels: Array<{ __typename?: 'Channel', id: number, ecosystem: string, sender: number, recipient: number, transfer_count: number, message_count: number }> };
 
 export type ChannelsInIntervalQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -180,17 +174,8 @@ export type ChannelsInIntervalQueryVariables = Exact<{
   endTime: Scalars['Timestamp']['input'];
 }>;
 
-export type ChannelsInIntervalQuery = {
-  __typename?: 'Query';
-  channelsInInterval: Array<{
-    __typename?: 'Channel';
-    id: number;
-    ecosystem: string;
-    sender: number;
-    recipient: number;
-    message_count: number;
-  }>;
-};
+
+export type ChannelsInIntervalQuery = { __typename?: 'Query', channelsInInterval: Array<{ __typename?: 'Channel', id: number, ecosystem: string, sender: number, recipient: number, message_count: number }> };
 
 export type ChannelQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -198,18 +183,8 @@ export type ChannelQueryVariables = Exact<{
   recipient: Scalars['Int']['input'];
 }>;
 
-export type ChannelQuery = {
-  __typename?: 'Query';
-  channel: {
-    __typename?: 'Channel';
-    id: number;
-    ecosystem: string;
-    sender: number;
-    recipient: number;
-    message_count: number;
-    active_at: number;
-  };
-};
+
+export type ChannelQuery = { __typename?: 'Query', channel: { __typename?: 'Channel', id: number, ecosystem: string, sender: number, recipient: number, message_count: number, active_at: number } };
 
 export type MessageCountsQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -218,16 +193,8 @@ export type MessageCountsQueryVariables = Exact<{
   endTime: Scalars['Timestamp']['input'];
 }>;
 
-export type MessageCountsQuery = {
-  __typename?: 'Query';
-  messageCounts: Array<{
-    __typename?: 'MessageCountByStatus';
-    ecosystem: string;
-    paraId?: number | null;
-    success: number;
-    failed: number;
-  }>;
-};
+
+export type MessageCountsQuery = { __typename?: 'Query', messageCounts: Array<{ __typename?: 'MessageCountByStatus', ecosystem: string, paraId?: number | null, success: number, failed: number }> };
 
 export type MessageCountsByDayQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -236,18 +203,8 @@ export type MessageCountsByDayQueryVariables = Exact<{
   endTime: Scalars['Timestamp']['input'];
 }>;
 
-export type MessageCountsByDayQuery = {
-  __typename?: 'Query';
-  messageCountsByDay: Array<{
-    __typename?: 'MessageCountByDay';
-    ecosystem: string;
-    paraId?: number | null;
-    date: string;
-    messageCount: number;
-    messageCountSuccess: number;
-    messageCountFailed: number;
-  }>;
-};
+
+export type MessageCountsByDayQuery = { __typename?: 'Query', messageCountsByDay: Array<{ __typename?: 'MessageCountByDay', ecosystem: string, paraId?: number | null, date: string, messageCount: number, messageCountSuccess: number, messageCountFailed: number }> };
 
 export type AssetCountsBySymbolQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -256,17 +213,8 @@ export type AssetCountsBySymbolQueryVariables = Exact<{
   endTime: Scalars['Timestamp']['input'];
 }>;
 
-export type AssetCountsBySymbolQuery = {
-  __typename?: 'Query';
-  assetCountsBySymbol: Array<{
-    __typename?: 'AssetCount';
-    ecosystem: string;
-    paraId?: number | null;
-    symbol: string;
-    count: number;
-    amount: string;
-  }>;
-};
+
+export type AssetCountsBySymbolQuery = { __typename?: 'Query', assetCountsBySymbol: Array<{ __typename?: 'AssetCount', ecosystem: string, paraId?: number | null, symbol: string, count: number, amount: string }> };
 
 export type AccountCountsQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -276,15 +224,8 @@ export type AccountCountsQueryVariables = Exact<{
   endTime: Scalars['Timestamp']['input'];
 }>;
 
-export type AccountCountsQuery = {
-  __typename?: 'Query';
-  accountCounts: Array<{
-    __typename?: 'AccountXcmCountType';
-    ecosystem: string;
-    id: string;
-    count: number;
-  }>;
-};
+
+export type AccountCountsQuery = { __typename?: 'Query', accountCounts: Array<{ __typename?: 'AccountXcmCountType', ecosystem: string, id: string, count: number }> };
 
 export type TotalMessageCountsQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
@@ -293,651 +234,15 @@ export type TotalMessageCountsQueryVariables = Exact<{
   countBy: CountOption;
 }>;
 
-export type TotalMessageCountsQuery = {
-  __typename?: 'Query';
-  totalMessageCounts: Array<{
-    __typename?: 'MessageCount';
-    ecosystem: string;
-    paraId: number;
-    totalCount: number;
-  }>;
-};
 
-export const ChannelsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'channels' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'channels' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'transfer_count' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<ChannelsQuery, ChannelsQueryVariables>;
-export const ChannelsInIntervalDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'channelsInInterval' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'channelsInInterval' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<ChannelsInIntervalQuery, ChannelsInIntervalQueryVariables>;
-export const ChannelDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'channel' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'recipient' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'channel' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'sender' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'recipient' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'recipient' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'active_at' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<ChannelQuery, ChannelQueryVariables>;
-export const MessageCountsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'messageCounts' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
-          type: {
-            kind: 'ListType',
-            type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-            }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'messageCounts' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'success' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'failed' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<MessageCountsQuery, MessageCountsQueryVariables>;
-export const MessageCountsByDayDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'messageCountsByDay' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
-          type: {
-            kind: 'ListType',
-            type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-            }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'messageCountsByDay' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'date' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'messageCount' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'messageCountSuccess' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'messageCountFailed' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<MessageCountsByDayQuery, MessageCountsByDayQueryVariables>;
-export const AssetCountsBySymbolDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'assetCountsBySymbol' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
-          type: {
-            kind: 'ListType',
-            type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-            }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'assetCountsBySymbol' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'symbol' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'count' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'amount' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<AssetCountsBySymbolQuery, AssetCountsBySymbolQueryVariables>;
-export const AccountCountsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'accountCounts' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'threshold' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
-          type: {
-            kind: 'ListType',
-            type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
-            }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'accountCounts' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'threshold' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'threshold' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'count' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<AccountCountsQuery, AccountCountsQueryVariables>;
-export const TotalMessageCountsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'totalMessageCounts' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Timestamp' } }
-          }
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'countBy' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'CountOption' } }
-          }
-        }
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'totalMessageCounts' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'ecosystem' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'ecosystem' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'startTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'startTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'endTime' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'endTime' } }
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'countBy' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'countBy' } }
-              }
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'totalCount' } }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
-} as unknown as DocumentNode<TotalMessageCountsQuery, TotalMessageCountsQueryVariables>;
+export type TotalMessageCountsQuery = { __typename?: 'Query', totalMessageCounts: Array<{ __typename?: 'MessageCount', ecosystem: string, paraId: number, totalCount: number }> };
+
+
+export const ChannelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"channels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"sender"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"transfer_count"}},{"kind":"Field","name":{"kind":"Name","value":"message_count"}}]}}]}}]} as unknown as DocumentNode<ChannelsQuery, ChannelsQueryVariables>;
+export const ChannelsInIntervalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"channelsInInterval"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channelsInInterval"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"sender"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"message_count"}}]}}]}}]} as unknown as DocumentNode<ChannelsInIntervalQuery, ChannelsInIntervalQueryVariables>;
+export const ChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"channel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sender"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recipient"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"sender"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sender"}}},{"kind":"Argument","name":{"kind":"Name","value":"recipient"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recipient"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"sender"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}},{"kind":"Field","name":{"kind":"Name","value":"message_count"}},{"kind":"Field","name":{"kind":"Name","value":"active_at"}}]}}]}}]} as unknown as DocumentNode<ChannelQuery, ChannelQueryVariables>;
+export const MessageCountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"messageCounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageCounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"paraIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"paraId"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"failed"}}]}}]}}]} as unknown as DocumentNode<MessageCountsQuery, MessageCountsQueryVariables>;
+export const MessageCountsByDayDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"messageCountsByDay"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageCountsByDay"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"paraIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"paraId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"messageCount"}},{"kind":"Field","name":{"kind":"Name","value":"messageCountSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"messageCountFailed"}}]}}]}}]} as unknown as DocumentNode<MessageCountsByDayQuery, MessageCountsByDayQueryVariables>;
+export const AssetCountsBySymbolDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"assetCountsBySymbol"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assetCountsBySymbol"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"paraIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"paraId"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}}]}}]} as unknown as DocumentNode<AssetCountsBySymbolQuery, AssetCountsBySymbolQueryVariables>;
+export const AccountCountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"accountCounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threshold"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountCounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"threshold"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threshold"}}},{"kind":"Argument","name":{"kind":"Name","value":"paraIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paraIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]} as unknown as DocumentNode<AccountCountsQuery, AccountCountsQueryVariables>;
+export const TotalMessageCountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"totalMessageCounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Timestamp"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"countBy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CountOption"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalMessageCounts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ecosystem"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ecosystem"}}},{"kind":"Argument","name":{"kind":"Name","value":"startTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"endTime"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"countBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"countBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ecosystem"}},{"kind":"Field","name":{"kind":"Name","value":"paraId"}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<TotalMessageCountsQuery, TotalMessageCountsQueryVariables>;

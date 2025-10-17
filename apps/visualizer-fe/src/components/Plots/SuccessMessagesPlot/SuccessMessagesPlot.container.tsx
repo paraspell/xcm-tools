@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { Center, Group, Loader, Stack, Title } from '@mantine/core';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

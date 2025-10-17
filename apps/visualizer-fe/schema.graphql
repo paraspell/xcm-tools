@@ -1,0 +1,83 @@
+schema {
+  query: Query
+}
+
+type AccountXcmCountType {
+  count: Int!
+  ecosystem: String!
+  id: String!
+}
+
+type Asset {
+  amount: String!
+  asset_module: String!
+  decimals: Int!
+  enum_key: String!
+  symbol: String!
+}
+
+type AssetCount {
+  amount: String!
+  count: Int!
+  ecosystem: String!
+  paraId: Int
+  symbol: String!
+}
+
+type Channel {
+  active_at: Int!
+  ecosystem: String!
+  id: Int!
+  message_count: Int!
+  proposed_max_capacity: Int!
+  proposed_max_message_size: Int!
+  recipient: Int!
+  sender: Int!
+  status: String!
+  transfer_count: Int!
+}
+
+"""Option to count messages by origin, destination, or both"""
+enum CountOption {
+  BOTH
+  DESTINATION
+  ORIGIN
+}
+
+type MessageCount {
+  ecosystem: String!
+  paraId: Int!
+  totalCount: Int!
+}
+
+type MessageCountByDay {
+  date: String!
+  ecosystem: String!
+  messageCount: Float!
+  messageCountFailed: Float!
+  messageCountSuccess: Float!
+  paraId: Int
+}
+
+type MessageCountByStatus {
+  ecosystem: String!
+  failed: Int!
+  paraId: Int
+  success: Int!
+}
+
+type Query {
+  accountCounts(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!, threshold: Int!): [AccountXcmCountType!]!
+  assetCountsBySymbol(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [AssetCount!]!
+  channel(ecosystem: String!, recipient: Int!, sender: Int!): Channel!
+  channels(ecosystem: String!): [Channel!]!
+  channelsInInterval(ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [Channel!]!
+  messageCounts(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [MessageCountByStatus!]!
+  messageCountsByDay(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [MessageCountByDay!]!
+  totalMessageCounts(countBy: CountOption! = ORIGIN, ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [MessageCount!]!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
