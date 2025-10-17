@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.11.0...sdk-core-v11.12.0) (2025-10-17)
+
+
+### Features
+
+* **xcm-router:** Add dryRun function to RouterBuilder 🪄 ([1f14dc9](https://github.com/paraspell/xcm-tools/commit/1f14dc94cb40edce7ade9faf157ddcf6cdbd5925))
+
 ## [11.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.10.0...sdk-core-v11.11.0) (2025-10-14)
 
 
