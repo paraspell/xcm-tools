@@ -500,78 +500,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "wstETH",
-        "decimals": 18,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "tBTC",
-        "decimals": 18,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "PEPE",
-        "decimals": 18,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
-                }
-              }
-            ]
-          }
-        }
       }
     ],
     "pairs": []
@@ -687,6 +615,26 @@
               {
                 "GlobalConsensus": {
                   "polkadot": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "vKSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0104000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
@@ -1480,11 +1428,6 @@
         }
       },
       {
-        "symbol": "4-Pool",
-        "decimals": 18,
-        "assetId": "100"
-      },
-      {
         "symbol": "KSM",
         "decimals": 12,
         "assetId": "1000771",
@@ -1495,6 +1438,36 @@
               {
                 "GlobalConsensus": {
                   "kusama": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "4-Pool",
+        "decimals": 18,
+        "assetId": "100"
+      },
+      {
+        "symbol": "PAXG",
+        "decimals": 18,
+        "assetId": "39",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
                 }
               }
             ]
