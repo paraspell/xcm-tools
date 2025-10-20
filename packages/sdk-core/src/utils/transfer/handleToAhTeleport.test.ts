@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InvalidParameterError } from '../../errors'
 import { dryRunInternal, getXcmFeeInternal } from '../../transfer'
 import type { TDryRunResult, TGetXcmFeeResult, TPolkadotXCMTransferOptions } from '../../types'
-import { padFeeBy } from '../fees/padFee'
+import { padValueBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 import { handleToAhTeleport } from './handleToAhTeleport'
 
@@ -101,7 +101,7 @@ describe('handleToAhTeleport', () => {
     const result = await handleToAhTeleport(mockOrigin, mockInput, defaultTx)
 
     expect(result).toBe(finalTx)
-    expect(padFeeBy).toHaveBeenCalledWith(200n, 20)
-    expect(padFeeBy).toHaveBeenCalledWith(100n, 20)
+    expect(padValueBy).toHaveBeenCalledWith(200n, 20)
+    expect(padValueBy).toHaveBeenCalledWith(100n, 20)
   })
 })

@@ -2,14 +2,14 @@ import {
   AmountTooLowError,
   getNativeAssetSymbol,
   InvalidParameterError,
+  padValueBy,
   Parents,
   transform,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 
 import { getExchangeAsset } from '../../assets';
-import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import type {
   TDexConfig,
   TGetAmountOutOptions,
@@ -24,7 +24,7 @@ class AssetHubExchange extends ExchangeChain {
   async swapCurrency(
     _api: ApiPromise,
     options: TSwapOptions,
-    toDestTxFee: BigNumber,
+    toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
 
@@ -36,15 +36,10 @@ class AssetHubExchange extends ExchangeChain {
       throw new InvalidParameterError('Asset to location not found');
     }
 
-    const amountIn = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-    const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee)).decimalPlaces(0);
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    const {
-      amountOut: quotedAmountOut,
-      usedFromML,
-      usedToML,
-    } = await getQuotedAmount(
+    const { amountOut, usedFromML, usedToML } = await getQuotedAmount(
       papiApi,
       this.chain,
       assetFrom.location,
@@ -52,14 +47,13 @@ class AssetHubExchange extends ExchangeChain {
       amountWithoutFee,
     );
 
-    const amountOutBN = BigNumber(quotedAmountOut.toString()).decimalPlaces(0);
+    const slippageMultiplier = Number(slippagePct);
 
-    const slippageMultiplier = BigNumber(1).minus(BigNumber(slippagePct).dividedBy(100));
-    const minAmountOut = BigInt(amountOutBN.multipliedBy(slippageMultiplier).toFixed(0));
+    const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
     const tx = papiApi.getUnsafeApi().tx.AssetConversion.swap_exact_tokens_for_tokens({
       path: [transform(usedFromML), transform(usedToML)],
-      amount_in: BigInt(amountWithoutFee.toString()),
+      amount_in: amountWithoutFee,
       amount_out_min: minAmountOut,
       send_to: senderAddress,
       keep_alive: assetFrom.assetId === undefined,
@@ -82,27 +76,20 @@ class AssetHubExchange extends ExchangeChain {
             true,
           ).then((res) => res.amountOut);
 
-    const toDestFeeCurrencyToBN = BigNumber(toDestFeeCurrencyTo.toString());
-    const quotedAmountOutBN = BigNumber(quotedAmountOut.toString());
+    const finalAmountOut = amountOut - padValueBy(toDestFeeCurrencyTo, FEE_BUFFER_PCT);
 
-    const finalAmountOut = quotedAmountOutBN
-      .minus(toDestFeeCurrencyToBN.multipliedBy(FEE_BUFFER))
-      .decimalPlaces(0);
-
-    if (finalAmountOut.isNegative()) {
-      throw new AmountTooLowError();
-    }
+    if (finalAmountOut <= 0n) throw new AmountTooLowError();
 
     return {
       tx,
-      amountOut: finalAmountOut.toString(),
+      amountOut: finalAmountOut,
     };
   }
 
   async handleMultiSwap(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult> {
     const { assetFrom, assetTo } = options;
 
@@ -131,16 +118,16 @@ class AssetHubExchange extends ExchangeChain {
     } else {
       // Multi-hop: AssetA -> Native -> AssetB
       const optionsHop1: TSwapOptions = { ...options, assetTo: nativeAsset };
-      const resultHop1 = await this.swapCurrency(api, optionsHop1, BigNumber(0));
+      const resultHop1 = await this.swapCurrency(api, optionsHop1, 0n);
 
-      if (BigNumber(resultHop1.amountOut).isLessThanOrEqualTo(0)) {
+      if (resultHop1.amountOut <= 0n) {
         throw new AmountTooLowError(
           `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
         );
       }
 
-      const hop1Received = BigNumber(resultHop1.amountOut);
-      const assumedInputForHop2 = hop1Received.multipliedBy(0.98).decimalPlaces(0);
+      const hop1Received = resultHop1.amountOut;
+      const assumedInputForHop2 = padValueBy(hop1Received, -2);
 
       const optionsHop2: TSwapOptions = {
         papiApi: options.papiApi,
@@ -149,13 +136,13 @@ class AssetHubExchange extends ExchangeChain {
         origin: undefined,
         assetFrom: nativeAsset,
         assetTo: assetTo,
-        amount: assumedInputForHop2.toString(),
+        amount: assumedInputForHop2,
         feeCalcAddress: options.feeCalcAddress,
       };
 
       const resultHop2 = await this.swapCurrency(api, optionsHop2, toDestTransactionFee);
 
-      if (BigNumber(resultHop2.amountOut).isLessThanOrEqualTo(0)) {
+      if (resultHop2.amountOut <= 0n) {
         throw new AmountTooLowError(
           `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
         );
@@ -194,9 +181,8 @@ class AssetHubExchange extends ExchangeChain {
       throw new InvalidParameterError('Cannot swap native asset to itself.');
     }
 
-    const amountIn = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-    const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee));
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
     if (isAssetFromNative || isAssetToNative) {
       const { amountOut } = await getQuotedAmount(
@@ -221,14 +207,13 @@ class AssetHubExchange extends ExchangeChain {
         amountWithoutFee,
       );
 
-      if (BigNumber(hop1AmountOut.toString()).isLessThanOrEqualTo(0)) {
+      if (hop1AmountOut <= 0n) {
         throw new AmountTooLowError(
           `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
         );
       }
 
-      const hop1Received = BigNumber(hop1AmountOut.toString());
-      const assumedInputForHop2 = hop1Received.multipliedBy(0.98).decimalPlaces(0);
+      const assumedInputForHop2 = padValueBy(hop1AmountOut, -2);
 
       const { amountOut: finalAmountOut } = await getQuotedAmount(
         papiApi,
@@ -238,7 +223,7 @@ class AssetHubExchange extends ExchangeChain {
         assumedInputForHop2,
       );
 
-      if (BigNumber(finalAmountOut.toString()).isLessThanOrEqualTo(0)) {
+      if (finalAmountOut <= 0n) {
         throw new AmountTooLowError(
           `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
         );

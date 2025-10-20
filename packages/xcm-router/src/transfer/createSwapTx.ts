@@ -1,13 +1,13 @@
-import BigNumber from 'bignumber.js';
-
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified } from '../types';
-import { calculateTxFee, isPjsExtrinsic } from '../utils';
+import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
+import { isPjsExtrinsic } from '../utils';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
-export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
+export const calculateFromExchangeFee = async (
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+) => {
   const { exchange, destination, amount, feeCalcAddress, senderAddress, builderOptions } = options;
-  if (!destination || destination.chain === exchange.baseChain) return BigNumber(0);
+  if (!destination || destination.chain === exchange.baseChain) return 0n;
   const tx = await buildFromExchangeExtrinsic({
     exchange,
     destination,
@@ -15,12 +15,12 @@ export const calculateFromExchangeFee = async (options: TBuildTransactionsOption
     senderAddress,
     builderOptions,
   });
-  return calculateTxFee(tx, feeCalcAddress);
+  return tx.getEstimatedFees(feeCalcAddress);
 };
 
 export const createSwapTx = async (
   exchange: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
   const toDestTxFee = await calculateFromExchangeFee(options);
 

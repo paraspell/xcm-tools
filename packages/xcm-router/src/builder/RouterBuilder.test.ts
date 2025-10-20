@@ -11,13 +11,7 @@ import {
 import type { TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
-vi.mock('../transfer', () => ({
-  buildApiTransactions: vi.fn(),
-  transfer: vi.fn(),
-  getBestAmountOut: vi.fn(),
-  getMinTransferableAmount: vi.fn(),
-  getXcmFees: vi.fn(),
-}));
+vi.mock('../transfer');
 
 export const transferParams: TTransferOptions = {
   from: 'Astar',

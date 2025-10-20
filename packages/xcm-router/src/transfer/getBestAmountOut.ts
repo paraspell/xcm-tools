@@ -52,7 +52,7 @@ export const getBestAmountOut = async (
         amount,
         assetFromOrigin?.decimals ?? assetFrom.decimals,
         !!builderOptions?.abstractDecimals,
-      ).toString(),
+      ),
     }),
   };
 };

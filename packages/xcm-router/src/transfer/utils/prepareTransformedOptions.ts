@@ -3,18 +3,18 @@ import { applyDecimalAbstraction, createChainClient, InvalidParameterError } fro
 import { supportsExchangePair } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
-import type { TAdditionalTransferOptions, TRouterBuilderOptions } from '../../types';
-import { type TBuildTransactionsOptions, type TTransferOptions } from '../../types';
+import type { TCommonRouterOptions, TRouterBuilderOptions, TTransformedOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { resolveAssets } from './resolveAssets';
 import { determineFeeCalcAddress } from './utils';
 
-export const prepareTransformedOptions = async <
-  T extends TTransferOptions | TBuildTransactionsOptions,
->(
-  options: T,
+export const prepareTransformedOptions = async (
+  options: TCommonRouterOptions,
   builderOptions?: TRouterBuilderOptions,
-): Promise<{ dex: ExchangeChain; options: T & TAdditionalTransferOptions }> => {
+): Promise<{
+  dex: ExchangeChain;
+  options: TTransformedOptions<TCommonRouterOptions>;
+}> => {
   const { from, to, exchange, senderAddress, recipientAddress, amount } = options;
 
   const originApi = from ? await createChainClient(from, builderOptions) : undefined;

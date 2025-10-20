@@ -2,20 +2,20 @@ import type { TXcmFeeDetail } from '@paraspell/sdk';
 import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified } from '../../types';
+import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 
 export const getSwapFee = async (
   exchange: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
-) => {
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
   const {
     senderAddress,
     exchange: { assetFrom },
     amount,
   } = options;
   let txs: unknown[];
-  let amountOut: string;
+  let amountOut: bigint;
 
   try {
     const swapResult = await createSwapTx(exchange, options);
@@ -24,24 +24,24 @@ export const getSwapFee = async (
   } catch (e: unknown) {
     if (!(e instanceof AmountTooLowError)) throw e;
     txs = [null];
-    amountOut = '0';
+    amountOut = 0n;
   }
 
   const currency = assetFrom.location
     ? {
         location: assetFrom.location,
-        amount: BigInt(amount),
+        amount,
       }
     : {
         symbol: assetFrom.symbol,
-        amount: BigInt(amount),
+        amount,
       };
 
   const buildTx = async (overrideAmount?: string) => {
     const txOptions = {
       ...options,
       ...(overrideAmount
-        ? { amount: applyDecimalAbstraction(overrideAmount, assetFrom.decimals, true).toString() }
+        ? { amount: applyDecimalAbstraction(overrideAmount, assetFrom.decimals, true) }
         : {}),
     };
     const { txs } = await createSwapTx(exchange, txOptions);
@@ -62,11 +62,9 @@ export const getSwapFee = async (
 
   return {
     result: {
+      ...result,
       fee: finalFee,
-      feeType: result.feeType,
-      currency: result.currency,
-      dryRunError: result.dryRunError,
-    } as TXcmFeeDetail,
+    },
     amountOut,
   };
 };

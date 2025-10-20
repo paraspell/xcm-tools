@@ -15,7 +15,7 @@ import type {
   TWeight
 } from '../../../types'
 import { getChainVersion } from '../../chain'
-import { padFeeBy } from '../../fees/padFee'
+import { padValueBy } from '../../fees/padFee'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
@@ -93,7 +93,7 @@ const extractFeesFromDryRun = (
         )
       }
       if (dryRunResult.destination && dryRunResult.destination.success) {
-        fees.exchangeFee = padFeeBy(dryRunResult.destination.fee, FEE_PADDING_PERCENTAGE)
+        fees.exchangeFee = padValueBy(dryRunResult.destination.fee, FEE_PADDING_PERCENTAGE)
       }
     } else {
       // Normal case: exchange is an intermediate hop
@@ -104,7 +104,7 @@ const extractFeesFromDryRun = (
         )
       }
       if (exchangeHop.result.success) {
-        fees.exchangeFee = padFeeBy(exchangeHop.result.fee, FEE_PADDING_PERCENTAGE)
+        fees.exchangeFee = padValueBy(exchangeHop.result.fee, FEE_PADDING_PERCENTAGE)
       }
     }
   } else {
@@ -126,7 +126,7 @@ const extractFeesFromDryRun = (
       )
     }
     if (hopBeforeExchange.result.success) {
-      fees.originReserveFee = padFeeBy(hopBeforeExchange.result.fee, FEE_PADDING_PERCENTAGE)
+      fees.originReserveFee = padValueBy(hopBeforeExchange.result.fee, FEE_PADDING_PERCENTAGE)
     }
   } else if (!destChain && hops.length > 0) {
     // Special case: when destChain is undefined and we have hops,
@@ -138,7 +138,7 @@ const extractFeesFromDryRun = (
       )
     }
     if (lastHop.result.success) {
-      fees.originReserveFee = padFeeBy(lastHop.result.fee, FEE_PADDING_PERCENTAGE)
+      fees.originReserveFee = padValueBy(lastHop.result.fee, FEE_PADDING_PERCENTAGE)
     }
   }
 
@@ -152,7 +152,7 @@ const extractFeesFromDryRun = (
       )
     }
     if (hopAfterExchange.result.success) {
-      fees.destReserveFee = padFeeBy(hopAfterExchange.result.fee, FEE_PADDING_PERCENTAGE)
+      fees.destReserveFee = padValueBy(hopAfterExchange.result.fee, FEE_PADDING_PERCENTAGE)
     }
   }
 

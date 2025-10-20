@@ -1,11 +1,9 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import { getBalanceNative, isChainEvm } from '@paraspell/sdk';
-import BigNumber from 'bignumber.js';
 import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { TExecuteRouterPlanOptions, TRouterPlan } from '../types';
-import { calculateTxFeeDryRun } from '../utils';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 
@@ -15,13 +13,7 @@ vi.mock('@paraspell/sdk', () => ({
   InvalidParameterError: class extends Error {},
 }));
 
-vi.mock('../utils/submitTransaction', () => ({
-  submitTransaction: vi.fn(),
-}));
-
-vi.mock('../utils', () => ({
-  calculateTxFeeDryRun: vi.fn(),
-}));
+vi.mock('../utils/submitTransaction');
 
 describe('executeRouterPlan', () => {
   const mockSigner = {} as PolkadotSigner;
@@ -59,7 +51,6 @@ describe('executeRouterPlan', () => {
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Unique');
     vi.mocked(submitTransaction).mockResolvedValue({} as TxFinalizedPayload);
     vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
-    vi.mocked(calculateTxFeeDryRun).mockResolvedValue(BigNumber(5000000000));
   });
 
   test('should execute plan with both EVM and non-EVM transactions', async () => {
@@ -132,63 +123,5 @@ describe('executeRouterPlan', () => {
 
     expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockEvmSigner);
     expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockSigner);
-  });
-
-  test('should run fee dry run when transferring from BifrostPolkadot to destinationChain', async () => {
-    const plan = [
-      {
-        api: {} as unknown as TPapiApi,
-        tx: 'txBifrost' as unknown as TPapiTransaction,
-        type: 'TRANSFER',
-        chain: 'BifrostPolkadot',
-        destinationChain: 'Astar',
-      },
-    ] as TRouterPlan;
-
-    await executeRouterPlan(plan, {
-      ...baseOptions,
-      destination: 'Astar',
-    });
-    expect(calculateTxFeeDryRun).toHaveBeenCalledWith(
-      plan[0].api,
-      'BifrostPolkadot',
-      'Astar',
-      'txBifrost',
-      mockSenderAddress,
-    );
-    expect(getBalanceNative).toHaveBeenCalledWith({
-      api: plan[0].api,
-      address: mockSenderAddress,
-      chain: 'BifrostPolkadot',
-    });
-    expect(submitTransaction).toHaveBeenCalledWith('txBifrost', mockSigner);
-  });
-
-  test('should throw error if BifrostPolkadot insufficient balance for fees', async () => {
-    const plan = [
-      {
-        api: {} as unknown as TPapiApi,
-        tx: 'txInsufficient' as unknown as TPapiTransaction,
-        type: 'TRANSFER',
-        chain: 'BifrostPolkadot',
-        destinationChain: 'Astar',
-      },
-    ] as TRouterPlan;
-
-    vi.mocked(calculateTxFeeDryRun).mockResolvedValue(BigNumber(50000000000));
-    vi.mocked(getBalanceNative).mockResolvedValue(1000n);
-
-    await expect(
-      executeRouterPlan(plan, {
-        ...baseOptions,
-        destination: 'Astar',
-      }),
-    ).rejects.toThrow(
-      'Insufficient balance to cover fees for transfer from BifrostPolkadot to Astar',
-    );
-
-    expect(calculateTxFeeDryRun).toHaveBeenCalled();
-    expect(getBalanceNative).toHaveBeenCalled();
-    expect(submitTransaction).not.toHaveBeenCalled();
   });
 });

@@ -3,7 +3,7 @@ import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@pa
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified } from '../../types';
+import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 import { getSwapFee } from './getSwapFee';
 
@@ -16,7 +16,7 @@ describe('getSwapFee', () => {
     senderAddress: '0xSender',
     exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT', decimals: 10 } },
     amount: '100',
-  } as unknown as TBuildTransactionsOptionsModified;
+  } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -26,7 +26,7 @@ describe('getSwapFee', () => {
   it('returns fee detail and amountOut on success; passes buildTx factory', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
-      amountOut: '100',
+      amountOut: 100n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
@@ -47,7 +47,7 @@ describe('getSwapFee', () => {
         destination: 'TEST_CHAIN',
         senderAddress: '0xSender',
         disableFallback: false,
-        currency: { symbol: 'DOT', amount: 100n },
+        currency: { symbol: 'DOT', amount: '100' },
       }),
     );
 
@@ -56,15 +56,16 @@ describe('getSwapFee', () => {
         fee: 1n,
         feeType: 'paymentInfo',
         currency: 'DOT',
+        asset: { symbol: 'DOT' },
       } as TXcmFeeDetail,
-      amountOut: '100',
+      amountOut: 100n,
     });
   });
 
   it('buildTx factory applies decimal abstraction on override and rebuilds tx', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['tx0' as unknown as TPapiTransaction],
-      amountOut: '150',
+      amountOut: 150n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
@@ -87,7 +88,7 @@ describe('getSwapFee', () => {
     expect(createSwapTx).toHaveBeenCalledWith(
       exchange,
       expect.objectContaining({
-        amount: BigInt('123').toString(),
+        amount: 123n,
       }),
     );
   });
@@ -117,13 +118,13 @@ describe('getSwapFee', () => {
       }),
     );
     expect(result.fee).toBe(3n * 1n);
-    expect(amountOut).toBe('0');
+    expect(amountOut).toBe(0n);
   });
 
   it('propagates errors from getOriginXcmFee', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
-      amountOut: '100',
+      amountOut: 100n,
     });
     const error = new Error('fee error');
     vi.mocked(getOriginXcmFee).mockRejectedValue(error);
@@ -135,7 +136,7 @@ describe('getSwapFee', () => {
     const dryError = 'Dry run error';
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
-      amountOut: '200',
+      amountOut: 200n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
@@ -149,15 +150,15 @@ describe('getSwapFee', () => {
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');
-    expect(result.currency).toBe('DOT');
+    expect(result.asset).toEqual({ symbol: 'DOT' });
     expect(result.dryRunError).toBe(dryError);
-    expect(amountOut).toBe('200');
+    expect(amountOut).toBe(200n);
   });
 
   it('enters currency as location when assetFrom includes a location', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx' as unknown as TPapiTransaction],
-      amountOut: '200',
+      amountOut: 200n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
@@ -172,11 +173,11 @@ describe('getSwapFee', () => {
         apiPapi: 'apiInstance',
         assetFrom: { symbol: 'DOT', location: {}, decimals: 10 },
       },
-    } as unknown as TBuildTransactionsOptionsModified);
+    } as unknown as TTransformedOptions<TBuildTransactionsOptions>);
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');
-    expect(result.currency).toBe('DOT');
-    expect(amountOut).toBe('200');
+    expect(result.asset).toEqual({ symbol: 'DOT' });
+    expect(amountOut).toBe(200n);
   });
 });

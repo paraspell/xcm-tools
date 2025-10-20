@@ -7,7 +7,7 @@ import { InvalidParameterError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { assertHasLocation } from '../assertions'
 import { getMythosOriginFee } from './getMythosOriginFee'
-import { padFeeBy } from './padFee'
+import { padValueBy } from './padFee'
 
 vi.mock('../../transfer')
 vi.mock('@paraspell/assets')
@@ -40,7 +40,7 @@ describe('getMythosOriginFee', () => {
     } as TAssetInfo)
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
     vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(200n)
-    vi.mocked(padFeeBy).mockReturnValue(220n)
+    vi.mocked(padValueBy).mockReturnValue(220n)
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
     const initSpy = vi.spyOn(mockClone, 'init')
@@ -54,7 +54,7 @@ describe('getMythosOriginFee', () => {
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Mythos')
     expect(assertHasLocation).toHaveBeenCalled()
     expect(quoteSpy).toHaveBeenCalledWith(expect.anything(), { parents: 1, interior: [] }, 150n)
-    expect(padFeeBy).toHaveBeenCalledWith(200n, 10)
+    expect(padValueBy).toHaveBeenCalledWith(200n, 10)
     expect(res).toBe(220n)
   })
 

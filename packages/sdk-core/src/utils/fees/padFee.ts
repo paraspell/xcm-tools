@@ -38,6 +38,6 @@ export const padFee = (
   return mul(raw, 130n, 100n)
 }
 
-export const padFeeBy = (amount: bigint, percent: number): bigint => {
+export const padValueBy = (amount: bigint, percent: number): bigint => {
   return mul(amount, BigInt(100 + percent), 100n)
 }

@@ -9,7 +9,7 @@ import { MAX_WEIGHT } from '../../../constants'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer'
 import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, getRelayChainOf, padFeeBy } from '../..'
+import { assertAddressIsString, getRelayChainOf, padValueBy } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 import { handleExecuteTransfer } from './handleExecuteTransfer'
@@ -53,7 +53,7 @@ describe('handleExecuteTransfer', () => {
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTChain).mockReturnValue(mockDestChain)
-    vi.mocked(padFeeBy).mockImplementation(
+    vi.mocked(padValueBy).mockImplementation(
       (fee, percentage) => fee + (fee * BigInt(percentage)) / 100n
     )
     vi.mocked(isAssetEqual).mockReturnValue(true)

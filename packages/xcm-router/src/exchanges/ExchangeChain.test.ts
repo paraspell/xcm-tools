@@ -19,7 +19,6 @@ class MockExchangeChain extends ExchangeChain {
     tx: 'mockTxHash',
     amountOut: 1000n,
   });
-
   getAmountOut = vi.fn();
   getDexConfig = vi.fn();
 }
@@ -36,7 +35,7 @@ describe('ExchangeChain', () => {
   it('should return correct multi swap result using swapCurrency', async () => {
     const mockApi = {} as ApiPromise;
     const mockOptions = {} as TSwapOptions;
-    const mockFee = 0 as unknown as BigNumber;
+    const mockFee = 0n;
 
     const chain = new MockExchangeChain('Acala', 'AcalaDex');
 

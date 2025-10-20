@@ -1,15 +1,13 @@
-import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TRouterBuilderOptions } from '../types';
-import { type TCommonTransferOptions, type TCommonTransferOptionsModified } from '../types';
+import type { TCommonRouterOptions, TRouterBuilderOptions, TTransformedOptions } from '../types';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 import { determineFeeCalcAddress } from './utils';
 
 export const selectBestExchange = async (
-  options: TCommonTransferOptions,
+  options: TCommonRouterOptions,
   originApi: PolkadotClient | undefined,
   builderOptions?: TRouterBuilderOptions,
 ): Promise<ExchangeChain> =>
@@ -17,8 +15,9 @@ export const selectBestExchange = async (
     options,
     originApi,
     async (dex, assetFromExchange, assetTo, options) => {
-      const modifiedOptions: TCommonTransferOptionsModified = {
+      const modifiedOptions: TTransformedOptions<TCommonRouterOptions> = {
         ...options,
+        amount: BigInt(options.amount),
         exchange: {
           api: await dex.createApiInstance(),
           apiPapi: await dex.createApiInstancePapi(),
@@ -31,7 +30,7 @@ export const selectBestExchange = async (
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
-      const swapResult = await dex.swapCurrency(
+      const { amountOut } = await dex.swapCurrency(
         modifiedOptions.exchange.api,
         {
           ...modifiedOptions,
@@ -41,7 +40,7 @@ export const selectBestExchange = async (
         },
         toDestTxFee,
       );
-      return new BigNumber(swapResult.amountOut);
+      return amountOut;
     },
     builderOptions,
   );

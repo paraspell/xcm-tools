@@ -1,10 +1,10 @@
 import type { TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow } from '@paraspell/assets'
-import { parseUnits } from 'viem'
 
 import type { GeneralBuilder } from '../../builder'
 import type { TCreateTxsOptions, TSendBaseOptions } from '../../types'
 import { assertToIsString } from '../assertions'
+import { parseUnits } from '../unit'
 import { isConfig } from './isConfig'
 
 export const computeOverridenAmount = <TApi, TRes>(

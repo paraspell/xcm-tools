@@ -5,7 +5,7 @@ import { DOT_LOCATION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { assertHasLocation } from '../assertions'
-import { padFeeBy } from './padFee'
+import { padValueBy } from './padFee'
 
 export const getMythosOriginFee = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>
@@ -28,5 +28,5 @@ export const getMythosOriginFee = async <TApi, TRes>(
     throw new InvalidParameterError(`Pool DOT -> ${nativeAsset.symbol} not found.`)
   }
 
-  return padFeeBy(feeConverted, 10)
+  return padValueBy(feeConverted, 10)
 }

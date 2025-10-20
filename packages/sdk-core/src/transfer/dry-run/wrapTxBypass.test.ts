@@ -7,13 +7,13 @@ import {
   isForeignAsset
 } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
-import { parseUnits } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { getPalletInstance } from '../../pallets'
 import { getAssetBalanceInternal } from '../../pallets/assets'
 import { getCurrencySelection } from '../../utils/asset'
+import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
 vi.mock('@paraspell/assets', async importOriginal => ({
@@ -47,7 +47,7 @@ vi.mock('../../pallets', () => ({
 
 vi.mock('../../pallets/assets')
 
-vi.mock('viem', () => ({
+vi.mock('../../utils/unit', () => ({
   parseUnits: vi.fn((v: string) => BigInt(v))
 }))
 

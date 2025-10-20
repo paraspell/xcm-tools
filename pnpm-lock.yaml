@@ -1168,8 +1168,8 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
       '@galacticcouncil/sdk':
-        specifier: ^10.0.0
-        version: 10.0.0(@polkadot/api-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.6(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6))(@polkadot/rpc-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.4.8)(@polkadot/types-codec@16.4.8)(@polkadot/types-create@16.4.8)(@polkadot/types-known@16.4.8)(@polkadot/types@16.4.8)(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.11))
+        specifier: ^10.1.0
+        version: 10.1.0(@polkadot/api-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.6(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6))(@polkadot/rpc-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.4.8)(@polkadot/types-codec@16.4.8)(@polkadot/types-create@16.4.8)(@polkadot/types-known@16.4.8)(@polkadot/types@16.4.8)(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.11))
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../sdk
@@ -1197,9 +1197,6 @@ importers:
       axios:
         specifier: ^1.12.2
         version: 1.12.2
-      bignumber.js:
-        specifier: ^9.3.1
-        version: 9.3.1
       ethers:
         specifier: ^5.8.0
         version: 5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -1218,9 +1215,6 @@ importers:
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
-      postinstall-postinstall:
-        specifier: ^2.1.0
-        version: 2.1.0
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -2965,8 +2959,8 @@ packages:
   '@galacticcouncil/math-xyk@1.2.0':
     resolution: {integrity: sha512-a+qcctffczjZ61vbdoXddmWVNq5nKK/pgsKPwvSBl41BotkvCqwePBieS/8jPTMKu+7uYEGv6eh+sX0ZejrFzg==}
 
-  '@galacticcouncil/sdk@10.0.0':
-    resolution: {integrity: sha512-1RjKtM0CgVlvTgL4g3LzVKaGwDIupwiuNL7A3Ni08/Tf6jMx2gzbkDkdspVZMMC8pBtxMcA/h894iRYv9ZJt8A==}
+  '@galacticcouncil/sdk@10.1.0':
+    resolution: {integrity: sha512-AH5nhOJxmpCZ/WZ3vowhTlvkM/FG/QEfLTfIeBlJOtb282G6E8fO3obpq3c641/HMOou5SaV4O2j/E3u4lpoww==}
     peerDependencies:
       '@polkadot/api': 16.4.8
       '@polkadot/api-augment': ^16.4.8
@@ -2983,7 +2977,7 @@ packages:
       '@polkadot/types-known': ^16.4.8
       '@polkadot/util': ^13.5.6
       '@polkadot/util-crypto': ^13.5.6
-      viem: ^2.23.7
+      viem: ^2.38.3
 
   '@gql.tada/internal@1.0.8':
     resolution: {integrity: sha512-XYdxJhtHC5WtZfdDqtKjcQ4d7R1s0d1rnlSs3OcBEUbYiPoJJfZU7tWsVXuv047Z6msvmr4ompJ7eLSK5Km57g==}
@@ -10515,9 +10509,6 @@ packages:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
 
-  postinstall-postinstall@2.1.0:
-    resolution: {integrity: sha512-7hQX6ZlZXIoRiWNrbMQaLzUUfH+sSx39u8EJ9HYuDc1kLo9IXKWjM5RSquZN1ad5GnH8CGFM78fsAAQi3OKEEQ==}
-
   potpack@1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
 
@@ -15179,7 +15170,7 @@ snapshots:
 
   '@galacticcouncil/math-xyk@1.2.0': {}
 
-  '@galacticcouncil/sdk@10.0.0(@polkadot/api-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.6(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6))(@polkadot/rpc-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.4.8)(@polkadot/types-codec@16.4.8)(@polkadot/types-create@16.4.8)(@polkadot/types-known@16.4.8)(@polkadot/types@16.4.8)(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.11))':
+  '@galacticcouncil/sdk@10.1.0(@polkadot/api-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.6(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6))(@polkadot/rpc-augment@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.4.8(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.4.8)(@polkadot/types-codec@16.4.8)(@polkadot/types-create@16.4.8)(@polkadot/types-known@16.4.8)(@polkadot/types@16.4.8)(@polkadot/util-crypto@13.5.6(@polkadot/util@13.5.6))(@polkadot/util@13.5.6)(viem@2.37.9(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.11))':
     dependencies:
       '@galacticcouncil/math-hsm': 1.1.0
       '@galacticcouncil/math-lbp': 1.2.0
@@ -24911,8 +24902,6 @@ snapshots:
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
-
-  postinstall-postinstall@2.1.0: {}
 
   potpack@1.0.2: {}
 

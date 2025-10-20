@@ -12,7 +12,6 @@ import type { TAssetsPallet } from '@paraspell/pallets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
-import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
 import { BYPASS_MINT_AMOUNT } from '../../constants'
@@ -22,6 +21,7 @@ import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
 import { getCurrencySelection } from '../../utils/asset'
+import { parseUnits } from '../../utils/unit'
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   if (isForeignAsset(asset) && (!asset.assetId || asset.assetId.startsWith('0x'))) {

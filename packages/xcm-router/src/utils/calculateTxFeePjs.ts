@@ -1,7 +1,6 @@
 import { type Extrinsic } from '@paraspell/sdk-pjs';
-import BigNumber from 'bignumber.js';
 
-export const calculateTxFeePjs = async (tx: Extrinsic, address: string): Promise<BigNumber> => {
+export const calculateTxFeePjs = async (tx: Extrinsic, address: string): Promise<bigint> => {
   const { partialFee } = await tx.paymentInfo(address);
-  return new BigNumber(partialFee.toString());
+  return partialFee.toBigInt();
 };

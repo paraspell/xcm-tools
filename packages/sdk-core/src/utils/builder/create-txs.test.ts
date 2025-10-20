@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow } from '@paraspell/assets'
-import { parseUnits } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -12,13 +11,14 @@ import type {
   TSendBaseOptionsWithSenderAddress
 } from '../../types'
 import { assertToIsString } from '../assertions'
+import { parseUnits } from '../unit'
 import { computeOverridenAmount, createTx, overrideTxAmount } from './create-txs'
 import { isConfig } from './isConfig'
 
 vi.mock('@paraspell/assets')
 vi.mock('../assertions')
 vi.mock('./isConfig')
-vi.mock('viem')
+vi.mock('../unit')
 
 const makeApi = (cfg: TBuilderConfig<unknown>) =>
   ({

@@ -1,9 +1,9 @@
 import type { TAmount } from '@paraspell/assets'
-import { parseUnits } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
 import { InvalidParameterError } from '../../errors'
 import { isConfig } from '..'
+import { parseUnits } from '../unit'
 
 export const abstractDecimals = <TApi, TRes>(
   amount: TAmount,

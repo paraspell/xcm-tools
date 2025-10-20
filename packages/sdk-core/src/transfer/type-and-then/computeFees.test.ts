@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, padFeeBy } from '../../utils'
+import { addXcmVersionHeader, padValueBy } from '../../utils'
 import { computeAllFees } from './computeFees'
 import type { createCustomXcm } from './createCustomXcm'
 import type { createRefundInstruction } from './utils'
@@ -58,7 +58,7 @@ describe('computeAllFees', () => {
     vi.clearAllMocks()
 
     vi.mocked(addXcmVersionHeader).mockReturnValue(mockXcmWithHeader)
-    vi.mocked(padFeeBy).mockReturnValue(mockPaddedFee)
+    vi.mocked(padValueBy).mockReturnValue(mockPaddedFee)
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
   })
 
@@ -172,6 +172,6 @@ describe('computeAllFees', () => {
   it('should apply correct padding percentage', async () => {
     await computeAllFees(mockContext, mockDepositReserveXcm, false, null)
 
-    expect(padFeeBy).toHaveBeenCalledWith(mockFee, 20)
+    expect(padValueBy).toHaveBeenCalledWith(mockFee, 20)
   })
 })

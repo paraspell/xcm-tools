@@ -7,7 +7,7 @@ import { InvalidParameterError } from '../../errors'
 import { dryRunInternal, getXcmFeeInternal } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertSenderAddress, assertToIsString } from '../assertions'
-import { padFeeBy } from '../fees/padFee'
+import { padValueBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 
 export const handleToAhTeleport = async <TApi, TRes>(
@@ -62,8 +62,8 @@ export const handleToAhTeleport = async <TApi, TRes>(
     useRootOrigin: true
   })
 
-  const originExecutionFee = padFeeBy(feeResult.origin.fee, 20) // Pad by 20%
-  const destinationExecutionFee = padFeeBy(
+  const originExecutionFee = padValueBy(feeResult.origin.fee, 20) // Pad by 20%
+  const destinationExecutionFee = padValueBy(
     // Pad by 20%
     feeResult.destination.feeType === 'paymentInfo'
       ? feeResult.origin.fee

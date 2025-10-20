@@ -1,6 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import { localizeLocation, type TLocation, transform } from '@paraspell/sdk';
-import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getQuotedAmount } from './getQuotedAmount';
@@ -20,7 +19,7 @@ describe('getQuotedAmount', () => {
   const mockChain = 'AssetHubPolkadot';
   const assetFromML: TLocation = { parents: 0, interior: 'Here' };
   const assetToML: TLocation = { parents: 0, interior: 'Here' };
-  const amountIn = BigNumber('1000');
+  const amountIn = 1000n;
 
   beforeEach(() => {
     vi.clearAllMocks();

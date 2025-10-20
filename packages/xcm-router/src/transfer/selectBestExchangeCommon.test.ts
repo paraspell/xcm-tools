@@ -1,13 +1,12 @@
 import type { TAssetInfo, TParachain } from '@paraspell/sdk';
 import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
-import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TCommonTransferOptions, TExchangeChain } from '../types';
+import type { TCommonRouterOptions, TExchangeChain } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 vi.mock('@paraspell/sdk', () => ({
@@ -19,7 +18,6 @@ vi.mock('@paraspell/sdk', () => ({
 }));
 
 vi.mock('../assets');
-
 vi.mock('../exchanges/ExchangeChainFactory');
 
 vi.mock('./canBuildToExchangeTx', () => ({
@@ -33,12 +31,12 @@ const baseOptions = {
   to: 'destDex',
   currencyFrom: { symbol: 'AAA' },
   currencyTo: { symbol: 'BBB' },
-} as unknown as TCommonTransferOptions;
+} as unknown as TCommonRouterOptions;
 
 describe('selectBestExchangeCommon', () => {
   beforeEach(() => {
     vi.mocked(applyDecimalAbstraction).mockImplementation((amount) =>
-      amount ? (amount as bigint) : BigInt(0),
+      amount ? (amount as bigint) : 0n,
     );
     vi.clearAllMocks();
   });
@@ -46,7 +44,7 @@ describe('selectBestExchangeCommon', () => {
   it('throws error if assetFromOrigin is not found', async () => {
     vi.mocked(findAssetInfo).mockReturnValue(null);
     await expect(
-      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(new BigNumber(0))),
+      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(0n)),
     ).rejects.toThrow(
       `Currency from ${JSON.stringify(baseOptions.currencyFrom)} not found in ${baseOptions.from}.`,
     );
@@ -56,7 +54,7 @@ describe('selectBestExchangeCommon', () => {
     const options = { ...baseOptions, currencyTo: { id: 'some-id' } };
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     await expect(
-      selectBestExchangeCommon(options, undefined, () => Promise.resolve(new BigNumber(0))),
+      selectBestExchangeCommon(options, undefined, () => Promise.resolve(0n)),
     ).rejects.toThrow(
       'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or location.',
     );
@@ -76,9 +74,9 @@ describe('selectBestExchangeCommon', () => {
     });
 
     const computeAmountOut = (dex: ExchangeChain) => {
-      if (dex.chain === ('ex1' as TParachain)) return Promise.resolve(BigNumber(100));
-      if (dex.chain === ('ex2' as TParachain)) return Promise.resolve(BigNumber(200));
-      return Promise.resolve(BigNumber(0));
+      if (dex.chain === ('ex1' as TParachain)) return Promise.resolve(100n);
+      if (dex.chain === ('ex2' as TParachain)) return Promise.resolve(200n);
+      return Promise.resolve(0n);
     };
 
     const originApi = undefined;
@@ -96,7 +94,7 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     await expect(
-      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(BigNumber(0))),
+      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(0n)),
     ).rejects.toThrow();
   });
 
@@ -118,7 +116,7 @@ describe('selectBestExchangeCommon', () => {
     const computeAmountOut = (dex: ExchangeChain) => {
       if (dex.chain === ('ex1' as TParachain)) throw error1;
       if (dex.chain === ('ex2' as TParachain)) throw error2;
-      return Promise.resolve(new BigNumber(0));
+      return Promise.resolve(0n);
     };
 
     await expect(
@@ -131,7 +129,7 @@ describe('selectBestExchangeCommon', () => {
       ...baseOptions,
       from: undefined,
       exchange: ['AcalaDex'],
-    } as unknown as TCommonTransferOptions;
+    } as unknown as TCommonRouterOptions;
 
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA', decimals: 8 });
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'BBB', decimals: 8 });
@@ -140,7 +138,7 @@ describe('selectBestExchangeCommon', () => {
     const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
-    const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
+    const computeAmountOut = vi.fn().mockResolvedValue(100n);
 
     const bestExchange = await selectBestExchangeCommon(
       optionsWithoutFrom,
@@ -157,7 +155,7 @@ describe('selectBestExchangeCommon', () => {
       ...baseOptions,
       from: 'Acala',
       exchange: ['AcalaDex'],
-    } as unknown as TCommonTransferOptions;
+    } as unknown as TCommonRouterOptions;
 
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
     vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA', decimals: 8 });
@@ -167,7 +165,7 @@ describe('selectBestExchangeCommon', () => {
     const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
-    const computeAmountOut = vi.fn().mockResolvedValue(new BigNumber(100));
+    const computeAmountOut = vi.fn().mockResolvedValue(100n);
 
     const bestExchange = await selectBestExchangeCommon(
       optionsWithSameChain,

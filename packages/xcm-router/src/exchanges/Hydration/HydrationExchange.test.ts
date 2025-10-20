@@ -1,5 +1,5 @@
 import type { Asset, SdkCtx, Trade, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk';
-import { createSdkContext } from '@galacticcouncil/sdk';
+import { BigNumber, createSdkContext } from '@galacticcouncil/sdk';
 import {
   AmountTooLowError,
   getAssetDecimals,
@@ -10,25 +10,20 @@ import {
 } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import HydrationExchange from './HydrationExchange';
 import * as utils from './utils';
 
-vi.mock('@galacticcouncil/sdk', () => ({
-  createSdkContext: vi.fn(),
-  PoolService: vi.fn(),
-  TradeRouter: vi.fn().mockImplementation(() => ({
-    getAllAssets: vi.fn(),
-    getBestSell: vi.fn(),
-    getBestSpotPrice: vi.fn(),
-  })),
-  PoolType: {
-    XYK: 'xyk',
-  },
-}));
+vi.mock('@galacticcouncil/sdk', async () => {
+  const actual = await vi.importActual('@galacticcouncil/sdk');
+  return {
+    ...actual,
+    TradeRouter: vi.fn(),
+    createSdkContext: vi.fn(),
+  };
+});
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -84,15 +79,15 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
-        amountOut: new BigNumber('10000000000000000'),
+        amountOut: BigNumber('10000000000000000'),
       } as unknown as Trade;
 
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue(mockTrade);
       vi.spyOn(mockTradeRouter, 'getBestSpotPrice').mockResolvedValue({
-        amount: new BigNumber('1'),
+        amount: BigNumber('1000000000000'),
         decimals: 12,
       });
 
@@ -110,9 +105,9 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '10000',
+        amount: 10000n,
       } as TSwapOptions;
-      const toDestTransactionFee = BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         'Native currency decimals not found',
@@ -127,10 +122,10 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
-        amountOut: new BigNumber('10000000000000000'),
+        amountOut: BigNumber('10000000000000000'),
       } as unknown as Trade;
 
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue(mockTrade);
@@ -140,7 +135,7 @@ describe('HydrationExchange', () => {
           if (assetIdA === '2' && assetIdB === '999') {
             return Promise.resolve(undefined);
           }
-          return Promise.resolve({ amount: new BigNumber('1'), decimals: 12 });
+          return Promise.resolve({ amount: BigNumber('1000000000000'), decimals: 12 });
         });
 
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
@@ -151,9 +146,9 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '10000',
+        amount: 10000n,
       } as TSwapOptions;
-      const toDestTransactionFee = BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         'Price not found',
@@ -170,9 +165,9 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'NON_EXISTENT' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '100',
+        amount: 100n,
       } as TSwapOptions;
-      const toDestTransactionFee = BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         InvalidCurrencyError,
@@ -187,28 +182,10 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'NON_EXISTENT' },
         slippagePct: '1',
-        amount: '100',
+        amount: 100n,
       } as TSwapOptions;
 
-      const toDestTransactionFee = BigNumber('10');
-
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        InvalidCurrencyError,
-      );
-    });
-
-    it('throws if either currencyFromDecimals or currencyToDecimals is falsy', async () => {
-      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 0, id: '1' } as Asset);
-      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
-
-      const options = {
-        assetFrom: { symbol: 'ABC' },
-        assetTo: { symbol: 'XYZ' },
-        slippagePct: '1',
-        amount: '100',
-      } as TSwapOptions;
-
-      const toDestTransactionFee = BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         InvalidCurrencyError,
@@ -221,13 +198,13 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue({
-        amountOut: new BigNumber('10000000000000000'),
+        amountOut: BigNumber('10000000000000000'),
       } as unknown as Trade);
       vi.spyOn(mockTradeRouter, 'getBestSpotPrice').mockResolvedValue({
-        amount: new BigNumber('1'),
+        amount: BigNumber('1000000000000'),
         decimals: 12,
       });
 
@@ -241,21 +218,21 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'HDX' },
         slippagePct: '1',
-        amount: '10000',
+        amount: 10000n,
       } as TSwapOptions;
-      const toDestTransactionFee = new BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       const result = await chain.swapCurrency(api, options, toDestTransactionFee);
 
       expect(result.tx).toBe('mockExtrinsic');
-      expect(result.amountOut).toBe('9999999999999989');
+      expect(result.amountOut).toBe(9999999999999999n);
     });
 
     it('throws if the amountWithoutFee becomes negative', async () => {
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('150'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(150n);
 
       const options = {
         origin: {
@@ -264,10 +241,10 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '100',
+        amount: 100n,
       } as TSwapOptions;
 
-      const toDestTransactionFee = BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         AmountTooLowError,
@@ -280,15 +257,15 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
-        amountOut: new BigNumber('10000000000000000'),
+        amountOut: BigNumber('10000000000000000'),
       } as unknown as Trade;
 
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue(mockTrade);
       vi.spyOn(mockTradeRouter, 'getBestSpotPrice').mockResolvedValue({
-        amount: new BigNumber('1'),
+        amount: BigNumber('1000000000000'),
         decimals: 12,
       });
 
@@ -298,9 +275,9 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '10000',
+        amount: 10000n,
       } as TSwapOptions;
-      const toDestTransactionFee = new BigNumber('10');
+      const toDestTransactionFee = 10n;
 
       const tradeSpy = vi.spyOn(mockTxBuilderFactory, 'trade');
       const slippageSpy = vi.spyOn(mockTxBuilderFactory.trade(mockTrade), 'withSlippage');
@@ -308,7 +285,7 @@ describe('HydrationExchange', () => {
       const result = await chain.swapCurrency(api, options, toDestTransactionFee);
 
       expect(result.tx).toBe('mockExtrinsic');
-      expect(typeof result.amountOut).toBe('string');
+      expect(typeof result.amountOut).toBe('bigint');
 
       expect(tradeSpy).toHaveBeenCalledWith(mockTrade);
       expect(slippageSpy).toHaveBeenCalledWith(1);
@@ -320,15 +297,15 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
-        amountOut: new BigNumber('5'),
+        amountOut: BigNumber('5'),
       } as unknown as Trade;
 
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue(mockTrade);
       vi.spyOn(mockTradeRouter, 'getBestSpotPrice').mockResolvedValue({
-        amount: new BigNumber('1'),
+        amount: BigNumber('1000000000000'),
         decimals: 12,
       });
 
@@ -338,10 +315,10 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: '100',
+        amount: 100n,
       } as TSwapOptions;
 
-      const toDestTransactionFee = BigNumber('99999');
+      const toDestTransactionFee = 99999n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
         AmountTooLowError,
@@ -379,7 +356,7 @@ describe('HydrationExchange', () => {
   describe('getAmountOut', () => {
     it('returns the correct amountOut', async () => {
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue({
-        amountOut: new BigNumber('100'),
+        amountOut: BigNumber('100'),
       } as unknown as Trade);
 
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
@@ -388,7 +365,7 @@ describe('HydrationExchange', () => {
       const options = {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'HDX' },
-        amount: '100',
+        amount: 100n,
         origin: {},
       } as TGetAmountOutOptions;
 

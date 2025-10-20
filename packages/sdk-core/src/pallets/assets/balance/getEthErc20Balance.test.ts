@@ -14,12 +14,12 @@ vi.mock('../../../errors', () => ({
   InvalidParameterError: class extends Error {}
 }))
 
-vi.mock('viem', () => {
-  return {
-    createPublicClient: vi.fn(() => mockClient),
-    http: vi.fn(() => ({}))
-  }
-})
+vi.mock('viem', () => ({
+  formatUnits: vi.fn(),
+  parseUnits: vi.fn(),
+  createPublicClient: vi.fn(() => mockClient),
+  http: vi.fn(() => ({}))
+}))
 
 vi.mock('viem/chains', () => ({
   mainnet: { id: 1 }

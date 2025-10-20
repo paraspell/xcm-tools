@@ -20,7 +20,7 @@ export type TSwapOptions = {
   papiApi: TPapiApi;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
-  amount: string;
+  amount: bigint;
   slippagePct: string;
   senderAddress: string;
   feeCalcAddress: string;
@@ -32,7 +32,7 @@ export type TGetAmountOutOptions = {
   origin?: TOriginInfo;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
-  amount: string;
+  amount: bigint;
   slippagePct?: string;
 };
 
@@ -40,12 +40,12 @@ export type TExtrinsic = Extrinsic | TPapiTransaction;
 
 export type TSingleSwapResult = {
   tx: TExtrinsic;
-  amountOut: string;
+  amountOut: bigint;
 };
 
 export type TMultiSwapResult = {
   txs: TExtrinsic[];
-  amountOut: string;
+  amountOut: bigint;
 };
 
 export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
@@ -159,8 +159,9 @@ export type TBuildTransactionsOptions = Omit<
   'onStatusChange' | 'signer' | 'evmSigner'
 >;
 
-export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 'exchange'> &
-  TAdditionalTransferOptions;
+export type TCommonRouterOptions = TTransferOptions | TBuildTransactionsOptions;
+
+export type TTransformedOptions<T> = Omit<T, 'exchange' | 'amount'> & TAdditionalTransferOptions;
 
 export type TOriginInfo = {
   api: TPapiApi;
@@ -183,18 +184,13 @@ export type TDestinationInfo = {
 };
 
 export type TAdditionalTransferOptions = {
+  amount: bigint;
   origin?: TOriginInfo;
   exchange: TExchangeInfo;
   destination?: TDestinationInfo;
   feeCalcAddress: string;
   builderOptions?: TRouterBuilderOptions;
 };
-
-export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
-  TAdditionalTransferOptions;
-
-export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
-export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
 
 export type TRouterAsset = {
   symbol: string;
@@ -268,14 +264,14 @@ export type TBuildToExchangeTxOptions = {
   exchange: TExchangeInfo;
   senderAddress: string;
   evmSenderAddress?: string;
-  amount: string;
+  amount: bigint;
   builderOptions?: TRouterBuilderOptions;
 };
 
 export type TBuildFromExchangeTxOptions = {
   exchange: TExchangeInfo;
   destination: TDestinationInfo;
-  amount: string;
+  amount: bigint;
   senderAddress: string;
   builderOptions?: TRouterBuilderOptions;
 };

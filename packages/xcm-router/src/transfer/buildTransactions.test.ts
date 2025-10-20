@@ -3,7 +3,12 @@ import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified, TDestinationInfo, TOriginInfo } from '../types';
+import type {
+  TBuildTransactionsOptions,
+  TDestinationInfo,
+  TOriginInfo,
+  TTransformedOptions,
+} from '../types';
 import { buildTransactions } from './buildTransactions';
 import * as prepareExtrinsicsModule from './prepareExtrinsics';
 
@@ -39,7 +44,7 @@ const baseOptions = {
     address: 'someAddress',
     chain: 'Crust',
   },
-} as TBuildTransactionsOptionsModified;
+} as TTransformedOptions<TBuildTransactionsOptions>;
 
 describe('buildTransactions', () => {
   beforeEach(() => {
