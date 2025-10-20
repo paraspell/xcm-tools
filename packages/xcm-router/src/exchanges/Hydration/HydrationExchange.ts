@@ -1,17 +1,19 @@
-import { createSdkContext } from '@galacticcouncil/sdk';
+import { BigNumber, createSdkContext } from '@galacticcouncil/sdk';
 import {
   AmountTooLowError,
+  formatUnits,
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   InvalidParameterError,
   isForeignAsset,
+  padValueBy,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
+import { parseUnits } from 'ethers-v6';
 
-import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -19,6 +21,7 @@ import type {
   TSingleSwapResult,
   TSwapOptions,
 } from '../../types';
+import { pow10n } from '../../utils';
 import ExchangeChain from '../ExchangeChain';
 import { calculateFee, getAssetInfo } from './utils';
 
@@ -26,7 +29,7 @@ class HydrationExchange extends ExchangeChain {
   async swapCurrency(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { origin, assetFrom, assetTo, senderAddress, slippagePct, amount } = options;
 
@@ -44,39 +47,24 @@ class HydrationExchange extends ExchangeChain {
       throw new InvalidCurrencyError("Currency to doesn't exist");
     }
 
-    const currencyFromDecimals = currencyFromInfo?.decimals;
-    const currencyToDecimals = currencyToInfo?.decimals;
-
-    if (!currencyFromDecimals) {
-      throw new InvalidCurrencyError('Decimals not found for currency from.');
-    }
-
-    if (!currencyToDecimals) {
-      throw new InvalidCurrencyError('Decimals not found for currency to');
-    }
-
-    const amountBnum = BigNumber(amount);
-
     const tradeFee = await calculateFee(
       options,
       tradeRouter,
       txBuilderFactory,
       currencyFromInfo,
       currencyToInfo,
-      currencyFromDecimals,
+      currencyFromInfo.decimals,
       this.chain,
       toDestTransactionFee,
     );
-    const amountWithoutFee = origin ? amountBnum.minus(tradeFee) : amountBnum;
+    const amountWithoutFee = origin ? amount - tradeFee : amount;
 
-    if (amountWithoutFee.isNegative()) {
-      throw new AmountTooLowError();
-    }
+    if (amountWithoutFee <= 0n) throw new AmountTooLowError();
 
-    const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
+    const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
 
     Logger.log('Original amount', amount);
-    Logger.log('Amount modified', amountWithoutFee.toString());
+    Logger.log('Amount modified', amountWithoutFee);
 
     const trade = await tradeRouter.getBestSell(
       currencyFromInfo.id,
@@ -92,7 +80,7 @@ class HydrationExchange extends ExchangeChain {
 
     const tx = substrateTx.get();
 
-    const amountOut = trade.amountOut;
+    const amountOut = BigInt(trade.amountOut.toString());
 
     const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
       symbol: getNativeAssetSymbol(this.chain),
@@ -112,7 +100,7 @@ class HydrationExchange extends ExchangeChain {
 
     if (currencyToInfo.id === nativeCurrencyInfo.id) {
       priceInfo = {
-        amount: BigNumber(1000000000000),
+        amount: BigNumber(parseUnits('1', nativeCurrencyDecimals)),
         decimals: nativeCurrencyDecimals,
       };
     }
@@ -121,27 +109,24 @@ class HydrationExchange extends ExchangeChain {
       throw new InvalidParameterError('Price not found');
     }
 
-    const currencyToPriceNormalNumber = priceInfo.amount.shiftedBy(-priceInfo.decimals);
+    const currencyToPrice = BigInt(priceInfo.amount.toString());
 
-    const feeNativeCurrencyNormalNumber = toDestTransactionFee.shiftedBy(-nativeCurrencyDecimals);
+    const feeInCurrencyTo =
+      (toDestTransactionFee *
+        pow10n(priceInfo.decimals + currencyToInfo.decimals) *
+        BigInt(FEE_BUFFER_PCT)) /
+      (currencyToPrice * pow10n(nativeCurrencyDecimals) * 100n);
 
-    const currencyToFee = feeNativeCurrencyNormalNumber
-      .multipliedBy(FEE_BUFFER)
-      .dividedBy(currencyToPriceNormalNumber);
+    Logger.log('Amount out fee', feeInCurrencyTo, nativeCurrencyInfo.symbol);
 
-    Logger.log('Amount out fee', currencyToFee.toString(), nativeCurrencyInfo.symbol);
+    const amountOutModified = amountOut - feeInCurrencyTo;
 
-    const currencyToFeeBnum = currencyToFee.shiftedBy(currencyToDecimals);
-    const amountOutModified = amountOut.minus(currencyToFeeBnum).decimalPlaces(0);
+    if (amountOutModified <= 0n) throw new AmountTooLowError();
 
-    if (amountOutModified.isNegative()) {
-      throw new AmountTooLowError();
-    }
+    Logger.log('Amount out original', amountOut);
+    Logger.log('Amount out modified', amountOutModified);
 
-    Logger.log('Amount out original', amountOut.toString());
-    Logger.log('Amount out modified', amountOutModified.toString());
-
-    return { tx, amountOut: amountOutModified.toString() };
+    return { tx, amountOut: amountOutModified };
   }
 
   async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
@@ -162,22 +147,10 @@ class HydrationExchange extends ExchangeChain {
       throw new InvalidCurrencyError("Currency to doesn't exist");
     }
 
-    const currencyFromDecimals = currencyFromInfo?.decimals;
-    const currencyToDecimals = currencyToInfo?.decimals;
-
-    if (!currencyFromDecimals) {
-      throw new InvalidCurrencyError('Decimals not found for currency from');
-    }
-
-    if (!currencyToDecimals) {
-      throw new InvalidCurrencyError('Decimals not found for currency to');
-    }
-
-    const amountBN = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
+    const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
 
     const trade = await tradeRouter.getBestSell(
       currencyFromInfo.id,
@@ -185,11 +158,11 @@ class HydrationExchange extends ExchangeChain {
       amountNormalized,
     );
 
-    const amountOut = trade.amountOut;
-    const slippageDecimal = BigNumber(slippagePct).dividedBy(100);
-    const amountOutWithSlippage = amountOut.minus(amountOut.times(slippageDecimal));
+    const amountOut = BigInt(trade.amountOut.toString());
 
-    return BigInt(amountOutWithSlippage.decimalPlaces(0).toString());
+    const slippageMultiplier = Number(slippagePct);
+
+    return padValueBy(amountOut, -slippageMultiplier);
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {

@@ -3,7 +3,6 @@ import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
 import type { TParachain, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import type BigNumber from 'bignumber.js';
 
 import type {
   TDexConfig,
@@ -34,13 +33,13 @@ abstract class ExchangeChain {
   abstract swapCurrency(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult>;
 
   async handleMultiSwap(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult> {
     const singleSwapResult = await this.swapCurrency(api, options, toDestTransactionFee);
     return {

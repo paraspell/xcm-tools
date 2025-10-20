@@ -12,7 +12,7 @@ import { type TDryRunResult } from '../../../types'
 import { handleSwapExecuteTransfer } from './handleSwapExecuteTransfer'
 
 vi.mock('../../fees/padFee', () => ({
-  padFeeBy: (fee: bigint) => fee + 10n
+  padValueBy: (fee: bigint) => fee + 10n
 }))
 
 vi.mock('../../chain', () => ({

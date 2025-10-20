@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   TBuildTransactionsOptions,
-  TBuildTransactionsOptionsModified,
   TRouterDryRunResult,
   TTransaction,
+  TTransformedOptions,
 } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { dryRunRouter } from './dryRun';
@@ -23,7 +23,7 @@ vi.mock('@paraspell/sdk', async () => {
 vi.mock('./utils');
 vi.mock('./buildTransactions');
 
-const createInitialOptions = (): TBuildTransactionsOptions =>
+const createInitialOptions = () =>
   ({
     from: 'Acala',
     to: 'Acala',
@@ -38,24 +38,24 @@ const createInitialOptions = (): TBuildTransactionsOptions =>
   }) as TBuildTransactionsOptions;
 
 const createOptions = (
-  overrides: Partial<TBuildTransactionsOptionsModified> = {},
-): TBuildTransactionsOptionsModified =>
-  ({
-    ...createInitialOptions(),
-    feeCalcAddress: 'sender',
-    builderOptions: undefined,
-    origin: undefined,
-    destination: undefined,
-    exchange: {
-      baseChain: 'Acala',
-      exchangeChain: 'AcalaDex',
-      api: {} as never,
-      apiPapi: {} as never,
-      assetFrom: { symbol: 'ACA', decimals: 12 } as never,
-      assetTo: { symbol: 'AUSD', decimals: 12 } as never,
-    },
-    ...overrides,
-  }) as unknown as TBuildTransactionsOptionsModified;
+  overrides: Partial<TTransformedOptions<TBuildTransactionsOptions>> = {},
+): TTransformedOptions<TBuildTransactionsOptions> => ({
+  ...createInitialOptions(),
+  feeCalcAddress: 'sender',
+  builderOptions: undefined,
+  origin: undefined,
+  destination: undefined,
+  exchange: {
+    baseChain: 'Acala',
+    exchangeChain: 'AcalaDex',
+    api: {} as never,
+    apiPapi: {} as never,
+    assetFrom: { symbol: 'ACA', decimals: 12 } as never,
+    assetTo: { symbol: 'AUSD', decimals: 12 } as never,
+  },
+  amount: 1000n,
+  ...overrides,
+});
 
 const createTransaction = (chain: string): TTransaction =>
   ({
@@ -73,7 +73,10 @@ const createDryRunResult = (overrides: Partial<TRouterDryRunResult> = {}): TRout
     ...overrides,
   }) as TRouterDryRunResult;
 
-const resolvePrepareOptions = (options: TBuildTransactionsOptionsModified, dexChain: string) =>
+const resolvePrepareOptions = (
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+  dexChain: string,
+) =>
   vi.mocked(prepareTransformedOptions).mockResolvedValue({
     dex: { chain: dexChain } as never,
     options: options as never,

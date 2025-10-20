@@ -41,7 +41,7 @@ import {
   isRelayChain,
   localizeLocation,
   MissingChainApiError,
-  padFeeBy,
+  padValueBy,
   Parents,
   replaceBigInt,
   Version,
@@ -890,7 +890,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const processedFee =
       (isRelayChain(chain) || chain.includes('AssetHub')) && asset?.symbol === 'DOT'
-        ? padFeeBy(fee, 30)
+        ? padValueBy(fee, 30)
         : fee
 
     return Promise.resolve({

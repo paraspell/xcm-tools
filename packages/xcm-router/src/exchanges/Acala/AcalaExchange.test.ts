@@ -1,13 +1,19 @@
 import { AmountTooLowError, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TSingleSwapResult, TSwapOptions } from '../../types';
+import type { TSwapOptions } from '../../types';
 import AcalaExchange from './AcalaExchange';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk', async () => {
+  const original = await vi.importActual('@paraspell/sdk');
+  return {
+    ...original,
+    getBalanceNative: vi.fn(),
+    getNativeAssetSymbol: vi.fn(),
+  };
+});
 
 vi.mock('@acala-network/sdk-core', () => ({
   FixedPointNumber: vi.fn().mockImplementation((value: string) => ({
@@ -82,7 +88,7 @@ vi.mock('./utils', () => ({
   createAcalaClient: vi.fn().mockResolvedValue({
     isMockApi: true,
   }),
-  calculateAcalaSwapFee: vi.fn().mockReturnValue(BigNumber(1)),
+  calculateAcalaSwapFee: vi.fn().mockReturnValue(1n),
   getDexConfig: vi.fn(),
 }));
 
@@ -124,12 +130,12 @@ describe('AcalaExchange', () => {
     const baseSwapOptions = {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
-      amount: '100',
+      amount: 100n,
     } as TSwapOptions;
 
     it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
       vi.mocked(getBalanceNative).mockResolvedValueOnce(1_000_000n);
-      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(0));
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(0n);
 
       await expect(
         chain.swapCurrency(
@@ -137,11 +143,11 @@ describe('AcalaExchange', () => {
           {
             assetFrom: { symbol: 'DOT' },
             assetTo: { symbol: 'ACA' },
-            amount: '-1',
+            amount: -1n,
             senderAddress: '5xxxx',
             origin: {},
           } as TSwapOptions,
-          BigNumber(0),
+          0n,
         ),
       ).rejects.toThrowError(AmountTooLowError);
     });
@@ -151,37 +157,30 @@ describe('AcalaExchange', () => {
       const options = {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'ACA' },
-        amount: '1',
+        amount: 1n,
         senderAddress: 'some-address',
         origin: {},
       } as TSwapOptions;
 
       vi.mocked(getBalanceNative).mockResolvedValueOnce(0n);
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(1n);
 
-      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(1));
-
-      await expect(chain.swapCurrency(mockApi, options, BigNumber(1))).rejects.toThrow(
-        AmountTooLowError,
-      );
+      await expect(chain.swapCurrency(mockApi, options, 1n)).rejects.toThrow(AmountTooLowError);
     });
 
     it('should swap successfully and return the tx and modified amountOut', async () => {
-      const result: TSingleSwapResult = await chain.swapCurrency(
-        mockApi,
-        baseSwapOptions,
-        BigNumber(0.01),
-      );
+      const result = await chain.swapCurrency(mockApi, baseSwapOptions, 1n);
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe('46200000000000');
+      expect(result.amountOut).toBe(46199999999998n);
     });
 
     it('should throw AmountTooLowError if the amount is too small to cover fees', async () => {
-      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(BigNumber(9999));
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(9999n);
 
-      await expect(chain.swapCurrency(mockApi, baseSwapOptions, BigNumber(0.01))).rejects.toThrow(
+      await expect(chain.swapCurrency(mockApi, baseSwapOptions, 1n)).rejects.toThrow(
         AmountTooLowError,
       );
     });
@@ -192,7 +191,7 @@ describe('AcalaExchange', () => {
     const baseSwapOptions = {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
-      amount: '100',
+      amount: 100n,
     } as TSwapOptions;
 
     it('should return the amountOut with fee deducted', async () => {

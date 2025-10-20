@@ -4,14 +4,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TPapiApi, TParachain } from '@paraspell/sdk';
 import { InvalidParameterError, localizeLocation, type TLocation, transform } from '@paraspell/sdk';
-import type BigNumber from 'bignumber.js';
 
 export const getQuotedAmount = async (
   api: TPapiApi,
   chain: TParachain,
   assetFromML: TLocation,
   assetToML: TLocation,
-  amountIn: BigNumber,
+  amountIn: bigint,
   includeFee = true,
 ) => {
   try {
@@ -23,7 +22,7 @@ export const getQuotedAmount = async (
       .apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
         transform(localizedFrom),
         transform(localizedTo),
-        BigInt(amountIn.decimalPlaces(0).toString()),
+        amountIn,
         includeFee,
       );
 

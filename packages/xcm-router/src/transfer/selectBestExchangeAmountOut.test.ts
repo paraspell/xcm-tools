@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -6,9 +5,7 @@ import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-vi.mock('./selectBestExchangeCommon', () => ({
-  selectBestExchangeCommon: vi.fn(),
-}));
+vi.mock('./selectBestExchangeCommon');
 
 describe('selectBestExchangeAmountOut', () => {
   const mockOptions = {
@@ -23,13 +20,12 @@ describe('selectBestExchangeAmountOut', () => {
     const fakeDex = {
       createApiInstance: vi.fn().mockResolvedValue('fakeApi'),
       createApiInstancePapi: vi.fn().mockResolvedValue('fakePapiApi'),
-      getAmountOut: vi.fn().mockResolvedValue('300'),
+      getAmountOut: vi.fn().mockResolvedValue(300n),
       chain: 'dummyDex',
       exchangeChain: 'dummyExchange',
     } as unknown as ExchangeChain;
 
-    const mockedSelectBestExchangeCommon = vi.mocked(selectBestExchangeCommon);
-    mockedSelectBestExchangeCommon.mockImplementation(
+    vi.mocked(selectBestExchangeCommon).mockImplementation(
       async (options, _originApi, computeAmountOut) => {
         const result = await computeAmountOut(
           fakeDex,
@@ -37,8 +33,7 @@ describe('selectBestExchangeAmountOut', () => {
           'assetTo' as unknown as TRouterAsset,
           options,
         );
-        expect(result instanceof BigNumber).toBe(true);
-        expect(result.toString()).toBe('300');
+        expect(result).toBe(300n);
         return fakeDex;
       },
     );
@@ -54,15 +49,14 @@ describe('selectBestExchangeAmountOut', () => {
     expect(getAmountOutSpy).toHaveBeenCalledWith('fakeApi', {
       assetFrom: 'assetFrom',
       assetTo: 'assetTo',
-      amount: mockOptions.amount,
+      amount: BigInt(mockOptions.amount),
       papiApi: 'fakePapiApi',
     });
   });
 
   it('should propagate errors thrown by selectBestExchangeCommon', async () => {
     const testError = new Error('Test error');
-    const mockedSelectBestExchangeCommon = vi.mocked(selectBestExchangeCommon);
-    mockedSelectBestExchangeCommon.mockRejectedValue(testError);
+    vi.mocked(selectBestExchangeCommon).mockRejectedValue(testError);
     await expect(selectBestExchangeAmountOut(mockOptions, undefined)).rejects.toThrow('Test error');
   });
 });

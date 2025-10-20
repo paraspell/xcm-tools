@@ -3,7 +3,7 @@ import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/s
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
-import type { TBuildTransactionsOptionsModified, TRouterAsset } from '../types/TRouter';
+import type { TRouterAsset, TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
   createToExchangeBuilder,
@@ -25,7 +25,7 @@ const toCurrencyCore = (asset: TRouterAsset): TCurrencyCore => {
 
 const computeExchangeMinAmount = async (
   dex: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<bigint> => {
   const { exchange } = options;
 
@@ -52,20 +52,21 @@ export const getMinTransferableAmount = async (
   validateTransferOptions(initialOptions);
 
   const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
-  const transformedOptions = options as TBuildTransactionsOptionsModified;
 
-  if (transformedOptions.origin) {
+  const { origin, exchange, senderAddress, evmSenderAddress, amount } = options;
+
+  if (origin) {
     const builder = createToExchangeBuilder({
-      origin: transformedOptions.origin,
-      exchange: transformedOptions.exchange,
-      senderAddress: transformedOptions.senderAddress,
-      evmSenderAddress: transformedOptions.evmSenderAddress,
-      amount: transformedOptions.amount,
+      origin,
+      exchange,
+      senderAddress,
+      evmSenderAddress,
+      amount,
       builderOptions,
     });
 
     return builder.getMinTransferableAmount();
   }
 
-  return computeExchangeMinAmount(dex, transformedOptions);
+  return computeExchangeMinAmount(dex, options);
 };

@@ -58,7 +58,7 @@ export const createFromExchangeBuilder = ({
     .to(chain)
     .currency({
       ...getCurrencySelection(baseChain, assetTo as TAssetInfo),
-      amount: BigInt(amount),
+      amount,
     })
     .address(address)
     .senderAddress(senderAddress);

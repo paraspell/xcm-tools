@@ -47,6 +47,8 @@ vi.mock('../../../utils/ethereum/createCustomXcmOnDest', () => ({
 
 vi.mock('viem', () => ({
   http: vi.fn(),
+  parseUnits: vi.fn(),
+  formatUnits: vi.fn(),
   createPublicClient: vi.fn(),
   getContract: vi.fn().mockImplementation(() => ({
     write: {

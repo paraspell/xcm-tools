@@ -3,18 +3,18 @@ import { dryRun, getFailureInfo, InvalidParameterError } from '@paraspell/sdk';
 
 import type {
   TBuildTransactionsOptions,
-  TBuildTransactionsOptionsModified,
   TRouterBuilderOptions,
   TRouterDryRunResult,
   TRouterPlan,
   TTransaction,
+  TTransformedOptions,
 } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
 const assignIsExchange = (
   result: TRouterDryRunResult,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
   const { origin, exchange, destination } = options;
 
@@ -35,7 +35,7 @@ const assignIsExchange = (
 };
 
 const dryRunTransaction = async (
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
   transaction: TTransaction,
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
@@ -76,7 +76,7 @@ const dryRunTransaction = async (
 };
 
 const mergeDryRunResults = (
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
   originResult: TRouterDryRunResult,
   exchangeResult: TRouterDryRunResult,
 ): TRouterDryRunResult => {
@@ -99,7 +99,7 @@ const mergeDryRunResults = (
 };
 
 const dryRun2Transactions = async (
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
   transactions: TRouterPlan,
 ): Promise<TRouterDryRunResult> => {
   const { exchange } = options;
@@ -124,7 +124,7 @@ const dryRun2Transactions = async (
 
 const dryRunTransactions = (
   transactions: TRouterPlan,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
   if (transactions.length === 1) {
     return dryRunTransaction(options, transactions[0]);

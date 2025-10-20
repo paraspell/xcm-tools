@@ -1,9 +1,9 @@
-import type { TCommonTransferOptions } from '../types';
+import type { TBuildTransactionsOptions } from '../types';
 
 export const MOCK_ADDRESS = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
 export const MOCK_SLIIPPAGE = '1';
 
-export const MOCK_TRANSFER_OPTIONS: TCommonTransferOptions = {
+export const MOCK_TRANSFER_OPTIONS: TBuildTransactionsOptions = {
   from: 'Astar',
   exchange: 'HydrationDex',
   to: 'Interlay',

@@ -1,10 +1,10 @@
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified, TRouterPlan } from '../types';
+import type { TBuildTransactionsOptions, TRouterPlan, TTransformedOptions } from '../types';
 import { prepareExtrinsics } from './prepareExtrinsics';
 
 export const buildTransactions = async (
   dex: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<TRouterPlan> => {
   const { origin, exchange, destination } = options;
 

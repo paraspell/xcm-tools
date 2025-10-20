@@ -6,7 +6,6 @@ import {
   InvalidParameterError,
   type TChain,
 } from '@paraspell/sdk';
-import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -14,12 +13,16 @@ import { EXCHANGE_CHAINS } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TGetBestAmountOutOptions, TRouterAsset, TRouterBuilderOptions } from '../types';
-import { type TCommonTransferOptions } from '../types';
+import type {
+  TCommonRouterOptions,
+  TGetBestAmountOutOptions,
+  TRouterAsset,
+  TRouterBuilderOptions,
+} from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 
 export const selectBestExchangeCommon = async <
-  T extends TCommonTransferOptions | TGetBestAmountOutOptions,
+  T extends TCommonRouterOptions | TGetBestAmountOutOptions,
 >(
   options: T,
   originApi: PolkadotClient | undefined,
@@ -28,7 +31,7 @@ export const selectBestExchangeCommon = async <
     assetFromExchange: TRouterAsset,
     assetTo: TRouterAsset,
     options: T,
-  ) => Promise<BigNumber>,
+  ) => Promise<bigint>,
   builderOptions?: TRouterBuilderOptions,
 ): Promise<ExchangeChain> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
@@ -54,7 +57,7 @@ export const selectBestExchangeCommon = async <
   const filteredExchangeChains = Array.isArray(exchange) ? exchange : EXCHANGE_CHAINS;
 
   let bestExchange: ExchangeChain | undefined;
-  let maxAmountOut: BigNumber = new BigNumber(0);
+  let maxAmountOut: bigint = 0n;
   const errors = new Map<TChain, Error>();
   let triedAnyExchange = false;
   for (const exchangeChain of filteredExchangeChains) {
@@ -113,7 +116,7 @@ export const selectBestExchangeCommon = async <
         ...options,
         amount: parsedAmount,
       });
-      if (amountOut.gt(maxAmountOut)) {
+      if (amountOut > maxAmountOut) {
         bestExchange = dex;
         maxAmountOut = amountOut;
       }

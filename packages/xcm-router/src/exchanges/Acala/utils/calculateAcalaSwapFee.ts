@@ -1,8 +1,7 @@
 import type { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
 import type { AggregateDex } from '@acala-network/sdk-swap';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
-import BigNumber from 'bignumber.js';
+import { type Extrinsic, formatUnits } from '@paraspell/sdk-pjs';
 import { firstValueFrom } from 'rxjs';
 
 import Logger from '../../../Logger/Logger';
@@ -15,8 +14,8 @@ export const calculateAcalaSwapFee = async (
   tokenFrom: Token,
   tokenTo: Token,
   { amount, feeCalcAddress }: TSwapOptions,
-): Promise<BigNumber> => {
-  const normalNumberAmount = new BigNumber(amount).shiftedBy(-tokenFrom.decimals).toString();
+): Promise<bigint> => {
+  const normalNumberAmount = formatUnits(amount, tokenFrom.decimals);
 
   const feeCalculationResult = await firstValueFrom(
     dex.swap({
@@ -30,11 +29,10 @@ export const calculateAcalaSwapFee = async (
   const swapTx = dex.getTradingTx(feeCalculationResult) as unknown as Extrinsic;
 
   const swapFee = await calculateTxFeePjs(swapTx, feeCalcAddress);
-  const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
 
   const nativeCurrency = wallet.consts.nativeCurrency;
 
-  Logger.log('Swap fee:', swapFeeNativeCurrency.toString(), nativeCurrency);
+  Logger.log('Swap fee:', swapFee.toString(), nativeCurrency);
 
-  return swapFeeNativeCurrency;
+  return swapFee;
 };

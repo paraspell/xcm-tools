@@ -1,13 +1,19 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import { AmountTooLowError, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
+import {
+  AmountTooLowError,
+  formatUnits,
+  getBalanceNative,
+  getNativeAssetSymbol,
+  padValueBy,
+  parseUnits,
+} from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
 
-import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -22,7 +28,7 @@ class AcalaExchange extends ExchangeChain {
   async swapCurrency(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { papiApi, assetFrom, assetTo, amount, senderAddress, origin } = options;
 
@@ -40,12 +46,11 @@ class AcalaExchange extends ExchangeChain {
       providers: [acalaDex],
     });
 
-    const amountBN = BigNumber(amount);
-
     const swapFee = await calculateAcalaSwapFee(dex, wallet, fromToken, toToken, options);
-    const totalNativeCurrencyFee = swapFee.plus(toDestTransactionFee).multipliedBy(FEE_BUFFER);
 
-    Logger.log('Total fee native:', totalNativeCurrencyFee.toString());
+    const totalNativeCurrencyFee = padValueBy(swapFee + toDestTransactionFee, FEE_BUFFER_PCT);
+
+    Logger.log('Total fee native:', totalNativeCurrencyFee);
 
     const balance = await getBalanceNative({
       api: papiApi,
@@ -53,11 +58,9 @@ class AcalaExchange extends ExchangeChain {
       chain: this.chain,
     });
 
-    Logger.log('Native currency balance:', balance.toString());
+    Logger.log('Native currency balance:', balance);
 
-    const balanceBN = BigNumber(balance.toString());
-
-    if (balanceBN.isLessThan(totalNativeCurrencyFee)) {
+    if (balance < totalNativeCurrencyFee) {
       throw new AmountTooLowError(
         `The native currency balance on ${this.chain} is too low to cover the fees. Please provide a larger amount.`,
       );
@@ -65,16 +68,16 @@ class AcalaExchange extends ExchangeChain {
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    if (amountWithoutFee.isNegative()) {
+    if (amountWithoutFee <= 0n) {
       throw new AmountTooLowError(
         'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }
 
     Logger.log('Original amount', amount);
-    Logger.log('Amount modified', amountWithoutFee.toString());
+    Logger.log('Amount modified', amountWithoutFee);
 
     const tradeResult = await firstValueFrom(
       dex.swap({
@@ -82,7 +85,7 @@ class AcalaExchange extends ExchangeChain {
         source: 'aggregate',
         mode: 'EXACT_INPUT',
         input: new FixedPointNumber(
-          amountWithoutFee.shiftedBy(-fromToken.decimals).toString(),
+          formatUnits(amountWithoutFee, fromToken.decimals),
           fromToken.decimals,
         ),
       }),
@@ -90,25 +93,22 @@ class AcalaExchange extends ExchangeChain {
 
     const tx = dex.getTradingTx(tradeResult) as unknown as Extrinsic;
 
-    const amountOut = tradeResult.result.output.amount.toString();
-    const amountOutBN = BigNumber(amountOut).shiftedBy(toToken.decimals).decimalPlaces(0);
+    const amountOutRes = tradeResult.result.output.amount.toString();
+    const amountOut = parseUnits(amountOutRes, toToken.decimals);
 
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
 
     if (toToken.symbol === nativeAssetSymbol) {
-      const amountOutWithFee = amountOutBN
-        .minus(toDestTransactionFee)
-        .multipliedBy(FEE_BUFFER)
-        .decimalPlaces(0);
-      Logger.log('Amount out with fee:', amountOutWithFee.toString());
+      const amountOutWithFee = padValueBy(amountOut - toDestTransactionFee, FEE_BUFFER_PCT);
+      Logger.log('Amount out with fee:', amountOutWithFee);
       Logger.log('Amount out decimals', toToken.decimals);
-      return { tx, amountOut: amountOutWithFee.toString() };
+      return { tx, amountOut: amountOutWithFee };
     }
 
-    Logger.log('Calculated amount out:', amountOutBN.toString());
+    Logger.log('Calculated amount out:', amountOut);
     Logger.log('Amount out decimals', toToken.decimals);
 
-    return { tx, amountOut: amountOutBN.toString() };
+    return { tx, amountOut };
   }
 
   async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions) {
@@ -130,8 +130,7 @@ class AcalaExchange extends ExchangeChain {
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountBN = BigNumber(amount);
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
     const tradeResult = await firstValueFrom(
       dex.swap({
@@ -139,19 +138,15 @@ class AcalaExchange extends ExchangeChain {
         source: 'aggregate',
         mode: 'EXACT_INPUT',
         input: new FixedPointNumber(
-          amountWithoutFee.shiftedBy(-fromToken.decimals).toString(),
+          formatUnits(amountWithoutFee, fromToken.decimals),
           fromToken.decimals,
         ),
       }),
     );
 
-    const amountOut = tradeResult.result.output.amount.toString();
-    const amountOutBN = BigNumber(amountOut)
-      .shiftedBy(toToken.decimals)
-      .decimalPlaces(0)
-      .toString();
+    const amountOutRes = tradeResult.result.output.amount.toString();
 
-    return BigInt(amountOutBN);
+    return parseUnits(amountOutRes, toToken.decimals);
   }
 
   async createApiInstance(): Promise<ApiPromise> {

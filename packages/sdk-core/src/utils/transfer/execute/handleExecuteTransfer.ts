@@ -1,6 +1,5 @@
 import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
-import { parseUnits } from 'viem'
 
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -8,7 +7,8 @@ import { DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
 import { assertAddressIsString, assertSenderAddress, getRelayChainOf } from '../..'
-import { padFeeBy } from '../../fees/padFee'
+import { padValueBy } from '../../fees/padFee'
+import { parseUnits } from '../../unit'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 
@@ -104,10 +104,10 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   }
 
   const originFeeEstimate = dryRunResult.origin.fee
-  const originFee = padFeeBy(originFeeEstimate, FEE_PADDING_PERCENTAGE)
+  const originFee = padValueBy(originFeeEstimate, FEE_PADDING_PERCENTAGE)
 
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
-  const reserveFee = padFeeBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
+  const reserveFee = padValueBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
 
   checkAmount(
     feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee

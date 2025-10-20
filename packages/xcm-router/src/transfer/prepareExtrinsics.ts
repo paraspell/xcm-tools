@@ -2,14 +2,13 @@ import type { TAssetInfo, WithAmount } from '@paraspell/sdk';
 import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified } from '../types';
-import type { TPreparedExtrinsics } from '../types';
+import type { TBuildTransactionsOptions, TPreparedExtrinsics, TTransformedOptions } from '../types';
 import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
 export const prepareExtrinsics = async (
   dex: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<TPreparedExtrinsics> => {
   const {
     origin,
@@ -48,7 +47,7 @@ export const prepareExtrinsics = async (
           calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
             dex.getAmountOut(exchange.api, {
               ...options,
-              amount: amountIn.toString(),
+              amount: amountIn,
               papiApi: options.exchange.apiPapi,
               assetFrom: options.exchange.assetFrom,
               assetTo: assetTo ?? options.exchange.assetTo,

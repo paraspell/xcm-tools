@@ -3,13 +3,17 @@ import { handleSwapExecuteTransfer, type TPapiApi, type TPapiTransaction } from 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified, TDestinationInfo, TOriginInfo } from '../types';
+import type {
+  TBuildTransactionsOptions,
+  TDestinationInfo,
+  TOriginInfo,
+  TTransformedOptions,
+} from '../types';
 import * as createSwapTxModule from './createSwapTx';
 import { prepareExtrinsics } from './prepareExtrinsics';
 import * as utils from './utils';
 
 vi.mock('./utils');
-
 vi.mock('./createSwapTx');
 
 vi.mock('@paraspell/sdk', async () => {
@@ -35,7 +39,7 @@ const baseOptions = {
     address: 'dest',
     chain: 'Crust',
   },
-} as unknown as TBuildTransactionsOptionsModified;
+} as unknown as TTransformedOptions<TBuildTransactionsOptions>;
 
 describe('prepareExtrinsics', () => {
   beforeEach(() => {
@@ -43,7 +47,7 @@ describe('prepareExtrinsics', () => {
 
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
       txs: ['swapTx' as unknown as TPapiTransaction],
-      amountOut: '1000',
+      amountOut: 1000n,
     });
   });
 
@@ -106,7 +110,7 @@ describe('prepareExtrinsics', () => {
     });
 
     expect(utils.buildFromExchangeExtrinsic).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: '1000' }),
+      expect.objectContaining({ amount: 1000n }),
     );
   });
 
@@ -140,7 +144,7 @@ describe('prepareExtrinsics', () => {
 
     const optionsWithAssetHub = {
       ...baseOptions,
-      amount: '100',
+      amount: 100n,
       senderAddress: 'sender123',
       recipientAddress: 'recipient456',
       exchange: {
@@ -150,7 +154,7 @@ describe('prepareExtrinsics', () => {
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
       },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 
@@ -189,7 +193,7 @@ describe('prepareExtrinsics', () => {
 
     const optionsWithAssetHub = {
       ...baseOptions,
-      amount: '100',
+      amount: 100n,
       senderAddress: 'sender123',
       recipientAddress: 'recipient456',
       exchange: {
@@ -199,7 +203,7 @@ describe('prepareExtrinsics', () => {
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
       },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     const customError = new Error('Network error');
     vi.mocked(handleSwapExecuteTransfer).mockRejectedValue(customError);
@@ -219,7 +223,7 @@ describe('prepareExtrinsics', () => {
 
     const optionsWithAssetHub = {
       ...baseOptions,
-      amount: '100',
+      amount: 100n,
       senderAddress: 'sender123',
       recipientAddress: 'recipient456',
       exchange: {
@@ -229,7 +233,7 @@ describe('prepareExtrinsics', () => {
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
       },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     let capturedCalculateMinAmountOut:
       | ((amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>)

@@ -63,6 +63,7 @@ describe('transfer utils', () => {
     it('builds correct Extrinsic for Polkadot origin', () => {
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
+        amount: BigInt(transferParams.amount),
         origin: {
           api: relaychainApi,
           chain: 'Polkadot',
@@ -81,6 +82,7 @@ describe('transfer utils', () => {
       const from: TSubstrateChain = 'Astar';
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
+        amount: BigInt(transferParams.amount),
         origin: {
           api: parachainPapiApi,
           chain: from,
@@ -96,7 +98,7 @@ describe('transfer utils', () => {
     });
 
     it('handles custom amount and senderAddress correctly', () => {
-      const customAmount = '999999999999999';
+      const customAmount = 999999999999999n;
       const customSenderAddress = '5D...CustomAddress';
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
@@ -125,6 +127,7 @@ describe('transfer utils', () => {
     it('should still build when currencyFrom is missing and from is not Ethereum', () => {
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
+        amount: BigInt(transferParams.amount),
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
@@ -148,6 +151,7 @@ describe('transfer utils', () => {
     it('builds correct Extrinsic for Polkadot destination', () => {
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
+        amount: BigInt(transferParams.amount),
         destination: {
           chain: 'Polkadot',
           address: 'MOCK_ADDRESS',
@@ -168,6 +172,7 @@ describe('transfer utils', () => {
     it('builds correct Extrinsic for non-Polkadot/Kusama destination', () => {
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
+        amount: BigInt(transferParams.amount),
         destination: {
           chain: 'Astar',
           address: 'MOCK_ADDRESS',

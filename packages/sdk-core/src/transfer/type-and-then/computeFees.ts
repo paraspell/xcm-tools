@@ -3,7 +3,7 @@ import type { Version } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { addXcmVersionHeader, padFeeBy } from '../../utils'
+import { addXcmVersionHeader, padValueBy } from '../../utils'
 import type { createCustomXcm } from './createCustomXcm'
 import type { createRefundInstruction } from './utils'
 
@@ -15,7 +15,7 @@ const computeInstructionFee = async <TApi, TRes>(
   version: Version,
   xcm: unknown
 ) =>
-  padFeeBy(
+  padValueBy(
     await api.getXcmPaymentApiFee(
       chain,
       addXcmVersionHeader(xcm, version),

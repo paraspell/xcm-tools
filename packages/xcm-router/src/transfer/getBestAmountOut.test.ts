@@ -64,7 +64,7 @@ describe('getBestAmountOut', () => {
     expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance', {
       assetFrom: fakeAssets.assetFromExchange,
       assetTo: fakeAssets.assetTo,
-      amount: '100',
+      amount: 100n,
       papiApi: 'api_instance_papi',
     });
     expect(result).toEqual({
@@ -112,7 +112,7 @@ describe('getBestAmountOut', () => {
     expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance_b', {
       assetFrom: fakeAssets.assetFromExchange,
       assetTo: fakeAssets.assetTo,
-      amount: '50',
+      amount: 50n,
       papiApi: 'api_instance_papi_b',
     });
     expect(result).toEqual({

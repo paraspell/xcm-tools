@@ -9,12 +9,12 @@ import type { TPjsApi, TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptions, TBuildTransactionsOptionsModified } from '../types';
+import type { TBuildTransactionsOptions } from '../types';
 import type {
-  TAdditionalTransferOptions,
   TExchangeInfo,
   TOriginInfo,
   TRouterAsset,
+  TTransformedOptions,
 } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import { getMinTransferableAmount } from './getMinTransferableAmount';
@@ -73,11 +73,11 @@ const createOptions = (
 });
 
 const createTransformedOptions = (
-  overrides: Partial<TBuildTransactionsOptionsModified> = {},
-): TBuildTransactionsOptions & TAdditionalTransferOptions => {
+  overrides: Partial<TTransformedOptions<TBuildTransactionsOptions>> = {},
+) => {
   const { exchange: _ignored, ...rest } = createOptions();
 
-  const base: TBuildTransactionsOptionsModified = {
+  const base = {
     ...rest,
     exchange: createExchangeInfo('HDX'),
     origin: undefined,
@@ -89,7 +89,7 @@ const createTransformedOptions = (
   return {
     ...base,
     ...overrides,
-  } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions;
+  } as TTransformedOptions<TBuildTransactionsOptions>;
 };
 
 const createExchangeChainStub = (): ExchangeChain =>
@@ -171,7 +171,7 @@ describe('getMinTransferableAmount', () => {
       currency: 'HDX',
       asset: createAssetInfo('HDX'),
     };
-    vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: '0' });
+    vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
 
     const result = await getMinTransferableAmount(createOptions());
 

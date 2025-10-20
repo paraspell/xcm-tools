@@ -8,13 +8,13 @@ import {
 } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptionsModified, TRouterXcmFeeResult } from '../types';
+import type { TBuildTransactionsOptions, TRouterXcmFeeResult, TTransformedOptions } from '../types';
 import { getSwapFee } from './fees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
 export const getRouterFees = async (
   dex: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<TRouterXcmFeeResult> => {
   const {
     origin,
@@ -34,8 +34,8 @@ export const getRouterFees = async (
       const buildTx = async (overrideAmount?: string) => {
         const amt =
           overrideAmount !== undefined
-            ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true).toString()
-            : amount.toString();
+            ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true)
+            : amount;
         const amountOut = await dex.getAmountOut(exchange.api, {
           ...options,
           amount: amt,
@@ -60,7 +60,7 @@ export const getRouterFees = async (
             calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
               dex.getAmountOut(exchange.api, {
                 ...options,
-                amount: amountIn.toString(),
+                amount: amountIn,
                 papiApi: options.exchange.apiPapi,
                 assetFrom: options.exchange.assetFrom,
                 assetTo: assetTo ?? options.exchange.assetTo,
@@ -75,7 +75,7 @@ export const getRouterFees = async (
 
       const mainAmountOut = await dex.getAmountOut(exchange.api, {
         ...options,
-        amount: amount.toString(),
+        amount,
         papiApi: exchange.apiPapi,
         assetFrom: exchange.assetFrom,
         assetTo: exchange.assetTo,

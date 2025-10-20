@@ -6,11 +6,12 @@ import {
   getNativeAssetSymbol,
   getParaId,
   InvalidParameterError,
+  padValueBy,
+  parseUnits,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 
-import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfig,
@@ -26,7 +27,7 @@ class BifrostExchange extends ExchangeChain {
   async swapCurrency(
     api: ApiPromise,
     options: TSwapOptions,
-    toDestTxFee: BigNumber,
+    toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
 
@@ -53,19 +54,15 @@ class BifrostExchange extends ExchangeChain {
 
     const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
 
-    Logger.log('To dest tx fee in native currency:', toDestTxFee.toString());
+    Logger.log('To dest tx fee in native currency:', toDestTxFee);
     Logger.log('Original amount', amount);
-
-    const amountBN = BigNumber(amount);
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
-    Logger.log('Amount modified', amountWithoutFee.toString());
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
+    Logger.log('Amount modified', amountWithoutFee);
 
-    if (amountWithoutFee.isNegative()) {
-      throw new AmountTooLowError();
-    }
+    if (amountWithoutFee <= 0n) throw new AmountTooLowError();
 
     const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
 
@@ -88,31 +85,24 @@ class BifrostExchange extends ExchangeChain {
       throw new InvalidParameterError('Extrinsic is null');
     }
 
-    const amountOutBN = BigNumber(trade.outputAmount.toFixed())
-      .shiftedBy(tokenTo.decimals)
-      .decimalPlaces(0);
+    const amountOut = parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals);
 
     const nativeSymbol = getNativeAssetSymbol(this.chain);
 
     if (tokenTo.symbol === nativeSymbol) {
-      const amountOutWithFee = amountOutBN
-        .minus(toDestTxFee)
-        .multipliedBy(FEE_BUFFER)
-        .decimalPlaces(0);
+      const amountOutWithFee = amountOut - padValueBy(toDestTxFee, FEE_BUFFER_PCT);
 
-      if (amountOutWithFee.isNegative()) {
-        throw new AmountTooLowError();
-      }
+      if (amountOutWithFee <= 0n) throw new AmountTooLowError();
 
-      Logger.log('Amount out with fee:', amountOutWithFee.toString());
-      return { tx: extrinsic[0], amountOut: amountOutWithFee.toString() };
+      Logger.log('Amount out with fee:', amountOutWithFee);
+      return { tx: extrinsic[0], amountOut: amountOutWithFee };
     }
 
-    Logger.log('Calculated amount out:', amountOutBN.toString());
+    Logger.log('Calculated amount out:', amountOut);
 
     return {
       tx: extrinsic[0],
-      amountOut: amountOutBN.toString(),
+      amountOut,
     };
   }
 
@@ -142,20 +132,14 @@ class BifrostExchange extends ExchangeChain {
 
     const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
 
-    const amountBN = new BigNumber(amount);
-
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee)).decimalPlaces(0);
+    const amountWithoutFee = padValueBy(amount, pctDestFee);
 
     const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
     const trade = getBestTrade(chainId, pairs, amountIn, tokenTo);
 
-    const amountOutBN = BigNumber(trade.outputAmount.toFixed())
-      .shiftedBy(tokenTo.decimals)
-      .decimalPlaces(0);
-
-    return BigInt(amountOutBN.toString());
+    return parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals);
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {

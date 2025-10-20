@@ -4,7 +4,6 @@ import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { AmountTooLowError, getBalanceNative, getParaId } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TSwapOptions } from '../../types';
@@ -68,11 +67,11 @@ describe('BifrostExchange', () => {
     const swapOptions = {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
-      amount: '1000000',
+      amount: 1000000n,
       senderAddress: '5xxxxxx',
       slippagePct: '0.5',
     } as TSwapOptions;
-    const mockToDestTransactionFee = new BigNumber('1000');
+    const mockToDestTransactionFee = 1000n;
 
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);
@@ -119,7 +118,7 @@ describe('BifrostExchange', () => {
           mockApi,
           {
             ...swapOptions,
-            amount: '-1',
+            amount: -1n,
           },
           mockToDestTransactionFee,
         ),
@@ -176,13 +175,13 @@ describe('BifrostExchange', () => {
         mockApi,
         {
           ...swapOptions,
-          amount: '100000000000000',
+          amount: 100000000000000n,
         },
         mockToDestTransactionFee,
       );
 
       expect(result.tx).toEqual({});
-      expect(result.amountOut).toEqual('1000000000000');
+      expect(result.amountOut).toEqual(1000000000000n);
     });
   });
 
@@ -190,7 +189,7 @@ describe('BifrostExchange', () => {
     const swapOptions = {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
-      amount: '1000000',
+      amount: 1000000n,
     } as TSwapOptions;
 
     beforeEach(() => {

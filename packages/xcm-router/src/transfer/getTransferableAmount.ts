@@ -7,7 +7,7 @@ import {
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
-import type { TBuildTransactionsOptionsModified, TRouterAsset } from '../types/TRouter';
+import type { TRouterAsset, TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
   createToExchangeBuilder,
@@ -29,7 +29,7 @@ const toCurrencyCore = (asset: TRouterAsset): TCurrencyCore => {
 
 const computeLocalTransferableAmount = async (
   dex: ExchangeChain,
-  options: TBuildTransactionsOptionsModified,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<bigint> => {
   const { exchange, senderAddress } = options;
 

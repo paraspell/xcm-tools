@@ -15,11 +15,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type {
-  TBuildTransactionsOptionsModified,
+  TBuildTransactionsOptions,
   TDestinationInfo,
   TOriginInfo,
   TRouterXcmFeeHopInfo,
   TRouterXcmFeeResult,
+  TTransformedOptions,
 } from '../types';
 import { getSwapFee } from './fees';
 import { getRouterFees } from './getRouterFees';
@@ -40,7 +41,7 @@ vi.mock('@paraspell/sdk', async () => {
 describe('getRouterFees', () => {
   let dex: ExchangeChain;
   let baseChain: TParachain;
-  let options: TBuildTransactionsOptionsModified;
+  let options: TTransformedOptions<TBuildTransactionsOptions>;
 
   const swapFee = { fee: 1234n, currency: 'FOO' } as TXcmFeeDetail;
   const swapAmountOut = 5000n;
@@ -83,12 +84,12 @@ describe('getRouterFees', () => {
       },
       senderAddress: '0xdeadbeef',
       amount: '1000',
-    } as TBuildTransactionsOptionsModified;
+    } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
 
     vi.clearAllMocks();
     vi.mocked(getSwapFee).mockResolvedValue({
       result: swapFee,
-      amountOut: swapAmountOut.toString(),
+      amountOut: swapAmountOut,
     });
     vi.mocked(getToExchangeFee).mockResolvedValue(toExchangeFeeValue);
     vi.mocked(getFromExchangeFee).mockResolvedValue(toDestFeeValue);
@@ -232,7 +233,7 @@ describe('getRouterFees', () => {
     const localOptions = {
       ...options,
       destination: { chain: 'Moonbeam' },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     const result = await getRouterFees(hydrationDex, localOptions);
 
@@ -261,7 +262,7 @@ describe('getRouterFees', () => {
     const localOptions = {
       ...options,
       origin: { chain: 'Acala' },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Other', 'origin'));
 
@@ -282,7 +283,7 @@ describe('getRouterFees', () => {
       ...options,
       origin: { chain: 'Acala' },
       destination: { chain: 'Moonbeam' },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     await getRouterFees(assetHubDex, localOptions);
 
@@ -317,7 +318,7 @@ describe('getRouterFees', () => {
     const localOptions = {
       ...options,
       origin: { chain: 'Acala' },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     await getRouterFees(assetHubDex, localOptions);
 
@@ -338,7 +339,7 @@ describe('getRouterFees', () => {
     expect(spy).toHaveBeenLastCalledWith(
       localOptions.exchange.api,
       expect.objectContaining({
-        amount: '123',
+        amount: 123n,
         papiApi: localOptions.exchange.apiPapi,
         assetFrom: localOptions.exchange.assetFrom,
         assetTo: customAssetTo,
@@ -358,7 +359,7 @@ describe('getRouterFees', () => {
     const localOptions = {
       ...options,
       destination: { chain: 'Moonbeam' },
-    } as TBuildTransactionsOptionsModified;
+    } as TTransformedOptions<TBuildTransactionsOptions>;
 
     await getRouterFees(hydrationDex, localOptions);
 
@@ -378,7 +379,7 @@ describe('getRouterFees', () => {
     expect(spy).toHaveBeenLastCalledWith(
       localOptions.exchange.api,
       expect.objectContaining({
-        amount: '777',
+        amount: 777n,
         papiApi: localOptions.exchange.apiPapi,
         assetFrom: localOptions.exchange.assetFrom,
         assetTo: localOptions.exchange.assetTo,
@@ -408,7 +409,7 @@ describe('getRouterFees', () => {
       currencyTo: { symbol: 'DOT' },
       amount: 1n,
       senderAddress: 'addr',
-    } as unknown as TBuildTransactionsOptionsModified;
+    } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
 
     vi.mocked(getXcmFee).mockResolvedValue({
       failureReason: 'NoDeal',

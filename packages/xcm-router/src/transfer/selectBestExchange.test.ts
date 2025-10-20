@@ -1,20 +1,14 @@
-import BigNumber from 'bignumber.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TCommonTransferOptions } from '../types';
+import type { TBuildTransactionsOptions } from '../types';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchange } from './selectBestExchange';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-vi.mock('./createSwapTx', () => ({
-  calculateFromExchangeFee: vi.fn(),
-}));
-
-vi.mock('./selectBestExchangeCommon', () => ({
-  selectBestExchangeCommon: vi.fn(),
-}));
+vi.mock('./createSwapTx');
+vi.mock('./selectBestExchangeCommon');
 
 const dummyDex = (): ExchangeChain =>
   ({
@@ -25,10 +19,10 @@ const dummyDex = (): ExchangeChain =>
     swapCurrency: vi.fn().mockResolvedValue({ amountOut: '123' }),
   }) as unknown as ExchangeChain;
 
-const fee = new BigNumber(10);
+const fee = 10n;
 
 describe('selectBestExchange', () => {
-  let baseOptions: TCommonTransferOptions;
+  let baseOptions: TBuildTransactionsOptions;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -85,7 +79,7 @@ describe('selectBestExchange', () => {
   });
 
   it('propagates errors from selectBestExchangeCommon (e.g. unsupported asset)', async () => {
-    const failingOptions: TCommonTransferOptions = {
+    const failingOptions: TBuildTransactionsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: 'xyz' },
       currencyTo: { id: '1000099' },

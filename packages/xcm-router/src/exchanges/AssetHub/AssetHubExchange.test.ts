@@ -9,15 +9,12 @@ import {
   transform,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
-import { BigNumber } from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset } from '../../assets';
 import type { TSingleSwapResult, TSwapOptions } from '../../types';
 import AssetHubExchange from './AssetHubExchange';
 import { getQuotedAmount } from './utils';
-
-vi.mock('./utils');
 
 vi.mock('@paraspell/sdk', async () => {
   const original = await vi.importActual('@paraspell/sdk');
@@ -29,20 +26,10 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
-vi.mock('../../consts', () => ({
-  DEST_FEE_BUFFER_PCT: 0.02,
-  FEE_BUFFER: 1,
-}));
-
-vi.mock('../../assets', () => ({
-  getExchangeAsset: vi.fn(),
-}));
+vi.mock('./utils');
+vi.mock('../../assets');
 
 describe('AssetHubExchange', () => {
-  it('should be defined', () => {
-    expect(true).toBeDefined();
-  });
-
   let instance: AssetHubExchange;
   let api: ApiPromise;
   let papiApi: TPapiApi = {} as unknown as TPapiApi;
@@ -70,7 +57,7 @@ describe('AssetHubExchange', () => {
       papiApi: papiApi,
       assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
       assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
-      amount: '1000',
+      amount: 1000n,
       senderAddress: 'sender',
       slippagePct: '5',
       origin: undefined,
@@ -83,26 +70,26 @@ describe('AssetHubExchange', () => {
   describe('swapCurrency', () => {
     it('should throw if assetFrom.location is missing', async () => {
       const opts = { ...baseSwapOptions, assetFrom: { symbol: 'ASSET1' } } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, new BigNumber('50'))).rejects.toThrow(
+      await expect(instance.swapCurrency(api, opts, 50n)).rejects.toThrow(
         'Asset from location not found',
       );
     });
 
     it('should throw if assetTo.location is missing', async () => {
       const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, new BigNumber('50'))).rejects.toThrow(
+      await expect(instance.swapCurrency(api, opts, 50n)).rejects.toThrow(
         'Asset to location not found',
       );
     });
 
     it('should throw AmountTooLowError if amount is too small', async () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce({
-        amountOut: BigInt('100'),
+        amountOut: 100n,
         usedFromML: assetFromML,
         usedToML: assetToML,
       });
       vi.mocked(getQuotedAmount).mockResolvedValueOnce({
-        amountOut: BigInt('10000000'),
+        amountOut: 10000000n,
         usedFromML: assetFromML,
         usedToML: assetToML,
       });
@@ -110,11 +97,9 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
         assetTo: { symbol: 'NATIVE', decimals: 10, location: assetToML },
-        amount: '1000',
+        amount: 1000n,
       } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, BigNumber('50000'))).rejects.toThrow(
-        AmountTooLowError,
-      );
+      await expect(instance.swapCurrency(api, opts, 50000n)).rejects.toThrow(AmountTooLowError);
     });
 
     it('should swap using native fee conversion when assetTo.symbol equals native asset symbol', async () => {
@@ -124,23 +109,23 @@ describe('AssetHubExchange', () => {
         origin: {},
       } as TSwapOptions;
       const firstQuote = {
-        amountOut: BigInt('2000'),
+        amountOut: 2000n,
         usedFromML: assetFromML,
         usedToML: assetToML,
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
-      const toDestTxFee = BigNumber('50');
+      const toDestTxFee = 50n;
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(swapMock).toHaveBeenCalledWith({
         path: [assetFromML, assetToML],
-        amount_in: 980n,
+        amount_in: 990n,
         amount_out_min: 1900n,
         send_to: 'sender',
         keep_alive: true,
       });
-      expect(result).toEqual({ tx: dummyTx, amountOut: '1950' });
+      expect(result).toEqual({ tx: dummyTx, amountOut: 1945n });
       expect(getQuotedAmount).toHaveBeenCalledTimes(1);
     });
 
@@ -163,7 +148,7 @@ describe('AssetHubExchange', () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote).mockResolvedValueOnce(feeQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
-      const toDestTxFee = BigNumber('50');
+      const toDestTxFee = 50n;
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(swapMock).toHaveBeenCalledWith({
         path: [assetFromML, assetToML],
@@ -172,7 +157,7 @@ describe('AssetHubExchange', () => {
         send_to: 'sender',
         keep_alive: true,
       });
-      expect(result).toEqual({ tx: dummyTx, amountOut: '1900' });
+      expect(result).toEqual({ tx: dummyTx, amountOut: 1890n });
       expect(getQuotedAmount).toHaveBeenCalledTimes(2);
 
       expect(getQuotedAmount).toHaveBeenCalledWith(
@@ -206,7 +191,7 @@ describe('AssetHubExchange', () => {
     };
 
     const baseOpts = {
-      amount: '1000',
+      amount: 1000n,
       senderAddress: 'sender',
       slippagePct: '5',
       origin: undefined,
@@ -226,7 +211,7 @@ describe('AssetHubExchange', () => {
             assetFrom: assetA,
             assetTo: assetB,
           } as TSwapOptions,
-          BigNumber(0),
+          0n,
         ),
       ).rejects.toThrow(InvalidParameterError);
     });
@@ -240,7 +225,7 @@ describe('AssetHubExchange', () => {
             assetFrom: assetNative,
             assetTo: assetNative,
           } as TSwapOptions,
-          BigNumber(0),
+          0n,
         ),
       ).rejects.toThrow(InvalidParameterError);
     });
@@ -248,7 +233,7 @@ describe('AssetHubExchange', () => {
     it('handles single hop when assetFrom is native', async () => {
       instance.swapCurrency = vi.fn().mockResolvedValueOnce({
         tx: dummyTx,
-        amountOut: '999',
+        amountOut: 999n,
       });
 
       const spy = vi.spyOn(instance, 'swapCurrency');
@@ -260,17 +245,17 @@ describe('AssetHubExchange', () => {
           assetFrom: assetNative,
           assetTo: assetB,
         } as TSwapOptions,
-        BigNumber(0),
+        0n,
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({ txs: [dummyTx], amountOut: '999' });
+      expect(result).toEqual({ txs: [dummyTx], amountOut: 999n });
     });
 
     it('handles single hop when assetTo is native', async () => {
       instance.swapCurrency = vi.fn().mockResolvedValueOnce({
         tx: dummyTx,
-        amountOut: '888',
+        amountOut: 888n,
       });
 
       const spy = vi.spyOn(instance, 'swapCurrency');
@@ -282,18 +267,18 @@ describe('AssetHubExchange', () => {
           assetFrom: assetA,
           assetTo: assetNative,
         } as TSwapOptions,
-        BigNumber(0),
+        0n,
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({ txs: [dummyTx], amountOut: '888' });
+      expect(result).toEqual({ txs: [dummyTx], amountOut: 888n });
     });
 
     it('handles multi-hop swap when both assets are non-native', async () => {
       instance.swapCurrency = vi
         .fn()
-        .mockResolvedValueOnce({ tx: 'tx1', amountOut: '1000' })
-        .mockResolvedValueOnce({ tx: 'tx2', amountOut: '950' });
+        .mockResolvedValueOnce({ tx: 'tx1', amountOut: 1000n })
+        .mockResolvedValueOnce({ tx: 'tx2', amountOut: 950n });
 
       const spy = vi.spyOn(instance, 'swapCurrency');
 
@@ -304,18 +289,18 @@ describe('AssetHubExchange', () => {
           assetFrom: assetA,
           assetTo: assetB,
         } as TSwapOptions,
-        BigNumber(0),
+        0n,
       );
 
       expect(spy).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
         txs: ['tx1', 'tx2'],
-        amountOut: '950',
+        amountOut: 950n,
       });
     });
 
     it('throws if hop 1 returns 0', async () => {
-      instance.swapCurrency = vi.fn().mockResolvedValueOnce({ tx: 'tx1', amountOut: '0' });
+      instance.swapCurrency = vi.fn().mockResolvedValueOnce({ tx: 'tx1', amountOut: 0n });
       await expect(
         instance.handleMultiSwap(
           api,
@@ -324,7 +309,7 @@ describe('AssetHubExchange', () => {
             assetFrom: assetA,
             assetTo: assetB,
           } as TSwapOptions,
-          BigNumber(0),
+          0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
     });
@@ -332,8 +317,8 @@ describe('AssetHubExchange', () => {
     it('throws if hop 2 returns 0', async () => {
       instance.swapCurrency = vi
         .fn()
-        .mockResolvedValueOnce({ tx: 'tx1', amountOut: '1000' })
-        .mockResolvedValueOnce({ tx: 'tx2', amountOut: '0' });
+        .mockResolvedValueOnce({ tx: 'tx1', amountOut: 1000n })
+        .mockResolvedValueOnce({ tx: 'tx2', amountOut: 0n });
 
       await expect(
         instance.handleMultiSwap(
@@ -343,7 +328,7 @@ describe('AssetHubExchange', () => {
             assetFrom: assetA,
             assetTo: assetB,
           } as TSwapOptions,
-          new BigNumber(0),
+          0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
     });
@@ -415,7 +400,7 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const firstQuote = {
-        amountOut: BigInt('2000'),
+        amountOut: 2000n,
         usedFromML: assetNative.location,
         usedToML: assetB.location,
       };
@@ -429,7 +414,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetNative.location,
         assetB.location,
-        BigNumber('1000'),
+        1000n,
       );
     });
 
@@ -442,7 +427,7 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const firstQuote = {
-        amountOut: BigInt('2000'),
+        amountOut: 2000n,
         usedFromML: assetA.location,
         usedToML: assetNative.location,
       };
@@ -456,7 +441,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetA.location,
         assetNative.location,
-        BigNumber('1000'),
+        1000n,
       );
     });
 
@@ -469,7 +454,7 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const firstQuote = {
-        amountOut: BigInt('2000'),
+        amountOut: 2000n,
         usedFromML: assetNative.location,
         usedToML: assetB.location,
       };
@@ -482,7 +467,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetNative.location,
         assetB.location,
-        BigNumber('980'), // 1000 * (1 - 0.02)
+        990n,
       );
     });
 
@@ -495,12 +480,12 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const hop1Quote = {
-        amountOut: BigInt('1000'),
+        amountOut: 1000n,
         usedFromML: assetA.location,
         usedToML: assetNative.location,
       };
       const hop2Quote = {
-        amountOut: BigInt('950'),
+        amountOut: 950n,
         usedFromML: assetNative.location,
         usedToML: assetB.location,
       };
@@ -517,7 +502,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetA.location,
         assetNative.location,
-        BigNumber('1000'),
+        1000n,
       );
 
       expect(getQuotedAmount).toHaveBeenNthCalledWith(
@@ -526,7 +511,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetNative.location,
         assetB.location,
-        BigNumber('980'), // 1000 * 0.98
+        980n, // 1000 * 0.98
       );
     });
 
@@ -539,12 +524,12 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const hop1Quote = {
-        amountOut: BigInt('1000'),
+        amountOut: 1000n,
         usedFromML: assetA.location,
         usedToML: assetNative.location,
       };
       const hop2Quote = {
-        amountOut: BigInt('950'),
+        amountOut: 950n,
         usedFromML: assetNative.location,
         usedToML: assetB.location,
       };
@@ -560,7 +545,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetA.location,
         assetNative.location,
-        BigNumber('980'), // 1000 * (1 - 0.02)
+        990n,
       );
 
       expect(getQuotedAmount).toHaveBeenNthCalledWith(
@@ -569,7 +554,7 @@ describe('AssetHubExchange', () => {
         instance.chain,
         assetNative.location,
         assetB.location,
-        BigNumber('980'), // 1000 (hop1Quote.amountOut) * 0.98
+        980n, // 1000 (hop1Quote.amountOut) * 0.98
       );
     });
 
@@ -581,7 +566,7 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const hop1Quote = {
-        amountOut: BigInt('0'),
+        amountOut: 0n,
         usedFromML: assetA.location,
         usedToML: assetNative.location,
       };
@@ -601,12 +586,12 @@ describe('AssetHubExchange', () => {
       } as TSwapOptions;
 
       const hop1Quote = {
-        amountOut: BigInt('1000'),
+        amountOut: 1000n,
         usedFromML: assetA.location,
         usedToML: assetNative.location,
       };
       const hop2Quote = {
-        amountOut: BigInt('0'),
+        amountOut: 0n,
         usedFromML: assetNative.location,
         usedToML: assetB.location,
       };
