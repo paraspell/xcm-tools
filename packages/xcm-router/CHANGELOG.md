@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.12.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.11.0...xcm-router-v11.12.0) (2025-10-21)
+
+
+### Features
+
+* **xcm-router:** Add dryRun function to RouterBuilder 🪄 ([1f14dc9](https://github.com/paraspell/xcm-tools/commit/1f14dc94cb40edce7ade9faf157ddcf6cdbd5925))
+* **xcm-router:** Add getMinTransferableAmount to RouterBuilder 🪄 ([845a2bf](https://github.com/paraspell/xcm-tools/commit/845a2bf00d683cd73923a023b1da1a0e1130c145))
+* **xcm-router:** Add transferable amount for router ✨ ([575e3d2](https://github.com/paraspell/xcm-tools/commit/575e3d2b858c1ec422d64cb11c3d0a03cf1b7ebb))
+
+
+### Code Refactoring
+
+* **xcm-router:** Use native bigint instead of bignumber.js 📦 ([e0d227e](https://github.com/paraspell/xcm-tools/commit/e0d227e3ad0d59578fccf494bd0598c6e2d39b51))
+
+
+### Tests
+
+* **xcm-router:** Add getMinTransferable unit tests 🧪 ([bf1428c](https://github.com/paraspell/xcm-tools/commit/bf1428c57311aeee52a9f68e8232f431c1efddba))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([d591a28](https://github.com/paraspell/xcm-tools/commit/d591a28841a92109f7162c32cfa627f3d6a6b86f))
+
 ## [11.11.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.10.0...xcm-router-v11.11.0) (2025-10-14)
 
 

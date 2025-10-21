@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.11.0...sdk-v11.12.0) (2025-10-21)
+
+
+### Code Refactoring
+
+* **xcm-router:** Use native bigint instead of bignumber.js 📦 ([e0d227e](https://github.com/paraspell/xcm-tools/commit/e0d227e3ad0d59578fccf494bd0598c6e2d39b51))
+
 ## [11.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.10.0...sdk-v11.11.0) (2025-10-14)
 
 

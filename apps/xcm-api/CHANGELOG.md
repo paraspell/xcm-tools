@@ -1,5 +1,14 @@
 # Changelog
 
+## [11.12.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.11.0...xcm-api-v11.12.0) (2025-10-21)
+
+
+### Features
+
+* **xcm-router:** Add dryRun function to RouterBuilder 🪄 ([1f14dc9](https://github.com/paraspell/xcm-tools/commit/1f14dc94cb40edce7ade9faf157ddcf6cdbd5925))
+* **xcm-router:** Add getMinTransferableAmount to RouterBuilder 🪄 ([845a2bf](https://github.com/paraspell/xcm-tools/commit/845a2bf00d683cd73923a023b1da1a0e1130c145))
+* **xcm-router:** Add transferable amount for router ✨ ([575e3d2](https://github.com/paraspell/xcm-tools/commit/575e3d2b858c1ec422d64cb11c3d0a03cf1b7ebb))
+
 ## [11.11.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.10.0...xcm-api-v11.11.0) (2025-10-14)
 
 
