@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.11.0...sdk-core-v11.12.0) (2025-10-21)
+
+
+### Features
+
+* **xcm-router:** Add dryRun function to RouterBuilder 🪄 ([1f14dc9](https://github.com/paraspell/xcm-tools/commit/1f14dc94cb40edce7ade9faf157ddcf6cdbd5925))
+
+
+### Code Refactoring
+
+* **xcm-router:** Use native bigint instead of bignumber.js 📦 ([e0d227e](https://github.com/paraspell/xcm-tools/commit/e0d227e3ad0d59578fccf494bd0598c6e2d39b51))
+
 ## [11.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.10.0...sdk-core-v11.11.0) (2025-10-14)
 
 
