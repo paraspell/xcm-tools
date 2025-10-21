@@ -12,22 +12,26 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TSubstrateChain } from '@paraspell/sdk';
 import {
+  formatUnits,
   getOtherAssets,
   isForeignAsset,
   replaceBigInt,
   type TAssetInfo,
+  type TChain,
   type TCurrencyInput,
+  type TSubstrateChain,
 } from '@paraspell/sdk';
-import type {
-  TExchangeChain,
-  TExchangeInput,
-  TRouterBuilderOptions,
-  TRouterEvent,
-  TTransaction,
+import {
+  createExchangeInstance,
+  RouterBuilder,
+  type TExchangeChain,
+  type TExchangeInput,
+  type TGetBestAmountOutResult,
+  type TRouterBuilderOptions,
+  type TRouterEvent,
+  type TTransaction,
 } from '@paraspell/xcm-router';
-import { createExchangeInstance, RouterBuilder } from '@paraspell/xcm-router';
 import axios, { AxiosError } from 'axios';
 import { ethers } from 'ethers';
 import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
@@ -36,12 +40,15 @@ import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 
-import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
-import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
+import {
+  type TRouterFormValuesTransformed,
+  XcmRouterForm,
+} from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
 import { useWallet } from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
 import { fetchFromApi, submitTransactionPapi } from '../../utils';
+import { resolveDecimals } from '../../utils/amountFormat';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -142,6 +149,19 @@ export const XcmRouter = () => {
     throw new Error('Invalid currency input');
   };
 
+  const normalizeBestAmount = (
+    rawAmount: bigint,
+    chain: TSubstrateChain | TChain | undefined,
+    asset: TAssetInfo,
+  ): number => {
+    const decimals =
+      chain != null
+        ? (resolveDecimals(chain, asset) ?? Number(asset.decimals))
+        : Number(asset.decimals);
+
+    return Number(formatUnits(rawAmount, decimals));
+  };
+
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
@@ -153,7 +173,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
+      amountFrom,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
@@ -183,7 +203,7 @@ export const XcmRouter = () => {
           exchange === undefined || Array.isArray(exchange),
         ),
       )
-      .amount(amount)
+      .amount(amountFrom)
       .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .evmSenderAddress(evmSenderAddress)
@@ -196,18 +216,32 @@ export const XcmRouter = () => {
 
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | TExchangeChain[] | undefined,
+    exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
   ) => {
-    const { currencyFrom, currencyTo } = formValues;
+    const { from, amountFrom, currencyFrom, currencyTo } = formValues;
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: { symbol: currencyFrom.symbol },
-          currencyTo: { symbol: currencyTo.symbol },
+          currencyFrom: determineCurrency(
+            from
+              ? from
+              : exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+            currencyFrom,
+          ),
+          currencyTo: determineCurrency(
+            exchange && !Array.isArray(exchange)
+              ? createExchangeInstance(exchange).chain
+              : undefined,
+            currencyTo,
+            exchange === undefined || Array.isArray(exchange),
+          ),
+          amount: amountFrom,
           exchange: exchange ?? undefined,
           senderAddress,
           options: builderOptions,
@@ -280,7 +314,7 @@ export const XcmRouter = () => {
 
   const submitGetXcmFee = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | undefined,
+    exchange: TExchangeInput,
     senderAddress: string,
   ) => {
     const {
@@ -289,7 +323,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
+      amountFrom,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
@@ -303,6 +337,22 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+            amount: amountFrom,
             senderAddress: selectedAccount?.address,
             options: builderOptions,
           },
@@ -334,7 +384,7 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(amount)
+          .amount(amountFrom)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
@@ -361,7 +411,7 @@ export const XcmRouter = () => {
 
   const submitGetTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | undefined,
+    exchange: TExchangeInput,
     senderAddress: string,
   ) => {
     const {
@@ -370,7 +420,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
+      amountFrom,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
@@ -384,6 +434,22 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
+            amount: amountFrom,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
             exchange,
             senderAddress,
             options: builderOptions,
@@ -416,7 +482,7 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(amount)
+          .amount(amountFrom)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
@@ -447,7 +513,7 @@ export const XcmRouter = () => {
 
   const submitGetMinTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | undefined,
+    exchange: TExchangeInput,
     senderAddress: string,
   ) => {
     const {
@@ -456,7 +522,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
+      amountFrom,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
@@ -470,6 +536,22 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
+            amount: amountFrom,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
             exchange,
             senderAddress,
             options: builderOptions,
@@ -502,7 +584,7 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(amount)
+          .amount(amountFrom)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
@@ -533,7 +615,7 @@ export const XcmRouter = () => {
 
   const submitDryRun = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | undefined,
+    exchange: TExchangeInput,
     senderAddress: string,
   ) => {
     const {
@@ -542,7 +624,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
-      amount,
+      amountFrom,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
       slippagePct,
@@ -557,6 +639,22 @@ export const XcmRouter = () => {
           {
             ...formValues,
             exchange,
+            amount: amountFrom,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
             senderAddress,
             options: builderOptions,
           },
@@ -588,7 +686,7 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(amount)
+          .amount(amountFrom)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
@@ -616,9 +714,10 @@ export const XcmRouter = () => {
 
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeChain | undefined,
+    exchange: TExchangeInput | undefined,
   ) => {
-    const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+    const { useApi, from, to, currencyFrom, currencyTo, amountFrom } =
+      formValues;
 
     setLoading(true);
 
@@ -628,6 +727,22 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
+            amount: amountFrom,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
             options: builderOptions,
           },
           '/router/best-amount-out',
@@ -658,10 +773,26 @@ export const XcmRouter = () => {
               exchange === undefined || Array.isArray(exchange),
             ),
           )
-          .amount(formValues.amount)
+          .amount(amountFrom)
           .getBestAmountOut();
       }
-      setOutput(JSON.stringify(result, replaceBigInt, 2));
+      const response = result as TGetBestAmountOutResult;
+      const formattedAmountOut = normalizeBestAmount(
+        response.amountOut,
+        to ?? from,
+        currencyTo,
+      );
+
+      setOutput(
+        JSON.stringify(
+          {
+            result,
+            formattedAmountOut,
+          },
+          replaceBigInt,
+          2,
+        ),
+      );
       openOutputAlert();
       closeAlert();
       showSuccessNotification(undefined, 'Success', 'Best amount fetched');
@@ -673,6 +804,78 @@ export const XcmRouter = () => {
         openAlert();
         setShowStepper(false);
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quoteBestAmount = async (
+    formValues: TRouterFormValuesTransformed,
+  ): Promise<number | null> => {
+    const { useApi, from, to, currencyFrom, exchange, currencyTo, amountFrom } =
+      formValues;
+
+    setLoading(true);
+
+    try {
+      let result;
+      if (useApi) {
+        result = await fetchFromApi(
+          {
+            ...formValues,
+            amount: amountFrom,
+            currencyFrom: determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+            currencyTo: determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+            options: builderOptions,
+          },
+          '/router/best-amount-out',
+          'POST',
+          true,
+        );
+      } else {
+        result = await RouterBuilder(builderOptions)
+          .from(from)
+          .exchange(exchange)
+          .to(to)
+          .currencyFrom(
+            determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createExchangeInstance(exchange).chain
+                  : undefined,
+              currencyFrom,
+            ),
+          )
+          .currencyTo(
+            determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createExchangeInstance(exchange).chain
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+          )
+          .amount(amountFrom)
+          .getBestAmountOut();
+      }
+      const { amountOut } = result as TGetBestAmountOutResult;
+      return normalizeBestAmount(amountOut, to ?? from, currencyTo);
+    } catch (_error) {
+      return null;
     } finally {
       setLoading(false);
     }
@@ -839,7 +1042,11 @@ export const XcmRouter = () => {
             </Text>
           </Box>
 
-          <XcmRouterForm onSubmit={onSubmit} loading={loading} />
+          <XcmRouterForm
+            onSubmit={onSubmit}
+            loading={loading}
+            onQuoteBestAmountValue={async (v) => quoteBestAmount(v)}
+          />
         </Stack>
         <Box ref={targetRef}>
           {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (
