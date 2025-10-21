@@ -68,3 +68,34 @@ export type TRouterSubmitType =
   | 'getMinTransferableAmount'
   | 'getTransferableAmount'
   | 'dryRun';
+
+export type TCurrencyEntry = {
+  optionId: string;
+  isCustom: boolean;
+  customType?: 'id' | 'symbol' | 'location';
+  customValue?: string;
+  customSymbolSpecifier?: 'auto' | 'native' | 'foreign';
+};
+
+export type CurrencyFieldPath =
+  | 'currencyFrom.optionId'
+  | 'currencyFrom.isCustom'
+  | 'currencyFrom.customType'
+  | 'currencyFrom.customValue'
+  | 'currencyFrom.customSymbolSpecifier'
+  | 'currencyTo.optionId'
+  | 'currencyTo.isCustom'
+  | 'currencyTo.customType'
+  | 'currencyTo.customValue'
+  | 'currencyTo.customSymbolSpecifier';
+
+export type CurrencyFieldMap = {
+  isCustom: CurrencyFieldPath;
+  type: CurrencyFieldPath;
+  value: CurrencyFieldPath;
+  symbol: CurrencyFieldPath;
+  optionId: CurrencyFieldPath;
+  label: 'From' | 'To';
+};
+
+export type Side = 'from' | 'to';
