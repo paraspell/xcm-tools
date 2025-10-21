@@ -80,7 +80,7 @@ class HydrationExchange extends ExchangeChain {
 
     const tx = substrateTx.get();
 
-    const amountOut = BigInt(trade.amountOut.toString());
+    const amountOut = BigInt(trade.amountOut.decimalPlaces(0).toString());
 
     const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
       symbol: getNativeAssetSymbol(this.chain),
@@ -109,7 +109,7 @@ class HydrationExchange extends ExchangeChain {
       throw new InvalidParameterError('Price not found');
     }
 
-    const currencyToPrice = BigInt(priceInfo.amount.toString());
+    const currencyToPrice = BigInt(priceInfo.amount.decimalPlaces(0).toString());
 
     const feeInCurrencyTo =
       (toDestTransactionFee *
@@ -158,7 +158,7 @@ class HydrationExchange extends ExchangeChain {
       amountNormalized,
     );
 
-    const amountOut = BigInt(trade.amountOut.toString());
+    const amountOut = BigInt(trade.amountOut.decimalPlaces(0).toString());
 
     const slippageMultiplier = Number(slippagePct);
 
