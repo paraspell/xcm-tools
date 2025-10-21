@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.0...xcm-router-v11.12.1) (2025-10-21)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix HydrationDex conversion to native bigint 🛠️ ([ef7efb6](https://github.com/paraspell/xcm-tools/commit/ef7efb66bf7e5127926b1c27e17cadc3642a7bec))
+
 ## [11.12.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.11.0...xcm-router-v11.12.0) (2025-10-21)
 
 
