@@ -24,18 +24,18 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   BifrostKusama: ['assetRegistry.currencyMetadatas'],
   BifrostPaseo: ['assetRegistry.currencyMetadatas'],
   BifrostPolkadot: ['assetRegistry.currencyMetadatas'],
-  BridgeHubKusama: [],
-  BridgeHubPaseo: [],
-  BridgeHubPolkadot: [],
-  BridgeHubWestend: [],
+  BridgeHubKusama: [], // No assets metadata query
+  BridgeHubPaseo: [], // No assets metadata query
+  BridgeHubPolkadot: [], // No assets metadata query
+  BridgeHubWestend: [], // No assets metadata query
   Centrifuge: ['ormlAssetRegistry.metadata'],
   Collectives: [],
   CollectivesWestend: [],
   ComposableFinance: ['assetsRegistry.assetSymbol'],
-  CoretimeKusama: [],
-  CoretimePaseo: [],
-  CoretimePolkadot: [],
-  CoretimeWestend: [],
+  CoretimeKusama: [], // No assets metadata query
+  CoretimePaseo: [], // No assets metadata query
+  CoretimePolkadot: [], // No assets metadata query
+  CoretimeWestend: [], // No assets metadata query
   Crab: ['assets.metadata'],
   Crust: ['assets.metadata'],
   CrustShadow: ['assets.metadata'],
@@ -71,10 +71,10 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Peaq: ['assets.metadata'],
   Pendulum: ['assetRegistry.metadata'],
   Penpal: ['foreignAssets.metadata'],
-  PeopleKusama: [], // Does not support ParaToPara transfers
-  PeoplePaseo: [],
-  PeoplePolkadot: [], // Does not support ParaToPara transfers
-  PeopleWestend: [],
+  PeopleKusama: [], // No assets metadata query
+  PeoplePaseo: [], // No assets metadata query
+  PeoplePolkadot: [], // No assets metadata query
+  PeopleWestend: [], // No assets metadata query
   Phala: ['assets.metadata'],
   Polimec: ['foreignAssets.metadata'],
   Quartz: ['foreignAssets.collectionToForeignAsset'],

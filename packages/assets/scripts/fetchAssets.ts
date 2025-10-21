@@ -27,7 +27,7 @@ import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
-import { isRelayChain, TChain, TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { isRelayChain, TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
 import { getRelayChainSymbolOf, isChainEvm } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
@@ -87,7 +87,7 @@ const fetchNativeAssets = async (
     nativeAssets = await fetchNativeAssetsCurio(api, query)
   }
 
-  if (chain.includes('Bifrost')) {
+  if (chain.startsWith('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
@@ -245,7 +245,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchAssetHubAssets(api, query)
   }
 
-  if (chain.includes('Zeitgeist') || chain === 'Jamton') {
+  if (chain.startsWith('Zeitgeist') || chain === 'Jamton') {
     otherAssets = await fetchZeitgeistForeignAssets(
       api,
       query,
@@ -269,7 +269,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchComposableAssets(api, query)
   }
 
-  if (chain.includes('Bifrost')) {
+  if (chain.startsWith('Bifrost')) {
     otherAssets = await fetchBifrostForeignAssets(api, query)
   }
 
@@ -289,11 +289,11 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (chain === 'Polimec' || chain.includes('Kilt') || chain === 'Penpal') {
+  if (chain === 'Polimec' || chain.startsWith('Kilt') || chain === 'Penpal') {
     otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 
-  if (chain.includes('Ajuna') || chain.includes('Integritee')) {
+  if (chain.startsWith('Ajuna') || chain.startsWith('Integritee')) {
     otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 
@@ -321,7 +321,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchXodeOtherAssets(api, query)
   }
 
-  if (chain.includes('Hydration')) {
+  if (chain.startsWith('Hydration')) {
     otherAssets = await fetchHydrationAssets(api, query)
   }
 

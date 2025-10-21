@@ -10,10 +10,10 @@ export const fetchMantaOtherAssets = async (
   query: string
 ): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
-  const assets = await api.query[module][method].entries()
+  const response = await api.query[module][method].entries()
 
-  return Promise.all(
-    assets.map(
+  const assets = await Promise.all(
+    response.map(
       async ([
         {
           args: [era]
@@ -24,8 +24,12 @@ export const fetchMantaOtherAssets = async (
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
-        const assetDetails = await api.query[module].asset(era)
-        const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+        const details = await api.query[module].asset(era)
+        const detailsHuman = details.toHuman() as any
+
+        if (detailsHuman.status !== 'Live') return null
+
+        const existentialDeposit = detailsHuman.minBalance
 
         const locationVersioned = await api.query.assetManager.assetIdLocation(era)
 
@@ -43,4 +47,6 @@ export const fetchMantaOtherAssets = async (
       }
     )
   )
+
+  return assets.filter(item => item !== null)
 }

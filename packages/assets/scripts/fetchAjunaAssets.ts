@@ -24,8 +24,12 @@ export const fetchAjunaOtherAssets = async (
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
-        const assetDetails = await api.query[module].asset(era)
-        const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+        const details = await api.query[module].asset(era)
+        const detailsHuman = details.toHuman() as any
+
+        if (detailsHuman.status !== 'Live') return null
+
+        const existentialDeposit = detailsHuman.minBalance
 
         const location = await api.query.assetRegistry.assetIdLocation(era)
 
@@ -40,5 +44,5 @@ export const fetchAjunaOtherAssets = async (
     )
   )
 
-  return assets
+  return assets.filter(item => item !== null)
 }
