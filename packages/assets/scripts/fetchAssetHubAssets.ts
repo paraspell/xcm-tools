@@ -34,8 +34,12 @@ export const fetchAssetHubAssets = async (
           value
         ]) => {
           const { symbol, decimals } = value.toHuman() as any
-          const assetDetails = await api.query[module].asset(era)
-          const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+          const details = await api.query[module].asset(era)
+          const detailhuman = details.toHuman() as any
+
+          if (detailhuman.status !== 'Live') return null
+
+          const existentialDeposit = detailhuman.minBalance
           const assetId = (era.toHuman() as string).replace(/[,]/g, '')
 
           return {
@@ -75,5 +79,7 @@ export const fetchAssetHubAssets = async (
     })
   )
 
-  return [...parsedRegularAssets, ...parsedForeignAssets]
+  const parsedRegularLiveAssets = parsedRegularAssets.filter(item => item !== null)
+
+  return [...parsedRegularLiveAssets, ...parsedForeignAssets]
 }

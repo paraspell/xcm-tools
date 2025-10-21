@@ -10,10 +10,10 @@ export const fetchPolimecForeignAssets = async (
   query: string
 ): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
-  const res = await api.query[module][method].entries()
+  const response = await api.query[module][method].entries()
 
-  return Promise.all(
-    res.map(
+  const assets = await Promise.all(
+    response.map(
       async ([
         {
           args: [era]
@@ -23,15 +23,20 @@ export const fetchPolimecForeignAssets = async (
         const { symbol, decimals } = value.toHuman() as any
         const location = capitalizeLocation(era.toJSON()) as TLocation
 
-        const resDetail = await api.query[module].asset(era)
+        const details = await api.query[module].asset(era)
+        const detailsHuman = details.toHuman() as any
+
+        if (detailsHuman.status !== 'Live') return null
 
         return {
           symbol,
           decimals: +decimals,
           location,
-          existentialDeposit: (resDetail.toHuman() as any)?.minBalance
+          existentialDeposit: detailsHuman.minBalance
         }
       }
     )
   )
+
+  return assets.filter(item => item !== null)
 }

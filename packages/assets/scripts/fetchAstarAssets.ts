@@ -7,10 +7,10 @@ export const fetchAstarAssets = async (
   query: string
 ): Promise<TForeignAssetInfo[]> => {
   const [module, method] = query.split('.')
-  const assets = await api.query[module][method].entries()
+  const response = await api.query[module][method].entries()
 
-  return Promise.all(
-    assets.map(
+  const assets = await Promise.all(
+    response.map(
       async ([
         {
           args: [era]
@@ -19,8 +19,12 @@ export const fetchAstarAssets = async (
       ]) => {
         const { symbol, decimals } = value.toHuman() as any
 
-        const assetDetails = await api.query[module].asset(era)
-        const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+        const details = await api.query[module].asset(era)
+        const detailsHuman = details.toHuman() as any
+
+        if (detailsHuman.status !== 'Live') return null
+
+        const existentialDeposit = detailsHuman.minBalance
 
         const locationRes = await api.query.xcAssetConfig.assetIdToLocation(era)
 
@@ -40,4 +44,6 @@ export const fetchAstarAssets = async (
       }
     )
   )
+
+  return assets.filter(item => item !== null)
 }

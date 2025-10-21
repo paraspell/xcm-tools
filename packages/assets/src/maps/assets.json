@@ -7505,28 +7505,6 @@
         "alias": "TST2"
       },
       {
-        "assetId": "669",
-        "symbol": "lish",
-        "decimals": 9,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 669
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000"
-      },
-      {
         "assetId": "22222078",
         "symbol": "JAMTON",
         "decimals": 12,
@@ -7683,29 +7661,6 @@
         },
         "existentialDeposit": "1000000000000",
         "alias": "KSM1"
-      },
-      {
-        "assetId": "1010",
-        "symbol": "ETH",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1010
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "100000000000000000",
-        "alias": "ETH1"
       },
       {
         "assetId": "201",
@@ -7976,7 +7931,7 @@
           }
         },
         "existentialDeposit": "1",
-        "alias": "ETH2"
+        "alias": "ETH1"
       },
       {
         "assetId": "50000276",
@@ -8021,7 +7976,7 @@
           }
         },
         "existentialDeposit": "1",
-        "alias": "ETH3"
+        "alias": "ETH2"
       },
       {
         "assetId": "862812",
@@ -8800,7 +8755,7 @@
         },
         "existentialDeposit": "15000000000000",
         "isFeeAsset": true,
-        "alias": "ETH4"
+        "alias": "ETH3"
       },
       {
         "symbol": "KILT",
@@ -12369,29 +12324,6 @@
                   "length": 2,
                   "data": "0x0404000000000000000000000000000000000000000000000000000000000000"
                 }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "4294969280",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
               }
             ]
           }
@@ -16647,29 +16579,6 @@
         "existentialDeposit": "1000000000000"
       },
       {
-        "assetId": "67",
-        "symbol": "USDT",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 67
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "100000",
-        "alias": "USDT6"
-      },
-      {
         "assetId": "20",
         "symbol": "WETH",
         "decimals": 20,
@@ -17353,7 +17262,7 @@
           }
         },
         "existentialDeposit": "10",
-        "alias": "USDT7"
+        "alias": "USDT6"
       },
       {
         "assetId": "50000167",
@@ -17727,31 +17636,7 @@
             ]
           }
         },
-        "existentialDeposit": "100",
-        "alias": "USDT1"
-      },
-      {
-        "assetId": "7777",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 7777
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000",
-        "alias": "USDT2"
+        "existentialDeposit": "100"
       },
       {
         "assetId": "27",
@@ -18074,7 +17959,7 @@
         "symbol": "PAS",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "1000000000",
+        "existentialDeposit": "100000000",
         "location": {
           "parents": 1,
           "interior": {

@@ -48,8 +48,12 @@ export const fetchXodeOtherAssets = async (
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
-        const assetDetails = await api.query[module].asset(era)
-        const existentialDeposit = (assetDetails.toHuman() as any).minBalance
+        const details = await api.query[module].asset(era)
+        const detailsHuman = details.toHuman() as any
+
+        if (detailsHuman.status !== 'Live') return null
+
+        const existentialDeposit = detailsHuman.minBalance
 
         const location = locationMap[symbol.toUpperCase()]
 
@@ -64,5 +68,7 @@ export const fetchXodeOtherAssets = async (
     )
   )
 
-  return assets.filter(asset => asset.symbol?.toUpperCase() !== 'GEM')
+  return assets
+    .filter(asset => asset !== null)
+    .filter(asset => asset.symbol.toUpperCase() !== 'GEM')
 }
