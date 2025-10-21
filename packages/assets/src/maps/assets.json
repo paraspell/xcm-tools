@@ -1813,29 +1813,6 @@
         },
         "isNative": true,
         "isFeeAsset": true
-      },
-      {
-        "symbol": "vBNC",
-        "decimals": 12,
-        "existentialDeposit": "10000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0101000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "isNative": true,
-        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -2057,6 +2034,28 @@
                 "GeneralKey": {
                   "length": 2,
                   "data": "0x0901000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "symbol": "vBNC",
+        "decimals": 12,
+        "existentialDeposit": "10000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0101000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
@@ -9427,7 +9426,6 @@
         "symbol": "BNC",
         "decimals": 12,
         "existentialDeposit": "10000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9443,13 +9441,16 @@
               }
             ]
           }
-        }
-      },
+        },
+        "isNative": true,
+        "isFeeAsset": true
+      }
+    ],
+    "otherAssets": [
       {
         "symbol": "KSM",
         "decimals": 12,
         "existentialDeposit": "100000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9459,10 +9460,32 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "2",
+        "symbol": "KBTC",
+        "decimals": 8,
+        "existentialDeposit": "100",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "symbol": "RMRK",
         "decimals": 10,
         "existentialDeposit": "10000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9482,10 +9505,55 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "0",
+        "symbol": "USDT",
+        "decimals": 6,
+        "existentialDeposit": "1000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1",
+        "symbol": "KINT",
+        "decimals": 12,
+        "existentialDeposit": "10000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "symbol": "vBNC",
         "decimals": 12,
         "existentialDeposit": "10000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9501,13 +9569,13 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "vMOVR",
         "decimals": 18,
         "existentialDeposit": "1000000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9523,13 +9591,13 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "vKSM",
         "decimals": 12,
         "existentialDeposit": "100000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9545,13 +9613,36 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "4",
+        "symbol": "MGX",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2110
+              },
+              {
+                "GeneralKey": {
+                  "length": 4,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "MOVR",
         "decimals": 18,
         "existentialDeposit": "1000000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9571,7 +9662,6 @@
         "symbol": "ZLK",
         "decimals": 18,
         "existentialDeposit": "1000000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9594,7 +9684,6 @@
         "symbol": "PHA",
         "decimals": 12,
         "existentialDeposit": "40000000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9611,7 +9700,6 @@
         "symbol": "KAR",
         "decimals": 12,
         "existentialDeposit": "100000000",
-        "isNative": true,
         "location": {
           "parents": 1,
           "interior": {
@@ -9629,105 +9717,12 @@
           }
         },
         "isFeeAsset": true
-      }
-    ],
-    "otherAssets": [
-      {
-        "assetId": "0",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000",
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "2",
-        "symbol": "KBTC",
-        "decimals": 8,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "100",
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "1",
-        "symbol": "KINT",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000",
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "4",
-        "symbol": "MGX",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2110
-              },
-              {
-                "GeneralKey": {
-                  "length": 4,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000",
-        "isFeeAsset": true
       },
       {
         "assetId": "3",
         "symbol": "SDN",
         "decimals": 18,
+        "existentialDeposit": "10000000000000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -9738,7 +9733,6 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000000000",
         "isFeeAsset": true
       }
     ]

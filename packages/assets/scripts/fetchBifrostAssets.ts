@@ -54,35 +54,26 @@ const fetchBifrostAssets = async (
 
         const assetId = Object.values(assetIdKey ?? {})[0]
 
-        return isNative
-          ? {
-              symbol: val.symbol,
-              decimals: +val.decimals,
-              existentialDeposit: val.minimalBalance,
-              location:
-                location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined
-            }
-          : {
-              assetId,
-              symbol: val.symbol,
-              decimals: +val.decimals,
-              existentialDeposit: val.minimalBalance,
-              location:
-                location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined
-            }
+        const isIntegerString = (val: string) => /^-?\d+$/.test(val)
+
+        return {
+          ...(isIntegerString(assetId) ? { assetId } : {}),
+          symbol: val.symbol,
+          decimals: +val.decimals,
+          existentialDeposit: val.minimalBalance,
+          location: location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined,
+          ...(isNative ? { isNative: true } : {})
+        }
       })
     )
 
     return mapped
   }
 
-  const nativeAssets = (await mapAssets(
-    filterAssets(['token', 'vtoken', 'native']),
-    true
-  )) as TNativeAssetInfo[]
+  const nativeAssets = (await mapAssets(filterAssets(['native']), true)) as TNativeAssetInfo[]
 
   const otherAssets = (await mapAssets(
-    filterAssets(['token2', 'vtoken2', 'vstoken2']),
+    filterAssets(['token', 'token2', 'vtoken2', 'vtoken', 'vstoken2']),
     false
   )) as TForeignAssetInfo[]
 
