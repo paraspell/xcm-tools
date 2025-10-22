@@ -923,16 +923,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
+    const isDevelopment = isConfig(this._config) && this._config.development === true
     const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
 
     // Own client provided, destroy only if force true
-    if (force && typeof api === 'object') {
+    if (force && typeof api === 'object' && !isDevelopment) {
       this.api.destroy()
     }
 
     // Client created automatically
     if (typeof api === 'string' || Array.isArray(api) || api === undefined) {
-      if (force) {
+      if (force && !isDevelopment) {
         this.api.destroy()
       } else {
         const key = api === undefined ? getChainProviders(this._chain) : api

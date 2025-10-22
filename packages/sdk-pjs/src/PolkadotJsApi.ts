@@ -681,10 +681,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return
 
+    const isDevelopment = isConfig(this._config) && this._config.development === true
     const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
 
     // Disconnect api only if it was created automatically
-    if (force || typeof api === 'string' || api === undefined) {
+    if ((force || typeof api === 'string' || api === undefined) && !isDevelopment) {
       await this.api.disconnect()
     }
   }
