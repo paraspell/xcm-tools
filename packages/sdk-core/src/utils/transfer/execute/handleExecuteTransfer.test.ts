@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../../api'
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
+import { AmountTooLowError } from '../../../errors'
 import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer'
 import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
@@ -65,9 +66,7 @@ describe('handleExecuteTransfer', () => {
       senderAddress: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 999n }
     }
-    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
-      'Asset amount is too low, please increase the amount or use a different fee asset.'
-    )
+    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(AmountTooLowError)
   })
 
   it('should throw error when amount is smaller than calculated fee (same asset)', async () => {
@@ -91,9 +90,7 @@ describe('handleExecuteTransfer', () => {
     // reserve fee: 1000, padded by 40% = 1400
     // total = 2800
 
-    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
-      'Asset amount is too low, please increase the amount or use a different fee asset.'
-    )
+    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(AmountTooLowError)
   })
 
   it('should throw error when amount is smaller than calculated fee (different fee asset)', async () => {
@@ -118,9 +115,7 @@ describe('handleExecuteTransfer', () => {
     } as unknown as TDryRunResult
     vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
 
-    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
-      'Asset amount is too low, please increase the amount or use a different fee asset.'
-    )
+    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(AmountTooLowError)
   })
 
   it('should throw error if origin dry run fails', async () => {
