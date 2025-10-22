@@ -3,7 +3,7 @@ import type { TParachain } from '@paraspell/sdk-common'
 
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
 import { assertAddressIsString, assertSenderAddress, getRelayChainOf } from '../..'
@@ -42,11 +42,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   assertAddressIsString(address)
 
   const checkAmount = (fee: bigint) => {
-    if (assetInfo.amount <= fee) {
-      throw new InvalidParameterError(
-        `Asset amount is too low, please increase the amount or use a different fee asset.`
-      )
-    }
+    if (assetInfo.amount <= fee) throw new AmountTooLowError()
   }
 
   checkAmount(MIN_FEE)
