@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.12.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.1...assets-v11.12.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* **assets:** Update Bifrost assets script 🔧 ([c4ba327](https://github.com/paraspell/xcm-tools/commit/c4ba327cd2e9d39d60927110e32e3b37de5a663b))
+
+
+### Build System
+
+* **assets:** Fetch live assets only 🛜 ([d27e49a](https://github.com/paraspell/xcm-tools/commit/d27e49ac116548a81d7c56855c616290ba8ca81e))
+
 ## [11.12.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.0...assets-v11.12.1) (2025-10-21)
 
 

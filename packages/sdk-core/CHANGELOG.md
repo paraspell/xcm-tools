@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.1...sdk-core-v11.12.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use correct error class in execute call 🔧 ([5826d99](https://github.com/paraspell/xcm-tools/commit/5826d991e6a64ada049b3efd0c621cbe8c8f77b5))
+
 ## [11.12.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.0...sdk-core-v11.12.1) (2025-10-21)
 
 
