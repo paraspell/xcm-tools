@@ -5,7 +5,7 @@ type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Ke
     [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
   }[Keys]
 
-type TBaseAssetInfo = {
+export type TBaseAssetInfo = {
   symbol: string
   decimals: number
   manuallyAdded?: boolean
