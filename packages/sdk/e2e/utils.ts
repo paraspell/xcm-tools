@@ -5,7 +5,7 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import { SUBSTRATE_CHAINS, TPallet, TPapiApi, TPapiTransaction, TSerializedApiCall } from '../src'
+import { TPallet, TPapiApi, TPapiTransaction, TSerializedApiCall } from '../src'
 import { expect } from 'vitest'
 import { GeneralBuilder, TSendBaseOptionsWithSenderAddress } from '@paraspell/sdk-core'
 
@@ -16,19 +16,12 @@ export const createSr25519Signer = () => {
   return getPolkadotSigner(aliceKeyPair.publicKey, 'Sr25519', aliceKeyPair.sign)
 }
 
-export const signEcdsa = (
-  hasher: (input: Uint8Array) => Uint8Array,
-  value: Uint8Array,
-  priv: Uint8Array
-) => {
-  const signature = secp256k1.sign(hasher(value), priv)
-  const signedBytes = signature.toCompactRawBytes()
-
-  const result = new Uint8Array(signedBytes.length + 1)
-  result.set(signedBytes)
-  result[signedBytes.length] = signature.recovery
-
-  return result
+export const signEcdsa = (input: Uint8Array, privateKey: Uint8Array) => {
+  const signature = secp256k1.sign(keccak_256(input), privateKey, {
+    prehash: false,
+    format: 'recovered'
+  })
+  return Uint8Array.from([...signature.slice(1), signature[0]])
 }
 
 export const createEcdsaSigner = () => {
@@ -42,9 +35,7 @@ export const createEcdsaSigner = () => {
 
   const publicAddress = keccak_256(secp256k1.getPublicKey(privateKey, false).slice(1)).slice(-20)
 
-  return getPolkadotSigner(publicAddress, 'Ecdsa', input =>
-    signEcdsa(keccak_256, input, privateKey)
-  )
+  return getPolkadotSigner(publicAddress, 'Ecdsa', input => signEcdsa(input, privateKey))
 }
 
 const serializeTx = (tx: TPapiTransaction): TSerializedApiCall => {
