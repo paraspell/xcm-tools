@@ -4,6 +4,7 @@ import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
 import type {
   TAssetInfo,
+  TBaseAssetInfo,
   TCurrencySymbolValue,
   TForeignAssetInfo,
   TNativeAssetInfo
@@ -11,6 +12,54 @@ import type {
 import { getOtherAssets } from '../assets'
 import { findBestMatches } from './findBestMatches'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
+
+const removePrefix = (symbol: string) => symbol.slice(2)
+
+const removeSuffix = (symbol: string) => symbol.slice(0, -2)
+
+const findEthAssetBySymbol = (symbol: string): TForeignAssetInfo | undefined => {
+  const ethereumAssets = getOtherAssets('Ethereum')
+  return findBestMatches(ethereumAssets, symbol)[0]
+}
+
+const findEthMatch = (symbol: string): TForeignAssetInfo | undefined => {
+  const match = findEthAssetBySymbol(symbol)
+  if (match) return match
+
+  const altSymbol = symbol.toLowerCase().endsWith('.e') ? removeSuffix(symbol) : `${symbol}.e`
+
+  return findEthAssetBySymbol(altSymbol.toLowerCase())
+}
+
+const findWithXcVariant = <T extends TBaseAssetInfo>(items: T[], value: string): T[] => {
+  const lower = value.toLowerCase()
+  const candidate = lower.startsWith('xc') ? removePrefix(value) : `xc${value}`
+  return findBestMatches(items, candidate)
+}
+
+const pickOtherOrThrow = (
+  input: string,
+  otherMatches: TForeignAssetInfo[]
+): TForeignAssetInfo | undefined => {
+  if (otherMatches.length > 1) {
+    throwDuplicateAssetError(input, [], otherMatches)
+  }
+  return otherMatches[0]
+}
+
+const pickAny = (native: TNativeAssetInfo[], other: TForeignAssetInfo[]) => {
+  return other[0] ?? native[0]
+}
+
+const throwIfDuplicate = (
+  input: string,
+  nativeMatches: TNativeAssetInfo[],
+  otherMatches: TForeignAssetInfo[]
+) => {
+  if (nativeMatches.length + otherMatches.length > 1) {
+    throwDuplicateAssetError(input, nativeMatches, otherMatches)
+  }
+}
 
 export const findAssetInfoBySymbol = (
   destination: TChain | null,
@@ -32,96 +81,40 @@ export const findAssetInfoBySymbol = (
       let otherAssetsMatches: TForeignAssetInfo[] = []
 
       if (destination === 'Ethereum') {
-        const ethereumAssets = getOtherAssets('Ethereum')
-
-        let assetsMatches = findBestMatches(ethereumAssets, value)
-
-        if (assetsMatches.length === 0) {
-          if (lowerSymbol.endsWith('.e')) {
-            // Symbol ends with '.e', strip it and search again
-            const strippedSymbol = value.slice(0, -2).toLowerCase()
-            assetsMatches = findBestMatches(ethereumAssets, strippedSymbol)
-          } else {
-            // Symbol does not end with '.e', add '.e' suffix and search
-            const suffixedSymbol = `${value}.e`.toLowerCase()
-            assetsMatches = findBestMatches(ethereumAssets, suffixedSymbol)
-          }
-        }
-
-        return assetsMatches[0]
+        return findEthMatch(value)
       }
 
       if (lowerSymbol.endsWith('.e')) {
         // Symbol ends with '.e', indicating a Snowbridge asset
-        const strippedSymbol = value.slice(0, -2)
+        const strippedSymbol = removeSuffix(value)
 
         // If not found, search normal assets with '.e' suffix
         otherAssetsMatches = findBestMatches(otherAssets, value)
 
-        if (otherAssetsMatches.length > 1) {
-          throwDuplicateAssetError(value, [], otherAssetsMatches)
-        } else if (otherAssetsMatches.length > 0) {
-          return otherAssetsMatches[0]
-        }
+        let foundAsset = pickOtherOrThrow(value, otherAssetsMatches)
+        if (foundAsset) return foundAsset
 
-        if (lowerSymbol.startsWith('xc')) {
-          // Symbol starts with 'xc', try stripping 'xc' prefix
-          const strippedSymbol = value.substring(2)
-          otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
-        } else {
-          // Try adding 'xc' prefix
-          const prefixedSymbol = `xc${value}`
-          otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
-        }
+        otherAssetsMatches = findWithXcVariant(otherAssets, value)
 
-        if (otherAssetsMatches.length > 1) {
-          throwDuplicateAssetError(value, [], otherAssetsMatches)
-        } else if (otherAssetsMatches.length > 0) {
-          return otherAssetsMatches[0]
-        }
+        foundAsset = pickOtherOrThrow(value, otherAssetsMatches)
+        if (foundAsset) return foundAsset
 
-        // Search in Ethereum assets without the '.e' suffix
-        const ethereumAssets = getOtherAssets('Ethereum')
-        const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
-
-        if (ethereumMatches.length > 0) {
-          return ethereumMatches[0]
-        }
+        const ethAsset = findEthAssetBySymbol(strippedSymbol)
+        if (ethAsset) return ethAsset
 
         // If still not found, search normal assets without suffix
         otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
 
-        if (otherAssetsMatches.length > 1) {
-          throwDuplicateAssetError(value, [], otherAssetsMatches)
-        } else if (otherAssetsMatches.length > 0) {
-          return otherAssetsMatches[0]
-        }
-
-        // No matches found
-        return undefined
+        return pickOtherOrThrow(value, otherAssetsMatches)
       } else {
         // Symbol does not end with '.e', proceed with existing logic
         otherAssetsMatches = findBestMatches(otherAssets, value)
 
         if (otherAssetsMatches.length === 0) {
-          if (lowerSymbol.startsWith('xc')) {
-            // Symbol starts with 'xc', try stripping 'xc' prefix
-            const strippedSymbol = value.substring(2)
-
-            otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
-          } else {
-            // Try adding 'xc' prefix
-            const prefixedSymbol = `xc${value}`
-
-            otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
-          }
+          otherAssetsMatches = findWithXcVariant(otherAssets, value)
         }
 
-        if (otherAssetsMatches.length > 1) {
-          throwDuplicateAssetError(value, [], otherAssetsMatches)
-        }
-
-        return otherAssetsMatches[0] || undefined
+        return pickOtherOrThrow(value, otherAssetsMatches)
       }
     } else if (type === 'ForeignAbstract') {
       assetsMatches = findBestMatches(otherAssets, value, 'alias')
@@ -138,113 +131,51 @@ export const findAssetInfoBySymbol = (
     let nativeAssetsMatches: TNativeAssetInfo[] = []
 
     if (destination === 'Ethereum') {
-      const ethereumAssets = getOtherAssets('Ethereum')
-
-      let assetsMatches = findBestMatches(ethereumAssets, symbol)
-
-      if (assetsMatches.length === 0) {
-        if (lowerSymbol.endsWith('.e')) {
-          // Symbol ends with '.e', strip it and search again
-          const strippedSymbol = symbol.slice(0, -2).toLowerCase()
-          assetsMatches = findBestMatches(ethereumAssets, strippedSymbol)
-        } else {
-          // Symbol does not end with '.e', add '.e' suffix and search
-          const suffixedSymbol = `${symbol}.e`.toLowerCase()
-          assetsMatches = findBestMatches(ethereumAssets, suffixedSymbol)
-        }
-      }
-
-      return assetsMatches[0]
+      return findEthMatch(symbol)
     }
 
     if (lowerSymbol.endsWith('.e')) {
       // Symbol ends with '.e', indicating a Snowbridge asset
-      const strippedSymbol = symbol.slice(0, -2)
+      const strippedSymbol = removeSuffix(symbol)
 
       // If not found, search normal assets with '.e' suffix
       otherAssetsMatches = findBestMatches(otherAssets, symbol)
       nativeAssetsMatches = findBestMatches(nativeAssets, symbol)
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
-        return otherAssetsMatches[0] || nativeAssetsMatches[0]
+        return pickAny(nativeAssetsMatches, otherAssetsMatches)
       }
 
-      if (lowerSymbol.startsWith('xc')) {
-        // Symbol starts with 'xc', try stripping 'xc' prefix
-        const strippedSymbol = symbol.substring(2)
-        otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
-      } else {
-        // Try adding 'xc' prefix
-        const prefixedSymbol = `xc${symbol}`
-        otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
-      }
+      otherAssetsMatches = findWithXcVariant(otherAssets, symbol)
 
-      if (otherAssetsMatches.length > 1) {
-        throwDuplicateAssetError(symbol, [], otherAssetsMatches)
-      } else if (otherAssetsMatches.length > 0) {
-        return otherAssetsMatches[0]
-      }
+      const foundAsset = pickOtherOrThrow(symbol, otherAssetsMatches)
+      if (foundAsset) return foundAsset
 
       // Search in Ethereum assets without the '.e' suffix
-      const ethereumAssets = getOtherAssets('Ethereum')
-      const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
-
-      if (ethereumMatches.length > 0) {
-        return ethereumMatches[0]
-      }
+      const ethAsset = findEthAssetBySymbol(strippedSymbol)
+      if (ethAsset) return ethAsset
 
       // If still not found, search normal assets without suffix
       otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
       nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol)
 
-      if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
-        return otherAssetsMatches[0] || nativeAssetsMatches[0]
-      }
-
-      // No matches found
-      return undefined
+      return pickAny(nativeAssetsMatches, otherAssetsMatches)
     } else {
       // Symbol does not end with '.e'
       otherAssetsMatches = findBestMatches(otherAssets, symbol)
       nativeAssetsMatches = findBestMatches(nativeAssets, symbol)
 
       if (otherAssetsMatches.length === 0 && nativeAssetsMatches.length === 0) {
-        if (lowerSymbol.startsWith('xc')) {
-          // Symbol starts with 'xc', try stripping 'xc' prefix
-          const strippedSymbol = symbol.substring(2)
-
-          otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
-          nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol)
-
-          const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
-
-          if (totalMatches > 1) {
-            throwDuplicateAssetError(symbol, nativeAssetsMatches, otherAssetsMatches)
-          }
-        } else {
-          // Try adding 'xc' prefix
-          const prefixedSymbol = `xc${symbol}`
-
-          otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
-          nativeAssetsMatches = findBestMatches(nativeAssets, prefixedSymbol)
-
-          const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
-
-          if (totalMatches > 1) {
-            throwDuplicateAssetError(symbol, nativeAssetsMatches, otherAssetsMatches)
-          }
-        }
+        otherAssetsMatches = findWithXcVariant(otherAssets, symbol)
+        nativeAssetsMatches = findWithXcVariant(nativeAssets, symbol)
+        throwIfDuplicate(symbol, nativeAssetsMatches, otherAssetsMatches)
       }
 
-      const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
+      throwIfDuplicate(symbol, nativeAssetsMatches, otherAssetsMatches)
 
-      if (totalMatches > 1) {
-        throwDuplicateAssetError(symbol, nativeAssetsMatches, otherAssetsMatches)
-      }
-
-      return otherAssetsMatches[0] || nativeAssetsMatches[0] || undefined
+      return pickAny(nativeAssetsMatches, otherAssetsMatches)
     }
   }
 
-  return assetsMatches[0] || undefined
+  return assetsMatches[0]
 }

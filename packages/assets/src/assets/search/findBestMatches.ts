@@ -1,4 +1,6 @@
-export const findBestMatches = <T extends { symbol: string; alias?: string }>(
+import type { TBaseAssetInfo } from '../../types'
+
+export const findBestMatches = <T extends TBaseAssetInfo>(
   assets: T[],
   value: string,
   property: 'symbol' | 'alias' = 'symbol'
