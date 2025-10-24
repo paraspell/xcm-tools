@@ -18129,11 +18129,6 @@
         "existentialDeposit": "10000000"
       },
       {
-        "symbol": "KSM",
-        "decimals": 12,
-        "existentialDeposit": "10000000"
-      },
-      {
         "assetId": "15",
         "symbol": "vETH",
         "decimals": 18,
@@ -18156,11 +18151,6 @@
         "symbol": "ARB_ETH",
         "decimals": 18,
         "existentialDeposit": "1000000000000"
-      },
-      {
-        "symbol": "DOT",
-        "decimals": 10,
-        "existentialDeposit": "100000000"
       },
       {
         "assetId": "5",
@@ -18198,11 +18188,6 @@
         "symbol": "GLMR",
         "decimals": 18,
         "existentialDeposit": "1000000000000"
-      },
-      {
-        "symbol": "vBNC",
-        "decimals": 12,
-        "existentialDeposit": "10000000000"
       },
       {
         "assetId": "14",

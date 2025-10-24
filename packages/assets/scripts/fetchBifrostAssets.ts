@@ -44,11 +44,11 @@ const fetchBifrostAssets = async (
     )
 
   const mapAssets = async (assets: [StorageKey<AnyTuple>, Codec][], isNative: boolean) => {
-    const mapped = await Promise.all(
-      assets.map(async ([_key, value]) => {
+    const mappedAssets = await Promise.all(
+      assets.map(async ([key, value]) => {
         const val = value.toHuman() as any
 
-        const assetIdKey = _key.args[0].toHuman()
+        const assetIdKey = key.args[0].toHuman()
 
         const location = await api.query[module].currencyIdToLocations(assetIdKey)
 
@@ -56,18 +56,24 @@ const fetchBifrostAssets = async (
 
         const isIntegerString = (val: string) => /^-?\d+$/.test(val)
 
+        const locationJson = location.toJSON()
+
+        if (!isIntegerString(assetId) && locationJson === null) {
+          return null
+        }
+
         return {
           ...(isIntegerString(assetId) ? { assetId } : {}),
           symbol: val.symbol,
           decimals: +val.decimals,
           existentialDeposit: val.minimalBalance,
-          location: location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined,
+          location: locationJson !== null ? capitalizeLocation(locationJson) : undefined,
           ...(isNative ? { isNative: true } : {})
         }
       })
     )
 
-    return mapped
+    return mappedAssets.filter(asset => asset !== null)
   }
 
   const nativeAssets = (await mapAssets(filterAssets(['native']), true)) as TNativeAssetInfo[]
