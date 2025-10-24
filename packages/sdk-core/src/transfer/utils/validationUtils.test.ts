@@ -5,8 +5,8 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
-  isDotKsmBridge,
   isRelayChain,
+  isSubstrateBridge,
   isTLocation,
   type TParachain,
   type TSubstrateChain
@@ -18,16 +18,8 @@ import { IncompatibleChainsError } from '../../errors'
 import type { TDestination } from '../../types'
 import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
 
-vi.mock('@paraspell/pallets', () => ({
-  getDefaultPallet: vi.fn()
-}))
-
-vi.mock('@paraspell/sdk-common', () => ({
-  isTLocation: vi.fn(),
-  isRelayChain: vi.fn(),
-  isDotKsmBridge: vi.fn()
-}))
-
+vi.mock('@paraspell/pallets')
+vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
   getRelayChainSymbol: vi.fn(),
   getNativeAssets: vi.fn(),
@@ -37,9 +29,7 @@ vi.mock('@paraspell/assets', () => ({
   isTAsset: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  throwUnsupportedCurrency: vi.fn()
-}))
+vi.mock('../../pallets/xcmPallet/utils')
 
 describe('validateCurrency', () => {
   let consoleWarnSpy: MockInstance
@@ -136,7 +126,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
@@ -146,7 +136,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -156,7 +146,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isDotKsmBridge).mockReturnValue(true)
+    vi.mocked(isSubstrateBridge).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -166,7 +156,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = {} as TDestination
 
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     // Relay chain symbols should not be fetched in this case
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -184,7 +174,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Polkadot'
 
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
 
     expect(() => validateDestination(origin, destination)).not.toThrow()

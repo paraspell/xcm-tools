@@ -5,10 +5,10 @@ import type { TAssetInfo } from '../types'
 import { isSymbolMatch } from './isSymbolMatch'
 
 export const isAssetEqual = (asset1: TAssetInfo, asset2: TAssetInfo) => {
-  const ml1 = asset1.location
-  const ml2 = asset2.location
+  const loc1 = asset1.location
+  const loc2 = asset2.location
 
-  if (ml1 && ml2 && deepEqual(ml1, ml2)) return true
+  if (loc1 && loc2) return deepEqual(loc1, loc2)
 
   if (isForeignAsset(asset1) && isForeignAsset(asset2) && asset1.assetId === asset2.assetId)
     return true

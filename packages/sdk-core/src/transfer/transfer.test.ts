@@ -4,8 +4,13 @@ import {
   type TAssetWithFee,
   type TCurrencyInput
 } from '@paraspell/assets'
-import type { TLocation } from '@paraspell/sdk-common'
-import { isDotKsmBridge, isRelayChain, isTLocation, Version } from '@paraspell/sdk-common'
+import {
+  isRelayChain,
+  isSubstrateBridge,
+  isTLocation,
+  type TLocation,
+  Version
+} from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -29,14 +34,13 @@ import {
   validateDestinationAddress
 } from './utils'
 
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual =
-    await vi.importActual<typeof import('@paraspell/sdk-common')>('@paraspell/sdk-common')
+vi.mock('@paraspell/sdk-common', async importActual => {
+  const actual = await importActual<typeof import('@paraspell/sdk-common')>()
   return {
     ...actual,
     isRelayChain: vi.fn(),
     isTLocation: vi.fn(),
-    isDotKsmBridge: vi.fn()
+    isSubstrateBridge: vi.fn()
   }
 })
 
@@ -69,7 +73,7 @@ describe('send', () => {
 
     vi.mocked(getChain).mockReturnValue(originChainMock)
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
@@ -289,7 +293,7 @@ describe('send', () => {
 
   it('should throw when destination is ethereum and origin is relay chain', async () => {
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
 
     const options = {
       api: apiMock,
@@ -306,7 +310,7 @@ describe('send', () => {
 
   it('should throw when asset is not provided for relay chain to relay chain transfers', async () => {
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isDotKsmBridge).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(resolveAsset).mockReturnValue(null)
 
     const options = {

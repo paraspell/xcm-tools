@@ -7,7 +7,7 @@ import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, createBeneficiaryLocation, localizeLocation } from '../../utils'
 
 export const createCustomXcm = <TApi, TRes>(
-  { origin, dest, reserve, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
+  { origin, dest, reserve, isSubBridge, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
   isDotAsset: boolean,
   fees: TTypeAndThenFees = {
     reserveFee: MIN_FEE,
@@ -20,12 +20,12 @@ export const createCustomXcm = <TApi, TRes>(
 
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
-  const feeLocLocalized = localizeLocation(dest.chain, feeAssetLocation)
+  const feeLocLocalized = localizeLocation(dest.chain, feeAssetLocation, origin.chain)
 
   const asset = createAsset(
     version,
     assetInfo.amount,
-    localizeLocation(dest.chain, assetInfo.location)
+    localizeLocation(dest.chain, assetInfo.location, origin.chain)
   )
 
   const depositInstruction = {
@@ -57,7 +57,7 @@ export const createCustomXcm = <TApi, TRes>(
     createAsset(version, assetInfo.amount, localizeLocation(reserve.chain, assetInfo.location))
   )
 
-  if (origin.chain !== reserve.chain && dest.chain !== reserve.chain) {
+  if (isSubBridge || (origin.chain !== reserve.chain && dest.chain !== reserve.chain)) {
     const buyExecutionAmount = !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee
 
     if (buyExecutionAmount < 0n) throw new AmountTooLowError()
@@ -76,27 +76,35 @@ export const createCustomXcm = <TApi, TRes>(
       }
     }
 
+    if (isSubBridge) {
+      return [buyExecution, depositInstruction]
+    }
+
     const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
 
     // If destination is a system chain, use teleport instead of reserve deposit
     if (isSystemChain(dest.chain)) {
-      return {
-        InitiateTeleport: {
+      return [
+        {
+          InitiateTeleport: {
+            assets: filter,
+            dest: destLoc,
+            xcm: [buyExecution, depositInstruction]
+          }
+        }
+      ]
+    }
+
+    return [
+      {
+        DepositReserveAsset: {
           assets: filter,
           dest: destLoc,
           xcm: [buyExecution, depositInstruction]
         }
       }
-    }
-
-    return {
-      DepositReserveAsset: {
-        assets: filter,
-        dest: destLoc,
-        xcm: [buyExecution, depositInstruction]
-      }
-    }
+    ]
   }
 
-  return depositInstruction
+  return [depositInstruction]
 }

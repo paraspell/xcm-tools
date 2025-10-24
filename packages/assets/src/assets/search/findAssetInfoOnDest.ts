@@ -1,4 +1,4 @@
-import { replaceBigInt, type TChain } from '@paraspell/sdk-common'
+import { isSubstrateBridge, replaceBigInt, type TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput } from '../../types'
@@ -11,14 +11,12 @@ export const findAssetInfoOnDest = (
   currency: TCurrencyInput,
   originAsset?: TAssetInfo | null
 ): TAssetInfo | null => {
-  const isDotKsmBridge =
-    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
-    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
+  const isBridge = isSubstrateBridge(origin, destination)
 
   const resolvedOriginAsset = originAsset ?? findAssetInfoOrThrow(origin, currency, destination)
 
   const assetByLocation =
-    !isDotKsmBridge && resolvedOriginAsset.location
+    !isBridge && resolvedOriginAsset.location
       ? findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
       : null
 

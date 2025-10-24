@@ -1,27 +1,49 @@
-import { hasSupportForAsset, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
-import { isRelayChain } from '@paraspell/sdk-common'
+import {
+  findNativeAssetInfoOrThrow,
+  hasSupportForAsset,
+  InvalidCurrencyError,
+  isAssetEqual,
+  type TAssetInfo
+} from '@paraspell/assets'
+import { isExternalChain, isRelayChain, isTLocation, Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
+import { getRelayChainOf } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
+  isExternalChain: vi.fn(),
   isRelayChain: vi.fn(),
   isTLocation: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
+  findNativeAssetInfoOrThrow: vi.fn(),
   hasSupportForAsset: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
+  InvalidCurrencyError: class extends Error {},
+  isAssetEqual: vi.fn()
 }))
 
 vi.mock('../../pallets/xcmPallet/utils')
 
+vi.mock('../../utils', async importOriginal => ({
+  ...(await importOriginal()),
+  getRelayChainOf: vi.fn()
+}))
+
 describe('validateAssetSupport', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+
+    vi.mocked(isRelayChain).mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
   })
 
   it('should not throw when isBridge is true', () => {
@@ -35,7 +57,67 @@ describe('validateAssetSupport', () => {
     const isBridge = true
     const asset = { symbol: 'TEST' } as TAssetInfo
 
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(asset)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
+    expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
+  })
+
+  it('should not throw when bridged asset matches target relay consensus', () => {
+    const options = {
+      from: 'Astar',
+      to: 'Acala',
+      currency: { symbol: 'BRIDGED' }
+    } as TSendOptions<unknown, unknown>
+
+    const assetCheckEnabled = true
+    const isBridge = true
+    const asset = {
+      symbol: 'BRIDGED',
+      location: {
+        parents: Parents.TWO,
+        interior: {
+          X2: [{ GlobalConsensus: { polkadot: null } }, { Parachain: 2000 }]
+        }
+      }
+    } as unknown as TAssetInfo
+
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+
+    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
+    expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
+  })
+
+  it('should throw when bridge asset is neither native nor bridged', () => {
+    const options = {
+      from: 'Astar',
+      to: 'Acala',
+      currency: { symbol: 'FOREIGN' }
+    } as TSendOptions<unknown, unknown>
+
+    const assetCheckEnabled = true
+    const isBridge = true
+    const asset = {
+      symbol: 'FOREIGN',
+      location: {
+        parents: Parents.ONE,
+        interior: {
+          X1: [{ PalletInstance: 50 }]
+        }
+      }
+    } as unknown as TAssetInfo
+
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+
+    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
+      'Substrate bridge does not support currency {"symbol":"FOREIGN"}.'
+    )
   })
 
   it('should not throw when destination is not AssetHub', () => {
@@ -138,7 +220,7 @@ describe('validateAssetSupport', () => {
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(options.currency, options.from)
   })
 
-  it('should not call throwUnsupportedCurrency when isBridge is true', () => {
+  it('should call throwUnsupportedCurrency when isBridge is true and asset is null', () => {
     const options = {
       from: 'Astar',
       to: 'Acala',
@@ -151,7 +233,7 @@ describe('validateAssetSupport', () => {
 
     validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-    expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
+    expect(throwUnsupportedCurrency).toHaveBeenCalledWith(options.currency, options.from)
   })
 
   it('should not throw when destination is relay (undefined)', () => {
@@ -164,6 +246,8 @@ describe('validateAssetSupport', () => {
     const assetCheckEnabled = true
     const isBridge = false
     const asset = { symbol: 'TEST' } as TAssetInfo
+
+    vi.mocked(isRelayChain).mockReturnValueOnce(true)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })

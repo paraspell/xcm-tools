@@ -1,4 +1,9 @@
-import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  isRelayChain,
+  isSubstrateBridge,
+  isTLocation,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
@@ -9,11 +14,11 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
   overrideReserve?: TSubstrateChain
 ): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
-  const { api, destChain, assetInfo } = options
+  const { api, destination, assetInfo } = options
 
   assertHasLocation(assetInfo)
 
-  if (!destChain) {
+  if (isTLocation(destination)) {
     throw new InvalidParameterError(
       'Cannot override destination when using type and then transfer.'
     )
@@ -22,20 +27,22 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   const reserveChain =
     overrideReserve !== undefined
       ? overrideReserve
-      : // Paseo ecosystem migrated reserves to AssetHub
-        getRelayChainOf(chain) === 'Paseo'
+      : // Paseo and Kusama ecosystem migrated reserves to AssetHub
+        getRelayChainOf(chain) === 'Paseo' || getRelayChainOf(chain) === 'Kusama'
         ? getAssetReserveChain(chain, chain, assetInfo.location)
-        : isRelayChain(destChain)
-          ? destChain
+        : isRelayChain(destination)
+          ? destination
           : getAssetReserveChain(chain, chain, assetInfo.location)
 
   const destApi = api.clone()
-  await destApi.init(destChain)
+  await destApi.init(destination)
 
   const reserveApi =
-    reserveChain === chain ? api : reserveChain === destChain ? destApi : api.clone()
+    reserveChain === chain ? api : reserveChain === destination ? destApi : api.clone()
 
   await reserveApi.init(reserveChain)
+
+  const isSubBridge = isSubstrateBridge(chain, destination)
 
   return {
     origin: {
@@ -44,12 +51,13 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     },
     dest: {
       api: destApi,
-      chain: destChain as TSubstrateChain
+      chain: destination as TSubstrateChain
     },
     reserve: {
       api: reserveApi,
       chain: reserveChain
     },
+    isSubBridge,
     assetInfo,
     options
   }

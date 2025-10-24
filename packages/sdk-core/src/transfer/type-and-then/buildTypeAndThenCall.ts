@@ -16,6 +16,7 @@ export const buildTypeAndThenCall = <TApi, TRes>(
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
   const finalDest = origin.chain === reserve.chain ? dest.chain : reserve.chain
+
   const destLocation = createDestination(version, origin.chain, finalDest, getParaId(finalDest))
 
   const reserveType = origin.chain === reserve.chain ? 'LocalReserve' : 'DestinationReserve'
