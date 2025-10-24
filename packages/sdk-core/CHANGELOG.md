@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.2...sdk-core-v11.12.3) (2025-10-24)
+
+
+### Code Refactoring
+
+* **sdk-core:** Extract fee asset resolution logic to common func 🧹 ([135f4f6](https://github.com/paraspell/xcm-tools/commit/135f4f671cc5ac61bed7bcb3315884a06fa905c4))
+
 ## [11.12.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.1...sdk-core-v11.12.2) (2025-10-22)
 
 
