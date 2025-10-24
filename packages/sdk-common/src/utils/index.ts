@@ -1,5 +1,5 @@
 export * from './chain'
 export * from './deepEqual'
-export * from './isDotKsmBridge'
+export * from './isSubstrateBridge'
 export * from './location'
 export * from './replaceBigInt'

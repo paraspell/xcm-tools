@@ -49,40 +49,39 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   const { assetInfo } = context
 
-  const isDotAsset =
-    deepEqual(assetInfo.location, RELAY_LOCATION) ||
-    deepEqual(assetInfo.location, {
+  const LOCATIONS = [
+    RELAY_LOCATION,
+    {
       parents: 2,
-      interior: {
-        X1: [
-          {
-            GlobalConsensus: {
-              Kusama: null
-            }
-          }
-        ]
-      }
-    })
+      interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+    },
+    {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
+    }
+  ]
 
-  const customXcm = createCustomXcm(context, isDotAsset)
+  const isRelayAsset = LOCATIONS.some(loc => deepEqual(assetInfo.location, loc))
 
-  const assetCount = isDotAsset ? 1 : 2
+  const customXcm = createCustomXcm(context, isRelayAsset)
+
+  const assetCount = isRelayAsset ? 1 : 2
 
   const refundInstruction = senderAddress
     ? createRefundInstruction(api, senderAddress, version, assetCount)
     : null
 
-  const fees = await computeAllFees(context, customXcm, isDotAsset, refundInstruction)
+  const fees = await computeAllFees(context, customXcm, isRelayAsset, refundInstruction)
 
   const finalCustomXcm = []
 
   if (refundInstruction) finalCustomXcm.push(refundInstruction)
 
-  finalCustomXcm.push(createCustomXcm(context, isDotAsset, fees))
+  finalCustomXcm.push(...createCustomXcm(context, isRelayAsset, fees))
 
   const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
 
-  const assets = buildAssets(chain, assetInfo, totalFee, isDotAsset, version)
+  const assets = buildAssets(chain, assetInfo, totalFee, isRelayAsset, version)
 
-  return buildTypeAndThenCall(context, isDotAsset, finalCustomXcm, assets)
+  return buildTypeAndThenCall(context, isRelayAsset, finalCustomXcm, assets)
 }

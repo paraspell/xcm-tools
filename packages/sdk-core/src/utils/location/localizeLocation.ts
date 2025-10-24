@@ -1,7 +1,17 @@
 import type { TChain } from '@paraspell/sdk-common'
-import { getJunctionValue, isRelayChain, Parents, type TLocation } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  getJunctionValue,
+  hasJunction,
+  isExternalChain,
+  isRelayChain,
+  Parents,
+  type TLocation
+} from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
+import { RELAY_LOCATION } from '../../constants'
+import { getRelayChainOf } from '../chain'
 
 /**
  * This function localizes a location by removing the `Parachain` junction
@@ -12,7 +22,29 @@ import { getParaId } from '../../chains/config'
  * @param location - The location to localize
  * @returns The localized location
  */
-export const localizeLocation = (chain: TChain, location: TLocation): TLocation => {
+export const localizeLocation = (
+  chain: TChain,
+  location: TLocation,
+  origin?: TChain
+): TLocation => {
+  const targetRelay = isExternalChain(chain) ? undefined : getRelayChainOf(chain).toLowerCase()
+
+  const originRelay =
+    origin && !isExternalChain(origin) ? getRelayChainOf(origin).toLowerCase() : undefined
+
+  const ecosystemDiffers = originRelay !== targetRelay
+
+  if (
+    origin &&
+    ecosystemDiffers &&
+    location.parents === Parents.TWO &&
+    originRelay !== undefined &&
+    targetRelay !== undefined &&
+    deepEqual(getJunctionValue(location, 'GlobalConsensus'), { [targetRelay]: null })
+  ) {
+    return RELAY_LOCATION
+  }
+
   let newInterior: TLocation['interior'] = location.interior
   let parachainRemoved = false
 
@@ -39,6 +71,28 @@ export const localizeLocation = (chain: TChain, location: TLocation): TLocation 
     } else {
       newInterior = { [`X${filteredJunctions.length}`]: filteredJunctions }
     }
+  }
+
+  const isOriginRelayHere = deepEqual(location, RELAY_LOCATION)
+
+  const hasGlobalConsensus = hasJunction(location, 'GlobalConsensus')
+
+  if (
+    origin &&
+    ecosystemDiffers &&
+    isOriginRelayHere &&
+    !hasGlobalConsensus &&
+    originRelay !== undefined
+  ) {
+    return {
+      parents: Parents.TWO,
+      interior: {
+        X2: [
+          { GlobalConsensus: { [originRelay]: null } as Record<string, null> },
+          { Parachain: getParaId(origin) }
+        ]
+      }
+    } as TLocation
   }
 
   const shouldSetParentsToZero = parachainRemoved || (newInterior === 'Here' && isRelayChain(chain))

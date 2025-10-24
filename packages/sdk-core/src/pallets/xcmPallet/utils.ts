@@ -7,7 +7,13 @@ import type {
   TSubstrateChain,
   Version
 } from '@paraspell/sdk-common'
-import { getJunctionValue, PARACHAINS, replaceBigInt } from '@paraspell/sdk-common'
+import {
+  getJunctionValue,
+  isExternalChain,
+  isSubstrateBridge,
+  PARACHAINS,
+  replaceBigInt
+} from '@paraspell/sdk-common'
 import { isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
@@ -25,6 +31,25 @@ export const createDestination = (
   junction?: TJunction,
   parents?: Parents
 ): TLocation => {
+  const isLocDestination = isTLocation(destination)
+
+  const isSubBridge =
+    !isLocDestination && !isExternalChain(destination) && isSubstrateBridge(origin, destination)
+
+  if (isSubBridge) {
+    return {
+      parents: Parents.TWO,
+      interior: {
+        X2: [
+          { GlobalConsensus: getRelayChainOf(destination) },
+          {
+            Parachain: chainId
+          }
+        ]
+      }
+    }
+  }
+
   const scenario = resolveScenario(origin, destination)
   const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
   const interior =
@@ -32,9 +57,7 @@ export const createDestination = (
       ? 'Here'
       : createX1Payload(version, junction ?? { Parachain: chainId })
 
-  const isLocationDestination = isTLocation(destination)
-
-  return isLocationDestination ? destination : ({ parents: parentsResolved, interior } as TLocation)
+  return isLocDestination ? destination : ({ parents: parentsResolved, interior } as TLocation)
 }
 
 export const createVersionedDestination = (
@@ -55,27 +78,6 @@ export const createVersionedDestination = (
   )
 
   return addXcmVersionHeader(plainDestination, version)
-}
-
-export const createBridgeDestination = (
-  ecosystem: 'Kusama' | 'Polkadot',
-  destination: TDestination,
-  chainId?: number
-): TLocation => {
-  const location: TLocation = {
-    parents: Parents.TWO,
-    interior: {
-      X2: [
-        {
-          GlobalConsensus: ecosystem
-        },
-        {
-          Parachain: chainId
-        }
-      ]
-    }
-  }
-  return isTLocation(destination) ? destination : location
 }
 
 export const resolveTChainFromLocation = (

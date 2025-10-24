@@ -33,7 +33,7 @@ describe('createTypeAndThenCall', () => {
     method: 'mockMethod',
     parameters: {}
   } as TSerializedApiCall
-  const mockCustomXcm = { xcm: 'custom' } as unknown as ReturnType<typeof createCustomXcm>
+  const mockCustomXcm = [{ xcm: 'custom' }] as unknown as ReturnType<typeof createCustomXcm>
   const mockRefundInstruction = { refund: 'instruction' } as unknown as ReturnType<
     typeof createRefundInstruction
   >
@@ -98,7 +98,7 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       dotContext,
       true,
-      [mockRefundInstruction, mockCustomXcm],
+      [mockRefundInstruction, ...mockCustomXcm],
       [mockAsset]
     )
   })
@@ -178,7 +178,7 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       mockContext,
       false,
-      [mockRefundInstruction, mockCustomXcm],
+      [mockRefundInstruction, ...mockCustomXcm],
       [mockAsset, mockAsset]
     )
   })
@@ -201,7 +201,7 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       mockContext,
       false,
-      [mockCustomXcm],
+      mockCustomXcm,
       expect.any(Array)
     )
   })
