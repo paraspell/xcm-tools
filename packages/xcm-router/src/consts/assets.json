@@ -1475,6 +1475,31 @@
         }
       },
       {
+        "symbol": "ENA",
+        "decimals": 18,
+        "assetId": "38",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x57e114b691db790c35207b2e685d4a43181e6061"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "GLMR",
         "decimals": 18,
         "assetId": "16",
