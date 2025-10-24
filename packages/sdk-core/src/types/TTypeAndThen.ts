@@ -13,6 +13,7 @@ export type TTypeAndThenCallContext<TApi, TRes> = {
   origin: TChainWithApi<TApi, TRes>
   dest: TChainWithApi<TApi, TRes>
   reserve: TChainWithApi<TApi, TRes, TSubstrateChain>
+  isSubBridge: boolean
   assetInfo: WithAmount<TAssetWithLocation>
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 }

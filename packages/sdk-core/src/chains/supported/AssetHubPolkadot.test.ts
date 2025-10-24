@@ -28,20 +28,6 @@ import { handleExecuteTransfer } from '../../utils/transfer'
 import Parachain from '../Parachain'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn(),
-  createVersionedDestination: vi.fn(),
-  createBridgeDestination: vi.fn()
-}))
-
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  createTypeAndThenCall: vi.fn()
-}))
-
 vi.mock('@paraspell/assets', async () => {
   const actual = await vi.importActual('@paraspell/assets')
   return {
@@ -58,27 +44,18 @@ vi.mock('@paraspell/assets', async () => {
   }
 })
 
-vi.mock('../../transfer/getBridgeStatus', () => ({
-  getBridgeStatus: vi.fn()
-}))
-
-vi.mock('../../utils/location', () => ({
-  localizeLocation: vi.fn(),
-  createBeneficiaryLocation: vi.fn()
-}))
-
-vi.mock('../../utils/ethereum/generateMessageId', () => ({
-  generateMessageId: vi.fn()
-}))
-
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  ...(await importOriginal()),
   hasJunction: vi.fn()
 }))
 
-vi.mock('../../utils/transfer', () => ({
-  handleExecuteTransfer: vi.fn()
-}))
+vi.mock('../../transfer/getBridgeStatus')
+vi.mock('../../utils/location')
+vi.mock('../../utils/ethereum/generateMessageId')
+vi.mock('../../pallets/xcmPallet/utils')
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../transfer')
+vi.mock('../../utils/transfer')
 
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<unknown, unknown>
@@ -121,39 +98,6 @@ describe('AssetHubPolkadot', () => {
     expect(assetHub.info).toBe('PolkadotAssetHub')
     expect(assetHub.ecosystem).toBe('Polkadot')
     expect(assetHub.version).toBe(Version.V5)
-  })
-
-  describe('handleBridgeTransfer', () => {
-    it('should process a valid DOT transfer to Polkadot', async () => {
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-      const result = await assetHub.handleBridgeTransfer(mockInput, 'Polkadot')
-      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
-      expect(result).toBe(mockExtrinsic)
-    })
-
-    it('should process a valid DOT transfer to Kusama', async () => {
-      const input = { ...mockInput, assetInfo: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
-        unknown,
-        unknown
-      >
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-      const result = await assetHub.handleBridgeTransfer(input, 'Kusama')
-      expect(result).toStrictEqual(mockExtrinsic)
-      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
-    })
-
-    it('throws InvalidCurrencyError for unsupported currency', () => {
-      const input = {
-        ...mockInput,
-        assetInfo: {
-          symbol: 'UNKNOWN',
-          amount: 1000n,
-          isNative: true
-        } as WithAmount<TNativeAssetInfo>
-      }
-      expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
-    })
   })
 
   describe('handleEthBridgeTransfer', () => {
@@ -326,16 +270,6 @@ describe('AssetHubPolkadot', () => {
         expect(handleExecuteTransfer).not.toHaveBeenCalled()
         expect(transferPolkadotXcm).toHaveBeenCalled()
       })
-    })
-
-    it('should call handleBridgeTransfer when destination is AssetHubKusama', async () => {
-      mockInput.destination = 'AssetHubKusama'
-
-      const spy = vi.spyOn(assetHub, 'handleBridgeTransfer').mockResolvedValue({} as unknown)
-
-      await assetHub.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalledWith(mockInput, 'Kusama')
     })
 
     it('should call handleEthBridgeTransfer when destination is Ethereum', async () => {

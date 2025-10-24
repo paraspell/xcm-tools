@@ -6,8 +6,8 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
-  isDotKsmBridge,
   isRelayChain,
+  isSubstrateBridge,
   isTLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
@@ -60,7 +60,7 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
   }
 
   const isLocationDestination = typeof destination === 'object'
-  const isBridge = !isTLocation(destination) && isDotKsmBridge(origin, destination)
+  const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
   const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
 
   if (!isRelayDestination && !isLocationDestination) {

@@ -1,8 +1,51 @@
-import { hasSupportForAsset, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
-import { isRelayChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
+import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  findNativeAssetInfoOrThrow,
+  hasSupportForAsset,
+  InvalidCurrencyError,
+  isAssetEqual,
+  type TAssetInfo
+} from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  getJunctionValue,
+  isExternalChain,
+  isRelayChain,
+  isTLocation,
+  Parents,
+  replaceBigInt
+} from '@paraspell/sdk-common'
 
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type { TSendOptions } from '../../types'
+import type { TDestination, TSendOptions } from '../../types'
+import { getRelayChainOf } from '../../utils'
+
+const validateBridgeAsset = (
+  origin: TSubstrateChain,
+  destination: TDestination,
+  asset: TAssetInfo | null,
+  currency: TCurrencyInputWithAmount,
+  isBridge: boolean
+) => {
+  if (!asset || isTLocation(destination) || isExternalChain(destination) || !isBridge) {
+    return
+  }
+
+  const nativeAsset = findNativeAssetInfoOrThrow(origin)
+  const isNativeAsset = isAssetEqual(asset, nativeAsset)
+  const ecosystem = getRelayChainOf(destination).toLowerCase()
+
+  const isBridgedAsset =
+    asset.location?.parents === Parents.TWO &&
+    deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), { [ecosystem]: null })
+
+  if (!(isNativeAsset || isBridgedAsset)) {
+    throw new InvalidCurrencyError(
+      `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
+    )
+  }
+}
 
 export const validateAssetSupport = <TApi, TRes>(
   { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
@@ -27,7 +70,9 @@ export const validateAssetSupport = <TApi, TRes>(
     )
   }
 
-  if (!isBridge && asset === null && assetCheckEnabled) {
+  if (asset === null && assetCheckEnabled) {
     throwUnsupportedCurrency(currency, origin)
   }
+
+  validateBridgeAsset(origin, destination, asset, currency, isBridge)
 }

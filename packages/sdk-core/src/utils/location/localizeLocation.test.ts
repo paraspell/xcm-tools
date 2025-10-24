@@ -3,9 +3,14 @@ import { isRelayChain, Parents, type TChain, type TLocation } from '@paraspell/s
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../chains/config'
+import { RELAY_LOCATION } from '../../constants'
+import { getRelayChainOf } from '../chain'
 import { localizeLocation } from './localizeLocation'
 
 vi.mock('../../chains/config')
+vi.mock('../chain', () => ({
+  getRelayChainOf: vi.fn()
+}))
 vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')
   return {
@@ -27,7 +32,22 @@ describe('localizeLocation', () => {
       if (chain === 'Acala') return 2000
       if (chain === 'Moonbeam') return 2004
       if (chain === 'AssetHubPolkadot') return 1000
+      if (chain === 'BifrostKusama') return 2001
       return 0
+    })
+
+    vi.mocked(getRelayChainOf).mockImplementation(chain => {
+      switch (chain) {
+        case 'Acala':
+        case 'Astar':
+        case 'AssetHubPolkadot':
+        case 'Moonbeam':
+          return 'Polkadot'
+        case 'BifrostKusama':
+          return 'Kusama'
+        default:
+          return 'Polkadot'
+      }
     })
   })
 
@@ -216,6 +236,32 @@ describe('localizeLocation', () => {
       testCases.forEach(input => {
         const result = localizeLocation(parachain, input)
         expect(result.parents).toBe(input.parents)
+      })
+    })
+  })
+
+  describe('cross-ecosystem adjustments', () => {
+    it('should collapse to relay location when location points to target relay from different origin ecosystem', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X2: [{ GlobalConsensus: { polkadot: null } }, { Parachain: 2000 }]
+        }
+      }
+
+      const result = localizeLocation('Acala', input, 'BifrostKusama')
+
+      expect(result).toEqual(RELAY_LOCATION)
+    })
+
+    it('should expand relay location with global consensus when origin ecosystem differs', () => {
+      const result = localizeLocation('Astar', RELAY_LOCATION, 'BifrostKusama')
+
+      expect(result).toEqual({
+        parents: Parents.TWO,
+        interior: {
+          X2: [{ GlobalConsensus: { kusama: null } }, { Parachain: 2001 }]
+        }
       })
     })
   })

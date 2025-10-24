@@ -33,7 +33,7 @@ describe('createTypeAndThenCall', () => {
     method: 'mockMethod',
     parameters: {}
   } as TSerializedApiCall
-  const mockCustomXcm = { xcm: 'custom' } as unknown as ReturnType<typeof createCustomXcm>
+  const mockCustomXcm = [{ xcm: 'custom' }] as unknown as ReturnType<typeof createCustomXcm>
   const mockRefundInstruction = { refund: 'instruction' } as unknown as ReturnType<
     typeof createRefundInstruction
   >
@@ -46,10 +46,24 @@ describe('createTypeAndThenCall', () => {
   } as Awaited<ReturnType<typeof computeAllFees>>
 
   const mockContext = {
+    origin: { api: {} as unknown, chain: mockChain } as TTypeAndThenCallContext<
+      unknown,
+      unknown
+    >['origin'],
+    dest: { api: {} as unknown, chain: mockChain } as TTypeAndThenCallContext<
+      unknown,
+      unknown
+    >['dest'],
+    reserve: { api: {} as unknown, chain: mockChain } as TTypeAndThenCallContext<
+      unknown,
+      unknown
+    >['reserve'],
+    isSubBridge: false,
     assetInfo: {
       amount: 1000n,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
-    }
+    },
+    options: {} as TPolkadotXCMTransferOptions<unknown, unknown>
   } as TTypeAndThenCallContext<unknown, unknown>
 
   beforeEach(() => {
@@ -83,6 +97,8 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
 
+    expect(createCustomXcm).toHaveBeenNthCalledWith(1, dotContext, true, 1)
+
     expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 1)
 
     expect(computeAllFees).toHaveBeenCalledWith(
@@ -98,9 +114,11 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       dotContext,
       true,
-      [mockRefundInstruction, mockCustomXcm],
+      [mockRefundInstruction, ...mockCustomXcm],
       [mockAsset]
     )
+
+    expect(createCustomXcm).toHaveBeenNthCalledWith(2, dotContext, true, 1, mockFees)
   })
 
   it('should handle DOT asset with Kusama GlobalConsensus location', async () => {
@@ -178,9 +196,34 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       mockContext,
       false,
-      [mockRefundInstruction, mockCustomXcm],
+      [mockRefundInstruction, ...mockCustomXcm],
       [mockAsset, mockAsset]
     )
+  })
+
+  it('should omit refund instruction when context is sub bridge', async () => {
+    const subBridgeContext = {
+      ...mockContext,
+      isSubBridge: true
+    }
+    vi.mocked(createTypeAndThenCallContext).mockResolvedValue(subBridgeContext)
+
+    const options = {
+      api: mockApi,
+      senderAddress: mockSenderAddress,
+      version: mockVersion
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    const result = await createTypeAndThenCall(mockChain, options)
+
+    expect(result).toBe(mockSerializedCall)
+
+    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 2)
+
+    expect(buildTypeAndThenCall).toHaveBeenCalledWith(subBridgeContext, false, mockCustomXcm, [
+      mockAsset,
+      mockAsset
+    ])
   })
 
   it('should handle missing senderAddress (no refund instruction)', async () => {
@@ -201,7 +244,7 @@ describe('createTypeAndThenCall', () => {
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       mockContext,
       false,
-      [mockCustomXcm],
+      mockCustomXcm,
       expect.any(Array)
     )
   })
@@ -237,8 +280,8 @@ describe('createTypeAndThenCall', () => {
 
     expect(createCustomXcm).toHaveBeenCalledTimes(2)
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(1, mockContext, false)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(1, mockContext, false, 2)
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(2, mockContext, false, mockFees)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(2, mockContext, false, 2, mockFees)
   })
 })
