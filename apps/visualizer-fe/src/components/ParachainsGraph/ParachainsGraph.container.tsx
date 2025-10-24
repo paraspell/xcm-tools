@@ -1,23 +1,24 @@
 import { useQuery } from '@apollo/client/react';
+import type { TRelaychain } from '@paraspell/sdk';
 import type { FC } from 'react';
 
 import { allChannelsQueryDocument } from '../../api/channels';
 import { totalMessageCountsQueryDocument } from '../../api/messages';
 import { useDeviceType } from '../../context/DeviceType/useDeviceType';
+import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
-import type { Ecosystem } from '../../types/types';
 import ParachainsGraph from './ParachainsGraph';
 
 const now = Date.now();
 
 type Props = {
-  ecosystem: Ecosystem;
+  ecosystem: TRelaychain;
 };
 
 const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
   const { dateRange, parachainArrangement } = useSelectedParachain();
-  const { selectedEcosystem } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
   const { isTouch } = useDeviceType();
 
   const [start, end] = dateRange;

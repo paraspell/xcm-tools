@@ -1,14 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { returnInt } from '../../utils/graphql.utils';
-
 @ObjectType()
 export class MessageCountByDay {
   @Field()
   ecosystem: string;
 
-  @Field(returnInt, { nullable: true })
-  paraId?: number;
+  @Field({ nullable: true })
+  parachain?: string;
 
   @Field()
   date: string;

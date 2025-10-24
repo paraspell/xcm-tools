@@ -1,20 +1,18 @@
+import type { TSubstrateChain } from '@paraspell/sdk';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { createContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import type { ChannelsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
-import { decodeDate, decodeEcosystem, decodeList } from '../../routes/urlFilters';
-import { Ecosystem } from '../../types/types';
-
-export type SelectedParachain = string;
+import { decodeDate, decodeList } from '../../routes/urlFilters';
 
 interface SelectedParachainContextType {
-  parachains: SelectedParachain[];
-  setParachains: (parachain: SelectedParachain[]) => void;
-  toggleParachain: (parachain: SelectedParachain) => void;
-  activeEditParachain: SelectedParachain | null;
-  toggleActiveEditParachain: (parachain: SelectedParachain | null) => void;
+  selectedParachains: TSubstrateChain[];
+  setSelectedParachains: (parachains: TSubstrateChain[]) => void;
+  toggleParachain: (parachain: TSubstrateChain) => void;
+  activeEditParachain: TSubstrateChain | null;
+  toggleActiveEditParachain: (parachain: TSubstrateChain | null) => void;
   selectedChannel?: ChannelsQuery['channels'][number];
   setSelectedChannel: (channel: ChannelsQuery['channels'][number] | undefined) => void;
   channelAlertOpen?: boolean;
@@ -31,8 +29,6 @@ interface SelectedParachainContextType {
   setSelectedChannelColor: (color: string) => void;
   parachainArrangement?: CountOption;
   setParachainArrangement: (arrangement: CountOption) => void;
-  selectedEcosystem: Ecosystem;
-  setSelectedEcosystem: (ecosystem: Ecosystem) => void;
   skyboxTrigger: number;
   setSkyboxTrigger: Dispatch<SetStateAction<number>>;
   animationEnabled: boolean;
@@ -48,10 +44,7 @@ interface SelectedParachainProviderProps {
 const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
   // Set defaults from url params
   const [searchParams] = useSearchParams();
-  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(
-    decodeEcosystem(searchParams.get('ecosystem'), Ecosystem.POLKADOT)
-  );
-  const [parachains, setParachains] = useState<SelectedParachain[]>(
+  const [selectedParachains, setSelectedParachains] = useState<TSubstrateChain[]>(
     decodeList(searchParams.get('parachains'))
   );
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
@@ -66,19 +59,19 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [selectedChannelColor, setSelectedChannelColor] = useState<string>();
   const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
-  const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
+  const [activeEditParachain, setActiveEditParachain] = useState<TSubstrateChain | null>(null);
   const [skyboxTrigger, setSkyboxTrigger] = useState(0);
   const [animationEnabled, setAnimationEnabled] = useState(true);
 
-  const toggleParachain = (parachain: SelectedParachain) => {
-    if (parachains.includes(parachain)) {
-      setParachains(parachains.filter(p => p !== parachain));
+  const toggleParachain = (parachain: TSubstrateChain) => {
+    if (selectedParachains.includes(parachain)) {
+      setSelectedParachains(selectedParachains.filter(p => p !== parachain));
     } else {
-      setParachains([...parachains, parachain]);
+      setSelectedParachains([...selectedParachains, parachain]);
     }
   };
 
-  const toggleActiveEditParachain = (parachain: SelectedParachain | null) => {
+  const toggleActiveEditParachain = (parachain: TSubstrateChain | null) => {
     if (activeEditParachain === parachain) {
       setActiveEditParachain(null);
     } else {
@@ -89,8 +82,8 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   return (
     <SelectedParachainContext.Provider
       value={{
-        parachains,
-        setParachains,
+        selectedParachains,
+        setSelectedParachains,
         toggleParachain,
         dateRange,
         setDateRange,
@@ -108,8 +101,6 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         setSelectedChannelColor,
         parachainArrangement,
         setParachainArrangement,
-        selectedEcosystem,
-        setSelectedEcosystem,
         activeEditParachain,
         toggleActiveEditParachain,
         skyboxTrigger,

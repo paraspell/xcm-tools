@@ -4,11 +4,11 @@ import { returnInt } from '../../utils/graphql.utils';
 
 @ObjectType()
 export class MessageCountByStatus {
-  @Field()
-  ecosystem: string;
+  @Field({ nullable: true })
+  ecosystem?: string;
 
-  @Field(returnInt, { nullable: true })
-  paraId?: number;
+  @Field({ nullable: true })
+  parachain?: string;
 
   @Field(returnInt)
   success: number;

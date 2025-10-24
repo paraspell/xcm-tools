@@ -345,6 +345,9 @@ importers:
       '@nestjs/websockets':
         specifier: ^11.1.8
         version: 11.1.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(@nestjs/platform-socket.io@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@paraspell/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       axios:
         specifier: ^1.13.1
         version: 1.13.1
@@ -370,6 +373,9 @@ importers:
         specifier: ^0.3.27
         version: 0.3.27(pg@8.16.3)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.10.0)(typescript@5.8.3))
     devDependencies:
+      '@babel/preset-env':
+        specifier: ^7.28.5
+        version: 7.28.5(@babel/core@7.28.5)
       '@nestjs/cli':
         specifier: ^11.0.10
         version: 11.0.10(@swc/core@1.14.0)(@types/node@24.10.0)
@@ -388,6 +394,9 @@ importers:
       '@types/supertest':
         specifier: ^6.0.3
         version: 6.0.3
+      babel-jest:
+        specifier: ^30.2.0
+        version: 30.2.0(@babel/core@7.28.5)
       jest:
         specifier: ^30.2.0
         version: 30.2.0(@types/node@24.10.0)(ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.10.0)(typescript@5.8.3))
@@ -436,6 +445,9 @@ importers:
       '@mantine/notifications':
         specifier: ^8.3.6
         version: 8.3.6(@mantine/core@8.3.6(@mantine/hooks@8.3.6(react@19.2.0))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/hooks@8.3.6(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@paraspell/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@polkadot/apps-config':
         specifier: ^0.167.1
         version: 0.167.1(@polkadot/keyring@13.5.7(@polkadot/util-crypto@13.5.7(@polkadot/util@13.5.7))(@polkadot/util@13.5.7))(@swc/core@1.14.0)(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(react-dom@19.2.0(react@19.2.0))(react-is@19.0.0)(react@19.2.0)(utf-8-validate@5.0.10)(yaml@2.8.0)
@@ -7472,11 +7484,6 @@ packages:
   browserify-zlib@0.2.0:
     resolution: {integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==}
 
-  browserslist@4.25.0:
-    resolution: {integrity: sha512-PJ8gYKeS5e/whHBh8xrwYK+dAvEj7JXtz6uTucnMRB8OiGTsKccFekoRrjajPBHV8oOY+2tI4uxeceSimKwMFA==}
-    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
-    hasBin: true
-
   browserslist@4.25.1:
     resolution: {integrity: sha512-KGj0KoOMXLpSNkkEI6Z6mShmQy0bc1I+T7K9N81k4WWMrfz+6fQ6es80B/YLAeRoKvjYE1YSHHOW1qe9xIVzHw==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -7576,9 +7583,6 @@ packages:
     engines: {node: '>=20.11.0', npm: '>=10.8.2'}
     peerDependencies:
       three: '>=0.126.1'
-
-  caniuse-lite@1.0.30001720:
-    resolution: {integrity: sha512-Ec/2yV2nNPwb4DnTANEV99ZWwm3ZWfdlfkQbWSDDt+PsXEVYwlhPH8tdMaPunYTKKmz7AnHi2oNEi1GcmKCD8g==}
 
   caniuse-lite@1.0.30001731:
     resolution: {integrity: sha512-lDdp2/wrOmTRWuoB5DpfNkC0rJDU8DqRa6nYL6HK6sytw70QMopt/NIc/9SM7ylItlBWfACXk0tEn37UWM/+mg==}
@@ -8179,9 +8183,6 @@ packages:
 
   effect@3.18.4:
     resolution: {integrity: sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA==}
-
-  electron-to-chromium@1.5.161:
-    resolution: {integrity: sha512-hwtetwfKNZo/UlwHIVBlKZVdy7o8bIZxxKs0Mv/ROPiQQQmDgdm5a+KvKtBsxM8ZjFzTaCeLoodZ8jiBE3o9rA==}
 
   electron-to-chromium@1.5.193:
     resolution: {integrity: sha512-eePuBZXM9OVCwfYUhd2OzESeNGnWmLyeu0XAEjf7xjijNjHFdeJSzuRUGN4ueT2tEYo5YqjHramKEFxz67p3XA==}
@@ -16086,7 +16087,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@jest/types': 30.2.0
-      '@jridgewell/trace-mapping': 0.3.29
+      '@jridgewell/trace-mapping': 0.3.31
       babel-plugin-istanbul: 7.0.1
       chalk: 4.1.2
       convert-source-map: 2.0.0
@@ -21209,13 +21210,6 @@ snapshots:
     dependencies:
       pako: 1.0.11
 
-  browserslist@4.25.0:
-    dependencies:
-      caniuse-lite: 1.0.30001720
-      electron-to-chromium: 1.5.161
-      node-releases: 2.0.19
-      update-browserslist-db: 1.1.3(browserslist@4.25.0)
-
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001731
@@ -21318,8 +21312,6 @@ snapshots:
   camera-controls@3.1.0(three@0.181.0):
     dependencies:
       three: 0.181.0
-
-  caniuse-lite@1.0.30001720: {}
 
   caniuse-lite@1.0.30001731: {}
 
@@ -21894,8 +21886,6 @@ snapshots:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
-
-  electron-to-chromium@1.5.161: {}
 
   electron-to-chromium@1.5.193: {}
 
@@ -22626,7 +22616,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.2
+      semver: 7.7.3
       tapable: 2.2.2
       typescript: 5.8.3
       webpack: 5.100.2(@swc/core@1.14.0(@swc/helpers@0.5.17))
@@ -22643,7 +22633,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.2
+      semver: 7.7.3
       tapable: 2.2.2
       typescript: 5.8.3
       webpack: 5.100.2(@swc/core@1.14.0)
@@ -24056,7 +24046,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.2
+      semver: 7.7.3
 
   make-error@1.3.6: {}
 
@@ -25831,7 +25821,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.14(@swc/core@1.14.0(@swc/helpers@0.5.17))(webpack@5.100.2(@swc/core@1.14.0(@swc/helpers@0.5.17))):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.2
       serialize-javascript: 6.0.2
@@ -25842,7 +25832,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.14(@swc/core@1.14.0)(webpack@5.100.2(@swc/core@1.14.0)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.2
       serialize-javascript: 6.0.2
@@ -26424,12 +26414,6 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.9.2
       '@unrs/resolver-binding-win32-x64-msvc': 1.9.2
 
-  update-browserslist-db@1.1.3(browserslist@4.25.0):
-    dependencies:
-      browserslist: 4.25.0
-      escalade: 3.2.0
-      picocolors: 1.1.1
-
   update-browserslist-db@1.1.3(browserslist@4.25.1):
     dependencies:
       browserslist: 4.25.1
@@ -26988,7 +26972,7 @@ snapshots:
       '@webassemblyjs/wasm-parser': 1.14.1
       acorn: 8.15.0
       acorn-import-phases: 1.0.4(acorn@8.15.0)
-      browserslist: 4.25.0
+      browserslist: 4.25.1
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
       es-module-lexer: 1.7.0
@@ -27020,7 +27004,7 @@ snapshots:
       '@webassemblyjs/wasm-parser': 1.14.1
       acorn: 8.15.0
       acorn-import-phases: 1.0.4(acorn@8.15.0)
-      browserslist: 4.25.0
+      browserslist: 4.25.1
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
       es-module-lexer: 1.7.0

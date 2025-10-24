@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  getParaId,
+  getRelayChainOf,
+  getTChain,
+  TRelaychain,
+  TSubstrateChain,
+} from '@paraspell/sdk';
+import {
   AccountXcmCountResult,
   AssetCountResult,
   ParaIdAssetCountResult,
@@ -23,14 +30,17 @@ export class MessageService {
   ) {}
 
   async countMessagesByStatus(
-    ecosystem: string,
-    paraIds: number[] = [],
+    ecosystem: string = null,
+    parachains: TSubstrateChain[] = [],
     startTime: number,
     endTime: number,
   ): Promise<MessageCountByStatus[]> {
-    if (paraIds.length > 0) {
+    if (parachains.length > 0) {
       const results = await Promise.all(
-        paraIds.map(async (paraId) => {
+        parachains.map(async (parachain) => {
+          const paraId = getParaId(parachain);
+          const ecosystem = getRelayChainOf(parachain).toLowerCase();
+
           const successCount = await this.messagesRepository.count({
             where: {
               ecosystem: ecosystem,
@@ -51,7 +61,7 @@ export class MessageService {
 
           return {
             ecosystem,
-            paraId,
+            parachain,
             success: successCount,
             failed: failedCount,
           };
@@ -82,69 +92,108 @@ export class MessageService {
 
   async countMessagesByDay(
     ecosystem: string,
-    paraIds: number[],
+    parachains: TSubstrateChain[],
     startTime: number,
     endTime: number,
   ): Promise<MessageCountByDay[]> {
-    const queryBuilder = this.messagesRepository
-      .createQueryBuilder('message')
-      .select(
-        "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-        'date',
-      )
-      .addSelect('COUNT(*)', 'message_count')
-      .addSelect(
-        "SUM(CASE WHEN message.status = 'success' THEN 1 ELSE 0 END)",
-        'message_count_success',
-      )
-      .addSelect(
-        "SUM(CASE WHEN message.status = 'failed' THEN 1 ELSE 0 END)",
-        'message_count_failed',
-      );
+    const base = () =>
+      this.messagesRepository
+        .createQueryBuilder('message')
+        .select(
+          "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
+          'date',
+        )
+        .addSelect('COUNT(*)', 'message_count')
+        .addSelect(
+          "SUM(CASE WHEN message.status = 'success' THEN 1 ELSE 0 END)",
+          'message_count_success',
+        )
+        .addSelect(
+          "SUM(CASE WHEN message.status = 'failed' THEN 1 ELSE 0 END)",
+          'message_count_failed',
+        )
+        .where(
+          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
+          { startTime, endTime },
+        );
 
-    queryBuilder.where('message.ecosystem = :ecosystem', { ecosystem });
+    if (!parachains?.length) {
+      if (!ecosystem) return [];
 
-    queryBuilder.where(
-      'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-      {
-        startTime,
-        endTime,
-      },
-    );
+      const qb = base()
+        .andWhere('message.ecosystem = :ecosystem', {
+          ecosystem: ecosystem.toLowerCase(),
+        })
+        .groupBy(
+          "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
+        )
+        .orderBy('date', 'ASC');
 
-    if (paraIds.length > 0) {
-      queryBuilder
+      const rows: {
+        date: string;
+        message_count: string;
+        message_count_success: string;
+        message_count_failed: string;
+      }[] = await qb.getRawMany();
+
+      return rows.map((r) => ({
+        ecosystem: ecosystem.toLowerCase(),
+        parachain: undefined,
+        date: r.date,
+        messageCount: parseInt(r.message_count, 10),
+        messageCountSuccess: parseInt(r.message_count_success, 10),
+        messageCountFailed: parseInt(r.message_count_failed, 10),
+      }));
+    }
+
+    const ecoToParaIds = new Map<string, number[]>();
+    const keyToName = new Map<string, string>();
+
+    for (const name of new Set(parachains)) {
+      const eco = getRelayChainOf(name).toLowerCase();
+      const id = getParaId(name);
+      if (!ecoToParaIds.has(eco)) ecoToParaIds.set(eco, []);
+      ecoToParaIds.get(eco).push(id);
+      keyToName.set(`${eco}:${id}`, name);
+    }
+
+    const out: MessageCountByDay[] = [];
+
+    for (const [eco, idsRaw] of ecoToParaIds.entries()) {
+      const paraIds = Array.from(new Set(idsRaw));
+
+      const qb = base()
+        .andWhere('message.ecosystem = :ecosystem', { ecosystem: eco })
         .andWhere('message.origin_para_id IN (:...paraIds)', { paraIds })
         .addSelect('message.origin_para_id', 'paraId')
         .groupBy(
           "message.origin_para_id, TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-        );
-    } else {
-      queryBuilder.groupBy(
-        "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-      );
+        )
+        .orderBy('message.origin_para_id', 'ASC')
+        .addOrderBy('date', 'ASC');
+
+      const rows: {
+        paraId: string;
+        date: string;
+        message_count: string;
+        message_count_success: string;
+        message_count_failed: string;
+      }[] = await qb.getRawMany();
+
+      for (const r of rows) {
+        const id = parseInt(r.paraId, 10);
+        out.push({
+          ecosystem: eco,
+          parachain: keyToName.get(`${eco}:${id}`),
+          date: r.date,
+          messageCount: parseInt(r.message_count, 10),
+          messageCountSuccess: parseInt(r.message_count_success, 10),
+          messageCountFailed: parseInt(r.message_count_failed, 10),
+        });
+      }
     }
 
-    queryBuilder.orderBy(
-      paraIds.length > 0 ? 'message.origin_para_id, date' : 'date',
-    );
-
-    const data: {
-      paraId: string;
-      date: string;
-      message_count_success: string;
-      message_count_failed: string;
-    }[] = await queryBuilder.getRawMany();
-    return data.map((d) => ({
-      ecosystem,
-      paraId: d.paraId ? parseInt(d.paraId, 10) : undefined,
-      date: d.date,
-      messageCount:
-        parseInt(d.message_count_success, 10) +
-        parseInt(d.message_count_failed, 10),
-      messageCountSuccess: parseInt(d.message_count_success, 10),
-      messageCountFailed: parseInt(d.message_count_failed, 10),
-    }));
+    return out;
   }
 
   async getTotalMessageCounts(
@@ -236,96 +285,116 @@ export class MessageService {
 
   async countAssetsBySymbol(
     ecosystem: string,
-    paraIds: number[],
+    parachains: TSubstrateChain[],
     startTime: number,
     endTime: number,
   ): Promise<AssetCount[]> {
-    let query = '';
-    const queryParameters: (number | number[] | string)[] = [
+    const baseParams: (string | number | number[])[] = [
       ecosystem,
       startTime,
       endTime,
     ];
 
-    if (paraIds.length > 0) {
-      query = `
-        WITH asset_rows AS (
-          SELECT
-            m.origin_para_id,
-            (a.elem->>'symbol')                    AS symbol,
-            NULLIF(a.elem->>'decimals','')::int    AS decimals,
-            NULLIF(a.elem->>'amount','')::numeric  AS amount_num
-          FROM messages m
-          CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
-          WHERE
-            m.ecosystem = $1
-            AND m.origin_block_timestamp BETWEEN $2 AND $3
-            AND m.origin_para_id = ANY($4)
-        )
+    if (parachains.length > 0) {
+      const paraIds = parachains.map((p) => getParaId(p));
+      const ecosystems = parachains.map((p) =>
+        getRelayChainOf(p).toLowerCase(),
+      );
+      const ecoByParaId = new Map<number, string>();
+      for (let i = 0; i < paraIds.length; i++)
+        ecoByParaId.set(paraIds[i], ecosystems[i]);
+
+      const query = `
+      WITH selected_paras AS (
+        SELECT UNNEST($1::int[])  AS para_id,
+               UNNEST($2::text[]) AS ecosystem
+      ),
+      asset_rows AS (
         SELECT
-          origin_para_id,
-          symbol,
-          MAX(decimals)                                            AS decimals,
-          COUNT(*)                                                 AS count,
-          SUM(amount_num) / POWER(10::numeric, MAX(decimals))      AS amount
-        FROM asset_rows
+          m.origin_para_id,
+          (a.elem->>'symbol')                   AS symbol,
+          NULLIF(a.elem->>'decimals','')::int   AS decimals,
+          NULLIF(a.elem->>'amount','')::numeric AS amount_num
+        FROM messages m
+        JOIN selected_paras sp
+          ON sp.para_id   = m.origin_para_id
+         AND sp.ecosystem = m.ecosystem
+        CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
         WHERE
-          symbol IS NOT NULL AND symbol <> ''
-          AND decimals IS NOT NULL
-          AND amount_num IS NOT NULL
-        GROUP BY origin_para_id, symbol
-        ORDER BY count DESC, origin_para_id;
-      `;
-      queryParameters.push(paraIds);
-    } else {
-      query = `
-        WITH asset_rows AS (
-          SELECT
-            m.origin_para_id,
-            (a.elem->>'symbol')                    AS symbol,
-            NULLIF(a.elem->>'decimals','')::int    AS decimals,
-            NULLIF(a.elem->>'amount','')::numeric  AS amount_num
-          FROM messages m
-          CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
-          WHERE
-            m.ecosystem = $1
-            AND m.origin_block_timestamp BETWEEN $2 AND $3
-        )
-        SELECT
-          symbol,
-          MAX(decimals)                                            AS decimals,
-          COUNT(*)                                                 AS count,
-          SUM(amount_num) / POWER(10::numeric, MAX(decimals))      AS amount
-        FROM asset_rows
-        WHERE
-          symbol IS NOT NULL AND symbol <> ''
-          AND decimals IS NOT NULL
-          AND amount_num IS NOT NULL
-        GROUP BY symbol
-        ORDER BY count DESC;
-      `;
+          m.origin_block_timestamp BETWEEN $3 AND $4
+      )
+      SELECT
+        origin_para_id,
+        symbol,
+        MAX(decimals)                                           AS decimals,
+        COUNT(*)                                                AS count,
+        SUM(amount_num) / POWER(10::numeric, MAX(decimals))     AS amount
+      FROM asset_rows
+      WHERE
+        symbol IS NOT NULL AND symbol <> ''
+        AND decimals IS NOT NULL
+        AND amount_num IS NOT NULL
+      GROUP BY origin_para_id, symbol
+      ORDER BY count DESC, origin_para_id;
+    `;
+
+      const results = await this.messagesRepository.query<
+        ParaIdAssetCountResult[]
+      >(query, [paraIds, ecosystems, startTime, endTime]);
+
+      return results.map((r) => {
+        const paraId = r.origin_para_id;
+        const ecosystem = ecoByParaId.get(paraId);
+        return {
+          ecosystem: ecosystem,
+          parachain: getTChain(
+            paraId,
+            (ecosystem[0].toUpperCase() + ecosystem.slice(1)) as TRelaychain,
+          ),
+          symbol: r.symbol,
+          count: parseInt(r.count, 10),
+          amount: r.amount,
+        };
+      });
     }
+
+    const query = `
+    WITH asset_rows AS (
+      SELECT
+        m.origin_para_id,
+        (a.elem->>'symbol')                   AS symbol,
+        NULLIF(a.elem->>'decimals','')::int   AS decimals,
+        NULLIF(a.elem->>'amount','')::numeric AS amount_num
+      FROM messages m
+      CROSS JOIN LATERAL jsonb_array_elements(COALESCE(m.assets, '[]'::jsonb)) AS a(elem)
+      WHERE
+        m.ecosystem = $1
+        AND m.origin_block_timestamp BETWEEN $2 AND $3
+    )
+    SELECT
+      symbol,
+      MAX(decimals)                                           AS decimals,
+      COUNT(*)                                                AS count,
+      SUM(amount_num) / POWER(10::numeric, MAX(decimals))     AS amount
+    FROM asset_rows
+    WHERE
+      symbol IS NOT NULL AND symbol <> ''
+      AND decimals IS NOT NULL
+      AND amount_num IS NOT NULL
+    GROUP BY symbol
+    ORDER BY count DESC;
+  `;
 
     const results = await this.messagesRepository.query<
       (ParaIdAssetCountResult | AssetCountResult)[]
-    >(query, queryParameters);
+    >(query, baseParams);
 
-    return results.map((result) =>
-      'origin_para_id' in result
-        ? {
-            ecosystem,
-            paraId: result.origin_para_id,
-            symbol: result.symbol,
-            count: parseInt(result.count),
-            amount: result.amount,
-          }
-        : {
-            ecosystem,
-            symbol: result.symbol,
-            count: parseInt(result.count),
-            amount: result.amount,
-          },
-    );
+    return results.map((r) => ({
+      ecosystem,
+      symbol: r.symbol,
+      count: parseInt(r.count, 10),
+      amount: r.amount,
+    }));
   }
 
   async getAccountXcmCounts(

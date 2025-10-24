@@ -5,12 +5,12 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { messageCountsByDayQueryDocument } from '../../../api/messages';
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
 import convertToCsv from '../../../utils/convertToCsv';
 import downloadSvg from '../../../utils/downloadSvg';
 import { downloadZip } from '../../../utils/downloadZip';
-import { getParachainId } from '../../../utils/utils';
 import DownloadButtons from '../../DownloadButtons';
 import AmountTransferedPlot from './AmountTransferedPlot';
 
@@ -23,27 +23,44 @@ const AmountTransferedPlotContainer = () => {
 
   const [showMedian, setShowMedian] = useState(false);
 
-  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
+  const { selectedParachains, dateRange } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
   const [start, end] = dateRange;
 
-  const { data, loading, error } = useQuery(messageCountsByDayQueryDocument, {
-    variables: {
-      ecosystem: selectedEcosystem.toString().toLowerCase(),
-      paraIds: parachains.map(parachain => getParachainId(parachain, selectedEcosystem)),
-      startTime: start && end ? start.getTime() / 1000 : 1,
-      endTime: start && end ? end.getTime() / 1000 : now
+  const { data, loading, error } = useQuery<MessageCountsByDayQuery>(
+    messageCountsByDayQueryDocument,
+    {
+      variables: {
+        ecosystem: selectedEcosystem.toString().toLowerCase(),
+        parachains: selectedParachains,
+        startTime: start && end ? Math.floor(start.getTime() / 1000) : 1,
+        endTime: start && end ? Math.floor(end.getTime() / 1000) : Math.floor(now / 1000)
+      }
     }
-  });
+  );
 
   const onDownloadZipClick = () => {
-    if (!data) throw new Error(t('errors.noDownloadData'));
+    if (!data || !Array.isArray(data.messageCountsByDay))
+      throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<
       MessageCountsByDayQuery['messageCountsByDay'][number],
       '__typename'
-    >)[] = ['paraId', 'date', 'messageCount', 'messageCountSuccess', 'messageCountFailed'];
-    const csvData = convertToCsv(data.messageCountsByDay, headers);
-    void downloadZip(data.messageCountsByDay, csvData);
+    >)[] = [
+      'ecosystem',
+      'parachain',
+      'date',
+      'messageCount',
+      'messageCountSuccess',
+      'messageCountFailed'
+    ];
+    const rows = data.messageCountsByDay.map(({ __typename, parachain, ecosystem, ...rest }) => ({
+      ...rest,
+      parachain: parachain ?? '',
+      ecosystem: ecosystem ?? ''
+    }));
+    const csvData = convertToCsv(rows, headers);
+    void downloadZip(rows, csvData);
   };
 
   const onDownloadSvgClick = () => {

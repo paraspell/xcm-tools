@@ -1,4 +1,5 @@
-import { Ecosystem } from '../types/types';
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { RELAYCHAINS } from '@paraspell/sdk';
 
 export function encodeDate(d: Date | null | undefined) {
   return d ? d.toISOString() : undefined;
@@ -14,19 +15,19 @@ export function encodeList(list: string[]) {
   return list.length ? list.join(',') : undefined;
 }
 
-export function decodeList(s: string | null): string[] {
-  return s ? s.split(',').filter(Boolean) : [];
+export function decodeList(s: string | null): TSubstrateChain[] {
+  return s ? (s.split(',').filter(Boolean) as TSubstrateChain[]) : [];
 }
 
-export function encodeEcosystem(e: Ecosystem): string {
-  return String(e);
+export function encodeEcosystem(e: TRelaychain): string {
+  return e.toString();
 }
 
-export function decodeEcosystem(s: string | null, fallback: Ecosystem): Ecosystem {
+export function decodeEcosystem(s: string | null, fallback: TRelaychain): TRelaychain {
   if (!s) return fallback;
   const norm = s.trim().toLowerCase();
-  const match = (Object.values(Ecosystem) as string[]).find(v => v.toLowerCase() === norm);
-  return (match as Ecosystem) ?? fallback;
+  const match = RELAYCHAINS.find(v => v.toLowerCase() === norm);
+  return match ?? fallback;
 }
 
 export function setOrDelete(params: URLSearchParams, key: string, value?: string) {

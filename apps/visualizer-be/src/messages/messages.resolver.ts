@@ -1,4 +1,5 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { TSubstrateChain } from '@paraspell/sdk';
 
 import { CountOption } from './count-option';
 import { Message } from './message.entity';
@@ -15,14 +16,15 @@ export class MessageResolver {
 
   @Query(() => [MessageCountByStatus])
   async messageCounts(
-    @Args('ecosystem', { type: () => String }) ecosystem: string,
-    @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
+    @Args('ecosystem', { type: () => String, nullable: true })
+    ecosystem: string,
+    @Args('parachains', { type: () => [String] }) parachains: string[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ): Promise<MessageCountByStatus[]> {
     return this.messageService.countMessagesByStatus(
       ecosystem,
-      paraIds,
+      parachains as TSubstrateChain[],
       startTime.getTime(),
       endTime.getTime(),
     );
@@ -31,13 +33,13 @@ export class MessageResolver {
   @Query(() => [MessageCountByDay])
   async messageCountsByDay(
     @Args('ecosystem', { type: () => String }) ecosystem: string,
-    @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
+    @Args('parachains', { type: () => [String] }) parachains: string[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.countMessagesByDay(
       ecosystem,
-      paraIds,
+      parachains as TSubstrateChain[],
       startTime.getTime(),
       endTime.getTime(),
     );
@@ -46,13 +48,13 @@ export class MessageResolver {
   @Query(() => [AssetCount])
   async assetCountsBySymbol(
     @Args('ecosystem', { type: () => String }) ecosystem: string,
-    @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
+    @Args('parachains', { type: () => [String] }) parachains: string[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.countAssetsBySymbol(
       ecosystem,
-      paraIds,
+      parachains as TSubstrateChain[],
       startTime.getTime(),
       endTime.getTime(),
     );

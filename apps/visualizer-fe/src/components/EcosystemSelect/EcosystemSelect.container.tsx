@@ -1,11 +1,11 @@
 import { Box } from '@mantine/core';
 
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useFilterSync } from '../../hooks/useFilterSync';
 import EcosystemSelect from './EcosystemSelect';
 
 const EcosystemSelectContainer = () => {
-  const { selectedEcosystem, setSelectedEcosystem } = useSelectedParachain();
+  const { selectedEcosystem, setSelectedEcosystem } = useSelectedEcosystem();
   useFilterSync();
 
   return (

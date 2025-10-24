@@ -20,7 +20,7 @@ type AssetCount {
   amount: String!
   count: Int!
   ecosystem: String!
-  paraId: Int
+  parachain: String
   symbol: String!
 }
 
@@ -56,24 +56,24 @@ type MessageCountByDay {
   messageCount: Float!
   messageCountFailed: Float!
   messageCountSuccess: Float!
-  paraId: Int
+  parachain: String
 }
 
 type MessageCountByStatus {
-  ecosystem: String!
+  ecosystem: String
   failed: Int!
-  paraId: Int
+  parachain: String
   success: Int!
 }
 
 type Query {
   accountCounts(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!, threshold: Int!): [AccountXcmCountType!]!
-  assetCountsBySymbol(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [AssetCount!]!
+  assetCountsBySymbol(ecosystem: String!, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [AssetCount!]!
   channel(ecosystem: String!, recipient: Int!, sender: Int!): Channel!
   channels(ecosystem: String!): [Channel!]!
   channelsInInterval(ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [Channel!]!
-  messageCounts(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [MessageCountByStatus!]!
-  messageCountsByDay(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!): [MessageCountByDay!]!
+  messageCounts(ecosystem: String, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [MessageCountByStatus!]!
+  messageCountsByDay(ecosystem: String!, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [MessageCountByDay!]!
   totalMessageCounts(countBy: CountOption! = ORIGIN, ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [MessageCount!]!
 }
 

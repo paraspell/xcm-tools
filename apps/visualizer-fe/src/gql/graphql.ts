@@ -43,7 +43,7 @@ export type AssetCount = {
   amount: Scalars['String']['output'];
   count: Scalars['Int']['output'];
   ecosystem: Scalars['String']['output'];
-  paraId?: Maybe<Scalars['Int']['output']>;
+  parachain?: Maybe<Scalars['String']['output']>;
   symbol: Scalars['String']['output'];
 };
 
@@ -82,14 +82,14 @@ export type MessageCountByDay = {
   messageCount: Scalars['Float']['output'];
   messageCountFailed: Scalars['Float']['output'];
   messageCountSuccess: Scalars['Float']['output'];
-  paraId?: Maybe<Scalars['Int']['output']>;
+  parachain?: Maybe<Scalars['String']['output']>;
 };
 
 export type MessageCountByStatus = {
   __typename?: 'MessageCountByStatus';
-  ecosystem: Scalars['String']['output'];
+  ecosystem?: Maybe<Scalars['String']['output']>;
   failed: Scalars['Int']['output'];
-  paraId?: Maybe<Scalars['Int']['output']>;
+  parachain?: Maybe<Scalars['String']['output']>;
   success: Scalars['Int']['output'];
 };
 
@@ -116,7 +116,7 @@ export type QueryAccountCountsArgs = {
 export type QueryAssetCountsBySymbolArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  parachains: Array<Scalars['String']['input']>;
   startTime: Scalars['Timestamp']['input'];
 };
 
@@ -137,16 +137,16 @@ export type QueryChannelsInIntervalArgs = {
 };
 
 export type QueryMessageCountsArgs = {
-  ecosystem: Scalars['String']['input'];
+  ecosystem?: InputMaybe<Scalars['String']['input']>;
   endTime: Scalars['Timestamp']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  parachains: Array<Scalars['String']['input']>;
   startTime: Scalars['Timestamp']['input'];
 };
 
 export type QueryMessageCountsByDayArgs = {
   ecosystem: Scalars['String']['input'];
   endTime: Scalars['Timestamp']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  parachains: Array<Scalars['String']['input']>;
   startTime: Scalars['Timestamp']['input'];
 };
 
@@ -213,7 +213,7 @@ export type ChannelQuery = {
 
 export type MessageCountsQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
+  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
   startTime: Scalars['Timestamp']['input'];
   endTime: Scalars['Timestamp']['input'];
 }>;
@@ -222,8 +222,8 @@ export type MessageCountsQuery = {
   __typename?: 'Query';
   messageCounts: Array<{
     __typename?: 'MessageCountByStatus';
-    ecosystem: string;
-    paraId?: number | null;
+    ecosystem?: string | null;
+    parachain?: string | null;
     success: number;
     failed: number;
   }>;
@@ -231,7 +231,7 @@ export type MessageCountsQuery = {
 
 export type MessageCountsByDayQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
+  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
   startTime: Scalars['Timestamp']['input'];
   endTime: Scalars['Timestamp']['input'];
 }>;
@@ -241,7 +241,7 @@ export type MessageCountsByDayQuery = {
   messageCountsByDay: Array<{
     __typename?: 'MessageCountByDay';
     ecosystem: string;
-    paraId?: number | null;
+    parachain?: string | null;
     date: string;
     messageCount: number;
     messageCountSuccess: number;
@@ -251,7 +251,7 @@ export type MessageCountsByDayQuery = {
 
 export type AssetCountsBySymbolQueryVariables = Exact<{
   ecosystem: Scalars['String']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
+  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
   startTime: Scalars['Timestamp']['input'];
   endTime: Scalars['Timestamp']['input'];
 }>;
@@ -261,7 +261,7 @@ export type AssetCountsBySymbolQuery = {
   assetCountsBySymbol: Array<{
     __typename?: 'AssetCount';
     ecosystem: string;
-    paraId?: number | null;
+    parachain?: string | null;
     symbol: string;
     count: number;
     amount: string;
@@ -513,12 +513,15 @@ export const MessageCountsDocument = {
         },
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } },
           type: {
-            kind: 'ListType',
+            kind: 'NonNullType',
             type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+              }
             }
           }
         },
@@ -553,8 +556,8 @@ export const MessageCountsDocument = {
               },
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
+                name: { kind: 'Name', value: 'parachains' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } }
               },
               {
                 kind: 'Argument',
@@ -571,7 +574,7 @@ export const MessageCountsDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'parachain' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'success' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'failed' } }
               ]
@@ -600,12 +603,15 @@ export const MessageCountsByDayDocument = {
         },
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } },
           type: {
-            kind: 'ListType',
+            kind: 'NonNullType',
             type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+              }
             }
           }
         },
@@ -640,8 +646,8 @@ export const MessageCountsByDayDocument = {
               },
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
+                name: { kind: 'Name', value: 'parachains' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } }
               },
               {
                 kind: 'Argument',
@@ -658,7 +664,7 @@ export const MessageCountsByDayDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'parachain' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'date' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'messageCount' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'messageCountSuccess' } },
@@ -689,12 +695,15 @@ export const AssetCountsBySymbolDocument = {
         },
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } },
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } },
           type: {
-            kind: 'ListType',
+            kind: 'NonNullType',
             type: {
-              kind: 'NonNullType',
-              type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
+              kind: 'ListType',
+              type: {
+                kind: 'NonNullType',
+                type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+              }
             }
           }
         },
@@ -729,8 +738,8 @@ export const AssetCountsBySymbolDocument = {
               },
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'paraIds' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'paraIds' } }
+                name: { kind: 'Name', value: 'parachains' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'parachains' } }
               },
               {
                 kind: 'Argument',
@@ -747,7 +756,7 @@ export const AssetCountsBySymbolDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'ecosystem' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'paraId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'parachain' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'symbol' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'count' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'amount' } }
