@@ -1,5 +1,6 @@
 export * from './resolveAsset'
 export * from './resolveFeeAsset'
+export * from './resolveHopAsset'
 export * from './resolveOverriddenAsset'
 export * from './selectXcmVersion'
 export * from './shouldPerformAssetCheck'

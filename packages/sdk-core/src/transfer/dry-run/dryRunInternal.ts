@@ -1,23 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
-  findAssetInfoOnDest,
   findAssetInfoOrThrow,
-  findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
   hasDryRunSupport
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
+import { resolveHopAsset } from '../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getFailureInfo } from './getFailureInfo'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
@@ -94,19 +93,14 @@ export const dryRunInternal = async <TApi, TRes>(
       hasPassedExchange
     } = params
 
-    let hopAsset: TAssetInfo
-    if (asset.location && asset.location.parents === Parents.TWO) {
-      hopAsset = findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
-    } else if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-      hopAsset = findAssetOnDestOrThrow(
-        swapConfig.exchangeChain,
-        currentChain,
-        swapConfig.currencyTo
-      )
-    } else {
-      hopAsset = asset
-      hopAsset = findAssetInfoOnDest(origin, currentChain, currency) ?? asset
-    }
+    const hopAsset = resolveHopAsset({
+      originChain: origin,
+      currentChain,
+      asset: currentAsset,
+      currency,
+      swapConfig,
+      hasPassedExchange
+    })
 
     if (!hasDryRunSupport(currentChain)) {
       return {
