@@ -17,9 +17,9 @@ import type { TPallet } from '@paraspell/pallets'
 import type { TChain, TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
-  isDotKsmBridge,
   isExternalChain,
   isRelayChain,
+  isSubstrateBridge,
   isTLocation,
   isTrustedChain,
   Parents,
@@ -130,7 +130,7 @@ abstract class Parachain<TApi, TRes> {
 
   canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
     const { assetInfo: asset } = options
-    const isExternalAsset = asset.location && asset.location.parents === Parents.TWO
+    const isExternalAsset = asset.location?.parents === Parents.TWO
     return !isExternalAsset && !this.shouldUseNativeAssetTeleport(options)
   }
 
@@ -189,12 +189,15 @@ abstract class Parachain<TApi, TRes> {
       )
     }
 
+    const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
+
     const useTypeAndThen =
-      isRelayAsset &&
-      supportsTypeThen &&
-      destChain &&
-      !feeAsset &&
-      (!isTrustedChain(this.chain) || !isTrustedChain(destChain))
+      (isRelayAsset &&
+        supportsTypeThen &&
+        destChain &&
+        !feeAsset &&
+        (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
+      isSubBridge
 
     if (supportsXTokens(this) && this.canUseXTokens(sendOptions) && !useTypeAndThen) {
       const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
@@ -290,31 +293,32 @@ abstract class Parachain<TApi, TRes> {
         throw new InvalidParameterError('Astar system asset transfers are temporarily disabled')
       }
 
-      const isAHPOrigin = this.chain.includes('AssetHub')
-      const isAHPDest = !isTLocation(destination) && destination.includes('AssetHub')
+      const isAHOrigin = this.chain.includes('AssetHub')
+      const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
 
       // Handle common cases
-      const isExternalAsset = asset.location && asset.location.parents === Parents.TWO
+      const isExternalAsset = asset.location?.parents === Parents.TWO
 
       const isEthDest = destination === 'Ethereum'
 
       // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
       const isExternalAssetViaAh =
-        isExternalAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset
+        isExternalAsset && !isAHOrigin && !isAHDest && !isEthDest && !feeAsset
 
       // External asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
       const isExternalAssetToAh =
-        isExternalAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset
+        isExternalAsset && isAHDest && !isAHOrigin && !isEthDest && !feeAsset
 
       if (isExternalAssetViaAh || isExternalAssetToAh || useTypeAndThen) {
         // Validate that the chain-specific transfer wouldn't reject this scenario.
-        if (useTypeAndThen && supportsPolkadotXCM(this)) {
+        if (useTypeAndThen && supportsPolkadotXCM(this) && !isSubBridge) {
           await this.transferPolkadotXCM(options) // ignore result
         }
 
         const call = isRelayAsset
           ? await createTypeThenAutoReserve(this.chain, options)
           : await createTypeAndThenCall(this.chain, options)
+
         return api.callTxMethod(call)
       }
 
@@ -372,7 +376,7 @@ abstract class Parachain<TApi, TRes> {
     assetInfo: asset,
     to
   }: TSendInternalOptions<TApi, TRes>): boolean {
-    if (isTLocation(to) || isDotKsmBridge(this.chain, to) || to === 'Ethereum') return false
+    if (isTLocation(to) || isSubstrateBridge(this.chain, to) || to === 'Ethereum') return false
 
     const isAHPOrigin = this.chain.includes('AssetHub')
     const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
@@ -475,10 +479,22 @@ abstract class Parachain<TApi, TRes> {
   }
 
   async transferLocal(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    const { api, assetInfo: asset, address, senderAddress, currency, isAmountAll } = options
+    const {
+      api,
+      assetInfo: asset,
+      feeAsset,
+      address,
+      senderAddress,
+      currency,
+      isAmountAll
+    } = options
 
     if (isTLocation(address)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
+    }
+
+    if (feeAsset) {
+      throw new InvalidParameterError('Fee asset is not supported for local transfers')
     }
 
     const validatedOptions = { ...options, address }

@@ -21,11 +21,7 @@ import {
 import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import {
-  createBridgeDestination,
-  createDestination,
-  createVersionedDestination
-} from '../../pallets/xcmPallet/utils'
+import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { createTypeAndThenCall } from '../../transfer'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
@@ -62,43 +58,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
-  }
-
-  public handleBridgeTransfer<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>,
-    targetChain: 'Polkadot' | 'Kusama'
-  ): Promise<TRes> {
-    const { api, assetInfo: asset, destination, address, version, paraIdTo } = input
-    if (
-      (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'DOT')
-    ) {
-      const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
-        ...input,
-        destLocation: createBridgeDestination(targetChain, destination, paraIdTo),
-        beneficiaryLocation: createBeneficiaryLocation({
-          api,
-          address: address,
-          version
-        }),
-        asset: createAsset(version, asset.amount, asset.location as TLocation)
-      }
-      return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
-    } else if (
-      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Kusama' && 'DOT')
-    ) {
-      const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
-        ...input,
-        destLocation: createBridgeDestination(targetChain, destination, paraIdTo),
-        asset: createAsset(version, asset.amount, DOT_LOCATION)
-      }
-
-      return transferPolkadotXcm(modifiedInput, 'limited_reserve_transfer_assets', 'Unlimited')
-    }
-    throw new InvalidCurrencyError(
-      `Polkadot <-> Kusama bridge does not support currency ${asset.symbol}`
-    )
   }
 
   public async handleEthBridgeNativeTransfer<TApi, TRes>(
@@ -291,10 +250,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       if (!isNativeAsset || !isNativeFeeAsset) {
         return api.callTxMethod(await handleExecuteTransfer(this.chain, options))
       }
-    }
-
-    if (destination === 'AssetHubKusama') {
-      return this.handleBridgeTransfer(options, 'Kusama')
     }
 
     if (destination === 'Ethereum') {

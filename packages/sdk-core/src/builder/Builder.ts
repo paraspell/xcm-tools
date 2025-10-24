@@ -3,7 +3,7 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
-import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
+import { isRelayChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { MIN_AMOUNT } from '../constants'
@@ -259,12 +259,6 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       throw new InvalidParameterError(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
       )
-    }
-
-    const { from, to } = this._options
-
-    if (!isTLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
-      throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
     const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)

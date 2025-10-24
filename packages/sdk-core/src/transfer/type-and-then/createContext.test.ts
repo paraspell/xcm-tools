@@ -1,22 +1,50 @@
 import type { TAssetWithLocation } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
-import { isRelayChain } from '@paraspell/sdk-common'
+import {
+  isRelayChain,
+  isSubstrateBridge,
+  isTLocation,
+  type TChain,
+  type TLocation,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
-import { createTypeAndThenCallContext } from './createContext'
+import { createTypeAndThenCallContext, getSubBridgeReserve } from './createContext'
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isRelayChain: vi.fn()
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal()),
+  isRelayChain: vi.fn(),
+  isSubstrateBridge: vi.fn(),
+  isTLocation: vi.fn()
 }))
 
-vi.mock('../../utils', () => ({
-  assertHasLocation: vi.fn(),
-  getAssetReserveChain: vi.fn(),
-  getRelayChainOf: vi.fn()
-}))
+vi.mock('../../utils')
+
+describe('getSubBridgeReserve', () => {
+  const originChain: TSubstrateChain = 'BridgeHubPolkadot'
+  const destinationChain: TSubstrateChain = 'BridgeHubKusama'
+
+  it('returns the origin chain when asset location is relay', () => {
+    const result = getSubBridgeReserve(originChain, destinationChain, RELAY_LOCATION)
+
+    expect(result).toBe(originChain)
+  })
+
+  it('returns the destination chain when asset location differs from relay', () => {
+    const parachainLocation: TLocation = {
+      parents: 1,
+      interior: { X1: { Parachain: 2000 } }
+    }
+
+    const result = getSubBridgeReserve(originChain, destinationChain, parachainLocation)
+
+    expect(result).toBe(destinationChain)
+  })
+})
 
 describe('createTypeAndThenCallContext', () => {
   const mockChain: TSubstrateChain = 'AssetHubPolkadot'
@@ -41,7 +69,7 @@ describe('createTypeAndThenCallContext', () => {
 
   const mockOptions = {
     api: mockApi,
-    destChain: mockDestChain,
+    destination: mockDestChain,
     assetInfo: mockAsset
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
@@ -49,6 +77,8 @@ describe('createTypeAndThenCallContext', () => {
     vi.clearAllMocks()
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(isRelayChain).mockReturnValue(false)
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
+    vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
   })
@@ -59,7 +89,7 @@ describe('createTypeAndThenCallContext', () => {
 
     const options = {
       ...mockOptions,
-      destChain: relayDestChain
+      destination: relayDestChain
     }
 
     const result = await createTypeAndThenCallContext(mockChain, options)
@@ -71,6 +101,7 @@ describe('createTypeAndThenCallContext', () => {
       origin: { api: mockApi, chain: mockChain },
       dest: { api: mockClonedApi, chain: relayDestChain },
       reserve: { api: mockClonedApi, chain: relayDestChain },
+      isSubBridge: false,
       assetInfo: mockAsset,
       options
     })
@@ -87,6 +118,7 @@ describe('createTypeAndThenCallContext', () => {
       origin: { api: mockApi, chain: mockChain },
       dest: { api: mockClonedApi, chain: mockDestChain },
       reserve: { api: mockClonedApi, chain: mockReserveChain },
+      isSubBridge: false,
       assetInfo: mockAsset,
       options: mockOptions
     })

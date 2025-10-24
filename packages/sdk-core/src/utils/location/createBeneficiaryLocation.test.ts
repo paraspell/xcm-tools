@@ -8,17 +8,10 @@ import { resolveScenario } from '../transfer/resolveScenario'
 import { createBeneficiaryLocation, createBeneficiaryLocXTokens } from './createBeneficiaryLocation'
 import { createX1Payload } from './createX1Payload'
 
-vi.mock('viem', () => ({
-  isAddress: vi.fn()
-}))
+vi.mock('viem')
 
-vi.mock('./createX1Payload', () => ({
-  createX1Payload: vi.fn()
-}))
-
-vi.mock('../transfer/resolveScenario', () => ({
-  resolveScenario: vi.fn()
-}))
+vi.mock('./createX1Payload')
+vi.mock('../transfer/resolveScenario')
 
 vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')

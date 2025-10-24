@@ -13,6 +13,7 @@ import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   InvalidAddressError,
+  InvalidParameterError,
   NoXCMSupportImplementedError,
   TransferToAhNotSupported
 } from '../errors'
@@ -546,6 +547,22 @@ describe('Parachain', () => {
       } as TSendInternalOptions<unknown, unknown>
 
       await expect(chain.transferLocal(options)).rejects.toThrow(InvalidAddressError)
+    })
+
+    it('should throw an error when fee asset is provided', async () => {
+      const options = {
+        api,
+        assetInfo: { symbol: 'DOT', amount: 100n, decimals: 10 },
+        senderAddress: '0x456',
+        address: '0x123',
+        feeAsset: { symbol: 'USDT', decimals: 12, assetId: '1', isFeeAsset: true },
+        to: 'Acala',
+        currency: { symbol: 'DOT', amount: 100n },
+        version: Version.V4,
+        isAmountAll: false
+      } as TSendInternalOptions<unknown, unknown>
+
+      await expect(chain.transferLocal(options)).rejects.toThrow(InvalidParameterError)
     })
 
     it('should call transferLocalNativeAsset when asset is native', async () => {

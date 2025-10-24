@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
 import { normalizeLocation, type TNativeAssetInfo } from '@paraspell/assets'
-import { isDotKsmBridge, isRelayChain, isTLocation } from '@paraspell/sdk-common'
+import { isRelayChain, isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
@@ -45,7 +45,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
 
-  const isBridge = !isTLocation(destination) && isDotKsmBridge(origin, destination)
+  const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
 
   const assetCheckEnabled = shouldPerformAssetCheck(origin, currency)
 
@@ -55,6 +55,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
     : undefined
+
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
   const amount = Array.isArray(currency)

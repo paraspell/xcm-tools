@@ -1,11 +1,56 @@
-import type { TLocation } from '@paraspell/sdk-common'
-import { Parents } from '@paraspell/sdk-common'
-import { describe, expect, it } from 'vitest'
+import {
+  isExternalChain,
+  isSubstrateBridge,
+  Parents,
+  type TLocation,
+  type TSubstrateChain,
+  Version
+} from '@paraspell/sdk-common'
+import { describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../errors'
-import { resolveTChainFromLocation } from './utils'
+import { getRelayChainOf } from '../../utils'
+import { createDestination, resolveTChainFromLocation } from './utils'
+
+vi.mock('@paraspell/sdk-common', async importActual => {
+  const actual = await importActual<typeof import('@paraspell/sdk-common')>()
+  return {
+    ...actual,
+    isSubstrateBridge: vi.fn(),
+    isExternalChain: vi.fn()
+  }
+})
+
+vi.mock('../../utils', async importActual => {
+  const actual = await importActual<typeof import('../../utils')>()
+  return {
+    ...actual,
+    getRelayChainOf: vi.fn(actual.getRelayChainOf)
+  }
+})
 
 describe('XcmPallet utils', () => {
+  describe('createDestination', () => {
+    it('creates sub bridge destination location with global consensus', () => {
+      const origin: TSubstrateChain = 'BridgeHubPolkadot'
+      const destination: TSubstrateChain = 'BridgeHubKusama'
+      const chainId = 4000
+
+      vi.mocked(isSubstrateBridge).mockReturnValue(true)
+      vi.mocked(isExternalChain).mockReturnValue(false)
+      vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
+
+      const location = createDestination(Version.V5, origin, destination, chainId)
+
+      expect(location).toEqual({
+        parents: Parents.TWO,
+        interior: {
+          X2: [{ GlobalConsensus: 'Kusama' }, { Parachain: chainId }]
+        }
+      })
+    })
+  })
+
   describe('resolveTChainFromLocation', () => {
     it('should throw InvalidParameterError if Parachain ID is not found in destination location', () => {
       const locationWithoutParachain: TLocation = {

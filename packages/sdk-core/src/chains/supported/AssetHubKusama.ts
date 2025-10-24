@@ -30,10 +30,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
 
-    if (destination === 'AssetHubPolkadot') {
-      return getChain('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
-    }
-
     if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && !isForeignAsset(asset)) {
       throw new ScenarioNotSupportedError(
         this.chain,

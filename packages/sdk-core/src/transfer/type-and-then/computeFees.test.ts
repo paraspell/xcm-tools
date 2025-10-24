@@ -40,17 +40,21 @@ describe('computeAllFees', () => {
 
   const mockXcm = [{ Mock: 'Instruction' }]
 
-  const mockDepositReserveXcm = {
-    DepositReserveAsset: {
-      assets: { Wild: 'All' },
-      dest: {},
-      xcm: mockXcm
+  const mockDepositReserveXcm = [
+    {
+      DepositReserveAsset: {
+        assets: { Wild: 'All' },
+        dest: {},
+        xcm: mockXcm
+      }
     }
-  } as unknown as Extract<ReturnType<typeof createCustomXcm>, { DepositReserveAsset: unknown }>
+  ] as unknown as ReturnType<typeof createCustomXcm>
 
-  const mockSimpleXcm = {
-    DepositAsset: {}
-  } as ReturnType<typeof createCustomXcm>
+  const mockSimpleXcm = [
+    {
+      DepositAsset: {}
+    }
+  ] as ReturnType<typeof createCustomXcm>
 
   const mockRefundInstruction = { SetAppendix: {} } as ReturnType<typeof createRefundInstruction>
 
@@ -112,14 +116,14 @@ describe('computeAllFees', () => {
 
     expect(hasXcmPaymentApiSupport).toHaveBeenCalledWith('Acala')
 
-    expect(mockDepositReserveXcm).toHaveProperty('DepositReserveAsset')
+    const [depositReserveInstruction] = mockDepositReserveXcm
 
-    if (!('DepositReserveAsset' in mockDepositReserveXcm)) {
+    if (!depositReserveInstruction || !('DepositReserveAsset' in depositReserveInstruction)) {
       throw new Error('DepositReserveAsset is not defined in mockDepositReserveXcm')
     }
     expect(addXcmVersionHeader).toHaveBeenNthCalledWith(
       2,
-      mockDepositReserveXcm.DepositReserveAsset.xcm,
+      depositReserveInstruction.DepositReserveAsset.xcm,
       mockVersion
     )
 
