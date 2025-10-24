@@ -11,6 +11,11 @@ import type { IPolkadotApi } from '../api'
 import type { WithApi } from './TApi'
 import type { TDestination, TWeight } from './TTransfer'
 
+export type TSwapConfig = {
+  currencyTo: TCurrencyCore
+  exchangeChain: TParachain
+}
+
 export type TDryRunBaseOptions<TRes> = {
   tx: TRes
   origin: TSubstrateChain
@@ -20,10 +25,7 @@ export type TDryRunBaseOptions<TRes> = {
   currency: TCurrencyInputWithAmount
   feeAsset?: TCurrencyInput
   // Used when there is an asset swap on some hop
-  swapConfig?: {
-    currencyTo: TCurrencyCore
-    exchangeChain: TParachain
-  }
+  swapConfig?: TSwapConfig
   useRootOrigin?: boolean
   bypassOptions?: TBypassOptions
 }
@@ -129,6 +131,15 @@ export type TDryRunResult = {
   hops: THopInfo[]
 }
 
+export type TResolveHopParams = {
+  originChain: TSubstrateChain
+  currentChain: TSubstrateChain
+  asset: TAssetInfo
+  currency: TCurrencyInputWithAmount
+  swapConfig?: TSwapConfig
+  hasPassedExchange: boolean
+}
+
 // XCM hop traversal types
 
 export type HopProcessParams<TApi, TRes> = {
@@ -152,10 +163,7 @@ export type HopTraversalConfig<TApi, TRes, THopResult> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialForwardedXcms: any
   initialDestParaId: number | undefined
-  swapConfig?: {
-    exchangeChain: TParachain
-    currencyTo: TCurrencyCore
-  }
+  swapConfig?: TSwapConfig
   processHop: (params: HopProcessParams<TApi, TRes>) => Promise<THopResult>
   shouldContinue: (hopResult: THopResult) => boolean
   extractNextHopData: (hopResult: THopResult) => {

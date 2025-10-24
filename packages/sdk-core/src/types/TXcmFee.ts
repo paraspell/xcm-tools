@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
+import type { TSwapConfig } from './TDryRun'
 import type { TWeight } from './TTransfer'
+
+export type TXcmFeeSwapConfig = TSwapConfig & { amountOut: bigint }
 
 export type TTxFactory<TRes> = (amount?: string) => Promise<TRes>
 
@@ -29,7 +32,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   feeAsset?: TCurrencyInput
   disableFallback: TDisableFallback
   // Used when there is an asset swap on some hop
-  swapConfig?: TSwapConfig
+  swapConfig?: TXcmFeeSwapConfig
 }
 
 export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
@@ -85,12 +88,6 @@ export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
   tx: TRes
 }
 
-export type TSwapConfig = {
-  currencyTo: TCurrencyCore
-  amountOut: bigint
-  exchangeChain: TParachain
-}
-
 export type TGetFeeForDestChainBaseOptions<TRes> = {
   prevChain: TSubstrateChain
   origin: TSubstrateChain
@@ -105,7 +102,7 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   feeAsset?: TCurrencyInput
   disableFallback: boolean
   hasPassedExchange?: boolean
-  swapConfig?: TSwapConfig
+  swapConfig?: TXcmFeeSwapConfig
 }
 
 export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<

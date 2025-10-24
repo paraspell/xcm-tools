@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetInfoOnDest,
   findAssetInfoOrThrow,
-  findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
-import { Parents, type TSubstrateChain } from '@paraspell/sdk-common'
+import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
@@ -23,6 +21,7 @@ import type {
 import { abstractDecimals, getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
+import { resolveHopAsset } from '../utils'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
@@ -174,20 +173,14 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       hasPassedExchange
     } = params
 
-    let hopAsset: TAssetInfo
-    if (!(currentAsset.location && currentAsset.location.parents === Parents.TWO)) {
-      if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {
-        hopAsset = findAssetOnDestOrThrow(
-          swapConfig.exchangeChain,
-          currentChain,
-          swapConfig.currencyTo
-        )
-      } else {
-        hopAsset = findAssetInfoOnDest(origin, currentChain, currency) ?? currentAsset
-      }
-    } else {
-      hopAsset = findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
-    }
+    const hopAsset = resolveHopAsset({
+      originChain: origin,
+      currentChain,
+      asset: currentAsset,
+      currency,
+      swapConfig,
+      hasPassedExchange
+    })
 
     const hopResult = await getDestXcmFee({
       api: hopApi,
