@@ -1,3 +1,4 @@
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
@@ -9,7 +10,7 @@ import { Color, TextureLoader } from 'three';
 
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import type { Ecosystem } from '../../types/types';
+import { getChainNameNoEcosystem } from '../../utils';
 import { adjustUVs } from '../../utils/adjustUVs';
 import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
@@ -17,17 +18,17 @@ import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getChainLogo, getLogoScaleFactor } from './utils';
 
 type Props = {
-  name: string;
+  name: TSubstrateChain;
   index: number;
   isSelected: boolean;
-  onClick: (name: string) => void;
-  onRightClick: (name: string) => void;
+  onClick: (name: TSubstrateChain) => void;
+  onRightClick: (name: TSubstrateChain) => void;
   scale: number;
-  ecosystem: Ecosystem;
+  ecosystem: TRelaychain;
   ref: RefCallback<Group | null>;
 };
 
-const Parachain: FC<Props> = ({
+const ParachainNode: FC<Props> = ({
   ref,
   name,
   index,
@@ -50,7 +51,7 @@ const Parachain: FC<Props> = ({
 
   useImperativeHandle(ref, () => groupRef.current!);
 
-  const logo = getChainLogo(name, ecosystem);
+  const logo = getChainLogo(name);
   const texture = logo ? useLoader(TextureLoader, logo) : null;
 
   useEffect(() => {
@@ -157,12 +158,12 @@ const Parachain: FC<Props> = ({
         anchorY="middle"
         font={FONT_URL}
       >
-        {name}
+        {getChainNameNoEcosystem(name, ecosystem)}
       </Text>
     </group>
   );
 };
 
-Parachain.displayName = 'Parachain';
+ParachainNode.displayName = 'Parachain';
 
-export default Parachain;
+export default ParachainNode;

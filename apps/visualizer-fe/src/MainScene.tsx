@@ -1,3 +1,5 @@
+import type { TRelaychain } from '@paraspell/sdk';
+import { RELAYCHAINS } from '@paraspell/sdk';
 import { OrbitControls, PerspectiveCamera, TransformControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
@@ -5,8 +7,8 @@ import { Vector3 } from 'three';
 
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
 import { useDeviceType } from './context/DeviceType/useDeviceType';
+import { useSelectedEcosystem } from './context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
-import { Ecosystem } from './types/types';
 
 const RADIUS = 25;
 
@@ -19,12 +21,13 @@ interface AngleMap {
 }
 
 const MainScene = () => {
-  const { selectedEcosystem, activeEditParachain } = useSelectedParachain();
+  const { activeEditParachain } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
   const { isMobile } = useDeviceType();
 
   const targetAngles = useRef<AngleMap>({});
   const currentAngles = useRef<AngleMap>({});
-  const ecosystems = Object.values(Ecosystem);
+  const ecosystems = RELAYCHAINS;
   const totalEcosystems = ecosystems.length;
   const initialTargetRef = useRef<Vector3 | null>(null);
   const [_initialized, setInitialized] = useState(false);
@@ -35,7 +38,7 @@ const MainScene = () => {
       targetAngles.current[ecosystem] = targetAngle;
       currentAngles.current[ecosystem] = currentAngles.current[ecosystem] ?? targetAngle;
     });
-    const initialEcosystem = Ecosystem.POLKADOT;
+    const initialEcosystem: TRelaychain = 'Polkadot';
     initialTargetRef.current = getCirclePosition(targetAngles.current[initialEcosystem], RADIUS);
     setInitialized(true);
   }, [totalEcosystems, ecosystems]);
@@ -75,10 +78,10 @@ const MainScene = () => {
       {activeEditParachainMesh && (
         <TransformControls object={activeEditParachainMesh} mode="translate" size={0.5} />
       )}
-      <ParachainsGraphContainer ecosystem={Ecosystem.POLKADOT} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.KUSAMA} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.WESTEND} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.PASEO} />
+      <ParachainsGraphContainer ecosystem="Polkadot" />
+      <ParachainsGraphContainer ecosystem="Kusama" />
+      <ParachainsGraphContainer ecosystem="Westend" />
+      <ParachainsGraphContainer ecosystem="Paseo" />
       <OrbitControls enableDamping autoRotate={false} target={target} makeDefault />
       <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
     </>

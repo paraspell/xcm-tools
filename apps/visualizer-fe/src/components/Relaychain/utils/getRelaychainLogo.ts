@@ -1,18 +1,19 @@
+import type { TRelaychain } from '@paraspell/sdk';
+
 import kusamaPng from '../../../logos/kusama.png';
 import paseoPng from '../../../logos/paseo.png';
 import polkadotPng from '../../../logos/polkadot1.png';
 import westendPng from '../../../logos/westend.png';
-import { Ecosystem } from '../../../types/types';
 
-export const getRelaychainLogo = (ecosystem: Ecosystem) => {
+export const getRelaychainLogo = (ecosystem: TRelaychain) => {
   switch (ecosystem) {
-    case Ecosystem.POLKADOT:
+    case 'Polkadot':
       return polkadotPng;
-    case Ecosystem.KUSAMA:
+    case 'Kusama':
       return kusamaPng;
-    case Ecosystem.WESTEND:
+    case 'Westend':
       return westendPng;
-    case Ecosystem.PASEO:
+    case 'Paseo':
       return paseoPng;
   }
 };

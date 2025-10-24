@@ -11,7 +11,8 @@ import ParachainSelector from '../ParachainSelector';
 
 const Footer = () => {
   const { t } = useTranslation();
-  const { parachains, setParachains, dateRange, setDateRange } = useSelectedParachain();
+  const { selectedParachains, setSelectedParachains, dateRange, setDateRange } =
+    useSelectedParachain();
   const { isMobile } = useDeviceType();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -47,7 +48,11 @@ const Footer = () => {
         {/* Selectors */}
         <Paper p="md" radius="md" bg="rgba(255,255,255,0.8)" flex={1} miw={0}>
           <Group gap="md" align="end" wrap="nowrap">
-            <ParachainSelector value={parachains} onCustomChange={setParachains} flex={1} />
+            <ParachainSelector
+              value={selectedParachains}
+              onCustomChange={setSelectedParachains}
+              flex={1}
+            />
             <DateRangePicker value={dateRange} setValue={setDateRange} />
             <OptionsModal opened={opened} close={close} />
             <Button onClick={open} miw={'95px'}>

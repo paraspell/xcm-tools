@@ -1,3 +1,11 @@
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import {
+  getParaId,
+  getRelayChainOf,
+  getTChain,
+  isExternalChain,
+  SUBSTRATE_CHAINS
+} from '@paraspell/sdk';
 import {
   prodRelayKusama,
   prodRelayPolkadot,
@@ -5,58 +13,57 @@ import {
   testRelayWestend
 } from '@polkadot/apps-config/endpoints';
 
-import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
-import { Ecosystem } from '../types/types';
-
-export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosystem): number => {
-  if (parachain === ecosystem.toString()) return 0;
-
-  const paraId = findEndpointOption(ecosystem, parachain)?.paraId;
-  return paraId ?? -1;
+export const getParachainId = (parachain: TSubstrateChain): number => {
+  return getParaId(parachain);
 };
 
-export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedParachain | null => {
-  if (id === 0) return ecosystem.toString();
-  const parachain = getFilteredEndpointOptions(ecosystem)?.find(chain => chain.paraId === id)?.text;
-  if (!parachain) return null;
-  return parachain;
+export const getParachainById = (id: number, ecosystem: TRelaychain): TSubstrateChain | null => {
+  const chain = getTChain(id, ecosystem);
+  if (!chain || isExternalChain(chain)) return null;
+  return chain;
 };
 
-export const getParachainColor = (parachain: SelectedParachain, ecosystem: Ecosystem): string => {
-  if (parachain === ecosystem.toString()) return 'blue.6';
-  return findEndpointOption(ecosystem, parachain)?.ui.color ?? 'gray.6';
+export const getParachainEcosystem = (parachain: TSubstrateChain): TRelaychain =>
+  getRelayChainOf(parachain);
+
+export const getParachainColor = (parachain: TSubstrateChain, ecosystem?: TRelaychain): string => {
+  if (ecosystem && parachain === ecosystem) return 'blue.6';
+  return findEndpointOption(getParachainEcosystem(parachain), parachain)?.ui.color ?? 'gray.6';
 };
 
 export const getParachainLogo = (
-  parachain: SelectedParachain,
-  ecosystem: Ecosystem
+  parachain: TSubstrateChain,
+  ecosystem?: TRelaychain
 ): string | undefined => {
-  return getFilteredEndpointOptions(ecosystem)?.find(chain => chain.text === parachain)?.ui.logo;
+  const paraId = getParaId(parachain);
+  const e = ecosystem ?? getRelayChainOf(parachain);
+  const logo = getFilteredEndpointOptions(e)?.find(chain => chain.paraId === paraId)?.ui.logo;
+  return logo?.startsWith('fa;') ? undefined : logo;
 };
 
-export const getChainsByEcosystem = (ecosystem: Ecosystem) =>
-  getFilteredEndpointOptions(ecosystem)?.map(option => option.text) ?? [];
+export const getChainsByEcosystem = (ecosystem: TRelaychain) =>
+  SUBSTRATE_CHAINS.filter(chain => getRelayChainOf(chain) === ecosystem && chain !== ecosystem);
 
-const findEndpointOption = (ecosystem: Ecosystem, parachain: SelectedParachain) => {
+const findEndpointOption = (ecosystem: TRelaychain, parachain: TSubstrateChain) => {
   return getFilteredEndpointOptions(ecosystem)?.find(chain => chain.text === parachain);
 };
 
-export const getFilteredEndpointOptions = (ecosystem: Ecosystem) => {
+export const getFilteredEndpointOptions = (ecosystem: TRelaychain) => {
   return getEndpointOptions(ecosystem)?.filter(({ providers, isUnreachable }) => {
     const hasProviders = Object.keys(providers).length !== 0;
     return hasProviders && !isUnreachable;
   });
 };
 
-const getEndpointOptions = (ecosystem: Ecosystem) => {
+const getEndpointOptions = (ecosystem: TRelaychain) => {
   switch (ecosystem) {
-    case Ecosystem.POLKADOT:
+    case 'Polkadot':
       return prodRelayPolkadot.linked;
-    case Ecosystem.KUSAMA:
+    case 'Kusama':
       return prodRelayKusama.linked;
-    case Ecosystem.WESTEND:
+    case 'Westend':
       return testRelayWestend.linked;
-    case Ecosystem.PASEO:
+    case 'Paseo':
       return testRelayPaseo.linked;
   }
 };

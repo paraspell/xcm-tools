@@ -4,12 +4,12 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { messageCountsQueryDocument } from '../../../api/messages';
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsQuery } from '../../../gql/graphql';
 import convertToCsv from '../../../utils/convertToCsv';
 import downloadSvg from '../../../utils/downloadSvg';
 import { downloadZip } from '../../../utils/downloadZip';
-import { getParachainId } from '../../../utils/utils';
 import DownloadButtons from '../../DownloadButtons';
 import SuccessMessagesPlot from './SuccessMessagesPlot';
 
@@ -20,14 +20,15 @@ const SuccessMessagesPlotContainer = () => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
+  const { selectedParachains, dateRange } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
 
   const [start, end] = dateRange;
 
   const { data, loading, error } = useQuery(messageCountsQueryDocument, {
     variables: {
       ecosystem: selectedEcosystem.toString().toLowerCase(),
-      paraIds: parachains.map(parachain => getParachainId(parachain, selectedEcosystem)),
+      parachains: selectedParachains,
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }
@@ -52,12 +53,18 @@ const SuccessMessagesPlotContainer = () => {
     if (!data) throw new Error(t('errors.noDownloadData'));
 
     const headers: (keyof Omit<MessageCountsQuery['messageCounts'][number], '__typename'>)[] = [
-      'paraId',
+      'ecosystem',
+      'parachain',
       'success',
       'failed'
     ];
-    const csvData = convertToCsv(data.messageCounts, headers);
-    void downloadZip(data.messageCounts, csvData);
+    const rows = data.messageCounts.map(({ __typename, parachain, ecosystem, ...rest }) => ({
+      ...rest,
+      parachain: parachain ?? '',
+      ecosystem: ecosystem ?? ''
+    }));
+    const csvData: string = convertToCsv(rows, headers);
+    void downloadZip(rows, csvData);
   };
 
   const onDownloadSvgClick = () => {

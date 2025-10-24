@@ -16,11 +16,12 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import dayjs from 'dayjs';
 
 import subscanLogo from '../../../../assets/subscan.png';
 import { useSelectedParachain } from '../../../../context/SelectedParachain/useSelectedParachain';
-import type { Ecosystem } from '../../../../types/types';
+import { getChainDisplayName } from '../../../../utils';
 import { getParachainId } from '../../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
@@ -87,17 +88,17 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => {
+const getParaId = (label?: string): number | undefined => {
   if (!label || label === 'Total') return undefined;
-  return getParachainId(label, ecosystem);
+  return getParachainId(label as TSubstrateChain);
 };
 
-const getLinkByEcosystem = (ecosystem: Ecosystem): string => {
-  return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_transfer?page=1`;
+const getLinkByEcosystem = (ecosystem: TRelaychain): string => {
+  return `https://${ecosystem.toLowerCase()}.subscan.io/xcm_transfer?page=1`;
 };
 
 const generateExplorerLink = (
-  ecosystem: Ecosystem,
+  ecosystem: TRelaychain,
   from: number | undefined,
   startDate: Date | null,
   endDate: Date | null,
@@ -149,25 +150,20 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     return null;
   }
 
-  const { dateRange, selectedEcosystem } = useSelectedParachain();
+  const { dateRange } = useSelectedParachain();
 
   const filteredPayload = getFilteredChartTooltipPayload(payload, segmentId);
   const scatterLabel = type === 'scatter' ? payload[0]?.payload?.name : null;
   const labels = getSeriesLabels(series);
   const _label = label || scatterLabel;
 
-  const paraId = getParaId(selectedEcosystem, label as string);
+  const paraId = getParaId(label as string);
+  const ecosystem = filteredPayload[0]?.payload.ecosystem;
 
   const [startDate, endDate] = dateRange;
 
   const items = filteredPayload.map(item => {
-    const explorerLink = generateExplorerLink(
-      selectedEcosystem,
-      paraId,
-      startDate,
-      endDate,
-      item.name
-    );
+    const explorerLink = generateExplorerLink(ecosystem, paraId, startDate, endDate, item.name);
     return (
       <div key={item?.key ?? item.name} data-type={type} {...getStyles('tooltipItem')}>
         <div {...getStyles('tooltipItemBody')}>
@@ -204,7 +200,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
       {...others}
       onMouseMove={e => e.stopPropagation()}
     >
-      {_label && <div {...getStyles('tooltipLabel')}>{_label}</div>}
+      {_label && <div {...getStyles('tooltipLabel')}>{getChainDisplayName(_label)}</div>}
       <div {...getStyles('tooltipBody')}>{items}</div>
     </Box>
   );

@@ -11,6 +11,7 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import RightPanel from './components/RightPanel';
 import DeviceTypeProvider from './context/DeviceType/DeviceTypeContext';
 import LiveDataProvider from './context/LiveData/LiveDataContext';
+import SelectedEcosystemProvider from './context/SelectedEcosystem/SelectedEcosystemContext';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
@@ -34,20 +35,22 @@ const App = () => (
   <ApolloProvider client={client}>
     <BrowserRouter>
       <DeviceTypeProvider>
-        <SelectedParachainProvider>
-          <LiveDataProvider>
-            <MantineProvider forceColorScheme="light">
-              <Box pos="relative" h="100%">
-                <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
-                <Notifications />
-                <Flex h="100%" w="100%" pos="relative" style={{ overflow: 'hidden' }}>
-                  <LeftPanel />
-                  <RightPanel />
-                </Flex>
-              </Box>
-            </MantineProvider>
-          </LiveDataProvider>
-        </SelectedParachainProvider>
+        <SelectedEcosystemProvider>
+          <SelectedParachainProvider>
+            <LiveDataProvider>
+              <MantineProvider forceColorScheme="light">
+                <Box pos="relative" h="100%">
+                  <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+                  <Notifications />
+                  <Flex h="100%" w="100%" pos="relative" style={{ overflow: 'hidden' }}>
+                    <LeftPanel />
+                    <RightPanel />
+                  </Flex>
+                </Box>
+              </MantineProvider>
+            </LiveDataProvider>
+          </SelectedParachainProvider>
+        </SelectedEcosystemProvider>
       </DeviceTypeProvider>
     </BrowserRouter>
   </ApolloProvider>

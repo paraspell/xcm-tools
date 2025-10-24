@@ -1,36 +1,43 @@
 import type { MultiSelectProps } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
+import { SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk';
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
-import { Ecosystem } from '../types/types';
-import { getChainsByEcosystem } from '../utils/utils';
+import { getChainDisplayName } from '../utils';
 
 type Props = MultiSelectProps & {
-  value: SelectedParachain[];
-  onCustomChange: (parachain: SelectedParachain[]) => void;
+  value: TSubstrateChain[];
+  onCustomChange: (parachain: TSubstrateChain[]) => void;
 };
 
 const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
   const { t } = useTranslation();
 
+  const data = useMemo(
+    () =>
+      SUBSTRATE_CHAINS.map(item => ({
+        value: item,
+        label: getChainDisplayName(item)
+      })),
+    []
+  );
+
   const onChangeInternal = (values: string[]) => {
-    if (values) {
-      onCustomChange(values);
-    }
+    if (values) onCustomChange(values as TSubstrateChain[]);
   };
 
   return (
     <MultiSelect
       label={t('main.taxonomy.parachains')}
       placeholder={t('filters.select')}
-      data={[...getChainsByEcosystem(Ecosystem.POLKADOT), 'Polkadot']}
+      data={data}
       onChange={onChangeInternal}
       searchable
       clearable
       {...props}
-      miw={'85px'}
+      miw="85px"
     />
   );
 };
