@@ -1,5 +1,27 @@
 # Changelog
 
+## [11.12.3](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.2...assets-v11.12.3) (2025-10-27)
+
+
+### Bug Fixes
+
+* **sdk-core:** Migrate substrate bridge to type and then ➡️ ([9c5b7cd](https://github.com/paraspell/xcm-tools/commit/9c5b7cd4c42eb50f33391ec6c03a1fbd5e715cdd))
+
+
+### Code Refactoring
+
+* **assets:** Simplify findAssetBySymbol function ⚙️ ([8fefee4](https://github.com/paraspell/xcm-tools/commit/8fefee45b9371bce534d0a2c08b26a18b1beee4a))
+
+
+### Tests
+
+* **xcm-router:** Update unit tests 🛠️ ([7921f13](https://github.com/paraspell/xcm-tools/commit/7921f132b01fa843c16b1340b83c13c26e24a042))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([55cd350](https://github.com/paraspell/xcm-tools/commit/55cd3506b7e5492cf95eed1dcd71338f22d3b490))
+
 ## [11.12.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.1...assets-v11.12.2) (2025-10-22)
 
 
