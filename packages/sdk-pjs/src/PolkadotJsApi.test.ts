@@ -7,6 +7,7 @@ import type {
 import {
   BatchMode,
   computeFeeFromDryRunPjs,
+  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
   hasXcmPaymentApiSupport,
@@ -19,6 +20,7 @@ import { ApiPromise } from '@polkadot/api'
 import type { VoidFn } from '@polkadot/api/types'
 import type { Codec } from '@polkadot/types/types'
 import { validateAddress } from '@polkadot/util-crypto'
+import type { Mock } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
@@ -27,6 +29,7 @@ import type { Extrinsic, TPjsApi } from './types'
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
+  findAssetInfoOrThrow: vi.fn(),
   getChainProviders: vi.fn(),
   resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
   findNativeAssetInfoOrThrow: vi.fn(),
@@ -44,6 +47,7 @@ vi.mock('@polkadot/util-crypto', async importOriginal => ({
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
   let mockApiPromise: TPjsApi
+  let accountCurrencyMapMock: Mock
   const mockChain = 'Acala'
 
   beforeEach(async () => {
@@ -96,6 +100,9 @@ describe('PolkadotJsApi', () => {
             key: vi.fn().mockResolvedValue('0x1234567890abcdef')
           }
         },
+        multiTransactionPayment: {
+          accountCurrencyMap: vi.fn()
+        },
         ethereumOutboundQueue: {
           operatingMode: vi.fn().mockResolvedValue({ toPrimitive: () => 'Normal' })
         }
@@ -137,6 +144,11 @@ describe('PolkadotJsApi', () => {
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockResolvedValue({
       toJSON: vi.fn().mockReturnValue({ ok: { v4: [] } })
     } as unknown as Codec)
+
+    accountCurrencyMapMock = mockApiPromise.query.multiTransactionPayment
+      .accountCurrencyMap as unknown as Mock
+    accountCurrencyMapMock.mockReset()
+    vi.mocked(findAssetInfoOrThrow).mockReset()
   })
 
   describe('getFromRpc', () => {
@@ -1368,6 +1380,67 @@ describe('PolkadotJsApi', () => {
       expect(result.asset).toEqual(feeAsset)
     })
 
+    it('falls back to native asset when MultiTransactionPayment fee lookup fails', async () => {
+      const resp = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Ok: true } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              ok: {
+                actualWeight: { refTime: '10', proofSize: '5' }
+              }
+            },
+            local_xcm: { instructions: [] },
+            forwardedXcms: []
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const nativeAsset: TAssetInfo = {
+        symbol: 'HYDR',
+        location: { parents: 0, interior: { Here: null } }
+      } as TAssetInfo
+      const multiAsset: TAssetInfo = {
+        symbol: 'USDC',
+        location: { parents: 0, interior: { Here: null } }
+      } as TAssetInfo
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+
+      const resolveUsedAssetSpy = vi
+        .spyOn(polkadotApi, 'resolveFeeAsset')
+        .mockResolvedValue({ isCustomAsset: true, asset: multiAsset })
+
+      const getXcmPaymentApiFeeSpy = vi
+        .spyOn(polkadotApi, 'getXcmPaymentApiFee')
+        .mockResolvedValue(undefined as unknown as bigint)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain: 'Hydration',
+        destination: 'Moonbeam',
+        asset: multiAsset as WithAmount<TAssetInfo>
+      })
+
+      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: true,
+        fee: 1000n,
+        asset: nativeAsset,
+        weight: { refTime: 10n, proofSize: 5n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+
+      resolveUsedAssetSpy.mockRestore()
+      getXcmPaymentApiFeeSpy.mockRestore()
+    })
+
     it('should throw error for unsupported chain', async () => {
       const mockTransaction = {} as unknown as Extrinsic
 
@@ -1380,6 +1453,51 @@ describe('PolkadotJsApi', () => {
           asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow(RuntimeApiUnavailableError)
+    })
+  })
+
+  describe('resolveUsedAsset', () => {
+    const baseOptions = {
+      tx: {} as Extrinsic,
+      address: 'addr',
+      chain: 'Hydration' as const,
+      destination: 'Moonbeam' as const,
+      asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+    }
+
+    it('returns native asset when accountCurrencyMap yields null', async () => {
+      const storageResponse = {
+        toJSON: vi.fn().mockReturnValue(null)
+      } as unknown as Codec
+
+      accountCurrencyMapMock.mockResolvedValue(storageResponse)
+
+      const nativeAsset = { symbol: 'HYDR' } as TAssetInfo
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+
+      const result = await polkadotApi.resolveFeeAsset(baseOptions)
+
+      expect(accountCurrencyMapMock).toHaveBeenCalledWith(baseOptions.address)
+      expect(result).toEqual({ isCustomAsset: false, asset: nativeAsset })
+      expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    })
+
+    it('returns mapped asset when accountCurrencyMap yields an id', async () => {
+      const assetId = '1001'
+      const storageResponse = {
+        toJSON: vi.fn().mockReturnValue(assetId)
+      } as unknown as Codec
+
+      accountCurrencyMapMock.mockResolvedValue(storageResponse)
+
+      const mappedAsset = { symbol: 'USDC' } as TAssetInfo
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue(mappedAsset)
+
+      const result = await polkadotApi.resolveFeeAsset(baseOptions)
+
+      expect(accountCurrencyMapMock).toHaveBeenCalledWith(baseOptions.address)
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: assetId }, null)
+      expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
   })
 

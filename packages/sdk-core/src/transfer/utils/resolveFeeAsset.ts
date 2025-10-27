@@ -2,6 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfo, isTAsset, type TCurrencyInput } from '@paraspell/assets'
 import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 import { throwUnsupportedCurrency } from '../../utils'
 
@@ -11,6 +12,10 @@ export const resolveFeeAsset = (
   destination: TDestination,
   currency: TCurrencyInput
 ): TAssetInfo | undefined => {
+  if (!origin.startsWith('Hydration') && origin !== 'AssetHubPolkadot') {
+    throw new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
+  }
+
   const asset = findAssetInfo(origin, feeAsset, !isTLocation(destination) ? destination : null)
 
   const usesRawOverriddenMultiAssets = Array.isArray(currency) && currency.every(isTAsset)
