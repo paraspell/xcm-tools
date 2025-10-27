@@ -25,6 +25,7 @@ import {
   assertHasLocation,
   BatchMode,
   ChainNotSupportedError,
+  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChain,
   getChainProviders,
@@ -309,6 +310,30 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return api
   }
 
+  resolveDefaultUsedAsset({ chain, feeAsset }: TDryRunCallBaseOptions<Extrinsic>) {
+    return feeAsset ?? findNativeAssetInfoOrThrow(chain)
+  }
+
+  async resolveUsedAsset(options: TDryRunCallBaseOptions<Extrinsic>) {
+    const { chain, address } = options
+
+    if (!chain.startsWith('Hydration')) {
+      return { isCustomAsset: false, asset: this.resolveDefaultUsedAsset(options) }
+    }
+
+    const response = await this.api.query.multiTransactionPayment.accountCurrencyMap(address)
+    const assetId = response.toJSON() as any
+
+    if (assetId === null) {
+      return { isCustomAsset: false, asset: findNativeAssetInfoOrThrow(chain) }
+    }
+
+    return {
+      isCustomAsset: true,
+      asset: findAssetInfoOrThrow(chain, { id: assetId }, null)
+    }
+  }
+
   async getDryRunCall(options: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
     const {
       tx,
@@ -339,8 +364,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         )
       : tx
 
-    const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
-    const usedSymbol = usedAsset.symbol
+    const resolvedUsed = await this.resolveUsedAsset(options)
+    let usedAsset = resolvedUsed.asset
+    let usedSymbol = usedAsset.symbol
 
     const performDryRunCall = async (includeVersion: boolean) => {
       return this.api.call.dryRunApi.dryRunCall(
@@ -452,10 +478,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           )
 
     if (
-      hasXcmPaymentApiSupport(chain) &&
-      resultJson.ok.local_xcm &&
-      hasLocation &&
-      (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))
+      (hasXcmPaymentApiSupport(chain) &&
+        resultJson.ok.local_xcm &&
+        hasLocation &&
+        (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
+      resolvedUsed.isCustomAsset
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
@@ -474,6 +501,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           forwardedXcms,
           destParaId
         })
+      } else {
+        usedAsset = this.resolveDefaultUsedAsset(options)
+        usedSymbol = usedAsset.symbol
       }
     }
 
