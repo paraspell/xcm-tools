@@ -4,6 +4,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { throwUnsupportedCurrency } from '../../utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
@@ -24,7 +25,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = 'Astar'
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
@@ -39,7 +40,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = {} as TLocation
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
@@ -53,7 +54,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = 'Astar'
 
     vi.mocked(throwUnsupportedCurrency).mockImplementation(() => {
@@ -65,5 +66,16 @@ describe('resolveFeeAsset', () => {
     )
     expect(findAssetInfo).toHaveBeenCalledWith(origin, feeAsset, destination)
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(feeAsset, origin)
+  })
+
+  it('throws InvalidParameterError when origin does not support fee assets', () => {
+    const origin = 'Moonbeam'
+    const feeCurrency = {} as TCurrencyInput
+    const feeAsset = {} as TCurrencyInput
+
+    expect(() => resolveFeeAsset(feeAsset, origin, 'Hydration', feeCurrency)).toThrow(
+      new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
+    )
+    expect(findAssetInfo).not.toHaveBeenCalled()
   })
 })

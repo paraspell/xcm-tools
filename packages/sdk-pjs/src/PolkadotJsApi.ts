@@ -25,6 +25,7 @@ import {
   addXcmVersionHeader,
   assertHasLocation,
   BatchMode,
+  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
   hasXcmPaymentApiSupport,
@@ -242,6 +243,30 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return api
   }
 
+  resolveDefaultFeeAsset({ chain, feeAsset }: TDryRunCallBaseOptions<Extrinsic>) {
+    return feeAsset ?? findNativeAssetInfoOrThrow(chain)
+  }
+
+  async resolveFeeAsset(options: TDryRunCallBaseOptions<Extrinsic>) {
+    const { chain, address } = options
+
+    if (!chain.startsWith('Hydration')) {
+      return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
+    }
+
+    const response = await this.api.query.multiTransactionPayment.accountCurrencyMap(address)
+    const assetId = response.toJSON() as any
+
+    if (assetId === null) {
+      return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
+    }
+
+    return {
+      isCustomAsset: true,
+      asset: findAssetInfoOrThrow(chain, { id: assetId }, null)
+    }
+  }
+
   async getDryRunCall(options: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
     const {
       tx,
@@ -272,7 +297,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         )
       : tx
 
-    const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
+    let resolvedFeeAsset = await this.resolveFeeAsset(options)
 
     const performDryRunCall = async (includeVersion: boolean) => {
       return this.api.call.dryRunApi.dryRunCall(
@@ -330,7 +355,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       if (msg.includes('Expected 3 arguments')) {
         shouldRetryWithVersion = true
       } else {
-        return { success: false, failureReason: msg, asset: usedAsset }
+        return { success: false, failureReason: msg, asset: resolvedFeeAsset.asset }
       }
     }
 
@@ -351,7 +376,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           success: false,
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
-          asset: usedAsset
+          asset: resolvedFeeAsset.asset
         }
       }
     }
@@ -361,7 +386,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         success: false,
         failureReason: failureErr.failureReason || 'Unknown error',
         failureSubReason: failureErr.failureSubReason,
-        asset: usedAsset
+        asset: resolvedFeeAsset.asset
       }
     }
 
@@ -389,10 +414,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           )
 
     if (
-      hasXcmPaymentApiSupport(chain) &&
-      resultJson.ok.local_xcm &&
-      hasLocation &&
-      (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))
+      (hasXcmPaymentApiSupport(chain) &&
+        resultJson.ok.local_xcm &&
+        hasLocation &&
+        (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
+      resolvedFeeAsset.isCustomAsset
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
@@ -405,11 +431,13 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         return Promise.resolve({
           success: true,
           fee: xcmFee,
-          asset: usedAsset,
+          asset: resolvedFeeAsset.asset,
           weight,
           forwardedXcms,
           destParaId
         })
+      } else {
+        resolvedFeeAsset = { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
       }
     }
 
@@ -419,7 +447,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return {
       success: true,
       fee,
-      asset: usedAsset,
+      asset: resolvedFeeAsset.asset,
       weight,
       forwardedXcms,
       destParaId
