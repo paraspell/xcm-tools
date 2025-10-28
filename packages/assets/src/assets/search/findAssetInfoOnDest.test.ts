@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput } from '../../types'
+import { Foreign, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
 import { findAssetInfoOnDest, findAssetOnDestOrThrow } from './findAssetInfoOnDest'
 import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
@@ -114,7 +115,7 @@ describe('findAssetOnDest', () => {
     expect(findAssetInfo).toHaveBeenCalledTimes(1)
   })
 
-  it('should skip location lookup for DOT/KSM bridge (AssetHubPolkadot -> AssetHubKusama)', () => {
+  it('should lookup native asset first for substrate bridge (AssetHubPolkadot -> AssetHubKusama)', () => {
     const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
@@ -127,31 +128,58 @@ describe('findAssetOnDest', () => {
       currencyInput,
       'AssetHubKusama'
     )
-    expect(findAssetInfo).toHaveBeenCalledWith('AssetHubKusama', { symbol: mockAssetSymbol }, null)
-    expect(result).toEqual(mockDestinationAsset)
-    expect(findAssetInfo).toHaveBeenCalledTimes(1)
-  })
-
-  it('should skip location lookup for DOT/KSM bridge (AssetHubKusama -> AssetHubPolkadot)', () => {
-    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
-
-    const result = findAssetInfoOnDest('AssetHubKusama', 'AssetHubPolkadot', currencyInput)
-
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      'AssetHubKusama',
-      currencyInput,
-      'AssetHubPolkadot'
-    )
     expect(findAssetInfo).toHaveBeenCalledWith(
-      'AssetHubPolkadot',
-      { symbol: mockAssetSymbol },
+      'AssetHubKusama',
+      { symbol: Native(mockOriginAssetWithLocation.symbol) },
       null
     )
     expect(result).toEqual(mockDestinationAsset)
     expect(findAssetInfo).toHaveBeenCalledTimes(1)
+  })
+
+  it('should fall back to foreign selector when native asset is missing on substrate bridge', () => {
+    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
+    vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(mockDestinationAsset)
+
+    const result = findAssetInfoOnDest('AssetHubPolkadot', 'AssetHubKusama', currencyInput)
+
+    expect(findAssetInfo).toHaveBeenNthCalledWith(
+      1,
+      'AssetHubKusama',
+      { symbol: Native(mockOriginAssetWithLocation.symbol) },
+      null
+    )
+    expect(findAssetInfo).toHaveBeenNthCalledWith(
+      2,
+      'AssetHubKusama',
+      { symbol: Foreign(mockOriginAssetWithLocation.symbol) },
+      null
+    )
+    expect(result).toEqual(mockDestinationAsset)
+  })
+
+  it('should return null when substrate bridge asset is missing for both native and foreign selectors', () => {
+    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
+    vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(null)
+
+    const result = findAssetInfoOnDest('AssetHubKusama', 'AssetHubPolkadot', currencyInput)
+
+    expect(findAssetInfo).toHaveBeenCalledWith(
+      'AssetHubPolkadot',
+      { symbol: Native(mockOriginAssetWithLocation.symbol) },
+      null
+    )
+    expect(findAssetInfo).toHaveBeenCalledWith(
+      'AssetHubPolkadot',
+      { symbol: Foreign(mockOriginAssetWithLocation.symbol) },
+      null
+    )
+    expect(result).toBeNull()
+    expect(findAssetInfo).toHaveBeenCalledTimes(2)
   })
 
   it('should return null if asset is not found on destination', () => {
@@ -183,6 +211,27 @@ describe('findAssetOnDest', () => {
       mockDestinationChain
     )
     expect(findAssetInfo).not.toHaveBeenCalled()
+  })
+
+  it('should use provided origin asset instead of resolving when available', () => {
+    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
+
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
+
+    const result = findAssetInfoOnDest(
+      mockOriginChain,
+      mockDestinationChain,
+      currencyInput,
+      mockOriginAssetWithLocation
+    )
+
+    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(findAssetInfo).toHaveBeenCalledWith(
+      mockDestinationChain,
+      { location: mockLocation },
+      null
+    )
+    expect(result).toEqual(mockDestinationAsset)
   })
 })
 

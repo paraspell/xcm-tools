@@ -5,7 +5,7 @@ import * as sdkCommon from '@paraspell/sdk-common'
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { MIN_FEE, RELAY_LOCATION } from '../../constants'
+import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
 import { createBeneficiaryLocation } from '../../utils'
@@ -124,10 +124,11 @@ describe('createCustomXcm', () => {
         },
         true,
         1,
+        true,
         {
-          reserveFee: MIN_FEE,
+          reserveFee: 0n,
           refundFee: 0n,
-          destFee: MIN_FEE
+          destFee: 0n
         }
       )
 
@@ -159,6 +160,7 @@ describe('createCustomXcm', () => {
         },
         false,
         2,
+        false,
         {
           reserveFee: 100n,
           refundFee: 50n,
@@ -193,6 +195,7 @@ describe('createCustomXcm', () => {
         },
         false,
         2,
+        false,
         {
           reserveFee: 100n,
           refundFee: 50n,
@@ -227,6 +230,7 @@ describe('createCustomXcm', () => {
         },
         false,
         2,
+        false,
         {
           reserveFee: 100n,
           refundFee: 50n,
@@ -240,7 +244,7 @@ describe('createCustomXcm', () => {
     })
 
     it('excludes DOT from assetsFilter when asset location equals RELAY_LOCATION', () => {
-      const result = createCustomXcm(mockContext, true, 1, {
+      const result = createCustomXcm(mockContext, true, 1, false, {
         reserveFee: 100n,
         refundFee: 50n,
         destFee: 200n
@@ -255,7 +259,7 @@ describe('createCustomXcm', () => {
     })
 
     it('calculates BuyExecution fees correctly with DOT included', () => {
-      const result = createCustomXcm(mockContext, false, 2, {
+      const result = createCustomXcm(mockContext, false, 2, false, {
         reserveFee: 100n,
         refundFee: 50n,
         destFee: 200n
@@ -279,7 +283,7 @@ describe('createCustomXcm', () => {
     })
 
     it('calculates BuyExecution fees correctly without DOT', () => {
-      const result = createCustomXcm(mockContext, false, 2, {
+      const result = createCustomXcm(mockContext, false, 2, false, {
         reserveFee: 100n,
         refundFee: 50n,
         destFee: 200n
@@ -302,17 +306,17 @@ describe('createCustomXcm', () => {
     })
 
     it('uses default fees when fees parameter not provided', () => {
-      const result = createCustomXcm(mockContext, false, 2)
+      const result = createCustomXcm(mockContext, false, 2, false)
 
       const depositReserveInstruction = getDepositReserveInstruction(result)
       expect(depositReserveInstruction).toBeDefined()
 
       const depositReserveAsset = depositReserveInstruction!.DepositReserveAsset
-      expect(depositReserveAsset.assets).toEqual({ Wild: 'All' })
+      expect(depositReserveAsset.assets).toHaveProperty('Definite')
 
       const buyExecutionStep = getBuyExecutionStep(depositReserveInstruction!)
       if (buyExecutionStep) {
-        expect(buyExecutionStep.BuyExecution.fees.fun.Fungible).toBe(MIN_FEE)
+        expect(buyExecutionStep.BuyExecution.fees.fun.Fungible).toBe(0n)
       }
     })
 
@@ -326,6 +330,7 @@ describe('createCustomXcm', () => {
           },
           true,
           1,
+          false,
           {
             reserveFee: 100n,
             refundFee: 50n,
@@ -350,7 +355,8 @@ describe('createCustomXcm', () => {
           reserve
         },
         false,
-        2
+        2,
+        false
       )
 
       const depositAssetInstruction = getDepositAssetInstruction(result)
@@ -378,7 +384,8 @@ describe('createCustomXcm', () => {
           reserve
         },
         false,
-        2
+        2,
+        false
       )
 
       const depositAssetInstruction = getDepositAssetInstruction(result)
@@ -408,7 +415,8 @@ describe('createCustomXcm', () => {
           reserve
         },
         false,
-        2
+        2,
+        false
       )
 
       expect(getDepositAssetInstruction(result)).toBeDefined()

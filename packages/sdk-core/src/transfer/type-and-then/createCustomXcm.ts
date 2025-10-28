@@ -1,6 +1,6 @@
 import { isSystemChain } from '@paraspell/sdk-common'
 
-import { MIN_FEE, RELAY_LOCATION } from '../../constants'
+import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
@@ -10,10 +10,11 @@ export const createCustomXcm = <TApi, TRes>(
   { origin, dest, reserve, isSubBridge, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
   isDotAsset: boolean,
   assetCount: number,
+  isForFeeCalc: boolean,
   fees: TTypeAndThenFees = {
-    reserveFee: MIN_FEE,
+    reserveFee: 0n,
     refundFee: 0n,
-    destFee: MIN_FEE
+    destFee: 0n
   }
 ) => {
   const { destination, version, address, paraIdTo } = options
@@ -66,14 +67,13 @@ export const createCustomXcm = <TApi, TRes>(
   if (isSubBridge || (origin.chain !== reserve.chain && dest.chain !== reserve.chain)) {
     const buyExecutionAmount = !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee
 
-    if (buyExecutionAmount < 0n) throw new AmountTooLowError()
+    if (buyExecutionAmount < 0n && !isForFeeCalc) throw new AmountTooLowError()
 
-    const filter =
-      fees.destFee === MIN_FEE
-        ? { Wild: 'All' }
-        : {
-            Definite: assetsFilter
-          }
+    const filter = isForFeeCalc
+      ? { Wild: 'All' }
+      : {
+          Definite: assetsFilter
+        }
 
     const buyExecution = {
       BuyExecution: {

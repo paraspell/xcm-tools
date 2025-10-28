@@ -7642,29 +7642,6 @@
         "existentialDeposit": "1000000"
       },
       {
-        "assetId": "22222037",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 22222037
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000",
-        "alias": "KSM1"
-      },
-      {
         "assetId": "201",
         "symbol": "WUD",
         "decimals": 6,
@@ -8159,8 +8136,7 @@
           }
         },
         "existentialDeposit": "1000000000",
-        "isFeeAsset": true,
-        "alias": "KSM2"
+        "isFeeAsset": true
       },
       {
         "symbol": "sUSDS",
@@ -12563,29 +12539,6 @@
         "existentialDeposit": "10000000000"
       },
       {
-        "assetId": "14",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 14
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "100000000",
-        "alias": "DOT1"
-      },
-      {
         "assetId": "360",
         "symbol": "uni",
         "decimals": 20,
@@ -13347,8 +13300,7 @@
           }
         },
         "existentialDeposit": "10000000",
-        "isFeeAsset": true,
-        "alias": "DOT2"
+        "isFeeAsset": true
       },
       {
         "symbol": "vKSM",
