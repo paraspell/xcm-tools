@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.3...sdk-core-v11.12.4) (2025-10-28)
+
+
+### Bug Fixes
+
+* **assets:** Fix asset search between ecosystems 🛠️ ([49ba9d5](https://github.com/paraspell/xcm-tools/commit/49ba9d59282c7c3152d574b28b847a7098961682))
+
 ## [11.12.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.2...sdk-core-v11.12.3) (2025-10-27)
 
 
