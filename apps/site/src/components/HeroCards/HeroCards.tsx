@@ -35,7 +35,7 @@ const codeForSdk = `
     `;
 
 const codeForRouter = `
-await RouterBuilder
+await RouterBuilder()
     .from('Hydration')
     .to('AssetHubPolkadot')
     .currencyFrom(CURRENCY_SPEC)
