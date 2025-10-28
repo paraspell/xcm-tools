@@ -24,10 +24,10 @@ const codeForAnalyser = `
 
 const codeForSdk = `
   await Builder()    
-      .from('Acala')
+      .from('BifrostPolkadot')
       .to('Hydration')      
       .currency({
-        symbol : 'ACA',
+        symbol : 'BNC',
         amount : 100000000000 
       })
       .address(address)    
@@ -36,10 +36,10 @@ const codeForSdk = `
 
 const codeForRouter = `
 await RouterBuilder
-    .from('Polkadot')
-    .to('Astar')
-    .currencyFrom('DOT')
-    .currencyTo('ASTR')
+    .from('Hydration')
+    .to('AssetHubPolkadot')
+    .currencyFrom(CURRENCY_SPEC)
+    .currencyTo(CURRENCY_SPEC)
     .amount('10000000000')
     .slippagePct('1')
     .injectorAddress(address)    
