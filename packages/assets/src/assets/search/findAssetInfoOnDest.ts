@@ -2,6 +2,7 @@ import { isSubstrateBridge, replaceBigInt, type TChain } from '@paraspell/sdk-co
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput } from '../../types'
+import { Foreign, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
 import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
 
@@ -15,10 +16,29 @@ export const findAssetInfoOnDest = (
 
   const resolvedOriginAsset = originAsset ?? findAssetInfoOrThrow(origin, currency, destination)
 
-  const assetByLocation =
-    !isBridge && resolvedOriginAsset.location
-      ? findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
-      : null
+  if (isBridge) {
+    // Try native first
+    const nativeMatch = findAssetInfo(
+      destination,
+      { symbol: Native(resolvedOriginAsset.symbol) },
+      null
+    )
+    if (nativeMatch) return nativeMatch
+
+    // Then try foreign
+    const foreignMatch = findAssetInfo(
+      destination,
+      { symbol: Foreign(resolvedOriginAsset.symbol) },
+      null
+    )
+    if (foreignMatch) return foreignMatch
+
+    return null
+  }
+
+  const assetByLocation = resolvedOriginAsset.location
+    ? findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
+    : null
 
   return assetByLocation ?? findAssetInfo(destination, { symbol: resolvedOriginAsset.symbol }, null)
 }

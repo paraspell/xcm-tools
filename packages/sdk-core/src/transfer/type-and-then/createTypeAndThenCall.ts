@@ -65,7 +65,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   const assetCount = isRelayAsset ? 1 : 2
 
-  const customXcm = createCustomXcm(context, isRelayAsset, assetCount)
+  const customXcm = createCustomXcm(context, isRelayAsset, assetCount, true)
 
   const refundInstruction = senderAddress
     ? createRefundInstruction(api, senderAddress, version, assetCount)
@@ -77,7 +77,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
   if (refundInstruction && !isSubBridge) finalCustomXcm.push(refundInstruction)
 
-  finalCustomXcm.push(...createCustomXcm(context, isRelayAsset, assetCount, fees))
+  finalCustomXcm.push(...createCustomXcm(context, isRelayAsset, assetCount, false, fees))
 
   const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
 

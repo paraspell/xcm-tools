@@ -97,7 +97,7 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(1, dotContext, true, 1)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(1, dotContext, true, 1, true)
 
     expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 1)
 
@@ -118,7 +118,7 @@ describe('createTypeAndThenCall', () => {
       [mockAsset]
     )
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(2, dotContext, true, 1, mockFees)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(2, dotContext, true, 1, false, mockFees)
   })
 
   it('should handle DOT asset with Kusama GlobalConsensus location', async () => {
@@ -280,8 +280,8 @@ describe('createTypeAndThenCall', () => {
 
     expect(createCustomXcm).toHaveBeenCalledTimes(2)
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(1, mockContext, false, 2)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(1, mockContext, false, 2, true)
 
-    expect(createCustomXcm).toHaveBeenNthCalledWith(2, mockContext, false, 2, mockFees)
+    expect(createCustomXcm).toHaveBeenNthCalledWith(2, mockContext, false, 2, false, mockFees)
   })
 })
