@@ -4,7 +4,12 @@ import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { createAsset, createBeneficiaryLocation, localizeLocation } from '../../utils'
+import {
+  createAsset,
+  createBeneficiaryLocation,
+  localizeLocation,
+  normalizeAmount
+} from '../../utils'
 
 export const createCustomXcm = <TApi, TRes>(
   { origin, dest, reserve, isSubBridge, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
@@ -77,7 +82,7 @@ export const createCustomXcm = <TApi, TRes>(
 
     const buyExecution = {
       BuyExecution: {
-        fees: createAsset(version, buyExecutionAmount, feeLocLocalized),
+        fees: createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized),
         weight_limit: 'Unlimited'
       }
     }

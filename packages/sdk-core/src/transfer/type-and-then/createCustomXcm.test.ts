@@ -25,7 +25,8 @@ vi.mock('../../utils', () => ({
   })),
   localizeLocation: vi.fn((chain, location) => ({
     localizedLocation: { chain, location }
-  }))
+  })),
+  normalizeAmount: vi.fn((amount: bigint) => amount)
 }))
 
 describe('createCustomXcm', () => {

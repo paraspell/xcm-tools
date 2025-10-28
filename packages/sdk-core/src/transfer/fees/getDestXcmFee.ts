@@ -7,10 +7,10 @@ import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
-import { DOT_LOCATION, MIN_AMOUNT } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import type { TDestXcmFeeDetail } from '../../types'
 import { type TGetFeeForDestChainOptions } from '../../types'
-import { addXcmVersionHeader } from '../../utils'
+import { addXcmVersionHeader, normalizeAmount } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
@@ -125,7 +125,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     asset,
     originFee,
     feeAsset: resolvedFeeAsset,
-    amount: currency.amount < MIN_AMOUNT ? MIN_AMOUNT : currency.amount
+    amount: normalizeAmount(currency.amount)
   })
 
   if (!dryRunResult.success) {
