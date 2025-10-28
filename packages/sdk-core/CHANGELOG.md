@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.4...sdk-core-v11.12.5) (2025-10-28)
+
+
+### Bug Fixes
+
+* **sdk-core:** Prevent 0 amount in type then buy execution 🔧 ([7366f35](https://github.com/paraspell/xcm-tools/commit/7366f357398b3687ea5cf13911fd5461940e2952))
+
 ## [11.12.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.3...sdk-core-v11.12.4) (2025-10-28)
 
 
