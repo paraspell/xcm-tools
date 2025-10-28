@@ -114,46 +114,6 @@ describe('findAssetOnDest', () => {
     expect(findAssetInfo).toHaveBeenCalledTimes(1)
   })
 
-  it('should skip location lookup for DOT/KSM bridge (AssetHubPolkadot -> AssetHubKusama)', () => {
-    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
-
-    const result = findAssetInfoOnDest('AssetHubPolkadot', 'AssetHubKusama', currencyInput)
-
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      'AssetHubPolkadot',
-      currencyInput,
-      'AssetHubKusama'
-    )
-    expect(findAssetInfo).toHaveBeenCalledWith('AssetHubKusama', { symbol: mockAssetSymbol }, null)
-    expect(result).toEqual(mockDestinationAsset)
-    expect(findAssetInfo).toHaveBeenCalledTimes(1)
-  })
-
-  it('should skip location lookup for DOT/KSM bridge (AssetHubKusama -> AssetHubPolkadot)', () => {
-    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
-
-    const result = findAssetInfoOnDest('AssetHubKusama', 'AssetHubPolkadot', currencyInput)
-
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      'AssetHubKusama',
-      currencyInput,
-      'AssetHubPolkadot'
-    )
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      'AssetHubPolkadot',
-      { symbol: mockAssetSymbol },
-      null
-    )
-    expect(result).toEqual(mockDestinationAsset)
-    expect(findAssetInfo).toHaveBeenCalledTimes(1)
-  })
-
   it('should return null if asset is not found on destination', () => {
     const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
 
