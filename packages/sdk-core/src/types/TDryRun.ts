@@ -134,6 +134,7 @@ export type TDryRunResult = {
 export type TResolveHopParams = {
   originChain: TSubstrateChain
   currentChain: TSubstrateChain
+  destination: TDestination
   asset: TAssetInfo
   currency: TCurrencyInputWithAmount
   swapConfig?: TSwapConfig

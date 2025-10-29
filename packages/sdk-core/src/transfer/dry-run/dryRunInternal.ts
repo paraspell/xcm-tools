@@ -97,6 +97,7 @@ export const dryRunInternal = async <TApi, TRes>(
       originChain: origin,
       currentChain,
       asset: currentAsset,
+      destination,
       currency,
       swapConfig,
       hasPassedExchange

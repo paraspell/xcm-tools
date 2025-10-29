@@ -177,6 +177,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       originChain: origin,
       currentChain,
       asset: currentAsset,
+      destination,
       currency,
       swapConfig,
       hasPassedExchange

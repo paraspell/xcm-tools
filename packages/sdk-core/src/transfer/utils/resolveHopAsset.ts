@@ -4,7 +4,7 @@ import {
   findNativeAssetInfoOrThrow,
   type TAssetInfo
 } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sdk-common'
 
 import type { TResolveHopParams } from '../../types'
 import { getRelayChainOf } from '../../utils'
@@ -12,12 +12,22 @@ import { getRelayChainOf } from '../../utils'
 export const resolveHopAsset = ({
   originChain,
   currentChain,
+  destination,
   swapConfig,
   asset,
   hasPassedExchange,
   currency
 }: TResolveHopParams): TAssetInfo => {
-  const isExternalAsset = asset.location?.parents === Parents.TWO
+  const isExternalAsset =
+    asset.location?.parents === Parents.TWO &&
+    !RELAYCHAINS.some(
+      chain =>
+        asset.location &&
+        deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
+          [chain.toLowerCase()]: null
+        })
+    ) &&
+    destination === 'Ethereum'
 
   if (isExternalAsset) {
     return findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
