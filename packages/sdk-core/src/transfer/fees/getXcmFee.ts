@@ -7,6 +7,7 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
   options: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   const { buildTx, api } = options
+
   try {
     const tx = await buildTx()
     const real = await getXcmFeeInternal({ ...options, tx, useRootOrigin: false })
