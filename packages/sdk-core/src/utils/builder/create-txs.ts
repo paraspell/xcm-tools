@@ -9,7 +9,8 @@ import { isConfig } from './isConfig'
 
 export const computeOverridenAmount = <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  increaseAmount: string
+  increaseAmount: string,
+  relative: boolean = true
 ) => {
   const { from, to, currency, api } = options
 
@@ -17,22 +18,25 @@ export const computeOverridenAmount = <TApi, TRes>(
 
   const config = api.getConfig()
   if (isConfig(config) && config.abstractDecimals && typeof amount !== 'bigint') {
-    return Number(increaseAmount) + Number(amount)
+    const base = relative ? Number(amount) : 0
+    return Number(increaseAmount) + base
   } else {
     assertToIsString(to)
     const asset = findAssetInfoOrThrow(from, currency, to)
-    return parseUnits(increaseAmount, asset.decimals) + BigInt(amount)
+    const base = relative ? BigInt(amount) : 0n
+    return parseUnits(increaseAmount, asset.decimals) + base
   }
 }
 
 export const overrideTxAmount = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
   builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
-  amount: string
+  amount: string,
+  relative?: boolean
 ) => {
   const modifiedBuilder = builder.currency({
     ...options.currency,
-    amount: computeOverridenAmount(options, amount)
+    amount: computeOverridenAmount(options, amount, relative)
   })
 
   const { tx } = await modifiedBuilder['buildInternal']()
@@ -42,12 +46,13 @@ export const overrideTxAmount = async <TApi, TRes>(
 export const createTx = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
   builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
-  amount: string | undefined
+  amount?: string,
+  relative?: boolean
 ): Promise<TRes> => {
   if (amount === undefined) {
     const { tx } = await builder['buildInternal']()
     return tx
   }
 
-  return await overrideTxAmount(options, builder, amount)
+  return await overrideTxAmount(options, builder, amount, relative)
 }

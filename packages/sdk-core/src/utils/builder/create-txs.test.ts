@@ -75,6 +75,30 @@ describe('computeOverridenAmount', () => {
     expect(parseUnits).toHaveBeenCalledWith('7', 8)
     expect(out).toBe(12468n) // 12345n + 123n
   })
+
+  it('when relative=false with abstractDecimals=true, ignores existing amount and returns only the increase (number path)', () => {
+    const options = { ...baseOptions, api: makeApi({ abstractDecimals: true }) }
+    vi.mocked(isConfig).mockReturnValue(true)
+
+    const out = computeOverridenAmount(options, '100', /* relative */ false)
+    expect(out).toBe(100) // not 223
+    expect(assertToIsString).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(parseUnits).not.toHaveBeenCalled()
+  })
+
+  it('when relative=false with abstractDecimals=false, ignores existing amount and returns only the parsed increase (bigint path)', () => {
+    const options = { ...baseOptions, api: makeApi({ abstractDecimals: false }) }
+    vi.mocked(isConfig).mockReturnValue(true)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 12 } as TAssetInfo)
+    vi.mocked(parseUnits).mockReturnValue(999n)
+
+    const out = computeOverridenAmount(options, '100', /* relative */ false)
+    expect(assertToIsString).toHaveBeenCalledWith('Hydration')
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
+    expect(parseUnits).toHaveBeenCalledWith('100', 12)
+    expect(out).toBe(999n) // not 1122n
+  })
 })
 
 describe('overrideTxAmount', () => {

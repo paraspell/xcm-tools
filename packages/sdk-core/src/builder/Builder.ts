@@ -316,9 +316,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
   private createTxFactory<TOptions extends TSendBaseOptions>(
     this: GeneralBuilder<TApi, TRes, TOptions>
-  ) {
-    return (amount: string | undefined) =>
-      createTx({ ...this._options, api: this.api }, this, amount)
+  ): TTxFactory<TRes> {
+    return (amount, relative) =>
+      createTx({ ...this._options, api: this.api }, this, amount, relative)
   }
 
   /**
