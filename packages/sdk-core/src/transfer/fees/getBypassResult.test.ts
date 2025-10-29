@@ -1,144 +1,103 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { AmountTooLowError } from '../../errors'
 import { getBypassResultWithRetries } from './getBypassResult'
 
-type TApiStub = { someApiProp?: string }
-type TResStub = { id: string }
-
-const okFailureReason = () => ({ failureReason: undefined }) as const
-const failFailureReason = (msg = 'err') => ({ failureReason: msg }) as const
-
-const okDryRun = () => ({ dryRunError: undefined }) as const
-const failDryRun = (msg = 'dry') => ({ dryRunError: msg }) as const
-
 describe('getBypassResultWithRetries', () => {
-  let buildTx: ReturnType<typeof vi.fn>
-  let internalFn: ReturnType<typeof vi.fn>
-  const api: TApiStub = { someApiProp: 'x' }
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-    buildTx = vi.fn<() => Promise<TResStub>>() as any
-    internalFn = vi.fn<(arg: any) => Promise<any>>() as any
-  })
-
-  it('returns immediately when initialTx passes (no retries, failureReason shape)', async () => {
-    const initialTx: TResStub = { id: 'initial' }
-    internalFn.mockResolvedValueOnce(okFailureReason())
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn, initialTx)
-
+  it('returns immediately when initialTx succeeds', async () => {
+    const buildTx = vi.fn((a?: string, r?: boolean) => Promise.resolve({ a, r }))
+    const internalFn = vi.fn(() => Promise.resolve({}))
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn, {} as unknown)
+    expect(res).toEqual({})
     expect(internalFn).toHaveBeenCalledTimes(1)
-    expect(internalFn).toHaveBeenCalledWith(
-      expect.objectContaining({ tx: initialTx, useRootOrigin: true })
-    )
     expect(buildTx).not.toHaveBeenCalled()
-    expect(res).toEqual(okFailureReason())
   })
 
-  it('retries with increasing amounts until success (100, 200, ...)', async () => {
-    const initialTx: TResStub = { id: 'initial' }
-    internalFn
-      .mockResolvedValueOnce(failFailureReason('first-fail'))
-      .mockResolvedValueOnce(failFailureReason('retry-1-fail'))
-      .mockResolvedValueOnce(okFailureReason())
-
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' }).mockResolvedValueOnce({ id: 'tx-200' })
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn, initialTx)
-
-    expect(buildTx).toHaveBeenNthCalledWith(1, '100')
-    expect(buildTx).toHaveBeenNthCalledWith(2, '200')
-    expect(res).toEqual(okFailureReason())
+  it('retries with increasing amounts until success', async () => {
+    const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
+    const internalFn = vi
+      .fn()
+      .mockResolvedValueOnce({ dryRunError: 'x' })
+      .mockResolvedValueOnce({ dryRunError: 'y' })
+      .mockResolvedValueOnce({})
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(res).toEqual({})
+    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['100', '200', '300'])
   })
 
-  it('skips a retry when buildTx throws AmountTooLowError and succeeds later', async () => {
-    internalFn.mockResolvedValueOnce({ failureReason: undefined })
-
-    buildTx.mockRejectedValueOnce(new AmountTooLowError()).mockResolvedValueOnce({ id: 'tx-200' })
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn)
-
-    expect(buildTx).toHaveBeenNthCalledWith(1, '100')
-    expect(buildTx).toHaveBeenNthCalledWith(2, '200')
-    expect(buildTx).not.toHaveBeenCalledWith('300')
-
-    expect(internalFn).toHaveBeenCalledTimes(1)
-    expect(internalFn).toHaveBeenCalledWith(
-      expect.objectContaining({ tx: { id: 'tx-200' }, useRootOrigin: true })
-    )
-
-    expect(res).toEqual({ failureReason: undefined })
+  it('on FailedToTransactAsset, runs reduced-amount flow (relative=false)', async () => {
+    const buildTx = vi.fn((a?: string, rel?: boolean) => Promise.resolve({ a, rel }))
+    let call = 0
+    const internalFn = vi.fn(() => {
+      call += 1
+      if (call === 1) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
+      if (call < 5) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
+      return Promise.resolve({})
+    })
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(res).toEqual({})
+    const reducedCalls = buildTx.mock.calls.slice(1)
+    expect(reducedCalls.length).toBeGreaterThan(0)
+    expect(reducedCalls.every(c => c[1] === false)).toBe(true)
   })
 
-  it('rethrows AmountTooLowError from buildTx on the last attempt', async () => {
-    buildTx.mockRejectedValue(new AmountTooLowError())
+  it('divides reduced amount when AmountTooLowError occurs during retry', async () => {
+    const buildTx = vi.fn((a?: string, rel?: boolean) => Promise.resolve({ a, rel }))
+    let call = 0
+    const internalFn = vi.fn(() => {
+      call += 1
+      if (call === 1) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
+      if (call === 2) return Promise.reject(new AmountTooLowError('low'))
+      return Promise.resolve({})
+    })
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(res).toEqual({})
+    expect(buildTx).toHaveBeenCalledTimes(3)
+    expect(buildTx).toHaveBeenNthCalledWith(1, '100', undefined)
+    expect(buildTx).toHaveBeenNthCalledWith(2, '0.2', false)
+    expect(buildTx).toHaveBeenNthCalledWith(3, '0.04', false)
+  })
 
+  it('after exhausting reduced retries performs final attempt', async () => {
+    const buildTx = vi.fn((a?: string, rel?: boolean) => Promise.resolve({ a, rel }))
+    const responses = [
+      ...Array.from({ length: 6 }, () => ({ failureReason: 'FailedToTransactAsset' as const })),
+      {}
+    ]
+    const internalFn = vi.fn(() => {
+      const next = responses.shift()
+      if (!next) throw new Error('unexpected call')
+      return Promise.resolve(next as Record<string, unknown>)
+    })
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(res).toEqual({})
+    expect(buildTx).toHaveBeenCalledTimes(7)
+    const reducedCalls = buildTx.mock.calls.slice(1)
+    expect(reducedCalls.every(c => c[1] === false)).toBe(true)
+    for (let idx = 1; idx < reducedCalls.length; idx++) {
+      const previous = Number(reducedCalls[idx - 1][0])
+      const current = Number(reducedCalls[idx][0])
+      expect(current).toBeCloseTo(previous / 5, 10)
+    }
+  })
+
+  it('throws after max retries with AmountTooLowError', async () => {
+    const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
+    const internalFn = vi.fn(() => Promise.reject(new AmountTooLowError('low')))
     await expect(
-      getBypassResultWithRetries({ ...api, buildTx }, internalFn, undefined, 2)
+      getBypassResultWithRetries({ buildTx }, internalFn, undefined, 2, 50)
     ).rejects.toBeInstanceOf(AmountTooLowError)
-
-    expect(buildTx).toHaveBeenCalledTimes(2)
-    expect(buildTx).toHaveBeenNthCalledWith(1, '100')
-    expect(buildTx).toHaveBeenNthCalledWith(2, '200')
+    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['50', '100'])
   })
 
-  it('continues when internalFn throws AmountTooLowError and succeeds later', async () => {
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' }).mockResolvedValueOnce({ id: 'tx-200' })
-
-    internalFn
-      .mockRejectedValueOnce(new AmountTooLowError())
-      .mockResolvedValueOnce(okFailureReason())
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn)
-    expect(buildTx).toHaveBeenCalledTimes(2)
-    expect(res).toEqual(okFailureReason())
-  })
-
-  it('rethrows AmountTooLowError from internalFn on the last attempt', async () => {
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' }).mockResolvedValueOnce({ id: 'tx-200' })
-
-    internalFn
-      .mockRejectedValueOnce(new AmountTooLowError())
-      .mockRejectedValueOnce(new AmountTooLowError())
-
-    await expect(
-      getBypassResultWithRetries({ ...api, buildTx }, internalFn, undefined, 2)
-    ).rejects.toBeInstanceOf(AmountTooLowError)
-  })
-
-  it('returns the last failing result if all retries return failure (failureReason shape)', async () => {
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' }).mockResolvedValueOnce({ id: 'tx-200' })
-
-    internalFn
-      .mockResolvedValueOnce(failFailureReason('fail-100'))
-      .mockResolvedValueOnce(failFailureReason('fail-200'))
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn, undefined, 2)
-    expect(res).toEqual(failFailureReason('fail-200'))
-  })
-
-  it('handles dryRunError shape similarly (no initialTx)', async () => {
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' }).mockResolvedValueOnce({ id: 'tx-200' })
-
-    internalFn.mockResolvedValueOnce(failDryRun('dry-100')).mockResolvedValueOnce(okDryRun())
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn)
-    expect(res).toEqual(okDryRun())
-  })
-
-  it('when initialTx causes AmountTooLowError in internalFn, it proceeds to retries', async () => {
-    const initialTx = { id: 'init' }
-    internalFn
-      .mockRejectedValueOnce(new AmountTooLowError())
-      .mockResolvedValueOnce(okFailureReason())
-
-    buildTx.mockResolvedValueOnce({ id: 'tx-100' })
-
-    const res = await getBypassResultWithRetries({ ...api, buildTx }, internalFn, initialTx, 3)
-    expect(buildTx).toHaveBeenCalledWith('100')
-    expect(res).toEqual(okFailureReason())
+  it('ignores AmountTooLowError from initialTx and continues', async () => {
+    const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
+    const internalFn = vi
+      .fn()
+      .mockRejectedValueOnce(new AmountTooLowError('low'))
+      .mockResolvedValueOnce({})
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn, {} as unknown)
+    expect(res).toEqual({})
+    expect(buildTx).toHaveBeenCalledWith('100', undefined)
   })
 })
