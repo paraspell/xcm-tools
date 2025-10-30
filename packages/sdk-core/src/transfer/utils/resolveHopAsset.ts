@@ -4,22 +4,27 @@ import {
   findNativeAssetInfoOrThrow,
   type TAssetInfo
 } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
 
 import type { TResolveHopParams } from '../../types'
 import { getRelayChainOf } from '../../utils'
 
-export const resolveHopAsset = ({
+export const resolveHopAsset = <TApi, TRes>({
+  api,
+  tx,
   originChain,
   currentChain,
+  destination,
   swapConfig,
   asset,
   hasPassedExchange,
   currency
-}: TResolveHopParams): TAssetInfo => {
-  const isExternalAsset = asset.location?.parents === Parents.TWO
+}: TResolveHopParams<TApi, TRes>): TAssetInfo => {
+  const isRelayAssetIncluded = api.getTypeThenAssetCount(tx) === 2
+  const isSubBridge = !isTLocation(destination) && isSubstrateBridge(originChain, destination)
+  const useRelayAssetAsFee = destination === 'Ethereum' || isSubBridge || isRelayAssetIncluded
 
-  if (isExternalAsset) {
+  if (useRelayAssetAsFee) {
     return findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
   }
 

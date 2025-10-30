@@ -94,8 +94,11 @@ export const dryRunInternal = async <TApi, TRes>(
     } = params
 
     const hopAsset = resolveHopAsset({
+      api,
+      tx,
       originChain: origin,
       currentChain,
+      destination,
       asset: currentAsset,
       currency,
       swapConfig,

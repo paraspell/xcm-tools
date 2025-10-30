@@ -1,6 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -30,6 +29,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
+vi.mock('../utils/resolveHopAsset')
 vi.mock('../dry-run')
 vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
@@ -1182,7 +1182,6 @@ describe('getXcmFeeInternal', () => {
 
     const res = await getXcmFeeInternal(createOptions())
 
-    expect(findAssetInfoOnDest).toHaveBeenCalledWith('Acala', 'Moonbeam', 'ACA')
     expect(res.destination.asset).toEqual({ symbol: 'ACA', decimals: 12 })
   })
 
@@ -1246,10 +1245,6 @@ describe('getXcmFeeInternal', () => {
         }
       })
     )
-
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Moonbeam', {
-      symbol: 'USDT'
-    })
   })
 
   it('test bridgeHub fee update when fees differ', async () => {

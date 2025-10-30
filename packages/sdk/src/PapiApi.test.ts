@@ -1195,6 +1195,43 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('getTypeThenAssetCount', () => {
+    it('returns undefined when transaction is not transfer_assets_using_type_and_then', () => {
+      const tx = {
+        decodedCall: {
+          value: {
+            type: 'transfer_assets',
+            value: {
+              assets: {
+                value: [{}, {}]
+              }
+            }
+          }
+        }
+      } as unknown as TPapiTransaction
+
+      expect(papiApi.getTypeThenAssetCount(tx)).toBeUndefined()
+    })
+
+    it('returns asset count when transaction is transfer_assets_using_type_and_then', () => {
+      const assets = [{}, {}, {}]
+      const tx = {
+        decodedCall: {
+          value: {
+            type: 'transfer_assets_using_type_and_then',
+            value: {
+              assets: {
+                value: assets
+              }
+            }
+          }
+        }
+      } as unknown as TPapiTransaction
+
+      expect(papiApi.getTypeThenAssetCount(tx)).toBe(assets.length)
+    })
+  })
+
   describe('getDryRunCall', () => {
     let dryRunApiCallMock: Mock
     const DEFAULT_XCM_VERSION = 3

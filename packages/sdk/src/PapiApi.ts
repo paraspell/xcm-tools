@@ -300,6 +300,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return tx.decodedCall.value.type
   }
 
+  getTypeThenAssetCount(tx: TPapiTransaction): number | undefined {
+    if (this.getMethod(tx) !== 'transfer_assets_using_type_and_then') return undefined
+    return tx.decodedCall.value.value.assets.value.length
+  }
+
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {
     return tx.getEstimatedFees(address)
   }
