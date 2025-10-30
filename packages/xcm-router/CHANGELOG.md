@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.7](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.6...xcm-router-v11.12.7) (2025-10-30)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Acala & Bifrost minting logic 🔧 ([0189bfa](https://github.com/paraspell/xcm-tools/commit/0189bfaa9c3b2c8447755e2b8220803f98338012))
+
 ## [11.12.6](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.5...xcm-router-v11.12.6) (2025-10-30)
 
 
