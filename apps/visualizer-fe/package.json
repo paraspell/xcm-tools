@@ -22,7 +22,6 @@
     "@mantine/form": "^8.3.2",
     "@mantine/hooks": "^8.3.2",
     "@mantine/notifications": "^8.3.2",
-    "@paraspell/sdk": "workspace:*",
     "@polkadot/apps-config": "^0.165.1",
     "@react-spring/web": "^10.0.3",
     "@react-three/drei": "^10.7.6",
