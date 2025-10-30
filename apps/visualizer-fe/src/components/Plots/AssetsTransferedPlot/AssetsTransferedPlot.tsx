@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { TAssetCounts } from '../../../types/types';
+import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
 import { generateSeries } from './utils/generateSeries';
@@ -35,11 +36,6 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
       })),
     [aggregatedData, showAmounts]
   );
-
-  const formatNumber = useMemo(() => {
-    const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 20 });
-    return (v: number) => (typeof v === 'number' ? nf.format(v) : v);
-  }, []);
 
   return (
     <BarChart
