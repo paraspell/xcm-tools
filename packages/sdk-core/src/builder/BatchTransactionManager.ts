@@ -39,12 +39,12 @@ class BatchTransactionManager<TApi, TRes> {
 
     const normalized = await Promise.all(
       this.transactionOptions.map(async opts => {
-        const { buildTx } = opts
-        return normalizeAmountAll(api, buildTx, opts)
+        const { builder } = opts
+        return normalizeAmountAll(api, builder, opts)
       })
     )
 
-    const txs = await Promise.all(normalized.map(o => send(o)))
+    const txs = await Promise.all(normalized.map(({ options }) => send(options)))
 
     return api.callBatchMethod(txs, mode)
   }

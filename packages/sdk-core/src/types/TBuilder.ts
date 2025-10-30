@@ -2,9 +2,9 @@ import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 
+import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
 import type { TSendBaseOptions, TSendOptions } from './TTransfer'
-import type { TTxFactory } from './TXcmFee'
 
 export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
 
@@ -97,7 +97,7 @@ export type TCreateTxsOptions<TApi, TRes> = Pick<
 >
 
 export type TBatchedSendOptions<TApi, TRes> = Omit<TSendOptions<TApi, TRes>, 'isAmountAll'> & {
-  buildTx: TTxFactory<TRes>
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
 }
 
 export type TBuildInternalRes<TApi, TRes, TOptions extends TSendBaseOptions = TSendBaseOptions> = {

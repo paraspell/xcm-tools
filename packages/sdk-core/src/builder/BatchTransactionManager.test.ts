@@ -2,9 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { send } from '../transfer'
-import type { TBatchedSendOptions } from '../types'
+import type { TBatchedSendOptions, TSendBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import BatchTransactionManager from './BatchTransactionManager'
+import type { GeneralBuilder } from './Builder'
 
 vi.mock('../transfer')
 
@@ -12,6 +13,11 @@ const mockApi = {
   init: vi.fn(),
   callBatchMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
+
+const createBuilder = () =>
+  ({
+    createTxFactory: vi.fn(() => vi.fn())
+  }) as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions>
 
 const createSendOptions = (
   overrides: Partial<TBatchedSendOptions<unknown, unknown>> = {}
@@ -21,7 +27,7 @@ const createSendOptions = (
   to: 'Hydration',
   currency: { symbol: 'ACA', amount: 100 },
   address: 'address',
-  buildTx: vi.fn().mockResolvedValue('tx'),
+  builder: createBuilder(),
   ...overrides
 })
 
@@ -63,7 +69,7 @@ describe('BatchTransactionManager', () => {
     it('calls sendTransaction for each added transaction and batches them with batchAll', async () => {
       const manager = new BatchTransactionManager()
       manager.addTransaction(createSendOptions())
-      manager.addTransaction(createSendOptions({ buildTx: vi.fn().mockResolvedValue('tx-2') }))
+      manager.addTransaction(createSendOptions())
       vi.mocked(send).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })

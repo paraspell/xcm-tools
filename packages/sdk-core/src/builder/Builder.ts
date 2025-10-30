@@ -6,7 +6,6 @@ import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isRelayChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { MIN_AMOUNT } from '../constants'
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../errors'
 import {
   getMinTransferableAmount,
@@ -190,12 +189,10 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   addToBatch(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptions>
   ): GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }> {
-    const buildTx = this.createTxFactory()
-
     this.batchManager.addTransaction({
       api: this.api,
       ...this._options,
-      buildTx
+      builder: this
     })
 
     return new GeneralBuilder<TApi, TRes, T & { from: TSubstrateChain }>(
@@ -230,13 +227,11 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     normalizedOptions: TSendOptions<TApi, TRes> & TOptions
     buildTx: TTxFactory<TRes>
   }> {
-    const builder = this.currency({
-      ...options.currency,
-      amount: MIN_AMOUNT.toString()
-    })
-    const buildTx = builder.createTxFactory()
-
-    const normalizedOptions = await normalizeAmountAll(this.api, buildTx, options)
+    const { options: normalizedOptions, buildTx } = await normalizeAmountAll(
+      this.api,
+      this,
+      options
+    )
 
     return { normalizedOptions, buildTx }
   }
@@ -314,7 +309,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     })
   }
 
-  private createTxFactory<TOptions extends TSendBaseOptions>(
+  protected createTxFactory<TOptions extends TSendBaseOptions>(
     this: GeneralBuilder<TApi, TRes, TOptions>
   ): TTxFactory<TRes> {
     return (amount, relative) =>

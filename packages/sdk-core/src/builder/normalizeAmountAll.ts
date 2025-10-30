@@ -3,19 +3,27 @@ import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
-import type { TSendBaseOptions, TSendOptions } from '../types'
+import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
 import { assertSenderAddress, assertToIsString } from '../utils'
+import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseOptions>(
   api: IPolkadotApi<TApi, TRes>,
-  buildTx: (amount?: string) => Promise<TRes>,
+  builder: GeneralBuilder<TApi, TRes, TOptions>,
   options: TOptions
-): Promise<TSendOptions<TApi, TRes> & TOptions> => {
+): Promise<{ options: TSendOptions<TApi, TRes> & TOptions; buildTx: TTxFactory<TRes> }> => {
   const { currency } = options
 
   const isAmountAll = !Array.isArray(currency) && currency.amount === AMOUNT_ALL
 
-  if (!isAmountAll) return { api, isAmountAll, ...options }
+  if (!isAmountAll)
+    return { options: { api, isAmountAll, ...options }, buildTx: builder['createTxFactory']() }
+
+  const builderWithMinAmount = builder.currency({
+    ...options.currency,
+    amount: MIN_AMOUNT
+  })
+  const buildTx = builderWithMinAmount['createTxFactory']()
 
   assertToIsString(options.to)
   assertSenderAddress(options.senderAddress)
@@ -30,10 +38,20 @@ export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseO
     currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
   })
 
+  const finalBuildTx = builder
+    .currency({
+      ...options.currency,
+      amount: transferable
+    })
+    ['createTxFactory']()
+
   return {
-    ...options,
-    api,
-    isAmountAll,
-    currency: { ...currency, amount: transferable }
+    options: {
+      ...options,
+      api,
+      isAmountAll,
+      currency: { ...currency, amount: transferable }
+    },
+    buildTx: finalBuildTx
   }
 }
