@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.7](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.6...assets-v11.12.7) (2025-10-30)
+
+
+### Bug Fixes
+
+* **assets:** Fix relay asset symbol in HydrationPaseo assets 🛠️ ([77077e8](https://github.com/paraspell/xcm-tools/commit/77077e87d88aba2b8267331477cd2141a15b9417))
+
 ## [11.12.6](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.5...assets-v11.12.6) (2025-10-30)
 
 
