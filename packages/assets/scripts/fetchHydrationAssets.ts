@@ -1,8 +1,10 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
+import { TSubstrateChain } from '@paraspell/sdk-common'
 
 export const fetchHydrationAssets = async (
+  chain: TSubstrateChain,
   api: ApiPromise,
   query: string
 ): Promise<TForeignAssetInfo[]> => {
@@ -21,11 +23,14 @@ export const fetchHydrationAssets = async (
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
+        // Special case: overwrite PAS symbol for HydrationPaseo chain and assetId 5
+        const finalSymbol = chain === 'HydrationPaseo' && numberAssetId === '5' ? 'PAS' : symbol
+
         const location = await api.query.assetRegistry.assetLocations(era)
 
         return {
           assetId: numberAssetId,
-          symbol: symbol ?? '',
+          symbol: finalSymbol ?? '',
           decimals: +decimals,
           existentialDeposit,
           location: location.toJSON() !== null ? capitalizeLocation(location.toJSON()) : undefined
