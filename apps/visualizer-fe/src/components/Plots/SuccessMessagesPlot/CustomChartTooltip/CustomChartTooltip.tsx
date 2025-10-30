@@ -243,7 +243,13 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   const explorerLink = generateExplorerLink(selectedEcosystem, paraId, startDate, endDate);
 
   return (
-    <Box {...getStyles('tooltip')} mod={[{ type }, mod]} ref={ref} {...others}>
+    <Box
+      {...getStyles('tooltip')}
+      mod={[{ type }, mod]}
+      ref={ref}
+      {...others}
+      onMouseMove={e => e.stopPropagation()}
+    >
       {_label && <div {...getStyles('tooltipLabel')}>{_label}</div>}
       <div {...getStyles('tooltipBody')}>
         {items}

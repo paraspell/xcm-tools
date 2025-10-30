@@ -249,7 +249,13 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   };
 
   return (
-    <Box {...getStyles('tooltip')} mod={[{ type }, mod]} ref={ref} {...others}>
+    <Box
+      {...getStyles('tooltip')}
+      mod={[{ type }, mod]}
+      ref={ref}
+      {...others}
+      onMouseMove={e => e.stopPropagation()}
+    >
       {_label && (
         <Group pr="xs">
           <div {...getStyles('tooltipLabel')}>{_label}</div>

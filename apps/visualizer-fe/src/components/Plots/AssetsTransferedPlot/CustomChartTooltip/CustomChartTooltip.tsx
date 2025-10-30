@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ChartSeries, ChartTooltipProps } from '@mantine/charts';
@@ -43,34 +42,8 @@ export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesL
   }, {});
 }
 
-function updateChartTooltipPayload(payload: Record<string, any>[]): Record<string, any>[] {
-  return payload.map(item => {
-    const matchFound = item.name.search(/\./);
-    if (matchFound >= 0) {
-      const newDataKey = item.name.substring(0, matchFound);
-      const nestedPayload = { ...item.payload[newDataKey] };
-      const shallowPayload = Object.entries(item.payload).reduce((acc, current) => {
-        const [k, v] = current;
-        return k === newDataKey ? acc : { ...acc, [k]: v };
-      }, {});
-
-      return {
-        ...item,
-        name: item.name.substring(matchFound + 1),
-        payload: {
-          ...shallowPayload,
-          ...nestedPayload
-        }
-      };
-    }
-    return item;
-  });
-}
-
 export function getFilteredChartTooltipPayload(payload: Record<string, any>[], segmentId?: string) {
-  const duplicatesFilter = updateChartTooltipPayload(
-    payload.filter(item => item.fill !== 'none' || !item.color)
-  );
+  const duplicatesFilter = payload.filter(item => item.fill !== 'none' || !item.color);
 
   if (!segmentId) {
     return duplicatesFilter;
@@ -90,7 +63,7 @@ function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter')
   if (Array.isArray(item.payload[item.dataKey])) {
     return item.payload[item.dataKey][1] - item.payload[item.dataKey][0];
   }
-  return item.payload[item.name];
+  return item.payload[item.name] ?? item.value;
 }
 
 export type ChartTooltipStylesNames =
@@ -224,7 +197,13 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   });
 
   return (
-    <Box {...getStyles('tooltip')} mod={[{ type }, mod]} ref={ref} {...others}>
+    <Box
+      {...getStyles('tooltip')}
+      mod={[{ type }, mod]}
+      ref={ref}
+      {...others}
+      onMouseMove={e => e.stopPropagation()}
+    >
       {_label && <div {...getStyles('tooltipLabel')}>{_label}</div>}
       <div {...getStyles('tooltipBody')}>{items}</div>
     </Box>
