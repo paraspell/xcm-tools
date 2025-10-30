@@ -5,6 +5,8 @@ import type { TChain } from '@paraspell/sdk-common'
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
 import type { TAssetInfo, TForeignAssetInfo } from '../types'
 import { type TAssetJsonMap, type TChainAssetsInfo, type TNativeAssetInfo } from '../types'
+import { isSymbolMatch } from './isSymbolMatch'
+import { findNativeAssetInfoOrThrow } from './search'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
@@ -142,6 +144,8 @@ export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
  */
 export const getAssetDecimals = (chain: TChain, symbol: string): number | null => {
   const { otherAssets, nativeAssets } = getAssetsObject(chain)
+  const isMainNativeAsset = isSymbolMatch(symbol, getNativeAssetSymbol(chain))
+  if (isMainNativeAsset) return findNativeAssetInfoOrThrow(chain).decimals
   const asset = [...otherAssets, ...nativeAssets].find(o => o.symbol === symbol)
   return asset?.decimals !== undefined ? asset.decimals : null
 }
