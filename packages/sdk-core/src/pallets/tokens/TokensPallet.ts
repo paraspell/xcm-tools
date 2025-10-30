@@ -1,8 +1,30 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  isForeignAsset,
+  type TAssetInfo,
+  type WithAmount
+} from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
+
+const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
+  const isBifrost = chain.startsWith('Bifrost')
+  if (isBifrost) {
+    const isEthAsset = isForeignAsset(asset) && asset.assetId?.startsWith('0x')
+
+    const resolvedAsset =
+      isEthAsset && asset.location
+        ? findAssetInfoOrThrow(chain, { location: asset.location }, null)
+        : asset
+
+    return getChain('BifrostPolkadot').getCurrencySelection(resolvedAsset)
+  } else {
+    assertHasId(asset)
+    return asset.assetId
+  }
+}
 
 export class TokensPallet extends BaseAssetsPallet {
   mint(
@@ -15,9 +37,7 @@ export class TokensPallet extends BaseAssetsPallet {
 
     if (!isBifrost) assertHasId(asset)
 
-    const id = isBifrost
-      ? getChain('BifrostPolkadot').getCurrencySelection(asset)
-      : (assertHasId(asset), asset.assetId)
+    const id = resolveId(asset, chain)
 
     const { amount } = asset
 

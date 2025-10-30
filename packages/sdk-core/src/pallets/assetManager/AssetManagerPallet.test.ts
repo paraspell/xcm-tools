@@ -20,8 +20,8 @@ describe('AssetManagerPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n)
 
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledWith(asset)
+    expect(assertHasId).toHaveBeenCalledTimes(1)
+    expect(assertHasId).toHaveBeenCalledWith(asset)
     expect(res.balanceTx.module).toBe('AssetManager')
     expect(res.balanceTx.method).toBe('updateBalance')
     expect(res.balanceTx.parameters.who).toEqual({ Id: address })

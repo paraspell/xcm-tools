@@ -12,9 +12,11 @@ export class CurrenciesPallet extends BaseAssetsPallet {
     chain: TSubstrateChain
   ): Promise<TSetBalanceRes> {
     const isKarura = chain.startsWith('Karura')
+    const isAcala = chain.startsWith('Acala')
+    const isAcalaLike = isKarura || isAcala
 
-    const id = isKarura
-      ? getChain('Karura').getCurrencySelection(asset)
+    const id = isAcalaLike
+      ? getChain(isKarura ? 'Karura' : 'Acala').getCurrencySelection(asset)
       : (assertHasId(asset), Number(asset.assetId))
 
     const { amount } = asset
@@ -24,7 +26,7 @@ export class CurrenciesPallet extends BaseAssetsPallet {
         module: this.palletName,
         method: 'update_balance',
         parameters: {
-          who: isKarura ? { Id: address } : address,
+          who: isAcalaLike ? { Id: address } : address,
           currency_id: id,
           amount: balance + amount
         }

@@ -24,7 +24,7 @@ describe('AssetsPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
+    expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(res.assetStatusTx?.module).toBe('Assets')
     expect(res.assetStatusTx?.method).toBe('force_asset_status')
     expect(typeof res.assetStatusTx?.parameters.id).toBe('bigint')
@@ -55,7 +55,7 @@ describe('AssetsPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(1)
+    expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(typeof res.assetStatusTx?.parameters.id).toBe('number')
     expect(res.assetStatusTx?.parameters.id).toBe(45)
     expect(res.assetStatusTx?.parameters.owner).toEqual({ Id: address })
