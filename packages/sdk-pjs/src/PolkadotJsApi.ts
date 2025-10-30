@@ -280,6 +280,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return tx.method.toString()
   }
 
+  getTypeThenAssetCount(tx: Extrinsic): number | undefined {
+    if (this.getMethod(tx) !== 'transferAssetsUsingTypeAndThen') return undefined
+    const human = tx.toHuman() as any
+    return (Object.values(human.method.args.assets)[0] as any).length
+  }
+
   hasMethod(pallet: TPallet, method: string): Promise<boolean> {
     const palletFormatted = lowercaseFirstLetter(pallet)
     const methodFormatted = snakeToCamel(method)

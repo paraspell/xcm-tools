@@ -21,7 +21,7 @@ import type {
 import { abstractDecimals, getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
-import { resolveHopAsset } from '../utils'
+import { resolveHopAsset } from '../utils/resolveHopAsset'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
@@ -174,8 +174,11 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     } = params
 
     const hopAsset = resolveHopAsset({
+      api,
+      tx,
       originChain: origin,
       currentChain,
+      destination,
       asset: currentAsset,
       currency,
       swapConfig,

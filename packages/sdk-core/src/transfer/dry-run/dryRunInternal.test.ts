@@ -1,6 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
-  findAssetInfoOnDest,
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow,
@@ -13,6 +12,7 @@ import type { IPolkadotApi } from '../../api'
 import type { HopProcessParams, HopTraversalResult, TDryRunOptions } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
+import { resolveHopAsset } from '../utils'
 import { dryRunInternal } from './dryRunInternal'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
@@ -27,6 +27,7 @@ vi.mock('../../utils/fees/getMythosOriginFee')
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
 vi.mock('../utils/resolveFeeAsset')
+vi.mock('../utils/resolveHopAsset')
 vi.mock('./traverseXcmHops')
 vi.mock('../fees/getDestXcmFee', () => ({
   createOriginLocation: vi.fn().mockReturnValue({})
@@ -117,6 +118,7 @@ describe('dryRunInternal', () => {
     vi.mocked(getMythosOriginFee).mockResolvedValue(500n)
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'MYTH', decimals: 18 } as TAssetInfo)
+    vi.mocked(resolveHopAsset).mockReturnValue({ symbol: 'MYTH' } as TAssetInfo)
 
     const originOk = {
       success: true,
@@ -376,6 +378,7 @@ describe('dryRunInternal', () => {
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       vi.mocked(hasDryRunSupport).mockReturnValue(true)
       vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+      vi.mocked(resolveHopAsset).mockReturnValue({ symbol: 'MAPPED_ACA' } as TAssetInfo)
 
       const originOk = {
         success: true,
@@ -413,11 +416,6 @@ describe('dryRunInternal', () => {
 
       const api = createFakeApi(originOk)
       await dryRunInternal(createOptions(api))
-
-      expect(findAssetInfoOnDest).toHaveBeenCalledWith('Acala', 'Moonbeam', {
-        symbol: 'ACA',
-        amount: 1_000n
-      })
     })
 
     it('handles processHop currency logic: hasPassedExchange with swapConfig', async () => {
@@ -427,6 +425,7 @@ describe('dryRunInternal', () => {
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       vi.mocked(hasDryRunSupport).mockReturnValue(true)
       vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+      vi.mocked(resolveHopAsset).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
       const originOk = {
         success: true,
@@ -471,10 +470,6 @@ describe('dryRunInternal', () => {
           }
         })
       )
-
-      expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Moonbeam', {
-        symbol: 'USDT'
-      })
     })
 
     it('handles processHop when hop dry run fails', async () => {
@@ -483,6 +478,7 @@ describe('dryRunInternal', () => {
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       vi.mocked(hasDryRunSupport).mockReturnValue(true)
       vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+      vi.mocked(resolveHopAsset).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
       const originOk = {
         success: true,
@@ -697,6 +693,7 @@ describe('dryRunInternal', () => {
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       vi.mocked(hasDryRunSupport).mockReturnValue(true)
       vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
+      vi.mocked(resolveHopAsset).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
       const originOk = {
         success: true,

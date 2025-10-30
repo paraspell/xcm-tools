@@ -28,6 +28,7 @@ export interface IPolkadotApi<TApi, TRes> {
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
   getMethod(tx: TRes): string
+  getTypeThenAssetCount(tx: TRes): number | undefined
   hasMethod(pallet: TPallet, method: string): Promise<boolean>
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   quoteAhPrice(

@@ -293,6 +293,43 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('getTypeThenAssetCount', () => {
+    it('returns the asset count when assets argument is present', () => {
+      const assets = [{}, {}]
+      const tx = {
+        method: 'transferAssetsUsingTypeAndThen',
+        toHuman: vi.fn().mockReturnValue({
+          method: {
+            args: {
+              assets: {
+                someKey: assets
+              }
+            }
+          }
+        })
+      } as unknown as Extrinsic
+
+      expect(polkadotApi.getTypeThenAssetCount(tx)).toBe(assets.length)
+    })
+
+    it('returns undefined when assets do not expose a length', () => {
+      const tx = {
+        method: 'transferAssetsUsingTypeAndThen',
+        toHuman: vi.fn().mockReturnValue({
+          method: {
+            args: {
+              assets: {
+                someKey: { foo: 'bar' }
+              }
+            }
+          }
+        })
+      } as unknown as Extrinsic
+
+      expect(polkadotApi.getTypeThenAssetCount(tx)).toBeUndefined()
+    })
+  })
+
   describe('callTxMethod', () => {
     it('should create an extrinsic with the provided module, method, and parameters', () => {
       const serializedCall: TSerializedApiCall = {

@@ -131,9 +131,12 @@ export type TDryRunResult = {
   hops: THopInfo[]
 }
 
-export type TResolveHopParams = {
+export type TResolveHopParams<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  tx: TRes
   originChain: TSubstrateChain
   currentChain: TSubstrateChain
+  destination: TDestination
   asset: TAssetInfo
   currency: TCurrencyInputWithAmount
   swapConfig?: TSwapConfig
