@@ -30,8 +30,8 @@ describe('TokensPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledTimes(2)
-    expect(vi.mocked(getChain)).not.toHaveBeenCalled()
+    expect(assertHasId).toHaveBeenCalledTimes(2)
+    expect(getChain).not.toHaveBeenCalled()
 
     expect(res.balanceTx.module).toBe('Tokens')
     expect(res.balanceTx.method).toBe('set_balance')
@@ -51,9 +51,9 @@ describe('TokensPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(vi.mocked(assertHasId)).not.toHaveBeenCalled()
-    expect(vi.mocked(getChain)).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(getChain)).toHaveBeenCalledWith('BifrostPolkadot')
+    expect(assertHasId).not.toHaveBeenCalled()
+    expect(getChain).toHaveBeenCalledTimes(1)
+    expect(getChain).toHaveBeenCalledWith('BifrostPolkadot')
 
     expect(res.balanceTx.parameters.who).toEqual({ Id: address })
     expect(res.balanceTx.parameters.currency_id).toEqual({ Token: 'BNC' })

@@ -48,12 +48,12 @@ describe('SystemPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain, api)
 
-    expect(vi.mocked(assertHasId)).toHaveBeenCalledWith(asset)
-    expect(vi.mocked(formatAssetIdToERC20)).toHaveBeenCalledWith('123')
-    expect(vi.mocked(getAddress)).toHaveBeenCalledWith(address)
-    expect(vi.mocked(pad)).toHaveBeenCalledWith('hex:321', { size: 32 })
-    expect(vi.mocked(concat)).toHaveBeenCalled()
-    expect(vi.mocked(keccak256)).toHaveBeenCalled()
+    expect(assertHasId).toHaveBeenCalledWith(asset)
+    expect(formatAssetIdToERC20).toHaveBeenCalledWith('123')
+    expect(getAddress).toHaveBeenCalledWith(address)
+    expect(pad).toHaveBeenCalledWith('hex:321', { size: 32 })
+    expect(concat).toHaveBeenCalled()
+    expect(keccak256).toHaveBeenCalled()
     expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)
 
     expect(res.balanceTx.module).toBe('System')

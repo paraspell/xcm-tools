@@ -21,8 +21,8 @@ describe('ForeignAssetsPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset)
 
-    expect(vi.mocked(assertHasLocation)).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(assertHasLocation)).toHaveBeenCalledWith(asset)
+    expect(assertHasLocation).toHaveBeenCalledTimes(1)
+    expect(assertHasLocation).toHaveBeenCalledWith(asset)
 
     expect(res.assetStatusTx?.module).toBe('ForeignAssets')
     expect(res.assetStatusTx?.method).toBe('force_asset_status')
