@@ -5,7 +5,6 @@ import Scene3d from '../pages/Scene3d';
 import ChannelAlertContainer from './ChannelInfo/ChannelAlert.container';
 import EcosystemSelectContainer from './EcosystemSelect/EcosystemSelect.container';
 import Footer from './Footer/Footer';
-import SendXCMContainer from './SendXCMContainer/SendXCMContainer';
 
 const LeftPanel = () => {
   const { selectedChannel } = useSelectedParachain();
@@ -14,7 +13,6 @@ const LeftPanel = () => {
       <Scene3d />
       <Footer />
       {selectedChannel && <ChannelAlertContainer selectedChannel={selectedChannel} />}
-      <SendXCMContainer />
       <EcosystemSelectContainer />
     </Group>
   );

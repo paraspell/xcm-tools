@@ -11,7 +11,6 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import RightPanel from './components/RightPanel';
 import LiveDataProvider from './context/LiveData/LiveDataContext';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
-import WalletProvider from './providers/WalletProvider';
 
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 
@@ -33,22 +32,20 @@ export const client = new ApolloClient({
 const App = () => (
   <ApolloProvider client={client}>
     <BrowserRouter>
-      <WalletProvider>
-        <SelectedParachainProvider>
-          <LiveDataProvider>
-            <MantineProvider forceColorScheme="light">
-              <Box pos="relative" h="100%">
-                <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
-                <Notifications />
-                <Flex h="100%">
-                  <LeftPanel />
-                  <RightPanel />
-                </Flex>
-              </Box>
-            </MantineProvider>
-          </LiveDataProvider>
-        </SelectedParachainProvider>
-      </WalletProvider>
+      <SelectedParachainProvider>
+        <LiveDataProvider>
+          <MantineProvider forceColorScheme="light">
+            <Box pos="relative" h="100%">
+              <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+              <Notifications />
+              <Flex h="100%">
+                <LeftPanel />
+                <RightPanel />
+              </Flex>
+            </Box>
+          </MantineProvider>
+        </LiveDataProvider>
+      </SelectedParachainProvider>
     </BrowserRouter>
   </ApolloProvider>
 );
