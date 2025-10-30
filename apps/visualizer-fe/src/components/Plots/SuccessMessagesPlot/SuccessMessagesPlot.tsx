@@ -7,6 +7,7 @@ import { useSelectedParachain } from '../../../context/SelectedParachain/useSele
 import type { MessageCountsQuery } from '../../../gql/graphql';
 import type { Ecosystem } from '../../../types/types';
 import { getParachainById } from '../../../utils/utils';
+import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {
@@ -40,6 +41,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
       data={chartData}
       dataKey="category"
       tooltipAnimationDuration={200}
+      valueFormatter={formatNumber}
       minBarSize={3}
       series={series}
       tickLine="y"
@@ -49,6 +51,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
             label={label as ReactNode}
             payload={payload ?? []}
             series={series}
+            valueFormatter={formatNumber}
             withTotal
           />
         )

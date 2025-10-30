@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../../utils/utils';
+import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Payload = {
@@ -111,6 +112,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
         }
       ]}
       curveType="natural"
+      valueFormatter={formatNumber}
       onClick={onChartClick}
       tooltipProps={{
         trigger: 'click',
@@ -179,6 +181,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
               label={label as ReactNode}
               payload={extendedPayload}
               onCloseClick={onTooltipClose}
+              valueFormatter={formatNumber}
             />
           );
         }
