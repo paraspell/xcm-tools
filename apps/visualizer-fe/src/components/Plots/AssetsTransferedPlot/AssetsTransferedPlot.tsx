@@ -50,7 +50,11 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
       tooltipProps={{
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
-          const sortedPayload = payload.sort((a, b) => b.value - a.value);
+          const sortedPayload = [
+            ...new Map(
+              payload.sort((a, b) => b.value - a.value).map(item => [item.value, item])
+            ).values()
+          ];
           return (
             <CustomChartTooltip
               label={label as ReactNode}
