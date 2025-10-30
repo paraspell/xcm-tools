@@ -1575,7 +1575,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address,
-          chain: 'Acala',
+          chain: 'Interlay',
           destination: 'Hydration',
           asset: {} as WithAmount<TAssetInfo>
         })
@@ -1716,7 +1716,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          chain: 'Acala',
+          chain: 'Interlay',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions<Extrinsic>)
       ).rejects.toThrow(ChainNotSupportedError)
