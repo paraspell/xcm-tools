@@ -322,7 +322,7 @@ const fetchOtherAssets = async (
   }
 
   if (chain.startsWith('Hydration')) {
-    otherAssets = await fetchHydrationAssets(api, query)
+    otherAssets = await fetchHydrationAssets(chain, api, query)
   }
 
   if (chain === 'Basilisk') {
