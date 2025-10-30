@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.12.6](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.5...sdk-pjs-v11.12.6) (2025-10-30)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect feeAsset when relay asset is not attached 🔧 ([aefc3eb](https://github.com/paraspell/xcm-tools/commit/aefc3eb19869370bdd4a92819047ad59fc5fa789))
+
+
+### Tests
+
+* **sdk-pjs:** Fix unit tests 🔧 ([ce7d592](https://github.com/paraspell/xcm-tools/commit/ce7d592ef9aed9f0463a04b0fc5dcd156b97f83f))
+
 ## [11.12.5](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.4...sdk-pjs-v11.12.5) (2025-10-28)
 
 

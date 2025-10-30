@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.6](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.5...sdk-v11.12.6) (2025-10-30)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect feeAsset when relay asset is not attached 🔧 ([aefc3eb](https://github.com/paraspell/xcm-tools/commit/aefc3eb19869370bdd4a92819047ad59fc5fa789))
+
 ## [11.12.5](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.4...sdk-v11.12.5) (2025-10-28)
 
 

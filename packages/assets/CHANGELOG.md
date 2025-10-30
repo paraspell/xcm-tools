@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.12.6](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.5...assets-v11.12.6) (2025-10-30)
+
+
+### Bug Fixes
+
+* **assets:** Fix incorrect decimals returned for AH chains 🔧 ([f5cd331](https://github.com/paraspell/xcm-tools/commit/f5cd3312fe078472a666e3b654cd05c6f7bc0ec0))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([6119da8](https://github.com/paraspell/xcm-tools/commit/6119da814dbb16d14e3221bda1e0be76a8f8c010))
+
 ## [11.12.5](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.4...assets-v11.12.5) (2025-10-28)
 
 
