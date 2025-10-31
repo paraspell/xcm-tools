@@ -1,9 +1,10 @@
 import type { ApiPromise } from '@polkadot/api'
 import { getAllAssetsSymbols, type TForeignAssetInfo } from '../src'
-import { getParaId, CHAINS } from '../../sdk-core/src'
+import { getParaId, CHAINS, Parents, TSubstrateChain } from '../../sdk-core/src'
 import { capitalizeLocation } from './utils'
 
 export const fetchAssetHubAssets = async (
+  chain: TSubstrateChain,
   api: ApiPromise,
   query: string
 ): Promise<TForeignAssetInfo[]> => {
@@ -79,7 +80,16 @@ export const fetchAssetHubAssets = async (
     })
   )
 
+  const isAHPolkadot = chain === 'AssetHubPolkadot'
+  const wantedSymbol = isAHPolkadot ? 'KSM' : 'DOT'
+
   const parsedRegularLiveAssets = parsedRegularAssets.filter(item => item !== null)
 
-  return [...parsedRegularLiveAssets, ...parsedForeignAssets]
+  // Remove fake KSM assets on AssetHubPolkadot and fake DOT assets on AssetHubKusama
+  const parsedFilteredRegularAssets = parsedRegularLiveAssets.filter(asset => {
+    const parents = asset.location.parents
+    return !(asset.symbol === wantedSymbol && parents !== Parents.TWO)
+  })
+
+  return [...parsedFilteredRegularAssets, ...parsedForeignAssets]
 }

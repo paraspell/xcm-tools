@@ -26,7 +26,7 @@ import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
-import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
+import { fetchKiltForeignAssets } from './fetchKiltAssets'
 import { isRelayChain, TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
 import { getRelayChainSymbolOf, isChainEvm } from './utils'
@@ -242,7 +242,7 @@ const fetchOtherAssets = async (
   let otherAssets: TForeignAssetInfo[] = []
 
   if (chain.includes('AssetHub')) {
-    otherAssets = await fetchAssetHubAssets(api, query)
+    otherAssets = await fetchAssetHubAssets(chain, api, query)
   }
 
   if (chain.startsWith('Zeitgeist') || chain === 'Jamton') {
@@ -289,8 +289,8 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (chain === 'Polimec' || chain.startsWith('Kilt') || chain === 'Penpal') {
-    otherAssets = await fetchPolimecForeignAssets(api, query)
+  if (chain.startsWith('Kilt') || chain === 'Penpal') {
+    otherAssets = await fetchKiltForeignAssets(api, query)
   }
 
   if (chain.startsWith('Ajuna') || chain.startsWith('Integritee')) {

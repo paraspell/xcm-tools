@@ -6,10 +6,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { createContext } from './createContext'
 
 vi.mock('@snowbridge/api', () => ({
-  Context: vi.fn().mockImplementation(() => ({}))
+  Context: vi.fn(class {})
 }))
 vi.mock('ethers', () => ({
-  AbstractProvider: class {}
+  AbstractProvider: vi.fn(class {})
 }))
 
 describe('createContext', () => {

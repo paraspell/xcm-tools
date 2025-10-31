@@ -38,32 +38,6 @@ describe('getBalanceForeignPolkadotXcm', () => {
     expect(result).toBe(1000n)
   })
 
-  it('should return balance for Polimec', async () => {
-    const mockApi = {
-      getBalanceForeignAssetsPallet: vi.fn().mockResolvedValue(200n)
-    } as unknown as IPolkadotApi<unknown, unknown>
-
-    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
-      symbol: 'DOT',
-      decimals: 10,
-      location: { foo: 'bar' } as unknown as TLocation
-    })
-
-    expect(result).toBe(200n)
-  })
-
-  it('Polimec - throws if location missing', async () => {
-    const api = {} as unknown as IPolkadotApi<unknown, unknown>
-
-    await expect(
-      getBalanceForeignPolkadotXcm(api, 'Polimec', 'addr', {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-    ).rejects.toThrow(InvalidCurrencyError)
-  })
-
   it('Moonbeam - uses getMoonbeamBalance', async () => {
     const MOONBEAM_BAL = 555n
     vi.mocked(getMoonbeamErc20Balance).mockResolvedValue(MOONBEAM_BAL)

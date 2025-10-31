@@ -396,19 +396,6 @@ describe('Parachain', () => {
     expect(result).toBe('transferXTokens called')
   })
 
-  it('should fail when transfering to Polimec and chain is not AssetHubPolkadot or Hydration', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress',
-      to: 'Polimec'
-    } as TSendInternalOptions<unknown, unknown>
-
-    await expect(chain.transfer(options)).rejects.toThrowError(
-      'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
-    )
-  })
-
   it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', async () => {
     const chain = new OnlyPolkadotXCMParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
     const options = {
@@ -462,37 +449,6 @@ describe('Parachain', () => {
     expect(transferXTokensSpy).not.toHaveBeenCalled()
     expect(transferXTransferSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTransfer called')
-  })
-
-  it('should throw error when destination is Polimec and chain is not AssetHubPolkadot', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress',
-      to: 'Polimec'
-    } as TSendInternalOptions<unknown, unknown>
-
-    await expect(chain.transfer(options)).rejects.toThrowError(
-      'Sending assets to Polimec is supported only from AssetHubPolkadot'
-    )
-  })
-
-  it('should not throw error when destination is Polimec and chain is AssetHubPolkadot', async () => {
-    const chain = new TestParachain('AssetHubPolkadot', 'TestChain', 'Polkadot', Version.V4)
-    chain.transferXTokens = vi.fn().mockReturnValue('transferXTokens called')
-    const options = {
-      api,
-      assetInfo: { symbol: 'PLMC', amount: 100n },
-      address: 'destinationAddress',
-      to: 'Polimec'
-    } as TSendInternalOptions<unknown, unknown>
-
-    const transferXTokensSpy = vi.spyOn(chain, 'transferXTokens')
-
-    const result = await chain.transfer(options)
-
-    expect(transferXTokensSpy).toHaveBeenCalled()
-    expect(result).toBe('transferXTokens called')
   })
 
   it('should create currency spec', () => {

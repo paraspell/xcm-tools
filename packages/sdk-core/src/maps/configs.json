@@ -330,10 +330,6 @@
         "endpoint": "wss://moonbeam.public.blastapi.io"
       },
       {
-        "name": "Dwellir",
-        "endpoint": "wss://moonbeam-rpc.n.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://moonbeam.ibp.network"
       },
@@ -531,17 +527,6 @@
       }
     ]
   },
-  "Subsocial": {
-    "name": "Subsocial",
-    "info": "subsocial",
-    "paraId": 2101,
-    "providers": [
-      {
-        "name": "Dappforce",
-        "endpoint": "wss://para.subsocial.network"
-      }
-    ]
-  },
   "KiltSpiritnet": {
     "name": "KILT Spiritnet",
     "info": "kilt",
@@ -603,33 +588,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://peaq.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Polimec": {
-    "name": "Polimec",
-    "info": "polimec",
-    "paraId": 3344,
-    "providers": [
-      {
-        "name": "Amforc",
-        "endpoint": "wss://polimec.rpc.amforc.com"
-      },
-      {
-        "name": "Helikon",
-        "endpoint": "wss://rpc.helikon.io/polimec"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://polimec.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://polimec.dotters.network"
-      },
-      {
-        "name": "Polimec Foundation",
-        "endpoint": "wss://rpc.polimec.org"
       }
     ]
   },
@@ -695,18 +653,6 @@
       {
         "name": "IBP2",
         "endpoint": "wss://unique.dotters.network"
-      },
-      {
-        "name": "Unique America",
-        "endpoint": "wss://us-ws.unique.network"
-      },
-      {
-        "name": "Unique Asia",
-        "endpoint": "wss://asia-ws.unique.network"
-      },
-      {
-        "name": "Unique Europe",
-        "endpoint": "wss://eu-ws.unique.network"
       }
     ]
   },
@@ -876,10 +822,6 @@
       {
         "name": "Allnodes",
         "endpoint": "wss://moonriver-rpc.publicnode.com"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://moonriver-rpc.n.dwellir.com"
       },
       {
         "name": "Moonbeam Foundation",
@@ -1070,10 +1012,6 @@
       {
         "name": "Geo Load Balancer",
         "endpoint": "wss://ws-quartz.unique.network"
-      },
-      {
-        "name": "Unique Europe",
-        "endpoint": "wss://eu-ws-quartz.unique.network"
       }
     ]
   },

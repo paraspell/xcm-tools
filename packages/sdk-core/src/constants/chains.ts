@@ -64,12 +64,10 @@ import PeoplePaseo from '../chains/supported/PeoplePaseo'
 import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Phala from '../chains/supported/Phala'
-import Polimec from '../chains/supported/Polimec'
 import Quartz from '../chains/supported/Quartz'
 import RobonomicsKusama from '../chains/supported/RobonomicsKusama'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
-import Subsocial from '../chains/supported/Subsocial'
 import Unique from '../chains/supported/Unique'
 import Xode from '../chains/supported/Xode'
 import Zeitgeist from '../chains/supported/Zeitgeist'
@@ -104,12 +102,10 @@ export const chains = <TApi, TRes>() => ({
   Pendulum: new Pendulum<TApi, TRes>(),
   Collectives: new Collectives<TApi, TRes>(),
   Phala: new Phala<TApi, TRes>(),
-  Subsocial: new Subsocial<TApi, TRes>(),
   KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),
   Curio: new Curio<TApi, TRes>(),
   Mythos: new Mythos<TApi, TRes>(),
   Peaq: new Peaq<TApi, TRes>(),
-  Polimec: new Polimec<TApi, TRes>(),
   Xode: new Xode<TApi, TRes>(),
 
   // Kusama chains

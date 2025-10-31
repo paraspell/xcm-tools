@@ -200,9 +200,9 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
     const { assetInfo, destination, version } = input
 
+    // TODO: Refactor this
     if (
       (destination === 'Hydration' ||
-        destination === 'Polimec' ||
         destination === 'Moonbeam' ||
         destination === 'BifrostPolkadot') &&
       assetInfo.symbol === this.getNativeAssetSymbol()
@@ -219,7 +219,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
     const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
     if (
-      destination === 'Polimec' ||
       destination === 'Moonbeam' ||
       (typeof destination === 'string' && destination.startsWith('Integritee'))
     )

@@ -16,58 +16,68 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 vi.mock('@acala-network/sdk-core', () => ({
-  FixedPointNumber: vi.fn().mockImplementation((value: string) => ({
-    toString: () => value,
-  })),
+  FixedPointNumber: vi.fn(
+    class {
+      constructor(private value: number) {
+        this.value = value;
+      }
+
+      toString = () => this.value;
+    },
+  ),
 }));
 
 vi.mock('@acala-network/sdk', () => ({
-  Wallet: vi.fn().mockImplementation(() => ({
-    isReady: Promise.resolve(),
-    getToken: vi.fn().mockImplementation((symbol: string) => ({
-      symbol,
-      decimals: symbol === 'ACA' ? 12 : 10,
-    })),
-    getPrice: vi.fn().mockImplementation((symbol: string) => ({
-      toNumber: () => (symbol.includes('0price') ? 0 : 1),
-    })),
-    getTokens: vi.fn().mockResolvedValue({
-      ACA: {
-        symbol: 'ACA',
-        toCurrencyId: vi.fn().mockReturnValue({
-          toString: () => JSON.stringify({ Token: 'ACA' }),
-        }),
-      },
-      DOT: {
-        symbol: 'DOT',
-        toCurrencyId: vi.fn().mockReturnValue({
-          toString: () => JSON.stringify({ Token: 'DOT' }),
-        }),
-      },
-      USDC: {
-        symbol: 'USDC',
-        toCurrencyId: vi.fn().mockReturnValue({
-          toString: () =>
-            JSON.stringify({
-              Foreign: '',
-            }),
-        }),
-      },
-    }),
-    consts: {
-      nativeCurrency: 'ACA',
+  Wallet: vi.fn(
+    class {
+      isReady = Promise.resolve();
+      getToken = vi.fn().mockImplementation((symbol: string) => ({
+        symbol,
+        decimals: symbol === 'ACA' ? 12 : 10,
+      }));
+      getPrice = vi.fn().mockImplementation((symbol: string) => ({
+        toNumber: () => (symbol.includes('0price') ? 0 : 1),
+      }));
+      getTokens = vi.fn().mockResolvedValue({
+        ACA: {
+          symbol: 'ACA',
+          toCurrencyId: vi.fn().mockReturnValue({
+            toString: () => JSON.stringify({ Token: 'ACA' }),
+          }),
+        },
+        DOT: {
+          symbol: 'DOT',
+          toCurrencyId: vi.fn().mockReturnValue({
+            toString: () => JSON.stringify({ Token: 'DOT' }),
+          }),
+        },
+        USDC: {
+          symbol: 'USDC',
+          toCurrencyId: vi.fn().mockReturnValue({
+            toString: () =>
+              JSON.stringify({
+                Foreign: '',
+              }),
+          }),
+        },
+      });
+      consts = {
+        nativeCurrency: 'ACA',
+      };
     },
-  })),
+  ),
 }));
 
 vi.mock('@acala-network/sdk-swap', () => ({
   AcalaDex: vi.fn(),
-  AggregateDex: vi.fn().mockImplementation(() => ({
-    swap: vi.fn().mockImplementation(() => ({
-      subscribe: vi.fn(),
-    })),
-    getTradingTx: vi.fn().mockImplementation(() => ({})),
-  })),
+  AggregateDex: vi.fn(
+    class {
+      swap = vi.fn().mockImplementation(() => ({
+        subscribe: vi.fn(),
+      }));
+      getTradingTx = vi.fn().mockImplementation(() => ({}));
+    },
+  ),
 }));
 
 vi.mock('rxjs', async () => {

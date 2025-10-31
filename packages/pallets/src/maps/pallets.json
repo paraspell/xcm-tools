@@ -250,10 +250,6 @@
       {
         "name": "Assets",
         "index": 104
-      },
-      {
-        "name": "AssetManager",
-        "index": 105
       }
     ],
     "nativeAssets": "Balances",
@@ -499,10 +495,6 @@
       {
         "name": "Assets",
         "index": 104
-      },
-      {
-        "name": "AssetManager",
-        "index": 105
       }
     ],
     "nativeAssets": "Balances",
@@ -776,17 +768,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets"]
   },
-  "Subsocial": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "KiltSpiritnet": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -915,25 +896,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": []
-  },
-  "Polimec": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "ForeignAssets",
-        "index": 14
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["ForeignAssets"]
   },
   "RobonomicsPolkadot": {
     "defaultPallet": "PolkadotXcm",

@@ -76,12 +76,10 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   PeoplePolkadot: [], // No assets metadata query
   PeopleWestend: [], // No assets metadata query
   Phala: ['assets.metadata'],
-  Polimec: ['foreignAssets.metadata'],
   Quartz: ['foreignAssets.collectionToForeignAsset'],
   RobonomicsKusama: ['assets.metadata'],
   RobonomicsPolkadot: ['assets.metadata'],
   Shiden: ['assets.metadata'],
-  Subsocial: [], // No assets metadata query
   Unique: ['foreignAssets.collectionToForeignAsset'],
   Xode: ['assets.metadata'],
   Zeitgeist: ['assetRegistry.metadata'],
