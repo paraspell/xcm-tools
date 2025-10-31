@@ -6,8 +6,7 @@ export const LEGACY_CHAINS: TChain[] = [
   'CrustShadow',
   'Kintsugi',
   'RobonomicsKusama',
-  'Pendulum',
-  'Subsocial'
+  'Pendulum'
 ]
 
 // Cache settings

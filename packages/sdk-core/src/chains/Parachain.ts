@@ -155,18 +155,6 @@ abstract class Parachain<TApi, TRes> {
     const paraId = resolveParaId(paraIdTo, destination)
     const destChain = resolveDestChain(this.chain, paraId)
 
-    // TODO: Use canReceiveFrom for this condition
-    if (
-      destination === 'Polimec' &&
-      this.chain !== 'AssetHubPolkadot' &&
-      this.chain !== 'Hydration' &&
-      this.chain !== destination
-    ) {
-      throw new InvalidParameterError(
-        'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
-      )
-    }
-
     const isLocalTransfer = this.chain === destination
     if (isLocalTransfer) {
       return this.transferLocal(sendOptions)

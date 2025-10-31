@@ -10,7 +10,6 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  TSerializedApiCall,
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
@@ -18,25 +17,14 @@ import { getChain } from '../../utils'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
 import type Hydration from './Hydration'
-import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
 vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('./Polimec', async importOriginal => ({
-  ...(await importOriginal<typeof import('./Polimec')>()),
-  createTypeAndThenTransfer: vi.fn(),
-  createTransferAssetsTransfer: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
@@ -192,71 +180,6 @@ describe('Hydration', () => {
         method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
-    })
-
-    it('should call api.callTxMethod using createTypeAndThenTransfer when asset is DOT', async () => {
-      mockInput = {
-        api: mockApi,
-        address: '0xPolimecAddress',
-        assetInfo: { symbol: 'DOT', assetId: '1', amount: 1000n },
-        scenario: 'ParaToPara',
-        destination: 'Polimec',
-        version: hydration.version
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const typeAndThenCall = { dummy: 'call-dummy' } as unknown as TSerializedApiCall
-      vi.mocked(createTypeAndThenTransfer).mockReturnValue(typeAndThenCall)
-      const callTxSpy = vi.spyOn(mockApi, 'callTxMethod')
-
-      const result = await hydration.transferToPolimec(mockInput)
-
-      expect(createTypeAndThenTransfer).toHaveBeenCalledWith(mockInput, hydration.version)
-      expect(callTxSpy).toHaveBeenCalledWith(typeAndThenCall)
-      expect(result).toBe(mockExtrinsic)
-    })
-
-    it('should call createTransferAssetsTransfer for non-DOT asset (USDC) when junction is valid', async () => {
-      mockInput = {
-        api: mockApi,
-        address: '0xPolimecAddress',
-        assetInfo: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, location: {} },
-        scenario: 'ParaToPara',
-        destination: 'Polimec',
-        version: hydration.version
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(true)
-
-      const assetsTransferSpy = vi
-        .mocked(createTransferAssetsTransfer)
-        .mockResolvedValue(mockExtrinsic)
-
-      const result = await hydration.transferToPolimec(mockInput)
-
-      expect(hasJunctionSpy).toHaveBeenCalled()
-      expect(assetsTransferSpy).toHaveBeenCalledWith(mockInput, hydration.version)
-      expect(result).toBe(mockExtrinsic)
-
-      hasJunctionSpy.mockRestore()
-    })
-
-    it('should throw InvalidCurrencyError for USDC when junction is invalid', () => {
-      mockInput = {
-        api: mockApi,
-        address: '0xPolimecAddress',
-        assetInfo: { symbol: 'USDC', assetId: 'usdc-id', amount: 500n, location: {} },
-        scenario: 'ParaToPara',
-        destination: 'Polimec',
-        version: hydration.version
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(false)
-
-      expect(() => hydration.transferToPolimec(mockInput)).toThrowError(
-        'The selected asset is not supported for transfer to Polimec'
-      )
-
-      hasJunctionSpy.mockRestore()
     })
 
     it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', () => {

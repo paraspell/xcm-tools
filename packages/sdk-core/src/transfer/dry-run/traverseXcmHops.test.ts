@@ -21,9 +21,12 @@ vi.mock('../../constants', () => ({
 
 describe('traverseXcmHops', () => {
   let mockApi: IPolkadotApi<unknown, unknown>
-  let mockProcessHop: ReturnType<typeof vi.fn>
-  let mockShouldContinue: ReturnType<typeof vi.fn>
-  let mockExtractNextHopData: ReturnType<typeof vi.fn>
+
+  const baseConfig = {
+    processHop: vi.fn(),
+    shouldContinue: vi.fn().mockReturnValue(true),
+    extractNextHopData: vi.fn()
+  } as unknown as HopTraversalConfig<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -36,11 +39,6 @@ describe('traverseXcmHops', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
-
-    mockProcessHop = vi.fn()
-    mockShouldContinue = vi.fn().mockReturnValue(true)
-    mockExtractNextHopData = vi.fn()
-
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ assetId: 'asset1' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAssetInfo)
@@ -50,31 +48,30 @@ describe('traverseXcmHops', () => {
     const forwardedXcms = [[], [{ value: ['some-data'] }]]
     const destParaId = 1000
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
-
-    mockProcessHop.mockResolvedValue({
-      fee: 1000n,
-      xcmData: 'processed'
-    })
-
-    mockExtractNextHopData.mockReturnValue({
-      forwardedXcms: [[], []],
-      destParaId: undefined
-    })
-
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
-      initialDestParaId: destParaId,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      initialDestParaId: destParaId
     }
 
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+
+    vi.spyOn(config, 'processHop').mockResolvedValue({
+      fee: 1000n,
+      xcmData: 'processed'
+    })
+
+    vi.spyOn(config, 'extractNextHopData').mockReturnValue({
+      forwardedXcms: [[], []],
+      destParaId: undefined
+    })
+
     const initSpy = vi.spyOn(mockApi, 'init')
+    const processHopSpy = vi.spyOn(config, 'processHop')
 
     const result = await traverseXcmHops(config)
 
@@ -85,7 +82,7 @@ describe('traverseXcmHops', () => {
     })
 
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot', 300000)
-    expect(mockProcessHop).toHaveBeenCalledWith({
+    expect(processHopSpy).toHaveBeenCalledWith({
       api: mockApi,
       currentChain: 'AssetHubPolkadot',
       currentOrigin: 'Polkadot',
@@ -103,26 +100,8 @@ describe('traverseXcmHops', () => {
     const forwardedXcms2 = [[], [{ value: ['data2'] }]]
     const forwardedXcms3 = [[], [{ value: ['data3'] }]]
 
-    vi.mocked(getTChain)
-      .mockReturnValueOnce('BridgeHubPolkadot')
-      .mockReturnValueOnce('Hydration')
-      .mockReturnValueOnce('AssetHubPolkadot')
-
-    const hopResult1 = { fee: 1000n, hop: 1 }
-    const hopResult2 = { fee: 2000n, hop: 2 }
-    const hopResult3 = { fee: 3000n, hop: 3 }
-
-    mockProcessHop
-      .mockResolvedValueOnce(hopResult1)
-      .mockResolvedValueOnce(hopResult2)
-      .mockResolvedValueOnce(hopResult3)
-
-    mockExtractNextHopData
-      .mockReturnValueOnce({ forwardedXcms: forwardedXcms2, destParaId: 2000 })
-      .mockReturnValueOnce({ forwardedXcms: forwardedXcms3, destParaId: 3000 })
-      .mockReturnValueOnce({ forwardedXcms: [[], []], destParaId: undefined })
-
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
@@ -132,11 +111,28 @@ describe('traverseXcmHops', () => {
       swapConfig: {
         exchangeChain: 'Hydration' as TParachain,
         currencyTo: { id: 'USDT' }
-      },
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      }
     }
+
+    vi.mocked(getTChain)
+      .mockReturnValueOnce('BridgeHubPolkadot')
+      .mockReturnValueOnce('Hydration')
+      .mockReturnValueOnce('AssetHubPolkadot')
+
+    const hopResult1 = { fee: 1000n, hop: 1 }
+    const hopResult2 = { fee: 2000n, hop: 2 }
+    const hopResult3 = { fee: 3000n, hop: 3 }
+
+    const processHopSpy = vi
+      .spyOn(config, 'processHop')
+      .mockResolvedValueOnce(hopResult1)
+      .mockResolvedValueOnce(hopResult2)
+      .mockResolvedValueOnce(hopResult3)
+
+    vi.spyOn(config, 'extractNextHopData')
+      .mockReturnValueOnce({ forwardedXcms: forwardedXcms2, destParaId: 2000 })
+      .mockReturnValueOnce({ forwardedXcms: forwardedXcms3, destParaId: 3000 })
+      .mockReturnValueOnce({ forwardedXcms: [[], []], destParaId: undefined })
 
     const result = await traverseXcmHops(config)
 
@@ -150,11 +146,9 @@ describe('traverseXcmHops', () => {
       lastProcessedChain: 'AssetHubPolkadot'
     })
 
-    expect(mockProcessHop).toHaveBeenCalledTimes(3)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(mockProcessHop.mock.calls[1][0].hasPassedExchange).toBe(false)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(mockProcessHop.mock.calls[2][0].hasPassedExchange).toBe(true)
+    expect(processHopSpy).toHaveBeenCalledTimes(3)
+    expect(processHopSpy.mock.calls[1][0].hasPassedExchange).toBe(false)
+    expect(processHopSpy.mock.calls[2][0].hasPassedExchange).toBe(true)
   })
 
   it('should throw error when getTChain returns null', async () => {
@@ -163,15 +157,13 @@ describe('traverseXcmHops', () => {
     vi.mocked(getTChain).mockReturnValue(null)
 
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
-      initialDestParaId: 1000,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      initialDestParaId: 1000
     }
 
     await expect(traverseXcmHops(config)).rejects.toThrow(
@@ -182,40 +174,41 @@ describe('traverseXcmHops', () => {
   it('should stop processing when shouldContinue returns false', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
-    mockProcessHop.mockResolvedValue({ fee: 1000n })
-    mockShouldContinue.mockReturnValue(false)
-
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'Acala' as TChain,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
-      initialDestParaId: 1000,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      initialDestParaId: 1000
     }
+
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+
+    vi.spyOn(config, 'processHop').mockResolvedValue({ fee: 1000n })
+    vi.spyOn(config, 'shouldContinue').mockReturnValue(false)
+
+    const extractSpy = vi.spyOn(config, 'extractNextHopData')
 
     const result = await traverseXcmHops(config)
 
     expect(result.hops).toHaveLength(1)
-    expect(mockExtractNextHopData).not.toHaveBeenCalled()
+    expect(extractSpy).not.toHaveBeenCalled()
   })
 
   it('should handle empty forwardedXcms', async () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       currency: { id: 'DOT' },
       initialForwardedXcms: [[], []],
-      initialDestParaId: 1000,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      initialDestParaId: 1000
     }
+
+    const processHopSpy = vi.spyOn(config, 'processHop')
 
     const result = await traverseXcmHops(config)
 
@@ -223,26 +216,24 @@ describe('traverseXcmHops', () => {
       hops: [],
       lastProcessedChain: 'Polkadot'
     })
-    expect(mockProcessHop).not.toHaveBeenCalled()
+    expect(processHopSpy).not.toHaveBeenCalled()
   })
 
   it('should always disconnect api after processing', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
-    mockProcessHop.mockRejectedValue(new Error('Processing failed'))
-
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
+      ...baseConfig,
       api: mockApi,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
-      initialDestParaId: 1000,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
+      initialDestParaId: 1000
     }
+
+    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+    vi.spyOn(config, 'processHop').mockRejectedValue(new Error('Processing failed'))
 
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 

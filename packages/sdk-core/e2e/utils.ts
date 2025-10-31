@@ -11,7 +11,6 @@ const supportsOnlyNativeAsset: TChain[] = [
   'Nodle',
   'Pendulum',
   'Phala',
-  'Subsocial',
   'Ajuna',
   'AjunaPaseo',
   'IntegriteeKusama',
@@ -56,19 +55,6 @@ export const generateTransferScenarios = (originChain: TChain) => {
     for (const asset of allAssets) {
       if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
       if (isAssetIdRequired && !isForeignAsset(asset)) continue
-
-      // Special case: Sending assets to Polimec is supported only from AssetHubPolkadot
-      if (destChain === 'Polimec' && originChain !== 'AssetHubPolkadot') {
-        continue
-      }
-
-      if (
-        originChain === 'Polimec' &&
-        destChain === 'AssetHubPolkadot' &&
-        asset.symbol === 'PLMC'
-      ) {
-        continue
-      }
 
       const notCompatible =
         ['DOT', 'KSM'].includes(asset.symbol) &&

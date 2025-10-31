@@ -114,7 +114,6 @@ describe('XCM API (e2e)', () => {
     const unknownSymbol = 'UnknownSymbol';
 
     CHAINS.forEach((chain) => {
-      if (chain === 'Polimec') return;
       const assetsObjectUrl = `/assets/${chain}`;
       it(`Get assets object - ${assetsObjectUrl} (GET)`, () => {
         const assetsObject = getAssetsObject(chain);
@@ -403,6 +402,7 @@ describe('XCM API (e2e)', () => {
         .to(to)
         .currency(currency)
         .address(address)
+        .senderAddress(address)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
@@ -410,6 +410,7 @@ describe('XCM API (e2e)', () => {
           from,
           to,
           address,
+          senderAddress: address,
           currency,
         })
         .expect(201)
@@ -832,7 +833,7 @@ describe('XCM API (e2e)', () => {
 
       const currency = {
         symbol: 'DOT',
-        amount: '1000',
+        amount: '10000000000',
       };
 
       const builder = Builder()
@@ -840,6 +841,7 @@ describe('XCM API (e2e)', () => {
         .to('Polkadot')
         .currency(currency)
         .address(address)
+        .senderAddress(address)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -853,6 +855,7 @@ describe('XCM API (e2e)', () => {
               to: 'Polkadot',
               currency,
               address,
+              senderAddress: address,
             },
           ],
           options: {
@@ -953,7 +956,7 @@ describe('XCM API (e2e)', () => {
 
     it(`Generate XCM call - Parachain to parachain custom xcm execute call - ${xTransferUrl}`, async () => {
       const from: TChain = 'AssetHubPolkadot';
-      const to: TChain = 'Polimec';
+      const to: TChain = 'Hydration';
       const currency: TCurrencyInputWithAmount = {
         symbol: 'USDC',
         amount: '1000000000',
@@ -1128,7 +1131,7 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post('/dry-run')
         .send({
-          from: 'Acala',
+          from: 'Interlay',
           to: 'Astar',
           currency: {
             symbol: 'ACA',

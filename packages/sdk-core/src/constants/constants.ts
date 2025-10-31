@@ -28,7 +28,6 @@ export const RELAY_LOCATION: TLocation = {
 export const CHAINS_DOT_RESERVE_AH = new Set<TChain>([
   'Acala',
   'Karura',
-  'Polimec',
   'Moonbeam',
   'Hydration',
   'HydrationPaseo',

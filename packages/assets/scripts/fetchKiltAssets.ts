@@ -5,7 +5,7 @@ import type { TForeignAssetInfo } from '../src/types'
 import { capitalizeLocation } from './utils'
 import { TLocation } from '@paraspell/sdk-common'
 
-export const fetchPolimecForeignAssets = async (
+export const fetchKiltForeignAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAssetInfo[]> => {

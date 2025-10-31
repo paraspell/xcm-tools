@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
-import type Xode from './Subsocial'
+import type Xode from './Xode'
 
 vi.mock('../../pallets/polkadotXcm')
 

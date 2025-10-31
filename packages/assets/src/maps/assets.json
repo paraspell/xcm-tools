@@ -91,90 +91,6 @@
     ],
     "otherAssets": []
   },
-  "Polimec": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "PLMC",
-    "isEVM": false,
-    "ss58Prefix": 41,
-    "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": true,
-    "nativeAssets": [
-      {
-        "symbol": "PLMC",
-        "isNative": true,
-        "decimals": 10,
-        "existentialDeposit": "100000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3344
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "otherAssets": [
-      {
-        "symbol": "USDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1337
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "70000",
-        "isFeeAsset": true
-      },
-      {
-        "symbol": "USDt",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "70000",
-        "isFeeAsset": true
-      },
-      {
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "100000000",
-        "isFeeAsset": true
-      }
-    ]
-  },
   "Acala": {
     "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "ACA",
@@ -2793,33 +2709,6 @@
         "existentialDeposit": "0"
       }
     ]
-  },
-  "Subsocial": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "SUB",
-    "isEVM": false,
-    "ss58Prefix": 28,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "nativeAssets": [
-      {
-        "symbol": "SUB",
-        "isNative": true,
-        "decimals": 10,
-        "existentialDeposit": "100000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2101
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "otherAssets": []
   },
   "Xode": {
     "relaychainSymbol": "DOT",

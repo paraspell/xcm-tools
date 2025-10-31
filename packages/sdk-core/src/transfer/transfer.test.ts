@@ -55,7 +55,7 @@ describe('send', () => {
   let originChainMock: AssetHubPolkadot<unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
 
     apiMock = {
       init: vi.fn().mockResolvedValue(undefined),

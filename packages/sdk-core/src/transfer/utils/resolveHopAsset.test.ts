@@ -4,7 +4,7 @@ import {
   findAssetOnDestOrThrow,
   findNativeAssetInfoOrThrow
 } from '@paraspell/assets'
-import { isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
+import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -18,7 +18,6 @@ vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')
   return {
     ...actual,
-    isSubstrateBridge: vi.fn(),
     isTLocation: vi.fn()
   }
 })
@@ -43,7 +42,6 @@ describe('resolveHopAsset', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.spyOn(mockApi, 'getTypeThenAssetCount').mockReturnValue(1)
-    vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
   })
@@ -59,20 +57,6 @@ describe('resolveHopAsset', () => {
 
     expect(getRelayChainOf).toHaveBeenCalledWith(baseParams.currentChain)
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Kusama')
-    expect(result).toBe(relayAsset)
-  })
-
-  it('returns the relay native asset when hop is over a substrate bridge', () => {
-    vi.mocked(isSubstrateBridge).mockReturnValue(true)
-    const relayAsset = { symbol: 'DOT' } as TAssetInfo
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(relayAsset)
-
-    const asset = { symbol: 'USDT' } as TAssetInfo
-
-    const result = resolveHopAsset({ ...baseParams, asset, destination: 'Hydration' })
-
-    expect(isSubstrateBridge).toHaveBeenCalledWith(baseParams.originChain, 'Hydration')
     expect(result).toBe(relayAsset)
   })
 

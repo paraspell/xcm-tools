@@ -9,10 +9,14 @@ vi.mock('nodemailer');
 vi.mock('googleapis', () => ({
   google: {
     auth: {
-      OAuth2: vi.fn().mockImplementation(() => ({
-        setCredentials: vi.fn(),
-        getAccessToken: vi.fn().mockResolvedValue({ token: 'mockAccessToken' }),
-      })),
+      OAuth2: vi.fn(
+        class {
+          setCredentials = vi.fn();
+          getAccessToken = vi
+            .fn()
+            .mockResolvedValue({ token: 'mockAccessToken' });
+        },
+      ),
     },
   },
 }));

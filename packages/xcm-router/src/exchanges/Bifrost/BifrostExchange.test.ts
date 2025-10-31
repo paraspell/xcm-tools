@@ -31,18 +31,28 @@ vi.mock('@crypto-dex-sdk/currency', () => ({
       toFixed: () => rawAmount,
     })),
   },
-  Token: vi.fn().mockImplementation((props: { decimals: number; symbol: string }) => ({
-    decimals: props.decimals,
-    symbol: props.symbol,
-  })),
+  Token: vi.fn(
+    class Token {
+      symbol: string;
+      decimals: number;
+      constructor(token: { decimals: number; symbol: string }) {
+        this.symbol = token.symbol;
+        this.decimals = token.decimals;
+      }
+    },
+  ),
   getCurrencyCombinations: vi.fn(),
 }));
 
 vi.mock('@crypto-dex-sdk/math', () => ({
-  Percent: vi.fn().mockImplementation((numerator: number, denominator: number) => ({
-    numerator,
-    denominator,
-  })),
+  Percent: vi.fn(
+    class {
+      constructor(
+        public numerator: number,
+        public denominator: number,
+      ) {}
+    },
+  ),
 }));
 
 vi.mock('../../Logger/Logger');
@@ -79,9 +89,7 @@ describe('BifrostExchange', () => {
         BNC: { wrapped: { symbol: 'BNC', decimals: 12 } } as Token,
         KSM: { wrapped: { symbol: 'KSM', decimals: 12 } } as Token,
       });
-      vi.mocked(findToken).mockImplementation((tokenMap, symbol) => {
-        return tokenMap[symbol];
-      });
+      vi.mocked(findToken).mockImplementation((tokenMap, symbol) => tokenMap[symbol]);
       vi.mocked(getFilteredPairs).mockResolvedValue([]);
       vi.mocked(getBestTrade).mockReturnValue({
         descriptions: [{ fee: 0.5 }],

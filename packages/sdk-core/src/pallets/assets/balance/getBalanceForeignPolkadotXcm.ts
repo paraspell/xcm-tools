@@ -3,7 +3,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { hasJunction } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { assertHasId, assertHasLocation, assertIsForeign } from '../../../utils'
+import { assertHasId, assertIsForeign } from '../../../utils'
 import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
@@ -22,12 +22,6 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   }
 
   assertIsForeign(asset)
-
-  if (chain === 'Polimec') {
-    assertHasLocation(asset)
-
-    return api.getBalanceForeignAssetsPallet(address, asset.location)
-  }
 
   if (chain.startsWith('AssetHub')) {
     const ASSETS_PALLET_ID = 50

@@ -97,7 +97,7 @@ describe('getBalanceForeign', () => {
     vi.mocked(getBalanceForeignPolkadotXcm).mockResolvedValue(2000n)
     const result = await getBalanceForeign({
       address: 'address',
-      chain: 'Subsocial',
+      chain: 'AssetHubPolkadot',
       currency: { symbol: 'DOT' },
       api: mockApi
     })
