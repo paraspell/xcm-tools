@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.8](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.7...assets-v11.12.8) (2025-10-31)
+
+
+### Bug Fixes
+
+* **assets:** Remove fake dot & ksm assets 🔧 ([70f81ad](https://github.com/paraspell/xcm-tools/commit/70f81ade73b7f256f345f745909b20213932530f))
+
 ## [11.12.7](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.6...assets-v11.12.7) (2025-10-30)
 
 
