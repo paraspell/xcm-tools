@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.8...sdk-core-v11.12.9) (2025-10-31)
+
+
+### Build System
+
+* Perform a monthly maintenance check ⚙️ ([65d72b0](https://github.com/paraspell/xcm-tools/commit/65d72b032251ba023ff5340fce8d737bb884968a))
+
 ## [11.12.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.7...sdk-core-v11.12.8) (2025-10-31)
 
 
