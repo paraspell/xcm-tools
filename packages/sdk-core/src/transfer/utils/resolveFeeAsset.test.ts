@@ -4,20 +4,14 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { InvalidParameterError } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfo: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('@paraspell/sdk-common')
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isTLocation: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  throwUnsupportedCurrency: vi.fn()
-}))
+vi.mock('../../pallets/xcmPallet/utils')
 
 describe('resolveFeeAsset', () => {
   beforeEach(() => {
@@ -31,7 +25,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = 'Astar'
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
@@ -46,7 +40,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = {} as TLocation
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
@@ -60,7 +54,7 @@ describe('resolveFeeAsset', () => {
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAssetInfo
-    const origin = 'Acala'
+    const origin = 'Hydration'
     const destination = 'Astar'
 
     vi.mocked(throwUnsupportedCurrency).mockImplementation(() => {
@@ -72,5 +66,16 @@ describe('resolveFeeAsset', () => {
     )
     expect(findAssetInfo).toHaveBeenCalledWith(origin, feeAsset, destination)
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(feeAsset, origin)
+  })
+
+  it('throws InvalidParameterError when origin does not support fee assets', () => {
+    const origin = 'Moonbeam'
+    const feeCurrency = {} as TCurrencyInput
+    const feeAsset = {} as TCurrencyInput
+
+    expect(() => resolveFeeAsset(feeAsset, origin, 'Hydration', feeCurrency)).toThrow(
+      new InvalidParameterError(`Fee asset is not supported on ${origin}`)
+    )
+    expect(findAssetInfo).not.toHaveBeenCalled()
   })
 })

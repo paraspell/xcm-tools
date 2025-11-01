@@ -46,7 +46,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   destination: TDestination
   /**
-   * The address to dry-run with
+   * The address to dry-run with (senderAddress)
    */
   address: string
   /**

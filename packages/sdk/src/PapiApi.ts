@@ -28,6 +28,7 @@ import {
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRun,
+  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChain,
@@ -498,6 +499,25 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return api
   }
 
+  resolveDefaultUsedAsset({ chain, feeAsset }: TDryRunCallBaseOptions<TPapiTransaction>) {
+    return feeAsset ?? findNativeAssetInfoOrThrow(chain)
+  }
+
+  async resolveUsedAsset(options: TDryRunCallBaseOptions<TPapiTransaction>) {
+    const { chain, address } = options
+    if (!chain.startsWith('Hydration'))
+      return { isCustomAsset: false, asset: this.resolveDefaultUsedAsset(options) }
+
+    const assetId = await this.api
+      .getUnsafeApi()
+      .query.MultiTransactionPayment.AccountCurrencyMap.getValue(address)
+
+    if (assetId === undefined)
+      return { isCustomAsset: false, asset: findNativeAssetInfoOrThrow(chain) }
+
+    return { isCustomAsset: true, asset: findAssetInfoOrThrow(chain, { id: assetId }, null) }
+  }
+
   async getDryRunCall(
     options: TDryRunCallBaseOptions<TPapiTransaction>
   ): Promise<TDryRunChainResult> {
@@ -602,8 +622,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
-    const usedSymbol = usedAsset.symbol
+    const resolvedUsed = await this.resolveUsedAsset(options)
+    let usedAsset = resolvedUsed.asset
+    let usedSymbol = usedAsset.symbol
 
     if (!isSuccess) {
       return Promise.resolve({
@@ -630,21 +651,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const nativeAsset = findNativeAssetInfoOrThrow(chain)
-
-    const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
+    const hasLocation = usedAsset?.location
 
     if (
-      hasXcmPaymentApiSupport(chain) &&
-      result.value.local_xcm &&
-      hasLocation &&
-      (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))
+      (hasXcmPaymentApiSupport(chain) &&
+        result.value.local_xcm &&
+        hasLocation &&
+        (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
+      resolvedUsed.isCustomAsset
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,
         forwardedXcms,
-        feeAsset ?? nativeAsset
+        usedAsset
       )
 
       if (typeof xcmFee === 'bigint') {
@@ -657,6 +677,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           forwardedXcms,
           destParaId
         })
+      } else {
+        usedAsset = this.resolveDefaultUsedAsset(options)
+        usedSymbol = usedAsset.symbol
       }
     }
 
