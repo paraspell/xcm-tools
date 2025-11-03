@@ -16,12 +16,17 @@ export class AssetsPallet extends BaseAssetsPallet {
 
     const { assetId, amount } = asset
 
-    const id =
-      chain === 'Astar' || chain === 'Shiden' || chain === 'Moonbeam'
-        ? BigInt(assetId)
-        : Number(assetId)
+    const bigintIdChains = ['Astar', 'Shiden', 'Moonbeam', 'NeuroWeb']
+    const notUseAddressIdChains = ['NeuroWeb']
 
-    const addr = isChainEvm(chain) ? address : { Id: address }
+    const useBigInt = bigintIdChains.some(prefix => chain.startsWith(prefix))
+
+    const id = useBigInt ? BigInt(assetId) : Number(assetId)
+
+    const notUseId =
+      notUseAddressIdChains.some(prefix => chain.startsWith(prefix)) || isChainEvm(chain)
+
+    const addr = notUseId ? address : { Id: address }
 
     return Promise.resolve({
       assetStatusTx: {

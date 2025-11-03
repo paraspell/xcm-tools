@@ -355,7 +355,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const res = await this.api
       .getUnsafeApi()
       .query.Assets.Account.getValue(
-        chain === 'NeuroWeb' ? BigInt(asset.assetId) : asset.assetId,
+        chain.startsWith('NeuroWeb') ? BigInt(asset.assetId) : asset.assetId,
         address
       )
 

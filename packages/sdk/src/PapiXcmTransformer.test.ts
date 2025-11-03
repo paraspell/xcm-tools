@@ -1,9 +1,11 @@
-import { Binary } from 'polkadot-api'
-import { describe, expect, it, vi } from 'vitest'
+import type { SS58AddressInfo } from 'polkadot-api'
+import { Binary, getSs58AddressInfo } from 'polkadot-api'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { checkAndConvertToNumberOrBigInt, transform } from './PapiXcmTransformer'
 
 vi.mock('polkadot-api', () => ({
+  getSs58AddressInfo: vi.fn(),
   FixedSizeBinary: {
     fromHex: vi.fn((hex: string) => `FixedSizeBinary(${hex})`)
   },
@@ -47,6 +49,11 @@ describe('checkAndConvertToNumberOrBigInt', () => {
 })
 
 describe('transform', () => {
+  beforeEach(() => {
+    vi.resetAllMocks()
+    vi.mocked(getSs58AddressInfo).mockReturnValue({ isValid: false })
+  })
+
   it('should return primitive values as is', () => {
     expect(transform(123)).toBe(123)
     expect(transform('test')).toBe('test')
@@ -96,6 +103,8 @@ describe('transform', () => {
   })
 
   it('should not transform dest and target keys', () => {
+    vi.mocked(getSs58AddressInfo).mockReturnValue({ isValid: true } as SS58AddressInfo)
+
     const input = {
       dest: '0x1234abcd',
       target: '0xdeadbeef'
