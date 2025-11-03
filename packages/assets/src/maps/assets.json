@@ -15535,6 +15535,32 @@
         }
       },
       {
+        "symbol": "PAXG",
+        "assetId": "0x45804880de22913dafe09f4980848ece6ecbaf78",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "sUSDS",
         "assetId": "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd",
         "decimals": 18,
@@ -15554,6 +15580,32 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "ENA",
+        "assetId": "0x57e114b691db790c35207b2e685d4a43181e6061",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x57e114b691db790c35207b2e685d4a43181e6061"
                 }
               }
             ]
@@ -20276,8 +20328,8 @@
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
     "ss58Prefix": 101,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "NEURO",
