@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.10](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.9...sdk-v11.12.10) (2025-11-03)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix NeuroWebPaseo minting & Update getXcmFee retry logic 🔧 ([fd0b0b8](https://github.com/paraspell/xcm-tools/commit/fd0b0b8437331568eeb35f6747f24d8f2187e3ce))
+
 ## [11.12.9](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.8...sdk-v11.12.9) (2025-10-31)
 
 
