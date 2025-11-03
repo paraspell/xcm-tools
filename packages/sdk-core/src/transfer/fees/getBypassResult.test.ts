@@ -13,6 +13,16 @@ describe('getBypassResultWithRetries', () => {
     expect(buildTx).not.toHaveBeenCalled()
   })
 
+  it('uses the first bump step on the initial retry', async () => {
+    const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
+    const internalFn = vi
+      .fn()
+      .mockResolvedValueOnce({ dryRunError: 'retry-needed' })
+      .mockResolvedValueOnce({})
+    await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined)
+  })
+
   it('retries with increasing amounts until success', async () => {
     const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
     const internalFn = vi
@@ -22,7 +32,7 @@ describe('getBypassResultWithRetries', () => {
       .mockResolvedValueOnce({})
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(res).toEqual({})
-    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['100', '200', '300'])
+    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['1', '200', '300'])
   })
 
   it('on FailedToTransactAsset, runs reduced-amount flow (relative=false)', async () => {
@@ -53,7 +63,7 @@ describe('getBypassResultWithRetries', () => {
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(res).toEqual({})
     expect(buildTx).toHaveBeenCalledTimes(3)
-    expect(buildTx).toHaveBeenNthCalledWith(1, '100', undefined)
+    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined)
     expect(buildTx).toHaveBeenNthCalledWith(2, '0.2', false)
     expect(buildTx).toHaveBeenNthCalledWith(3, '0.04', false)
   })
@@ -87,7 +97,7 @@ describe('getBypassResultWithRetries', () => {
     await expect(
       getBypassResultWithRetries({ buildTx }, internalFn, undefined, 2, 50)
     ).rejects.toBeInstanceOf(AmountTooLowError)
-    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['50', '100'])
+    expect(buildTx.mock.calls.map(c => c[0])).toEqual(['1', '100'])
   })
 
   it('ignores AmountTooLowError from initialTx and continues', async () => {
@@ -98,6 +108,6 @@ describe('getBypassResultWithRetries', () => {
       .mockResolvedValueOnce({})
     const res = await getBypassResultWithRetries({ buildTx }, internalFn, {} as unknown)
     expect(res).toEqual({})
-    expect(buildTx).toHaveBeenCalledWith('100', undefined)
+    expect(buildTx).toHaveBeenCalledWith('1', undefined)
   })
 })

@@ -362,8 +362,7 @@ const XcmUtilsForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress =
-    (isChainEvm(from) && isChainEvm(to)) || isChainEvm(from);
+  const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
 
   if (!isVisible) {
     return null;

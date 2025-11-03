@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InvalidParameterError } from '@paraspell/sdk-core'
-import { Binary, FixedSizeBinary } from 'polkadot-api'
+import { Binary, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { isAddress } from 'viem'
 
 export const checkAndConvertToNumberOrBigInt = (input: string) => {
@@ -171,7 +171,7 @@ export const transform = (obj: any): any => {
           continue
         }
 
-        if ((k === 'dest' || k === 'who' || k === 'target') && typeof v === 'string') {
+        if (typeof v === 'string' && getSs58AddressInfo(v).isValid) {
           newObj[k] = v
           continue
         }

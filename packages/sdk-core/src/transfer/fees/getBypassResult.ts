@@ -3,6 +3,7 @@ import type { TTxFactory } from '../../types'
 
 const MAX_INCREASE_RETRIES = 5
 const INCREASE_BUMP_STEP = 100
+const FIRST_INCREASE_BUMP_STEP = 1
 
 const DECREASE_START_AMOUNT = 1
 const MAX_DECREASE_RETRIES = 5
@@ -75,7 +76,7 @@ export const getBypassResultWithRetries = async <
   }
 
   for (let i = 1; i <= maxRetries; i++) {
-    const amount = bumpStep * i
+    const amount = i === 1 ? FIRST_INCREASE_BUMP_STEP : bumpStep * i
 
     try {
       const res = await attempt(amount.toString())
