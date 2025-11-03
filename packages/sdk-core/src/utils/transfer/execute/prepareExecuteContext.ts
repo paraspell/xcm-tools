@@ -4,8 +4,8 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
+import { getAssetReserveChain } from '../../chain'
 import { localizeLocation } from '../../location'
-import { getAssetReserveChain } from './getAssetReserveChain'
 
 export type TExecuteContext = {
   amount: bigint

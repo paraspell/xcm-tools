@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../errors'
-import { dryRunInternal, getXcmFeeInternal } from '../../transfer'
+import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
 import type { TDryRunResult, TGetXcmFeeResult, TPolkadotXCMTransferOptions } from '../../types'
 import { padValueBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
@@ -40,7 +40,7 @@ describe('handleToAhTeleport', () => {
 
     expect(result).toBe(defaultTx)
     expect(dryRunInternal).toHaveBeenCalled()
-    expect(getXcmFeeInternal).not.toHaveBeenCalled()
+    expect(getXcmFeeOnce).not.toHaveBeenCalled()
   })
 
   it('returns executeTx if dry run fails', async () => {
@@ -51,7 +51,7 @@ describe('handleToAhTeleport', () => {
       destination: { success: false }
     } as TDryRunResult)
     vi.mocked(createExecuteExchangeXcm).mockReturnValueOnce(dummyTx).mockReturnValueOnce(finalTx)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFeeOnce).mockResolvedValue({
       origin: { fee: 100n, weight: {} },
       destination: { feeType: 'paymentInfo', fee: 50n }
     } as TGetXcmFeeResult)
@@ -60,7 +60,7 @@ describe('handleToAhTeleport', () => {
 
     expect(result).toBe(finalTx)
     expect(createExecuteExchangeXcm).toHaveBeenCalledTimes(2)
-    expect(getXcmFeeInternal).toHaveBeenCalled()
+    expect(getXcmFeeOnce).toHaveBeenCalled()
   })
 
   it('throws error if destination is a location', async () => {
@@ -93,7 +93,7 @@ describe('handleToAhTeleport', () => {
       destination: { success: false }
     } as TDryRunResult)
     vi.mocked(createExecuteExchangeXcm).mockReturnValueOnce(dummyTx).mockReturnValueOnce(finalTx)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+    vi.mocked(getXcmFeeOnce).mockResolvedValue({
       origin: { fee: 200n, weight: {} },
       destination: { feeType: 'dryRun', fee: 100n }
     } as TGetXcmFeeResult)

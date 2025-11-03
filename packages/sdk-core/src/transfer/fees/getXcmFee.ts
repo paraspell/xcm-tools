@@ -1,17 +1,17 @@
 import { AmountTooLowError } from '../../errors'
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
-import { getXcmFeeInternal } from './getXcmFeeInternal'
+import { getXcmFeeOnce } from './getXcmFeeOnce'
 
-export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
+export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boolean>(
   options: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
-  const { buildTx, api } = options
+  const { buildTx } = options
 
   try {
     const tx = await buildTx()
-    const real = await getXcmFeeInternal({ ...options, tx, useRootOrigin: false })
-    const forced = await getBypassResultWithRetries(options, getXcmFeeInternal, tx)
+    const real = await getXcmFeeOnce({ ...options, tx, useRootOrigin: false })
+    const forced = await getBypassResultWithRetries(options, getXcmFeeOnce, tx)
 
     return {
       ...forced,
@@ -31,7 +31,7 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
   } catch (e: unknown) {
     if (!(e instanceof AmountTooLowError)) throw e
 
-    const forced = await getBypassResultWithRetries(options, getXcmFeeInternal)
+    const forced = await getBypassResultWithRetries(options, getXcmFeeOnce)
 
     return {
       ...forced,
@@ -44,6 +44,15 @@ export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
         result: { ...hop.result, sufficient: false }
       }))
     }
+  }
+}
+
+export const getXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
+  options: TGetXcmFeeOptions<TApi, TRes, TDisableFallback>
+): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+  const { api } = options
+  try {
+    return await getXcmFeeInternal(options)
   } finally {
     await api.disconnect()
   }

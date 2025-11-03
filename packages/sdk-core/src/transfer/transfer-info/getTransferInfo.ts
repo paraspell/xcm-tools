@@ -12,7 +12,7 @@ import { InvalidParameterError } from '../../errors'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals, getRelayChainOf } from '../../utils'
-import { getXcmFee } from '../fees'
+import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -73,7 +73,7 @@ export const getTransferInfo = async <TApi, TRes>({
       bridgeHub: bridgeHubFeeResult,
       destination: destFeeDetail,
       hops
-    } = await getXcmFee({
+    } = await getXcmFeeInternal({
       api,
       buildTx,
       origin,

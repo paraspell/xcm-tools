@@ -73,7 +73,7 @@ const getFailureInfo = (
   return {}
 }
 
-export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boolean>({
+export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean>({
   api,
   tx,
   origin,
@@ -84,7 +84,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   feeAsset,
   disableFallback,
   swapConfig,
-  useRootOrigin
+  useRootOrigin,
+  skipReverseFeeCalculation
 }: TGetXcmFeeInternalOptions<TApi, TRes, TDisableFallback>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
@@ -94,7 +95,6 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
 
   const {
     fee: originFeeRaw,
-    currency: originCurrency,
     asset: originAsset,
     feeType: originFeeType,
     dryRunError: originDryRunError,
@@ -144,7 +144,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
         originFee: originFee ?? 0n,
         senderAddress,
         disableFallback,
-        swapConfig
+        swapConfig,
+        skipReverseFeeCalculation
       })
 
       const result = {
@@ -152,7 +153,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
           sufficient: sufficientOriginFee,
-          currency: originCurrency,
+          currency: originAsset.symbol,
           asset: originAsset,
           ...(originDryRunError && { dryRunError: originDryRunError }),
           ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
@@ -226,7 +227,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       originFee: originFee ?? 0n,
       disableFallback,
       hasPassedExchange,
-      swapConfig
+      swapConfig,
+      skipReverseFeeCalculation
     })
 
     return hopResult
@@ -292,7 +294,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       originFee: originFee ?? 0n,
       senderAddress,
       disableFallback,
-      swapConfig
+      swapConfig,
+      skipReverseFeeCalculation
     })
 
     destFee = destFallback.fee
@@ -348,7 +351,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(originFee && { fee: originFee }),
       ...(originFeeType && { feeType: originFeeType }),
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
-      currency: originCurrency,
+      currency: originAsset.symbol,
       asset: originAsset,
       ...(originDryRunError && { dryRunError: originDryRunError }),
       ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })

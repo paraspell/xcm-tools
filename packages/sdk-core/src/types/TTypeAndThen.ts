@@ -14,12 +14,12 @@ export type TTypeAndThenCallContext<TApi, TRes> = {
   dest: TChainWithApi<TApi, TRes>
   reserve: TChainWithApi<TApi, TRes, TSubstrateChain>
   isSubBridge: boolean
+  isRelayAsset: boolean
   assetInfo: WithAmount<TAssetWithLocation>
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 }
 
 export type TTypeAndThenFees = {
-  reserveFee: bigint
-  refundFee: bigint
+  hopFees: bigint
   destFee: bigint
 }

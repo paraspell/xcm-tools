@@ -3,23 +3,18 @@ import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getTChain } from '../../../chains/getTChain'
-import { InvalidParameterError } from '../../../errors'
-import { getRelayChainOf } from '../..'
+import { getRelayChainOf, getTChain } from '../..'
+import { InvalidParameterError } from '../../errors'
 import { getAssetReserveChain } from './getAssetReserveChain'
 
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-common')
-  return {
-    ...actual,
-    hasJunction: vi.fn(),
-    getJunctionValue: vi.fn(),
-    deepEqual: vi.fn(),
-    Parents: { ONE: 1 }
-  }
-})
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  hasJunction: vi.fn(),
+  getJunctionValue: vi.fn(),
+  deepEqual: vi.fn(),
+  Parents: { ONE: 1 }
+}))
 
-vi.mock('../../../chains/getTChain')
 vi.mock('../..')
 
 describe('getAssetReserveChain', () => {

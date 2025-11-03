@@ -5,7 +5,8 @@ import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createAsset, localizeLocation } from '../../utils'
+import { addXcmVersionHeader, createAsset } from '../../utils'
+import { localizeLocation } from '../../utils/location'
 
 export const buildTypeAndThenCall = <TApi, TRes>(
   { origin, reserve, dest, assetInfo, options: { version } }: TTypeAndThenCallContext<TApi, TRes>,
