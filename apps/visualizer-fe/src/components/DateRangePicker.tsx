@@ -27,6 +27,7 @@ const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
       onChange={handleChange}
       flex={1}
       {...props}
+      miw={'85px'}
     />
   );
 };

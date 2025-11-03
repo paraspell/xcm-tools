@@ -28,7 +28,9 @@ const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
       data={[...getChainsByEcosystem(Ecosystem.POLKADOT), 'Polkadot']}
       onChange={onChangeInternal}
       searchable
+      clearable
       {...props}
+      miw={'85px'}
     />
   );
 };

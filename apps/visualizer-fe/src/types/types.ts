@@ -1,3 +1,5 @@
+import type { UseOSReturnValue } from '@mantine/hooks';
+
 import type { AssetCountsBySymbolQuery } from '../gql/graphql';
 
 export type ChartDataItem = {
@@ -42,4 +44,15 @@ export type LiveXcmMsg = {
   confirmTimestamp: number;
   from: number;
   to: number;
+};
+
+export enum DeviceType {
+  Mobile = 'mobile',
+  Tablet = 'tablet',
+  Desktop = 'desktop'
+}
+
+export type TDeviceInfo = {
+  device: DeviceType;
+  os: UseOSReturnValue;
 };

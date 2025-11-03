@@ -17,6 +17,7 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelQuery } from '../../gql/graphql';
 import type { Ecosystem } from '../../types';
@@ -32,6 +33,7 @@ type Props = {
 const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
   const { t } = useTranslation();
   const { dateRange, selectedEcosystem } = useSelectedParachain();
+  const { isMobile } = useDeviceType();
   const [startDate, endDate] = dateRange;
   const [value, setValue] = useState('from');
 
@@ -56,10 +58,11 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
     return `${baseUrl}${fromChain}${toChain}${start}${end}`;
   };
 
+  const padding = isMobile ? '75px' : 'xl';
   const explorerLink = generateExplorerLink();
 
   return (
-    <Box pos="absolute" top={0} left={0} p="xl">
+    <Box pos="absolute" top={0} left={0} p={padding}>
       <Alert
         title={t('main.network.channelInfo')}
         withCloseButton
