@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Vector3 } from 'three';
 
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
+import { useDeviceType } from './context/DeviceType/useDeviceType';
 import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
 import { Ecosystem } from './types/types';
 
-const CAMERA_POSITION = new Vector3(48, 10, 0);
 const RADIUS = 25;
 
 const getCirclePosition = (angle: number, radius: number): Vector3 => {
@@ -20,6 +20,7 @@ interface AngleMap {
 
 const MainScene = () => {
   const { selectedEcosystem, activeEditParachain } = useSelectedParachain();
+  const { isMobile } = useDeviceType();
 
   const targetAngles = useRef<AngleMap>({});
   const currentAngles = useRef<AngleMap>({});
@@ -58,6 +59,8 @@ const MainScene = () => {
       }
     });
   });
+
+  const CAMERA_POSITION = new Vector3(isMobile ? 58 : 48, 10, 0);
 
   const target = initialTargetRef.current || CAMERA_POSITION;
 

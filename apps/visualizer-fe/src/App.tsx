@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import LeftPanel from './components/LeftPanel';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import RightPanel from './components/RightPanel';
+import DeviceTypeProvider from './context/DeviceType/DeviceTypeContext';
 import LiveDataProvider from './context/LiveData/LiveDataContext';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 
@@ -32,20 +33,22 @@ export const client = new ApolloClient({
 const App = () => (
   <ApolloProvider client={client}>
     <BrowserRouter>
-      <SelectedParachainProvider>
-        <LiveDataProvider>
-          <MantineProvider forceColorScheme="light">
-            <Box pos="relative" h="100%">
-              <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
-              <Notifications />
-              <Flex h="100%">
-                <LeftPanel />
-                <RightPanel />
-              </Flex>
-            </Box>
-          </MantineProvider>
-        </LiveDataProvider>
-      </SelectedParachainProvider>
+      <DeviceTypeProvider>
+        <SelectedParachainProvider>
+          <LiveDataProvider>
+            <MantineProvider forceColorScheme="light">
+              <Box pos="relative" h="100%">
+                <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+                <Notifications />
+                <Flex h="100%" w="100%" pos="relative" style={{ overflow: 'hidden' }}>
+                  <LeftPanel />
+                  <RightPanel />
+                </Flex>
+              </Box>
+            </MantineProvider>
+          </LiveDataProvider>
+        </SelectedParachainProvider>
+      </DeviceTypeProvider>
     </BrowserRouter>
   </ApolloProvider>
 );

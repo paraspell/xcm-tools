@@ -3,6 +3,7 @@ import type { FC } from 'react';
 
 import { allChannelsQueryDocument } from '../../api/channels';
 import { totalMessageCountsQueryDocument } from '../../api/messages';
+import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
 import type { Ecosystem } from '../../types/types';
@@ -16,6 +17,8 @@ type Props = {
 
 const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
   const { dateRange, parachainArrangement } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedParachain();
+  const { isTouch } = useDeviceType();
 
   const [start, end] = dateRange;
 
@@ -33,7 +36,10 @@ const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
     }
   });
 
-  if (data && totalCountsQuery.data) {
+  // on touch devices, only show the selected ecosystem
+  const isVisible = !isTouch || ecosystem === selectedEcosystem;
+
+  if (data && totalCountsQuery.data && isVisible) {
     return (
       <ParachainsGraph
         channels={data.channels}
