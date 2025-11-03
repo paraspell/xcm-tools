@@ -1,10 +1,19 @@
-import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
+import {
+  findNativeAssetInfoOrThrow,
+  type TAssetWithLocation,
+  type WithAmount
+} from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
-import { deepEqual, isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import { createAsset, localizeLocation } from '../../utils'
+import type {
+  TPolkadotXCMTransferOptions,
+  TSerializedApiCall,
+  TTypeAndThenCallContext,
+  TTypeAndThenFees
+} from '../../types'
+import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -35,6 +44,60 @@ const buildAssets = (
   return assets
 }
 
+const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
+
+const resolveSystemAssetAmount = <TApi, TRes>(
+  { origin }: TTypeAndThenCallContext<TApi, TRes>,
+  isForFeeCalc: boolean,
+  fees: TTypeAndThenFees
+) => {
+  if (isForFeeCalc) {
+    const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(origin.chain))
+    return parseUnits(DEFAULT_SYSTEM_ASSET_AMOUNT, systemAsset.decimals)
+  }
+  return fees.destFee + fees.hopFees
+}
+
+export const constructTypeAndThenCall = <TApi, TRes>(
+  context: TTypeAndThenCallContext<TApi, TRes>,
+  fees: TTypeAndThenFees | null = null
+): TSerializedApiCall => {
+  const {
+    origin,
+    assetInfo,
+    isSubBridge,
+    isRelayAsset,
+    options: { senderAddress, version }
+  } = context
+
+  const assetCount = isRelayAsset ? 1 : 2
+
+  const refundInstruction = senderAddress
+    ? createRefundInstruction(origin.api, senderAddress, version, assetCount)
+    : null
+
+  const finalCustomXcm = []
+
+  if (refundInstruction && !isSubBridge) finalCustomXcm.push(refundInstruction)
+
+  const resolvedFees = fees ?? {
+    hopFees: 0n,
+    destFee: 0n
+  }
+
+  const isForFeeCalc = fees === null
+
+  const systemAssetAmount = resolveSystemAssetAmount(context, isForFeeCalc, resolvedFees)
+
+  finalCustomXcm.push(
+    ...createCustomXcm(context, assetCount, isForFeeCalc, systemAssetAmount, resolvedFees)
+  )
+
+  const assets = buildAssets(origin.chain, assetInfo, systemAssetAmount, isRelayAsset, version)
+
+  return buildTypeAndThenCall(context, isRelayAsset, finalCustomXcm, assets)
+}
+
 /**
  * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
  */
@@ -43,45 +106,29 @@ export const createTypeAndThenCall = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
   overrideReserve?: TSubstrateChain
 ): Promise<TSerializedApiCall> => {
-  const { api, senderAddress, version } = options
-
   const context = await createTypeAndThenCallContext(chain, options, overrideReserve)
 
-  const { assetInfo, isSubBridge } = context
+  const { origin, assetInfo } = context
 
-  const LOCATIONS = [
-    RELAY_LOCATION,
-    {
-      parents: 2,
-      interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
-    },
-    {
-      parents: 2,
-      interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
-    }
-  ]
+  const fees = await computeAllFees(context, (amount, relative) => {
+    const overridenAmount = amount
+      ? relative
+        ? assetInfo.amount + parseUnits(amount, assetInfo.decimals)
+        : parseUnits(amount, assetInfo.decimals)
+      : assetInfo.amount
 
-  const isRelayAsset = LOCATIONS.some(loc => deepEqual(assetInfo.location, loc))
+    return Promise.resolve(
+      origin.api.callTxMethod(
+        constructTypeAndThenCall({
+          ...context,
+          assetInfo: {
+            ...assetInfo,
+            amount: overridenAmount
+          }
+        })
+      )
+    )
+  })
 
-  const assetCount = isRelayAsset ? 1 : 2
-
-  const customXcm = createCustomXcm(context, isRelayAsset, assetCount, true)
-
-  const refundInstruction = senderAddress
-    ? createRefundInstruction(api, senderAddress, version, assetCount)
-    : null
-
-  const fees = await computeAllFees(context, customXcm, isRelayAsset, refundInstruction)
-
-  const finalCustomXcm = []
-
-  if (refundInstruction && !isSubBridge) finalCustomXcm.push(refundInstruction)
-
-  finalCustomXcm.push(...createCustomXcm(context, isRelayAsset, assetCount, false, fees))
-
-  const totalFee = fees.reserveFee + fees.destFee + fees.refundFee
-
-  const assets = buildAssets(chain, assetInfo, totalFee, isRelayAsset, version)
-
-  return buildTypeAndThenCall(context, isRelayAsset, finalCustomXcm, assets)
+  return constructTypeAndThenCall(context, fees)
 }

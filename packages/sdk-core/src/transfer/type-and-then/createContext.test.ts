@@ -23,6 +23,12 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 }))
 
 vi.mock('../../utils')
+vi.mock('../../constants', () => ({
+  RELAY_LOCATION: {
+    parents: 1,
+    interior: { Here: null }
+  }
+}))
 
 describe('getSubBridgeReserve', () => {
   const originChain: TSubstrateChain = 'BridgeHubPolkadot'
@@ -102,6 +108,7 @@ describe('createTypeAndThenCallContext', () => {
       dest: { api: mockClonedApi, chain: relayDestChain },
       reserve: { api: mockClonedApi, chain: relayDestChain },
       isSubBridge: false,
+      isRelayAsset: false,
       assetInfo: mockAsset,
       options
     })
@@ -119,6 +126,7 @@ describe('createTypeAndThenCallContext', () => {
       dest: { api: mockClonedApi, chain: mockDestChain },
       reserve: { api: mockClonedApi, chain: mockReserveChain },
       isSubBridge: false,
+      isRelayAsset: false,
       assetInfo: mockAsset,
       options: mockOptions
     })
@@ -146,18 +154,19 @@ describe('createTypeAndThenCallContext', () => {
     expect(result.reserve.chain).toBe(mockChain)
   })
 
-  it('should throw if asset has no location', async () => {
-    const invalidOptions = {
+  it('marks assets located on the relay as relay assets', async () => {
+    const relayAsset = {
+      ...mockAsset,
+      location: RELAY_LOCATION
+    } as TAssetWithLocation
+
+    const options = {
       ...mockOptions,
-      assetInfo: { amount: 1000n }
+      assetInfo: relayAsset
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    vi.mocked(assertHasLocation).mockImplementation(() => {
-      throw new Error('Asset has no location')
-    })
+    const result = await createTypeAndThenCallContext(mockChain, options)
 
-    await expect(createTypeAndThenCallContext(mockChain, invalidOptions)).rejects.toThrow(
-      'Asset has no location'
-    )
+    expect(result.isRelayAsset).toBe(true)
   })
 })

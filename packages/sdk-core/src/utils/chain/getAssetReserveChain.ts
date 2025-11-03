@@ -8,9 +8,8 @@ import {
   type TLocation
 } from '@paraspell/sdk-common'
 
-import { getTChain } from '../../../chains/getTChain'
-import { InvalidParameterError } from '../../../errors'
-import { getRelayChainOf } from '../..'
+import { getRelayChainOf, getTChain } from '../..'
+import { InvalidParameterError } from '../../errors'
 
 export const getAssetReserveChain = (
   chain: TSubstrateChain,

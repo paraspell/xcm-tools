@@ -155,7 +155,7 @@ describe('Manta', () => {
     })
 
     it('isReceivingTempDisabled should return true', () => {
-      expect(manta.isReceivingTempDisabled('ParaToPara' as never)).toBe(true)
+      expect(manta.isReceivingTempDisabled('ParaToPara')).toBe(true)
     })
   })
 })

@@ -4,7 +4,7 @@ import { isTLocation } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT } from '../../constants'
 import { InvalidParameterError } from '../../errors'
-import { dryRunInternal, getXcmFeeInternal } from '../../transfer'
+import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertSenderAddress, assertToIsString } from '../assertions'
 import { padValueBy } from '../fees/padFee'
@@ -50,7 +50,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
     asset.amount / 2n
   )
 
-  const feeResult = await getXcmFeeInternal({
+  const feeResult = await getXcmFeeOnce({
     api,
     tx: dummyTx,
     origin,

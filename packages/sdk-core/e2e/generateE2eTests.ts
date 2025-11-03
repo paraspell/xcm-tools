@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChainProviders,
   ChainNotSupportedError,
@@ -32,6 +32,14 @@ import {
   Native,
   TCurrencyCore
 } from '@paraspell/assets'
+
+beforeEach(ctx => {
+  console.log(`▶ Running test: ${ctx.task.name}`)
+})
+
+afterEach(ctx => {
+  console.log(`✅ Finished test: ${ctx.task.name}`)
+})
 
 const MOCK_AMOUNT = 1000000000000
 const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptions } from '../types';
+import type { TBuildTransactionsOptions, TRouterAsset } from '../types';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchange } from './selectBestExchange';
@@ -49,8 +49,8 @@ describe('selectBestExchange', () => {
       async (_options, _originApi, candidateFn) => {
         await candidateFn(
           dex,
-          baseOptions.currencyFrom as never,
-          baseOptions.currencyTo as never,
+          baseOptions.currencyFrom as TRouterAsset,
+          baseOptions.currencyTo as TRouterAsset,
           _options,
         );
 

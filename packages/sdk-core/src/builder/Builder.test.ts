@@ -851,8 +851,6 @@ describe('Builder', () => {
 
       const SENDER = 'sender-address'
 
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
       const result = await Builder(mockApi)
         .from(CHAIN)
         .to(CHAIN_2)
@@ -865,7 +863,6 @@ describe('Builder', () => {
       expect(getXcmFee).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should fetch origin XCM fee', async () => {

@@ -1,15 +1,25 @@
 import {
   deepEqual,
   isSubstrateBridge,
-  isTLocation,
   type TLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
-import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
-import { assertHasLocation, getAssetReserveChain } from '../../utils'
+import { assertHasLocation, assertToIsString, getAssetReserveChain } from '../../utils'
+
+const RELAY_ASSET_LOCATIONS = [
+  RELAY_LOCATION,
+  {
+    parents: 2,
+    interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+  },
+  {
+    parents: 2,
+    interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
+  }
+]
 
 export const getSubBridgeReserve = (
   chain: TSubstrateChain,
@@ -46,12 +56,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   const { api, destination, assetInfo } = options
 
   assertHasLocation(assetInfo)
-
-  if (isTLocation(destination)) {
-    throw new InvalidParameterError(
-      'Cannot override destination when using type and then transfer.'
-    )
-  }
+  assertToIsString(destination)
 
   const destinationChain = destination as TSubstrateChain
   const isSubBridge = isSubstrateBridge(chain, destinationChain)
@@ -63,6 +68,8 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     isSubBridge,
     overrideReserve
   )
+
+  const isRelayAsset = RELAY_ASSET_LOCATIONS.some(loc => deepEqual(assetInfo.location, loc))
 
   const destApi = api.clone()
   await destApi.init(destinationChain)
@@ -86,6 +93,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
       chain: reserveChain
     },
     isSubBridge,
+    isRelayAsset,
     assetInfo,
     options
   }
