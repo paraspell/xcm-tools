@@ -9,6 +9,7 @@ type Props = {
 export const Canvas3D: FC<Props> = ({ children }) => {
   return (
     <Canvas
+      resize={{ debounce: 0 }}
       gl={{
         antialias: true,
         alpha: true
