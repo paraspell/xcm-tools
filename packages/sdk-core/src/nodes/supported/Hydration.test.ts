@@ -8,7 +8,6 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -135,15 +134,26 @@ describe('Hydration', () => {
       vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
     })
 
-    it('should throw ScenarioNotSupportedError when Snowbridge is disabled', async () => {
-      const executeTransfer = () =>
-        hydration.transferPolkadotXCM({
-          ...mockInput,
-          senderAddress: '5Gw3s7q'
-        })
+    it('should call api.callTxMethod with correct parameters', async () => {
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
 
-      await expect(executeTransfer()).rejects.toThrow(ScenarioNotSupportedError)
-      await expect(executeTransfer()).rejects.toThrow('Snowbridge is temporarily disabled.')
+      vi.mocked(findAssetByMultiLocation).mockReturnValue({
+        assetId: '0x1234567890abcdef',
+        symbol: 'WETH',
+        decimals: 18
+      })
+
+      await hydration.transferPolkadotXCM({
+        ...mockInput,
+        senderAddress: '5Gw3s7q'
+      })
+
+      expect(spy).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalledWith({
+        module: 'PolkadotXcm',
+        method: 'transfer_assets_using_type_and_then',
+        parameters: expect.any(Object)
+      })
     })
 
     it('should create call for AssetHub destination DOT transfer using symbol', async () => {

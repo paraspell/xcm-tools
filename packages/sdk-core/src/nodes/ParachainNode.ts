@@ -294,11 +294,6 @@ abstract class ParachainNode<TApi, TRes> {
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version, pallet, method: methodOverride } = options
     const { method, includeFee } = this.getRelayToParaOverrides()
-
-    if (getRelayChainOf(this.node) === 'Polkadot') {
-      throw new InvalidParameterError(`Sending from Polkadot relaychain is temporarily disabled`)
-    }
-
     return {
       module: (pallet as TPallet) ?? 'XcmPallet',
       method: methodOverride ?? method,

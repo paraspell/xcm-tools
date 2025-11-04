@@ -5,7 +5,6 @@ import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type {
@@ -53,13 +52,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     const { api, destination, asset, scenario, version } = input
 
     if (destination === 'Ethereum') {
-      //Temporarily disabled
-      //return this.transferToEthereum(input)
-      throw new ScenarioNotSupportedError(
-        this.node,
-        scenario,
-        'Snowbridge is temporarily disabled.'
-      )
+      return this.transferToEthereum(input)
     }
 
     if (isSymbolMatch(asset.symbol, getRelayChainSymbol(this.node))) {

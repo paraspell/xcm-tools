@@ -17,10 +17,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
+import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { localizeLocation } from '../../utils/location'
@@ -662,24 +662,6 @@ describe('AssetHubPolkadot', () => {
           amount: BigInt(mockInput.asset.amount)
         }
       })
-    })
-  })
-
-  describe('temporary disable flags', () => {
-    const emptyOptions = {} as TSendInternalOptions<unknown, unknown>
-
-    it('should report sending and receiving as temporarily disabled', () => {
-      expect(assetHub.isSendingTempDisabled(emptyOptions)).toBe(true)
-      expect(assetHub.isReceivingTempDisabled('ParaToPara')).toBe(true)
-    })
-
-    it('should throw when attempting local transfer', () => {
-      const invokeTransferLocal = () => assetHub.transferLocal(emptyOptions)
-
-      expect(invokeTransferLocal).toThrow(InvalidParameterError)
-      expect(invokeTransferLocal).toThrow(
-        'Local transfers on AssetHubPolkadot are temporarily disabled.'
-      )
     })
   })
 })

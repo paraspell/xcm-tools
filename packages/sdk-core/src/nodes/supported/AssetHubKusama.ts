@@ -4,13 +4,9 @@ import type { TAsset } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { isSystemChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 
-import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type {
-  TRelayToParaOverrides,
-  TSendInternalOptions,
-  TTransferLocalOptions
-} from '../../types'
+import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -88,14 +84,6 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     return getNode<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
       options
     )
-  }
-
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return true
-  }
-
-  transferLocal(_options: TSendInternalOptions<TApi, TRes>): TRes {
-    throw new InvalidParameterError(`Local transfers on ${this.node} are temporarily disabled.`)
   }
 }
 

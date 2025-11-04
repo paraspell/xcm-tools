@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
@@ -18,6 +17,10 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 vi.mock('../../transfer', () => ({
   createTypeAndThenCall: vi.fn()
 }))
+
+type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
+  transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
+}
 
 describe('Moonbeam', () => {
   let node: Moonbeam<unknown, unknown>
@@ -136,17 +139,23 @@ describe('Moonbeam', () => {
     )
   })
 
-  it('should throw ScenarioNotSupportedError when destination is Ethereum', async () => {
+  it('should call transferToEthereum when destination is Ethereum', async () => {
+    const spyTransferToEth = vi
+      .spyOn(node as WithTransferToEthereum, 'transferToEthereum')
+      .mockResolvedValue({})
+
     const inputEth = {
       ...mockInput,
       destination: 'Ethereum',
       scenario: 'ParaToPara'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const executeTransfer = () => node.transferPolkadotXCM(inputEth)
+    await node.transferPolkadotXCM(inputEth)
 
-    await expect(executeTransfer()).rejects.toThrow(ScenarioNotSupportedError)
-    await expect(executeTransfer()).rejects.toThrow('Snowbridge is temporarily disabled.')
+    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
+    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
+
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {
