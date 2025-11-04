@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.10...sdk-core-v11.12.11) (2025-11-04)
+
+
+### Bug Fixes
+
+* Temporarily disable Polkadot system chains during migration ([c3175ad](https://github.com/paraspell/xcm-tools/commit/c3175adcd6718c3e15ffc0e8d729609b56c1b69f))
+
 ## [11.12.10](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.9...sdk-core-v11.12.10) (2025-11-03)
 
 
