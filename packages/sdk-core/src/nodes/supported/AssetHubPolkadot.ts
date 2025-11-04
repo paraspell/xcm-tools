@@ -38,6 +38,7 @@ import type {
   TDestination,
   TPolkadotXcmMethod,
   TRelayToParaOverrides,
+  TSendInternalOptions,
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
@@ -429,6 +430,18 @@ class AssetHubPolkadot<TApi, TRes>
         amount: asset.amount
       }
     })
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
+    return true
+  }
+
+  transferLocal(_options: TSendInternalOptions<TApi, TRes>): TRes {
+    throw new InvalidParameterError(`Local transfers on ${this.node} are temporarily disabled.`)
   }
 }
 

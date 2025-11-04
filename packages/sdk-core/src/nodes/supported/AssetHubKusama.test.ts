@@ -3,8 +3,12 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../constants'
-import { ScenarioNotSupportedError } from '../../errors'
-import { type TPolkadotXCMTransferOptions, type TScenario } from '../../types'
+import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import {
+  type TPolkadotXCMTransferOptions,
+  type TScenario,
+  type TSendInternalOptions
+} from '../../types'
 import { getNode } from '../../utils'
 import type AssetHubKusama from './AssetHubKusama'
 
@@ -67,6 +71,23 @@ describe('transferPolkadotXCM', () => {
       node.createCurrencySpec(amount, scenario, node.version, assetWithoutML)
 
       expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  describe('temporary disable flags', () => {
+    const emptyOptions = {} as TSendInternalOptions<unknown, unknown>
+
+    it('should mark sending as temporarily disabled', () => {
+      expect(node.isSendingTempDisabled(emptyOptions)).toBe(true)
+    })
+
+    it('should throw when attempting local transfers', () => {
+      const invokeTransferLocal = () => node.transferLocal(emptyOptions)
+
+      expect(invokeTransferLocal).toThrow(InvalidParameterError)
+      expect(invokeTransferLocal).toThrow(
+        'Local transfers on AssetHubKusama are temporarily disabled.'
+      )
     })
   })
 })

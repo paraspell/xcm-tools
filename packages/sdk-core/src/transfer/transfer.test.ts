@@ -93,8 +93,11 @@ describe('send', () => {
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
+    vi.mocked(isRelayChain).mockReturnValue(false)
+    vi.mocked(isTMultiLocation).mockReturnValue(false)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
+    vi.mocked(validateCurrency).mockImplementation(() => undefined)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
     vi.mocked(selectXcmVersion).mockReturnValue(Version.V4)
@@ -382,20 +385,38 @@ describe('send', () => {
   })
 
   describe('local transfers on relay chain', () => {
-    const relayChain = 'Polkadot'
-
     beforeEach(() => {
       vi.mocked(isRelayChain).mockReturnValue(true)
       vi.mocked(resolveAsset).mockReturnValue({ symbol: 'DOT' } as TAsset)
     })
 
-    it('should perform a local transfer from relay chain successfully', async () => {
+    it('should throw an error when local transfer on Polkadot relay chain is attempted', async () => {
       const options = {
         api: apiMock,
-        from: relayChain,
-        to: relayChain,
+        from: 'Polkadot',
+        to: 'Polkadot',
         currency: { symbol: 'DOT', amount: '100' },
         address: 'some-polkadot-address'
+      } as TSendOptions<unknown, unknown>
+
+      const initSpy = vi.spyOn(apiMock, 'init')
+      const callTxSpy = vi.spyOn(apiMock, 'callTxMethod')
+
+      await expect(send(options)).rejects.toThrow(
+        'Local transfers on Polkadot relay chain are temporarily disabled.'
+      )
+
+      expect(initSpy).not.toHaveBeenCalled()
+      expect(callTxSpy).not.toHaveBeenCalled()
+    })
+
+    it('should perform a local transfer from non-Polkadot relay chain successfully', async () => {
+      const options = {
+        api: apiMock,
+        from: 'Kusama',
+        to: 'Kusama',
+        currency: { symbol: 'DOT', amount: '100' },
+        address: 'some-kusama-address'
       } as TSendOptions<unknown, unknown>
 
       const initSpy = vi.spyOn(apiMock, 'init')
@@ -403,7 +424,7 @@ describe('send', () => {
 
       const result = await send(options)
 
-      expect(initSpy).toHaveBeenCalledWith(relayChain, TX_CLIENT_TIMEOUT_MS)
+      expect(initSpy).toHaveBeenCalledWith('Kusama', TX_CLIENT_TIMEOUT_MS)
 
       expect(callTxSpy).toHaveBeenCalledWith({
         module: 'Balances',
@@ -422,8 +443,8 @@ describe('send', () => {
 
       const options = {
         api: apiMock,
-        from: relayChain,
-        to: relayChain,
+        from: 'Kusama',
+        to: 'Kusama',
         currency: { symbol: 'DOT', amount: '100' },
         address: { X1: { AccountId32: { id: '0x1234' } } } as unknown as string
       } as TSendOptions<unknown, unknown>

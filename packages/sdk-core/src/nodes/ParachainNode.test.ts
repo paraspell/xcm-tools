@@ -12,6 +12,7 @@ import { DOT_MULTILOCATION } from '../constants'
 import {
   BridgeHaltedError,
   InvalidAddressError,
+  InvalidParameterError,
   NoXCMSupportImplementedError,
   TransferToAhNotSupported
 } from '../errors'
@@ -25,6 +26,7 @@ import {
   type TXTokensTransferOptions,
   type TXTransferTransferOptions
 } from '../types'
+import { getRelayChainOf } from '../utils'
 import ParachainNode from './ParachainNode'
 
 vi.mock('../constants/nodes')
@@ -348,7 +350,17 @@ describe('ParachainNode', () => {
     expect(result).toBe('transferXTokens called')
   })
 
-  it('should return correct API call from transferRelayToPara', () => {
+  it('should throw when transferRelayToPara is called for Polkadot relay chain', () => {
+    const options = {} as TRelayToParaOptions<unknown, unknown>
+
+    const transfer = () => node.transferRelayToPara(options)
+
+    expect(transfer).toThrowError(InvalidParameterError)
+    expect(transfer).toThrow('Sending from Polkadot relaychain is temporarily disabled')
+  })
+
+  it('should return correct API call from transferRelayToPara for non-Polkadot relay chain', () => {
+    vi.mocked(getRelayChainOf).mockReturnValueOnce('Kusama')
     const options = {} as TRelayToParaOptions<unknown, unknown>
 
     const result = node.transferRelayToPara(options)
