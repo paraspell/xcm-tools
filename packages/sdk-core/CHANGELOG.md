@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.12.13](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.12...sdk-core-v11.12.13) (2025-11-04)
+
+
+### Reverts
+
+* **sdk-core:** Modify temporarily disabled scenarios 🔧 ([996f180](https://github.com/paraspell/xcm-tools/commit/996f1802be7a95c9f097d0213d00dc5443fc7868))
+* **sdk-core:** Temporarily disable Polkadot system chains during migration ([5aff3d5](https://github.com/paraspell/xcm-tools/commit/5aff3d589c232f80e03a6807c5ae30c6a5c8255e))
+
 ## [11.12.12](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.11...sdk-core-v11.12.12) (2025-11-04)
 
 
