@@ -1,19 +1,10 @@
 import { Version } from '@paraspell/sdk-common'
 
-import type { TScenario, TSendInternalOptions } from '../../types'
 import Collectives from './Collectives'
 
 class CollectivesWestend<TApi, TRes> extends Collectives<TApi, TRes> {
   constructor() {
     super('CollectivesWestend', 'westendCollectives', 'westend', Version.V5)
-  }
-
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return false
-  }
-
-  isReceivingTempDisabled(_scenario: TScenario): boolean {
-    return false
   }
 }
 
