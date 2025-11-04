@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.11.12](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.11...sdk-core-v10.11.12) (2025-11-04)
+
+
+### Bug Fixes
+
+* **sdk-core:** Disable some scenarious due to migration 🔧 ([f087521](https://github.com/paraspell/xcm-tools/commit/f0875214e2a0e291c6bf29224a3c6e0e76d8131f))
+
 ## [10.11.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.11.10...sdk-core-v10.11.11) (2025-08-22)
 
 
