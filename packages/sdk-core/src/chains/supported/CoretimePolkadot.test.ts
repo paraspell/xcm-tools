@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TSendInternalOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import CoretimePolkadot from './CoretimePolkadot'
 
@@ -24,15 +24,6 @@ describe('CoretimePolkadot', () => {
     expect(chain.info).toBe('polkadotCoretime')
     expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
-  })
-
-  it('isSendingTempDisabled should return true', () => {
-    const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
-    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
-  })
-
-  it('isReceivingTempDisabled should return true', () => {
-    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
