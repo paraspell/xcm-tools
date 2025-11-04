@@ -4,7 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { isTLocation, isTrustedChain, Version } from '@paraspell/sdk-common'
 
-import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   TDestination,
@@ -71,10 +71,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
       asset,
       isOverridenAsset
     )
-  }
-
-  transferLocal(_options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    throw new InvalidParameterError(`Local transfers on ${this.chain} are temporarily disabled.`)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

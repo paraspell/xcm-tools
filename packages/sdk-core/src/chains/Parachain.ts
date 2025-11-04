@@ -404,10 +404,6 @@ abstract class Parachain<TApi, TRes> {
     } = options
     const { method, includeFee } = this.getRelayToParaOverrides()
 
-    if (getRelayChainOf(this.chain) === 'Polkadot') {
-      throw new InvalidParameterError(`Sending from Polkadot relaychain is temporarily disabled`)
-    }
-
     if (this.isReceivingTempDisabled('RelayToPara')) {
       throw new InvalidParameterError(`Receiving on ${this.chain} is temporarily disabled`)
     }
