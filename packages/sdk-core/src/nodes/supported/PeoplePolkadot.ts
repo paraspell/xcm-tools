@@ -3,7 +3,7 @@
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { ScenarioNotSupportedError } from '../../errors'
+import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides, TScenario, TSendInternalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
@@ -31,6 +31,10 @@ class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { method: 'limited_teleport_assets', includeFee: true }
+  }
+
+  transferLocal(_options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+    throw new InvalidParameterError(`Local transfers on ${this.chain} are temporarily disabled.`)
   }
 
   isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {

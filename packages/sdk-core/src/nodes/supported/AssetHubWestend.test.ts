@@ -1,7 +1,8 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getNode } from '../../utils'
+import type { TSendInternalOptions } from '../../types'
+import { getChain } from '../../utils'
 import type AssetHubWestend from './AssetHubWestend'
 
 describe('AssetHubWestend', () => {
@@ -9,13 +10,22 @@ describe('AssetHubWestend', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getNode<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
+    chain = getChain<unknown, unknown, 'AssetHubWestend'>('AssetHubWestend')
   })
 
   it('should initialize with correct values', () => {
-    expect(chain.node).toBe('AssetHubPolkadot')
-    expect(chain.info).toBe('PolkadotAssetHub')
-    expect(chain.type).toBe('polkadot')
+    expect(chain.chain).toBe('AssetHubWestend')
+    expect(chain.info).toBe('WestendAssetHub')
+    expect(chain.ecosystem).toBe('Westend')
     expect(chain.version).toBe(Version.V5)
+  })
+
+  it('isSendingTempDisabled should return false', () => {
+    const options = {} as TSendInternalOptions<unknown, unknown>
+    expect(chain.isSendingTempDisabled(options)).toBe(false)
+  })
+
+  it('isReceivingTempDisabled should return false', () => {
+    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(false)
   })
 })

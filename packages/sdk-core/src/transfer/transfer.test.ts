@@ -382,7 +382,7 @@ describe('send', () => {
   })
 
   describe('local transfers on relay chain', () => {
-    const relayChain = 'Polkadot'
+    const relayChain = 'Kusama'
 
     beforeEach(() => {
       vi.mocked(isRelayChain).mockReturnValue(true)

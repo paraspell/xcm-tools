@@ -74,10 +74,14 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     const isLocalTransfer = origin === destination
 
     if (isLocalTransfer) {
-      if (isTMultiLocation(address)) {
-        throw new InvalidAddressError(
-          'Multi-Location address is not supported for local transfers.'
+      if (origin === 'Polkadot') {
+        throw new InvalidParameterError(
+          'Local transfers on Polkadot relay chain are temporarily disabled.'
         )
+      }
+
+      if (isTLocation(address)) {
+        throw new InvalidAddressError('Location address is not supported for local transfers.')
       }
 
       await api.init(origin, TX_CLIENT_TIMEOUT_MS)

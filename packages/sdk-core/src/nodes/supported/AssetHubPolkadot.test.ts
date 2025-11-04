@@ -16,8 +16,8 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
-import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
+import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
+import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
@@ -132,6 +132,11 @@ describe('AssetHubPolkadot', () => {
   it('isReceivingTempDisabled should return true', () => {
     const chain = assetHub
     expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
+  })
+
+  it('should throw InvalidParameterError when transferLocal is called', () => {
+    const options = {} as TSendInternalOptions<unknown, unknown>
+    expect(() => assetHub.transferLocal(options)).toThrow(InvalidParameterError)
   })
 
   describe('handleEthBridgeTransfer', () => {

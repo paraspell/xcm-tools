@@ -4,7 +4,7 @@ import type { TAsset } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { isSystemChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 
-import { ScenarioNotSupportedError } from '../../errors'
+import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   TDestination,
@@ -80,6 +80,10 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       asset,
       isOverridenAsset
     )
+  }
+
+  transferLocal(_options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+    throw new InvalidParameterError(`Local transfers on ${this.chain} are temporarily disabled.`)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
