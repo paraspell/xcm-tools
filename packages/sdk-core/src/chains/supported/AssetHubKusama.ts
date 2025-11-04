@@ -10,6 +10,7 @@ import type {
   TDestination,
   TPolkadotXcmMethod,
   TRelayToParaOverrides,
+  TSendInternalOptions,
   TTransferLocalOptions
 } from '../../types'
 import {
@@ -37,7 +38,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
         'Bridged DOT cannot currently be transfered from AssetHubKusama, if you are sending different DOT asset, please specify {id: <DOTID>}.'
       )
     }
-
     const method = this.getMethod(scenario, destination)
 
     return transferPolkadotXcm(input, method, 'Unlimited')
@@ -77,6 +77,10 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
     return getChain<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
       options
     )
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
   }
 }
 

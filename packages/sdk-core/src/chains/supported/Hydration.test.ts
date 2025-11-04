@@ -88,32 +88,16 @@ describe('Hydration', () => {
         api: mockApi,
         address: '0xPolkadotAddress',
         assetInfo: {
-          symbol: 'WETH',
-          assetId: '0x1234567890abcdef',
+          symbol: 'DOT',
+          assetId: '1',
           amount: 1000n,
           location: {
-            parents: 2,
-            interior: {
-              X2: [
-                {
-                  GlobalConsensus: {
-                    Ethereum: {
-                      chainId: 1
-                    }
-                  }
-                },
-                {
-                  AccountKey20: {
-                    network: null,
-                    key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-                  }
-                }
-              ]
-            }
+            parents: 1,
+            interior: { Here: null }
           }
         },
-        scenario: 'RelayToPara',
-        destination: 'Ethereum'
+        scenario: 'ParaToRelay',
+        destination: 'Polkadot'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
@@ -139,6 +123,18 @@ describe('Hydration', () => {
         method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
+    })
+
+    it('should throw error when destination is Ethereum', async () => {
+      const inputEth = {
+        ...mockInput,
+        destination: 'Ethereum',
+        scenario: 'ParaToPara'
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      await expect(hydration.transferPolkadotXCM(inputEth)).rejects.toThrow(
+        'Snowbridge is temporarily disabled'
+      )
     })
 
     it('should create call for AssetHub destination DOT transfer using symbol', async () => {

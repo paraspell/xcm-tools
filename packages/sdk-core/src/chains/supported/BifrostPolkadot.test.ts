@@ -100,6 +100,18 @@ describe('BifrostPolkadot', () => {
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
   })
 
+  it('should throw error when destination is Ethereum', () => {
+    const inputEth = {
+      ...mockPolkadotXCMInput,
+      destination: 'Ethereum',
+      scenario: 'ParaToPara'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    expect(() => bifrostPolkadot.transferPolkadotXCM(inputEth)).toThrow(
+      'Snowbridge is temporarily disabled'
+    )
+  })
+
   describe('canUseXTokens', () => {
     it('should return false when currency symbol is WETH and destination is AssetHubPolkadot', () => {
       const options = {
