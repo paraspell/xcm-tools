@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ScenarioNotSupportedError } from '../../errors'
+import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TSendInternalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -81,5 +81,10 @@ describe('Collectives', () => {
   it('should return correct parameters for getRelayToParaOverrides', () => {
     const result = chain.getRelayToParaOverrides()
     expect(result).toEqual({ method: 'limited_teleport_assets', includeFee: true })
+  })
+
+  it('should throw InvalidParameterError when transferLocal is called', () => {
+    const options = {} as TSendInternalOptions<unknown, unknown>
+    expect(() => chain.transferLocal(options)).toThrow(InvalidParameterError)
   })
 })

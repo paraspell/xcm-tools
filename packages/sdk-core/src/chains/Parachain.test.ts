@@ -27,7 +27,7 @@ import {
   type TSendInternalOptions,
   type TXTransferTransferOptions
 } from '../types'
-import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
+import { createBeneficiaryLocation, getChain, getRelayChainOf, resolveDestChain } from '../utils'
 import Parachain from './Parachain'
 
 vi.mock('../constants/chains')
@@ -665,12 +665,19 @@ describe('Parachain', () => {
     beforeEach(() => {
       chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
       vi.resetAllMocks()
+      vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
       vi.mocked(resolveDestChain).mockReturnValue('Acala')
       vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
       vi.mocked(createTypeThenAutoReserve).mockResolvedValue(mockCall)
       vi.mocked(constructRelayToParaParameters).mockReturnValue(
         'parameters' as unknown as Record<string, unknown>
       )
+    })
+
+    it('should throw when Polkadot relaychain transfers are disabled', async () => {
+      vi.mocked(getRelayChainOf).mockReturnValueOnce('Polkadot')
+
+      await expect(chain.transferRelayToPara(baseOptions)).rejects.toThrow(InvalidParameterError)
     })
 
     it('should call createTypeAndThenCall when override method is type-and-then', async () => {

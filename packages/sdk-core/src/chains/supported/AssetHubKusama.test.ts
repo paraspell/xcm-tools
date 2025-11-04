@@ -3,8 +3,12 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_LOCATION } from '../../constants'
-import { ScenarioNotSupportedError } from '../../errors'
-import { type TPolkadotXCMTransferOptions, type TScenario } from '../../types'
+import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import {
+  type TPolkadotXCMTransferOptions,
+  type TScenario,
+  type TSendInternalOptions
+} from '../../types'
 import { getChain } from '../../utils'
 import type AssetHubKusama from './AssetHubKusama'
 
@@ -69,6 +73,11 @@ describe('transferPolkadotXCM', () => {
       method: 'limited_teleport_assets',
       includeFee: true
     })
+  })
+
+  it('should throw InvalidParameterError when transferLocal is called', () => {
+    const options = {} as TSendInternalOptions<unknown, unknown>
+    expect(() => chain.transferLocal(options)).toThrow(InvalidParameterError)
   })
 
   describe('createCurrencySpec', () => {
