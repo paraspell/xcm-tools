@@ -12,43 +12,40 @@ const AnimatedDiv = animated('div');
 const RightPanel = () => {
   const { isMobile } = useDeviceType();
 
-  const [width, setWidth] = useState(isMobile ? '0%' : '40%');
-  const props = useSpring({ width });
+  const [open, setOpen] = useState(!isMobile);
+  const toggleWidth = () => setOpen(v => !v);
 
-  const toggleWidth = () => {
-    const maxWidth = isMobile ? '100%' : '40%';
-    setWidth(width === '0%' ? maxWidth : '0%');
-  };
+  // Only animate translateX. No width animation.
+  const springs = useSpring({
+    x: open ? 0 : 1, // 0 = visible, 1 = slid out
+    config: { tension: 230, friction: 26 }
+  });
 
-  const isCollapsed = width === '0%';
+  // Constant width for the panel itself
+  const panelWidth = isMobile ? '100%' : '40%';
 
   return (
-    <AnimatedDiv
-      style={{
-        ...props,
-        position: isMobile ? 'absolute' : 'relative',
-        right: 0,
-        top: 0,
-        height: '100%',
-        zIndex: isMobile ? 10 : 1
-      }}
-    >
-      <Stack h="100%" w="100%" pos="relative" bg="white">
-        <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} isMobile={isMobile} />
-        <Flex
-          flex={1}
-          w="100%"
-          h="50%"
-          pl={10}
-          mih={0}
-          justify="center"
-          align="stretch"
-          style={{ overflow: 'hidden' }}
-        >
-          <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
-        </Flex>
+    <>
+      {/* The handle is a sibling positioned against the parent container */}
+      <CollapseButton onClick={toggleWidth} isCollapsed={!open} isMobile={isMobile} />
 
-        {!isMobile && (
+      <AnimatedDiv
+        style={{
+          position: 'absolute', // parent <Flex> must be pos="relative"
+          right: 0,
+          top: 0,
+          height: '100%',
+          width: panelWidth,
+          transform: springs.x.to(v => `translateX(${v * 100}%)`),
+          willChange: 'transform',
+          contain: 'layout paint size',
+          zIndex: 1,
+          pointerEvents: isMobile ? (open ? 'auto' : 'none') : 'auto',
+          overflow: 'hidden',
+          background: 'white'
+        }}
+      >
+        <Stack h="100%" w="100%" pos="relative" bg="white">
           <Flex
             flex={1}
             w="100%"
@@ -59,11 +56,26 @@ const RightPanel = () => {
             align="stretch"
             style={{ overflow: 'hidden' }}
           >
-            <TabNavigator />
+            <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
           </Flex>
-        )}
-      </Stack>
-    </AnimatedDiv>
+
+          {!isMobile && (
+            <Flex
+              flex={1}
+              w="100%"
+              h="50%"
+              pl={10}
+              mih={0}
+              justify="center"
+              align="stretch"
+              style={{ overflow: 'hidden' }}
+            >
+              <TabNavigator />
+            </Flex>
+          )}
+        </Stack>
+      </AnimatedDiv>
+    </>
   );
 };
 
