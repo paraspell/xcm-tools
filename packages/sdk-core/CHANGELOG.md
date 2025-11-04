@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.12](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.11...sdk-core-v11.12.12) (2025-11-04)
+
+
+### Bug Fixes
+
+* **sdk-core:** Modify temporarily disabled scenarios 🔧 ([208aec5](https://github.com/paraspell/xcm-tools/commit/208aec52195097c1ada2e41ddd655511d03393b9))
+
 ## [11.12.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.10...sdk-core-v11.12.11) (2025-11-04)
 
 
