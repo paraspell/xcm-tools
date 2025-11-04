@@ -5,7 +5,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TRelayToParaOverrides } from '../../types'
+import type { TRelayToParaOverrides, TScenario, TSendInternalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
@@ -37,6 +37,14 @@ class BridgeHubPolkadot<TApi, TRes>
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { method: 'limited_teleport_assets', includeFee: true }
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
+    return true
   }
 }
 

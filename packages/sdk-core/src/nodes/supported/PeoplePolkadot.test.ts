@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions } from '../../types'
-import { getNode } from '../../utils'
+import type { TPolkadotXCMTransferOptions, TSendInternalOptions } from '../../types'
+import { getChain } from '../../utils'
 import PeoplePolkadot from './PeoplePolkadot'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
@@ -24,6 +24,15 @@ describe('PeoplePolkadot', () => {
     expect(node.info).toBe('polkadotPeople')
     expect(node.type).toBe('polkadot')
     expect(node.version).toBe(Version.V5)
+  })
+
+  it('isSendingTempDisabled should return true', () => {
+    const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
+  })
+
+  it('isReceivingTempDisabled should return true', () => {
+    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 
   describe('transferPolkadotXCM', () => {

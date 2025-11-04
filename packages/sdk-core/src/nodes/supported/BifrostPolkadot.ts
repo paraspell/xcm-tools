@@ -11,6 +11,7 @@ import {
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -89,10 +90,16 @@ class BifrostPolkadot<TApi, TRes>
     )
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { destination } = input
+  transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    const { destination, scenario } = options
     if (destination === 'Ethereum') {
-      return this.transferToEthereum(input)
+      //Temporarily disabled
+      //return this.transferToEthereum(options)
+      throw new ScenarioNotSupportedError(
+        this.chain,
+        scenario,
+        'Snowbridge is temporarily disabled.'
+      )
     }
 
     return this.transferToAssetHub(input)

@@ -9,7 +9,8 @@ import {
 import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -118,10 +119,23 @@ class Hydration<TApi, TRes>
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, destination, feeAsset, asset, overriddenAsset } = input
+    const {
+      api,
+      destination,
+      scenario,
+      feeAssetInfo: feeAsset,
+      assetInfo: asset,
+      overriddenAsset
+    } = input
 
     if (destination === 'Ethereum') {
-      return this.transferToEthereum(input)
+      //Temporarily disabled
+      //return this.transferToEthereum(input)
+      throw new ScenarioNotSupportedError(
+        this.chain,
+        scenario,
+        'Snowbridge is temporarily disabled.'
+      )
     }
 
     if (feeAsset) {

@@ -20,7 +20,7 @@ import { DOT_MULTILOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TTransferLocalOptions } from '../../types'
+import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { localizeLocation } from '../../utils/location'
@@ -123,33 +123,15 @@ describe('AssetHubPolkadot', () => {
     expect(assetHub.version).toBe(Version.V5)
   })
 
-  describe('handleBridgeTransfer', () => {
-    it('should process a valid DOT transfer to Polkadot', async () => {
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-      const result = await assetHub.handleBridgeTransfer(mockInput, 'Polkadot')
-      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
-      expect(result).toBe(mockExtrinsic)
-    })
+  it('isSendingTempDisabled should return true', () => {
+    const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+    const chain = assetHub
+    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
+  })
 
-    it('should process a valid DOT transfer to Kusama', async () => {
-      const input = { ...mockInput, asset: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
-        unknown,
-        unknown
-      >
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-      const result = await assetHub.handleBridgeTransfer(input, 'Kusama')
-      expect(result).toStrictEqual(mockExtrinsic)
-      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
-    })
-
-    it('throws InvalidCurrencyError for unsupported currency', () => {
-      const input = {
-        ...mockInput,
-        asset: { symbol: 'UNKNOWN', amount: 1000n, isNative: true } as WithAmount<TNativeAsset>
-      }
-      expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
-    })
+  it('isReceivingTempDisabled should return true', () => {
+    const chain = assetHub
+    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 
   describe('handleEthBridgeTransfer', () => {

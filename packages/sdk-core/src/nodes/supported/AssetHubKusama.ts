@@ -6,7 +6,13 @@ import { isSystemChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
+import type {
+  TDestination,
+  TPolkadotXcmMethod,
+  TRelayToParaOverrides,
+  TSendInternalOptions,
+  TTransferLocalOptions
+} from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -51,11 +57,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
         'Bridged DOT cannot currently be transfered from AssetHubKusama, if you are sending different DOT asset, please specify {id: <DOTID>}.'
       )
     }
-
-    const method =
-      scenario === 'ParaToPara' && !isTrusted
-        ? 'limited_reserve_transfer_assets'
-        : 'limited_teleport_assets'
+    const method = this.getMethod(scenario, destination)
 
     return transferPolkadotXcm(input, method, 'Unlimited')
   }
@@ -84,6 +86,10 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     return getNode<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
       options
     )
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
   }
 }
 
