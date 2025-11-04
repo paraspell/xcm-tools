@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TSendInternalOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -59,10 +59,5 @@ describe('PeoplePolkadot', () => {
       method: 'limited_teleport_assets',
       includeFee: true
     })
-  })
-
-  it('should throw InvalidParameterError when transferLocal is called', () => {
-    const options = {} as TSendInternalOptions<unknown, unknown>
-    expect(() => chain.transferLocal(options)).toThrow(InvalidParameterError)
   })
 })

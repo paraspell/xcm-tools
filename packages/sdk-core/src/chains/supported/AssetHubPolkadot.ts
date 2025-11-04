@@ -302,10 +302,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     return true
   }
 
-  transferLocal(_options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    throw new InvalidParameterError(`Local transfers on ${this.chain} are temporarily disabled.`)
-  }
-
   createCurrencySpec(
     amount: bigint,
     scenario: TScenario,

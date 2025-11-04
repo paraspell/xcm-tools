@@ -3,7 +3,7 @@
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides, TScenario, TSendInternalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
@@ -31,10 +31,6 @@ class Collectives<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadot
     }
 
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
-  }
-
-  transferLocal(_options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    throw new InvalidParameterError(`Local transfers on ${this.chain} are temporarily disabled.`)
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
