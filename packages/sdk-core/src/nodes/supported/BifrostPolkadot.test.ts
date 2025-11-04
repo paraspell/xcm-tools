@@ -3,6 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -97,6 +98,19 @@ describe('BifrostPolkadot', () => {
     })
 
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw when attempting to transfer to Ethereum while Snowbridge is disabled', () => {
+    const input = {
+      ...mockPolkadotXCMInput,
+      destination: 'Ethereum',
+      scenario: 'ParaToPara'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    const executeTransfer = () => bifrostPolkadot.transferPolkadotXCM(input)
+
+    expect(executeTransfer).toThrow(ScenarioNotSupportedError)
+    expect(executeTransfer).toThrow('Snowbridge is temporarily disabled.')
   })
 
   describe('canUseXTokens', () => {
