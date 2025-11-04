@@ -1,9 +1,9 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TScenario, TSendInternalOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Collectives from './Collectives'
 
@@ -50,23 +50,5 @@ describe('Collectives', () => {
   it('should return correct parameters for getRelayToParaOverrides', () => {
     const result = node.getRelayToParaOverrides()
     expect(result).toEqual({ method: 'limited_teleport_assets', includeFee: true })
-  })
-
-  describe('temporary disable flags', () => {
-    const emptyOptions = {} as TSendInternalOptions<unknown, unknown>
-
-    it('should mark sending and receiving as temporarily disabled', () => {
-      expect(node.isSendingTempDisabled(emptyOptions)).toBe(true)
-      expect(node.isReceivingTempDisabled('ParaToPara' as TScenario)).toBe(true)
-    })
-
-    it('should throw when attempting local transfer', () => {
-      const invokeTransferLocal = () => node.transferLocal(emptyOptions)
-
-      expect(invokeTransferLocal).toThrow(InvalidParameterError)
-      expect(invokeTransferLocal).toThrow(
-        'Local transfers on Collectives are temporarily disabled.'
-      )
-    })
   })
 })

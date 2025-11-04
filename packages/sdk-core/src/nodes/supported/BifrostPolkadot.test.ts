@@ -3,7 +3,6 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import { createTypeAndThenCall } from '../../transfer'
@@ -17,17 +16,13 @@ import { assertHasLocation, getNode } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import type BifrostPolkadot from './BifrostPolkadot'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../transfer')
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  createTypeAndThenCall: vi.fn()
-}))
+type WithTransferToEthereum = BifrostPolkadot<unknown, unknown> & {
+  transferToEthereum: BifrostPolkadot<unknown, unknown>['transferToEthereum']
+}
 
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<unknown, unknown>
@@ -61,6 +56,25 @@ describe('BifrostPolkadot', () => {
     bifrostPolkadot.transferXTokens(mockXTokensInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
+  })
+
+  it('should call transferToEthereum when destination is Ethereum', async () => {
+    const spyTransferToEth = vi
+      .spyOn(bifrostPolkadot as WithTransferToEthereum, 'transferToEthereum')
+      .mockResolvedValue({})
+
+    const inputEth = {
+      ...mockPolkadotXCMInput,
+      destination: 'Ethereum',
+      scenario: 'ParaToPara'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await bifrostPolkadot.transferPolkadotXCM(inputEth)
+
+    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
+    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
+
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
   it('should call transferPolkadotXCM with correct parameters for WETH transfer', async () => {
@@ -98,19 +112,6 @@ describe('BifrostPolkadot', () => {
     })
 
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
-  })
-
-  it('should throw when attempting to transfer to Ethereum while Snowbridge is disabled', () => {
-    const input = {
-      ...mockPolkadotXCMInput,
-      destination: 'Ethereum',
-      scenario: 'ParaToPara'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    const executeTransfer = () => bifrostPolkadot.transferPolkadotXCM(input)
-
-    expect(executeTransfer).toThrow(ScenarioNotSupportedError)
-    expect(executeTransfer).toThrow('Snowbridge is temporarily disabled.')
   })
 
   describe('canUseXTokens', () => {
