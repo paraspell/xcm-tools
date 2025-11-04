@@ -52,13 +52,7 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     const { api, destination, assetInfo, scenario, version } = input
 
     if (destination === 'Ethereum') {
-      //Temporarily disabled
-      //return this.transferToEthereum(input)
-      throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
-        'Snowbridge is temporarily disabled.'
-      )
+      return this.transferToEthereum(input)
     }
 
     if (isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.chain))) {

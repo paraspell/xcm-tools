@@ -12,6 +12,10 @@ import type Moonbeam from './Moonbeam'
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../transfer')
 
+type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
+  transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
+}
+
 describe('Moonbeam', () => {
   let chain: Moonbeam<unknown, unknown>
 
@@ -127,16 +131,23 @@ describe('Moonbeam', () => {
     )
   })
 
-  it('should throw error when destination is Ethereum', async () => {
+  it('should call transferToEthereum when destination is Ethereum', async () => {
+    const spyTransferToEth = vi
+      .spyOn(chain as WithTransferToEthereum, 'transferToEthereum')
+      .mockResolvedValue({})
+
     const inputEth = {
       ...mockInput,
       destination: 'Ethereum',
       scenario: 'ParaToPara'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    await expect(chain.transferPolkadotXCM(inputEth)).rejects.toThrow(
-      'Snowbridge is temporarily disabled'
-    )
+    await chain.transferPolkadotXCM(inputEth)
+
+    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
+    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
+
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
   describe('transferLocalNonNativeAsset', () => {

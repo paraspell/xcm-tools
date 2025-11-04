@@ -1,6 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { AMOUNT_ALL } from '../../constants'
@@ -17,17 +17,13 @@ import { assertHasLocation, getChain } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import type BifrostPolkadot from './BifrostPolkadot'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../transfer')
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../transfer', () => ({
-  createTypeAndThenCall: vi.fn()
-}))
+type WithTransferToEthereum = BifrostPolkadot<unknown, unknown> & {
+  transferToEthereum: BifrostPolkadot<unknown, unknown>['transferToEthereum']
+}
 
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<unknown, unknown>
@@ -46,6 +42,10 @@ describe('BifrostPolkadot', () => {
 
   beforeEach(() => {
     bifrostPolkadot = getChain<unknown, unknown, 'BifrostPolkadot'>('BifrostPolkadot')
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   it('should initialize with correct values', () => {
@@ -85,6 +85,25 @@ describe('BifrostPolkadot', () => {
     )
   })
 
+  it('should call transferToEthereum when destination is Ethereum', async () => {
+    const spyTransferToEth = vi
+      .spyOn(bifrostPolkadot as WithTransferToEthereum, 'transferToEthereum')
+      .mockResolvedValue({})
+
+    const inputEth = {
+      ...mockPolkadotXCMInput,
+      destination: 'Ethereum',
+      scenario: 'ParaToPara'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await bifrostPolkadot.transferPolkadotXCM(inputEth)
+
+    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
+    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
+
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
+  })
+
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
     const assetInfo = {
       symbol: 'DOT',
@@ -98,18 +117,6 @@ describe('BifrostPolkadot', () => {
     })
 
     expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
-  })
-
-  it('should throw error when destination is Ethereum', () => {
-    const inputEth = {
-      ...mockPolkadotXCMInput,
-      destination: 'Ethereum',
-      scenario: 'ParaToPara'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    expect(() => bifrostPolkadot.transferPolkadotXCM(inputEth)).toThrow(
-      'Snowbridge is temporarily disabled'
-    )
   })
 
   describe('canUseXTokens', () => {

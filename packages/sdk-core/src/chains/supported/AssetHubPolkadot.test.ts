@@ -20,7 +20,7 @@ import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
+import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import { localizeLocation } from '../../utils/location'
@@ -98,17 +98,6 @@ describe('AssetHubPolkadot', () => {
     expect(assetHub.info).toBe('PolkadotAssetHub')
     expect(assetHub.ecosystem).toBe('Polkadot')
     expect(assetHub.version).toBe(Version.V5)
-  })
-
-  it('isSendingTempDisabled should return true', () => {
-    const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
-    const chain = assetHub
-    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
-  })
-
-  it('isReceivingTempDisabled should return true', () => {
-    const chain = assetHub
-    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 
   describe('handleEthBridgeTransfer', () => {
