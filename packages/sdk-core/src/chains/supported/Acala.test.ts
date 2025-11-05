@@ -7,13 +7,8 @@ import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types
 import { getChain } from '../../utils/getChain'
 import type Acala from './Acala'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
-
-vi.mock('../config', () => ({
-  getChainProviders: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
+vi.mock('../config')
 
 describe('Acala', () => {
   let acala: Acala<unknown, unknown>

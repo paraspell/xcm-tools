@@ -1,18 +1,15 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import type { TAssetInfo } from '@paraspell/assets'
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TScenario,
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
-import { createAsset } from '../../utils/asset'
 import Parachain from '../Parachain'
 
 class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -28,21 +25,6 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     }
 
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
-  }
-
-  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAssetInfo) {
-    if (scenario === 'ParaToPara') {
-      return createAsset(version, amount, {
-        parents: Parents.ZERO,
-        interior: {
-          X1: {
-            PalletInstance: 5
-          }
-        }
-      })
-    } else {
-      return super.createCurrencySpec(amount, scenario, version)
-    }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

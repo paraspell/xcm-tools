@@ -31,15 +31,7 @@ describe('Xode', () => {
   it('should call transferPolkadotXCM with limited_reserve_transfer_assets', async () => {
     await chain.transferPolkadotXCM(options)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      {
-        ...options,
-        asset: {
-          fun: {
-            Fungible: undefined
-          },
-          id: {}
-        }
-      },
+      options,
       'limited_reserve_transfer_assets',
       'Unlimited'
     )

@@ -2,15 +2,12 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Moonbeam from './Moonbeam'
 
 vi.mock('../../pallets/polkadotXcm')
-vi.mock('../../transfer')
 
 type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
   transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
@@ -46,89 +43,9 @@ describe('Moonbeam', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should use correct location when transfering native asset', async () => {
-    const mockInputNative = {
-      ...mockInput,
-      scenario: 'ParaToPara',
-      assetInfo: { symbol: 'GLMR', amount: 100n }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await chain.transferPolkadotXCM(mockInputNative)
-
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      {
-        ...mockInputNative,
-        asset: {
-          fun: {
-            Fungible: mockInput.assetInfo.amount
-          },
-          id: {
-            parents: 0,
-            interior: {
-              X1: [{ PalletInstance: 10 }]
-            }
-          }
-        }
-      },
-      'transfer_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should use correct location when transfering DOT to relay', async () => {
-    const mockInputDot = {
-      ...mockInput,
-      scenario: 'ParaToRelay',
-      assetInfo: { symbol: 'DOT', amount: 100n, location: DOT_LOCATION }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await chain.transferPolkadotXCM(mockInputDot)
-
-    expect(createTypeAndThenCall).toHaveBeenCalledTimes(1)
-  })
-
-  it('should use correct location when transfering USDT', async () => {
-    const asset = {
-      symbol: 'USDT',
-      location: {
-        parents: 1,
-        interior: {
-          X3: [
-            {
-              Parachain: 1000
-            },
-            {
-              PalletInstance: 50
-            },
-            {
-              GeneralIndex: 1984
-            }
-          ]
-        }
-      },
-      amount: 100n
-    }
-    const mockInputUsdt = {
-      ...mockInput,
-      scenario: 'ParaToPara',
-      assetInfo: asset
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await chain.transferPolkadotXCM(mockInputUsdt)
-
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      {
-        ...mockInputUsdt,
-        asset: {
-          fun: {
-            Fungible: mockInput.assetInfo.amount
-          },
-          id: asset.location
-        }
-      },
-      'transfer_assets',
-      'Unlimited'
-    )
+  it('should call transferPolkadotXCM with transfer_assets', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'transfer_assets', 'Unlimited')
   })
 
   it('should call transferToEthereum when destination is Ethereum', async () => {

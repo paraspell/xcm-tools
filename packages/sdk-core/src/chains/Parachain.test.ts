@@ -31,6 +31,7 @@ import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
 import Parachain from './Parachain'
 
 vi.mock('../constants/chains')
+vi.mock('../utils/location')
 
 vi.mock('../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
@@ -401,7 +402,14 @@ describe('Parachain', () => {
     const options = {
       api,
       to: 'Astar',
-      assetInfo: { symbol: 'DOT', amount: 100n },
+      assetInfo: {
+        symbol: 'ASTR',
+        amount: 100n,
+        location: {
+          parents: 1,
+          interior: { X1: { Parachain: 2000 } }
+        }
+      },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
 
@@ -451,12 +459,17 @@ describe('Parachain', () => {
     expect(result).toBe('transferXTransfer called')
   })
 
-  it('should create currency spec', () => {
-    const result = chain.createCurrencySpec(100n, 'ParaToRelay', Version.V4, {
-      symbol: 'DOT',
-      decimals: 10,
-      isNative: true
-    })
+  it('should create xcm asset', () => {
+    const result = chain.createAsset(
+      {
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: true,
+        amount: 1000n,
+        location: RELAY_LOCATION
+      },
+      Version.V5
+    )
 
     expect(result).toBe('asset')
   })

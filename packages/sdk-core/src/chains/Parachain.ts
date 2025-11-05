@@ -1,6 +1,6 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfo,
   findAssetInfoByLoc,
@@ -76,6 +76,7 @@ import {
 import { createAsset } from '../utils/asset'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
+import { localizeLocation } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
@@ -234,13 +235,7 @@ abstract class Parachain<TApi, TRes> {
           version
         }),
         address,
-        asset: this.createCurrencySpec(
-          asset.amount,
-          scenario,
-          version,
-          asset,
-          overriddenAsset !== undefined
-        ),
+        asset: this.createAsset(asset, version),
         overriddenAsset,
         assetInfo: asset,
         currency,
@@ -429,7 +424,7 @@ abstract class Parachain<TApi, TRes> {
           version
         }),
         senderAddress,
-        asset: this.createCurrencySpec(assetInfo.amount, scenario, version, assetInfo, false),
+        asset: this.createAsset(assetInfo, version),
         destLocation: createDestination(version, this.chain, destination, paraId),
         scenario,
         destChain,
@@ -444,22 +439,10 @@ abstract class Parachain<TApi, TRes> {
     }
   }
 
-  createCurrencySpec(
-    amount: bigint,
-    scenario: TScenario,
-    version: Version,
-    asset?: TAssetInfo,
-    _isOverridenAsset?: boolean
-  ): TAsset {
-    const isRelayAsset = deepEqual(asset?.location, RELAY_LOCATION)
-    const parents =
-      scenario === 'ParaToRelay' || (isRelayAsset && isTrustedChain(this.chain))
-        ? Parents.ONE
-        : Parents.ZERO
-    return createAsset(version, amount, {
-      parents,
-      interior: 'Here'
-    })
+  createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {
+    assertHasLocation(asset)
+    const { amount, location } = asset
+    return createAsset(version, amount, localizeLocation(this.chain, location))
   }
 
   getNativeAssetSymbol(): string {

@@ -1,20 +1,13 @@
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
-import { createAsset } from '../../utils/asset'
 import type Crab from './Crab'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../utils/asset', () => ({
-  createAsset: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Crab', () => {
   let crab: Crab<unknown, unknown>
@@ -54,33 +47,5 @@ describe('Crab', () => {
 
   it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
     expect(() => crab.transferRelayToPara()).toThrowError(ChainNotSupportedError)
-  })
-
-  it('should call createCurrencySpec with correct values', () => {
-    crab.createCurrencySpec(100n, 'ParaToPara', Version.V4)
-    expect(createAsset).toHaveBeenCalledWith(Version.V4, 100n, {
-      parents: Parents.ZERO,
-      interior: {
-        X1: [
-          {
-            PalletInstance: 5
-          }
-        ]
-      }
-    })
-  })
-
-  it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    crab.createCurrencySpec(100n, 'ParaToRelay', Version.V4)
-    expect(createAsset).toHaveBeenCalledWith(Version.V4, 100n, {
-      parents: Parents.ZERO,
-      interior: {
-        X1: [
-          {
-            PalletInstance: 5
-          }
-        ]
-      }
-    })
   })
 })

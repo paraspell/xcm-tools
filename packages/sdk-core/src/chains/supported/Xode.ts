@@ -6,7 +6,7 @@ import { Version } from '@paraspell/sdk-common'
 import { IncompatibleChainsError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation, createAsset } from '../../utils'
+import { assertHasLocation } from '../../utils'
 import Parachain from '../Parachain'
 
 class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -25,14 +25,7 @@ class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
 
     assertHasLocation(assetInfo)
 
-    return transferPolkadotXcm(
-      {
-        ...options,
-        asset: createAsset(this.version, assetInfo.amount, assetInfo.location)
-      },
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+    return transferPolkadotXcm(options, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
   canReceiveFrom(origin: TChain): boolean {

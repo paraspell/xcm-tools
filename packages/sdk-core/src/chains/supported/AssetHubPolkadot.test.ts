@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { TAssetInfo } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
   getOtherAssets,
@@ -11,38 +10,32 @@ import {
   type WithAmount
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import { hasJunction, type TLocation, Version } from '@paraspell/sdk-common'
-import type { MockInstance } from 'vitest'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { type TLocation, Version } from '@paraspell/sdk-common'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TTransferLocalOptions } from '../../types'
+import type { TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
-import { localizeLocation } from '../../utils/location'
 import { handleExecuteTransfer } from '../../utils/transfer'
-import Parachain from '../Parachain'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
-vi.mock('@paraspell/assets', async () => {
-  const actual = await vi.importActual('@paraspell/assets')
-  return {
-    ...actual,
-    getOtherAssets: vi.fn(),
-    getParaId: vi.fn(),
-    InvalidCurrencyError: class extends Error {},
-    isForeignAsset: vi.fn(),
-    hasSupportForAsset: vi.fn(),
-    findAssetInfoByLoc: vi.fn(),
-    getNativeAssetSymbol: vi.fn(),
-    normalizeSymbol: vi.fn(),
-    isAssetEqual: vi.fn()
-  }
-})
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  getOtherAssets: vi.fn(),
+  getParaId: vi.fn(),
+  InvalidCurrencyError: class extends Error {},
+  isForeignAsset: vi.fn(),
+  hasSupportForAsset: vi.fn(),
+  findAssetInfoByLoc: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
+  normalizeSymbol: vi.fn(),
+  isAssetEqual: vi.fn()
+}))
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
@@ -362,148 +355,6 @@ describe('AssetHubPolkadot', () => {
     expect(result).toEqual({
       method: 'limited_teleport_assets',
       includeFee: true
-    })
-  })
-
-  describe('createCurrencySpec', () => {
-    const amount = 1000n
-    let superCreateCurrencySpecSpy: MockInstance
-
-    beforeEach(() => {
-      superCreateCurrencySpecSpy = vi.spyOn(Parachain.prototype, 'createCurrencySpec')
-      vi.mocked(hasJunction).mockClear()
-      vi.mocked(localizeLocation).mockClear()
-    })
-
-    afterEach(() => {
-      superCreateCurrencySpecSpy.mockRestore()
-    })
-
-    it('should call super.createCurrencySpec for non-ParaToPara scenarios', () => {
-      const scenario: TScenario = 'RelayToPara'
-      const mockAsset = {
-        symbol: 'DOT',
-        amount: 1000n,
-        isNative: true
-      } as WithAmount<TNativeAssetInfo>
-      const expectedSuperResult = {
-        V3: [{ id: 'Here' as unknown as TLocation, fun: { Fungible: amount } }]
-      }
-      superCreateCurrencySpecSpy.mockReturnValue(expectedSuperResult)
-
-      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
-
-      expect(superCreateCurrencySpecSpy).toHaveBeenCalledWith(
-        amount,
-        scenario,
-        assetHub.version,
-        mockAsset
-      )
-      expect(hasJunction).not.toHaveBeenCalled()
-      expect(localizeLocation).not.toHaveBeenCalled()
-      expect(result).toEqual(expectedSuperResult)
-    })
-
-    it('should use original Location for ParaToPara when transformation is not needed', () => {
-      const scenario: TScenario = 'ParaToPara'
-      const mockLocation: TLocation = {
-        parents: 1,
-        interior: { X1: { Parachain: 2000 } }
-      }
-      const mockAsset = {
-        symbol: 'DOT',
-        amount: 1000n,
-        isNative: true,
-        location: mockLocation
-      } as WithAmount<TNativeAssetInfo>
-      const expectedResult = { id: mockLocation, fun: { Fungible: amount } }
-
-      vi.mocked(hasJunction).mockReturnValue(false)
-
-      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
-
-      expect(hasJunction).toHaveBeenCalledWith(mockLocation, 'Parachain', 1000)
-      expect(localizeLocation).not.toHaveBeenCalled()
-      expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
-      expect(result).toEqual(expectedResult)
-    })
-
-    it('should use transformed Location for ParaToPara when transformation is needed', () => {
-      const scenario: TScenario = 'ParaToPara'
-      const originalLocation: TLocation = {
-        parents: 1,
-        interior: { X1: { Parachain: 1000 } }
-      }
-      const mockAsset = {
-        symbol: 'DOT',
-        amount: 1000n,
-        isNative: true,
-        location: originalLocation
-      } as WithAmount<TNativeAssetInfo>
-      const transformedLocation: TLocation = {
-        parents: 0,
-        interior: { X1: { AccountId32: { id: '0x123...' } } }
-      }
-      const expectedResult = { id: transformedLocation, fun: { Fungible: amount } }
-
-      vi.mocked(hasJunction).mockReturnValue(true)
-      vi.mocked(localizeLocation).mockReturnValue(transformedLocation)
-
-      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
-
-      expect(hasJunction).toHaveBeenCalledWith(originalLocation, 'Parachain', 1000)
-      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalLocation)
-      expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
-      expect(result).toEqual(expectedResult)
-    })
-
-    it('should throw InvalidCurrencyError for ParaToPara if asset is missing', () => {
-      const scenario: TScenario = 'ParaToPara'
-      expect(() =>
-        assetHub.createCurrencySpec(amount, scenario, assetHub.version, undefined)
-      ).toThrow('Asset does not have a location defined')
-    })
-
-    it('should throw InvalidCurrencyError for ParaToPara if asset has no location', () => {
-      const scenario: TScenario = 'ParaToPara'
-      const assetWithoutML = { symbol: 'TST' } as TAssetInfo
-      expect(() =>
-        assetHub.createCurrencySpec(amount, scenario, assetHub.version, assetWithoutML)
-      ).toThrow('Asset does not have a location defined')
-    })
-
-    it('should provide default location if asset is overridden', () => {
-      const scenario: TScenario = 'ParaToPara'
-      const mockAsset = {
-        symbol: 'DOT',
-        amount: 1000n,
-        isNative: true,
-        location: {} as TLocation
-      } as WithAmount<TNativeAssetInfo>
-
-      const isOverriddenAsset = true
-
-      const expectedResult = {
-        id: {
-          parents: 0,
-          interior: 'Here'
-        },
-        fun: { Fungible: amount }
-      }
-
-      vi.mocked(hasJunction).mockReturnValue(false)
-      vi.mocked(superCreateCurrencySpecSpy).mockReturnValue(expectedResult)
-
-      const result = assetHub.createCurrencySpec(
-        amount,
-        scenario,
-        assetHub.version,
-        mockAsset,
-        isOverriddenAsset
-      )
-
-      expect(result).toEqual(expectedResult)
-      expect(hasJunction).toHaveBeenCalled()
     })
   })
 
