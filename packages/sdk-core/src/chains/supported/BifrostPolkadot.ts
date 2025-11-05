@@ -3,9 +3,7 @@
 import {
   findAssetInfoByLoc,
   getOtherAssets,
-  getRelayChainSymbol,
   isForeignAsset,
-  isSymbolMatch,
   type TAssetInfo
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
@@ -13,7 +11,6 @@ import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenCall } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -21,8 +18,6 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasLocation } from '../../utils'
-import { createAsset } from '../../utils/asset'
 import Parachain from '../Parachain'
 
 class BifrostPolkadot<TApi, TRes>
@@ -67,35 +62,13 @@ class BifrostPolkadot<TApi, TRes>
     return transferXTokens(input, currencySelection)
   }
 
-  // Handles DOT, WETH transfers to AssetHubPolkadot
-  async transferToAssetHub<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TRes> {
-    const { api, assetInfo } = input
-
-    if (isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.chain))) {
-      return api.callTxMethod(await createTypeAndThenCall(this.chain, input))
-    }
-
-    assertHasLocation(assetInfo)
-
-    return transferPolkadotXcm(
-      {
-        ...input,
-        asset: createAsset(this.version, assetInfo.amount, assetInfo.location)
-      },
-      'transfer_assets',
-      'Unlimited'
-    )
-  }
-
   transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { destination } = options
     if (destination === 'Ethereum') {
       return this.transferToEthereum(options)
     }
 
-    return this.transferToAssetHub(options)
+    return transferPolkadotXcm(options, 'transfer_assets', 'Unlimited')
   }
 
   canUseXTokens({ assetInfo, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {

@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for AssetHubKusama Parachain
 
-import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { isTLocation, isTrustedChain, Version } from '@paraspell/sdk-common'
 
@@ -55,22 +54,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { method: 'limited_teleport_assets', includeFee: true }
-  }
-
-  createCurrencySpec(
-    amount: bigint,
-    scenario: TScenario,
-    version: Version,
-    asset?: TAssetInfo,
-    isOverridenAsset?: boolean
-  ) {
-    return getChain('AssetHubPolkadot').createCurrencySpec(
-      amount,
-      scenario,
-      version,
-      asset,
-      isOverridenAsset
-    )
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

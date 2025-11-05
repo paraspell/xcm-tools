@@ -342,7 +342,7 @@ exports[`XCM - e2e > Auto API create > should create transfer tx from Acala to A
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -719,7 +719,7 @@ exports[`XCM - e2e > Auto API create > should create transfer tx from Acala to A
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -1279,6 +1279,100 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DOT from A
         "parents": 1,
       },
     },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ENA from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountKey20",
+            "value": {
+              "key": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fee_asset_item": 0,
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -2086,6 +2180,100 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from 
 `;
 
 exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets",
+  "module": "PolkadotXcm",
+  "parameters": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountKey20",
+            "value": {
+              "key": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PAXG from AssetHubPolkadot to Ethereum 1`] = `
 {
   "method": "transfer_assets",
   "module": "PolkadotXcm",
@@ -4997,7 +5185,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -5167,7 +5355,7 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
       ],
     },
     "assets_transfer_type": {
-      "type": "LocalReserve",
+      "type": "DestinationReserve",
     },
     "custom_xcm_on_dest": {
       "type": "V5",
@@ -5209,34 +5397,88 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
           ],
         },
         {
-          "type": "DepositAsset",
+          "type": "DepositReserveAsset",
           "value": {
             "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 1000000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "Here",
+                    },
+                    "parents": 1,
+                  },
+                },
+              ],
             },
-            "beneficiary": {
+            "dest": {
               "interior": {
                 "type": "X1",
                 "value": {
-                  "type": "AccountId32",
-                  "value": {
-                    "id": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
+                  "type": "Parachain",
+                  "value": 2006,
                 },
               },
               "parents": 0,
             },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 996755950000n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "Here",
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": FixedSizeBinary {
+                            "asBytes": [Function],
+                            "asHex": [Function],
+                            "asOpaqueBytes": [Function],
+                            "asOpaqueHex": [Function],
+                            "asText": [Function],
+                          },
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
           },
         },
       ],
@@ -5248,14 +5490,14 @@ exports[`XCM - e2e > RelayToPara > should create transfer tx - DOT from Polkadot
           "type": "X1",
           "value": {
             "type": "Parachain",
-            "value": 2006,
+            "value": 1000,
           },
         },
         "parents": 0,
       },
     },
     "fees_transfer_type": {
-      "type": "LocalReserve",
+      "type": "DestinationReserve",
     },
     "remote_fees_id": {
       "type": "V5",
@@ -8561,7 +8803,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -8793,7 +9035,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -8978,7 +9220,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -9163,7 +9405,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -9348,7 +9590,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -9533,7 +9775,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -9763,7 +10005,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -9995,7 +10237,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -10227,7 +10469,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -10412,7 +10654,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -10650,7 +10892,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -10841,7 +11083,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -11069,7 +11311,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -11254,7 +11496,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -11439,7 +11681,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -11620,7 +11862,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > should create transfe
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -12858,7 +13100,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -12924,7 +13165,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -13068,7 +13308,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -13725,7 +13964,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubKusama > ParaToPara >
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -14326,7 +14564,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -14392,7 +14629,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -14912,7 +15148,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -15638,7 +15873,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -15835,7 +16069,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -15901,7 +16134,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -17375,7 +17607,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -18093,7 +18324,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -18159,7 +18389,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -18225,7 +18454,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -18366,7 +18594,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
           "id": {
             "interior": {
               "type": "Here",
-              "value": null,
             },
             "parents": 1,
           },
@@ -24813,7 +25040,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -25043,7 +25270,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -25228,7 +25455,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -25458,7 +25685,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -25690,7 +25917,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -25967,7 +26194,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -26246,7 +26473,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -26474,7 +26701,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -26747,7 +26974,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > should crea
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -30045,7 +30272,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Darwinia > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -30226,7 +30453,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Darwinia > should create tran
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -31032,7 +31259,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -31259,7 +31486,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -31570,7 +31797,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -31916,7 +32143,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
         {
           "fun": {
             "type": "Fungible",
-            "value": 2481108000n,
+            "value": 3309708000n,
           },
           "id": {
             "interior": {
@@ -32015,7 +32242,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                 {
                   "fun": {
                     "type": "Fungible",
-                    "value": 2437008000n,
+                    "value": 3265608000n,
                   },
                   "id": {
                     "interior": {
@@ -32382,7 +32609,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -32605,7 +32832,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -32870,7 +33097,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > should create tra
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -33729,7 +33956,7 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
         {
           "fun": {
             "type": "Fungible",
-            "value": 2481108000n,
+            "value": 2437681362n,
           },
           "id": {
             "interior": {
@@ -33828,7 +34055,7 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
                 {
                   "fun": {
                     "type": "Fungible",
-                    "value": 2437008000n,
+                    "value": 2393581362n,
                   },
                   "id": {
                     "interior": {
@@ -33892,7 +34119,7 @@ exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara >
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 43608000n,
+                      "value": 181362n,
                     },
                     "id": {
                       "interior": {
@@ -34918,7 +35145,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -35103,7 +35330,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -35353,7 +35580,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -35538,7 +35765,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -35723,7 +35950,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -35908,7 +36135,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -36093,7 +36320,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -36278,7 +36505,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -36463,7 +36690,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -36648,7 +36875,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -36839,7 +37066,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -37030,7 +37257,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -37215,7 +37442,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -37400,7 +37627,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -37591,7 +37818,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -37782,7 +38009,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -37973,7 +38200,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -38160,7 +38387,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -38345,7 +38572,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -38530,7 +38757,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > ParaToPa
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -38711,7 +38938,7 @@ exports[`XCM - e2e > Transfer scenarios for origin IntegriteePolkadot > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -39203,7 +39430,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                     "interior": {
                       "type": "Here",
                     },
-                    "parents": 0,
+                    "parents": 1,
                   },
                 },
               ],
@@ -39225,7 +39452,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -39279,7 +39506,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V4",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -39406,7 +39637,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -39634,7 +39865,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                     "interior": {
                       "type": "Here",
                     },
-                    "parents": 0,
+                    "parents": 1,
                   },
                 },
               ],
@@ -39656,7 +39887,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -39710,7 +39941,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V4",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -39837,7 +40072,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -40022,7 +40257,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -40181,7 +40416,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                     "interior": {
                       "type": "Here",
                     },
-                    "parents": 0,
+                    "parents": 1,
                   },
                 },
               ],
@@ -40203,7 +40438,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -40257,7 +40492,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V4",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -40384,7 +40623,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -40565,7 +40804,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -40746,7 +40985,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -40927,7 +41166,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -41112,7 +41351,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -41338,7 +41577,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -41523,7 +41762,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -41691,7 +41930,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                       "interior": {
                         "type": "Here",
                       },
-                      "parents": 0,
+                      "parents": 1,
                     },
                   },
                 },
@@ -41714,7 +41953,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -41771,7 +42010,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V3",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -41901,7 +42144,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -42065,7 +42308,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                       "interior": {
                         "type": "Here",
                       },
-                      "parents": 0,
+                      "parents": 1,
                     },
                   },
                 },
@@ -42088,7 +42331,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -42145,7 +42388,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V3",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -42380,7 +42627,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                     "interior": {
                       "type": "Here",
                     },
-                    "parents": 0,
+                    "parents": 1,
                   },
                 },
               ],
@@ -42402,7 +42649,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -42456,7 +42703,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V4",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -42561,7 +42812,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                     "interior": {
                       "type": "Here",
                     },
-                    "parents": 0,
+                    "parents": 1,
                   },
                 },
               ],
@@ -42583,7 +42834,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -42637,7 +42888,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Jamton > ParaToPara > should 
       "type": "V4",
       "value": {
         "interior": {
-          "type": "Here",
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
         },
         "parents": 1,
       },
@@ -48665,7 +48920,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -48919,7 +49174,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -49335,7 +49590,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -49676,7 +49931,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -50152,7 +50407,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -50405,7 +50660,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -50724,7 +50979,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > should create tran
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 997439950000n,
                     },
                     "id": {
                       "interior": {
@@ -52958,7 +53213,11 @@ exports[`XCM - e2e > Transfer scenarios for origin NeuroWeb > ParaToPara > shoul
           },
           "id": {
             "interior": {
-              "type": "Here",
+              "type": "X1",
+              "value": {
+                "type": "PalletInstance",
+                "value": 10,
+              },
             },
             "parents": 0,
           },
@@ -53023,7 +53282,11 @@ exports[`XCM - e2e > Transfer scenarios for origin NeuroWeb > ParaToPara > shoul
           },
           "id": {
             "interior": {
-              "type": "Here",
+              "type": "X1",
+              "value": {
+                "type": "PalletInstance",
+                "value": 10,
+              },
             },
             "parents": 0,
           },
@@ -53153,7 +53416,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Nodle > ParaToPara > should c
           },
           "id": {
             "interior": {
-              "type": "Here",
+              "type": "X1",
+              "value": {
+                "type": "PalletInstance",
+                "value": 2,
+              },
             },
             "parents": 0,
           },
@@ -53218,7 +53485,11 @@ exports[`XCM - e2e > Transfer scenarios for origin Nodle > ParaToPara > should c
           },
           "id": {
             "interior": {
-              "type": "Here",
+              "type": "X1",
+              "value": {
+                "type": "PalletInstance",
+                "value": 2,
+              },
             },
             "parents": 0,
           },
@@ -54628,7 +54899,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -54733,7 +55004,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
       ],
     },
     "assets_transfer_type": {
-      "type": "LocalReserve",
+      "type": "DestinationReserve",
     },
     "custom_xcm_on_dest": {
       "type": "V5",
@@ -54775,34 +55046,88 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
           ],
         },
         {
-          "type": "DepositAsset",
+          "type": "DepositReserveAsset",
           "value": {
             "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 1000000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "Here",
+                    },
+                    "parents": 1,
+                  },
+                },
+              ],
             },
-            "beneficiary": {
+            "dest": {
               "interior": {
                 "type": "X1",
                 "value": {
-                  "type": "AccountId32",
-                  "value": {
-                    "id": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
+                  "type": "Parachain",
+                  "value": 2006,
                 },
               },
               "parents": 0,
             },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 996755950000n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "Here",
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": FixedSizeBinary {
+                            "asBytes": [Function],
+                            "asHex": [Function],
+                            "asOpaqueBytes": [Function],
+                            "asOpaqueHex": [Function],
+                            "asText": [Function],
+                          },
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
           },
         },
       ],
@@ -54814,14 +55139,14 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
           "type": "X1",
           "value": {
             "type": "Parachain",
-            "value": 2006,
+            "value": 1000,
           },
         },
         "parents": 0,
       },
     },
     "fees_transfer_type": {
-      "type": "LocalReserve",
+      "type": "DestinationReserve",
     },
     "remote_fees_id": {
       "type": "V5",
@@ -56814,142 +57139,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > should create tran
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Altair - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2088,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Amplitude - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2124,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to AssetHubKusama - (XRT) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -57086,210 +57275,6 @@ exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to BifrostKusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2001,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to BridgeHubKusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1002,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to CoretimeKusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1005,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to CrustShadow - (XRT) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -57358,342 +57343,6 @@ exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Encointer - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1001,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to IntegriteeKusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2015,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Karura - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2000,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Kintsugi - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2092,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Kusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 1,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Moonriver - (XRT) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -57750,206 +57399,6 @@ exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara
             "type": "Parachain",
             "value": 2023,
           },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to PeopleKusama - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1004,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > ParaToPara > should create transfer tx from RobonomicsKusama to Shiden - (KSM) 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2007,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin RobonomicsKusama > should create transfer tx - ParaToRelay KSM from RobonomicsKusama to Relay 1`] = `
-{
-  "method": "limited_reserve_transfer_assets",
-  "module": "PolkadotXcm",
-  "parameters": {
-    "assets": {
-      "type": "V3",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "type": "Concrete",
-            "value": {
-              "interior": {
-                "type": "Here",
-              },
-              "parents": 1,
-            },
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountId32",
-            "value": {
-              "id": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "Here",
         },
         "parents": 1,
       },
@@ -60663,7 +60112,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -60886,7 +60335,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -61067,7 +60516,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -61290,7 +60739,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -61513,7 +60962,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -61778,7 +61227,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -62047,7 +61496,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Unique > ParaToPara > should 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -63496,7 +62945,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -63722,7 +63171,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -63903,7 +63352,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {
@@ -64084,7 +63533,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -64309,7 +63758,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -64535,7 +63984,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941641129n,
+                      "value": 999938477117n,
                     },
                     "id": {
                       "interior": {
@@ -64716,7 +64165,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 997584550000n,
+                      "value": 996755950000n,
                     },
                     "id": {
                       "interior": {
@@ -64990,7 +64439,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999941488802n,
+                      "value": 999938198263n,
                     },
                     "id": {
                       "interior": {

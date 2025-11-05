@@ -1,7 +1,6 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
-import type { TAssetInfo } from '@paraspell/assets'
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
@@ -10,11 +9,9 @@ import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TScenario,
   type TSerializedApiCall
 } from '../../types'
-import { createX1Payload, getChain } from '../../utils'
-import { createAsset } from '../../utils/asset'
+import { getChain } from '../../utils'
 import Parachain from '../Parachain'
 
 class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -31,19 +28,6 @@ class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
 
   transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
-  }
-
-  createCurrencySpec(amount: bigint, scenario: TScenario, version: Version, _asset?: TAssetInfo) {
-    if (scenario === 'ParaToPara') {
-      return createAsset(version, amount, {
-        parents: Parents.ZERO,
-        interior: createX1Payload(version, {
-          PalletInstance: 5
-        })
-      })
-    } else {
-      return super.createCurrencySpec(amount, scenario, version)
-    }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

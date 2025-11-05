@@ -1,10 +1,8 @@
-import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_LOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
-import { type TPolkadotXCMTransferOptions, type TScenario } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type AssetHubKusama from './AssetHubKusama'
 
@@ -68,20 +66,6 @@ describe('transferPolkadotXCM', () => {
     expect(result).toEqual({
       method: 'limited_teleport_assets',
       includeFee: true
-    })
-  })
-
-  describe('createCurrencySpec', () => {
-    it('should throw InvalidCurrencyError for ParaToPara if asset has no location', () => {
-      const scenario: TScenario = 'ParaToPara'
-      const amount = 1000000000n
-      const assetWithoutML = { symbol: 'DOT', location: DOT_LOCATION } as TAssetInfo
-
-      const spy = vi.spyOn(chain, 'createCurrencySpec')
-
-      chain.createCurrencySpec(amount, scenario, chain.version, assetWithoutML)
-
-      expect(spy).toHaveBeenCalled()
     })
   })
 })

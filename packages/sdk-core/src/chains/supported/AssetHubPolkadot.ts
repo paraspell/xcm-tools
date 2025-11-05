@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
-import type { TAssetInfo } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
   getRelayChainSymbol,
@@ -10,7 +9,6 @@ import {
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
-  hasJunction,
   isTLocation,
   isTrustedChain,
   Parents,
@@ -44,7 +42,7 @@ import {
 } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
+import { createBeneficiaryLocation } from '../../utils/location'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
@@ -291,34 +289,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { method: 'limited_teleport_assets', includeFee: true }
-  }
-
-  createCurrencySpec(
-    amount: bigint,
-    scenario: TScenario,
-    version: Version,
-    asset?: TAssetInfo,
-    isOverriddenAsset?: boolean
-  ) {
-    if (scenario === 'ParaToPara') {
-      // If the asset has overridden location, provide default location
-      // as it will be replaced later
-      const location: TLocation | undefined = isOverriddenAsset
-        ? { parents: Parents.ZERO, interior: 'Here' }
-        : asset?.location
-
-      if (!location) {
-        throw new InvalidCurrencyError('Asset does not have a location defined')
-      }
-
-      const transformedLocation = hasJunction(location, 'Parachain', getParaId(this.chain))
-        ? localizeLocation(this.chain, location)
-        : location
-
-      return createAsset(version, amount, transformedLocation)
-    } else {
-      return super.createCurrencySpec(amount, scenario, version, asset)
-    }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

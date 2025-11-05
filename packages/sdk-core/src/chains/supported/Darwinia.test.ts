@@ -1,5 +1,5 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
-import { Parents, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AMOUNT_ALL } from '../../constants'
@@ -7,16 +7,9 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
-import { createAsset } from '../../utils/asset'
 import type Darwinia from './Darwinia'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../utils/asset', () => ({
-  createAsset: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Darwinia', () => {
   let darwinia: Darwinia<unknown, unknown>
@@ -54,30 +47,6 @@ describe('Darwinia', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     expect(() => darwinia.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
-  })
-
-  it('should call createCurrencySpec with correct values', () => {
-    darwinia.createCurrencySpec(100n, 'ParaToPara', darwinia.version)
-    expect(createAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
-      parents: Parents.ZERO,
-      interior: {
-        X1: {
-          PalletInstance: 5
-        }
-      }
-    })
-  })
-
-  it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    darwinia.createCurrencySpec(100n, 'ParaToRelay', darwinia.version)
-    expect(createAsset).toHaveBeenCalledWith(darwinia.version, 100n, {
-      parents: Parents.ZERO,
-      interior: {
-        X1: {
-          PalletInstance: 5
-        }
-      }
-    })
   })
 
   describe('transferLocalNonNativeAsset', () => {
