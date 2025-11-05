@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.12.14](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.13...sdk-core-v11.12.14) (2025-11-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Export validateDestination function ⬆️ ([97adbc9](https://github.com/paraspell/xcm-tools/commit/97adbc9a11067ad161a2a1f97dce90d71fb3c78b))
+
 ## [11.12.13](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.12...sdk-core-v11.12.13) (2025-11-04)
 
 
