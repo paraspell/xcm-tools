@@ -66,6 +66,7 @@ export const dryRunInternal = async <TApi, TRes>(
   if (!originDryRun.success) {
     return {
       failureReason: originDryRun.failureReason,
+      failureSubReason: originDryRun.failureSubReason,
       failureChain: 'origin',
       origin: originDryRun,
       hops: []

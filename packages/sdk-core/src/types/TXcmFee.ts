@@ -134,6 +134,7 @@ export type TXcmFeeDetailSuccess = TXcmFeeBase & {
   fee: bigint
   feeType: TFeeType
   dryRunError?: string
+  dryRunSubError?: string
 }
 
 export type TXcmFeeDetailWithFallback = TXcmFeeDetailSuccess
@@ -142,6 +143,7 @@ export type TXcmFeeDetailError = TXcmFeeBase & {
   fee?: bigint
   feeType?: TFeeType
   dryRunError: string
+  dryRunSubError?: string
 }
 
 export type TXcmFeeDetail = TXcmFeeDetailSuccess | TXcmFeeDetailError
@@ -151,6 +153,7 @@ export type TXcmFeeHopResult = {
   feeType?: TFeeType
   sufficient?: boolean
   dryRunError?: string
+  dryRunSubError?: string
   forwardedXcms?: any
   destParaId?: number
   /** @deprecated Use `asset` property instead. */

@@ -31,21 +31,42 @@ const getFailureInfo = (
 ): {
   failureChain?: TXcmFeeChain
   failureReason?: string
+  failureSubReason?: string
 } => {
   // Check standard chains first for backwards compatibility
   if (chains.origin?.dryRunError)
-    return { failureChain: 'origin', failureReason: chains.origin.dryRunError }
+    return {
+      failureChain: 'origin',
+      failureReason: chains.origin.dryRunError,
+      failureSubReason: chains.origin.dryRunSubError
+    }
   if (chains.assetHub?.dryRunError)
-    return { failureChain: 'assetHub', failureReason: chains.assetHub.dryRunError }
+    return {
+      failureChain: 'assetHub',
+      failureReason: chains.assetHub.dryRunError,
+      failureSubReason: chains.assetHub.dryRunSubError
+    }
   if (chains.bridgeHub?.dryRunError)
-    return { failureChain: 'bridgeHub', failureReason: chains.bridgeHub.dryRunError }
+    return {
+      failureChain: 'bridgeHub',
+      failureReason: chains.bridgeHub.dryRunError,
+      failureSubReason: chains.bridgeHub.dryRunSubError
+    }
   if (chains.destination?.dryRunError)
-    return { failureChain: 'destination', failureReason: chains.destination.dryRunError }
+    return {
+      failureChain: 'destination',
+      failureReason: chains.destination.dryRunError,
+      failureSubReason: chains.destination.dryRunSubError
+    }
 
   // Check hops for failures
   for (const hop of hops) {
     if (hop.result.dryRunError) {
-      return { failureChain: hop.chain as TXcmFeeChain, failureReason: hop.result.dryRunError }
+      return {
+        failureChain: hop.chain as TXcmFeeChain,
+        failureReason: hop.result.dryRunError,
+        failureSubReason: hop.result.dryRunSubError
+      }
     }
   }
 
@@ -77,6 +98,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     asset: originAsset,
     feeType: originFeeType,
     dryRunError: originDryRunError,
+    dryRunSubError: originDryRunSubError,
     forwardedXcms: initialForwardedXcm,
     destParaId: initialDestParaId,
     weight: originWeight,
@@ -132,7 +154,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
           sufficient: sufficientOriginFee,
           currency: originCurrency,
           asset: originAsset,
-          ...(originDryRunError && { dryRunError: originDryRunError })
+          ...(originDryRunError && { dryRunError: originDryRunError }),
+          ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
         } as TXcmFeeDetail,
         destination: {
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
@@ -232,6 +255,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
   let destFeeType: TFeeType | undefined =
     destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
   let destDryRunError: string | undefined
+  let destDryRunSubError: string | undefined
   let destSufficient: boolean | undefined = undefined
 
   if (traversalResult.destination) {
@@ -239,6 +263,7 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
     destFee = destResult.fee
     destFeeType = destResult.feeType
     destDryRunError = destResult.dryRunError
+    destDryRunSubError = destResult.dryRunSubError
     destSufficient = destResult.sufficient
     destCurrency = destResult.currency
     destAsset = destResult.asset
@@ -313,7 +338,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
       currency: result.currency,
       asset: result.asset,
-      ...(result.dryRunError && { dryRunError: result.dryRunError })
+      ...(result.dryRunError && { dryRunError: result.dryRunError }),
+      ...(result.dryRunSubError && { dryRunSubError: result.dryRunSubError })
     }) as TXcmFeeDetail
 
   const result: TGetXcmFeeResult = {
@@ -324,7 +350,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
       currency: originCurrency,
       asset: originAsset,
-      ...(originDryRunError && { dryRunError: originDryRunError })
+      ...(originDryRunError && { dryRunError: originDryRunError }),
+      ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
     } as TXcmFeeDetail,
     ...(traversalResult.assetHub && { assetHub: convertToFeeDetail(traversalResult.assetHub) }),
     ...(processedBridgeHub && { bridgeHub: convertToFeeDetail(processedBridgeHub) }),
@@ -334,7 +361,8 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       sufficient: destSufficient,
       currency: destCurrency,
       asset: destAsset,
-      ...(destDryRunError && { dryRunError: destDryRunError })
+      ...(destDryRunError && { dryRunError: destDryRunError }),
+      ...(destDryRunSubError && { dryRunSubError: destDryRunSubError })
     } as TXcmFeeDetail,
     hops: traversalResult.hops.map(hop => ({
       chain: hop.chain,

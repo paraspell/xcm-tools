@@ -131,7 +131,8 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
   if (!dryRunResult.success) {
     if (disableFallback) {
       return {
-        dryRunError: dryRunResult.failureReason
+        dryRunError: dryRunResult.failureReason,
+        dryRunSubError: dryRunResult.failureSubReason
       } as TDestXcmFeeDetail<TDisableFallback>
     }
 
@@ -141,6 +142,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       fee,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
+      dryRunSubError: dryRunResult.failureSubReason,
       sufficient: false,
       asset,
       currency: asset.symbol

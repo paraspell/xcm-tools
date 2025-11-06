@@ -25,18 +25,13 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
   getChainProviders: vi.fn(),
-  resolveModuleError: vi.fn().mockReturnValue('ModuleError'),
+  resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
   findNativeAssetInfoOrThrow: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
   wrapTxBypass: vi.fn()
 }))
 
-vi.mock('@polkadot/api', () => ({
-  ApiPromise: {
-    create: vi.fn()
-  },
-  WsProvider: vi.fn()
-}))
+vi.mock('@polkadot/api')
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
@@ -1174,6 +1169,17 @@ describe('PolkadotJsApi', () => {
         })
       }) as unknown as Codec
 
+    const makeJsonOtherOnlyResponse = (reason: unknown = 'JsonOnlyFailure'): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({}),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { err: { error: { other: reason } } },
+            forwardedXcms: []
+          }
+        })
+      }) as unknown as Codec
+
     const makeNoErrShapesResponse = (): Codec =>
       ({
         toHuman: vi.fn().mockReturnValue({}),
@@ -1291,6 +1297,29 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
+      })
+    })
+
+    it('returns failure reason from JSON other when human result has no error', async () => {
+      const resp = makeJsonOtherOnlyResponse('JsonOnlyFailureReason')
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'JsonOnlyFailureReason',
         currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
@@ -1497,6 +1526,42 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
+        currency: 'GLMR',
+        asset: { symbol: 'GLMR' } as TAssetInfo
+      })
+    })
+
+    it('returns failure with preserved reason when retry with version throws', async () => {
+      const firstAttempt = makeErrOtherResponse('VersionedConversionFailed')
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
+        .mockResolvedValueOnce(firstAttempt)
+        .mockImplementationOnce(() => {
+          throw new Error('RPC temporarily unavailable')
+        })
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(2)
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenNthCalledWith(
+        2,
+        { system: { Signed: address } },
+        mockExtrinsic,
+        3
+      )
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'VersionedConversionFailed',
+        failureSubReason: undefined,
         currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })

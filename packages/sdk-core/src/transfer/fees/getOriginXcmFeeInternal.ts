@@ -81,6 +81,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
     if (disableFallback) {
       return {
         dryRunError: dryRunResult.failureReason,
+        dryRunSubError: dryRunResult.failureSubReason,
         currency: dryRunResult.currency,
         asset: dryRunResult.asset
       }
@@ -95,6 +96,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
       asset: dryRunResult.asset,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
+      dryRunSubError: dryRunResult.failureSubReason,
       sufficient: false
     }
   }
