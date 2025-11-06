@@ -7,12 +7,13 @@ import reactPlugin from "eslint-plugin-react";
 import tsDocsPlugin from "eslint-plugin-tsdoc";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
+import { defineConfig } from "eslint/config";
 
-export default tseslint.config(
+export default defineConfig(
   {
     settings: {
       react: {
-        version: "19.1.0",
+        version: "19.2.0",
       },
     },
   },
