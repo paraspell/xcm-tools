@@ -16,8 +16,8 @@ import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getChainLogo } from './utils';
 
-const Y_SCALE_FACTOR = 1.8
-const SCALE_FACTOR = 1.15
+const Y_SCALE_FACTOR = 1.8;
+const SCALE_FACTOR = 1.15;
 
 type Props = {
   name: string;

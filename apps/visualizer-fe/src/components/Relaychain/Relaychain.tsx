@@ -10,7 +10,7 @@ import { adjustUVs, adjustUVYAxis } from '../../utils/adjustUVs';
 import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
 const SCALE_FACTOR = 2.25;
-const SCALE_Y_FACTOR = 1.8
+const SCALE_Y_FACTOR = 1.8;
 
 type Props = {
   onClick: (event: ThreeEvent<MouseEvent>) => void;
