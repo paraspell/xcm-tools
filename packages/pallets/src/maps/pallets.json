@@ -129,21 +129,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Tokens"]
   },
-  "ComposableFinance": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 44
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "Darwinia": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
