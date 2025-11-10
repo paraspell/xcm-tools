@@ -9,6 +9,7 @@ import {
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRun,
+  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChainProviders,
@@ -21,6 +22,7 @@ import {
   localizeLocation,
   MissingChainApiError,
   Parents,
+  type TDestination,
   type TLocation,
   type TSerializedApiCall,
   type TSubstrateChain,
@@ -64,6 +66,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
   wrapTxBypass: vi.fn(),
+  findAssetInfoOrThrow: vi.fn(),
   findNativeAssetInfoOrThrow: vi.fn(),
   isSystemChain: vi.fn(),
   localizeLocation: vi.fn(),
@@ -75,6 +78,7 @@ describe('PapiApi', () => {
   let mockPolkadotClient: PolkadotClient
   let mockTransaction: TPapiTransaction
   let mockDryRunResult
+  let accountCurrencyMapGetValue: Mock
   const mockChain = 'Acala'
 
   beforeEach(async () => {
@@ -219,6 +223,11 @@ describe('PapiApi', () => {
             Accounts: {
               getEntries: vi.fn().mockResolvedValue([])
             }
+          },
+          MultiTransactionPayment: {
+            AccountCurrencyMap: {
+              getValue: vi.fn().mockResolvedValue(undefined)
+            }
           }
         }
       })
@@ -227,6 +236,48 @@ describe('PapiApi', () => {
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
+
+    accountCurrencyMapGetValue = papiApi.getApi().getUnsafeApi().query.MultiTransactionPayment
+      .AccountCurrencyMap.getValue as unknown as Mock
+    accountCurrencyMapGetValue.mockClear()
+  })
+
+  describe('resolveUsedAsset', () => {
+    const createOptions = () => ({
+      tx: mockTransaction,
+      address: 'addr',
+      chain: 'Hydration' as TSubstrateChain,
+      destination: 'Moonbeam' as TDestination,
+      asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+    })
+
+    it('returns native asset when MultiTransactionPayment has no mapping', async () => {
+      const nativeAsset = { symbol: 'HYDR' } as TAssetInfo
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+      accountCurrencyMapGetValue.mockResolvedValueOnce(undefined)
+
+      const result = await papiApi.resolveUsedAsset(createOptions())
+
+      expect(accountCurrencyMapGetValue).toHaveBeenCalledWith('addr')
+      expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Hydration')
+      expect(result).toEqual({ isCustomAsset: false, asset: nativeAsset })
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReset()
+    })
+
+    it('returns mapped asset when MultiTransactionPayment specifies an id', async () => {
+      const mappedAsset = { symbol: 'USDC' } as TAssetInfo
+      accountCurrencyMapGetValue.mockResolvedValueOnce('1001')
+      vi.mocked(findAssetInfoOrThrow).mockReturnValue(mappedAsset)
+
+      const result = await papiApi.resolveUsedAsset(createOptions())
+
+      expect(accountCurrencyMapGetValue).toHaveBeenCalledWith('addr')
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: '1001' }, null)
+      expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
+
+      vi.mocked(findAssetInfoOrThrow).mockReset()
+    })
   })
 
   it('should set config and get the api', async () => {
@@ -1787,6 +1838,65 @@ describe('PapiApi', () => {
         expect(result.destParaId).toBe(2000)
       }
     })
+
+    it('falls back to native asset when MultiTransactionPayment fee lookup fails', async () => {
+      const localXcm = { type: 'V4', value: [] }
+      const successResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 1n, proof_size: 2n } }
+          },
+          local_xcm: localXcm,
+          forwarded_xcms: []
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(successResponse)
+
+      const nativeAsset = {
+        symbol: 'HYDR',
+        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
+      } as unknown as TAssetInfo
+      const multiAsset = {
+        symbol: 'USDC',
+        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
+      } as unknown as TAssetInfo
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+
+      const resolveUsedAssetSpy = vi
+        .spyOn(papiApi, 'resolveUsedAsset')
+        .mockResolvedValue({ asset: multiAsset, isCustomAsset: true })
+
+      const getXcmPaymentApiFeeSpy = vi
+        .spyOn(papiApi, 'getXcmPaymentApiFee')
+        .mockResolvedValue(undefined as unknown as bigint)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Hydration',
+        destination: 'Moonbeam',
+        asset: multiAsset as WithAmount<TAssetInfo>
+      })
+
+      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        currency: 'HYDR',
+        asset: nativeAsset,
+        weight: { refTime: 1n, proofSize: 2n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+
+      resolveUsedAssetSpy.mockRestore()
+      getXcmPaymentApiFeeSpy.mockRestore()
+    })
   })
 
   describe('getXcmWeight', () => {
@@ -2414,7 +2524,7 @@ describe('PapiApi', () => {
         } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).resolves.toEqual({
         success: true,
-        fee: 100n,
+        fee: 101n,
         currency: 'AUSD',
         asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
