@@ -18,7 +18,7 @@ import {
   TransferToAhNotSupported
 } from '../errors'
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
-import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
+import { createTypeAndThenCall } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions, TSerializedApiCall, TTransferLocalOptions } from '../types'
 import {
@@ -86,7 +86,6 @@ vi.mock('./config', () => ({
 
 vi.mock('../transfer', () => ({
   createTypeAndThenCall: vi.fn(),
-  createTypeThenAutoReserve: vi.fn(),
   getParaEthTransferFees: vi.fn().mockReturnValue('fee')
 }))
 
@@ -421,6 +420,52 @@ describe('Parachain', () => {
     expect(result).toBe('transferPolkadotXCM called')
   })
 
+  it('uses type-and-then call for external asset routed via AssetHub', async () => {
+    const chain = new OnlyPolkadotXCMParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+
+    const mockCall: TSerializedApiCall = {
+      module: 'PolkadotXcm',
+      method: 'transfer_assets_using_type_and_then',
+      parameters: {}
+    }
+
+    vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
+    vi.mocked(resolveDestChain).mockReturnValue('Moonbeam')
+
+    const hasMethodSpy = vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
+    const callTxMethodSpy = vi.spyOn(api, 'callTxMethod').mockResolvedValue('callResult')
+
+    const options = {
+      api,
+      to: 'Moonbeam',
+      assetInfo: {
+        symbol: 'USDT',
+        amount: 100n,
+        location: {
+          parents: 2,
+          interior: { X1: [{ Parachain: 1000 }] }
+        }
+      },
+      address: 'destinationAddress',
+      senderAddress: '5FMockSender',
+      version: Version.V4,
+      paraIdTo: 2004
+    } as TSendInternalOptions<unknown, unknown>
+
+    const result = await chain.transfer(options)
+
+    expect(hasMethodSpy).toHaveBeenCalled()
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(
+      'Acala',
+      expect.objectContaining({
+        assetInfo: options.assetInfo,
+        destination: options.to
+      })
+    )
+    expect(callTxMethodSpy).toHaveBeenCalledWith(mockCall)
+    expect(result).toBe('callResult')
+  })
+
   it('should throw NoXCMSupportImplementedError when no transfer methods are supported', async () => {
     const chain = new NoSupportParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
     const options = {
@@ -680,7 +725,6 @@ describe('Parachain', () => {
       vi.resetAllMocks()
       vi.mocked(resolveDestChain).mockReturnValue('Acala')
       vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
-      vi.mocked(createTypeThenAutoReserve).mockResolvedValue(mockCall)
       vi.mocked(constructRelayToParaParameters).mockReturnValue(
         'parameters' as unknown as Record<string, unknown>
       )
@@ -694,7 +738,7 @@ describe('Parachain', () => {
         method: 'transfer_assets_using_type_and_then'
       })
 
-      expect(createTypeThenAutoReserve).toHaveBeenCalledOnce()
+      expect(createTypeAndThenCall).toHaveBeenCalledOnce()
       expect(result).toBe(mockCall)
     })
 
