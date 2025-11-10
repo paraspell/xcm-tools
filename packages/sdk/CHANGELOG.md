@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.14...sdk-v11.12.15) (2025-11-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Always use AH as reserve in system asset transfers ⚙️ ([eae3708](https://github.com/paraspell/xcm-tools/commit/eae37087cc5656e1052eecf7ee46939ee5cca1af))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor polkadot xcm asset creation 🔧 ([77203d6](https://github.com/paraspell/xcm-tools/commit/77203d6783b5d73275e35473c4fc52d44a28b501))
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.13...sdk-v11.12.14) (2025-11-05)
 
 
