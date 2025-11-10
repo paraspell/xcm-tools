@@ -1,6 +1,5 @@
 import {
   deepEqual,
-  isRelayChain,
   isSubstrateBridge,
   isTLocation,
   type TLocation,
@@ -10,7 +9,7 @@ import {
 import { RELAY_LOCATION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
-import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
+import { assertHasLocation, getAssetReserveChain } from '../../utils'
 
 export const getSubBridgeReserve = (
   chain: TSubstrateChain,
@@ -36,18 +35,7 @@ const resolveReserveChain = (
     return overrideReserve
   }
 
-  const relayChain = getRelayChainOf(chain)
-
-  if (relayChain === 'Paseo' || relayChain === 'Kusama') {
-    // Paseo and Kusama ecosystems migrate reserves to AssetHub
-    return getAssetReserveChain(chain, chain, assetLocation)
-  }
-
-  if (isRelayChain(destination)) {
-    return destination
-  }
-
-  return getAssetReserveChain(chain, chain, assetLocation)
+  return getAssetReserveChain(chain, assetLocation)
 }
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(

@@ -94,7 +94,7 @@ describe('createTypeAndThenCallContext', () => {
 
     const result = await createTypeAndThenCallContext(mockChain, options)
 
-    expect(getAssetReserveChain).not.toHaveBeenCalled()
+    expect(getAssetReserveChain).toHaveBeenCalled()
     expect(mockClonedApi.init).toHaveBeenCalledTimes(2)
 
     expect(result).toEqual({
@@ -110,7 +110,7 @@ describe('createTypeAndThenCallContext', () => {
   it('should create context with non-relay chain as destination', async () => {
     const result = await createTypeAndThenCallContext(mockChain, mockOptions)
 
-    expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockChain, mockAsset.location)
+    expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockAsset.location)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(1, mockDestChain)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(2, mockReserveChain)
 

@@ -30,7 +30,7 @@ export const prepareExecuteContext = ({
   if (feeAssetInfo) assertHasLocation(feeAssetInfo)
 
   const amount = assetInfo.amount
-  const reserveChain = getAssetReserveChain(chain, destChain, assetInfo.location)
+  const reserveChain = getAssetReserveChain(chain, assetInfo.location)
 
   const asset = createAsset(version, amount, assetInfo.location)
 

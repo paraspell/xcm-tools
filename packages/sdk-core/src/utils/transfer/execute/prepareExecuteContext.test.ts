@@ -63,7 +63,7 @@ describe('prepareExecuteContext', () => {
     const result = prepareExecuteContext(mockOptions)
 
     expect(assertHasLocation).toHaveBeenCalledWith(mockOptions.assetInfo)
-    expect(getAssetReserveChain).toHaveBeenCalledWith(chain, destChain, mockLocation)
+    expect(getAssetReserveChain).toHaveBeenCalledWith(chain, mockLocation)
     expect(createAsset).toHaveBeenCalledTimes(4)
     expect(localizeLocation).toHaveBeenCalledTimes(3)
 
