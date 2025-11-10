@@ -200,17 +200,6 @@
       }
     ]
   },
-  "ComposableFinance": {
-    "name": "Composable Finance",
-    "info": "composable",
-    "paraId": 2019,
-    "providers": [
-      {
-        "name": "Composable",
-        "endpoint": "wss://rpc.composable.finance"
-      }
-    ]
-  },
   "Darwinia": {
     "name": "Darwinia",
     "info": "darwinia",

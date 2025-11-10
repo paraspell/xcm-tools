@@ -31,7 +31,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Centrifuge: ['ormlAssetRegistry.metadata'],
   Collectives: [],
   CollectivesWestend: [],
-  ComposableFinance: ['assetsRegistry.assetSymbol'],
   CoretimeKusama: [], // No assets metadata query
   CoretimePaseo: [], // No assets metadata query
   CoretimePolkadot: [], // No assets metadata query

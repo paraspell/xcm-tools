@@ -19,7 +19,6 @@ import BridgeHubWestend from '../chains/supported/BridgeHubWestend'
 import Centrifuge from '../chains/supported/Centrifuge'
 import Collectives from '../chains/supported/Collectives'
 import CollectivesWestend from '../chains/supported/CollectivesWestend'
-import ComposableFinance from '../chains/supported/ComposableFinance'
 import CoretimeKusama from '../chains/supported/CoretimeKusama'
 import CoretimePaseo from '../chains/supported/CoretimePaseo'
 import CoretimePolkadot from '../chains/supported/CoretimePolkadot'
@@ -84,7 +83,6 @@ export const chains = <TApi, TRes>() => ({
   BifrostPolkadot: new BifrostPolkadot<TApi, TRes>(),
   BridgeHubPolkadot: new BridgeHubPolkadot<TApi, TRes>(),
   Centrifuge: new Centrifuge<TApi, TRes>(),
-  ComposableFinance: new ComposableFinance<TApi, TRes>(),
   Darwinia: new Darwinia<TApi, TRes>(),
   EnergyWebX: new EnergyWebX<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
