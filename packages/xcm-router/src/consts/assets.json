@@ -1172,6 +1172,35 @@
         }
       },
       {
+        "symbol": "PAXG",
+        "decimals": 18,
+        "assetId": "39",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "aPAGX",
+        "decimals": 18
+      },
+      {
         "symbol": "HDX",
         "decimals": 12,
         "location": {
@@ -1438,31 +1467,6 @@
               {
                 "GlobalConsensus": {
                   "kusama": null
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "PAXG",
-        "decimals": 18,
-        "assetId": "39",
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
                 }
               }
             ]
