@@ -75,7 +75,7 @@ const keyFromWs = (ws: string | string[]): TClientKey => {
 const createPolkadotClient = (ws: string | string[], useLegacy: boolean): TPapiApi => {
   const options = useLegacy ? { innerEnhancer: withLegacy() } : {}
   const provider = getWsProvider(ws, options)
-  return createClient(withPolkadotSdkCompat(provider))
+  return createClient(useLegacy ? provider : withPolkadotSdkCompat(provider))
 }
 
 const leasePolkadotClient = (ws: string | string[], ttlMs: number, useLegacy: boolean) => {
