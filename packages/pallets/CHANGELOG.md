@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/pallets-v11.12.15...pallets-v11.13.0) (2025-11-11)
+
+
+### Features
+
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+
 ## [11.12.15](https://github.com/paraspell/xcm-tools/compare/pallets-v11.12.14...pallets-v11.12.15) (2025-11-10)
 
 

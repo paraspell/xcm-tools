@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.15...sdk-core-v11.13.0) (2025-11-11)
+
+
+### Features
+
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+
+
+### Bug Fixes
+
+* **sdk-core:** Use localReserve when origin is relaychain 🔧 ([89365f3](https://github.com/paraspell/xcm-tools/commit/89365f38870e4d82065e76efb10c70a72074d22b))
+
 ## [11.12.15](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.14...sdk-core-v11.12.15) (2025-11-10)
 
 
