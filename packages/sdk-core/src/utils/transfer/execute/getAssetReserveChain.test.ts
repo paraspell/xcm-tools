@@ -90,6 +90,18 @@ describe('getAssetReserveChain', () => {
     expect(result).toBe('AssetHubPolkadot')
   })
 
+  it('returns origin when it is a relay chain', () => {
+    const relayChain: TSubstrateChain = 'Polkadot'
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(null)
+    vi.mocked(deepEqual).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue(relayChain)
+
+    const result = getAssetReserveChain(relayChain, mockAssetLocation)
+
+    expect(result).toBe(relayChain)
+  })
+
   it('returns origin when no conditions match', () => {
     vi.mocked(hasJunction).mockReturnValue(false)
     vi.mocked(getJunctionValue).mockReturnValue(null)

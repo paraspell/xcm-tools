@@ -3,6 +3,7 @@ import {
   deepEqual,
   getJunctionValue,
   hasJunction,
+  isRelayChain,
   Parents,
   type TLocation
 } from '@paraspell/sdk-common'
@@ -25,6 +26,8 @@ export const getAssetReserveChain = (
     }
     return resolvedChain as TSubstrateChain
   }
+
+  if (isRelayChain(chain)) return chain
 
   const relaychain = getRelayChainOf(chain)
   const ahChain = `AssetHub${relaychain}` as TSubstrateChain
