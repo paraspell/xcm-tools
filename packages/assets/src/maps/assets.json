@@ -1763,9 +1763,22 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X3": [
               {
-                "Parachain": 2104
+                "Parachain": 2030
+              },
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x95cef13441be50d20ca4558cc0a27b601ac544e5"
+                }
               }
             ]
           }
@@ -3791,6 +3804,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1039",
+        "symbol": "aPAGX",
+        "decimals": 18,
+        "existentialDeposit": "4675946889957",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x00f283c7a97ecb60dd905cdab52febceec04dc0f"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000794",
         "symbol": "LINK",
         "decimals": 18,
@@ -3866,6 +3902,26 @@
         },
         "isFeeAsset": true,
         "alias": "DAI2"
+      },
+      {
+        "assetId": "1001168",
+        "symbol": "XON",
+        "decimals": 12,
+        "existentialDeposit": "10000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 3417
+              },
+              {
+                "GeneralIndex": 0
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "13",
@@ -7222,6 +7278,29 @@
         "alias": "TST2"
       },
       {
+        "assetId": "50000336",
+        "symbol": "dot",
+        "decimals": 8,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000336
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "dot2"
+      },
+      {
         "assetId": "22222078",
         "symbol": "JAMTON",
         "decimals": 12,
@@ -7466,7 +7545,8 @@
             ]
           }
         },
-        "existentialDeposit": "6611"
+        "existentialDeposit": "6611",
+        "alias": "dot1"
       },
       {
         "assetId": "1000",
@@ -7626,28 +7706,6 @@
         },
         "existentialDeposit": "1",
         "alias": "ETH1"
-      },
-      {
-        "assetId": "50000276",
-        "symbol": "ATOM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000276
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
       },
       {
         "assetId": "20090107",
@@ -12525,28 +12583,6 @@
         "alias": "USDt2"
       },
       {
-        "assetId": "759",
-        "symbol": "bLd",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 759
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
         "assetId": "862812",
         "symbol": "CUBO",
         "decimals": 9,
@@ -14261,8 +14297,8 @@
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
     "ss58Prefix": 101,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "NEURO",
@@ -14281,7 +14317,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -16338,7 +16375,7 @@
           }
         },
         "existentialDeposit": "100000",
-        "alias": "USDT5"
+        "alias": "USDT6"
       },
       {
         "assetId": "313370",
@@ -16523,6 +16560,29 @@
         "existentialDeposit": "1000000",
         "isFeeAsset": true,
         "alias": "ETH1"
+      },
+      {
+        "assetId": "50000274",
+        "symbol": "USDT",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000274
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000",
+        "alias": "USDT4"
       },
       {
         "assetId": "4000000001",
@@ -16885,7 +16945,7 @@
           }
         },
         "existentialDeposit": "100000000000",
-        "alias": "USDT4"
+        "alias": "USDT5"
       },
       {
         "assetId": "4000000003",
@@ -16978,7 +17038,7 @@
           }
         },
         "existentialDeposit": "10",
-        "alias": "USDT6"
+        "alias": "USDT7"
       },
       {
         "assetId": "50000167",

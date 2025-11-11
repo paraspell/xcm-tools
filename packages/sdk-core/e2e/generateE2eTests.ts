@@ -11,7 +11,10 @@ import {
   PARACHAINS,
   SUBSTRATE_CHAINS,
   TBuilderOptions,
-  TSendBaseOptionsWithSenderAddress
+  TSendBaseOptionsWithSenderAddress,
+  getChain,
+  isRelayChain,
+  TSendInternalOptions
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
@@ -277,7 +280,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from Acala to Astar - WS url', async () => {
-        const builder = Builder('wss://acala-rpc.dwellir.com')
+        const acalaProvider = getChainProviders('Acala')[0]
+        const builder = Builder(acalaProvider)
           .from('Acala')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
@@ -287,7 +291,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from Acala to Astar - WS url array', async () => {
-        const builder = Builder(['wss://acala-rpc.dwellir.com', 'wss://acala.ibp.network'])
+        const acalaProviders = getChainProviders('Acala').slice(0, 2)
+        const builder = Builder(acalaProviders)
           .from('Acala')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
@@ -305,21 +310,28 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       const relayChainAsset = findAssetInfo(
         chain,
         // Use native selector for AssetHub chains because of duplicates
-        { symbol: chain.includes('AssetHub') ? Native(relayChainSymbol) : relayChainSymbol },
+        { symbol: chain.startsWith('AssetHub') ? Native(relayChainSymbol) : relayChainSymbol },
         getRelayChainOf(chain)
       )
       const paraToRelaySupported = relayChainAsset && !doesNotSupportParaToRelay.includes(chain)
       if (scenarios.length === 0 && !paraToRelaySupported) {
         return
       }
+
       describe.sequential(`Transfer scenarios for origin ${chain}`, () => {
         describe.sequential('ParaToPara', () => {
           scenarios.forEach(({ destChain, asset }) => {
+            // Skip temporarily disabled chains
+            const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
+            const isSendingDisabled = chainInstance?.isSendingTempDisabled(
+              {} as TSendInternalOptions<TApi, TRes>
+            )
+            if (isSendingDisabled) return
+
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
               const getCurrency = (): TCurrencyCore => {
                 if (
-                  (chain.startsWith('AssetHub') ||
-                    chain === 'Astar' ||
+                  ((chain.startsWith('AssetHub') && chain === 'Astar') ||
                     chain === 'Hydration' ||
                     chain === 'KiltSpiritnet') &&
                   asset.symbol.toUpperCase() === getNativeAssetSymbol(chain)

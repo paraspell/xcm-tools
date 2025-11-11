@@ -72,7 +72,13 @@ const resolveNativeAssets = async (
       }
     ]
   }
-  return fetchNativeAssetsDefault(api)
+  const defaultNativeAssets = await fetchNativeAssetsDefault(api)
+
+  if (chain === 'BifrostPaseo') {
+    return defaultNativeAssets.slice(0, 1)
+  }
+
+  return defaultNativeAssets
 }
 
 const fetchNativeAssets = async (
