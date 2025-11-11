@@ -4,7 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AMOUNT_ALL } from '../../constants'
 import { ChainNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TSendInternalOptions,
+  TTransferLocalOptions
+} from '../../types'
 import { getChain } from '../../utils/getChain'
 import type IntegriteePolkadot from './IntegriteePolkadot'
 
@@ -41,6 +45,16 @@ describe('IntegriteePolkadot', () => {
 
   it('transferRelayToPara should throw ChainNotSupportedError', () => {
     expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  })
+
+  it('isSendingTempDisabled should return true', () => {
+    const result = chain.isSendingTempDisabled({} as TSendInternalOptions<unknown, unknown>)
+    expect(result).toBe(true)
+  })
+
+  it('isReceivingTempDisabled should return true', () => {
+    const result = chain.isReceivingTempDisabled('ParaToRelay')
+    expect(result).toBe(true)
   })
 
   describe('transferLocalNonNativeAsset', () => {

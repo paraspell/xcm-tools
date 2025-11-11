@@ -10,8 +10,7 @@ import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
 const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
-  const isBifrost = chain.startsWith('Bifrost')
-  if (isBifrost) {
+  if (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo') {
     const isEthAsset = isForeignAsset(asset) && asset.assetId?.startsWith('0x')
 
     const resolvedAsset =
@@ -19,7 +18,7 @@ const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
         ? findAssetInfoOrThrow(chain, { location: asset.location }, null)
         : asset
 
-    return getChain('BifrostPolkadot').getCurrencySelection(resolvedAsset)
+    return getChain(chain).getCurrencySelection(resolvedAsset)
   } else {
     assertHasId(asset)
     return asset.assetId

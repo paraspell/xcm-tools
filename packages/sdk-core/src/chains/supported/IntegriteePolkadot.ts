@@ -8,6 +8,8 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
+  TScenario,
+  TSendInternalOptions,
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
@@ -30,6 +32,14 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
 
   transferRelayToPara(): Promise<TSerializedApiCall> {
     throw new ChainNotSupportedError()
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
+    return true
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
