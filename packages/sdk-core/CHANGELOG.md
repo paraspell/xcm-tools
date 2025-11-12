@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.13.0...sdk-core-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+* **xcm-router:** Fix decimal slippage not working 🛠️ ([34361ae](https://github.com/paraspell/xcm-tools/commit/34361ae6d8d1183b4943592c8adb5f84732f7aa4))
+
 ## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.15...sdk-core-v11.13.0) (2025-11-11)
 
 
