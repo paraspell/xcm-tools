@@ -2,6 +2,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AMOUNT_ALL } from '../../constants'
+import { ChainNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -151,5 +152,9 @@ describe('Acala', () => {
         amount: 500n
       }
     })
+  })
+
+  it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
+    expect(() => acala.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 })
