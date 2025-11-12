@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.13.0...sdk-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
+
+### Bug Fixes
+
+* **sdk-core:** improve PAPI enhancer usage ([5e409ab](https://github.com/paraspell/xcm-tools/commit/5e409ab48c5fef002159f0213f04a5f259ff0531))
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
 ## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.15...sdk-v11.13.0) (2025-11-11)
 
 

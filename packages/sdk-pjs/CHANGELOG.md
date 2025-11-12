@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.13.0...sdk-pjs-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
 ## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.15...sdk-pjs-v11.13.0) (2025-11-11)
 
 

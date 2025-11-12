@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.13.0...xcm-api-v11.14.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
 ## [11.13.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.12.15...xcm-api-v11.13.0) (2025-11-11)
 
 
