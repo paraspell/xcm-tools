@@ -3,6 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AMOUNT_ALL } from '../../constants'
+import { ChainNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -13,13 +14,8 @@ import type {
 import { getChain } from '../../utils'
 import type Astar from './Astar'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
-
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../pallets/xTokens')
 
 describe('Astar', () => {
   let astar: Astar<unknown, unknown>
@@ -55,6 +51,10 @@ describe('Astar', () => {
   it('should call transferXTokens with currencyID', () => {
     astar.transferXTokens(mockXTokensInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockXTokensInput, 123n)
+  })
+
+  it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
+    expect(() => astar.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 
   describe('transferLocalNonNativeAsset', () => {

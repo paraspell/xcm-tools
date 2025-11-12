@@ -43,7 +43,11 @@ import {
   createVersionedDestination
 } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
-import { createTypeAndThenCall, getParaEthTransferFees } from '../transfer'
+import {
+  createTypeAndThenCall,
+  createTypeThenAutoReserve,
+  getParaEthTransferFees
+} from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
@@ -410,7 +414,7 @@ abstract class Parachain<TApi, TRes> {
         )
       }
 
-      return createTypeAndThenCall(getRelayChainOf(destChain), {
+      return createTypeThenAutoReserve(getRelayChainOf(destChain), {
         ...options,
         beneficiaryLocation: createBeneficiaryLocation({
           api,

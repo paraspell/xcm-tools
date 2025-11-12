@@ -3,9 +3,10 @@
 import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import { ChainNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
+import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
@@ -40,6 +41,10 @@ class Astar<TApi, TRes>
 
   canUseXTokens({ assetInfo }: TSendInternalOptions<TApi, TRes>): boolean {
     return assetInfo.symbol !== this.getNativeAssetSymbol()
+  }
+
+  transferRelayToPara(): Promise<TSerializedApiCall> {
+    throw new ChainNotSupportedError()
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
