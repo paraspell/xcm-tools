@@ -10,7 +10,12 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
   address: string,
   asset: TAssetInfo
 ): Promise<bigint> => {
-  if (chain === 'Astar' || chain === 'Shiden' || chain.startsWith('Integritee')) {
+  if (
+    chain === 'Astar' ||
+    chain === 'Shiden' ||
+    chain === 'CrustShadow' ||
+    chain.startsWith('Integritee')
+  ) {
     assertHasId(asset)
     return api.getBalanceAssetsPallet(
       address,

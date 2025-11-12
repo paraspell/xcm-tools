@@ -7,6 +7,7 @@ import {
   isForeignAsset
 } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -21,8 +22,7 @@ vi.mock('@paraspell/assets', async importOriginal => ({
   findAssetInfo: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
-  isSymbolMatch: vi.fn((a: string, b: string) => a.toLowerCase() === b.toLowerCase()),
-  isForeignAsset: vi.fn((asset: Partial<TAssetInfo> & { __foreign?: boolean }) => !!asset.__foreign)
+  isSymbolMatch: vi.fn((a: string, b: string) => a.toLowerCase() === b.toLowerCase())
 }))
 
 vi.mock('@paraspell/pallets')
@@ -240,6 +240,8 @@ describe('wrapTxBypass (existing cases)', () => {
 })
 
 describe('getCurrencySelection (new coverage)', () => {
+  const CHAIN: TSubstrateChain = 'Acala'
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -248,25 +250,24 @@ describe('getCurrencySelection (new coverage)', () => {
     const asset = {
       symbol: 'XYZ',
       location: { parents: 0, interior: { Here: null } }
-    } as unknown as TAssetInfo
-    const res = getCurrencySelection(asset)
+    } as TAssetInfo
+    const res = getCurrencySelection(CHAIN, asset)
     expect('location' in res).toBe(true)
   })
 
   it('returns id when foreign + assetId present', () => {
     const asset = {
-      __foreign: true,
-      assetId: 1234,
+      assetId: '1234',
       symbol: 'USDC'
-    } as unknown as TAssetInfo
+    } as TAssetInfo
     expect(isForeignAsset(asset)).toBe(true)
-    const res = getCurrencySelection(asset)
-    expect(res).toEqual({ id: 1234 })
+    const res = getCurrencySelection(CHAIN, asset)
+    expect(res).toEqual({ id: '1234' })
   })
 
   it('falls back to symbol otherwise', () => {
-    const asset = { symbol: 'DOT' } as unknown as TAssetInfo
-    const res = getCurrencySelection(asset)
+    const asset = { symbol: 'DOT' } as TAssetInfo
+    const res = getCurrencySelection(CHAIN, asset)
     expect(res).toEqual({ symbol: 'DOT' })
   })
 })
@@ -398,7 +399,6 @@ describe('wrapTxBypass (new branches)', () => {
     const mainAssetIsNative = {
       symbol: 'ACA',
       decimals: 12,
-      assetId: undefined,
       amount: 5n
     } as WithAmount<TAssetInfo>
 

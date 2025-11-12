@@ -178,7 +178,7 @@ export const wrapTxBypass = async <TApi, TRes>(
     api,
     chain,
     address,
-    currency: getCurrencySelection(asset)
+    currency: getCurrencySelection(chain, asset)
   })
 
   const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets)

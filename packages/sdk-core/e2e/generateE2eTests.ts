@@ -14,7 +14,9 @@ import {
   TSendBaseOptionsWithSenderAddress,
   getChain,
   isRelayChain,
-  TSendInternalOptions
+  TSendInternalOptions,
+  RELAYCHAINS,
+  isSystemChain
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
@@ -127,27 +129,31 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describe.sequential('AssetClaim', () => {
-      ;(['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TSubstrateChain[]).forEach(
-        chain => {
-          it(`should create asset claim tx for ${chain}`, async () => {
-            const api = await createOrGetApiInstanceForChain(chain)
-            const tx = await Builder(api)
-              .claimFrom(chain)
-              .currency([
-                {
-                  id: {
-                    parents: Parents.ZERO,
-                    interior: 'Here'
-                  },
-                  fun: { Fungible: MOCK_AMOUNT }
-                }
-              ])
-              .address(MOCK_ADDRESS)
-              .build()
-            await validateTx(tx, signer)
-          })
-        }
-      )
+      const ASSET_CLAIM_CHAINS: TSubstrateChain[] = [
+        'Polkadot',
+        'Kusama',
+        'AssetHubPolkadot',
+        'AssetHubKusama'
+      ]
+      ASSET_CLAIM_CHAINS.forEach(chain => {
+        it(`should create asset claim tx for ${chain}`, async () => {
+          const api = await createOrGetApiInstanceForChain(chain)
+          const tx = await Builder(api)
+            .claimFrom(chain)
+            .currency([
+              {
+                id: {
+                  parents: Parents.ZERO,
+                  interior: 'Here'
+                },
+                fun: { Fungible: MOCK_AMOUNT }
+              }
+            ])
+            .address(MOCK_ADDRESS)
+            .build()
+          await validateTx(tx, signer)
+        })
+      })
 
       it('should create asset claim tx V3', async () => {
         const api = await createOrGetApiInstanceForChain('AssetHubPolkadot')
@@ -184,7 +190,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describe.sequential('RelayToPara', () => {
-      ;(['Polkadot', 'Kusama'] as TRelaychain[]).forEach(relayChain => {
+      RELAYCHAINS.forEach(relayChain => {
         PARACHAINS.forEach(chain => {
           const symbol = getRelayChainSymbol(chain)
           if (!hasSupportForAsset(chain, symbol)) return
@@ -208,7 +214,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
     })
 
-    describe.sequential('Hydration to AssetHub transfer', () => {
+    describe.sequential('Hydration to AssetHub transfer - miscellaneous scenarios', () => {
       it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
         const api = await createOrGetApiInstanceForChain('Hydration')
         const builder = Builder(api)
@@ -317,8 +323,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
       const relayChainAsset = findAssetInfo(
         chain,
-        // Use native selector for AssetHub chains because of duplicates
-        { symbol: chain.startsWith('AssetHub') ? Native(relayChainSymbol) : relayChainSymbol },
+        // Use native selector for system chains
+        { symbol: isSystemChain(chain) ? Native(relayChainSymbol) : relayChainSymbol },
         getRelayChainOf(chain)
       )
       const paraToRelaySupported = relayChainAsset && !doesNotSupportParaToRelay.includes(chain)
@@ -326,46 +332,25 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         return
       }
 
+      // Skip temporarily disabled chains
+      const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
+      const isSendingDisabled = chainInstance?.isSendingTempDisabled(
+        {} as TSendInternalOptions<TApi, TRes>
+      )
+      if (isSendingDisabled) return
+
       describe.sequential(`Transfer scenarios for origin ${chain}`, () => {
         describe.sequential('ParaToPara', () => {
           scenarios.forEach(({ destChain, asset }) => {
-            // Skip temporarily disabled chains
-            const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
-            const isSendingDisabled = chainInstance?.isSendingTempDisabled(
-              {} as TSendInternalOptions<TApi, TRes>
-            )
-            if (isSendingDisabled) return
-
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
               const getCurrency = (): TCurrencyCore => {
-                if (
-                  ((chain.startsWith('AssetHub') && chain === 'Astar') ||
-                    chain === 'Hydration' ||
-                    chain === 'KiltSpiritnet') &&
-                  asset.symbol.toUpperCase() === getNativeAssetSymbol(chain)
-                ) {
-                  return {
-                    symbol: Native(asset.symbol)
-                  }
+                if (asset.location) {
+                  return { location: asset.location }
                 }
 
                 // Bifrost has duplicated asset ids, thus use symbol specifier
-                if (isForeignAsset(asset) && asset.assetId && !chain.includes('Bifrost')) {
+                if (isForeignAsset(asset) && asset.assetId && !chain.startsWith('Bifrost')) {
                   return { id: asset.assetId }
-                }
-
-                if (chain === 'BifrostPaseo') {
-                  return {
-                    symbol: asset.symbol === 'KSM' ? Native(asset.symbol) : Foreign(asset.symbol)
-                  }
-                }
-
-                if (
-                  chain === 'AssetHubPolkadot' &&
-                  destChain === 'Mythos' &&
-                  asset.symbol === 'MYTH'
-                ) {
-                  return { symbol: ForeignAbstract('MYTH1') }
                 }
 
                 return { symbol: asset.symbol }
@@ -424,9 +409,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
             chain
           )} from ${chain} to Relay`, async () => {
-            const symbol = chain.startsWith('AssetHub')
-              ? Native(getRelayChainSymbol(chain))
-              : getRelayChainSymbol(chain)
+            const relaySymbol = getRelayChainSymbol(chain)
+            const symbol = isSystemChain(chain) ? Native(relaySymbol) : relaySymbol
             const api = await createOrGetApiInstanceForChain(chain)
             const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
             try {
@@ -452,29 +436,25 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           })
         }
       })
-    })
 
-    describe.sequential('Local transfers (origin = destination)', () => {
-      SUBSTRATE_CHAINS.forEach(chain => {
-        it(`should create local transfer tx on ${chain}`, async () => {
-          const api = await createOrGetApiInstanceForChain(chain)
-          const symbol = getRelayChainSymbol(chain)
-          const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+      it(`should create local transfer tx on ${chain}`, async () => {
+        const api = await createOrGetApiInstanceForChain(chain)
+        const symbol = getRelayChainSymbol(chain)
+        const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
 
-          try {
-            const builder = Builder(api)
-              .from(chain)
-              .to(chain)
-              .currency({ symbol, amount: MOCK_AMOUNT })
-              .senderAddress(address)
-              .address(address)
-            await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
-          } catch (error) {
-            if (error instanceof ChainNotSupportedError) {
-              expect(error).toBeInstanceOf(ChainNotSupportedError)
-            }
+        try {
+          const builder = Builder(api)
+            .from(chain)
+            .to(chain)
+            .currency({ symbol, amount: MOCK_AMOUNT })
+            .senderAddress(address)
+            .address(address)
+          await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
+        } catch (error) {
+          if (error instanceof ChainNotSupportedError) {
+            expect(error).toBeInstanceOf(ChainNotSupportedError)
           }
-        })
+        }
       })
     })
   })
