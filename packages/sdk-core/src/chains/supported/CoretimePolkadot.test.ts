@@ -48,8 +48,7 @@ describe('CoretimePolkadot', () => {
     const result = chain.getRelayToParaOverrides()
 
     expect(result).toEqual({
-      method: 'limited_teleport_assets',
-      includeFee: true
+      transferType: 'teleport'
     })
   })
 })

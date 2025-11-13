@@ -20,7 +20,12 @@ import {
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
-import type { TRelayToParaOptions, TSerializedApiCall, TTransferLocalOptions } from '../types'
+import type {
+  TRelayToParaOptions,
+  TRelayToParaOverrides,
+  TSerializedApiCall,
+  TTransferLocalOptions
+} from '../types'
 import {
   type TPolkadotXcmMethod,
   type TPolkadotXCMTransferOptions,
@@ -124,6 +129,12 @@ class TestParachain extends TestParachainBase {
     useOnlyDepositAsset = false
   ) {
     return this.transferToEthereum(options, useOnlyDepositAsset)
+  }
+}
+
+class RelayToParaTeleportParachain extends TestParachainBase {
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { transferType: 'teleport' }
   }
 }
 
@@ -756,9 +767,12 @@ describe('Parachain', () => {
     })
 
     it('should return serialized call when not using type-and-then', async () => {
+      const version = Version.V5
+      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', version)
       const options = {
         ...baseOptions,
-        method: 'limited_transfer_assets' as TPolkadotXcmMethod
+        version,
+        method: 'limited_transfer_assets'
       }
 
       const result = await chain.transferRelayToPara(options)
@@ -769,12 +783,11 @@ describe('Parachain', () => {
         parameters: 'parameters'
       })
 
-      expect(constructRelayToParaParameters).toHaveBeenCalledWith(options, Version.V4, {
-        includeFee: true
-      })
+      expect(constructRelayToParaParameters).toHaveBeenCalledWith(options, version)
     })
 
     it('should respect methodOverride when provided', async () => {
+      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', Version.V5)
       const result = await chain.transferRelayToPara({
         ...baseOptions,
         method: 'customMethod'

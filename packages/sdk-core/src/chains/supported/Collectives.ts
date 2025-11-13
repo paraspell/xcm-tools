@@ -34,7 +34,7 @@ class Collectives<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadot
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_teleport_assets', includeFee: true }
+    return { transferType: 'teleport' }
   }
 }
 

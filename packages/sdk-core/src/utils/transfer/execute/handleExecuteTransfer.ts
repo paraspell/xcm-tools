@@ -1,12 +1,11 @@
 import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
 
-import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { AmountTooLowError, DryRunFailedError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, assertSenderAddress, getRelayChainOf } from '../..'
+import { assertAddressIsString, assertSenderAddress } from '../..'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { createExecuteCall } from './createExecuteCall'
@@ -30,6 +29,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     api,
     senderAddress,
     paraIdTo,
+    destChain,
     assetInfo,
     currency,
     feeCurrency,
@@ -47,7 +47,9 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   checkAmount(MIN_FEE)
 
-  const destChain = getTChain(paraIdTo as number, getRelayChainOf(chain)) as TParachain
+  if (destChain === undefined) {
+    throw new InvalidParameterError('Could not determine destination chain for execute transfer')
+  }
 
   const internalOptions = {
     api,

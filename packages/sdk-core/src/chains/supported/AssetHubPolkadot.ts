@@ -288,7 +288,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_teleport_assets', includeFee: true }
+    return { transferType: 'teleport' }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

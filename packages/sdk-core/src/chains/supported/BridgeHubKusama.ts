@@ -27,7 +27,7 @@ class BridgeHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolk
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_teleport_assets', includeFee: true }
+    return { transferType: 'teleport' }
   }
 }
 
