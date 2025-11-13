@@ -20,6 +20,9 @@ interface AngleMap {
   [key: string]: number;
 }
 
+const CAMERA_POSITION = new Vector3(48, 10, 0);
+const CAMERA_POSITION_MOBILE = new Vector3(58, 10, 0);
+
 const MainScene = () => {
   const { activeEditParachain } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
@@ -27,30 +30,28 @@ const MainScene = () => {
 
   const targetAngles = useRef<AngleMap>({});
   const currentAngles = useRef<AngleMap>({});
-  const ecosystems = RELAYCHAINS;
-  const totalEcosystems = ecosystems.length;
   const initialTargetRef = useRef<Vector3 | null>(null);
   const [_initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    ecosystems.forEach((ecosystem, index) => {
-      const targetAngle = (index / totalEcosystems) * 2 * Math.PI;
+    RELAYCHAINS.forEach((ecosystem, index) => {
+      const targetAngle = (index / RELAYCHAINS.length) * 2 * Math.PI;
       targetAngles.current[ecosystem] = targetAngle;
       currentAngles.current[ecosystem] = currentAngles.current[ecosystem] ?? targetAngle;
     });
     const initialEcosystem: TRelaychain = 'Polkadot';
     initialTargetRef.current = getCirclePosition(targetAngles.current[initialEcosystem], RADIUS);
     setInitialized(true);
-  }, [totalEcosystems, ecosystems]);
+  }, []);
 
   useFrame(({ scene }) => {
     const rotationOffset = -(
-      (ecosystems.indexOf(selectedEcosystem) / totalEcosystems) *
+      (RELAYCHAINS.indexOf(selectedEcosystem) / RELAYCHAINS.length) *
       2 *
       Math.PI
     );
 
-    ecosystems.forEach(ecosystem => {
+    RELAYCHAINS.forEach(ecosystem => {
       const mesh = scene.getObjectByName(ecosystem);
       if (mesh) {
         const targetAngle = targetAngles.current[ecosystem] + rotationOffset;
@@ -62,8 +63,6 @@ const MainScene = () => {
       }
     });
   });
-
-  const CAMERA_POSITION = new Vector3(isMobile ? 58 : 48, 10, 0);
 
   const target = initialTargetRef.current || CAMERA_POSITION;
 
@@ -83,7 +82,10 @@ const MainScene = () => {
       <ParachainsGraphContainer ecosystem="Westend" />
       <ParachainsGraphContainer ecosystem="Paseo" />
       <OrbitControls enableDamping autoRotate={false} target={target} makeDefault />
-      <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
+      <PerspectiveCamera
+        makeDefault
+        position={isMobile ? CAMERA_POSITION_MOBILE : CAMERA_POSITION}
+      />
     </>
   );
 };

@@ -35,30 +35,12 @@ const RightPanel = () => {
     >
       <Stack h="100%" w="100%" pos="relative" bg="white">
         <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} isMobile={isMobile} />
-        <Flex
-          flex={1}
-          w="100%"
-          h="50%"
-          pl={10}
-          mih={0}
-          justify="center"
-          align="stretch"
-          style={{ overflow: 'hidden' }}
-        >
+        <Flex flex={1} w="100%" h="50%" pl={10} mih={0} justify="center" align="stretch">
           <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
         </Flex>
 
         {!isMobile && (
-          <Flex
-            flex={1}
-            w="100%"
-            h="50%"
-            pl={10}
-            mih={0}
-            justify="center"
-            align="stretch"
-            style={{ overflow: 'hidden' }}
-          >
+          <Flex flex={1} w="100%" h="50%" pl={10} mih={0} justify="center" align="stretch">
             <TabNavigator />
           </Flex>
         )}

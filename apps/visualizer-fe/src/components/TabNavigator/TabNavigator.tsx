@@ -32,7 +32,7 @@ const TabNavigator: FC<Props> = ({ defaultValue = PageRoute.SCENE_2D_MSG_SUCCESS
     [PageRoute.SCENE_2D_BUBBLE_PLOT, <Scene2dBubblePlot />],
     [PageRoute.SCENE_2D_LIVEDATA_PLOT, <Scene2dLiveDataPlot />]
   ] as const;
-  const panelProps = { p: 0, h: '100%' as const, mih: 0, style: { overflow: 'hidden' } };
+  const panelProps = { p: 0, h: '100%' as const, mih: 0 };
 
   return (
     <Tabs
@@ -77,7 +77,7 @@ const TabNavigator: FC<Props> = ({ defaultValue = PageRoute.SCENE_2D_MSG_SUCCESS
         </Tabs.Tab>
       </Tabs.List>
 
-      <Box flex={1} mih={0} style={{ overflow: 'hidden' }}>
+      <Box flex={1} mih={0}>
         {panels.map(([value, node]) => (
           <Tabs.Panel key={value} value={value} {...panelProps}>
             {node}
