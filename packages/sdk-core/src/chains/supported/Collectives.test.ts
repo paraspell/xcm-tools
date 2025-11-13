@@ -71,6 +71,6 @@ describe('Collectives', () => {
 
   it('should return correct parameters for getRelayToParaOverrides', () => {
     const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({ method: 'limited_teleport_assets', includeFee: true })
+    expect(result).toEqual({ transferType: 'teleport' })
   })
 })

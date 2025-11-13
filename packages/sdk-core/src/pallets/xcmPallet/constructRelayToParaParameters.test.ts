@@ -10,25 +10,23 @@ import { createVersionedAssets } from '../../utils/asset'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
 import { createVersionedDestination } from './utils'
 
-vi.mock('../../utils', () => ({
-  resolveParaId: vi.fn(),
-  createBeneficiaryLocation: vi.fn(),
-  addXcmVersionHeader: vi.fn()
-}))
-
-vi.mock('./utils', () => ({
-  createVersionedDestination: vi.fn()
-}))
-
-vi.mock('../../utils/asset', () => ({
-  createVersionedAssets: vi.fn()
-}))
+vi.mock('../../utils')
+vi.mock('./utils')
+vi.mock('../../utils/asset')
 
 describe('constructRelayToParaParameters', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
   const mockAmount = 1000n
   const mockAddress = 'address123'
   const mockParaId = 100
+  const mockBeneficiary: TLocation = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: '0x1234' } } }
+  }
+  const mockDest: TLocation = {
+    parents: 1,
+    interior: { X1: { Parachain: 2000 } }
+  }
 
   const options = {
     api: mockApi,
@@ -41,24 +39,23 @@ describe('constructRelayToParaParameters', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(createBeneficiaryLocation).mockReturnValue(
-      'mockedBeneficiary' as unknown as TLocation
-    )
-    vi.mocked(addXcmVersionHeader).mockReturnValue(
-      'mockedVersionedBeneficiary' as unknown as TXcmVersioned<TLocation>
-    )
+    vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
+    vi.mocked(addXcmVersionHeader).mockImplementation((obj, version) => ({
+      [version]: obj
+    }))
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
     vi.mocked(createVersionedAssets).mockReturnValue({} as TXcmVersioned<TAsset[]>)
-    vi.mocked(createVersionedDestination).mockReturnValue(
-      'mockedDest' as unknown as TXcmVersioned<TLocation>
-    )
+    vi.mocked(createVersionedDestination).mockImplementation(version => ({
+      [version as Version.V5]: mockDest
+    }))
   })
 
-  it('should construct parameters with location destination and include fee', () => {
-    const result = constructRelayToParaParameters(options, Version.V4, { includeFee: true })
+  it('should construct parameters with location destination', () => {
+    const version = Version.V4
+    const result = constructRelayToParaParameters(options, version)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
-      Version.V4,
+      version,
       options.origin,
       options.destination,
       mockParaId
@@ -66,15 +63,15 @@ describe('constructRelayToParaParameters', () => {
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
       address: mockAddress,
-      version: Version.V4
+      version
     })
-    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(version, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
     expect(result).toEqual({
-      dest: 'mockedDest',
-      beneficiary: 'mockedVersionedBeneficiary',
+      dest: { [version]: mockDest },
+      beneficiary: { [version]: mockBeneficiary },
       assets: {},
       fee_asset_item: DEFAULT_FEE_ASSET,
       weight_limit: 'Unlimited'
@@ -82,10 +79,11 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters without fee for location destination', () => {
-    const result = constructRelayToParaParameters(options, Version.V4)
+    const version = Version.V4
+    const result = constructRelayToParaParameters(options, version)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
-      Version.V4,
+      version,
       options.origin,
       options.destination,
       mockParaId
@@ -93,35 +91,36 @@ describe('constructRelayToParaParameters', () => {
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
       address: mockAddress,
-      version: Version.V4
+      version
     })
-    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(version, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
     expect(result).toEqual({
-      dest: 'mockedDest',
-      beneficiary: 'mockedVersionedBeneficiary',
+      dest: { [version]: mockDest },
+      beneficiary: { [version]: mockBeneficiary },
       assets: {},
-      fee_asset_item: DEFAULT_FEE_ASSET
+      fee_asset_item: DEFAULT_FEE_ASSET,
+      weight_limit: 'Unlimited'
     })
   })
 
-  it('should construct parameters without specifying paraIdTo and include fee', () => {
+  it('should construct parameters without specifying paraIdTo', () => {
     const paraIdTo = undefined
+    const version = Version.V4
 
     const result = constructRelayToParaParameters(
       {
         ...options,
         paraIdTo
       },
-      Version.V4,
-      { includeFee: true }
+      version
     )
 
     expect(resolveParaId).toHaveBeenCalledWith(paraIdTo, options.destination)
     expect(createVersionedDestination).toHaveBeenCalledWith(
-      Version.V4,
+      version,
       options.origin,
       options.destination,
       mockParaId
@@ -129,15 +128,15 @@ describe('constructRelayToParaParameters', () => {
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
       address: mockAddress,
-      version: Version.V4
+      version
     })
-    expect(createVersionedAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
+    expect(createVersionedAssets).toHaveBeenCalledWith(version, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
     expect(result).toEqual({
-      dest: 'mockedDest',
-      beneficiary: 'mockedVersionedBeneficiary',
+      dest: { [version]: mockDest },
+      beneficiary: { [version]: mockBeneficiary },
       assets: {},
       fee_asset_item: DEFAULT_FEE_ASSET,
       weight_limit: 'Unlimited'

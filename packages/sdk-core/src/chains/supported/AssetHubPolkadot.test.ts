@@ -351,10 +351,8 @@ describe('AssetHubPolkadot', () => {
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {
     const result = assetHub.getRelayToParaOverrides()
-
     expect(result).toEqual({
-      method: 'limited_teleport_assets',
-      includeFee: true
+      transferType: 'teleport'
     })
   })
 

@@ -380,7 +380,7 @@ abstract class Parachain<TApi, TRes> {
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'transfer_assets_using_type_and_then', includeFee: true }
+    return { transferType: 'typeAndThen' }
   }
 
   async transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): Promise<TSerializedApiCall> {
@@ -393,17 +393,15 @@ abstract class Parachain<TApi, TRes> {
       senderAddress,
       destination,
       paraIdTo,
-      method: methodOverride
+      method
     } = options
-    const { method, includeFee } = this.getRelayToParaOverrides()
+    const { transferType } = this.getRelayToParaOverrides()
 
     if (this.isReceivingTempDisabled('RelayToPara')) {
       throw new InvalidParameterError(`Receiving on ${this.chain} is temporarily disabled`)
     }
 
-    const customMethod = methodOverride ?? method
-
-    if (customMethod === 'transfer_assets_using_type_and_then') {
+    if (transferType === 'typeAndThen') {
       const paraId = resolveParaId(paraIdTo, destination)
       const destChain = resolveDestChain(this.chain, paraId)
       const scenario: TScenario = 'RelayToPara'
@@ -432,8 +430,8 @@ abstract class Parachain<TApi, TRes> {
 
     return {
       module: (pallet as TPallet) ?? 'XcmPallet',
-      method: customMethod,
-      parameters: constructRelayToParaParameters(options, version, { includeFee })
+      method: method ?? 'limited_teleport_assets',
+      parameters: constructRelayToParaParameters(options, version)
     }
   }
 

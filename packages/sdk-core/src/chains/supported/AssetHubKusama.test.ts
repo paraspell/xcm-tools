@@ -64,8 +64,7 @@ describe('transferPolkadotXCM', () => {
   it('should call getRelayToParaOverrides with the correct parameters', () => {
     const result = chain.getRelayToParaOverrides()
     expect(result).toEqual({
-      method: 'limited_teleport_assets',
-      includeFee: true
+      transferType: 'teleport'
     })
   })
 })
