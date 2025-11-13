@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.14.0...xcm-api-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
 ## [11.14.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.13.0...xcm-api-v11.14.0) (2025-11-12)
 
 

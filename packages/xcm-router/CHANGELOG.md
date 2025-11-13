@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.0...xcm-router-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update typeAndThen calls to use forwardedXcms for fee calculation ⚙️ ([5303a08](https://github.com/paraspell/xcm-tools/commit/5303a08d47863b03080f6b526548701d54a4d495))
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
 ## [11.14.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.13.0...xcm-router-v11.14.0) (2025-11-12)
 
 
