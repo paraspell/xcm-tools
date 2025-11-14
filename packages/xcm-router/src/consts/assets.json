@@ -1198,7 +1198,24 @@
       },
       {
         "symbol": "aPAGX",
-        "decimals": 18
+        "decimals": 18,
+        "assetId": "1039",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x00f283c7a97ecb60dd905cdab52febceec04dc0f"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "HDX",
@@ -1390,6 +1407,21 @@
             "X1": [
               {
                 "Parachain": 2101
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "PHA",
+        "decimals": 12,
+        "assetId": "8",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2035
               }
             ]
           }
