@@ -11,11 +11,14 @@ import { Color, TextureLoader } from 'three';
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { getChainNameNoEcosystem } from '../../utils';
-import { adjustUVs } from '../../utils/adjustUVs';
+import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
 import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
-import { getChainLogo, getLogoScaleFactor } from './utils';
+import { getChainLogo } from './utils';
+
+const SCALE_X_FACTOR = 1.8;
+const SCALE_FACTOR = 1.15;
 
 type Props = {
   name: TSubstrateChain;
@@ -56,7 +59,8 @@ const ParachainNode: FC<Props> = ({
 
   useEffect(() => {
     if (sphereRef.current) {
-      adjustUVs(sphereRef.current.geometry as SphereGeometry, getLogoScaleFactor(name));
+      adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
+      adjustUVs(sphereRef.current.geometry as SphereGeometry, Math.sqrt(scale) * SCALE_FACTOR);
     }
   }, []);
 

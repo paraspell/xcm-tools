@@ -6,10 +6,11 @@ import { useEffect, useImperativeHandle, useRef } from 'react';
 import type { Group, Mesh, SphereGeometry } from 'three';
 import { Color, TextureLoader } from 'three';
 
-import { adjustUVs } from '../../utils/adjustUVs';
+import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
 import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
 const SCALE_FACTOR = 2.25;
+const SCALE_X_FACTOR = 1.8;
 
 type Props = {
   onClick: (event: ThreeEvent<MouseEvent>) => void;
@@ -34,6 +35,7 @@ const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
 
   useEffect(() => {
     if (sphereRef.current) {
+      adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
       adjustUVs(sphereRef.current.geometry as SphereGeometry, SCALE_FACTOR);
     }
   }, []);
