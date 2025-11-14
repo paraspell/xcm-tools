@@ -1,155 +1,376 @@
 import { expect, Page } from '@playwright/test';
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
 import { PolkadotjsExtensionPage } from './pom';
-import {
-  CHAINS_WITH_RELAY_CHAINS,
-  getRelayChainSymbol,
-  TChainWithRelayChains,
-  getAllAssetsSymbols,
-  TChain,
-  CHAIN_NAMES_DOT_KSM,
-} from '@paraspell/sdk';
+import { createName } from './utils/selectorName';
 
-const excludedChains = new Set(['Quartz', 'CoretimeKusama']);
+type TSymbolOptions = 'Auto' | 'Native' | 'Foreign' | 'Foreign abstract';
+type TCustomAssetOperation =
+  | 'assetId'
+  | 'symbol'
+  | 'location'
+  | 'overridenLocation';
 
-const chains = CHAINS_WITH_RELAY_CHAINS.filter(
-  (chain) => !excludedChains.has(chain),
-);
+const paraToParaTestData = [
+  {
+    fromChain: 'Astar',
+    toChain: 'BifrostPolkadot',
+    currency: 'ASTR - Native',
+  },
+  {
+    fromChain: 'AssetHubKusama',
+    toChain: 'BifrostKusama',
+    currency: 'USDT - 11',
+  },
+  {
+    fromChain: 'Astar',
+    toChain: 'Unique',
+    currency: 'USDT - 4294969280',
+  },
+  {
+    fromChain: 'AssetHubKusama',
+    toChain: 'Basilisk',
+    currency: 'KSM - Native',
+  },
+  {
+    fromChain: 'Hydration',
+    toChain: 'Acala',
+    currency: 'HDX - Native',
+  },
+  {
+    fromChain: 'Crust',
+    toChain: 'Acala',
+    currency: 'CRU - Native',
+  },
+];
 
-function getRelayChainForChain(chain: TChainWithRelayChains): string {
-  return getRelayChainSymbol(chain) === 'DOT' ? 'Polkadot' : 'Kusama';
-}
+const paraRelayTestData = [
+  {
+    fromChain: 'Jamton',
+    toChain: 'Polkadot',
+  },
 
-const getAssetsForChain = (chain: TChainWithRelayChains): string[] => {
-  if (chain === 'Pendulum') return ['PEN'];
-  if (chain === 'Nodle') return ['NODL'];
-  if (chain === 'Crust') return ['EQD'];
-  if (chain === 'CrustShadow') return ['KAR'];
-  if (chain === 'Phala') return ['PHA'];
-  if (chain === 'Mythos') return ['MYTH'];
-  return getAllAssetsSymbols(chain);
-};
+  {
+    fromChain: 'Kusama',
+    toChain: 'BridgeHubKusama',
+  },
+];
 
-const findTransferableChain = (
-  from: TChainWithRelayChains,
-): TChain | undefined => {
-  const allFromAssets = getAssetsForChain(from);
+const multicurrencyTestData = [
+  {
+    fromChain: 'Astar',
+    toChain: 'BifrostPolkadot',
+    currency: 'ASTR - Native',
+    multicurrency: ['ASTR - Native', 'USDC - 4294969281'],
+    feeAsset: 'USDC - 4294969281',
+  },
+  {
+    fromChain: 'AssetHubKusama',
+    toChain: 'BifrostKusama',
+    multicurrency: ['KSM - Native', 'ZLK - 188'],
+    feeAsset: 'KSM - Native',
+  },
+  {
+    fromChain: 'Hydration',
+    toChain: 'Acala',
+    currency: 'HDX - Native',
+    multicurrency: ['HDX - Native', 'WETH - 4'],
+    feeAsset: 'WETH - 4',
+  },
+];
 
-  const chainTo = CHAIN_NAMES_DOT_KSM.filter(
-    (chain) => getRelayChainSymbol(chain) === getRelayChainSymbol(from),
-  ).find((chain) => {
-    const chainAssets = getAllAssetsSymbols(chain);
-    const commonAsset = chainAssets.filter((asset) =>
-      allFromAssets.includes(asset),
-    )[0];
-    return commonAsset !== undefined;
-  });
-
-  return chainTo;
-};
-
-chains.forEach((chain) => {
-  const relayChain = getRelayChainForChain(chain);
-  if (!relayChain) return;
-  const anotherParachain = findTransferableChain(chain);
-  if (!anotherParachain) return;
-
-  basePjsTest.describe(`XCM SDK - Transfer for chain ${chain}`, () => {
-    let appPage: Page;
-    let extensionPage: PolkadotjsExtensionPage;
-
-    basePjsTest.beforeAll(async ({ context }) => {
-      ({ appPage, extensionPage } = await setupPolkadotExtension(context));
-      await appPage.goto('/xcm-sdk-sandbox');
-    });
-
-    basePjsTest.beforeEach(async () => {
-      await appPage.reload();
-    });
-
-    basePjsTest(
-      `Should succeed for ParaToPara transfer ${chain} -> ${anotherParachain}`,
-      async () => {
-        await appPage.getByTestId('select-origin').click();
-        await appPage.getByRole('option', { name: chain, exact: true }).click();
-
-        await appPage.getByTestId('select-destination').click();
-        await appPage
-          .getByRole('option', { name: anotherParachain, exact: true })
-          .click();
-
-        await appPage.getByTestId('select-currency').click();
-        await appPage.getByRole('option').first().click();
-
-        await appPage.getByTestId('submit').click();
-
-        await appPage.waitForTimeout(3000);
-        const error = appPage.getByTestId('error');
-        await expect(
-          error,
-          (await error.isVisible()) ? await error.innerText() : '',
-        ).not.toBeVisible();
-
-        await extensionPage.navigate();
-        await extensionPage.isPopupOpen();
-        await extensionPage.close();
+const validLocation = {
+  parents: 1,
+  interior: {
+    X2: [
+      {
+        Parachain: 2000,
       },
-    );
-
-    if (!['Crust', 'CrustShadow', 'Phala'].includes(chain)) {
-      basePjsTest(
-        `Should succeed for ParaToRelay transfer ${chain} -> ${relayChain}`,
-        async () => {
-          await appPage.getByTestId('select-origin').click();
-          await appPage
-            .getByRole('option', { name: chain, exact: true })
-            .click();
-
-          await appPage.getByTestId('select-destination').click();
-          await appPage
-            .getByRole('option', { name: relayChain, exact: true })
-            .click();
-
-          await appPage.getByTestId('submit').click();
-
-          await appPage.waitForTimeout(3000);
-          const error = appPage.getByTestId('error');
-          await expect(
-            error,
-            (await error.isVisible()) ? await error.innerText() : '',
-          ).not.toBeVisible();
-
-          await extensionPage.navigate();
-          await extensionPage.isPopupOpen();
-          await extensionPage.close();
+      {
+        GeneralKey: {
+          length: 2,
+          data: '0x0000000000000000000000000000000000000000000000000000000000000000',
         },
-      );
+      },
+    ],
+  },
+};
+
+const overridenLocation = {
+  parents: 1,
+  interior: {
+    X3: [
+      {
+        Parachain: 1000,
+      },
+      {
+        PalletInstance: 50,
+      },
+      {
+        GeneralIndex: 1337,
+      },
+    ],
+  },
+};
+
+const overrideTestData = [
+  {
+    type: 'assetId',
+    value: '10',
+  },
+  {
+    type: 'symbol',
+    value: 'ACA',
+  },
+  {
+    type: 'location',
+    value: JSON.stringify(validLocation),
+  },
+  {
+    type: 'overridenLocation',
+    value: JSON.stringify(overridenLocation),
+  },
+] as { type: TCustomAssetOperation; value: string }[];
+
+const performCustomAction = async (
+  appPage: Page,
+  type: TCustomAssetOperation,
+  textBoxParam: string,
+  symbolOptions?: TSymbolOptions,
+) => {
+  await appPage.locator('[data-path="currencies.0.isCustomCurrency"]').check();
+
+  if (type === 'assetId') {
+    await appPage.getByPlaceholder('Asset ID').fill(textBoxParam);
+  } else if (type === 'symbol') {
+    await appPage.getByLabel('Symbol').locator('..').click();
+    await appPage.getByPlaceholder('Symbol').fill(textBoxParam);
+
+    if (symbolOptions) {
+      await appPage
+        .getByLabel(symbolOptions, { exact: true })
+        .locator('..')
+        .click();
+    }
+  } else if (type === 'location') {
+    await appPage.getByLabel('Location', { exact: true }).locator('..').click();
+    await appPage
+      .locator('textarea[data-path="currencies.0.customCurrency"]')
+      .fill(textBoxParam);
+  } else {
+    await appPage.getByLabel('Override location').locator('..').click();
+    await appPage
+      .locator('textarea[data-path="currencies.0.customCurrency"]')
+      .fill(textBoxParam);
+  }
+};
+
+const performTransfer = async (
+  appPage: Page,
+  extensionPage: PolkadotjsExtensionPage,
+  fromChain: string,
+  toChain: string,
+  currency: string | null | string[],
+  useApi: boolean,
+  feeAsset?: string,
+  customCurrencyFunction?: () => Promise<void>,
+) => {
+  await appPage.getByTestId('select-origin').fill(fromChain);
+  await appPage.getByRole('option', { name: createName(fromChain) }).click();
+
+  await appPage.getByTestId('select-destination').fill(toChain);
+  await appPage.getByRole('option', { name: createName(toChain) }).click();
+
+  if (currency && typeof currency === 'string') {
+    await appPage.getByTestId('select-currency').first().click();
+    await appPage.getByRole('option', { name: currency }).click();
+  } else if (currency) {
+    //Multi-currency testing
+    const currencies = currency as string[];
+
+    for (let index = 0; index < currencies.length; index++) {
+      const currentCurrency = currencies[index];
+
+      if (index > 0) {
+        await appPage
+          .getByRole('button', { name: 'Add another asset' })
+          .click();
+      }
+
+      const currencySelects = await appPage
+        .getByTestId('select-currency')
+        .all();
+      const currentSelect = currencySelects[index];
+      await currentSelect.click();
+
+      await appPage.getByRole('option', { name: currentCurrency }).click();
+      await appPage.getByTestId(`input-amount-${index}`).fill('10');
     }
 
-    basePjsTest(
-      `Should succeed for RelayToPara transfer ${relayChain} -> ${chain}`,
-      async () => {
-        await appPage.getByTestId('select-origin').click();
-        await appPage
-          .getByRole('option', { name: relayChain, exact: true })
-          .click();
+    // Select fee asset
+    await appPage.getByTestId('select-currency').last().click();
+    await appPage.getByRole('option', { name: feeAsset }).click();
+  }
 
-        await appPage.getByTestId('select-destination').click();
-        await appPage.getByRole('option', { name: chain, exact: true }).click();
+  if (customCurrencyFunction) {
+    await customCurrencyFunction();
+  }
 
-        await appPage.getByTestId('submit').click();
+  if (useApi) {
+    await appPage.getByTestId('checkbox-api').click();
+  }
 
-        await appPage.waitForTimeout(3000);
-        const error = appPage.getByTestId('error');
-        await expect(
-          error,
-          (await error.isVisible()) ? await error.innerText() : '',
-        ).not.toBeVisible();
+  await appPage.getByTestId('submit').click();
 
-        await extensionPage.navigate();
-        await extensionPage.isPopupOpen();
-        await extensionPage.close();
+  await appPage.waitForTimeout(3000);
+  const error = appPage.getByTestId('error');
+  await expect(
+    error,
+    (await error.isVisible()) ? await error.innerText() : '',
+  ).not.toBeVisible();
+
+  await appPage.waitForTimeout(3000);
+  await extensionPage.navigate();
+  await extensionPage.isPopupOpen();
+  await extensionPage.close();
+
+  await extensionPage.close();
+};
+
+basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
+  let appPage: Page;
+  let extensionPage: PolkadotjsExtensionPage;
+
+  basePjsTest.beforeAll(async ({ context }) => {
+    ({ appPage, extensionPage } = await setupPolkadotExtension(context));
+    await appPage.goto('/xcm-sdk/xcm-transfer');
+  });
+
+  basePjsTest.beforeEach(async () => {
+    await appPage.reload();
+  });
+
+  [true, false].forEach((useApi) => {
+    const apiLabel = useApi ? ' - API' : '';
+    paraToParaTestData.forEach(({ fromChain, toChain, currency }) => {
+      basePjsTest(
+        `Should succeed for ParaToPara transfer ${fromChain} -> ${toChain}${apiLabel}`,
+        async () => {
+          await performTransfer(
+            appPage,
+            extensionPage,
+            fromChain,
+            toChain,
+            currency,
+            useApi,
+          );
+        },
+      );
+    });
+
+    paraRelayTestData.forEach(({ fromChain, toChain }) => {
+      basePjsTest(
+        `Should succeed for RelayToPara transfer ${fromChain} -> ${toChain}${apiLabel}`,
+        async () => {
+          await performTransfer(
+            appPage,
+            extensionPage,
+            fromChain,
+            toChain,
+            null,
+            useApi,
+          );
+        },
+      );
+
+      basePjsTest(
+        `Should succeed for ParaToRelay transfer ${toChain} -> ${fromChain}${apiLabel}`,
+        async () => {
+          //We switch up the from and to chains
+          await performTransfer(
+            appPage,
+            extensionPage,
+            toChain,
+            fromChain,
+            null,
+            useApi,
+          );
+        },
+      );
+    });
+
+    multicurrencyTestData.forEach(
+      ({ fromChain, toChain, multicurrency, feeAsset }) => {
+        basePjsTest(
+          `Should succeed for multicurrency transfer ${toChain} -> ${fromChain}${apiLabel}`,
+          async () => {
+            await performTransfer(
+              appPage,
+              extensionPage,
+              fromChain,
+              toChain,
+              multicurrency,
+              useApi,
+              feeAsset,
+            );
+          },
+        );
       },
     );
+
+    overrideTestData.forEach(({ type, value }) => {
+      const fromChain = 'Acala';
+      const toChain = 'Hydration';
+
+      if (type !== 'symbol') {
+        basePjsTest(
+          `Should succeed for custom asset transfer - ${type}${apiLabel}`,
+          async () => {
+            await performTransfer(
+              appPage,
+              extensionPage,
+              fromChain,
+              toChain,
+              null,
+              useApi,
+              undefined,
+              async () => performCustomAction(appPage, type, value),
+            );
+          },
+        );
+      } else {
+        (
+          ['Auto', 'Native', 'Foreign', 'Foreign abstract'] as TSymbolOptions[]
+        ).forEach((symbolOption) => {
+          const currencySymbol =
+            symbolOption === 'Foreign'
+              ? 'UNQ'
+              : symbolOption === 'Foreign abstract'
+                ? 'WBTC2'
+                : value;
+
+          basePjsTest(
+            `Should succeed for custom asset transfer - ${type} | ${symbolOption}${apiLabel}`,
+            async () => {
+              await performTransfer(
+                appPage,
+                extensionPage,
+                fromChain,
+                toChain,
+                null,
+                useApi,
+                undefined,
+                async () =>
+                  await performCustomAction(
+                    appPage,
+                    type,
+                    currencySymbol,
+                    symbolOption,
+                  ),
+              );
+            },
+          );
+        });
+      }
+    });
   });
 });

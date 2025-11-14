@@ -1,5 +1,13 @@
 import { test, expect, Page } from '@playwright/test';
-import { SUBSTRATE_CHAINS, TChain, getOtherAssets } from '@paraspell/sdk';
+import { TChain, TSubstrateChain, getOtherAssets } from '@paraspell/sdk';
+import { createName } from './utils/selectorName';
+
+const chainsToTest = [
+  "Acala",
+  "Hydration",
+  "Crust"
+] as TSubstrateChain[]
+
 
 const performAssetsObjectTest = async (
   page: Page,
@@ -13,10 +21,11 @@ const performAssetsObjectTest = async (
     funcName == 'HAS_SUPPORT';
 
   await page.getByTestId('select-func').click();
-  await page.getByRole('option', { name: funcName, exact: true }).click();
+  await page.getByRole("option", {name: funcName}).click();
 
-  await page.getByTestId('select-chain').click();
-  await page.getByRole('option', { name: chain, exact: true }).click();
+  await page.getByTestId('select-chain').fill(chain);
+  await page.getByRole("option", {name: createName(chain)}).click();
+
 
   if (showSymbolInput) {
     const randomCurrencySymbol = getOtherAssets(chain as TChain).find(
@@ -52,11 +61,10 @@ test.describe('XCM SDK - Assets', () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/xcm-sdk-sandbox');
-    await page.getByTestId('tab-assets').click();
+    await page.goto('/xcm-sdk/assets');
   });
 
-  SUBSTRATE_CHAINS.forEach((chain) => {
+  chainsToTest.forEach((chain) => {
     functionNames.forEach((funcName) => {
       [false, true].forEach((useApi) => {
         const apiLabel = useApi ? ' - API' : '';

@@ -224,6 +224,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
                   Deposit {selectedCurrencySymbol}
                 </Button>
                 <Button
+                  data-testid="btn-currency-approve"
                   size="xs"
                   flex={1}
                   variant="light"

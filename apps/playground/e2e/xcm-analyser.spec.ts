@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('XCM Analyser', () => {
   test('Shoud succeed for valid location', async ({ page }) => {
-    await page.goto('/xcm-analyser-sandbox');
+    await page.goto('/xcm-analyser');
 
     const validLocation = {
       parents: 1,
@@ -23,7 +23,7 @@ test.describe('XCM Analyser', () => {
   });
 
   test('Shoud fail for invalid location', async ({ page }) => {
-    await page.goto('/xcm-analyser-sandbox');
+    await page.goto('/xcm-analyser');
 
     const invalidLocation = {
       parents: 1,

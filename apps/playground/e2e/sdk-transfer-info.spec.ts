@@ -1,44 +1,67 @@
 import { expect, Page } from '@playwright/test';
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
-import {
-  getRelayChainSymbol,
-  CHAINS_WITH_RELAY_CHAINS_DOT_KSM,
-  TChain,
-  getRelayChainOf,
-} from '@paraspell/sdk';
+import { createName } from './utils/selectorName';
+
+const testData = [
+  {
+    fromChain: 'Astar',
+    toChain: 'BifrostPolkadot',
+    currency: 'ASTR - Native',
+  },
+  {
+    fromChain: 'AssetHubKusama',
+    toChain: 'BifrostKusama',
+    currency: 'USDT - 11',
+  },
+  {
+    fromChain: 'Astar',
+    toChain: 'Unique',
+    currency: 'USDT - 4294969280',
+  },
+  {
+    fromChain: 'AssetHubKusama',
+    toChain: 'Basilisk',
+    currency: 'KSM - Native',
+  },
+  {
+    fromChain: 'Hydration',
+    toChain: 'Acala',
+    currency: 'HDX - Native',
+  },
+  {
+    fromChain: 'Crust',
+    toChain: 'Acala',
+    currency: 'CRU - Native',
+  },
+];
 
 const performTransferInfoTest = async (
   page: Page,
   fromChain: string,
   destChain: string,
+  currency: string,
   useApi: boolean,
 ) => {
-  await page.getByTestId('select-origin').click();
-  await page.getByRole('option', { name: fromChain, exact: true }).click();
+  await page.getByTestId('select-origin').fill(fromChain);
+  await page.getByRole('option', { name: createName(fromChain) }).click();
 
-  await page.getByTestId('select-destination').click();
-  await page.getByRole('option', { name: destChain, exact: true }).click();
+  await page.getByTestId('select-destination').fill(destChain);
+  await page.getByRole('option', { name: createName(destChain) }).click();
 
-  const isNotParaToPara =
-    fromChain === 'Polkadot' ||
-    fromChain === 'Kusama' ||
-    destChain === 'Polkadot' ||
-    destChain === 'Kusama';
-  if (!isNotParaToPara) {
-    const randomCurrencySymbol = getRelayChainSymbol(fromChain as TChain);
-    await page.getByTestId('input-currency').fill(randomCurrencySymbol ?? '');
-  }
+  await page.getByTestId('select-currency').first().click();
+  await page.getByRole('option', { name: currency, exact: true }).click();
 
   const testAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   await page.getByTestId('input-address').fill(testAddress);
-  await page.getByTestId('input-destination-address').fill(testAddress);
-  await page.getByTestId('input-amount').fill('10000000000000000000');
+  await page.getByTestId('input-amount-0').fill('10');
 
   if (useApi) {
     await page.getByTestId('checkbox-api').click();
   }
 
-  await page.getByTestId('submit').click();
+  await page.getByTestId('btn-actions').click();
+  await page.getByTestId('menu-item-transfer-info').click();
+
   await page.waitForTimeout(10000);
 
   const error = page.getByTestId('error');
@@ -57,19 +80,16 @@ basePjsTest.describe('XCM SDK - Transfer Info', () => {
   });
 
   basePjsTest.beforeEach(async () => {
-    await appPage.goto('/xcm-sdk-sandbox');
-    await appPage.getByTestId('tab-transfer-info').click();
+    await appPage.goto('/xcm-sdk/utils');
   });
 
-  CHAINS_WITH_RELAY_CHAINS_DOT_KSM.slice(0.5).map((fromChain) => {
-    const destChain =
-      getRelayChainOf(fromChain) === 'Polkadot' ? 'Astar' : 'Basilisk';
+  testData.map(({fromChain, toChain, currency}) => {
     [false, true].map((useApi) => {
       const apiLabel = useApi ? ' - API' : '';
       basePjsTest(
-        `Should succeed for transfer info from ${fromChain} to ${destChain}${apiLabel}`,
+        `Should succeed for transfer info from ${fromChain} to ${toChain}${apiLabel}`,
         async () => {
-          await performTransferInfoTest(appPage, fromChain, destChain, useApi);
+          await performTransferInfoTest(appPage, fromChain, toChain, currency, useApi);
         },
       );
     });

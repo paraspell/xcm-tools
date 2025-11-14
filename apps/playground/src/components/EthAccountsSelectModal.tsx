@@ -24,7 +24,7 @@ const EthAccountsSelectModal: FC<Props> = ({
   >
     <Stack gap="sm">
       {accounts.map((account, index) => (
-        <Button
+        <Button data-testid="btn-select-eth-account"
           key={index}
           variant="outline"
           onClick={() => onAccountSelect(account)}

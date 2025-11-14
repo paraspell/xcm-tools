@@ -46,7 +46,7 @@ export const ApiTypeSelector: FC<Props> = ({
         location.pathname === PageRoute.XCM_ROUTER.toString() ||
         isUseApiSelected,
       label: (
-        <Center style={{ gap: 8 }}>
+        <Center style={{ gap: 8 }} data-testid="label-pjs-api">
           <PolkadotJsLogo />
           <span>PJS</span>
         </Center>

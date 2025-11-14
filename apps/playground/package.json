@@ -16,7 +16,8 @@
     "install-polkadot-ext": "cd e2e/extensions/polkadot-ext && yarn && yarn build:chrome",
     "init-polkadot-ext": "git clone https://github.com/polkadot-js/extension e2e/extensions/polkadot-ext && pnpm install-polkadot-ext",
     "init-metamask-ext": "mkdir -p e2e/extensions/metamask-ext/ && cd e2e/extensions/metamask-ext && curl -L -o metamask.zip https://github.com/MetaMask/metamask-extension/releases/download/v12.2.4/metamask-chrome-12.2.4.zip && unzip metamask.zip",
-    "init-e2e": "pnpm init-polkadot-ext && pnpm init-metamask-ext"
+    "init-talisman-ext": "cd e2e/extensions && git clone https://github.com/TalismanSociety/talisman.git talisman-ext && cd talisman-ext && git checkout tags/v3.1.9 && pnpm install && pnpm build:extension",
+    "init-e2e": "pnpm init-polkadot-ext && pnpm init-metamask-ext && pnpm init-talisman-ext"
   },
   "dependencies": {
     "@mantine/code-highlight": "^8.3.6",

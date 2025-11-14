@@ -114,7 +114,7 @@ export class PolkadotjsExtensionPage {
 
   async connectAccountToHost() {
     await this.page.locator("text=Select all").click();
-    await this.page.locator("button").click();
+    await this.page.getByRole('button', { name: 'Connect 1 account(s)' }).click();
   }
 
   async close() {
