@@ -39,7 +39,7 @@ describe('Asset Override Logic', () => {
       expect(result).toEqual(originalAssets)
     })
 
-    it('should return a new asset array if override is a TLocation', () => {
+    it('should return a new asset object if override is a TLocation', () => {
       const newAsset = { id: { Concrete: mockLocation }, fun: { Fungible: 500n } }
       vi.mocked(isTLocation).mockReturnValue(true)
       vi.mocked(createAsset).mockReturnValue(newAsset)
@@ -48,7 +48,7 @@ describe('Asset Override Logic', () => {
 
       expect(isTLocation).toHaveBeenCalledWith(mockLocation)
       expect(createAsset).toHaveBeenCalledWith(mockVersion, mockAmount, mockLocation)
-      expect(result).toEqual([newAsset])
+      expect(result).toEqual(newAsset)
     })
 
     it('should return the provided asset array if override is a TMultiAsset[]', () => {

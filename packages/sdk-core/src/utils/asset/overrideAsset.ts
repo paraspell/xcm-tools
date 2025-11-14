@@ -15,7 +15,7 @@ export const maybeOverrideAssets = (
   }
 
   return isTLocation(overriddenCurrency)
-    ? [createAsset(version, amount, overriddenCurrency)]
+    ? createAsset(version, amount, overriddenCurrency)
     : overriddenCurrency
 }
 
