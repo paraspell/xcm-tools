@@ -9,7 +9,7 @@ export const adjustUVs = (geometry: SphereGeometry, scaleFactor: number) => {
   geometry.attributes.uv.needsUpdate = true;
 };
 
-export const adjustUVYAxis = (geometry: SphereGeometry, scaleFactor: number) => {
+export const adjustUVXAxis = (geometry: SphereGeometry, scaleFactor: number) => {
   const uvs = geometry.attributes.uv;
   for (let i = 0; i < uvs.count; i++) {
     uvs.setX(i, (uvs.getX(i) - 0.5) * scaleFactor + 0.5);

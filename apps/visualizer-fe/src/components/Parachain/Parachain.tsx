@@ -10,13 +10,13 @@ import { Color, TextureLoader } from 'three';
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { Ecosystem } from '../../types/types';
-import { adjustUVs, adjustUVYAxis } from '../../utils/adjustUVs';
+import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
 import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getChainLogo } from './utils';
 
-const Y_SCALE_FACTOR = 1.8;
+const SCALE_X_FACTOR = 1.8;
 const SCALE_FACTOR = 1.15;
 
 type Props = {
@@ -58,7 +58,7 @@ const Parachain: FC<Props> = ({
 
   useEffect(() => {
     if (sphereRef.current) {
-      adjustUVYAxis(sphereRef.current.geometry as SphereGeometry, Y_SCALE_FACTOR);
+      adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
       adjustUVs(sphereRef.current.geometry as SphereGeometry, Math.sqrt(scale) * SCALE_FACTOR);
     }
   }, []);
