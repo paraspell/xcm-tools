@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "types": ["jest", "node"],
+    "esModuleInterop": true
+  },
+  "include": ["src", "test"],
+  "exclude": ["dist"]
+}

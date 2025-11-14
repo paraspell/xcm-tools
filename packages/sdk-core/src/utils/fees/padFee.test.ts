@@ -40,7 +40,7 @@ describe('padFee', () => {
   })
 })
 
-describe('padFeeBy', () => {
+describe('padValueBy', () => {
   it('should return the same amount if percent is 0', () => {
     const result = padValueBy(1000n, 0)
     expect(result).toBe(1000n)

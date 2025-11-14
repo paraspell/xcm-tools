@@ -10,7 +10,7 @@ import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
-import { getXcmFee } from '../fees'
+import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveFeeAsset } from '../utils'
 
 export const getMinTransferableAmountInternal = async <TApi, TRes>({
@@ -60,7 +60,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
-  const result = await getXcmFee({
+  const result = await getXcmFeeInternal({
     api,
     origin,
     destination,

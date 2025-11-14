@@ -1,5 +1,40 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.1...assets-v11.14.2) (2025-11-14)
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([94e8b3f](https://github.com/paraspell/xcm-tools/commit/94e8b3f5198761531d41008a35c9133e0087f581))
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.0...assets-v11.14.1) (2025-11-13)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.13.0...assets-v11.14.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.15...assets-v11.13.0) (2025-11-11)
+
+
+### Features
+
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.14...assets-v11.12.15) (2025-11-10)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/assets-v11.12.13...assets-v11.12.14) (2025-11-05)
 
 

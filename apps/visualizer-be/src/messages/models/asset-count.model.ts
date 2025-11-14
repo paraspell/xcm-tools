@@ -7,8 +7,8 @@ export class AssetCount {
   @Field()
   ecosystem: string;
 
-  @Field(returnInt, { nullable: true })
-  paraId?: number;
+  @Field({ nullable: true })
+  parachain?: string;
 
   @Field()
   symbol: string;

@@ -1,4 +1,3 @@
-import type { TChain } from '@paraspell/sdk-common'
 import { Parents, type TJunction, type TLocation } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../types'
@@ -24,26 +23,6 @@ export const RELAY_LOCATION: TLocation = {
   parents: Parents.ONE,
   interior: { Here: null }
 }
-
-export const CHAINS_DOT_RESERVE_AH = new Set<TChain>([
-  'Acala',
-  'Karura',
-  'Moonbeam',
-  'Hydration',
-  'HydrationPaseo',
-  'AssetHubPolkadot',
-  'AssetHubKusama',
-  'AssetHubWestend',
-  'AssetHubPaseo',
-  'BifrostPolkadot',
-  'BifrostKusama',
-  'PeoplePolkadot',
-  'PeopleKusama',
-  'Ajuna',
-  'IntegriteePolkadot',
-  'IntegriteeKusama',
-  'IntegriteePaseo'
-] as const)
 
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
 

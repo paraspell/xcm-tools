@@ -10,7 +10,6 @@ export const PARACHAINS = [
   'BifrostPolkadot',
   'BridgeHubPolkadot',
   'Centrifuge',
-  'ComposableFinance',
   'Darwinia',
   'EnergyWebX',
   'Hydration',

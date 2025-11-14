@@ -1,5 +1,4 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import type { TParachain } from '@paraspell/sdk-common'
 
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
@@ -25,7 +24,7 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
       })
     : ((await getBalanceForeignInternal({
         address,
-        chain: chain as TParachain,
+        chain,
         api,
         currency
       })) ?? 0n)

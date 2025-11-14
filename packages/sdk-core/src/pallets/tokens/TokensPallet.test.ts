@@ -53,7 +53,7 @@ describe('TokensPallet.setBalance', () => {
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledTimes(1)
-    expect(getChain).toHaveBeenCalledWith('BifrostPolkadot')
+    expect(getChain).toHaveBeenCalledWith('BifrostKusama')
 
     expect(res.balanceTx.parameters.who).toEqual({ Id: address })
     expect(res.balanceTx.parameters.currency_id).toEqual({ Token: 'BNC' })

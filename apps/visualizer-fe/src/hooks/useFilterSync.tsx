@@ -1,11 +1,13 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { useSelectedEcosystem } from '../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 import { encodeDate, encodeEcosystem, encodeList, setOrDelete } from '../routes/urlFilters';
 
 export function useFilterSync() {
-  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
+  const { selectedParachains, dateRange } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Mirror actual state
@@ -13,11 +15,11 @@ export function useFilterSync() {
     const [from, to] = dateRange;
     return {
       ecosystem: encodeEcosystem(selectedEcosystem),
-      parachains: encodeList(parachains) ?? '',
+      parachains: encodeList(selectedParachains) ?? '',
       from: encodeDate(from) ?? '',
       to: encodeDate(to) ?? ''
     };
-  }, [selectedEcosystem, parachains, dateRange]);
+  }, [selectedEcosystem, selectedParachains, dateRange]);
 
   useEffect(() => {
     // Build the next search params

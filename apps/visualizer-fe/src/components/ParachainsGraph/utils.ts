@@ -1,9 +1,9 @@
+import type { TRelaychain } from '@paraspell/sdk';
 import { Vector3 } from 'three';
 
-import type { Ecosystem } from '../../types/types';
 import { getChainsByEcosystem } from '../../utils/utils';
 
-export const getParachainPosition = (index: number, ecosystem: Ecosystem) => {
+export const getParachainPosition = (index: number, ecosystem: TRelaychain) => {
   const radius = 6;
   const totalParachains = getChainsByEcosystem(ecosystem).length;
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians

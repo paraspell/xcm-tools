@@ -20,7 +20,12 @@ import {
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
-import type { TRelayToParaOptions, TSerializedApiCall, TTransferLocalOptions } from '../types'
+import type {
+  TRelayToParaOptions,
+  TRelayToParaOverrides,
+  TSerializedApiCall,
+  TTransferLocalOptions
+} from '../types'
 import {
   type TPolkadotXcmMethod,
   type TPolkadotXCMTransferOptions,
@@ -124,6 +129,12 @@ class TestParachain extends TestParachainBase {
     useOnlyDepositAsset = false
   ) {
     return this.transferToEthereum(options, useOnlyDepositAsset)
+  }
+}
+
+class RelayToParaTeleportParachain extends TestParachainBase {
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { transferType: 'teleport' }
   }
 }
 
@@ -421,6 +432,52 @@ describe('Parachain', () => {
     expect(result).toBe('transferPolkadotXCM called')
   })
 
+  it('uses type-and-then call for external asset routed via AssetHub', async () => {
+    const chain = new OnlyPolkadotXCMParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+
+    const mockCall: TSerializedApiCall = {
+      module: 'PolkadotXcm',
+      method: 'transfer_assets_using_type_and_then',
+      parameters: {}
+    }
+
+    vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
+    vi.mocked(resolveDestChain).mockReturnValue('Moonbeam')
+
+    const hasMethodSpy = vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
+    const callTxMethodSpy = vi.spyOn(api, 'callTxMethod').mockResolvedValue('callResult')
+
+    const options = {
+      api,
+      to: 'Moonbeam',
+      assetInfo: {
+        symbol: 'USDT',
+        amount: 100n,
+        location: {
+          parents: 2,
+          interior: { X1: [{ Parachain: 1000 }] }
+        }
+      },
+      address: 'destinationAddress',
+      senderAddress: '5FMockSender',
+      version: Version.V4,
+      paraIdTo: 2004
+    } as TSendInternalOptions<unknown, unknown>
+
+    const result = await chain.transfer(options)
+
+    expect(hasMethodSpy).toHaveBeenCalled()
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(
+      'Acala',
+      expect.objectContaining({
+        assetInfo: options.assetInfo,
+        destination: options.to
+      })
+    )
+    expect(callTxMethodSpy).toHaveBeenCalledWith(mockCall)
+    expect(result).toBe('callResult')
+  })
+
   it('should throw NoXCMSupportImplementedError when no transfer methods are supported', async () => {
     const chain = new NoSupportParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
     const options = {
@@ -710,9 +767,12 @@ describe('Parachain', () => {
     })
 
     it('should return serialized call when not using type-and-then', async () => {
+      const version = Version.V5
+      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', version)
       const options = {
         ...baseOptions,
-        method: 'limited_transfer_assets' as TPolkadotXcmMethod
+        version,
+        method: 'limited_transfer_assets'
       }
 
       const result = await chain.transferRelayToPara(options)
@@ -723,12 +783,11 @@ describe('Parachain', () => {
         parameters: 'parameters'
       })
 
-      expect(constructRelayToParaParameters).toHaveBeenCalledWith(options, Version.V4, {
-        includeFee: true
-      })
+      expect(constructRelayToParaParameters).toHaveBeenCalledWith(options, version)
     })
 
     it('should respect methodOverride when provided', async () => {
+      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', Version.V5)
       const result = await chain.transferRelayToPara({
         ...baseOptions,
         method: 'customMethod'

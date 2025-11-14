@@ -43,7 +43,7 @@ class BifrostPolkadot<TApi, TRes>
     const isVToken = asset.symbol && asset.symbol.startsWith('v')
     const isVSToken = asset.symbol && asset.symbol.startsWith('vs')
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || (isForeignAsset(asset) && !asset.assetId)) {
       return isVToken ? { VToken: asset.symbol.substring(1) } : { Token: asset.symbol }
     }
 

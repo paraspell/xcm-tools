@@ -15,7 +15,8 @@ vi.mock('@paraspell/assets')
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
 vi.mock('../eth-transfer')
-vi.mock('../../constants', () => ({
+vi.mock('../../constants', async importOriginal => ({
+  ...(await importOriginal()),
   DRY_RUN_CLIENT_TIMEOUT_MS: 300000
 }))
 

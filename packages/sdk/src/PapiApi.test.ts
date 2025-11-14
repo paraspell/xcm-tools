@@ -1536,6 +1536,55 @@ describe('PapiApi', () => {
       })
     })
 
+    it('should extract failure sub reason when nested error contains inner type', async () => {
+      const nestedError = {
+        type: 'Module',
+        value: {
+          error: {
+            type: 'Token'
+          }
+        }
+      }
+
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: {
+              error: {
+                value: {
+                  value: nestedError
+                }
+              }
+            }
+          }
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+      const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Moonbeam',
+        destination: 'Acala',
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
+      })
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'Module',
+        failureSubReason: 'Token',
+        currency: 'GLMR',
+        asset: nativeAsset
+      })
+    })
+
     it('should extract failure reason from dispatched Utility event result type fallback', async () => {
       const failingEvent = {
         type: 'Utility',

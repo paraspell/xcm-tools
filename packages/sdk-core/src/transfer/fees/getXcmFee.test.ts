@@ -6,9 +6,9 @@ import { AmountTooLowError } from '../../errors'
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
 import { getXcmFee } from './getXcmFee'
-import { getXcmFeeInternal } from './getXcmFeeInternal'
+import { getXcmFeeOnce } from './getXcmFeeOnce'
 
-vi.mock('./getXcmFeeInternal')
+vi.mock('./getXcmFeeOnce')
 vi.mock('./getBypassResult')
 
 describe('getXcmFee', () => {
@@ -44,7 +44,7 @@ describe('getXcmFee', () => {
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeOnce).mockResolvedValueOnce(real)
     vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
     const res = await getXcmFee(options)
@@ -52,13 +52,13 @@ describe('getXcmFee', () => {
     expect(options.buildTx).toHaveBeenCalledTimes(1)
     expect(options.buildTx).toHaveBeenCalledWith()
 
-    expect(getXcmFeeInternal).toHaveBeenCalledTimes(1)
-    expect(getXcmFeeInternal).toHaveBeenCalledWith(
+    expect(getXcmFeeOnce).toHaveBeenCalledTimes(1)
+    expect(getXcmFeeOnce).toHaveBeenCalledWith(
       expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
 
     expect(getBypassResultWithRetries).toHaveBeenCalledTimes(1)
-    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeInternal, realTx)
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeOnce, realTx)
 
     expect(res.origin.sufficient).toBe(false)
     expect(res.destination.sufficient).toBe(false)
@@ -89,7 +89,7 @@ describe('getXcmFee', () => {
       hops: []
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeOnce).mockResolvedValueOnce(real)
     vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
     const res = await getXcmFee(options)
@@ -114,7 +114,7 @@ describe('getXcmFee', () => {
       bridgeHub: { currency: 'BH', sufficient: false }
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(realWithHubs)
+    vi.mocked(getXcmFeeOnce).mockResolvedValueOnce(realWithHubs)
     vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forcedNoHubs)
 
     const res2 = await getXcmFee(options)
@@ -148,7 +148,7 @@ describe('getXcmFee', () => {
       hops: [{ chain: 'AssetHubPolkadot', result: { currency: 'DOT', sufficient: false } }]
     } as unknown as TGetXcmFeeResult<boolean>
 
-    vi.mocked(getXcmFeeInternal).mockResolvedValueOnce(real)
+    vi.mocked(getXcmFeeOnce).mockResolvedValueOnce(real)
     vi.mocked(getBypassResultWithRetries).mockResolvedValueOnce(forced)
 
     const res = await getXcmFee(options)
@@ -189,7 +189,7 @@ describe('getXcmFee', () => {
 
     const res = await getXcmFee(options)
 
-    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeInternal)
+    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeOnce)
 
     expect(res.origin.sufficient).toBe(false)
     expect(res.destination.sufficient).toBe(false)

@@ -5,29 +5,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
+import { getAssetReserveChain } from '../../chain'
 import { localizeLocation } from '../../location'
-import { getAssetReserveChain } from './getAssetReserveChain'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-vi.mock('@paraspell/assets', () => ({
-  isAssetEqual: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
-vi.mock('../../assertions', () => ({
-  assertHasLocation: vi.fn()
-}))
-
-vi.mock('../../location', () => ({
-  localizeLocation: vi.fn()
-}))
-
-vi.mock('../../asset', () => ({
-  createAsset: vi.fn()
-}))
-
-vi.mock('./getAssetReserveChain', () => ({
-  getAssetReserveChain: vi.fn()
-}))
+vi.mock('../../assertions')
+vi.mock('../../location')
+vi.mock('../../asset')
+vi.mock('../../chain')
 
 describe('prepareExecuteContext', () => {
   const mockLocation: TLocation = { parents: 1, interior: { Here: null } }
@@ -63,7 +50,7 @@ describe('prepareExecuteContext', () => {
     const result = prepareExecuteContext(mockOptions)
 
     expect(assertHasLocation).toHaveBeenCalledWith(mockOptions.assetInfo)
-    expect(getAssetReserveChain).toHaveBeenCalledWith(chain, destChain, mockLocation)
+    expect(getAssetReserveChain).toHaveBeenCalledWith(chain, mockLocation)
     expect(createAsset).toHaveBeenCalledTimes(4)
     expect(localizeLocation).toHaveBeenCalledTimes(3)
 

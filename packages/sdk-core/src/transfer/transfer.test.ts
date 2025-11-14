@@ -8,6 +8,7 @@ import {
   isRelayChain,
   isSubstrateBridge,
   isTLocation,
+  Parents,
   type TLocation,
   Version
 } from '@paraspell/sdk-common'
@@ -475,7 +476,7 @@ describe('send', () => {
     expect(selectXcmVersion).toHaveBeenCalledWith(undefined, Version.V4, Version.V3)
   })
 
-  it('should handle multiasset currency with amount 0', async () => {
+  it('should handle multiasset currency with default asset object', async () => {
     const options = {
       api: apiMock,
       from: 'Acala',
@@ -490,7 +491,17 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        assetInfo: { symbol: 'TEST', amount: 0n, assetId: '1' }
+        assetInfo: {
+          symbol: 'TEST',
+          amount: 0n,
+          assetId: '1',
+          location: {
+            parents: Parents.ZERO,
+            interior: {
+              Here: null
+            }
+          }
+        }
       })
     )
   })

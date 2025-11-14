@@ -39,5 +39,6 @@ export const padFee = (
 }
 
 export const padValueBy = (amount: bigint, percent: number): bigint => {
-  return mul(amount, BigInt(100 + percent), 100n)
+  const scaled = BigInt(Math.round(percent * 100)) // 2 decimal precision
+  return (amount * (BigInt(10000) + scaled)) / BigInt(10000)
 }

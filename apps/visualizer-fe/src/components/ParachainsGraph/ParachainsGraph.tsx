@@ -1,3 +1,4 @@
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -6,10 +7,9 @@ import type { Group, Object3D } from 'three';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
-import type { Ecosystem } from '../../types/types';
 import { getChainsByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
 import LineBetween from '../LineBetween/LineBetween';
-import Parachain from '../Parachain/Parachain';
+import ParachainNode from '../Parachain/Parachain';
 import Relaychain from '../Relaychain/Relaychain';
 
 const calculateLineWidth = (messageCount: number): number => {
@@ -21,15 +21,14 @@ const calculateLineWidth = (messageCount: number): number => {
 type Props = {
   channels: ChannelsQuery['channels'];
   totalMessageCounts: TotalMessageCountsQuery['totalMessageCounts'];
-  ecosystem: Ecosystem;
+  ecosystem: TRelaychain;
 };
 
 const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem }) => {
   const {
-    parachains,
+    selectedParachains,
     toggleParachain,
     selectedChannel,
-    selectedEcosystem,
     setSelectedChannel,
     setChannelAlertOpen,
     parachainArrangement,
@@ -49,34 +48,34 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     return getChainsByEcosystem(ecosystem)
       .slice()
       .sort((a, b) => {
-        const countA = nameToCountMap[getParachainId(a, ecosystem)] || 0;
-        const countB = nameToCountMap[getParachainId(b, ecosystem)] || 0;
+        const countA = nameToCountMap[getParachainId(a)] || 0;
+        const countB = nameToCountMap[getParachainId(b)] || 0;
         return countB - countA;
       });
   }, [totalMessageCounts, ecosystem]);
 
-  const handleParachainClick = (chain: string) => {
-    if (ecosystem == selectedEcosystem) toggleParachain(chain);
+  const handleParachainClick = (chain: TSubstrateChain) => {
+    toggleParachain(chain);
   };
 
-  const onRightClick = (chain: string) => {
+  const onRightClick = (chain: TSubstrateChain) => {
     if (ecosystem) {
-      toggleActiveEditParachain(`${ecosystem};${chain}`);
+      toggleActiveEditParachain(chain);
     }
   };
 
   const onRelaychainClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    if (ecosystem == selectedEcosystem) toggleParachain(ecosystem.toString());
+    toggleParachain(ecosystem);
   };
 
-  const calculateParachainScale = (parachain: string): number => {
+  const calculateParachainScale = (parachain: TSubstrateChain): number => {
     const baseLineWidth = 1.5;
     const scalingFactor = parachainArrangement === CountOption.BOTH ? 0.000004 : 0.000009;
     return (
       baseLineWidth +
-      (totalMessageCounts.find(item => getParachainId(parachain, ecosystem) === item.paraId)
-        ?.totalCount ?? 0) *
+      (totalMessageCounts.find(item => getParachainId(parachain) === item.paraId)?.totalCount ??
+        0) *
         scalingFactor
     );
   };
@@ -84,23 +83,16 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
   const onChannelClick =
     (channel: ChannelsQuery['channels'][number]) => (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
-      if (ecosystem == selectedEcosystem) {
-        setChannelAlertOpen(true);
-        setSelectedChannel(channel);
-      }
+
+      setChannelAlertOpen(true);
+      setSelectedChannel(channel);
     };
 
-  const selectedParachainChannels =
-    ecosystem == selectedEcosystem
-      ? channels.filter(channel =>
-          parachains.some(
-            p =>
-              getParachainId(p, ecosystem) === channel.sender ||
-              getParachainId(p, ecosystem) === channel.recipient
-          )
-        )
-      : [];
-
+  const selectedParachainChannels = channels.filter(channel =>
+    selectedParachains.some(
+      p => getParachainId(p) === channel.sender || getParachainId(p) === channel.recipient
+    )
+  );
   const RELAYCHAIN_ID = 0;
 
   const parachainRefs = useRef<{ [key: string]: Object3D | null }>({});
@@ -122,18 +114,18 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       <Relaychain
         onClick={onRelaychainClick}
         ecosystem={ecosystem}
-        isSelected={ecosystem === selectedEcosystem && parachains.includes(selectedEcosystem)}
+        isSelected={selectedParachains.includes(ecosystem)}
         ref={relaychainRef}
       />
       {sortedParachainNames?.map((chain, index) => {
         return (
-          <Parachain
+          <ParachainNode
             key={chain}
             name={chain}
             index={index}
             onClick={handleParachainClick}
             onRightClick={onRightClick}
-            isSelected={ecosystem === selectedEcosystem && parachains.includes(chain)}
+            isSelected={selectedParachains.includes(chain)}
             scale={calculateParachainScale(chain)}
             ecosystem={ecosystem}
             ref={el => {
@@ -172,15 +164,14 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
 
           const lineWidth = calculateLineWidth(channel.message_count);
           const isHighlighted =
-            ecosystem === selectedEcosystem &&
-            (parachains.some(p => getParachainId(p, ecosystem) === channel.sender) ||
-              parachains.some(p => getParachainId(p, ecosystem) === channel.recipient));
+            selectedParachains.some(p => getParachainId(p) === channel.sender) ||
+            selectedParachains.some(p => getParachainId(p) === channel.recipient);
 
           const isSecondary = selectedParachainChannels.some(
             ch => ch.sender === channel.sender || ch.recipient === channel.recipient
           );
 
-          const isSelected = ecosystem === selectedEcosystem && selectedChannel?.id === channel.id;
+          const isSelected = selectedChannel?.id === channel.id;
 
           return (
             <LineBetween

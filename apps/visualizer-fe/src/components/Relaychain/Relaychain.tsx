@@ -1,3 +1,4 @@
+import type { TRelaychain } from '@paraspell/sdk';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
 import type { FC } from 'react';
@@ -5,7 +6,6 @@ import { useEffect, useImperativeHandle, useRef } from 'react';
 import type { Group, Mesh, SphereGeometry } from 'three';
 import { Color, TextureLoader } from 'three';
 
-import type { Ecosystem } from '../../types/types';
 import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
 import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
@@ -14,7 +14,7 @@ const SCALE_X_FACTOR = 1.8;
 
 type Props = {
   onClick: (event: ThreeEvent<MouseEvent>) => void;
-  ecosystem: Ecosystem;
+  ecosystem: TRelaychain;
   ref: React.RefObject<Group | null>;
   isSelected?: boolean;
 };

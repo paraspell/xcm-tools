@@ -1,6 +1,9 @@
 import { dryRun, getFailureInfo, InvalidParameterError } from '@paraspell/sdk';
+import type { ApiPromise } from '@polkadot/api';
+import type { PolkadotClient } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type ExchangeChain from '../exchanges/ExchangeChain';
 import type {
   TBuildTransactionsOptions,
   TRouterDryRunResult,
@@ -27,9 +30,9 @@ const createInitialOptions = () =>
   ({
     from: 'Acala',
     to: 'Acala',
-    exchange: 'AcalaDex' as never,
-    currencyFrom: { symbol: 'ACA' } as never,
-    currencyTo: { symbol: 'AUSD' } as never,
+    exchange: 'AcalaDex',
+    currencyFrom: { symbol: 'ACA' },
+    currencyTo: { symbol: 'AUSD' },
     amount: '1000',
     senderAddress: 'sender',
     recipientAddress: 'recipient',
@@ -48,10 +51,10 @@ const createOptions = (
   exchange: {
     baseChain: 'Acala',
     exchangeChain: 'AcalaDex',
-    api: {} as never,
-    apiPapi: {} as never,
-    assetFrom: { symbol: 'ACA', decimals: 12 } as never,
-    assetTo: { symbol: 'AUSD', decimals: 12 } as never,
+    api: {} as ApiPromise,
+    apiPapi: {} as PolkadotClient,
+    assetFrom: { symbol: 'ACA', decimals: 12 },
+    assetTo: { symbol: 'AUSD', decimals: 12 },
   },
   amount: 1000n,
   ...overrides,
@@ -59,16 +62,16 @@ const createOptions = (
 
 const createTransaction = (chain: string): TTransaction =>
   ({
-    api: {} as never,
-    chain: chain as never,
-    tx: {} as never,
+    api: {} as PolkadotClient,
+    chain,
+    tx: {},
     type: 'TRANSFER',
   }) as TTransaction;
 
 const createDryRunResult = (overrides: Partial<TRouterDryRunResult> = {}): TRouterDryRunResult =>
   ({
-    origin: { chain: 'Acala' } as never,
-    destination: { chain: 'Acala' } as never,
+    origin: { chain: 'Acala' },
+    destination: { chain: 'Acala' },
     hops: [],
     ...overrides,
   }) as TRouterDryRunResult;
@@ -78,8 +81,8 @@ const resolvePrepareOptions = (
   dexChain: string,
 ) =>
   vi.mocked(prepareTransformedOptions).mockResolvedValue({
-    dex: { chain: dexChain } as never,
-    options: options as never,
+    dex: { chain: dexChain } as ExchangeChain,
+    options,
   });
 
 describe('dryRunRouter', () => {
@@ -94,8 +97,8 @@ describe('dryRunRouter', () => {
       exchange: {
         baseChain: 'Acala',
         exchangeChain: 'AcalaDex',
-        api: {} as never,
-        apiPapi: {} as never,
+        api: {} as ApiPromise,
+        apiPapi: {} as PolkadotClient,
         assetFrom: { symbol: 'ACA', decimals: 12 },
         assetTo: { symbol: 'AUSD', decimals: 12 },
       },
@@ -103,8 +106,11 @@ describe('dryRunRouter', () => {
 
     const routerPlan: [TTransaction] = [createTransaction('Acala')];
     const dryRunResult = createDryRunResult({
-      hops: [{ chain: 'Acala' } as never, { chain: 'Moonbeam' } as never],
-    });
+      hops: [
+        { chain: 'Acala', result: {} },
+        { chain: 'Moonbeam', result: {} },
+      ],
+    } as TRouterDryRunResult);
 
     resolvePrepareOptions(transformedOptions, 'Acala');
     vi.mocked(buildTransactions).mockResolvedValue(routerPlan);
@@ -132,13 +138,13 @@ describe('dryRunRouter', () => {
   it('propagates bypass options to the second transaction when the first dry run succeeds', async () => {
     const transformedOptions = createOptions({
       origin: {
-        api: {} as never,
+        api: {} as PolkadotClient,
         chain: 'BifrostPolkadot',
         assetFrom: {
           symbol: 'BNC',
           decimals: 12,
           location: { parents: 0, interior: 'Here' },
-        } as never,
+        },
       },
       destination: {
         chain: 'Moonbeam',
@@ -147,10 +153,10 @@ describe('dryRunRouter', () => {
       exchange: {
         baseChain: 'Hydration',
         exchangeChain: 'HydrationDex',
-        api: {} as never,
-        apiPapi: {} as never,
-        assetFrom: { symbol: 'BNC', decimals: 12 } as never,
-        assetTo: { symbol: 'GLMR', decimals: 18 } as never,
+        api: {} as ApiPromise,
+        apiPapi: {} as PolkadotClient,
+        assetFrom: { symbol: 'BNC', decimals: 12 },
+        assetTo: { symbol: 'GLMR', decimals: 18 },
       },
     });
 
@@ -162,16 +168,16 @@ describe('dryRunRouter', () => {
     ]);
 
     const firstResult = createDryRunResult({
-      origin: { chain: 'BifrostPolkadot' } as never,
-      destination: { chain: 'Hydration' } as never,
-      hops: [{ chain: 'BifrostPolkadot' } as never],
-    });
+      origin: {},
+      destination: {},
+      hops: [{ chain: 'BifrostPolkadot' }],
+    } as TRouterDryRunResult);
 
     const secondResult = createDryRunResult({
-      origin: { chain: 'Hydration' } as never,
-      destination: { chain: 'Moonbeam' } as never,
-      hops: [{ chain: 'Hydration' } as never],
-    });
+      origin: {},
+      destination: {},
+      hops: [{ chain: 'Hydration' }],
+    } as TRouterDryRunResult);
 
     vi.mocked(dryRun).mockResolvedValueOnce(firstResult).mockResolvedValueOnce(secondResult);
 

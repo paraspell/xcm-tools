@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { accountXcmCountsQueryDocument } from '../../../api/messages';
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { AccountCountsQuery } from '../../../gql/graphql';
 import convertToCsv from '../../../utils/convertToCsv';
@@ -24,7 +25,8 @@ const AccountsAmountPlotContainer = () => {
 
   const [threshold, setThreshold] = useState(500);
 
-  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
+  const { selectedParachains, dateRange } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
 
   const [start, end] = dateRange;
 
@@ -32,7 +34,7 @@ const AccountsAmountPlotContainer = () => {
     variables: {
       ecosystem: selectedEcosystem.toString().toLowerCase(),
       threshold,
-      paraIds: parachains.map(parachain => getParachainId(parachain, selectedEcosystem)),
+      paraIds: selectedParachains.map(parachain => getParachainId(parachain)),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }

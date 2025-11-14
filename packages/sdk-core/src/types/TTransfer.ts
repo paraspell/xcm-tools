@@ -206,8 +206,7 @@ type TRelayToParaBaseOptions = {
 }
 
 export type TRelayToParaOverrides = {
-  method: TXcmPalletMethod
-  includeFee: boolean
+  transferType: 'typeAndThen' | 'teleport'
 }
 
 /**

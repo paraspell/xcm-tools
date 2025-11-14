@@ -1,11 +1,11 @@
 import { LineChart } from '@mantine/charts';
+import type { TSubstrateChain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
-import { getParachainById, getParachainColor } from '../../../utils/utils';
+import { getParachainColor, getParachainId } from '../../../utils/utils';
 import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
@@ -24,7 +24,7 @@ type Props = {
 const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showMedian }, ref) => {
   const [isTooltipActive, setIsTooltipActive] = useState<boolean | undefined>(undefined);
   const { t } = useTranslation();
-  const { selectedEcosystem } = useSelectedParachain();
+
   const processData = () => {
     const dataByDate = counts.reduce<
       Record<
@@ -38,9 +38,8 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
       if (!acc[item.date]) {
         acc[item.date] = { date: item.date };
       }
-      const parachainKey = item.paraId
-        ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
-        : t('charts.common.total');
+      const paraId = item.parachain ? getParachainId(item.parachain as TSubstrateChain) : null;
+      const parachainKey = paraId ? item.parachain || `ID ${paraId}` : t('charts.common.total');
 
       acc[item.date][parachainKey] = Number(acc[item.date][parachainKey] || 0) + item.messageCount;
       acc[item.date][`${parachainKey} ${t('status.success')}`] = item.messageCountSuccess;
@@ -78,15 +77,14 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
 
   const series = Object.keys(
     counts.reduce<Record<string, boolean>>((result, item) => {
-      const key = item.paraId
-        ? getParachainById(item.paraId, selectedEcosystem) || `ID ${item.paraId}`
-        : t('charts.common.total');
+      const paraId = item.parachain ? getParachainId(item.parachain as TSubstrateChain) : null;
+      const key = paraId ? item.parachain || `ID ${paraId}` : t('charts.common.total');
       result[key] = true;
       return result;
     }, {})
   ).map(key => ({
     name: key,
-    color: key === t('charts.common.total') ? 'blue.6' : getParachainColor(key, selectedEcosystem)
+    color: key === t('charts.common.total') ? 'blue.6' : getParachainColor(key as TSubstrateChain)
   }));
 
   const onTooltipClose = () => {

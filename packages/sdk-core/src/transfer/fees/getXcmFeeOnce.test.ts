@@ -19,7 +19,7 @@ import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
-import { getXcmFeeInternal } from './getXcmFeeInternal'
+import { getXcmFeeOnce } from './getXcmFeeOnce'
 
 vi.mock('@paraspell/assets')
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
@@ -55,7 +55,7 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
     ...overrides
   }) as unknown as TGetXcmFeeInternalOptions<unknown, unknown>
 
-describe('getXcmFeeInternal', () => {
+describe('getXcmFeeOnce', () => {
   const xcmFeeResCurrency = {
     currency: 'ACA',
     asset: { symbol: 'ACA', decimals: 12 } as TAssetInfo
@@ -88,7 +88,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res).toEqual({
       failureReason: 'Simulation failed',
@@ -137,7 +137,7 @@ describe('getXcmFeeInternal', () => {
 
     const bridgeSpy = vi.mocked(addEthereumBridgeFees)
 
-    const res = await getXcmFeeInternal(
+    const res = await getXcmFeeOnce(
       createOptions({
         origin: 'Mythos',
         destination: 'Ethereum',
@@ -176,7 +176,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res).toEqual({
       origin: {
@@ -221,7 +221,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(getDestXcmFee).not.toHaveBeenCalled()
 
@@ -287,7 +287,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res).toEqual({
       origin: {
@@ -374,7 +374,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
 
@@ -475,7 +475,7 @@ describe('getXcmFeeInternal', () => {
       sufficient: false
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.hops).toHaveLength(2)
     expect(res.hops).toEqual([
@@ -583,7 +583,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(
+    const res = await getXcmFeeOnce(
       createOptions({
         swapConfig: {
           exchangeChain: 'Hydration',
@@ -644,7 +644,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
+    const res = await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
     expect(res.destination).toMatchObject({
       fee: 0n,
@@ -697,7 +697,7 @@ describe('getXcmFeeInternal', () => {
       currency: 'DOT'
     })
 
-    const res = await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
+    const res = await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
     expect(res.hops[0].result.fee).toBe(1_000n)
     expect(res.bridgeHub?.fee).toBe(1_000n)
@@ -727,7 +727,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.origin).not.toHaveProperty('sufficient')
   })
@@ -756,7 +756,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.origin).toHaveProperty('weight')
     expect(res.origin.weight).toEqual({ refTime: 1000000n, proofSize: 5000n })
@@ -803,7 +803,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.failureChain).toBe('Quartz')
     expect(res.failureReason).toBe('Custom chain failed')
@@ -841,7 +841,7 @@ describe('getXcmFeeInternal', () => {
       dryRunError: 'BridgeHub failed'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.failureChain).toBe('bridgeHub')
     expect(res.failureReason).toBe('BridgeHub failed')
@@ -875,7 +875,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.failureChain).toBe('destination')
     expect(res.failureReason).toBe('Destination failed')
@@ -908,7 +908,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.failureChain).toBeUndefined()
     expect(res.failureReason).toBeUndefined()
@@ -942,7 +942,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.destination).toEqual({
       fee: 2_000n,
@@ -996,7 +996,7 @@ describe('getXcmFeeInternal', () => {
       feeType: 'paymentInfo'
     })
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.hops[0].result).toEqual({
       currency: 'DOT',
@@ -1041,7 +1041,7 @@ describe('getXcmFeeInternal', () => {
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
 
-    await getXcmFeeInternal(createOptions({ api: mockApi }))
+    await getXcmFeeOnce(createOptions({ api: mockApi }))
 
     expect(cloneSpy).toHaveBeenCalled()
     expect(mockCloneApi.init).toHaveBeenCalled()
@@ -1113,7 +1113,7 @@ describe('getXcmFeeInternal', () => {
       sufficient: false
     })
 
-    const res = await getXcmFeeInternal(createOptions({ api: mockApi }))
+    const res = await getXcmFeeOnce(createOptions({ api: mockApi }))
 
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
     expect(mockCloneApi.init).toHaveBeenCalledWith('Moonbeam', expect.any(Number))
@@ -1180,7 +1180,7 @@ describe('getXcmFeeInternal', () => {
 
     const mockApi = createOptions().api
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.destination.asset).toEqual({ symbol: 'ACA', decimals: 12 })
   })
@@ -1236,7 +1236,7 @@ describe('getXcmFeeInternal', () => {
 
     const mockApi = createOptions().api
 
-    await getXcmFeeInternal(
+    await getXcmFeeOnce(
       createOptions({
         swapConfig: {
           exchangeChain: 'Hydration',
@@ -1289,7 +1289,7 @@ describe('getXcmFeeInternal', () => {
     }
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(updatedBridgeHubResult)
 
-    const res = await getXcmFeeInternal(createOptions())
+    const res = await getXcmFeeOnce(createOptions())
 
     expect(res.hops[0].result.fee).toBe(5_000n)
     expect(res.bridgeHub?.fee).toBe(5_000n)
@@ -1338,7 +1338,7 @@ describe('getXcmFeeInternal', () => {
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
-    await getXcmFeeInternal(createOptions({ destination: 'Ethereum' }))
+    await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
     expect(getNativeAssetSymbol).toHaveBeenCalledWith('Ethereum')
   })

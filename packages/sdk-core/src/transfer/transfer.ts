@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
 import { normalizeLocation, type TNativeAssetInfo } from '@paraspell/assets'
-import { isRelayChain, isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
+import { isRelayChain, isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
@@ -144,7 +144,20 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     } as TNativeAssetInfo)
 
   const finalAsset = Array.isArray(currency)
-    ? { ...resolvedAsset, amount: 0n, assetId: '1' }
+    ? // TODO: Refactor this
+      // We use a dummy values when overriding with multi-assets
+      // since these values won't be used but need to pass checks
+      {
+        ...resolvedAsset,
+        amount: 0n,
+        assetId: '1',
+        location: {
+          parents: Parents.ZERO,
+          interior: {
+            Here: null
+          }
+        }
+      }
     : { ...resolvedAsset, amount: finalAmount }
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)

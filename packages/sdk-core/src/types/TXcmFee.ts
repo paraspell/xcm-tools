@@ -33,6 +33,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   disableFallback: TDisableFallback
   // Used when there is an asset swap on some hop
   swapConfig?: TXcmFeeSwapConfig
+  skipReverseFeeCalculation?: boolean
 }
 
 export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
@@ -103,6 +104,7 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   disableFallback: boolean
   hasPassedExchange?: boolean
   swapConfig?: TXcmFeeSwapConfig
+  skipReverseFeeCalculation?: boolean
 }
 
 export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<
@@ -134,6 +136,7 @@ export type TXcmFeeDetailSuccess = TXcmFeeBase & {
   fee: bigint
   feeType: TFeeType
   dryRunError?: string
+  dryRunSubError?: string
 }
 
 export type TXcmFeeDetailWithFallback = TXcmFeeDetailSuccess
@@ -142,6 +145,7 @@ export type TXcmFeeDetailError = TXcmFeeBase & {
   fee?: bigint
   feeType?: TFeeType
   dryRunError: string
+  dryRunSubError?: string
 }
 
 export type TXcmFeeDetail = TXcmFeeDetailSuccess | TXcmFeeDetailError
@@ -151,6 +155,7 @@ export type TXcmFeeHopResult = {
   feeType?: TFeeType
   sufficient?: boolean
   dryRunError?: string
+  dryRunSubError?: string
   forwardedXcms?: any
   destParaId?: number
   /** @deprecated Use `asset` property instead. */

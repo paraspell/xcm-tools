@@ -1,6 +1,8 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { getParaId, getRelayChainOf, getTChain } from '@paraspell/sdk';
 import type { Repository } from 'typeorm';
 
 import { CountOption } from './count-option';
@@ -35,31 +37,44 @@ describe('MessageService', () => {
     const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
-    const paraIds = [101, 102];
+    const parachains: TSubstrateChain[] = ['AssetHubPolkadot', 'Acala'];
 
     it('should return status counts for each paraId when paraIds are provided', async () => {
-      mockRepository.count.mockImplementation(
-        ({ where: { _origin_para_id, status } }) =>
-          Promise.resolve(status === 'success' ? 3 : 1),
+      mockRepository.count.mockImplementation(({ where: { status } }) =>
+        Promise.resolve(status === 'success' ? 3 : 1),
+      );
+
+      const expectedEcosystems = parachains.map((chain) =>
+        getRelayChainOf(chain).toLowerCase(),
       );
 
       const results = await service.countMessagesByStatus(
         ecosystem,
-        paraIds,
+        parachains,
         startTime,
         endTime,
       );
 
       expect(results).toEqual([
-        { ecosystem, paraId: 101, success: 3, failed: 1 },
-        { ecosystem, paraId: 102, success: 3, failed: 1 },
+        {
+          ecosystem: expectedEcosystems[0],
+          parachain: 'AssetHubPolkadot',
+          success: 3,
+          failed: 1,
+        },
+        {
+          ecosystem: expectedEcosystems[1],
+          parachain: 'Acala',
+          success: 3,
+          failed: 1,
+        },
       ]);
       expect(mockRepository.count).toHaveBeenCalledTimes(4);
       expect(mockRepository.count).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             ecosystem,
-            origin_para_id: 101,
+            origin_para_id: getParaId(parachains[0]),
             status: 'success',
           }),
         }),
@@ -68,7 +83,7 @@ describe('MessageService', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             ecosystem,
-            origin_para_id: 102,
+            origin_para_id: getParaId(parachains[1]),
             status: 'failed',
           }),
         }),
@@ -101,9 +116,10 @@ describe('MessageService', () => {
     const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
-    const paraIds = [101, 102];
+    const parachains: TSubstrateChain[] = ['AssetHubPolkadot', 'Acala'];
 
     it('should return message counts by day for each paraId', async () => {
+      const [assetHubParaId, acalaParaId] = parachains.map((p) => getParaId(p));
       mockRepository.createQueryBuilder.mockReturnValueOnce({
         select: jest.fn().mockReturnThis(),
         addSelect: jest.fn().mockReturnThis(),
@@ -111,25 +127,32 @@ describe('MessageService', () => {
         andWhere: jest.fn().mockReturnThis(),
         groupBy: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
           {
             ecosystem,
-            paraId: 101,
+            paraId: assetHubParaId.toString(),
+            parachain: 'AssetHubPolkadot',
             date: '2023-09-01',
+            message_count: '4',
             message_count_success: '3',
             message_count_failed: '1',
           },
           {
             ecosystem,
-            paraId: 101,
+            paraId: assetHubParaId.toString(),
+            parachain: 'AssetHubPolkadot',
             date: '2023-09-02',
+            message_count: '2',
             message_count_success: '2',
             message_count_failed: '0',
           },
           {
             ecosystem,
-            paraId: 102,
+            paraId: acalaParaId.toString(),
+            parachain: 'Acala',
             date: '2023-09-01',
+            message_count: '7',
             message_count_success: '5',
             message_count_failed: '2',
           },
@@ -138,7 +161,7 @@ describe('MessageService', () => {
 
       const results = await service.countMessagesByDay(
         ecosystem,
-        paraIds,
+        parachains,
         startTime,
         endTime,
       );
@@ -146,7 +169,7 @@ describe('MessageService', () => {
       expect(results).toEqual([
         {
           ecosystem,
-          paraId: 101,
+          parachain: 'AssetHubPolkadot',
           date: '2023-09-01',
           messageCount: 4,
           messageCountSuccess: 3,
@@ -154,7 +177,7 @@ describe('MessageService', () => {
         },
         {
           ecosystem,
-          paraId: 101,
+          parachain: 'AssetHubPolkadot',
           date: '2023-09-02',
           messageCount: 2,
           messageCountSuccess: 2,
@@ -162,7 +185,7 @@ describe('MessageService', () => {
         },
         {
           ecosystem,
-          paraId: 102,
+          parachain: 'Acala',
           date: '2023-09-01',
           messageCount: 7,
           messageCountSuccess: 5,
@@ -185,12 +208,14 @@ describe('MessageService', () => {
           {
             ecosystem,
             date: '2023-09-01',
+            message_count: '11',
             message_count_success: '8',
             message_count_failed: '3',
           },
           {
             ecosystem,
             date: '2023-09-02',
+            message_count: '7',
             message_count_success: '6',
             message_count_failed: '1',
           },
@@ -207,6 +232,7 @@ describe('MessageService', () => {
       expect(results).toEqual([
         {
           ecosystem,
+          parachain: undefined,
           date: '2023-09-01',
           messageCount: 11,
           messageCountSuccess: 8,
@@ -214,6 +240,7 @@ describe('MessageService', () => {
         },
         {
           ecosystem,
+          parachain: undefined,
           date: '2023-09-02',
           messageCount: 7,
           messageCountSuccess: 6,
@@ -326,20 +353,22 @@ describe('MessageService', () => {
     const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
-    const paraIds = [101, 102];
+    const parachains: TSubstrateChain[] = ['AssetHubPolkadot', 'Acala'];
 
     it('should return asset counts by symbol for each paraId when paraIds are provided', async () => {
+      const paraIds = parachains.map((p) => getParaId(p));
+      const ecosystemsList = parachains.map((p) =>
+        getRelayChainOf(p).toLowerCase(),
+      );
       const mockResult = [
         {
-          ecosystem,
-          origin_para_id: 101,
+          origin_para_id: paraIds[0],
           symbol: 'GOLD',
           count: '3',
           amount: '69',
         },
         {
-          ecosystem,
-          origin_para_id: 102,
+          origin_para_id: paraIds[1],
           symbol: 'SILVER',
           count: '5',
           amount: '420',
@@ -349,20 +378,40 @@ describe('MessageService', () => {
 
       const results = await service.countAssetsBySymbol(
         ecosystem,
-        paraIds,
+        parachains,
         startTime,
         endTime,
       );
 
       expect(results).toEqual([
-        { ecosystem, paraId: 101, symbol: 'GOLD', count: 3, amount: '69' },
-        { ecosystem, paraId: 102, symbol: 'SILVER', count: 5, amount: '420' },
+        {
+          ecosystem: ecosystemsList[0],
+          parachain: getTChain(
+            paraIds[0],
+            (ecosystemsList[0][0].toUpperCase() +
+              ecosystemsList[0].slice(1)) as TRelaychain,
+          ),
+          symbol: 'GOLD',
+          count: 3,
+          amount: '69',
+        },
+        {
+          ecosystem: ecosystemsList[1],
+          parachain: getTChain(
+            paraIds[1],
+            (ecosystemsList[1][0].toUpperCase() +
+              ecosystemsList[1].slice(1)) as TRelaychain,
+          ),
+          symbol: 'SILVER',
+          count: 5,
+          amount: '420',
+        },
       ]);
       expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
-        ecosystem,
+        paraIds,
+        ecosystemsList,
         startTime,
         endTime,
-        paraIds,
       ]);
     });
 

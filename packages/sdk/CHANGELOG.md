@@ -1,5 +1,51 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.1...sdk-v11.14.2) (2025-11-14)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.0...sdk-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.13.0...sdk-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
+
+### Bug Fixes
+
+* **sdk-core:** improve PAPI enhancer usage ([5e409ab](https://github.com/paraspell/xcm-tools/commit/5e409ab48c5fef002159f0213f04a5f259ff0531))
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.15...sdk-v11.13.0) (2025-11-11)
+
+
+### Features
+
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.14...sdk-v11.12.15) (2025-11-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Always use AH as reserve in system asset transfers ⚙️ ([eae3708](https://github.com/paraspell/xcm-tools/commit/eae37087cc5656e1052eecf7ee46939ee5cca1af))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor polkadot xcm asset creation 🔧 ([77203d6](https://github.com/paraspell/xcm-tools/commit/77203d6783b5d73275e35473c4fc52d44a28b501))
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/sdk-v11.12.13...sdk-v11.12.14) (2025-11-05)
 
 

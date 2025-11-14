@@ -334,21 +334,17 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertToIsString(to)
     assertAddressIsString(address)
 
-    try {
-      return await getXcmFee({
-        api,
-        buildTx,
-        origin: from,
-        destination: to,
-        senderAddress,
-        address,
-        currency: currency as WithAmount<TCurrencyCore>,
-        feeAsset,
-        disableFallback
-      })
-    } finally {
-      await this.api.disconnect()
-    }
+    return getXcmFee({
+      api,
+      buildTx,
+      origin: from,
+      destination: to,
+      senderAddress,
+      address,
+      currency: currency as WithAmount<TCurrencyCore>,
+      feeAsset,
+      disableFallback
+    })
   }
 
   /**

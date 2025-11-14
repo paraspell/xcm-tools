@@ -15,7 +15,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
-import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
+import { BridgeHaltedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TTransferLocalOptions } from '../../types'
@@ -196,20 +196,6 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('transferPolkadotXcm', () => {
-    it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', async () => {
-      const input = {
-        ...mockInput,
-        assetInfo: { symbol: 'KSM', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
-        scenario: 'ParaToPara',
-        destination: 'Acala'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-
-      await expect(() => assetHub.transferPolkadotXCM(input)).rejects.toThrow(
-        ScenarioNotSupportedError
-      )
-    })
-
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', decimals: 10, assetId: '' }])
 
@@ -351,10 +337,8 @@ describe('AssetHubPolkadot', () => {
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {
     const result = assetHub.getRelayToParaOverrides()
-
     expect(result).toEqual({
-      method: 'limited_teleport_assets',
-      includeFee: true
+      transferType: 'teleport'
     })
   })
 

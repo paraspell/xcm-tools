@@ -7,7 +7,7 @@ describe.sequential('E2E tests', () => {
   describe('AcalaDex', () => {
     it('should build a transfer extrinsic without error for DOT to ACA on AcalaDex', async () => {
       const hashes = await RouterBuilder()
-        .from('Polkadot')
+        .from('Hydration')
         .exchange('AcalaDex')
         .to('Astar')
         .currencyFrom({ symbol: 'DOT' })
@@ -24,7 +24,7 @@ describe.sequential('E2E tests', () => {
 
     it('should build a transfer extrinsic without error for DOT to ACA (specified by location) on AcalaDex', async () => {
       const hashes = await RouterBuilder()
-        .from('Polkadot')
+        .from('Hydration')
         .exchange('AcalaDex')
         .to('Astar')
         .currencyFrom({ symbol: 'DOT' })
@@ -109,7 +109,7 @@ describe.sequential('E2E tests', () => {
 
     it('should build a transfer extrinsic without error for KSM to BNC on KaruraDex', async () => {
       const hashes = await RouterBuilder()
-        .from('Kusama')
+        .from('Basilisk')
         .exchange('KaruraDex')
         .to('BifrostKusama')
         .currencyFrom({ symbol: 'KSM' })

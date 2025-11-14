@@ -7,13 +7,11 @@ import { getRelayChainOf } from '../../utils/chain/getRelayChainOf'
 import { dryRunInternal } from '../dry-run'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
 import { createTypeThenAutoReserve } from './createTypeThenAutoReserve'
-import { selectReserveByBalance } from './utils/selectReserveByBalance'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../utils/chain/getRelayChainOf')
 vi.mock('./createTypeAndThenCall')
 vi.mock('../dry-run/dryRunInternal')
-vi.mock('./utils/selectReserveByBalance')
 vi.mock('../../utils/assertions')
 
 const mkApi = () => {
@@ -84,19 +82,17 @@ describe('createTypeThenAutoReserve', () => {
     expect(res).toEqual(ahCall)
   })
 
-  it('when dry-run unsupported, uses selectReserveByBalance override', async () => {
+  it('when dry-run unsupported, return default call', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(false)
-    vi.mocked(selectReserveByBalance).mockResolvedValue('Polkadot')
     vi.mocked(createTypeAndThenCall).mockResolvedValue(relayCall)
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(relayCall)
-    expect(createTypeAndThenCall).toHaveBeenCalledWith(origin, options, 'Polkadot')
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(origin, options)
   })
 
   it('when dry-run unsupported and no reserve, uses default createTypeAndThenCall', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(false)
-    vi.mocked(selectReserveByBalance).mockResolvedValue(undefined)
     const defaultCall: TSerializedApiCall = {
       module: 'XcmPallet',
       method: 'default',

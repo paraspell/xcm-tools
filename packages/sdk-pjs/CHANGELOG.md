@@ -1,5 +1,40 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.1...sdk-pjs-v11.14.2) (2025-11-14)
+
+
+### Miscellaneous Chores
+
+* **sdk-pjs:** Synchronize main versions
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.0...sdk-pjs-v11.14.1) (2025-11-13)
+
+
+### Miscellaneous Chores
+
+* **sdk-pjs:** Synchronize main versions
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.13.0...sdk-pjs-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.15...sdk-pjs-v11.13.0) (2025-11-11)
+
+
+### Miscellaneous Chores
+
+* **sdk-pjs:** Synchronize main versions
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.14...sdk-pjs-v11.12.15) (2025-11-10)
+
+
+### Miscellaneous Chores
+
+* **sdk-pjs:** Synchronize main versions
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.12.13...sdk-pjs-v11.12.14) (2025-11-05)
 
 

@@ -1,10 +1,11 @@
 import { BarChart } from '@mantine/charts';
+import type { TSubstrateChain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { TAssetCounts } from '../../../types/types';
+import { getChainDisplayName } from '../../../utils';
 import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
@@ -18,10 +19,8 @@ type Props = {
 const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showAmounts }, ref) => {
   const { t } = useTranslation();
 
-  const { selectedEcosystem } = useSelectedParachain();
-
   const aggregatedData = useMemo(() => {
-    return Object.values(aggregateDataByParachain(counts, t, selectedEcosystem));
+    return Object.values(aggregateDataByParachain(counts, t));
   }, [counts, t]);
 
   const series = useMemo(() => {
@@ -32,6 +31,8 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
     () =>
       aggregatedData.map(d => ({
         parachain: d.parachain,
+        ecosystem: d.ecosystem,
+        display: getChainDisplayName(d.parachain as TSubstrateChain),
         ...(showAmounts ? d.amounts : d.counts)
       })),
     [aggregatedData, showAmounts]
@@ -43,13 +44,15 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
       data={transformedData}
       series={series}
       type="stacked"
-      dataKey="parachain"
+      dataKey="display"
       h="100%"
       w="100%"
       tooltipAnimationDuration={200}
       tooltipProps={{
-        content: ({ label, payload }) => {
+        content: ({ payload }) => {
           if (!payload || payload.length === 0) return null;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          const rawLabel = payload[0].payload.parachain;
           const sortedPayload = [
             ...new Map(
               payload.sort((a, b) => b.value - a.value).map(item => [item.value, item])
@@ -57,7 +60,7 @@ const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showA
           ];
           return (
             <CustomChartTooltip
-              label={label as ReactNode}
+              label={rawLabel as ReactNode}
               payload={sortedPayload}
               valueFormatter={formatNumber}
             />

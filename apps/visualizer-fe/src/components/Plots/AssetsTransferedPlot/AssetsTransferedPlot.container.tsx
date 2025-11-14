@@ -4,12 +4,12 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { assetCountsBySymbolQueryDocument } from '../../../api/messages';
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { AssetCountsBySymbolQuery } from '../../../gql/graphql';
 import convertToCsv from '../../../utils/convertToCsv';
 import downloadSvg from '../../../utils/downloadSvg';
 import { downloadZip } from '../../../utils/downloadZip';
-import { getParachainId } from '../../../utils/utils';
 import DownloadButtons from '../../DownloadButtons';
 import AssetsTransferedPlot from './AssetsTransferedPlot';
 
@@ -20,7 +20,8 @@ const AssetsTransferedPlotContainer = () => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { parachains, dateRange, selectedEcosystem } = useSelectedParachain();
+  const { selectedParachains, dateRange } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
 
   const [showAmounts, setShowAmounts] = useState(false);
 
@@ -29,7 +30,7 @@ const AssetsTransferedPlotContainer = () => {
   const { data, loading, error } = useQuery(assetCountsBySymbolQueryDocument, {
     variables: {
       ecosystem: selectedEcosystem.toString().toLowerCase(),
-      paraIds: parachains.map(parachain => getParachainId(parachain, selectedEcosystem)),
+      parachains: selectedParachains,
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }
@@ -41,9 +42,13 @@ const AssetsTransferedPlotContainer = () => {
     const headers: (keyof Omit<
       AssetCountsBySymbolQuery['assetCountsBySymbol'][number],
       '__typename'
-    >)[] = ['paraId', 'symbol', 'count', 'amount'];
-    const csvData = convertToCsv(data.assetCountsBySymbol, headers);
-    void downloadZip(data.assetCountsBySymbol, csvData);
+    >)[] = ['parachain', 'symbol', 'count', 'amount'];
+    const rows = data.assetCountsBySymbol.map(({ __typename, parachain, ...rest }) => ({
+      ...rest,
+      parachain: parachain ?? ''
+    }));
+    const csvData = convertToCsv(rows, headers);
+    void downloadZip(rows, csvData);
   };
 
   const onDownloadSvgClick = () => {

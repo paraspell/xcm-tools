@@ -15,6 +15,7 @@ import type {
   TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
+  TDryRunError,
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
@@ -75,7 +76,7 @@ const keyFromWs = (ws: string | string[]): TClientKey => {
 const createPolkadotClient = (ws: string | string[], useLegacy: boolean): TPapiApi => {
   const options = useLegacy ? { innerEnhancer: withLegacy() } : {}
   const provider = getWsProvider(ws, options)
-  return createClient(withPolkadotSdkCompat(provider))
+  return createClient(useLegacy ? provider : withPolkadotSdkCompat(provider))
 }
 
 const leasePolkadotClient = (ws: string | string[], ttlMs: number, useLegacy: boolean) => {
@@ -553,34 +554,55 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return result?.success && result.value?.execution_result?.success && !errorInEvents
     }
 
-    const extractFailureReasonFromResult = (result: any): string => {
+    const findFailureObjectFromResult = (result: any) => {
       const executionResultValue = result?.value?.execution_result?.value
 
       if (executionResultValue?.error?.value?.value?.type) {
-        return String(executionResultValue.error.value.value.type)
+        return executionResultValue.error.value.value
       }
 
       if (executionResultValue?.error?.value?.type) {
-        return String(executionResultValue.error.value.type)
+        return executionResultValue.error.value
       }
 
       if (result?.value?.type) {
-        return String(result.value.type)
+        return result.value
       }
 
       const erroredEvent = findFailingEvent(result)
 
       if (erroredEvent) {
         const result = erroredEvent.value.value.result
-        return result.value.value.value?.type ?? result.value.value.type
+        return result.value.value.value ?? result.value.value
       }
 
-      return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
+      return result
+    }
+
+    const extractFailureReasonFromResult = (result: any): TDryRunError => {
+      const obj = findFailureObjectFromResult(result)
+
+      if (obj?.type && obj?.value?.error?.type) {
+        return { failureReason: obj.type, failureSubReason: obj.value.error.type }
+      }
+
+      if (obj?.type) {
+        return { failureReason: obj.type }
+      }
+
+      return {
+        failureReason: JSON.stringify(
+          result?.value ?? result ?? 'Unknown error structure',
+          replaceBigInt
+        )
+      }
     }
 
     let result
     let isSuccess
-    let failureOutputReason = ''
+    let failureOutputReason: TDryRunError = {
+      failureReason: ''
+    }
 
     result = await performDryRunCall(false)
 
@@ -590,14 +612,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       const initialFailureReason = extractFailureReasonFromResult(result)
       failureOutputReason = initialFailureReason
 
-      if (initialFailureReason === 'VersionedConversionFailed') {
+      if (initialFailureReason.failureReason === 'VersionedConversionFailed') {
         result = await performDryRunCall(true)
         isSuccess = getExecutionSuccessFromResult(result)
 
         if (!isSuccess) {
           failureOutputReason = extractFailureReasonFromResult(result)
         } else {
-          failureOutputReason = ''
+          failureOutputReason = { failureReason: '', failureSubReason: undefined }
         }
       }
     }
@@ -608,7 +630,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!isSuccess) {
       return Promise.resolve({
         success: false,
-        failureReason: failureOutputReason,
+        failureReason: failureOutputReason.failureReason,
+        failureSubReason: failureOutputReason.failureSubReason,
         currency: usedSymbol,
         asset: usedAsset
       })

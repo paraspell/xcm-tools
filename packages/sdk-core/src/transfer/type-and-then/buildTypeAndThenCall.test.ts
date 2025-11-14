@@ -2,52 +2,54 @@ import type { TAsset } from '@paraspell/assets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createAsset, localizeLocation } from '../../utils'
+import { localizeLocation } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
 vi.mock('../../chains/config')
 vi.mock('../../pallets/xcmPallet/utils')
-
-vi.mock('../../utils', () => ({
-  addXcmVersionHeader: vi.fn(value => ({ versioned: value })),
-  createAsset: vi.fn(),
-  localizeLocation: vi.fn()
-}))
+vi.mock('../../utils/location')
 
 describe('buildTypeAndThenCall', () => {
+  const mockApi = {} as IPolkadotApi<unknown, unknown>
   const mockVersion = Version.V5
-
-  const assetInfo = {
-    location: { parents: 1, interior: 'Here' }
+  const mockDestination: TLocation = {
+    parents: 1,
+    interior: { X1: { Parachain: 2000 } }
   }
-
   const mockContext = {
-    origin: { chain: 'Polkadot' } as TChainWithApi<unknown, unknown>,
-    reserve: { chain: 'Polkadot' } as TChainWithApi<unknown, unknown>,
-    dest: { chain: 'Kusama' } as TChainWithApi<unknown, unknown>,
-    assetInfo,
+    origin: { chain: 'Polkadot', api: mockApi },
+    reserve: { chain: 'Polkadot', api: mockApi },
+    dest: { chain: 'Kusama', api: mockApi },
+    assetInfo: {
+      amount: 1000n,
+      location: RELAY_LOCATION,
+      symbol: 'DOT',
+      decimals: 10
+    },
     options: {
       version: mockVersion
     }
   } as TTypeAndThenCallContext<unknown, unknown>
 
-  const mockAssets = [{ id: 'asset1' }] as unknown as TAsset[]
+  const mockAssets: TAsset[] = [
+    {
+      id: RELAY_LOCATION,
+      fun: { Fungible: 1300n }
+    }
+  ]
   const mockCustomXcm = ['xcm1', 'xcm2']
-  const mockDestination = {} as TLocation
+
   const mockParaId = 1000
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
     vi.mocked(getParaId).mockReturnValue(mockParaId)
     vi.mocked(createDestination).mockReturnValue(mockDestination)
-    vi.mocked(createAsset).mockImplementation((_version, amount, location) => ({
-      id: location,
-      fun: { Fungible: amount }
-    }))
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
   })
 
@@ -66,19 +68,22 @@ describe('buildTypeAndThenCall', () => {
       module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: { versioned: mockDestination },
-        assets: { versioned: mockAssets },
+        dest: { [mockVersion]: mockDestination },
+        assets: { [mockVersion]: mockAssets },
         assets_transfer_type: 'LocalReserve',
-        remote_fees_id: { versioned: RELAY_LOCATION },
+        remote_fees_id: { [mockVersion]: RELAY_LOCATION },
         fees_transfer_type: 'LocalReserve',
-        custom_xcm_on_dest: { versioned: mockCustomXcm },
+        custom_xcm_on_dest: { [mockVersion]: mockCustomXcm },
         weight_limit: 'Unlimited'
       }
     })
   })
 
   it('should build correct call when chain does not equal reserveChain and asset location equals RELAY_LOCATION', () => {
-    const differentReserve = { chain: 'Kusama' } as TChainWithApi<unknown, unknown>
+    const differentReserve: TChainWithApi<unknown, unknown> = {
+      chain: 'Kusama',
+      api: mockApi
+    }
 
     const result = buildTypeAndThenCall(
       {
@@ -102,20 +107,20 @@ describe('buildTypeAndThenCall', () => {
       module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: { versioned: mockDestination },
-        assets: { versioned: mockAssets },
+        dest: { [mockVersion]: mockDestination },
+        assets: { [mockVersion]: mockAssets },
         assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: { versioned: assetInfo.location },
+        remote_fees_id: { [mockVersion]: mockContext.assetInfo.location },
         fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: { versioned: mockCustomXcm },
+        custom_xcm_on_dest: { [mockVersion]: mockCustomXcm },
         weight_limit: 'Unlimited'
       }
     })
   })
 
   it('should use LocalReserve when chain equals reserveChain', () => {
-    const mockOrigin = { chain: 'AssetHubPolkadot' } as TChainWithApi<unknown, unknown>
-    const mockReserve = { chain: 'AssetHubPolkadot' } as TChainWithApi<unknown, unknown>
+    const mockOrigin: TChainWithApi<unknown, unknown> = { chain: 'AssetHubPolkadot', api: mockApi }
+    const mockReserve: TChainWithApi<unknown, unknown> = { chain: 'AssetHubPolkadot', api: mockApi }
 
     const result = buildTypeAndThenCall(
       {
@@ -133,8 +138,8 @@ describe('buildTypeAndThenCall', () => {
   })
 
   it('should use DestinationReserve when origin chain does not equal reserveChain', () => {
-    const mockOrigin = { chain: 'Polkadot' } as TChainWithApi<unknown, unknown>
-    const mockReserve = { chain: 'Kusama' } as TChainWithApi<unknown, unknown>
+    const mockOrigin: TChainWithApi<unknown, unknown> = { chain: 'Polkadot', api: mockApi }
+    const mockReserve: TChainWithApi<unknown, unknown> = { chain: 'Kusama', api: mockApi }
 
     const result = buildTypeAndThenCall(
       {
@@ -154,26 +159,14 @@ describe('buildTypeAndThenCall', () => {
   it('should use asset location as feeAssetLocation when asset location equals RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, true, mockCustomXcm, mockAssets)
 
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(assetInfo.location, mockVersion)
     expect(result.parameters.remote_fees_id).toEqual({
-      versioned: assetInfo.location
+      [mockVersion]: mockContext.assetInfo.location
     })
   })
 
   it('should use RELAY_LOCATION as feeAssetLocation when asset location does not equal RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(RELAY_LOCATION, mockVersion)
-    expect(result.parameters.remote_fees_id).toEqual({ versioned: RELAY_LOCATION })
-  })
-
-  it('should call addXcmVersionHeader for all versioned parameters', () => {
-    buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
-
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(mockDestination, mockVersion)
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(mockAssets, mockVersion)
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(RELAY_LOCATION, mockVersion)
-    expect(addXcmVersionHeader).toHaveBeenCalledWith(mockCustomXcm, mockVersion)
-    expect(addXcmVersionHeader).toHaveBeenCalledTimes(4)
+    expect(result.parameters.remote_fees_id).toEqual({ [mockVersion]: RELAY_LOCATION })
   })
 
   it('should always set weight_limit to Unlimited', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "11.12.14",
+  "version": "11.14.2",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "viem": "^2.38.5"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.20.0 < 2"
+    "polkadot-api": ">= 1.20.5 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",

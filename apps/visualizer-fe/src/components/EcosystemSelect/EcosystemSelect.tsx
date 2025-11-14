@@ -1,4 +1,5 @@
 import { Box, Combobox, Group, Input, InputBase, useCombobox } from '@mantine/core';
+import { RELAYCHAINS, type TRelaychain } from '@paraspell/sdk';
 import type { FC } from 'react';
 
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
@@ -6,11 +7,10 @@ import KusamaLogo from '../../logos/icons/kusama.svg?react';
 import PaseoLogo from '../../logos/icons/paseo.svg?react';
 import PolkadotLogo from '../../logos/icons/polkadot.svg?react';
 import WestendLogo from '../../logos/icons/westend.svg?react';
-import { Ecosystem } from '../../types/types';
 
 type Props = {
   value: string | null;
-  onChange: (value: Ecosystem) => void;
+  onChange: (value: TRelaychain) => void;
 };
 
 const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
@@ -18,7 +18,7 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
     onDropdownClose: () => combobox.resetSelectedOption()
   });
 
-  const { setParachains } = useSelectedParachain();
+  const { setSelectedParachains } = useSelectedParachain();
 
   const getLogo = (ecosystem: string) => {
     switch (ecosystem) {
@@ -35,8 +35,8 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
     }
   };
 
-  const options = Object.entries(Ecosystem).map(([key, value]) => (
-    <Combobox.Option value={key} key={key}>
+  const options = RELAYCHAINS.map((value, index) => (
+    <Combobox.Option value={value} key={index}>
       <Group gap="xs">
         <Box display="flex" w={16} h={16}>
           {getLogo(value)}
@@ -50,8 +50,8 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
     <Combobox
       store={combobox}
       onOptionSubmit={val => {
-        onChange(Ecosystem[val as keyof typeof Ecosystem]);
-        setParachains([]);
+        onChange(val as TRelaychain);
+        setSelectedParachains([]);
         combobox.closeDropdown();
       }}
     >

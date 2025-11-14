@@ -4,28 +4,39 @@ import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import {
-  createAsset,
-  createBeneficiaryLocation,
-  localizeLocation,
-  normalizeAmount
-} from '../../utils'
+import { createAsset, normalizeAmount } from '../../utils'
+import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
+
+const resolveBuyExecutionAmount = <TApi, TRes>(
+  { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes>,
+  isForFeeCalc: boolean,
+  { hopFees, destFee }: TTypeAndThenFees,
+  systemAssetAmount: bigint
+) => {
+  if (isForFeeCalc) {
+    // Rough estimates for dummy XCM call, that is later dryRunned
+    return isRelayAsset ? assetInfo.amount / 2n : systemAssetAmount / 2n
+  }
+
+  // We have actual fees, calculate exact buy execution amount
+  return isRelayAsset ? assetInfo.amount - hopFees : destFee
+}
 
 export const createCustomXcm = <TApi, TRes>(
-  { origin, dest, reserve, isSubBridge, assetInfo, options }: TTypeAndThenCallContext<TApi, TRes>,
-  isDotAsset: boolean,
+  context: TTypeAndThenCallContext<TApi, TRes>,
   assetCount: number,
   isForFeeCalc: boolean,
+  systemAssetAmount: bigint,
   fees: TTypeAndThenFees = {
-    reserveFee: 0n,
-    refundFee: 0n,
+    hopFees: 0n,
     destFee: 0n
   }
 ) => {
+  const { origin, dest, reserve, isSubBridge, isRelayAsset, assetInfo, options } = context
   const { destination, version, address, paraIdTo } = options
-  const { reserveFee, refundFee, destFee } = fees
+  const { hopFees, destFee } = fees
 
-  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
+  const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
 
   const feeLocLocalized = localizeLocation(dest.chain, feeAssetLocation, origin.chain)
 
@@ -60,9 +71,9 @@ export const createCustomXcm = <TApi, TRes>(
 
   const assetsFilter = []
 
-  if (!isDotAsset)
+  if (!isRelayAsset)
     assetsFilter.push(
-      createAsset(version, reserveFee + destFee, localizeLocation(reserve.chain, RELAY_LOCATION))
+      createAsset(version, hopFees + destFee, localizeLocation(reserve.chain, RELAY_LOCATION))
     )
 
   assetsFilter.push(
@@ -70,7 +81,12 @@ export const createCustomXcm = <TApi, TRes>(
   )
 
   if (isSubBridge || (origin.chain !== reserve.chain && dest.chain !== reserve.chain)) {
-    const buyExecutionAmount = !isDotAsset ? destFee : assetInfo.amount - reserveFee - refundFee
+    const buyExecutionAmount = resolveBuyExecutionAmount(
+      context,
+      isForFeeCalc,
+      fees,
+      systemAssetAmount
+    )
 
     if (buyExecutionAmount < 0n && !isForFeeCalc) throw new AmountTooLowError()
 

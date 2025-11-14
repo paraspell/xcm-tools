@@ -5,7 +5,7 @@ import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '
 import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
-import { getXcmFee } from '../fees'
+import { getXcmFeeInternal } from '../fees'
 
 export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
   let totalFee = 0n
@@ -59,7 +59,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
     currency: destCurrency
   })
 
-  const xcmFeeResult = await getXcmFee({
+  const xcmFeeResult = await getXcmFeeInternal({
     api,
     buildTx,
     origin,

@@ -1,20 +1,18 @@
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
   hasJunction,
+  isRelayChain,
   Parents,
   type TLocation
 } from '@paraspell/sdk-common'
 
-import { getTChain } from '../../../chains/getTChain'
-import { CHAINS_DOT_RESERVE_AH } from '../../../constants'
-import { InvalidParameterError } from '../../../errors'
-import { getRelayChainOf } from '../..'
+import { getRelayChainOf, getTChain } from '../..'
+import { InvalidParameterError } from '../../errors'
 
 export const getAssetReserveChain = (
   chain: TSubstrateChain,
-  destChain: TChain,
   assetLocation: TLocation
 ): TSubstrateChain => {
   const hasGlobalConsensusJunction = hasJunction(assetLocation, 'GlobalConsensus')
@@ -27,6 +25,8 @@ export const getAssetReserveChain = (
     }
     return resolvedChain as TSubstrateChain
   }
+
+  if (isRelayChain(chain)) return chain
 
   const relaychain = getRelayChainOf(chain)
   const ahChain = `AssetHub${relaychain}` as TSubstrateChain
@@ -41,8 +41,7 @@ export const getAssetReserveChain = (
       interior: { Here: null }
     })
   ) {
-    if (relaychain === 'Paseo') return ahChain
-    return CHAINS_DOT_RESERVE_AH.has(destChain) ? ahChain : relaychain
+    return ahChain
   }
 
   return chain

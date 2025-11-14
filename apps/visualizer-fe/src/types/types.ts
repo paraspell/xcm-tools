@@ -1,4 +1,5 @@
 import type { UseOSReturnValue } from '@mantine/hooks';
+import type { TRelaychain } from '@paraspell/sdk';
 
 import type { AssetCountsBySymbolQuery } from '../gql/graphql';
 
@@ -7,25 +8,19 @@ export type ChartDataItem = {
   value: number;
 };
 
-export interface CustomPoint extends Highcharts.Point {
+export type CustomPoint = Highcharts.Point & {
   name: string;
   value: number;
-}
+};
 
 export type TAssetCounts = AssetCountsBySymbolQuery['assetCountsBySymbol'];
 
 export type TAggregatedData = {
+  ecosystem: TRelaychain;
   parachain: string;
   counts: { [symbol: string]: number };
   amounts: { [symbol: string]: number };
 };
-
-export enum Ecosystem {
-  POLKADOT = 'Polkadot',
-  KUSAMA = 'Kusama',
-  WESTEND = 'Westend',
-  PASEO = 'Paseo'
-}
 
 export type TWalletAccount = {
   address: string;
@@ -36,7 +31,7 @@ export type TWalletAccount = {
 };
 
 export type LiveXcmMsg = {
-  ecosystem: Ecosystem;
+  ecosystem: TRelaychain;
   status: string;
   hash: string;
   id: string;

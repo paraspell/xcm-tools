@@ -1,20 +1,21 @@
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import type { TFunction } from 'i18next';
 
-import type { Ecosystem, TAggregatedData, TAssetCounts } from '../../../../types/types';
-import { getParachainById } from '../../../../utils/utils';
+import type { TAggregatedData, TAssetCounts } from '../../../../types/types';
+import { getParachainId } from '../../../../utils/utils';
 
-export const aggregateDataByParachain = (
-  counts: TAssetCounts,
-  t: TFunction,
-  ecosystem: Ecosystem
-): TAggregatedData[] => {
+export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TAggregatedData[] => {
   const accumulator: Record<string, TAggregatedData> = {};
   counts.forEach(asset => {
-    const parachainKey = asset.paraId
-      ? getParachainById(asset.paraId, ecosystem) || `ID ${asset.paraId}`
-      : t('charts.common.total');
+    const paraId = asset.parachain ? getParachainId(asset.parachain as TSubstrateChain) : null;
+    const parachainKey = paraId ? asset.parachain || `ID ${paraId}` : t('charts.common.total');
     if (!accumulator[parachainKey]) {
-      accumulator[parachainKey] = { parachain: parachainKey, counts: {}, amounts: {} };
+      accumulator[parachainKey] = {
+        parachain: parachainKey,
+        ecosystem: asset.ecosystem as TRelaychain,
+        counts: {},
+        amounts: {}
+      };
     }
     const currentCount = accumulator[parachainKey].counts[asset.symbol] ?? 0;
     accumulator[parachainKey].counts[asset.symbol] = currentCount + asset.count;

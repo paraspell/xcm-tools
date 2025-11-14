@@ -1,5 +1,46 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.1...xcm-router-v11.14.2) (2025-11-14)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor duplicate destChain resolution & refactor relayToPara overrides 🧹 ([239593a](https://github.com/paraspell/xcm-tools/commit/239593a913b428ce8810332e988d9a36d00eaf19))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([94e8b3f](https://github.com/paraspell/xcm-tools/commit/94e8b3f5198761531d41008a35c9133e0087f581))
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.0...xcm-router-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update typeAndThen calls to use forwardedXcms for fee calculation ⚙️ ([5303a08](https://github.com/paraspell/xcm-tools/commit/5303a08d47863b03080f6b526548701d54a4d495))
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.13.0...xcm-router-v11.14.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.15...xcm-router-v11.13.0) (2025-11-11)
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Synchronize main versions
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.14...xcm-router-v11.12.15) (2025-11-10)
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Synchronize main versions
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.12.13...xcm-router-v11.12.14) (2025-11-05)
 
 

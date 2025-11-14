@@ -16,8 +16,7 @@ export const constructRelayToParaParameters = <TApi, TRes>(
     address,
     paraIdTo
   }: TRelayToParaOptions<TApi, TRes>,
-  version: Version,
-  { includeFee } = { includeFee: false }
+  version: Version
 ): Record<string, unknown> => {
   const paraId = resolveParaId(paraIdTo, destination)
 
@@ -35,6 +34,6 @@ export const constructRelayToParaParameters = <TApi, TRes>(
       interior: 'Here'
     }),
     fee_asset_item: DEFAULT_FEE_ASSET,
-    ...(includeFee && { weight_limit: 'Unlimited' })
+    weight_limit: 'Unlimited'
   }
 }

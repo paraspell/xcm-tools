@@ -1,5 +1,63 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.1...sdk-core-v11.14.2) (2025-11-14)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix override location logic for XTokens pallet 🔧 ([432ad6f](https://github.com/paraspell/xcm-tools/commit/432ad6fb64de87dd9acfa44256cb7c710962bcfa))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor duplicate destChain resolution & refactor relayToPara overrides 🧹 ([239593a](https://github.com/paraspell/xcm-tools/commit/239593a913b428ce8810332e988d9a36d00eaf19))
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.0...sdk-core-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Enable auto-reserve for RelayToPara scenarios ⚙️ ([501399a](https://github.com/paraspell/xcm-tools/commit/501399a83fa9d3dcb7cdddc0abccec899a733084))
+* **sdk-core:** Update typeAndThen calls to use forwardedXcms for fee calculation ⚙️ ([5303a08](https://github.com/paraspell/xcm-tools/commit/5303a08d47863b03080f6b526548701d54a4d495))
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.13.0...sdk-core-v11.14.0) (2025-11-12)
+
+
+### Features
+
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+* **xcm-router:** Fix decimal slippage not working 🛠️ ([34361ae](https://github.com/paraspell/xcm-tools/commit/34361ae6d8d1183b4943592c8adb5f84732f7aa4))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.15...sdk-core-v11.13.0) (2025-11-11)
+
+
+### Features
+
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+
+
+### Bug Fixes
+
+* **sdk-core:** Use localReserve when origin is relaychain 🔧 ([89365f3](https://github.com/paraspell/xcm-tools/commit/89365f38870e4d82065e76efb10c70a72074d22b))
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.14...sdk-core-v11.12.15) (2025-11-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Always use AH as reserve in system asset transfers ⚙️ ([eae3708](https://github.com/paraspell/xcm-tools/commit/eae37087cc5656e1052eecf7ee46939ee5cca1af))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor polkadot xcm asset creation 🔧 ([77203d6](https://github.com/paraspell/xcm-tools/commit/77203d6783b5d73275e35473c4fc52d44a28b501))
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.12.13...sdk-core-v11.12.14) (2025-11-05)
 
 

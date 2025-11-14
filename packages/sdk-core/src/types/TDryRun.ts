@@ -110,6 +110,7 @@ export type TDryRunChainSuccess = TDryRunResBase & {
 export type TDryRunChainFailure = TDryRunResBase & {
   success: false
   failureReason: string
+  failureSubReason?: string
 }
 
 export type TDryRunChainResult = TDryRunChainSuccess | TDryRunChainFailure
@@ -123,6 +124,7 @@ export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub' |
 
 export type TDryRunResult = {
   failureReason?: string
+  failureSubReason?: string
   failureChain?: TDryRunChain
   origin: TDryRunChainResult
   destination?: TDryRunChainResult
@@ -215,6 +217,7 @@ export enum XTokensError {
   RateLimited = 'RateLimited'
 }
 
+// Mirrors https://github.com/paritytech/polkadot-sdk/blob/master/polkadot/xcm/pallet-xcm/src/errors.rs
 export enum PolkadotXcmError {
   Unreachable = 'Unreachable',
   SendFailure = 'SendFailure',
@@ -247,7 +250,56 @@ export enum PolkadotXcmError {
   LocalExecutionIncompleteWithError = 'LocalExecutionIncompleteWithError'
 }
 
+export enum PolkadotXcmExecutionError {
+  Overflow = 'Overflow',
+  Unimplemented = 'Unimplemented',
+  UntrustedReserveLocation = 'UntrustedReserveLocation',
+  UntrustedTeleportLocation = 'UntrustedTeleportLocation',
+  LocationFull = 'LocationFull',
+  LocationNotInvertible = 'LocationNotInvertible',
+  BadOrigin = 'BadOrigin',
+  InvalidLocation = 'InvalidLocation',
+  AssetNotFound = 'AssetNotFound',
+  FailedToTransactAsset = 'FailedToTransactAsset',
+  NotWithdrawable = 'NotWithdrawable',
+  LocationCannotHold = 'LocationCannotHold',
+  ExceedsMaxMessageSize = 'ExceedsMaxMessageSize',
+  DestinationUnsupported = 'DestinationUnsupported',
+  Transport = 'Transport',
+  Unroutable = 'Unroutable',
+  UnknownClaim = 'UnknownClaim',
+  FailedToDecode = 'FailedToDecode',
+  MaxWeightInvalid = 'MaxWeightInvalid',
+  NotHoldingFees = 'NotHoldingFees',
+  TooExpensive = 'TooExpensive',
+  Trap = 'Trap',
+  ExpectationFalse = 'ExpectationFalse',
+  PalletNotFound = 'PalletNotFound',
+  NameMismatch = 'NameMismatch',
+  VersionIncompatible = 'VersionIncompatible',
+  HoldingWouldOverflow = 'HoldingWouldOverflow',
+  ExportError = 'ExportError',
+  ReanchorFailed = 'ReanchorFailed',
+  NoDeal = 'NoDeal',
+  FeesNotMet = 'FeesNotMet',
+  LockError = 'LockError',
+  NoPermission = 'NoPermission',
+  Unanchored = 'Unanchored',
+  NotDepositable = 'NotDepositable',
+  TooManyAssets = 'TooManyAssets',
+  UnhandledXcmVersion = 'UnhandledXcmVersion',
+  WeightLimitReached = 'WeightLimitReached',
+  Barrier = 'Barrier',
+  WeightNotComputable = 'WeightNotComputable',
+  ExceedsStackLimit = 'ExceedsStackLimit'
+}
+
 export type TModuleError = {
   index: string
   error: string
+}
+
+export type TDryRunError = {
+  failureReason: string
+  failureSubReason?: string
 }

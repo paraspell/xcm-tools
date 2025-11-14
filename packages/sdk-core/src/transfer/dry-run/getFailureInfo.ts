@@ -2,7 +2,7 @@ import type { TDryRunChain, TDryRunChainResult, TDryRunResult } from '../../type
 
 export const getFailureInfo = (
   result: TDryRunResult
-): Pick<TDryRunResult, 'failureReason' | 'failureChain'> => {
+): Pick<TDryRunResult, 'failureReason' | 'failureSubReason' | 'failureChain'> => {
   const orderedChecks: { chain: TDryRunChain; chainResult?: TDryRunChainResult }[] = [
     { chain: 'origin', chainResult: result.origin },
     { chain: 'destination', chainResult: result.destination },
@@ -13,12 +13,17 @@ export const getFailureInfo = (
 
   for (const { chain, chainResult } of orderedChecks) {
     if (chainResult && chainResult.success === false && chainResult.failureReason) {
-      return { failureChain: chain, failureReason: chainResult.failureReason }
+      return {
+        failureChain: chain,
+        failureReason: chainResult.failureReason,
+        failureSubReason: chainResult.failureSubReason
+      }
     }
   }
 
   return {
     failureChain: result.failureChain,
-    failureReason: result.failureReason
+    failureReason: result.failureReason,
+    failureSubReason: result.failureSubReason
   }
 }

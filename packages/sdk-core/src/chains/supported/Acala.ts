@@ -6,8 +6,9 @@ import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT } from '../../constants'
+import { ChainNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
+import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
@@ -35,6 +36,10 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return transferXTokens(input, currencySelection)
+  }
+
+  transferRelayToPara(): Promise<TSerializedApiCall> {
+    throw new ChainNotSupportedError()
   }
 
   async transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {

@@ -24,7 +24,7 @@ class Encointer<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_teleport_assets', includeFee: true }
+    return { transferType: 'teleport' }
   }
 }
 

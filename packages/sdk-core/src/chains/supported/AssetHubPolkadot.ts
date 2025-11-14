@@ -4,7 +4,6 @@ import {
   getNativeAssetSymbol,
   getRelayChainSymbol,
   InvalidCurrencyError,
-  isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
@@ -17,7 +16,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
-import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
+import { BridgeHaltedError, InvalidParameterError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { createTypeAndThenCall } from '../../transfer'
@@ -264,14 +263,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       return api.callTxMethod(call)
     }
 
-    if (scenario === 'ParaToPara' && assetInfo.symbol === 'KSM' && !isForeignAsset(assetInfo)) {
-      throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
-        'Bridged KSM cannot currently be transfered from AssetHubPolkadot, if you are sending different KSM asset, please specify {id: <KSMID>}.'
-      )
-    }
-
     const method = this.getMethod(scenario, destination)
 
     // Patch transfer_assets to use type_and_then transfer
@@ -288,7 +279,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { method: 'limited_teleport_assets', includeFee: true }
+    return { transferType: 'teleport' }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

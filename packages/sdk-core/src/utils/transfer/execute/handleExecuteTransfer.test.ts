@@ -1,5 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
+import type { TParachain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -37,6 +38,7 @@ describe('handleExecuteTransfer', () => {
     asset: {} as TAsset,
     scenario: 'ParaToRelay',
     destLocation: {} as TLocation,
+    destChain: 'Hydration' as TParachain,
     beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
     address: 'address',
@@ -91,6 +93,19 @@ describe('handleExecuteTransfer', () => {
     // total = 2800
 
     await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(AmountTooLowError)
+  })
+
+  it('should throw error when unable to determine destination chain', async () => {
+    const input = {
+      ...mockInput,
+      senderAddress: '0xvalid',
+      destChain: undefined,
+      assetInfo: { ...mockInput.assetInfo, amount: 5000n }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await expect(handleExecuteTransfer(mockChain, input)).rejects.toThrow(
+      'Could not determine destination chain for execute transfer'
+    )
   })
 
   it('should throw error when amount is smaller than calculated fee (different fee asset)', async () => {

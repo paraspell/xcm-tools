@@ -18,13 +18,13 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
+import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSelectedParachain } from '../../../../context/SelectedParachain/useSelectedParachain';
-import type { Ecosystem } from '../../../../types/types';
+import { getChainDisplayName } from '../../../../utils';
 import { getParachainId } from '../../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
@@ -60,6 +60,7 @@ function updateChartTooltipPayload(payload: Record<string, any>[]): Record<strin
 
       return {
         ...item,
+        ecosystem: item.ecosystem,
         name: item.name.substring(matchFound + 1),
         payload: {
           ...shallowPayload,
@@ -120,16 +121,16 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (ecosystem: Ecosystem, label?: string): number | undefined => {
+const getParaId = (label?: string): number | undefined => {
   if (!label || label === 'Total') return undefined;
-  return getParachainId(label, ecosystem);
+  return getParachainId(label as TSubstrateChain);
 };
 
-const getLinkByEcosystem = (ecosystem: Ecosystem): string => {
-  return `https://${ecosystem.toString().toLowerCase()}.subscan.io/xcm_message?page=1`;
+const getLinkByEcosystem = (ecosystem: TRelaychain): string => {
+  return `https://${ecosystem.toLowerCase()}.subscan.io/xcm_message?page=1`;
 };
 
-const generateExplorerLink = (ecosystem: Ecosystem, from: number | undefined, date: string) => {
+const generateExplorerLink = (ecosystem: TRelaychain, from: number | undefined, date: string) => {
   const baseUrl = getLinkByEcosystem(ecosystem);
   const fromChain = from ? `&fromChain=${from}` : '';
   const start = `&date_start=${dayjs(date).format('YYYY-MM-DD')}`;
@@ -161,7 +162,6 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
 
   const theme = useMantineTheme();
   const { t } = useTranslation();
-  const { selectedEcosystem } = useSelectedParachain();
 
   if (!payload) {
     return null;
@@ -209,7 +209,9 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
                 withShadow={false}
               />
             )}
-            <div {...getStyles('tooltipItemName')}>{labels[item.name] || item.name}</div>
+            <div {...getStyles('tooltipItemName')}>
+              {getChainDisplayName(labels[item.name] || item.name)}
+            </div>
           </div>
           <div {...getStyles('tooltipItemData')}>
             {typeof valueFormatter === 'function'
@@ -228,10 +230,11 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
       parachainName !== 'Median' &&
       parachainName !== 'Total'
     ) {
-      paraId = getParaId(selectedEcosystem, parachainName);
+      paraId = getParaId(parachainName);
     }
 
-    const explorerLink = generateExplorerLink(selectedEcosystem, paraId, label as string);
+    const ecosystem: TRelaychain = 'Polkadot';
+    const explorerLink = generateExplorerLink(ecosystem, paraId, label as string);
     if (parachainName !== 'Median') {
       items.push(
         <Box mt={2} mb="xs" key={`link-${parachainName}`} className="tooltip-explorer-link">

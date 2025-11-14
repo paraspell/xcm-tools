@@ -1,5 +1,40 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.14.1...xcm-api-v11.14.2) (2025-11-14)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [11.14.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.14.0...xcm-api-v11.14.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+
+## [11.14.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.13.0...xcm-api-v11.14.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+
+## [11.13.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.12.15...xcm-api-v11.13.0) (2025-11-11)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [11.12.15](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.12.14...xcm-api-v11.12.15) (2025-11-10)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
 ## [11.12.14](https://github.com/paraspell/xcm-tools/compare/xcm-api-v11.12.13...xcm-api-v11.12.14) (2025-11-05)
 
 

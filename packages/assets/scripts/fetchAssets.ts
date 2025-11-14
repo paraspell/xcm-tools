@@ -21,7 +21,6 @@ import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifr
 import { fetchCentrifugeAssets, fetchCentrifugeNativeAssets } from './fetchCentrifugeAssets'
 import { fetchExistentialDeposit } from './fetchEd'
 import { fetchZeitgeistForeignAssets, fetchZeitgeistNativeAssets } from './fetchZeitgeistAssets'
-import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
@@ -73,7 +72,13 @@ const resolveNativeAssets = async (
       }
     ]
   }
-  return fetchNativeAssetsDefault(api)
+  const defaultNativeAssets = await fetchNativeAssetsDefault(api)
+
+  if (chain === 'BifrostPaseo') {
+    return defaultNativeAssets.slice(0, 1)
+  }
+
+  return defaultNativeAssets
 }
 
 const fetchNativeAssets = async (
@@ -263,10 +268,6 @@ const fetchOtherAssets = async (
 
   if (chain === 'Curio') {
     otherAssets = await fetchOtherAssetsCurio(api, query)
-  }
-
-  if (chain === 'ComposableFinance') {
-    otherAssets = await fetchComposableAssets(api, query)
   }
 
   if (chain.startsWith('Bifrost')) {

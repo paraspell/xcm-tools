@@ -10,7 +10,6 @@ import {
 import { getRelayChainOf } from '../../utils/chain/getRelayChainOf'
 import { dryRunInternal } from '../dry-run/dryRunInternal'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
-import { selectReserveByBalance } from './utils/selectReserveByBalance'
 
 const createCallForReserve = async <TApi, TRes>(
   chain: TSubstrateChain,
@@ -55,16 +54,12 @@ export const createTypeThenAutoReserve = async <TApi, TRes>(
   const originSupports = hasDryRunSupport(chain)
   const destSupports = options.destChain ? hasDryRunSupport(options.destChain) : false
   if (!(originSupports && destSupports)) {
-    const reserve = await selectReserveByBalance(chain, options)
-    if (reserve) {
-      return await createTypeAndThenCall(chain, options, reserve)
-    }
-    // Fallback: no suitable reserve by balance, use default call
+    // Fallback: no dry-run support, default call
     return await createTypeAndThenCall(chain, options)
   }
 
   const relay = getRelayChainOf(chain)
-  const assetHubReserve = `AssetHub${relay}` as unknown as TSubstrateChain
+  const assetHubReserve = `AssetHub${relay}` as TSubstrateChain
 
   const ahResult = await createCallForReserve(chain, assetHubReserve, options)
   if (ahResult.success) return ahResult.call

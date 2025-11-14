@@ -11,6 +11,7 @@ import type {
   TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
+  TDryRunError,
   TDryRunXcmBaseOptions,
   TLocation,
   TModuleError,
@@ -360,23 +361,23 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       return Boolean(resultHuman?.Ok && resultHuman.Ok.executionResult?.Ok)
     }
 
-    const extractFailureReasonFromResult = (resultHuman: any, resultJson: any): string => {
+    const extractFailureReasonFromResult = (resultHuman: any, resultJson: any): TDryRunError => {
       const modErrHuman = resultHuman?.Ok?.executionResult?.Err?.error?.Module
       if (modErrHuman) {
         return resolveModuleError(chain, modErrHuman as TModuleError)
       }
       const otherErrHuman = resultHuman?.Ok?.executionResult?.Err?.error?.Other
       if (otherErrHuman) {
-        return String(otherErrHuman)
+        return { failureReason: String(otherErrHuman) }
       }
       const execErrJson = resultJson?.ok?.executionResult?.err?.error
       if (execErrJson?.module) {
         return resolveModuleError(chain, execErrJson.module as TModuleError)
       }
       if (execErrJson?.other) {
-        return String(execErrJson.other)
+        return { failureReason: String(execErrJson.other) }
       }
-      return JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error')
+      return { failureReason: JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error') }
     }
 
     // Attempt 1: WITHOUT version
@@ -384,7 +385,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     let resultHuman: any
     let resultJson: any
     let isSuccess = false
-    let failureReason = ''
+    let failureErr: TDryRunError = { failureReason: '' }
     let shouldRetryWithVersion = false
 
     try {
@@ -394,8 +395,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       isSuccess = getExecutionSuccessFromResult(resultHuman)
 
       if (!isSuccess) {
-        failureReason = extractFailureReasonFromResult(resultHuman, resultJson)
-        if (failureReason === 'VersionedConversionFailed') {
+        failureErr = extractFailureReasonFromResult(resultHuman, resultJson)
+        if (failureErr.failureReason === 'VersionedConversionFailed') {
           shouldRetryWithVersion = true
         }
       }
@@ -416,19 +417,26 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         resultJson = response.toJSON()
         isSuccess = getExecutionSuccessFromResult(resultHuman)
         if (!isSuccess) {
-          failureReason = extractFailureReasonFromResult(resultHuman, resultJson)
+          failureErr = extractFailureReasonFromResult(resultHuman, resultJson)
         }
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e)
-        failureReason = failureReason || msg
-        return { success: false, failureReason, currency: usedSymbol, asset: usedAsset }
+        failureErr = failureErr || msg
+        return {
+          success: false,
+          failureReason: failureErr.failureReason,
+          failureSubReason: failureErr.failureSubReason,
+          currency: usedSymbol,
+          asset: usedAsset
+        }
       }
     }
 
     if (!isSuccess) {
       return {
         success: false,
-        failureReason: failureReason || 'Unknown error',
+        failureReason: failureErr.failureReason || 'Unknown error',
+        failureSubReason: failureErr.failureSubReason,
         currency: usedSymbol,
         asset: usedAsset
       }
@@ -583,7 +591,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const isSuccess = result.Ok && result.Ok.executionResult.Complete
 
     if (!isSuccess) {
-      const failureReason = result.Ok.executionResult.Incomplete.error
+      const error = result.Ok.executionResult.Incomplete.error
+      const failureReason = typeof error === 'string' ? error : error.error
       return { success: false, failureReason, currency: symbol, asset }
     }
 

@@ -3,6 +3,7 @@ import { IconArrowRight, IconCheck, IconCircleFilled, IconClock, IconX } from '@
 import type { FC } from 'react';
 
 import type { LiveXcmMsg } from '../../../../types';
+import { getChainDisplayName } from '../../../../utils';
 import { getParachainById } from '../../../../utils/utils';
 
 const getStatusStyle = (status: string) => {
@@ -27,7 +28,8 @@ type Props = {
 };
 
 export const MessageFlowLine: FC<Props> = ({ message }) => {
-  const getParachainName = (id: number) => getParachainById(id, message.ecosystem);
+  const getParachainName = (id: number) =>
+    getChainDisplayName(getParachainById(id, message.ecosystem)!);
 
   const { color, CenterIcon } = getStatusStyle(message.status);
 

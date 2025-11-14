@@ -3,18 +3,18 @@ import { graphql } from '../gql';
 export const messageCountsQueryDocument = graphql(`
   query messageCounts(
     $ecosystem: String!
-    $paraIds: [Int!]
+    $parachains: [String!]!
     $startTime: Timestamp!
     $endTime: Timestamp!
   ) {
     messageCounts(
       ecosystem: $ecosystem
-      paraIds: $paraIds
+      parachains: $parachains
       startTime: $startTime
       endTime: $endTime
     ) {
       ecosystem
-      paraId
+      parachain
       success
       failed
     }
@@ -24,18 +24,18 @@ export const messageCountsQueryDocument = graphql(`
 export const messageCountsByDayQueryDocument = graphql(`
   query messageCountsByDay(
     $ecosystem: String!
-    $paraIds: [Int!]
+    $parachains: [String!]!
     $startTime: Timestamp!
     $endTime: Timestamp!
   ) {
     messageCountsByDay(
       ecosystem: $ecosystem
-      paraIds: $paraIds
+      parachains: $parachains
       startTime: $startTime
       endTime: $endTime
     ) {
       ecosystem
-      paraId
+      parachain
       date
       messageCount
       messageCountSuccess
@@ -47,18 +47,18 @@ export const messageCountsByDayQueryDocument = graphql(`
 export const assetCountsBySymbolQueryDocument = graphql(`
   query assetCountsBySymbol(
     $ecosystem: String!
-    $paraIds: [Int!]
+    $parachains: [String!]!
     $startTime: Timestamp!
     $endTime: Timestamp!
   ) {
     assetCountsBySymbol(
       ecosystem: $ecosystem
-      paraIds: $paraIds
+      parachains: $parachains
       startTime: $startTime
       endTime: $endTime
     ) {
       ecosystem
-      paraId
+      parachain
       symbol
       count
       amount

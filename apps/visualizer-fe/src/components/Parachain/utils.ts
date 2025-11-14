@@ -1,29 +1,18 @@
+import type { TSubstrateChain } from '@paraspell/sdk';
 import acalaPng from '../../logos/acala.png';
 import ajunaPng from '../../logos/ajuna.png';
 import assetHubPng from '../../logos/assetHub.png';
 import astarPng from '../../logos/astar.png';
-import aventusPng from '../../logos/aventus.png';
 import bifrostPng from '../../logos/bifrost.png';
-import bitgreenPng from '../../logos/bitgreen.png';
 import centrifugePng from '../../logos/centrifuge.png';
 import collectivesPng from '../../logos/collectives.png';
-import composableFinancePng from '../../logos/composableFinance.png';
-import continuumPng from '../../logos/continuum.png';
-import coretimePng from '../../logos/coretime.png';
 import crabPng from '../../logos/crab.png';
 import crustPng from '../../logos/crust.png';
 import curioPng from '../../logos/curio.png';
 import darwiniaPng from '../../logos/darwinia.png';
-import frequencyPng from '../../logos/frequency.png';
-import hashedPng from '../../logos/hashed.png';
 import hydrationPng from '../../logos/hydration.png';
-import hyperbridgePng from '../../logos/hyperbridge.png';
 import interlayPng from '../../logos/interlay.png';
-import ipciPng from '../../logos/ipci.png';
-import krestPng from '../../logos/krest.png';
 import laosPng from '../../logos/laos.png';
-import litentryPng from '../../logos/litentry.png';
-import logionPng from '../../logos/logion.png';
 import mantaPng from '../../logos/manta.png';
 import moonbeamPng from '../../logos/moonbeam.png';
 import mythosPng from '../../logos/mythos.png';
@@ -31,58 +20,59 @@ import neuroWebPng from '../../logos/neuroWeb.png';
 import nodlePng from '../../logos/nodle.png';
 import pendulumPng from '../../logos/pendulum.png';
 import phalaPng from '../../logos/phala.png';
-import pioneerPng from '../../logos/pioneer.png';
-import polimecPng from '../../logos/polimec.png';
-import polkadexPng from '../../logos/polkadex.png';
-import soraPng from '../../logos/sora.png';
-import subsocialPng from '../../logos/subsocial.png';
-import t3rnPng from '../../logos/t3rn.png';
 import uniquePng from '../../logos/unique.png';
 import zeitgeistPng from '../../logos/zeitgeist.png';
-import type { Ecosystem } from '../../types/types';
 import { getParachainLogo } from '../../utils/utils';
 
-export const getChainLogo = (chain: string, ecosystem: Ecosystem) => {
-  if (chain === 'Collectives') return collectivesPng;
-  if (chain === 'Interlay') return interlayPng;
-  if (chain === 'Centrifuge') return centrifugePng;
-  if (chain === 'Zeitgeist') return zeitgeistPng;
-  if (chain === 'Bitgreen') return bitgreenPng;
-  if (chain === 'Unique Network') return uniquePng;
-  if (chain === 'Acala') return acalaPng;
-  if (chain === 'Pendulum') return pendulumPng;
-  if (chain === 'Manta') return mantaPng;
-  if (chain === 'Moonbeam') return moonbeamPng;
-  if (chain === 'Subsocial') return subsocialPng;
-  if (chain === 'Bifrost') return bifrostPng;
-  if (chain === 'Hydration') return hydrationPng;
-  if (chain === 'Polkadex') return polkadexPng;
-  if (chain === 'Litentry') return litentryPng;
-  if (chain === 'AssetHub') return assetHubPng;
-  if (chain === 'Astar') return astarPng;
-  if (chain === 'NeuroWeb') return neuroWebPng;
-  if (chain === 'Phala Network') return phalaPng;
-  if (chain === 'Crust') return crustPng;
-  if (chain === 'Composable Finance') return composableFinancePng;
-  if (chain === 'Nodle') return nodlePng;
-  if (chain === 'Darwinia') return darwiniaPng;
-  if (chain === 'Continuum') return continuumPng;
-  if (chain === 'Aventus') return aventusPng;
-  if (chain === 'Ajuna Network') return ajunaPng;
-  if (chain === 'Frequency') return frequencyPng;
-  if (chain === 'Hyperbridge (Nexus)') return hyperbridgePng;
-  if (chain === 'Hashed Network') return hashedPng;
-  if (chain === 'Laos') return laosPng;
-  if (chain === 'Mythos') return mythosPng;
-  if (chain === 'Polimec') return polimecPng;
-  if (chain === 't3rn') return t3rnPng;
-  if (chain === 'SORA') return soraPng;
-  if (chain === 'Logion') return logionPng;
-  if (chain === 'Curio') return curioPng;
-  if (chain === 'Krest') return krestPng;
-  if (chain === 'DAO IPCI') return ipciPng;
-  if (chain === 'Crab') return crabPng;
-  if (chain === 'Pioneer') return pioneerPng;
-  if (chain === 'Coretime') return coretimePng;
-  return getParachainLogo(chain, ecosystem);
+export const getChainLogo = (chain: TSubstrateChain) => {
+  switch (chain) {
+    case 'Collectives':
+      return collectivesPng;
+    case 'Interlay':
+      return interlayPng;
+    case 'Centrifuge':
+      return centrifugePng;
+    case 'Zeitgeist':
+      return zeitgeistPng;
+    case 'Unique':
+      return uniquePng;
+    case 'Acala':
+      return acalaPng;
+    case 'Pendulum':
+      return pendulumPng;
+    case 'Manta':
+      return mantaPng;
+    case 'Moonbeam':
+      return moonbeamPng;
+    case 'BifrostPolkadot':
+      return bifrostPng;
+    case 'Hydration':
+      return hydrationPng;
+    case 'AssetHubPolkadot':
+      return assetHubPng;
+    case 'Astar':
+      return astarPng;
+    case 'NeuroWeb':
+      return neuroWebPng;
+    case 'Phala':
+      return phalaPng;
+    case 'Crust':
+      return crustPng;
+    case 'Nodle':
+      return nodlePng;
+    case 'Darwinia':
+      return darwiniaPng;
+    case 'Ajuna':
+      return ajunaPng;
+    case 'Laos':
+      return laosPng;
+    case 'Mythos':
+      return mythosPng;
+    case 'Curio':
+      return curioPng;
+    case 'Crab':
+      return crabPng;
+    default:
+      return getParachainLogo(chain);
+  }
 };
