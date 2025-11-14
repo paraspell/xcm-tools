@@ -1,4 +1,5 @@
 import type { TSubstrateChain } from '@paraspell/sdk';
+
 import acalaPng from '../../logos/acala.png';
 import ajunaPng from '../../logos/ajuna.png';
 import assetHubPng from '../../logos/assetHub.png';
