@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.1...xcm-router-v11.14.2) (2025-11-14)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor duplicate destChain resolution & refactor relayToPara overrides 🧹 ([239593a](https://github.com/paraspell/xcm-tools/commit/239593a913b428ce8810332e988d9a36d00eaf19))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([94e8b3f](https://github.com/paraspell/xcm-tools/commit/94e8b3f5198761531d41008a35c9133e0087f581))
+
 ## [11.14.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.0...xcm-router-v11.14.1) (2025-11-13)
 
 

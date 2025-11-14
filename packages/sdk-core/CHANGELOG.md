@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.14.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.1...sdk-core-v11.14.2) (2025-11-14)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix override location logic for XTokens pallet 🔧 ([432ad6f](https://github.com/paraspell/xcm-tools/commit/432ad6fb64de87dd9acfa44256cb7c710962bcfa))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor duplicate destChain resolution & refactor relayToPara overrides 🧹 ([239593a](https://github.com/paraspell/xcm-tools/commit/239593a913b428ce8810332e988d9a36d00eaf19))
+
 ## [11.14.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.0...sdk-core-v11.14.1) (2025-11-13)
 
 
