@@ -467,6 +467,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           assetItem.value.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
         (typeof assetItem === 'object' &&
           'value' in assetItem &&
+          assetItem.value.type &&
+          assetItem.value.type.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
+        (typeof assetItem === 'object' &&
+          'value' in assetItem &&
           isForeignAsset(asset) &&
           assetItem.value.toString().toLowerCase() === asset.assetId?.toLowerCase())
       )

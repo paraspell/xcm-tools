@@ -877,6 +877,38 @@ describe('PapiApi', () => {
       expect(balance).toBe(6000n)
     })
 
+    it('should return the balance when assetItem.value.type matches the symbol', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([
+        {
+          keyArgs: [
+            '',
+            {
+              value: {
+                type: {
+                  toString: vi.fn().mockReturnValue('DOT')
+                }
+              },
+              toString: vi.fn().mockReturnValue('')
+            }
+          ],
+          value: {
+            free: {
+              toString: vi.fn().mockReturnValue('7000')
+            }
+          }
+        }
+      ])
+
+      const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
+        symbol: 'DOT',
+        decimals: 10,
+        assetId: '1'
+      })
+
+      expect(balance).toBe(7000n)
+    })
+
     it('should return null when no matching asset found', async () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([])
