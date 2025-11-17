@@ -433,10 +433,12 @@ export class MessageService {
       AccountXcmCountResult[]
     >(query, parameters);
 
-    return results.map((account) => ({
-      ecosystem,
-      id: account.from_account_id,
-      count: parseInt(account.message_count, 10),
-    }));
+    return results
+      .filter((a) => a.from_account_id && a.from_account_id !== '')
+      .map((a) => ({
+        ecosystem,
+        id: a.from_account_id,
+        count: parseInt(a.message_count, 10),
+      }));
   }
 }
