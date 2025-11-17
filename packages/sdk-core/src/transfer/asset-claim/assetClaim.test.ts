@@ -20,7 +20,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 describe('claimAssets', () => {
   const apiMock = {
     init: vi.fn(),
-    callTxMethod: vi.fn(),
+    deserializeExtrinsics: vi.fn(),
     disconnect: vi.fn(),
     getApi: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
@@ -42,14 +42,14 @@ describe('claimAssets', () => {
     vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
-    const callSpy = vi.spyOn(apiMock, 'callTxMethod')
+    const callSpy = vi.spyOn(apiMock, 'deserializeExtrinsics')
 
     await claimAssets(options)
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: 'claim_assets',
-      parameters: argsMock
+      params: argsMock
     })
 
     expect(validateAddress).toHaveBeenCalledWith(apiMock, options.address, mockChain, true)
@@ -71,7 +71,7 @@ describe('claimAssets', () => {
     vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
-    const callSpy = vi.spyOn(apiInstanceMock, 'callTxMethod')
+    const callSpy = vi.spyOn(apiInstanceMock, 'deserializeExtrinsics')
 
     const initSpy = vi.spyOn(apiInstanceMock, 'init')
 
@@ -81,7 +81,7 @@ describe('claimAssets', () => {
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: 'claim_assets',
-      parameters: argsMock
+      params: argsMock
     })
   })
 
@@ -100,14 +100,14 @@ describe('claimAssets', () => {
     vi.mocked(buildClaimAssetsParams).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(true)
 
-    const callSpy = vi.spyOn(apiMock, 'callTxMethod')
+    const callSpy = vi.spyOn(apiMock, 'deserializeExtrinsics')
 
     await claimAssets(options)
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XcmPallet',
       method: 'claim_assets',
-      parameters: argsMock
+      params: argsMock
     })
   })
 })

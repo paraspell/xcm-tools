@@ -1,4 +1,3 @@
-import type { TAssetInfo } from '@paraspell/assets'
 import {
   hasDryRunSupport,
   isAssetEqual,
@@ -17,10 +16,15 @@ import { getXcmFeeInternal } from '../fees'
 
 export const FEE_PADDING = 30
 
-const sumHopFees = (result: TGetXcmFeeResult<false>, asset: TAssetInfo): bigint => {
+const sumHopFees = <TApi, TRes>(
+  result: TGetXcmFeeResult<false>,
+  { assetInfo, isRelayAsset, systemAsset }: TTypeAndThenCallContext<TApi, TRes>
+): bigint => {
   return result.hops.reduce((acc, hop) => {
     // only add if asset is equal
-    return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
+    return isAssetEqual(hop.result.asset, isRelayAsset ? assetInfo : systemAsset)
+      ? acc + hop.result.fee
+      : acc
   }, 0n)
 }
 
@@ -31,7 +35,6 @@ export const computeAllFees = async <TApi, TRes>(
   const {
     origin,
     dest,
-    assetInfo,
     options: { senderAddress, address, currency, feeCurrency }
   } = context
 
@@ -55,7 +58,7 @@ export const computeAllFees = async <TApi, TRes>(
     skipReverseFeeCalculation: true
   })
 
-  const hopFees = sumHopFees(result, assetInfo)
+  const hopFees = sumHopFees(result, context)
   const destFee = result.destination.fee
 
   return {

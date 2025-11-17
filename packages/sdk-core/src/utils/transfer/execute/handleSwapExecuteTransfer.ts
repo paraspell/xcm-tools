@@ -243,7 +243,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
   const firstDryRunResult = await executeDryRun({
     ...dryRunParams,
-    tx: api.callTxMethod(initialCall)
+    tx: api.deserializeExtrinsics(initialCall)
   })
 
   if (firstDryRunResult.failureReason === 'NotHoldingFees') {
@@ -289,5 +289,5 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
   )
 
-  return api.callTxMethod(finalCall)
+  return api.deserializeExtrinsics(finalCall)
 }

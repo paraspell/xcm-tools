@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError } from '../..'
-import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
+import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
@@ -36,7 +36,7 @@ class Shiden<TApi, TRes>
     return assetInfo.symbol !== this.getNativeAssetSymbol()
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 

@@ -10,7 +10,7 @@ import { transferXTransfer } from './transferXTransfer'
 import { determineDestWeight } from './utils/determineDestWeight'
 
 const mockApi = {
-  callTxMethod: vi.fn()
+  deserializeExtrinsics: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 const mockLocation: TLocation = {
@@ -56,7 +56,7 @@ describe('XTransferTransferImpl', () => {
     vi.mocked(maybeOverrideAsset).mockReturnValue(mockAsset)
     vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockLocation)
 
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTransfer(input)
 
@@ -64,7 +64,7 @@ describe('XTransferTransferImpl', () => {
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTransfer',
       method: 'transfer',
-      parameters: {
+      params: {
         asset: mockAsset,
         dest: mockLocation,
         dest_weight: undefined
@@ -91,7 +91,7 @@ describe('XTransferTransferImpl', () => {
 
     vi.mocked(determineDestWeight).mockReturnValue(mockDestWeight)
 
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTransfer(input)
 
@@ -99,7 +99,7 @@ describe('XTransferTransferImpl', () => {
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTransfer',
       method: 'transfer',
-      parameters: {
+      params: {
         asset: mockAsset,
         dest: mockLocation,
         dest_weight: mockDestWeight

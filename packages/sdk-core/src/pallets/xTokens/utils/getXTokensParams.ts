@@ -5,7 +5,7 @@ import { isTLocation, type TLocation } from '@paraspell/sdk-common'
 import type { TXTokensCurrencySelection } from '../../../types'
 import { addXcmVersionHeader } from '../../../utils'
 
-export const getXTokensParameters = (
+export const getXTokensParams = (
   isMultiAssetTransfer: boolean,
   currencySelection: TXTokensCurrencySelection,
   destLocation: TLocation,

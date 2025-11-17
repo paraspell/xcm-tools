@@ -90,9 +90,15 @@ export const createCustomXcm = <TApi, TRes>(
 
     if (buyExecutionAmount < 0n && !isForFeeCalc) throw new AmountTooLowError()
 
-    const filter = {
-      Definite: assetsFilter
-    }
+    const filter = isForFeeCalc
+      ? {
+          Wild: {
+            AllCounted: assetCount
+          }
+        }
+      : {
+          Definite: assetsFilter
+        }
 
     const buyExecution = {
       BuyExecution: {

@@ -15,9 +15,7 @@ class Basilisk<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-
     assertHasId(asset)
-
     return transferXTokens(input, Number(asset.assetId))
   }
 

@@ -11,9 +11,8 @@ import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { InvalidParameterError } from '../../../errors'
-import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
-import { abstractDecimals, assertIsForeign } from '../../../utils'
+import { abstractDecimals, assertIsForeign, formatAssetIdToERC20 } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'

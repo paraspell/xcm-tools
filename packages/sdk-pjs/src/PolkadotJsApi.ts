@@ -16,18 +16,17 @@ import type {
   TLocation,
   TModuleError,
   TPallet,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedStateQuery,
   TSubstrateChain,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
-  assertHasId,
   assertHasLocation,
   BatchMode,
   ChainNotSupportedError,
   findNativeAssetInfoOrThrow,
-  getChain,
   getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidParameterError,
@@ -41,19 +40,15 @@ import {
   computeFeeFromDryRunPjs,
   getAssetsObject,
   type IPolkadotApi,
-  isForeignAsset,
   MissingChainApiError,
   resolveModuleError
 } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import type { StorageKey } from '@polkadot/types'
-import { u32, type UInt } from '@polkadot/types'
-import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
-import type { AnyTuple, Codec } from '@polkadot/types/types'
+import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
-import type { Extrinsic, TBalanceResponse, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -136,12 +131,34 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return decodeAddress(address)
   }
 
-  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
-    const values = Object.values(parameters)
-    const moduleLowerCase = lowercaseFirstLetter(module)
-    const methodCamelCase = snakeToCamel(method)
+  private convertToPjsCall<T extends TSerializedExtrinsics | TSerializedStateQuery>({
+    module,
+    method
+  }: T) {
+    return {
+      module: lowercaseFirstLetter(module),
+      method: snakeToCamel(method)
+    }
+  }
 
-    return this.api.tx[moduleLowerCase][methodCamelCase](...values)
+  deserializeExtrinsics(serialized: TSerializedExtrinsics) {
+    const { params } = serialized
+    const values = Object.values(params)
+    const { module, method } = this.convertToPjsCall(serialized)
+    return this.api.tx[module][method](...values)
+  }
+
+  async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
+    const { params } = serialized
+    const { module, method } = this.convertToPjsCall(serialized)
+    const res = await this.api.query[module][method](...params)
+    return res.toJSON() as T
+  }
+
+  queryRuntimeApi<T>(serialized: TSerializedStateQuery): Promise<T> {
+    const { params } = serialized
+    const { module, method } = this.convertToPjsCall(serialized)
+    return this.api.call[module][method](...params)
   }
 
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
@@ -184,97 +201,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   getEvmStorage(contract: string, slot: string): Promise<string> {
     return Promise.resolve(this.api.query.evm.accountStorages.key(contract, slot))
-  }
-
-  async getBalanceNative(address: string) {
-    const response = (await this.api.query.system.account(address)) as AccountInfo
-    return (response.data.free as UInt).toBigInt()
-  }
-
-  async getBalanceForeignPolkadotXcm(_chain: TSubstrateChain, address: string, asset: TAssetInfo) {
-    assertHasId(asset)
-    const parsedId = new u32(this.api.registry, asset.assetId)
-    const response: Codec = await this.api.query.assets.account(parsedId, address)
-    const obj = response.toJSON() as TBalanceResponse
-    return obj.balance ? BigInt(obj.balance) : 0n
-  }
-
-  async getMythosForeignBalance(address: string) {
-    const response: Codec = await this.api.query.balances.account(address)
-    const obj = response.toJSON() as TBalanceResponse
-    return obj.free ? BigInt(obj.free) : 0n
-  }
-
-  async getBalanceForeignAssetsPallet(address: string, location: TLocation) {
-    const response: Codec = await this.api.query.foreignAssets.account(location, address)
-    const obj = response.toJSON() as TBalanceResponse
-    return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
-  }
-
-  async getForeignAssetsByIdBalance(address: string, assetId: string) {
-    const response: Codec = await this.api.query.foreignAssets.account(assetId, address)
-    const obj = response.toJSON() as TBalanceResponse
-    return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
-  }
-
-  async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
-    const currencySelection = getChain('BifrostPolkadot').getCurrencySelection(asset)
-
-    const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
-
-    const accountData = response ? (response as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : 0n
-  }
-
-  async getBalanceNativeAcala(address: string, symbol: string) {
-    const response: Codec = await this.api.query.tokens.accounts(address, {
-      Token: symbol
-    })
-
-    const accountData = response ? (response as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : 0n
-  }
-
-  async getBalanceForeignXTokens(chain: TSubstrateChain, address: string, asset: TAssetInfo) {
-    let pallet = 'tokens'
-
-    if (chain === 'Centrifuge' || chain === 'Altair') {
-      pallet = 'ormlTokens'
-    }
-
-    const response: Array<[StorageKey<AnyTuple>, Codec]> =
-      await this.api.query[pallet].accounts.entries(address)
-
-    const entry = response.find(
-      ([
-        {
-          args: [_, assetItem]
-        },
-        _value1
-      ]) => {
-        const assetSymbol = assetItem.toString().toLowerCase()
-        return (
-          assetSymbol === asset.symbol?.toLowerCase() ||
-          (isForeignAsset(asset) && assetSymbol === asset.assetId?.toLowerCase()) ||
-          Object.values(assetItem.toHuman() ?? {})
-            .toString()
-            .toLowerCase() === asset.symbol?.toLowerCase() ||
-          (isForeignAsset(asset) &&
-            Object.values(assetItem.toHuman() ?? {})
-              .toString()
-              .toLowerCase() === asset.assetId?.toLowerCase())
-        )
-      }
-    )
-
-    const accountData = entry ? (entry[1] as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : 0n
-  }
-
-  async getBalanceAssetsPallet(address: string, assetId: bigint | number) {
-    const response = await this.api.query.assets.account(assetId, address)
-    const obj = response.toJSON() as TBalanceResponse
-    return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
   getMethod(tx: Extrinsic): string {
@@ -684,12 +610,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   getDisconnectAllowed() {
     return this.disconnectAllowed
-  }
-
-  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
-    const res = await this.api.call.locationToAccountApi.convertLocation(location)
-    const jsonRes = res.toJSON() as any
-    return jsonRes.ok ? jsonRes.ok.toString() : undefined
   }
 
   async disconnect(force = false) {

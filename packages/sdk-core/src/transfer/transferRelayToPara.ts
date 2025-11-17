@@ -16,9 +16,9 @@ export const transferRelayToPara = async <TApi, TRes>(
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
-  const serializedApiCall = await getChain(
+  const serializedCall = await getChain(
     isLocationDestination ? resolveTChainFromLocation(origin, destination) : destination
   ).transferRelayToPara(options)
 
-  return api.callTxMethod(serializedApiCall)
+  return api.deserializeExtrinsics(serializedCall)
 }

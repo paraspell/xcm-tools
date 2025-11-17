@@ -2750,6 +2750,12 @@
     ],
     "otherAssets": [
       {
+        "assetId": "1000000002",
+        "symbol": "GXON",
+        "decimals": 12,
+        "existentialDeposit": "1000000000"
+      },
+      {
         "assetId": "1984",
         "symbol": "USDT",
         "decimals": 6,
@@ -8076,7 +8082,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "symbol": "SKY",
@@ -11710,6 +11717,10 @@
         "assetId": "4294967295",
         "symbol": "DOT",
         "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": "Here"
+        },
         "existentialDeposit": "100"
       }
     ]
@@ -16293,6 +16304,10 @@
         "assetId": "1",
         "symbol": "DOT",
         "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": "Here"
+        },
         "existentialDeposit": "1000000"
       },
       {

@@ -57,11 +57,11 @@ class Hydration<TApi, TRes>
       const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.callTxMethod(await handleExecuteTransfer(this.chain, input))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, input))
       }
     }
 
-    return api.callTxMethod(await createTypeAndThenCall(this.chain, input))
+    return api.deserializeExtrinsics(await createTypeAndThenCall(this.chain, input))
   }
 
   transferMoonbeamWhAsset<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
@@ -134,10 +134,10 @@ class Hydration<TApi, TRes>
 
     if (isAmountAll) {
       return Promise.resolve(
-        api.callTxMethod({
+        api.deserializeExtrinsics({
           module: 'Balances',
           method: 'transfer_all',
-          parameters: {
+          params: {
             dest: address,
             keep_alive: false
           }
@@ -146,10 +146,10 @@ class Hydration<TApi, TRes>
     }
 
     return Promise.resolve(
-      api.callTxMethod({
+      api.deserializeExtrinsics({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: address,
           value: asset.amount
         }
@@ -165,10 +165,10 @@ class Hydration<TApi, TRes>
     const currencyId = Number(asset.assetId)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: address,
           currency_id: currencyId,
           keep_alive: false
@@ -176,10 +176,10 @@ class Hydration<TApi, TRes>
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: address,
         currency_id: currencyId,
         amount: asset.amount

@@ -54,6 +54,11 @@ export const transform = (obj: any): any => {
           type: key,
           value
         }
+      } else if (key === 'Substrate') {
+        return {
+          type: key,
+          value
+        }
       } else if (key === 'OtherReserve') {
         return {
           type: key,
@@ -70,10 +75,15 @@ export const transform = (obj: any): any => {
             type: 'polkadot' in value ? 'Polkadot' : 'Kusama'
           }
         }
-      } else if (key === 'PalletInstance' || key === 'GeneralIndex') {
+      } else if (key === 'PalletInstance') {
         return {
           type: key,
           value: value
+        }
+      } else if (key === 'GeneralIndex') {
+        return {
+          type: key,
+          value: BigInt(value)
         }
       } else if (key === 'Ethereum') {
         return {

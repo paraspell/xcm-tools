@@ -4,9 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getChain } from '../../utils'
 import type IntegriteePaseo from './IntegriteePaseo'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('IntegriteePaseo', () => {
   let chain: IntegriteePaseo<unknown, unknown>

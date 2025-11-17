@@ -40,7 +40,7 @@ vi.mock('@paraspell/assets', () => ({
 const mockApi = {
   init: vi.fn(),
   getXcmWeight: vi.fn(),
-  callTxMethod: vi.fn()
+  deserializeExtrinsics: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 const baseOptions = {
@@ -95,7 +95,7 @@ describe('handleSwapExecuteTransfer', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     baseOptions.calculateMinAmountOut = vi.fn().mockResolvedValue(1500n)
-    mockApi.callTxMethod = vi
+    mockApi.deserializeExtrinsics = vi
       .fn()
       .mockImplementation(call => `tx:${JSON.stringify(call, replaceBigInt)}`)
     mockApi.getXcmWeight = vi.fn().mockResolvedValue(100000n)

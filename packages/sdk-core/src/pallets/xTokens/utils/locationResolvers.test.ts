@@ -7,12 +7,7 @@ import { DOT_LOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
 import { buildLocation } from './locationResolvers'
 
-vi.mock('@paraspell/assets', () => ({
-  getOtherAssets: vi.fn(),
-  isForeignAsset: vi.fn(),
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {}
-}))
-
+vi.mock('@paraspell/assets')
 vi.mock('@paraspell/sdk-common', () => ({
   isRelayChain: vi.fn(),
   Parents: {

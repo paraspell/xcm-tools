@@ -7,9 +7,7 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Encointer from './Encointer'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Encointer', () => {
   let chain: Encointer<unknown, unknown>

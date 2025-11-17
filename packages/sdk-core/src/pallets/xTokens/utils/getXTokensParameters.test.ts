@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { DOT_LOCATION } from '../../../constants'
-import { getXTokensParameters } from './getXTokensParameters'
+import { getXTokensParams } from './getXTokensParams'
 
 describe('getXTokensParameters', () => {
   const mockLocation = DOT_LOCATION
@@ -25,7 +25,7 @@ describe('getXTokensParameters', () => {
   const version = Version.V4
 
   it('should return params for single asset (non-multi-asset)', () => {
-    const result = getXTokensParameters(false, 'DOT', mockLocation, '1000', '10', version)
+    const result = getXTokensParams(false, 'DOT', mockLocation, '1000', '10', version)
 
     expect(result).toEqual({
       currency_id: 'DOT',
@@ -36,7 +36,7 @@ describe('getXTokensParameters', () => {
   })
 
   it('should return params for multi-asset without fee asset', () => {
-    const result = getXTokensParameters(true, 'DOT', mockLocation, '1000', '10', version)
+    const result = getXTokensParams(true, 'DOT', mockLocation, '1000', '10', version)
 
     expect(result).toEqual({
       asset: 'DOT',
@@ -48,15 +48,7 @@ describe('getXTokensParameters', () => {
   it('should include fee_item index when fee asset is present (index 0)', () => {
     const multiAssets = [createMockAsset(1337, true), createMockAsset(30)]
 
-    const result = getXTokensParameters(
-      true,
-      'DOT',
-      mockLocation,
-      '1000',
-      '10',
-      version,
-      multiAssets
-    )
+    const result = getXTokensParams(true, 'DOT', mockLocation, '1000', '10', version, multiAssets)
 
     expect(result).toEqual({
       assets: 'DOT',
@@ -69,7 +61,7 @@ describe('getXTokensParameters', () => {
   it('should include fee_item index when fee asset is present (index 1)', () => {
     const multiAssets = [createMockAsset(30), createMockAsset(1337, true)]
 
-    const result = getXTokensParameters(true, 'DOT', mockLocation, '1000', 20, version, multiAssets)
+    const result = getXTokensParams(true, 'DOT', mockLocation, '1000', 20, version, multiAssets)
 
     expect(result).toEqual({
       assets: 'DOT',
@@ -82,15 +74,7 @@ describe('getXTokensParameters', () => {
   it('should not include fee_item if no fee asset is marked', () => {
     const multiAssets = [createMockAsset(1), createMockAsset(2)]
 
-    const result = getXTokensParameters(
-      true,
-      'DOT',
-      mockLocation,
-      '1000',
-      '5',
-      version,
-      multiAssets
-    )
+    const result = getXTokensParams(true, 'DOT', mockLocation, '1000', '5', version, multiAssets)
 
     expect(result).toEqual({
       assets: 'DOT',

@@ -60,7 +60,7 @@ describe('IntegriteePolkadot', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call Assets.transfer with correct params', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -71,10 +71,10 @@ describe('IntegriteePolkadot', () => {
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 1,
           target: { Id: 'address' },
           amount: 100n
@@ -84,7 +84,7 @@ describe('IntegriteePolkadot', () => {
 
     it('should call Assets.transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -96,10 +96,10 @@ describe('IntegriteePolkadot', () => {
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: 1,
           dest: { Id: 'address' },
           keep_alive: false

@@ -4,8 +4,7 @@ import { concat, getAddress, keccak256, pad, toHex } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId } from '../../utils'
-import { formatAssetIdToERC20 } from '../assets/balance'
+import { assertHasId, formatAssetIdToERC20 } from '../../utils'
 
 const SIZE = 32
 const BALANCE_SLOT = 0
@@ -37,10 +36,20 @@ export class SystemPallet extends BaseAssetsPallet {
       balanceTx: {
         module: this.palletName,
         method: 'set_storage',
-        parameters: {
+        params: {
           items: [[storageKey, amountEncoded]]
         }
       }
     }
+  }
+
+  async getBalance<TApi, TRes>(api: IPolkadotApi<TApi, TRes>, address: string): Promise<bigint> {
+    const balance = await api.queryState<{ data: { free: bigint } }>({
+      module: this.palletName,
+      method: 'Account',
+      params: [address]
+    })
+    const value = balance?.data?.free
+    return value !== undefined ? BigInt(value) : 0n
   }
 }

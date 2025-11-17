@@ -7,9 +7,7 @@ import type { TReserveAsset, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type CrustShadow from './CrustShadow'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('CrustShadow', () => {
   let crustShadow: CrustShadow<unknown, unknown>

@@ -3,7 +3,7 @@
 import type { ApiPromise } from '@polkadot/api'
 import { type TForeignAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
-import { formatAssetIdToERC20 } from '../../sdk-core/src/pallets/assets/balance'
+import { formatAssetIdToERC20 } from '../../sdk-core/src/utils/asset'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
 import { Parents } from '@paraspell/sdk-common'

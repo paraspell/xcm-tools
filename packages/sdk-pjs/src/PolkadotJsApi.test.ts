@@ -1,4 +1,9 @@
-import type { TAssetInfo, TDryRunXcmBaseOptions, WithAmount } from '@paraspell/sdk-core'
+import type {
+  TAssetInfo,
+  TDryRunXcmBaseOptions,
+  TSerializedExtrinsics,
+  WithAmount
+} from '@paraspell/sdk-core'
 import {
   BatchMode,
   ChainNotSupportedError,
@@ -8,14 +13,11 @@ import {
   hasXcmPaymentApiSupport,
   MissingChainApiError,
   type TLocation,
-  type TSerializedApiCall,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { ApiPromise } from '@polkadot/api'
 import type { VoidFn } from '@polkadot/api/types'
-import type { StorageKey } from '@polkadot/types'
-import { u32 } from '@polkadot/types'
-import type { AnyTuple, Codec } from '@polkadot/types/types'
+import type { Codec } from '@polkadot/types/types'
 import { validateAddress } from '@polkadot/util-crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -96,28 +98,6 @@ describe('PolkadotJsApi', () => {
         },
         ethereumOutboundQueue: {
           operatingMode: vi.fn().mockResolvedValue({ toPrimitive: () => 'Normal' })
-        },
-        system: {
-          account: vi.fn().mockResolvedValue({ data: { free: { toBigInt: () => 2000n } } })
-        },
-        assets: {
-          account: vi.fn().mockResolvedValue({ toJSON: () => ({ balance: '3000' }) })
-        },
-        balances: {
-          account: vi.fn()
-        },
-        foreignAssets: {
-          account: vi.fn()
-        },
-        tokens: {
-          accounts: Object.assign(vi.fn(), {
-            entries: vi.fn()
-          })
-        },
-        ormlTokens: {
-          accounts: Object.assign(vi.fn(), {
-            entries: vi.fn()
-          })
         }
       },
       disconnect: vi.fn()
@@ -358,15 +338,15 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('callTxMethod', () => {
+  describe('deserializeExtrinsics', () => {
     it('should create an extrinsic with the provided module, method, and parameters', () => {
-      const serializedCall: TSerializedApiCall = {
+      const serializedCall: TSerializedExtrinsics = {
         module: 'XTokens',
         method: 'transfer',
-        parameters: { beneficiary: 'recipient_address', amount: 1000 }
+        params: { beneficiary: 'recipient_address', amount: 1000 }
       }
 
-      const result = polkadotApi.callTxMethod(serializedCall)
+      const result = polkadotApi.deserializeExtrinsics(serializedCall)
 
       expect(mockApiPromise.tx.xTokens.transfer).toHaveBeenCalledWith('recipient_address', 1000)
       expect(result).toBe('mocked_extrinsic')
@@ -439,312 +419,6 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.query.evm.accountStorages.key).toHaveBeenCalledWith(address, key)
       expect(result).toBe('0x1234567890abcdef')
-    })
-  })
-
-  describe('getBalanceNative', () => {
-    it('should return the free balance as bigint', async () => {
-      const address = 'some_address'
-
-      const balance = await polkadotApi.getBalanceNative(address)
-
-      expect(mockApiPromise.query.system.account).toHaveBeenCalledWith(address)
-      expect(balance).toBe(2000n)
-    })
-  })
-
-  describe('getBalanceForeign', () => {
-    it('should return the foreign balance as bigint when balance exists', async () => {
-      const address = 'some_address'
-      const id = '1'
-      const parsedId = new u32(mockApiPromise.registry, id)
-
-      const balance = await polkadotApi.getBalanceForeignPolkadotXcm('AssetHubPolkadot', address, {
-        symbol: 'DOT',
-        assetId: id,
-        decimals: 10
-      })
-
-      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
-      expect(balance).toBe(3000n)
-    })
-
-    it('should return null when balance does not exist', async () => {
-      const address = 'some_address'
-      const id = '1'
-      const parsedId = new u32(mockApiPromise.registry, id)
-
-      const mockResponse = {
-        toJSON: () => ({})
-      } as unknown as Codec
-
-      vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(
-        mockResponse as unknown as VoidFn
-      )
-
-      const balance = await polkadotApi.getBalanceForeignPolkadotXcm('Hydration', address, {
-        symbol: 'DOT',
-        assetId: id,
-        decimals: 10
-      })
-
-      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
-      expect(balance).toBe(0n)
-    })
-
-    describe('getMythosForeignBalance', () => {
-      it('should return the Mythos foreign balance as bigint when balance exists', async () => {
-        const address = 'some_address'
-
-        const mockResponse = {
-          toJSON: () => ({ free: '4000' })
-        } as unknown as Codec
-
-        vi.mocked(mockApiPromise.query.balances.account).mockResolvedValue(
-          mockResponse as unknown as VoidFn
-        )
-
-        const balance = await polkadotApi.getMythosForeignBalance(address)
-
-        expect(mockApiPromise.query.balances.account).toHaveBeenCalledWith(address)
-        expect(balance).toBe(4000n)
-      })
-
-      it('should return null when free balance does not exist', async () => {
-        const address = 'some_address'
-
-        const mockResponse = {
-          toJSON: () => ({})
-        } as unknown as Codec
-
-        vi.mocked(mockApiPromise.query.balances.account).mockResolvedValue(
-          mockResponse as unknown as VoidFn
-        )
-
-        const balance = await polkadotApi.getMythosForeignBalance(address)
-
-        expect(mockApiPromise.query.balances.account).toHaveBeenCalledWith(address)
-        expect(balance).toBe(0n)
-      })
-    })
-
-    describe('getAssetHubForeignBalance', () => {
-      const location: TLocation = {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: 1000
-          }
-        }
-      }
-      it('should return the balance as bigint when balance exists', async () => {
-        const address = 'some_address'
-
-        const mockResponse = {
-          toJSON: () => ({ balance: '5000' })
-        } as unknown as Codec
-
-        vi.mocked(mockApiPromise.query.foreignAssets.account).mockResolvedValue(
-          mockResponse as unknown as VoidFn
-        )
-
-        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, location)
-
-        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(location, address)
-        expect(balance).toBe(5000n)
-      })
-
-      it('should return 0 when balance does not exist', async () => {
-        const address = 'some_address'
-
-        const mockResponse = {
-          toJSON: () => ({})
-        } as unknown as Codec
-
-        vi.mocked(mockApiPromise.query.foreignAssets.account).mockResolvedValue(
-          mockResponse as unknown as VoidFn
-        )
-
-        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, location)
-
-        expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(location, address)
-        expect(balance).toBe(0n)
-      })
-    })
-  })
-
-  describe('getBalanceForeignBifrost', () => {
-    it('should return the balance when asset matches currencySelection', async () => {
-      const address = 'some_address'
-      const mockResponse = {
-        free: { toString: () => '6000' }
-      } as unknown as VoidFn
-
-      vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
-
-      const balance = await polkadotApi.getBalanceForeignBifrost(address, {
-        symbol: 'DOT'
-      } as TAssetInfo)
-
-      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
-        Token: 'DOT'
-      })
-      expect(balance).toBe(6000n)
-    })
-
-    it('should return null when no matching asset found', async () => {
-      const address = 'some_address'
-
-      const mockResponse = {
-        free: { toString: () => '0' }
-      } as unknown as VoidFn
-
-      vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
-
-      const balance = await polkadotApi.getBalanceForeignBifrost(address, {
-        symbol: 'DOT'
-      } as TAssetInfo)
-
-      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
-        Token: 'DOT'
-      })
-      expect(balance).toBe(0n)
-    })
-  })
-
-  describe('getBalanceForeignXTokens', () => {
-    it('should return the balance when asset matches symbolOrId', async () => {
-      const address = 'some_address'
-      const mockEntry = [
-        {
-          args: [address, { toString: () => 'DOT', toHuman: () => ({}) }]
-        },
-        { free: { toString: () => '6000' } }
-      ] as unknown as [StorageKey<AnyTuple>, Codec]
-
-      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
-
-      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(6000n)
-    })
-
-    it('should return null when no matching asset found', async () => {
-      const address = 'some_address'
-
-      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([])
-
-      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(0n)
-    })
-
-    it('should return null when no matching asset found - Centrifuge', async () => {
-      const address = 'some_address'
-
-      vi.mocked(mockApiPromise.query.ormlTokens.accounts.entries).mockResolvedValue([])
-
-      const balance = await polkadotApi.getBalanceForeignXTokens('Centrifuge', address, {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-      expect(mockApiPromise.query.ormlTokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(0n)
-    })
-
-    it('should return balance when assetItem is object by symbol', async () => {
-      const address = 'some_address'
-      const mockEntry = [
-        {
-          args: [
-            address,
-            {
-              toString: () => '',
-              toHuman: () => ({
-                ForeignToken: 'DOT'
-              })
-            }
-          ]
-        },
-        { free: { toString: () => '6000' } }
-      ] as unknown as [StorageKey<AnyTuple>, Codec]
-
-      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
-
-      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(6000n)
-    })
-
-    it('should return balance when assetItem is object by id', async () => {
-      const address = 'some_address'
-      const mockEntry = [
-        {
-          args: [
-            address,
-            {
-              toString: () => '',
-              toHuman: () => ({
-                ForeignToken: '1'
-              })
-            }
-          ]
-        },
-        { free: { toString: () => '6000' } }
-      ] as unknown as [StorageKey<AnyTuple>, Codec]
-
-      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
-
-      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1'
-      })
-      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(6000n)
-    })
-  })
-
-  describe('getBalanceForeignMoonbeam', () => {
-    it('should return the balance when asset matches assetId', async () => {
-      const address = 'some_address'
-      const mockResponse = {
-        toJSON: () => ({ balance: '7000' })
-      } as unknown as VoidFn
-
-      vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
-
-      const balance = await polkadotApi.getBalanceAssetsPallet(address, 1n)
-
-      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1n, address)
-      expect(balance).toBe(7000n)
-    })
-
-    it('should return null when balance does not exist', async () => {
-      const address = 'some_address'
-      const mockResponse = {
-        toJSON: () => ({})
-      } as unknown as VoidFn
-
-      vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
-
-      const balance = await polkadotApi.getBalanceAssetsPallet(address, 1)
-
-      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1, address)
-      expect(balance).toEqual(0n)
     })
   })
 
@@ -1108,18 +782,6 @@ describe('PolkadotJsApi', () => {
       expect(mockDisconnect).not.toHaveBeenCalled()
 
       mockDisconnect.mockRestore()
-    })
-  })
-
-  describe('getBalanceNativeAcala', () => {
-    it('should return the free balance as bigint', async () => {
-      polkadotApi = new PolkadotJsApi(mockApiPromise)
-      await polkadotApi.init(mockChain)
-
-      const balance = await polkadotApi.getBalanceNativeAcala('some_address', 'AUSD')
-
-      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledOnce()
-      expect(balance).toBe(0n)
     })
   })
 
@@ -1997,41 +1659,6 @@ describe('PolkadotJsApi', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()
       expect(status).toEqual('Normal')
-    })
-  })
-
-  describe('convertLocationToAccount', () => {
-    const location: TLocation = {
-      parents: 1,
-      interior: {
-        X1: { Parachain: 1000 }
-      }
-    }
-
-    it('returns account string when API responds with ok', async () => {
-      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
-        toJSON: vi.fn().mockReturnValue({ ok: '5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y' })
-      } as unknown as Codec)
-
-      const res = await polkadotApi.convertLocationToAccount(location)
-
-      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
-        location
-      )
-      expect(res).toBe('5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y')
-    })
-
-    it('returns undefined when API responds without ok', async () => {
-      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
-        toJSON: vi.fn().mockReturnValue({ err: 'NotFound' })
-      } as unknown as Codec)
-
-      const res = await polkadotApi.convertLocationToAccount(location)
-
-      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
-        location
-      )
-      expect(res).toBeUndefined()
     })
   })
 })

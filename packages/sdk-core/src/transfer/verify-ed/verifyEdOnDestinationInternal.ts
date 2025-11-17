@@ -1,8 +1,8 @@
-import { getExistentialDepositOrThrow, normalizeSymbol } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
 
+import { getAssetBalanceInternal } from '../../balance'
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
@@ -48,15 +48,15 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
-  const destCurrency = asset.location ? { location: asset.location } : { symbol: asset.symbol }
+  const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const ed = getExistentialDepositOrThrow(destination, destCurrency)
+  const ed = getEdFromAssetOrThrow(destAsset)
 
   const balance = await getAssetBalanceInternal({
     address,
     chain: destination,
     api: destApi,
-    currency: destCurrency
+    asset: destAsset
   })
 
   const xcmFeeResult = await getXcmFeeInternal({

@@ -5,28 +5,33 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
+import { getAssetBalanceInternal } from '../../../balance'
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
 import { AmountTooLowError } from '../../../errors'
-import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer'
-import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
+import type {
+  TDryRunResult,
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics
+} from '../../../types'
 import { assertAddressIsString, getRelayChainOf, padValueBy } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 import { handleExecuteTransfer } from './handleExecuteTransfer'
+
+vi.mock('@paraspell/assets')
 
 vi.mock('../../../chains/getTChain')
 vi.mock('./createExecuteXcm')
 vi.mock('./createExecuteCall')
 vi.mock('../..')
 vi.mock('../../../transfer')
-vi.mock('../../../pallets/assets')
-vi.mock('@paraspell/assets')
+vi.mock('../../../balance')
 
 describe('handleExecuteTransfer', () => {
   const mockApi = {
-    callTxMethod: vi.fn(),
+    deserializeExtrinsics: vi.fn(),
     getXcmWeight: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
@@ -79,8 +84,8 @@ describe('handleExecuteTransfer', () => {
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
+    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
 
     const dryRunResult = {
       origin: { success: true, fee: 1000n },
@@ -121,8 +126,8 @@ describe('handleExecuteTransfer', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(5000))
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
+    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
 
     const dryRunResult = {
       origin: { success: true, fee: 1000n },
@@ -141,8 +146,8 @@ describe('handleExecuteTransfer', () => {
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
+    vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
 
     const dryRunResult = {
       origin: { success: false, fee: 0n },
@@ -161,8 +166,8 @@ describe('handleExecuteTransfer', () => {
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
+    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
     const getXcmWeightSpy = vi
       .spyOn(mockApi, 'getXcmWeight')
       .mockResolvedValue({ proofSize: 0n, refTime: 12000n })
@@ -233,8 +238,8 @@ describe('handleExecuteTransfer', () => {
     }
 
     vi.mocked(createDirectExecuteXcm).mockReturnValue(mockXcm)
-    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedApiCall)
-    vi.spyOn(mockApi, 'callTxMethod').mockReturnValue('mockTx')
+    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
     vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 15000n })
 
     const dryRunResult = {

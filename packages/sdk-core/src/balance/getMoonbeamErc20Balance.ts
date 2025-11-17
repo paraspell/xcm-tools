@@ -1,7 +1,8 @@
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
 
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
+import { formatAssetIdToERC20 } from '../utils'
 
 const ERC20_ABI = [
   {
@@ -14,7 +15,7 @@ const ERC20_ABI = [
 ] as const
 
 export const getMoonbeamErc20Balance = async (
-  chain: 'Moonbeam' | 'Moonriver',
+  chain: TSubstrateChain,
   assetId: string,
   address: string
 ): Promise<bigint> => {

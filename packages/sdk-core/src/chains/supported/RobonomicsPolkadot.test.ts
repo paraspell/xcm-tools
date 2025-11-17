@@ -60,7 +60,7 @@ describe('RobonomicsPolkadot', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     it('throws when options are missing assetInfo (undefined)', () => {
-      const mockApi = { callTxMethod: vi.fn() }
+      const mockApi = { deserializeExtrinsics: vi.fn() }
       const bad: unknown = {
         api: mockApi,
         address: 'addr'
@@ -69,11 +69,11 @@ describe('RobonomicsPolkadot', () => {
       expect(() =>
         robonomics.transferLocalNonNativeAsset(bad as TTransferLocalOptions<unknown, unknown>)
       ).toThrow(InvalidCurrencyError)
-      expect(mockApi.callTxMethod).not.toHaveBeenCalled()
+      expect(mockApi.deserializeExtrinsics).not.toHaveBeenCalled()
     })
 
     it('throws when assetId is missing in assetInfo', () => {
-      const mockApi = { callTxMethod: vi.fn() }
+      const mockApi = { deserializeExtrinsics: vi.fn() }
       const bad = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
@@ -81,11 +81,11 @@ describe('RobonomicsPolkadot', () => {
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
       expect(() => robonomics.transferLocalNonNativeAsset(bad)).toThrow(InvalidCurrencyError)
-      expect(mockApi.callTxMethod).not.toHaveBeenCalled()
+      expect(mockApi.deserializeExtrinsics).not.toHaveBeenCalled()
     })
 
     it('calls Assets.transfer with BigInt(assetId) & correct params', () => {
-      const mockApi = { callTxMethod: vi.fn() }
+      const mockApi = { deserializeExtrinsics: vi.fn() }
       const ok = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
@@ -94,10 +94,10 @@ describe('RobonomicsPolkadot', () => {
 
       robonomics.transferLocalNonNativeAsset(ok)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 1n,
           target: { Id: 'addr123' },
           amount: 100n
@@ -106,7 +106,7 @@ describe('RobonomicsPolkadot', () => {
     })
 
     it('calls Assets.transfer_all when amount is ALL', () => {
-      const mockApi = { callTxMethod: vi.fn() }
+      const mockApi = { deserializeExtrinsics: vi.fn() }
       const ok = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
@@ -116,10 +116,10 @@ describe('RobonomicsPolkadot', () => {
 
       robonomics.transferLocalNonNativeAsset(ok)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: 1n,
           dest: { Id: 'addr123' },
           keep_alive: false

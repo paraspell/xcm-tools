@@ -7,9 +7,7 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import CoretimePolkadot from './CoretimePolkadot'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('CoretimePolkadot', () => {
   let chain: CoretimePolkadot<unknown, unknown>

@@ -2,7 +2,7 @@ import type { TPallet } from '@paraspell/pallets'
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import {
-  type TSerializedApiCall,
+  type TSerializedExtrinsics,
   type TXTransferMethod,
   type TXTransferTransferOptions
 } from '../../types'
@@ -52,15 +52,15 @@ export const transferXTransfer = <TApi, TRes>(
 
   const method: TXTransferMethod = 'transfer'
 
-  const call: TSerializedApiCall = {
+  const call: TSerializedExtrinsics = {
     module: (pallet as TPallet) ?? 'XTransfer',
     method: methodOverride ?? method,
-    parameters: {
+    params: {
       asset: resolvedMultiAsset,
       dest,
       dest_weight: destWeight
     }
   }
 
-  return api.callTxMethod(call)
+  return api.deserializeExtrinsics(call)
 }

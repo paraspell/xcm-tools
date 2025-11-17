@@ -5,6 +5,7 @@ export const LEGACY_CHAINS: TChain[] = [
   'CrustShadow',
   'Kintsugi',
   'RobonomicsKusama',
+  'RobonomicsPolkadot',
   'Pendulum'
 ]
 

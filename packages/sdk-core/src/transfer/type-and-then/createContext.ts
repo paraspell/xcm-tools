@@ -1,3 +1,4 @@
+import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import {
   deepEqual,
   isSubstrateBridge,
@@ -7,19 +8,12 @@ import {
 
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
-import { assertHasLocation, assertToIsString, getAssetReserveChain } from '../../utils'
-
-const RELAY_ASSET_LOCATIONS = [
-  RELAY_LOCATION,
-  {
-    parents: 2,
-    interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
-  },
-  {
-    parents: 2,
-    interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
-  }
-]
+import {
+  assertHasLocation,
+  assertToIsString,
+  getAssetReserveChain,
+  getRelayChainOf
+} from '../../utils'
 
 export const getSubBridgeReserve = (
   chain: TSubstrateChain,
@@ -69,6 +63,20 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     overrideReserve
   )
 
+  const RELAY_ASSET_LOCATIONS = [
+    RELAY_LOCATION,
+    {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+    },
+    {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
+    }
+  ]
+
+  const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
+
   const isRelayAsset = RELAY_ASSET_LOCATIONS.some(loc => deepEqual(assetInfo.location, loc))
 
   const destApi = api.clone()
@@ -95,6 +103,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     isSubBridge,
     isRelayAsset,
     assetInfo,
-    options
+    options,
+    systemAsset
   }
 }

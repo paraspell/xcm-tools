@@ -1,9 +1,9 @@
 import { getExistentialDeposit } from '@paraspell/assets'
 
+import { getBalanceNative } from '../../balance'
 import { Builder } from '../../builder'
 import type { TOriginFeeDetails } from '../../types'
 import type { TGetOriginFeeDetailsOptions } from '../../types/TBalance'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
 
 export const getOriginFeeDetailsInternal = async <TApi, TRes>({
   api,
@@ -29,7 +29,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
   const xcmFee = await api.calculateTransactionFee(tx, account)
   const xcmFeeWithMargin = xcmFee + xcmFee / BigInt(feeMarginPercentage)
 
-  const nativeBalance = await getBalanceNativeInternal({
+  const nativeBalance = await getBalanceNative({
     address: account,
     chain: origin,
     api

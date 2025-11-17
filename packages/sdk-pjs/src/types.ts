@@ -45,8 +45,3 @@ type TEvmBuilderOptionsBase = {
 export type TPjsEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes> & {
   provider?: AbstractProvider
 }
-
-export type TBalanceResponse = {
-  free?: string
-  balance?: string
-}

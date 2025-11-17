@@ -2,14 +2,14 @@ import type { TPallet } from '@paraspell/pallets'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import type {
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TXTokensCurrencySelection,
   TXTokensMethod,
   TXTokensTransferOptions
 } from '../../../types'
 import { createBeneficiaryLocXTokens } from '../../../utils'
 import { getModifiedCurrencySelection } from './currencySelection'
-import { getXTokensParameters } from './getXTokensParameters'
+import { getXTokensParams } from './getXTokensParams'
 
 export const shouldUseMultiAssetTransfer = <TApi, TRes>({
   origin,
@@ -47,7 +47,7 @@ export const buildXTokensCall = <TApi, TRes>(
   input: TXTokensTransferOptions<TApi, TRes>,
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   const {
     api,
     origin,
@@ -78,7 +78,7 @@ export const buildXTokensCall = <TApi, TRes>(
     paraId: paraIdTo
   })
 
-  const parameters = getXTokensParameters(
+  const params = getXTokensParams(
     useMultiAsset,
     modifiedCurrencySelection,
     destLocation,
@@ -91,6 +91,6 @@ export const buildXTokensCall = <TApi, TRes>(
   return {
     module: (pallet as TPallet) ?? 'XTokens',
     method: methodOverride ?? method,
-    parameters
+    params
   }
 }
