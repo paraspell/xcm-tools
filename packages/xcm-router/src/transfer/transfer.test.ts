@@ -1,3 +1,4 @@
+import { isChainEvm } from '@paraspell/sdk';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,35 +16,17 @@ import { transfer } from './transfer';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-vi.mock('@paraspell/sdk-pjs', () => {
-  return {
-    createChainClient: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  isChainEvm: vi.fn(),
+}));
 
-vi.mock('./utils/validateTransferOptions', () => {
-  return {
-    validateTransferOptions: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-pjs');
 
-vi.mock('./utils', () => {
-  return {
-    prepareTransformedOptions: vi.fn(),
-  };
-});
-
-vi.mock('./buildTransactions', () => {
-  return {
-    buildTransactions: vi.fn(),
-  };
-});
-
-vi.mock('./executeRouterPlan', () => {
-  return {
-    executeRouterPlan: vi.fn(),
-  };
-});
+vi.mock('./utils/validateTransferOptions');
+vi.mock('./utils');
+vi.mock('./buildTransactions');
+vi.mock('./executeRouterPlan');
 
 describe('transfer', () => {
   const mockOriginApi = {} as unknown as TPjsApi;
@@ -51,6 +34,7 @@ describe('transfer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(isChainEvm).mockReturnValue(false);
 
     vi.mocked(validateTransferOptions).mockImplementation(() => {});
     vi.mocked(prepareTransformedOptions).mockResolvedValue({
@@ -154,6 +138,19 @@ describe('transfer', () => {
     expect(prepareTransformedOptions).toHaveBeenCalledTimes(1);
     expect(buildTransactions).toHaveBeenCalledTimes(1);
     expect(executeRouterPlan).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw an error if origin chain is EVM and evmSigner is missing', async () => {
+    const options = {
+      from: 'Moonbeam',
+      to: 'Astar',
+    } as TTransferOptions;
+
+    vi.mocked(isChainEvm).mockReturnValue(true);
+
+    await expect(transfer(options)).rejects.toThrow(
+      'EVM signer must be provided for EVM origin chains.',
+    );
   });
 
   it('should create and disconnect both originApi and swapApi', async () => {

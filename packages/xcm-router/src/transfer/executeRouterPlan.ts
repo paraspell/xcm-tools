@@ -1,4 +1,5 @@
-import { InvalidParameterError, isChainEvm } from '@paraspell/sdk';
+import { isChainEvm } from '@paraspell/sdk';
+import type { PolkadotSigner } from 'polkadot-api';
 
 import type { TExecuteRouterPlanOptions } from '../types';
 import { type TRouterPlan } from '../types';
@@ -6,7 +7,7 @@ import { submitTransaction } from '../utils/submitTransaction';
 
 export const executeRouterPlan = async (
   plan: TRouterPlan,
-  { signer, evmSigner, evmSenderAddress, onStatusChange }: TExecuteRouterPlanOptions,
+  { signer, evmSigner, onStatusChange }: TExecuteRouterPlanOptions,
 ): Promise<void> => {
   for (const [currentStep, { tx, type, chain, destinationChain }] of plan.entries()) {
     onStatusChange?.({
@@ -18,13 +19,9 @@ export const executeRouterPlan = async (
     });
 
     if (isChainEvm(chain)) {
-      if (!evmSigner || !evmSenderAddress) {
-        throw new InvalidParameterError(
-          'EVM signer and sender address must be provided for EVM chains.',
-        );
-      }
-
-      await submitTransaction(tx, evmSigner);
+      // Evm signer is guaranteed to be defined here
+      // because of prior validation
+      await submitTransaction(tx, evmSigner as PolkadotSigner);
     } else {
       await submitTransaction(tx, signer);
     }

@@ -1,4 +1,4 @@
-import { InvalidParameterError } from '@paraspell/sdk';
+import { InvalidParameterError, isChainEvm } from '@paraspell/sdk';
 import { ethers } from 'ethers-v6';
 
 import type { TBuildTransactionsOptions } from '../../types';
@@ -29,5 +29,9 @@ export const validateTransferOptions = (options: TBuildTransactionsOptions) => {
     throw new InvalidParameterError(
       'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
     );
+  }
+
+  if (from && isChainEvm(from) && !evmSenderAddress) {
+    throw new InvalidParameterError('EVM sender address must be provided for EVM chains.');
   }
 };

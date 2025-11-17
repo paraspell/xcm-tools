@@ -70,7 +70,7 @@ export const calculateFee = async (
     throw new InvalidParameterError('Price not found');
   }
 
-  const currencyFromPrice = BigInt(currencyFromPriceInfo.amount.toString());
+  const currencyFromPrice = BigInt(currencyFromPriceInfo.amount.decimalPlaces(0).toString());
 
   const feeInCurrencyFrom =
     (feeNative * pow10n(currencyFromPriceInfo.decimals + currencyFromDecimals)) /

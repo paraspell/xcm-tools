@@ -12,7 +12,13 @@ export const getExchangeAssetByOriginAsset = (
   const assets = getExchangeAssets(exchange);
 
   // Try searching by symbol fist, if duplicates are found, search by location
-  const candidates = findBestMatches(assets, originAsset.symbol);
+  const symbol = originAsset.symbol;
+  const symbolCandidates = [symbol];
+
+  // Handle Moonbeam xc- prefix
+  if (symbol.startsWith('xc')) symbolCandidates.push(symbol.slice(2));
+
+  const candidates = symbolCandidates.flatMap((sym) => findBestMatches(assets, sym));
 
   if (candidates.length === 0) {
     // No matching asset found by symbol.
