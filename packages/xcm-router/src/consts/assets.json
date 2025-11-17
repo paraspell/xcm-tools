@@ -656,6 +656,26 @@
         }
       },
       {
+        "symbol": "BNC",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "USDt",
         "decimals": 6,
         "location": {

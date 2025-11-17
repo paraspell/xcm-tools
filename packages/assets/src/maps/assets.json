@@ -18300,6 +18300,12 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1001165",
+        "symbol": "EURC",
+        "decimals": 6,
+        "existentialDeposit": "10000"
+      },
+      {
         "assetId": "1111",
         "symbol": "HUSDT",
         "decimals": 18,
