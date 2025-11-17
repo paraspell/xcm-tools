@@ -7,9 +7,7 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Collectives from './Collectives'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Collectives', () => {
   let chain: Collectives<unknown, unknown>

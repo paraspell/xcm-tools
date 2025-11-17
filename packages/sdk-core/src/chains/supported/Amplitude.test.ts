@@ -6,9 +6,7 @@ import type { TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Amplitude from './Amplitude'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Amplitude', () => {
   let amplitude: Amplitude<unknown, unknown>

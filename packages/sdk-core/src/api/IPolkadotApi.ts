@@ -9,7 +9,9 @@ import type {
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedRuntimeApiQuery,
+  TSerializedStateQuery,
   TWeight
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
@@ -21,7 +23,9 @@ export interface IPolkadotApi<TApi, TRes> {
   createApiInstance: (wsUrl: string | string[], chain: TSubstrateChain) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   accountToUint8a(address: string): Uint8Array
-  callTxMethod(serializedCall: TSerializedApiCall): TRes
+  deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes
+  queryState<T>(serialized: TSerializedStateQuery): Promise<T>
+  queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes
   callDispatchAsMethod(call: TRes, address: string): TRes
   objectToHex(obj: unknown, typeName: string): Promise<string>
@@ -49,23 +53,6 @@ export interface IPolkadotApi<TApi, TRes> {
     transformXcm: boolean
   ): Promise<bigint>
   getEvmStorage(contract: string, slot: string): Promise<string>
-  getBalanceNative(address: string): Promise<bigint>
-  getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
-  getBalanceForeignPolkadotXcm(
-    chain: TSubstrateChain,
-    address: string,
-    asset: TAssetInfo
-  ): Promise<bigint>
-  getMythosForeignBalance(address: string): Promise<bigint>
-  getBalanceForeignAssetsPallet(address: string, location: TLocation): Promise<bigint>
-  getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>
-  getBalanceForeignXTokens(
-    chain: TSubstrateChain,
-    address: string,
-    asset: TAssetInfo
-  ): Promise<bigint>
-  getBalanceForeignBifrost(address: string, asset: TAssetInfo): Promise<bigint>
-  getBalanceAssetsPallet(address: string, assetId: bigint | number): Promise<bigint>
   getFromRpc(module: string, method: string, key: string): Promise<string>
   blake2AsHex(data: Uint8Array): string
   clone(): IPolkadotApi<TApi, TRes>
@@ -76,9 +63,5 @@ export interface IPolkadotApi<TApi, TRes> {
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
   disconnect(force?: boolean): Promise<void>
-  /**
-   * Convert a location to a chain account address using the runtime LocationToAccount API, if available.
-   */
-  convertLocationToAccount(location: TLocation): Promise<string | undefined>
   validateSubstrateAddress(address: string): boolean
 }

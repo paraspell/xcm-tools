@@ -5,8 +5,9 @@ import { Builder } from './builder'
 import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
 
-vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')
+
+vi.mock('./PapiApi')
 
 describe('Builder Function using PapiApi', () => {
   const mockApi = {} as TPapiApi

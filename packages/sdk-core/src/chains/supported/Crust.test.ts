@@ -8,9 +8,7 @@ import type { TReserveAsset, TTransferLocalOptions, TXTokensTransferOptions } fr
 import { getChain } from '../../utils'
 import type Crust from './Crust'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Crust', () => {
   let crust: Crust<unknown, unknown>
@@ -66,7 +64,7 @@ describe('Crust', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should throw an error when asset is not a foreign asset', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -80,7 +78,7 @@ describe('Crust', () => {
 
     it('should throw an error when assetId is undefined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -94,7 +92,7 @@ describe('Crust', () => {
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -105,10 +103,10 @@ describe('Crust', () => {
 
       crust.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           target: { Id: mockOptions.address },
           id: 1n,
           amount: BigInt(mockOptions.assetInfo.amount)
@@ -118,7 +116,7 @@ describe('Crust', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -130,10 +128,10 @@ describe('Crust', () => {
 
       crust.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           id: 1n,
           keep_alive: false

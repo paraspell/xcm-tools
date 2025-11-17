@@ -17,8 +17,9 @@ import {
 } from './transfer'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 
-vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')
+
+vi.mock('./PapiApi')
 
 describe('Send function using PapiApi', () => {
   const mockApi = {} as TPapiApi

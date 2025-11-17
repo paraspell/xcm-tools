@@ -12,9 +12,7 @@ import type {
 import { getChain } from '../../utils'
 import type Interlay from './Interlay'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Interlay', () => {
   let interlay: Interlay<unknown, unknown>
@@ -64,7 +62,7 @@ describe('Interlay', () => {
   describe('transferLocalNativeAsset', () => {
     it('should call transferLocalNonNativeAsset', async () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -82,7 +80,7 @@ describe('Interlay', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -93,10 +91,10 @@ describe('Interlay', () => {
 
       interlay.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },
           value: BigInt(mockOptions.assetInfo.amount)
@@ -106,7 +104,7 @@ describe('Interlay', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -118,10 +116,10 @@ describe('Interlay', () => {
 
       interlay.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },
           keep_alive: false

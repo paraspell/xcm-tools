@@ -1,6 +1,6 @@
 // Inspired by Moonbeam XCM-SDK
 
-import { InvalidParameterError } from '../../../errors'
+import { InvalidParameterError } from '../../errors'
 
 // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/utils/src/format/asset.ts#L1
 export const formatAssetIdToERC20 = (id: string) => {

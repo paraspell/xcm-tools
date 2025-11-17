@@ -213,6 +213,10 @@ const fetchOtherAssetsDefault = async (
           assetId: era.toString(),
           symbol: valueHuman.symbol,
           decimals: +valueHuman.decimals,
+          location:
+            valueHuman.symbol === 'DOT'
+              ? ({ parents: 1, interior: 'Here' } as TLocation)
+              : undefined,
           existentialDeposit:
             valueHuman.existentialDeposit ??
             valueHuman.minimalBalance ??

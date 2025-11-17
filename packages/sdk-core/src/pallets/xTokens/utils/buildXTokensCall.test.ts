@@ -10,27 +10,16 @@ import { type TXTokensCurrencySelection, type TXTokensTransferOptions } from '..
 import { createBeneficiaryLocXTokens } from '../../../utils'
 import { buildXTokensCall } from './buildXTokensCall'
 import { getModifiedCurrencySelection } from './currencySelection'
-import { getXTokensParameters } from './getXTokensParameters'
+import { getXTokensParams } from './getXTokensParams'
 
-vi.mock('@paraspell/sdk-common', async importActual => {
-  const actual = await importActual<typeof import('@paraspell/sdk-common')>()
-  return {
-    ...actual,
-    isTLocation: vi.fn()
-  }
-})
-
-vi.mock('./currencySelection', () => ({
-  getModifiedCurrencySelection: vi.fn()
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  isTLocation: vi.fn()
 }))
 
-vi.mock('./getXTokensParameters', () => ({
-  getXTokensParameters: vi.fn()
-}))
-
-vi.mock('../../../utils', () => ({
-  createBeneficiaryLocXTokens: vi.fn()
-}))
+vi.mock('./currencySelection')
+vi.mock('./getXTokensParams')
+vi.mock('../../../utils')
 
 describe('buildXTokensCall', () => {
   const version = Version.V4
@@ -54,7 +43,7 @@ describe('buildXTokensCall', () => {
     vi.clearAllMocks()
     currencySelection = { ForeignAsset: '1' }
     vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TAsset })
-    vi.mocked(getXTokensParameters).mockReturnValue({ param1: 'value1', param2: 'value2' })
+    vi.mocked(getXTokensParams).mockReturnValue({ param1: 'value1', param2: 'value2' })
     vi.mocked(isTLocation).mockReturnValue(true)
     vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockDestLocation)
   })
@@ -85,13 +74,13 @@ describe('buildXTokensCall', () => {
     expect(result).toEqual({
       module: 'XTokens',
       method: 'transfer',
-      parameters: {
+      params: {
         param1: 'value1',
         param2: 'value2'
       }
     })
     expect(getModifiedCurrencySelection).not.toHaveBeenCalled()
-    expect(getXTokensParameters).toHaveBeenCalledWith(
+    expect(getXTokensParams).toHaveBeenCalledWith(
       false,
       currencySelection,
       mockDestLocation,
@@ -126,7 +115,7 @@ describe('buildXTokensCall', () => {
     })
 
     expect(getModifiedCurrencySelection).toHaveBeenCalledWith(input)
-    expect(getXTokensParameters).toHaveBeenCalledWith(
+    expect(getXTokensParams).toHaveBeenCalledWith(
       true,
       { [Version.V4]: {} },
       mockDestLocation,

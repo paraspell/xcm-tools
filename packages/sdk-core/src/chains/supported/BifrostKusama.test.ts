@@ -6,9 +6,7 @@ import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types
 import { getChain } from '../../utils'
 import type BifrostKusama from './BifrostKusama'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('BifrostKusama', () => {
   let bifrostKusama: BifrostKusama<unknown, unknown>
@@ -47,7 +45,7 @@ describe('BifrostKusama', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -58,10 +56,10 @@ describe('BifrostKusama', () => {
 
       bifrostKusama.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { Token2: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)

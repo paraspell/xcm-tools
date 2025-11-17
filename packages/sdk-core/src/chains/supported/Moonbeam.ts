@@ -1,8 +1,11 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
+import type { TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../../api'
+import { getMoonbeamErc20Balance } from '../../balance'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -10,6 +13,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
+import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
 class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -40,6 +44,15 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
       'ParaToPara',
       `${this.chain} local transfers are temporarily disabled`
     )
+  }
+
+  getBalanceForeign<TApi, TRes>(
+    _api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    assertHasId(asset)
+    return getMoonbeamErc20Balance(this.chain, asset.assetId, address)
   }
 }
 

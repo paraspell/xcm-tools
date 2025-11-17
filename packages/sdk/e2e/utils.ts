@@ -5,9 +5,13 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import { SUBSTRATE_CHAINS, TPallet, TPapiApi, TPapiTransaction, TSerializedApiCall } from '../src'
+import { TPallet, TPapiApi, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
-import { GeneralBuilder, TSendBaseOptionsWithSenderAddress } from '@paraspell/sdk-core'
+import {
+  GeneralBuilder,
+  TSendBaseOptionsWithSenderAddress,
+  TSerializedExtrinsics
+} from '@paraspell/sdk-core'
 
 export const createSr25519Signer = () => {
   const miniSecret = entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE))
@@ -47,12 +51,12 @@ export const createEcdsaSigner = () => {
   )
 }
 
-const serializeTx = (tx: TPapiTransaction): TSerializedApiCall => {
+const serializeTx = (tx: TPapiTransaction): TSerializedExtrinsics => {
   const call = tx.decodedCall
   return {
     module: call.type as TPallet,
     method: call.value.type,
-    parameters: call.value.value
+    params: call.value.value
   }
 }
 

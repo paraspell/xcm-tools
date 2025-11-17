@@ -13,7 +13,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TSerializedApiCall
+  TSerializedExtrinsics
 } from '../../types'
 import Parachain from '../Parachain'
 
@@ -47,7 +47,7 @@ class Laos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 }

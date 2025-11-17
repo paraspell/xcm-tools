@@ -8,7 +8,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TSerializedApiCall
+  type TSerializedExtrinsics
 } from '../../types'
 import Parachain from '../Parachain'
 
@@ -36,7 +36,7 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 }

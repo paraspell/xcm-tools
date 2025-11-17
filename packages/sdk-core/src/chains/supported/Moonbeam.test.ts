@@ -18,7 +18,7 @@ describe('Moonbeam', () => {
 
   const api = {
     createAccountId: vi.fn(),
-    callTxMethod: vi.fn()
+    deserializeExtrinsics: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockInput = {

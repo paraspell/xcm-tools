@@ -1,16 +1,3 @@
 packages:
   - apps/*
   - packages/*
-onlyBuiltDependencies:
-  - '@apollo/protobufjs'
-  - '@biomejs/biome'
-  - '@nestjs/core'
-  - '@sentry-internal/node-cpu-profiler'
-  - '@sentry/cli'
-  - '@swc/core'
-  - '@tsparticles/engine'
-  - bufferutil
-  - es5-ext
-  - esbuild
-  - postinstall-postinstall
-  - utf-8-validate

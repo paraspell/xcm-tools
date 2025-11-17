@@ -54,7 +54,7 @@ describe('Zeitgeist', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should throw an error when asset is not a foreign asset', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -68,7 +68,7 @@ describe('Zeitgeist', () => {
 
     it('should throw an error when assetId is undefined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -82,7 +82,7 @@ describe('Zeitgeist', () => {
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -93,10 +93,10 @@ describe('Zeitgeist', () => {
 
       zeitgeist.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'AssetManager',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)

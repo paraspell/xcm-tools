@@ -15,5 +15,5 @@ export const transferXTokens = <TApi, TRes>(
 
   assertToIsString(destination, ERR_LOCATION_DEST_NOT_SUPPORTED)
   const call = buildXTokensCall(input, currencySelection, fees)
-  return api.callTxMethod(call)
+  return api.deserializeExtrinsics(call)
 }

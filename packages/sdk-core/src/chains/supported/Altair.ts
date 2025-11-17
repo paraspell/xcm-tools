@@ -14,17 +14,15 @@ class Altair<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
     super('Altair', 'altair', 'Kusama', Version.V4)
   }
 
-  private getCurrencySelection(asset: TAssetInfo): TForeignOrNativeAsset {
+  getCustomCurrencyId(asset: TAssetInfo): TForeignOrNativeAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
-
     assertHasId(asset)
-
     return { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -32,13 +30,13 @@ class Altair<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = { Id: address }
-    const currencyId = this.getCurrencySelection(asset)
+    const currencyId = this.getCustomCurrencyId(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest,
           currency_id: currencyId,
           keep_alive: false
@@ -46,10 +44,10 @@ class Altair<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest,
         currency_id: currencyId,
         amount: asset.amount

@@ -10,7 +10,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TScenario,
   TSendInternalOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
@@ -30,7 +30,7 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
     return transferPolkadotXcm(input, 'transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 
@@ -51,10 +51,10 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
     const dest = { Id: address }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest,
           keep_alive: false
@@ -62,10 +62,10 @@ class IntegriteePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IP
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount: asset.amount

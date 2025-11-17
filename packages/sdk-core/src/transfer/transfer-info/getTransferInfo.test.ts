@@ -10,8 +10,8 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type {
   TGetTransferInfoOptions,
   TTransferInfo,
@@ -41,6 +41,7 @@ vi.mock('@paraspell/assets', async importOriginal => {
 vi.mock('../../errors')
 vi.mock('../../utils')
 vi.mock('../../pallets/assets/balance')
+vi.mock('../../balance')
 vi.mock('../utils')
 vi.mock('../fees')
 vi.mock('./buildDestInfo')
@@ -52,6 +53,12 @@ describe('getTransferInfo', () => {
   let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown>, 'api' | 'tx'>
 
   const buildTx = vi.fn(async () => Promise.resolve(mockTx))
+
+  const asset = {
+    symbol: 'DOT',
+    assetId: '1',
+    decimals: 10
+  } as TAssetInfo
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -82,11 +89,11 @@ describe('getTransferInfo', () => {
     vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'DOT',
-      assetId: 'DOT',
+      assetId: '1',
       decimals: 10
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(200000000000n)
+    vi.mocked(getBalanceNative).mockResolvedValue(200000000000n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000000000n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
@@ -146,7 +153,7 @@ describe('getTransferInfo', () => {
       options.destination
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
-    expect(getBalanceNativeInternal).not.toHaveBeenCalled()
+    expect(getBalanceNative).not.toHaveBeenCalled()
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
@@ -296,10 +303,10 @@ describe('getTransferInfo', () => {
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin,
-      currency: options.currency
+      asset
     })
-    expect(getBalanceNativeInternal).toHaveBeenCalledTimes(1)
-    expect(getBalanceNativeInternal).toHaveBeenCalledWith({
+    expect(getBalanceNative).toHaveBeenCalledTimes(1)
+    expect(getBalanceNative).toHaveBeenCalledWith({
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin

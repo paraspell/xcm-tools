@@ -6,7 +6,7 @@ import type {
   TCurrencyInputWithAmount,
   WithAmount
 } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
+import type { TAssetsPallet, TPallet } from '@paraspell/pallets'
 import type {
   TChain,
   TLocation,
@@ -214,10 +214,22 @@ export type TRelayToParaOverrides = {
  */
 export type TRelayToParaOptions<TApi, TRes> = WithApi<TRelayToParaBaseOptions, TApi, TRes>
 
-export type TSerializedApiCall = {
+export type TSerializedExtrinsics = {
   module: TPallet
   method: string
-  parameters: Record<string, unknown>
+  params: Record<string, unknown>
+}
+
+export type TSerializedStateQuery = {
+  module: TAssetsPallet
+  method: string
+  params: unknown[]
+}
+
+export type TSerializedRuntimeApiQuery = {
+  module: string
+  method: string
+  params: unknown[]
 }
 
 export type TDestWeight = {

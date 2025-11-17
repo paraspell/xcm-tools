@@ -1,8 +1,8 @@
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
+import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TBuildDestInfoOptions } from '../../types'
 
 export const buildDestInfo = async <TApi, TRes>({
@@ -25,15 +25,11 @@ export const buildDestInfo = async <TApi, TRes>({
 
   const edDest = getEdFromAssetOrThrow(destAsset)
 
-  const destCurrency = destAsset.location
-    ? { location: destAsset.location }
-    : { symbol: destAsset.symbol }
-
   const destBalance = await getAssetBalanceInternal({
     api: destApi,
     address,
     chain: destination,
-    currency: destCurrency
+    asset: destAsset
   })
 
   const destAmount = isFeeAssetAh ? currency.amount - originFee : currency.amount
@@ -101,7 +97,7 @@ export const buildDestInfo = async <TApi, TRes>({
   const isDestFeeInNativeCurrency = destFeeDetail.asset.symbol === getNativeAssetSymbol(destination)
 
   if (isDestFeeInNativeCurrency) {
-    const destRecipientNativeBalance = await getBalanceNativeInternal({
+    const destRecipientNativeBalance = await getBalanceNative({
       address: address,
       chain: destination,
       api: destApi

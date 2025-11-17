@@ -8,8 +8,8 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals, getRelayChainOf } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
@@ -44,25 +44,24 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
-    const originBalanceFee =
-      feeAsset && resolvedFeeAsset
-        ? await getAssetBalanceInternal({
-            api,
-            address: senderAddress,
-            chain: origin,
-            currency: feeAsset
-          })
-        : await getBalanceNativeInternal({
-            api,
-            address: senderAddress,
-            chain: origin
-          })
+    const originBalanceFee = resolvedFeeAsset
+      ? await getAssetBalanceInternal({
+          api,
+          address: senderAddress,
+          chain: origin,
+          asset: resolvedFeeAsset
+        })
+      : await getBalanceNative({
+          api,
+          address: senderAddress,
+          chain: origin
+        })
 
     const originBalance = await getAssetBalanceInternal({
       api,
       address: senderAddress,
       chain: origin,
-      currency
+      asset: originAsset
     })
 
     const edOrigin = getExistentialDepositOrThrow(origin, currency)

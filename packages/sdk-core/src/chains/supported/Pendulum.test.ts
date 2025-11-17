@@ -1,6 +1,4 @@
-import { InvalidCurrencyError } from '@paraspell/assets'
-import { isForeignAsset } from '@paraspell/assets'
-import { replaceBigInt, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -8,16 +6,7 @@ import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Pendulum from './Pendulum'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
-vi.mock('@paraspell/assets', async () => {
-  const actual = await vi.importActual<typeof import('@paraspell/assets')>('@paraspell/assets')
-  return {
-    ...actual,
-    isForeignAsset: vi.fn()
-  }
-})
+vi.mock('../../pallets/xTokens')
 
 describe('Pendulum', () => {
   let pendulum: Pendulum<unknown, unknown>
@@ -56,8 +45,6 @@ describe('Pendulum', () => {
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
     pendulum.transferXTokens(foreignAssetInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(
@@ -71,21 +58,6 @@ describe('Pendulum', () => {
     expect(transferXTokens).toHaveBeenCalledWith(
       { ...mockDOTInput, useMultiAssetTransfer: true },
       { XCM: 123 }
-    )
-  })
-
-  it('should throw InvalidCurrencyError for asset without assetId and not foreign', () => {
-    const invalidAssetInput = {
-      asset: { symbol: 'FAKE', amount: 50n }, // missing assetId
-      scenario: 'ParaToPara'
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(false)
-
-    expect(() => pendulum.transferXTokens(invalidAssetInput)).toThrowError(
-      new InvalidCurrencyError(
-        `Asset ${JSON.stringify(invalidAssetInput.asset, replaceBigInt)} has no assetId`
-      )
     )
   })
 })

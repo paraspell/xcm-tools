@@ -5,9 +5,7 @@ import type { TXTokensTransferOptions } from '../../types'
 import { assertToIsString } from '../../utils'
 import { transferXTokens } from './transferXTokens'
 
-vi.mock('../../utils', () => ({
-  assertToIsString: vi.fn()
-}))
+vi.mock('../../utils')
 
 vi.mock('./utils/buildXTokensCall', () => ({
   buildXTokensCall: vi.fn(() => ({
@@ -23,7 +21,7 @@ vi.mock('./utils/buildXTokensCall', () => ({
 
 describe('transferXTokens', () => {
   const mockApi = {
-    callTxMethod: vi.fn()
+    deserializeExtrinsics: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const baseOptions = {
@@ -50,7 +48,7 @@ describe('transferXTokens', () => {
     }
 
     const currencySelection = '123'
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTokens(input, currencySelection)
 
@@ -79,7 +77,7 @@ describe('transferXTokens', () => {
     }
 
     const currencySelection = 'USD'
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTokens(input, currencySelection, 500)
 

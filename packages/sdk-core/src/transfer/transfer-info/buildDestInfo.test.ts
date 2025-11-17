@@ -1,29 +1,22 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal, getBalanceNativeInternal } from '../../pallets/assets/balance'
 import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
 import { buildDestInfo } from './buildDestInfo'
 
-vi.mock('@paraspell/assets', async () => {
-  const actual = await import('@paraspell/assets')
-  return {
-    ...actual,
-    getNativeAssetSymbol: vi.fn(),
-    findAssetOnDestOrThrow: vi.fn()
-  }
-})
-
-vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {},
-  UnableToComputeError: class extends Error {}
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  getNativeAssetSymbol: vi.fn(),
+  findAssetOnDestOrThrow: vi.fn()
 }))
 
-vi.mock('../balance')
+vi.mock('../../../errors')
+vi.mock('../../balance')
 vi.mock('../../pallets/assets/balance')
 
 describe('buildDestInfo', () => {
@@ -35,7 +28,15 @@ describe('buildDestInfo', () => {
   const DEFAULT_BALANCE = 50000000000n
   const DEFAULT_FEE = 100000000n
   const DEFAULT_AMOUNT = 20000000000n
-  const LOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+  const LOCATION: TLocation = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+
+  const asset = {
+    symbol: 'GLMR',
+    assetId: 'glmrid',
+    decimals: 18,
+    location: LOCATION,
+    existentialDeposit: DEFAULT_ED
+  } as TAssetInfo
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -49,20 +50,14 @@ describe('buildDestInfo', () => {
       clone: vi.fn().mockReturnValue(mockClonedApi)
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
-      symbol: 'GLMR',
-      assetId: 'glmrid',
-      decimals: 18,
-      location: LOCATION,
-      existentialDeposit: DEFAULT_ED
-    } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
 
     baseOptions = {
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TSubstrateChain,
-      destination: 'Moonbeam' as TChain,
+      origin: 'AssetHubPolkadot',
+      destination: 'Moonbeam',
       address: 'receiverAlice',
-      currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
+      currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT },
       originFee: 50000000n,
       isFeeAssetAh: false,
       destFeeDetail: {
@@ -70,7 +65,7 @@ describe('buildDestInfo', () => {
         currency: 'GLMR',
         asset: {
           symbol: 'GLMR'
-        } as TAssetInfo
+        }
       } as TXcmFeeDetail,
       totalHopFee: 0n,
       bridgeFee: undefined
@@ -84,7 +79,7 @@ describe('buildDestInfo', () => {
       return 'NATIVE'
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(DEFAULT_BALANCE)
+    vi.mocked(getBalanceNative).mockResolvedValue(DEFAULT_BALANCE)
   })
 
   it('should successfully build dest info', async () => {
@@ -107,7 +102,7 @@ describe('buildDestInfo', () => {
       api: mockClonedApi,
       address: options.address,
       chain: options.destination,
-      currency: { location: LOCATION }
+      asset
     })
 
     expect(result.receivedCurrency.currencySymbol).toBe('GLMR')
@@ -154,9 +149,9 @@ describe('buildDestInfo', () => {
     const ahToAhBase = {
       ...baseOptions,
       api: mockApi,
-      origin: 'AssetHubPolkadot' as TSubstrateChain,
-      destination: 'AssetHubKusama' as TChain
-    }
+      origin: 'AssetHubPolkadot',
+      destination: 'AssetHubKusama'
+    } as TBuildDestInfoOptions<unknown, unknown>
 
     it('calculates receivedAmount for native asset transfer with bridgeFee', async () => {
       vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
@@ -206,7 +201,7 @@ describe('buildDestInfo', () => {
         destFeeDetail: {
           fee: DEFAULT_FEE,
           currency: 'DOT',
-          asset: { symbol: 'DOT' } as TAssetInfo
+          asset: { symbol: 'DOT' }
         } as TXcmFeeDetail,
         totalHopFee: 0n,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
@@ -238,7 +233,7 @@ describe('buildDestInfo', () => {
         destFeeDetail: {
           fee: DEFAULT_FEE,
           currency: 'USDT',
-          asset: { symbol: 'USDT' } as TAssetInfo
+          asset: { symbol: 'USDT' }
         } as TXcmFeeDetail,
         totalHopFee: 0n,
         currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>
@@ -271,7 +266,7 @@ describe('buildDestInfo', () => {
       currency: {
         symbol: 'USDT',
         amount: DEFAULT_AMOUNT,
-        asset: { symbol: 'USDT' } as TAssetInfo
+        asset: { symbol: 'USDT' }
       } as WithAmount<TCurrencyCore>
     }
 
@@ -280,7 +275,7 @@ describe('buildDestInfo', () => {
     const result = await buildDestInfo(options)
 
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(options.destination)
-    expect(getBalanceNativeInternal).not.toHaveBeenCalled()
+    expect(getBalanceNative).not.toHaveBeenCalled()
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
@@ -297,20 +292,19 @@ describe('buildDestInfo', () => {
   })
 
   it('should use destAsset.symbol if location is not present for getExistentialDeposit call', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    const asset = {
       symbol: 'CFG',
       assetId: 'cfgId',
       decimals: 18,
       existentialDeposit: DEFAULT_ED
-    } as TAssetInfo)
+    } as TAssetInfo
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
     const options = {
       ...baseOptions,
       api: mockApi
     }
     await buildDestInfo(options)
-    expect(getAssetBalanceInternal).toHaveBeenCalledWith(
-      expect.objectContaining({ currency: { symbol: 'CFG' } })
-    )
+    expect(getAssetBalanceInternal).toHaveBeenCalledWith(expect.objectContaining({ asset }))
   })
 
   it('should correctly calculate destXcmFeeBalanceAfter when isFeeAssetAh is true', async () => {
@@ -343,14 +337,14 @@ describe('buildDestInfo', () => {
         currency: 'SOME_OTHER_FEE_TOKEN',
         asset: {
           symbol: 'SOME_OTHER_FEE_TOKEN'
-        } as TAssetInfo
+        }
       } as TXcmFeeDetail
     }
     const nativeBalanceForFee = 70000000000n
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>
       chain === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
     )
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(nativeBalanceForFee)
+    vi.mocked(getBalanceNative).mockResolvedValue(nativeBalanceForFee)
 
     const result = await buildDestInfo(options)
     const expectedFeeBalanceAfter = nativeBalanceForFee - (options.destFeeDetail.fee ?? 0n)

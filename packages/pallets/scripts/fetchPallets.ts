@@ -1,42 +1,53 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../src'
+import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails, TAssetsPallet } from '../src'
 import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
-import { getChainProviders, TAssetsPallet } from '../../sdk-core/src'
 import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
+import { getChainProviders } from '../../sdk-core/dist'
 
 const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTransfer', 'XTokens', 'PolkadotXcm']
 
-const nativeAssetPalletsByPriority = ['Balances', 'Currencies', 'Tokens'] as const
+const nativeAssetPalletsByPriority: TAssetsPallet[] = ['Balances', 'Currencies', 'Tokens']
 
-const otherAssetPalletsByPriority = [
+const otherAssetPalletsByPriority: TAssetsPallet[] = [
   'Currencies',
   'Tokens',
   'Assets',
   'ForeignAssets',
   'AssetManager',
-  'Fungibles'
-] as const
+  'Fungibles',
+  'OrmlTokens'
+]
 
-const fetchPallets = async (api: ApiPromise): Promise<TPalletDetails[]> => {
+const fetchPallets = async (api: ApiPromise) => {
   const res = await api.rpc.state.getMetadata()
-  return res.asLatest.pallets
-    .filter(val => {
-      const name = val.name.toHuman()
-      const methodName = name.charAt(0).toLowerCase() + name.slice(1)
-      const containsExtrinsics = api.tx[methodName]
-      return !!containsExtrinsics
-    })
-    .map(val => ({
-      name: val.name.toHuman() as TPallet,
+
+  const palletsWithExtrinsics: TPalletDetails[] = []
+  const palletsWithoutExtrinsics: TPalletDetails[] = []
+
+  res.asLatest.pallets.forEach(val => {
+    const name = val.name.toHuman()
+    const methodName = name.charAt(0).toLowerCase() + name.slice(1)
+    const hasExtrinsics = !!api.tx[methodName]
+    const pallet = {
+      name: name as TPallet,
       index: val.index.toNumber()
-    }))
+    }
+
+    if (hasExtrinsics) {
+      palletsWithExtrinsics.push(pallet)
+    } else {
+      palletsWithoutExtrinsics.push(pallet)
+    }
+  })
+
+  return [palletsWithExtrinsics, palletsWithoutExtrinsics]
 }
 
 const composePalletMapObject = async (
   api: ApiPromise,
   chain: TSubstrateChain
 ): Promise<TPalletMap> => {
-  const palletDetails = await fetchPallets(api)
+  const [palletDetails, palletDetailsWithoutExtrinsics] = await fetchPallets(api)
 
   const allPallets = [
     ...defaultPalletsByPriority,
@@ -60,11 +71,15 @@ const composePalletMapObject = async (
         palletDetails.map(item => item.name).includes(pallet)
       ) as TAssetsPallet[])
 
+  const additionalOtherPallets = otherAssetPalletsByPriority.filter(pallet =>
+    palletDetailsWithoutExtrinsics.map(item => item.name).includes(pallet)
+  ) as TAssetsPallet[]
+
   return {
     defaultPallet,
     supportedPallets,
     nativeAssets: nativeAssetsPallet,
-    otherAssets: otherAssetsPallets
+    otherAssets: [...otherAssetsPallets, ...additionalOtherPallets]
   }
 }
 

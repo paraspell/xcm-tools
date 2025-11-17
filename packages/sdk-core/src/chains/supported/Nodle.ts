@@ -7,7 +7,7 @@ import { Version } from '@paraspell/sdk-common'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { type TSerializedApiCall } from '../../types'
+import { type TSerializedExtrinsics } from '../../types'
 import Parachain from '../Parachain'
 
 class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -36,7 +36,7 @@ class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 }

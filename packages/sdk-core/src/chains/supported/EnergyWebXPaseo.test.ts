@@ -4,9 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getChain } from '../../utils/getChain'
 import type EnergyWebXPaseo from './EnergyWebXPaseo'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('EnergyWebXPaseo', () => {
   let chain: EnergyWebXPaseo<unknown, unknown>

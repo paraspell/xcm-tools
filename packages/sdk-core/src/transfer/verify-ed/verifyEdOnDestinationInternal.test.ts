@@ -1,24 +1,21 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  findAssetOnDestOrThrow,
-  getExistentialDepositOrThrow,
-  normalizeSymbol
-} from '@paraspell/assets'
+import { findAssetOnDestOrThrow, getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal } from '../../balance'
 import { DryRunFailedError, UnableToComputeError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 vi.mock('@paraspell/assets')
+
 vi.mock('../../utils')
-vi.mock('../../pallets/assets/balance')
+vi.mock('../../balance')
 vi.mock('../fees')
 
 describe('verifyEdOnDestinationInternal', () => {
@@ -49,12 +46,17 @@ describe('verifyEdOnDestinationInternal', () => {
     currency: mockCurrency
   } as TVerifyEdOnDestinationOptions<unknown, unknown>
 
+  const asset = {
+    symbol: 'DOT',
+    decimals: 10
+  } as TAssetInfo
+
   beforeEach(() => {
     vi.resetAllMocks()
     buildTx.mockClear()
     vi.mocked(validateAddress).mockImplementation(() => {})
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       origin: { dryRunError: undefined },
@@ -140,14 +142,12 @@ describe('verifyEdOnDestinationInternal', () => {
 
     expect(result).toBe(true)
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(mockOrigin, mockDestination, mockCurrency)
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(mockDestination, {
-      symbol: mockCurrency.symbol
-    })
+    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(asset)
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       address: mockAddress,
       chain: mockDestination,
       api: expect.any(Object),
-      currency: { symbol: mockCurrency.symbol }
+      asset
     })
     expect(getXcmFeeInternal).toHaveBeenCalledWith(
       expect.objectContaining({ buildTx, origin: mockOrigin, destination: mockDestination })
@@ -167,7 +167,7 @@ describe('verifyEdOnDestinationInternal', () => {
       currency: { ...defaultOptions.currency, amount: 10000000000n }
     }
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n)
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       origin: { dryRunError: undefined },
       destination: { fee: 95000000000n, currency: 'DOT', dryRunError: undefined }

@@ -5,7 +5,7 @@ import { isRelayChain } from '@paraspell/sdk-common'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { createDestination } from '../../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TTypeAndThenCallContext } from '../../types'
+import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
 import { addXcmVersionHeader, createAsset } from '../../utils'
 import { localizeLocation } from '../../utils/location'
 
@@ -20,7 +20,7 @@ export const buildTypeAndThenCall = <TApi, TRes>(
   isDotAsset: boolean,
   customXcm: unknown[],
   assets: TAsset[]
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
   const finalDest = origin.chain === reserve.chain ? dest.chain : reserve.chain
@@ -41,7 +41,7 @@ export const buildTypeAndThenCall = <TApi, TRes>(
   return {
     module,
     method: methodName,
-    parameters: {
+    params: {
       dest: addXcmVersionHeader(destLocation, version),
       assets: addXcmVersionHeader(assets, version),
       assets_transfer_type: reserveType,

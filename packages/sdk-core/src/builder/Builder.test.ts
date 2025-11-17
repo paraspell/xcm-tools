@@ -51,7 +51,7 @@ describe('Builder', () => {
   const mockApi = {
     init: vi.fn(),
     setApi: vi.fn(),
-    callTxMethod: vi.fn(),
+    deserializeExtrinsics: vi.fn(),
     callBatchMethod: vi.fn(),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn(),
