@@ -50,10 +50,10 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
 
     const amount = isAmountAll ? balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'AssetManager',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),
         amount

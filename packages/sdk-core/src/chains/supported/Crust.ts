@@ -45,10 +45,10 @@ class Crust<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     const dest = { Id: address }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest,
           keep_alive: false
@@ -56,10 +56,10 @@ class Crust<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount: asset.amount

@@ -5,25 +5,14 @@ import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { DOT_LOCATION } from '../../../constants'
 import { createChainClient } from '../../../utils'
 import { getAssetBalance } from './getAssetBalance'
-import { getBalanceForeignInternal } from './getBalanceForeign'
-import { getBalanceNativeInternal } from './getBalanceNative'
+import { getBalanceForeign } from './getBalanceForeign'
+import { getBalanceNative } from './getBalanceNative'
 
-vi.mock('../../../utils', () => ({
-  createChainClient: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
-
-vi.mock('./getBalanceNative', () => ({
-  getBalanceNativeInternal: vi.fn()
-}))
-
-vi.mock('./getBalanceForeign', () => ({
-  getBalanceForeignInternal: vi.fn()
-}))
+vi.mock('../../../utils')
+vi.mock('./getBalanceNative')
+vi.mock('./getBalanceForeign')
 
 describe('getAssetBalance', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
@@ -46,11 +35,11 @@ describe('getAssetBalance', () => {
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000n)
+    vi.mocked(getBalanceNative).mockResolvedValue(1000n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, chain, currency })
     expect(result).toEqual(1000n)
-    expect(getBalanceNativeInternal).toHaveBeenCalledWith({
+    expect(getBalanceNative).toHaveBeenCalledWith({
       address: account,
       chain,
       api: apiMock
@@ -67,11 +56,11 @@ describe('getAssetBalance', () => {
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(200n)
+    vi.mocked(getBalanceForeign).mockResolvedValue(200n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, chain, currency })
     expect(result).toEqual(200n)
-    expect(getBalanceForeignInternal).toHaveBeenCalledWith({
+    expect(getBalanceForeign).toHaveBeenCalledWith({
       address: account,
       chain,
       currency,
@@ -89,7 +78,7 @@ describe('getAssetBalance', () => {
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(0n)
+    vi.mocked(getBalanceForeign).mockResolvedValue(0n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, chain, currency })
     expect(result).toEqual(0n)
@@ -105,11 +94,11 @@ describe('getAssetBalance', () => {
       location: DOT_LOCATION
     })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
+    vi.mocked(getBalanceForeign).mockResolvedValue(1500n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, chain, currency })
     expect(result).toEqual(1500n)
-    expect(getBalanceForeignInternal).toHaveBeenCalledWith({
+    expect(getBalanceForeign).toHaveBeenCalledWith({
       address: account,
       chain,
       currency,

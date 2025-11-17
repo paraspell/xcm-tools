@@ -38,10 +38,10 @@ class Kintsugi<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
     const currencyId = this.getCurrencySelection(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: address,
           currency_id: currencyId,
           keep_alive: false
@@ -49,10 +49,10 @@ class Kintsugi<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: address,
         currency_id: currencyId,
         value: asset.amount

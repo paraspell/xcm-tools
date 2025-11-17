@@ -6,7 +6,7 @@ import { Version } from '@paraspell/sdk-common'
 import { ChainNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
+import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
@@ -43,7 +43,7 @@ class Astar<TApi, TRes>
     return assetInfo.symbol !== this.getNativeAssetSymbol()
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 
@@ -56,10 +56,10 @@ class Astar<TApi, TRes>
     const dest = { Id: address }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest,
           keep_alive: false
@@ -67,10 +67,10 @@ class Astar<TApi, TRes>
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount: asset.amount

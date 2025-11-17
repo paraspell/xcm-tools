@@ -67,7 +67,7 @@ describe('buildTypeAndThenCall', () => {
     expect(result).toEqual({
       module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: { [mockVersion]: mockDestination },
         assets: { [mockVersion]: mockAssets },
         assets_transfer_type: 'LocalReserve',
@@ -106,7 +106,7 @@ describe('buildTypeAndThenCall', () => {
     expect(result).toEqual({
       module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: { [mockVersion]: mockDestination },
         assets: { [mockVersion]: mockAssets },
         assets_transfer_type: 'DestinationReserve',
@@ -133,8 +133,8 @@ describe('buildTypeAndThenCall', () => {
       mockAssets
     )
 
-    expect(result.parameters.assets_transfer_type).toBe('LocalReserve')
-    expect(result.parameters.fees_transfer_type).toBe('LocalReserve')
+    expect(result.params.assets_transfer_type).toBe('LocalReserve')
+    expect(result.params.fees_transfer_type).toBe('LocalReserve')
   })
 
   it('should use DestinationReserve when origin chain does not equal reserveChain', () => {
@@ -152,25 +152,25 @@ describe('buildTypeAndThenCall', () => {
       mockAssets
     )
 
-    expect(result.parameters.assets_transfer_type).toBe('DestinationReserve')
-    expect(result.parameters.fees_transfer_type).toBe('DestinationReserve')
+    expect(result.params.assets_transfer_type).toBe('DestinationReserve')
+    expect(result.params.fees_transfer_type).toBe('DestinationReserve')
   })
 
   it('should use asset location as feeAssetLocation when asset location equals RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, true, mockCustomXcm, mockAssets)
 
-    expect(result.parameters.remote_fees_id).toEqual({
+    expect(result.params.remote_fees_id).toEqual({
       [mockVersion]: mockContext.assetInfo.location
     })
   })
 
   it('should use RELAY_LOCATION as feeAssetLocation when asset location does not equal RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
-    expect(result.parameters.remote_fees_id).toEqual({ [mockVersion]: RELAY_LOCATION })
+    expect(result.params.remote_fees_id).toEqual({ [mockVersion]: RELAY_LOCATION })
   })
 
   it('should always set weight_limit to Unlimited', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
-    expect(result.parameters.weight_limit).toBe('Unlimited')
+    expect(result.params.weight_limit).toBe('Unlimited')
   })
 })

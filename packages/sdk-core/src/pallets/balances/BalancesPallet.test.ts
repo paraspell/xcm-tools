@@ -23,8 +23,8 @@ describe('BalancesPallet.setBalance', () => {
 
     expect(res.balanceTx.module).toBe('Balances')
     expect(res.balanceTx.method).toBe('force_set_balance')
-    expect(res.balanceTx.parameters.who).toBe(address)
-    expect(res.balanceTx.parameters.new_free).toBe(111n)
+    expect(res.balanceTx.params.who).toBe(address)
+    expect(res.balanceTx.params.new_free).toBe(111n)
   })
 
   it('uses address string for Basilisk', async () => {
@@ -37,8 +37,8 @@ describe('BalancesPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(res.balanceTx.parameters.who).toBe(address)
-    expect(res.balanceTx.parameters.new_free).toBe(222n)
+    expect(res.balanceTx.params.who).toBe(address)
+    expect(res.balanceTx.params.new_free).toBe(222n)
   })
 
   it('uses address string when chain is EVM', async () => {
@@ -51,8 +51,8 @@ describe('BalancesPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(res.balanceTx.parameters.who).toBe(address)
-    expect(res.balanceTx.parameters.new_free).toBe(333n)
+    expect(res.balanceTx.params.who).toBe(address)
+    expect(res.balanceTx.params.new_free).toBe(333n)
   })
 
   it('uses { Id: address } for other non-EVM chains', async () => {
@@ -65,7 +65,7 @@ describe('BalancesPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, chain)
 
-    expect(res.balanceTx.parameters.who).toEqual({ Id: address })
-    expect(res.balanceTx.parameters.new_free).toBe(444n)
+    expect(res.balanceTx.params.who).toEqual({ Id: address })
+    expect(res.balanceTx.params.new_free).toBe(444n)
   })
 })

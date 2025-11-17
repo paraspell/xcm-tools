@@ -1,37 +1,40 @@
 import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
-import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
-import { getBalanceForeignInternal } from './getBalanceForeign'
-import { getBalanceNativeInternal } from './getBalanceNative'
+import { getEthErc20Balance } from '../../../balance'
+import type { TGetBalanceOptions } from '../../../types/TBalance'
+import { getBalanceForeign } from './getBalanceForeign'
+import { getBalanceNative } from './getBalanceNative'
 
 export const getAssetBalanceInternal = async <TApi, TRes>({
   address,
   chain,
   currency,
   api
-}: TGetAssetBalanceOptions<TApi, TRes>): Promise<bigint> => {
+}: TGetBalanceOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(chain)
 
   const asset = findAssetInfoOrThrow(chain, currency, null)
 
+  if (chain === 'Ethereum') return getEthErc20Balance(asset, address)
+
   const isNativeSymbol = asset.symbol === getNativeAssetSymbol(chain)
 
   return isNativeSymbol && chain !== 'Interlay' && chain !== 'Kintsugi'
-    ? await getBalanceNativeInternal({
-        address,
-        chain,
-        api
-      })
-    : ((await getBalanceForeignInternal({
-        address,
-        chain,
+    ? await getBalanceNative({
         api,
+        address,
+        chain
+      })
+    : await getBalanceForeign({
+        api,
+        address,
+        chain,
         currency
-      })) ?? 0n)
+      })
 }
 
 export const getAssetBalance = async <TApi, TRes>(
-  options: TGetAssetBalanceOptions<TApi, TRes>
+  options: TGetBalanceOptions<TApi, TRes>
 ): Promise<bigint> => {
   const { api } = options
   try {

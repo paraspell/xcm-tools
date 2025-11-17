@@ -2,6 +2,7 @@
 
 export * from './address'
 export * from './api'
+export * from './balance'
 export * from './builder'
 export * from './chains/config'
 export * from './chains/getTChain'
@@ -12,7 +13,6 @@ export {
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'
-export * from './pallets/assets'
 export * from './transfer'
 export * from './types'
 export * from './utils'

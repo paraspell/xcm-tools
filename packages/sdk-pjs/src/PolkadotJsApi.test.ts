@@ -1,4 +1,9 @@
-import type { TAssetInfo, TDryRunXcmBaseOptions, WithAmount } from '@paraspell/sdk-core'
+import type {
+  TAssetInfo,
+  TDryRunXcmBaseOptions,
+  TSerializedExtrinsics,
+  WithAmount
+} from '@paraspell/sdk-core'
 import {
   BatchMode,
   ChainNotSupportedError,
@@ -8,7 +13,6 @@ import {
   hasXcmPaymentApiSupport,
   MissingChainApiError,
   type TLocation,
-  type TSerializedApiCall,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { ApiPromise } from '@polkadot/api'
@@ -368,15 +372,15 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('callTxMethod', () => {
+  describe('deserializeExtrinsics', () => {
     it('should create an extrinsic with the provided module, method, and parameters', () => {
-      const serializedCall: TSerializedApiCall = {
+      const serializedCall: TSerializedExtrinsics = {
         module: 'XTokens',
         method: 'transfer',
-        parameters: { beneficiary: 'recipient_address', amount: 1000 }
+        params: { beneficiary: 'recipient_address', amount: 1000 }
       }
 
-      const result = polkadotApi.callTxMethod(serializedCall)
+      const result = polkadotApi.deserializeExtrinsics(serializedCall)
 
       expect(mockApiPromise.tx.xTokens.transfer).toHaveBeenCalledWith('recipient_address', 1000)
       expect(result).toBe('mocked_extrinsic')
@@ -2007,41 +2011,6 @@ describe('PolkadotJsApi', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()
       expect(status).toEqual('Normal')
-    })
-  })
-
-  describe('convertLocationToAccount', () => {
-    const location: TLocation = {
-      parents: 1,
-      interior: {
-        X1: { Parachain: 1000 }
-      }
-    }
-
-    it('returns account string when API responds with ok', async () => {
-      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
-        toJSON: vi.fn().mockReturnValue({ ok: '5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y' })
-      } as unknown as Codec)
-
-      const res = await polkadotApi.convertLocationToAccount(location)
-
-      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
-        location
-      )
-      expect(res).toBe('5DAAnrj7VHTznn4hS7fGZ2xEmZ3c7xj4dQGcn1uP9gP7nS1Y')
-    })
-
-    it('returns undefined when API responds without ok', async () => {
-      vi.mocked(mockApiPromise.call.locationToAccountApi.convertLocation).mockResolvedValue({
-        toJSON: vi.fn().mockReturnValue({ err: 'NotFound' })
-      } as unknown as Codec)
-
-      const res = await polkadotApi.convertLocationToAccount(location)
-
-      expect(mockApiPromise.call.locationToAccountApi.convertLocation).toHaveBeenCalledWith(
-        location
-      )
-      expect(res).toBeUndefined()
     })
   })
 })

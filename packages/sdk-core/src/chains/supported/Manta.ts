@@ -51,10 +51,10 @@ class Manta<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
 
     const amount = isAmountAll ? balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: { Id: address },
         amount

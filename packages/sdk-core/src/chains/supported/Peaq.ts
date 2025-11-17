@@ -7,7 +7,7 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
-  type TSerializedApiCall,
+  type TSerializedExtrinsics,
   type TXTokensTransferOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
@@ -29,7 +29,7 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
     return transferXTokens(input, BigInt(asset.assetId))
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 
@@ -50,10 +50,10 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
     const dest = { Id: address }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest,
           keep_alive: false
@@ -61,10 +61,10 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount: asset.amount

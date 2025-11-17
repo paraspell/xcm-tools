@@ -3,8 +3,8 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { hasJunction } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { getMoonbeamErc20Balance } from '../../../balance'
 import { assertHasId, assertIsForeign } from '../../../utils'
-import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

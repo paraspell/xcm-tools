@@ -4,7 +4,7 @@ import type { TPallet } from '@paraspell/pallets'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type { TPolkadotXcmMethod, TSerializedApiCall } from '../../types'
+import type { TPolkadotXcmMethod, TSerializedExtrinsics } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { maybeOverrideAssets } from '../../utils/asset'
@@ -36,10 +36,10 @@ export const transferPolkadotXcm = <TApi, TRes>(
       ? DEFAULT_FEE_ASSET
       : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 
-  const call: TSerializedApiCall = {
+  const call: TSerializedExtrinsics = {
     module: (pallet as TPallet) ?? 'PolkadotXcm',
     method: methodOverride ?? method,
-    parameters: {
+    params: {
       dest: addXcmVersionHeader(destLocation, version),
       beneficiary: addXcmVersionHeader(beneficiaryLocation, version),
       assets: addXcmVersionHeader(resolvedMultiAssets, version),
@@ -48,5 +48,5 @@ export const transferPolkadotXcm = <TApi, TRes>(
     }
   }
 
-  return Promise.resolve(api.callTxMethod(call))
+  return Promise.resolve(api.deserializeExtrinsics(call))
 }

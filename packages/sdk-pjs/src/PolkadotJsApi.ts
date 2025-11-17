@@ -16,7 +16,8 @@ import type {
   TLocation,
   TModuleError,
   TPallet,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedStateQuery,
   TSubstrateChain,
   TWeight
 } from '@paraspell/sdk-core'
@@ -136,12 +137,33 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return decodeAddress(address)
   }
 
-  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
-    const values = Object.values(parameters)
-    const moduleLowerCase = lowercaseFirstLetter(module)
-    const methodCamelCase = snakeToCamel(method)
+  private convertToPjsCall<T extends TSerializedExtrinsics | TSerializedStateQuery>({
+    module,
+    method
+  }: T) {
+    return {
+      module: lowercaseFirstLetter(module),
+      method: snakeToCamel(method)
+    }
+  }
 
-    return this.api.tx[moduleLowerCase][methodCamelCase](...values)
+  deserializeExtrinsics(serialized: TSerializedExtrinsics) {
+    const { params } = serialized
+    const values = Object.values(params)
+    const { module, method } = this.convertToPjsCall(serialized)
+    return this.api.tx[module][method](...values)
+  }
+
+  queryChainState<T>(serialized: TSerializedStateQuery): Promise<T> {
+    const { params } = serialized
+    const { module, method } = this.convertToPjsCall(serialized)
+    return this.api.query[module][method](...params) as Promise<T>
+  }
+
+  queryRuntimeApi<T>(serialized: TSerializedStateQuery): Promise<T> {
+    const { params } = serialized
+    const { module, method } = this.convertToPjsCall(serialized)
+    return this.api.call[module][method](...params)
   }
 
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
@@ -684,12 +706,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   getDisconnectAllowed() {
     return this.disconnectAllowed
-  }
-
-  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
-    const res = await this.api.call.locationToAccountApi.convertLocation(location)
-    const jsonRes = res.toJSON() as any
-    return jsonRes.ok ? jsonRes.ok.toString() : undefined
   }
 
   async disconnect(force = false) {

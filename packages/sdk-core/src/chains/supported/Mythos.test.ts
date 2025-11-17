@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { TForeignAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError } from '@paraspell/assets'
@@ -117,7 +115,7 @@ describe('Mythos', () => {
       clone: vi.fn(),
       init: vi.fn(),
       quoteAhPrice: vi.fn(),
-      callTxMethod: vi.fn()
+      deserializeExtrinsics: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const mockEthereumInput = {
@@ -140,7 +138,7 @@ describe('Mythos', () => {
       vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
       vi.spyOn(mockApi, 'init').mockResolvedValue(undefined)
       vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
-      vi.spyOn(mockApi, 'callTxMethod').mockResolvedValue('ethereum_tx_result')
+      vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue('ethereum_tx_result')
     })
 
     it('should handle Ethereum transfers with createTypeAndThenTransfer', async () => {
@@ -162,7 +160,7 @@ describe('Mythos', () => {
       )
       expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
       expect(mockApi.quoteAhPrice).toHaveBeenCalled()
-      expect(mockApi.callTxMethod).toHaveBeenCalled()
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalled()
       expect(result).toBe('ethereum_tx_result')
     })
 
@@ -175,11 +173,11 @@ describe('Mythos', () => {
 
       await mythos.transferPolkadotXCM(mockEthereumInput)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith(
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith(
         expect.objectContaining({
           module: 'PolkadotXcm',
           method: 'transfer_assets_using_type_and_then',
-          parameters: expect.objectContaining({
+          params: expect.objectContaining({
             dest: expect.any(Object),
             assets: expect.any(Object),
             assets_transfer_type: 'DestinationReserve',
@@ -254,7 +252,7 @@ describe('createTypeAndThenTransfer', () => {
     expect(result).toEqual({
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: expect.objectContaining({
+      params: expect.objectContaining({
         dest: expect.any(Object),
         assets: expect.any(Object),
         assets_transfer_type: 'DestinationReserve',
@@ -305,12 +303,25 @@ describe('createTypeAndThenTransfer', () => {
 
     const result = await createTypeAndThenTransfer(largeAmountOptions, 'Mythos', Version.V4)
 
-    expect((result as any).parameters.assets[Version.V4]).toHaveLength(2)
-    expect((result as any).parameters.assets[Version.V4][1]).toEqual(
-      expect.objectContaining({
-        id: mockOptions.assetInfo.location,
-        fun: { Fungible: 999999999999n }
+    expect(result).toEqual({
+      module: 'PolkadotXcm',
+      method: 'transfer_assets_using_type_and_then',
+      params: expect.objectContaining({
+        dest: expect.any(Object),
+        assets: {
+          [Version.V4]: expect.arrayContaining([
+            expect.objectContaining({
+              id: largeAmountOptions.assetInfo.location,
+              fun: { Fungible: 999999999999n }
+            })
+          ])
+        },
+        assets_transfer_type: 'DestinationReserve',
+        remote_fees_id: expect.any(Object),
+        fees_transfer_type: 'Teleport',
+        custom_xcm_on_dest: [{ instruction: 'test' }],
+        weight_limit: 'Unlimited'
       })
-    )
+    })
   })
 })

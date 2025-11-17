@@ -5,9 +5,8 @@ import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
-import { abstractDecimals } from '../../../utils'
+import { abstractDecimals, formatAssetIdToERC20 } from '../../../utils'
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
 import { transferMoonbeamEvm } from './transferMoonbeamEvm'
@@ -19,13 +18,13 @@ vi.mock('@paraspell/assets', () => ({
   isForeignAsset: vi.fn()
 }))
 vi.mock('viem')
-vi.mock('../../../pallets/assets/balance')
+
 vi.mock('./getDestinationLocation')
 vi.mock('../../../utils')
 
 const mockApi = {
   init: vi.fn(),
-  callTxMethod: vi.fn()
+  deserializeExtrinsics: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('transferMoonbeamEvm', () => {

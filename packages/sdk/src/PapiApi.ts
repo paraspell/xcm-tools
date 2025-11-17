@@ -19,7 +19,8 @@ import type {
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedStateQuery,
   TSubstrateChain,
   TWeight
 } from '@paraspell/sdk-core'
@@ -228,9 +229,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return result.isValid
   }
 
-  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
-    const transformedParameters = transform(parameters)
-    return this.api.getUnsafeApi().tx[module][method](transformedParameters)
+  deserializeExtrinsics({ module, method, params }: TSerializedExtrinsics) {
+    const transformedParams = transform(params)
+    return this.api.getUnsafeApi().tx[module][method](transformedParams)
+  }
+
+  queryChainState<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
+    return this.api.getUnsafeApi().query[module][method].getValue(...params.map(transform))
+  }
+
+  queryRuntimeApi<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
+    return this.api.getUnsafeApi().apis[module][method](...params.map(transform))
   }
 
   callBatchMethod(calls: TPapiTransaction[], mode: BatchMode) {
@@ -342,7 +351,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   async getBalanceNative(address: string) {
     const res = await this.api.getUnsafeApi().query.System.Account.getValue(address)
-
     return res.data.free as bigint
   }
 
@@ -486,7 +494,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   async getBalanceAssetsPallet(address: string, assetId: bigint | number) {
     const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
-
     return BigInt(response === undefined ? 0 : response.balance)
   }
 
@@ -978,14 +985,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     return Promise.resolve()
-  }
-
-  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
-    const res = await this.api
-      .getUnsafeApi()
-      .apis.LocationToAccountApi.convert_location({ type: Version.V4, value: transform(location) })
-
-    return res.success ? res.value : undefined
   }
 }
 

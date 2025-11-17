@@ -4,7 +4,7 @@ import type { TParachain } from '@paraspell/sdk-common'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
-import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
+import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
 import { assertAddressIsString, assertSenderAddress } from '../..'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
@@ -24,7 +24,7 @@ const FEE_PADDING_PERCENTAGE = 40
 export const handleExecuteTransfer = async <TApi, TRes>(
   chain: TParachain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
-): Promise<TSerializedApiCall> => {
+): Promise<TSerializedExtrinsics> => {
   const {
     api,
     senderAddress,
@@ -87,7 +87,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   const dryRunResult = await dryRunInternal({
     api,
-    tx: api.callTxMethod(call),
+    tx: api.deserializeExtrinsics(call),
     origin: chain,
     destination: destChain,
     senderAddress,

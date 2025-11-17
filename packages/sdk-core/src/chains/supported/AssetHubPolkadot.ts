@@ -25,7 +25,7 @@ import type {
   TDestination,
   TPolkadotXcmMethod,
   TRelayToParaOverrides,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
 import {
@@ -88,10 +88,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
     const location = asset.symbol === this.getNativeAssetSymbol() ? DOT_LOCATION : asset.location
 
-    const call: TSerializedApiCall = {
+    const call: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: createVersionedDestination(
           this.version,
           this.chain,
@@ -126,7 +126,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       }
     }
 
-    return api.callTxMethod(call)
+    return api.deserializeExtrinsics(call)
   }
 
   public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
@@ -237,14 +237,14 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
       if (isSymbolMatch(assetInfo.symbol, 'KSM')) {
         const call = await createTypeAndThenCall(this.chain, options)
-        return api.callTxMethod(call)
+        return api.deserializeExtrinsics(call)
       }
 
       const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol())
       const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.callTxMethod(await handleExecuteTransfer(this.chain, options))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, options))
       }
     }
 
@@ -260,7 +260,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
     if (isExternalAsset) {
       const call = await createTypeAndThenCall(this.chain, options)
-      return api.callTxMethod(call)
+      return api.deserializeExtrinsics(call)
     }
 
     const method = this.getMethod(scenario, destination)
@@ -270,7 +270,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       method === 'transfer_assets' &&
       isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.chain))
     ) {
-      return api.callTxMethod(await createTypeAndThenCall(this.chain, options))
+      return api.deserializeExtrinsics(await createTypeAndThenCall(this.chain, options))
     }
 
     const modifiedInput = this.patchInput(options)
@@ -291,10 +291,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       const assetId = Number(asset.assetId)
       const dest = { Id: address }
       if (isAmountAll) {
-        return api.callTxMethod({
+        return api.deserializeExtrinsics({
           module: 'Assets',
           method: 'transfer_all',
-          parameters: {
+          params: {
             id: assetId,
             dest,
             keep_alive: false
@@ -302,10 +302,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
         })
       }
 
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: assetId,
           target: dest,
           amount: asset.amount
@@ -314,10 +314,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'ForeignAssets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: asset.location,
           dest: { Id: address },
           keep_alive: false
@@ -325,10 +325,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'ForeignAssets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: asset.location,
         target: { Id: address },
         amount: asset.amount

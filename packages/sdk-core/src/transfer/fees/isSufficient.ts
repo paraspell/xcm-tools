@@ -1,5 +1,6 @@
 import type { TAssetInfo, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import {
+  getEdFromAssetOrThrow,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
   isSymbolMatch
@@ -7,7 +8,8 @@ import {
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets/balance'
+import { getAssetBalanceInternal } from '../../balance'
+import { getBalanceNative } from '../../pallets/assets/balance'
 
 export const isSufficientOrigin = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -25,7 +27,7 @@ export const isSufficientOrigin = async <TApi, TRes>(
 
   const edNative = getExistentialDepositOrThrow(origin)
 
-  const balanceNative = await getBalanceNativeInternal({
+  const balanceNative = await getBalanceNative({
     api,
     chain: origin,
     address: senderAddress
@@ -41,14 +43,14 @@ export const isSufficientOrigin = async <TApi, TRes>(
   if (!isNativeAssetToOrigin) {
     const isSufficientNative = balanceNative - edNative - feeNative > 0n
 
-    const balanceAsset = await getAssetBalance({
+    const balanceAsset = await getAssetBalanceInternal({
       api,
       chain: origin,
       address: senderAddress,
-      currency
+      asset
     })
 
-    const edAsset = getExistentialDepositOrThrow(origin, currency)
+    const edAsset = getEdFromAssetOrThrow(asset)
 
     const isSufficientAsset = balanceAsset - edAsset > 0n
 
@@ -74,7 +76,7 @@ export const isSufficientDestination = async <TApi, TRes>(
 
   const existentialDeposit = getExistentialDepositOrThrow(destination)
 
-  const nativeBalance = await getBalanceNativeInternal({
+  const nativeBalance = await getBalanceNative({
     api,
     chain: destination,
     address: address

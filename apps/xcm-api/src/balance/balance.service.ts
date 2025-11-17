@@ -6,6 +6,7 @@ import {
   getBalanceNative,
   getExistentialDeposit,
   TChain,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { validateChain } from '../utils.js';
@@ -36,7 +37,7 @@ export class BalanceService {
       const balance = await getBalanceForeign({
         address,
         currency,
-        chain: chain as TChain,
+        chain: chain as TSubstrateChain,
       });
       return balance === null ? 'null' : balance.toString();
     } catch (e) {

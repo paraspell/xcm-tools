@@ -9,7 +9,9 @@ import type {
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedRuntimeApiQuery,
+  TSerializedStateQuery,
   TWeight
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
@@ -21,7 +23,9 @@ export interface IPolkadotApi<TApi, TRes> {
   createApiInstance: (wsUrl: string | string[], chain: TSubstrateChain) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   accountToUint8a(address: string): Uint8Array
-  callTxMethod(serializedCall: TSerializedApiCall): TRes
+  deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes
+  queryChainState<T>(serialized: TSerializedStateQuery): Promise<T>
+  queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes
   callDispatchAsMethod(call: TRes, address: string): TRes
   objectToHex(obj: unknown, typeName: string): Promise<string>
@@ -76,10 +80,6 @@ export interface IPolkadotApi<TApi, TRes> {
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
   disconnect(force?: boolean): Promise<void>
-  /**
-   * Convert a location to a chain account address using the runtime LocationToAccount API, if available.
-   */
-  convertLocationToAccount(location: TLocation): Promise<string | undefined>
   /**
    * Validate if a Substrate address is valid.
    * @param address - The address to validate

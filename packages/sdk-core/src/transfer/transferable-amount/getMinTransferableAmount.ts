@@ -6,8 +6,8 @@ import {
 } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
+import { getAssetBalanceInternal } from '../../balance'
 import { AmountTooLowError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetMinTransferableAmountOptions } from '../../types'
 import { abstractDecimals, padValueBy, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
@@ -37,10 +37,6 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
 
   const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const destCurrency = destAsset.location
-    ? { location: destAsset.location }
-    : { symbol: destAsset.symbol }
-
   const destApi = api.clone()
   await destApi.init(destination)
 
@@ -48,7 +44,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
     api: destApi,
     address,
     chain: destination,
-    currency: destCurrency
+    asset: destAsset
   })
 
   const destEd = getEdFromAssetOrThrow(destAsset)

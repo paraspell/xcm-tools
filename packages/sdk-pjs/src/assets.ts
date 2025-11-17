@@ -1,7 +1,7 @@
 import {
   claimAssets as claimAssetsImpl,
-  getAssetBalance as getAssetBalanceImpl,
-  getBalanceForeign as getBalanceForeignImpl,
+  getBalance as getAssetBalanceImpl,
+  getBalance as getBalanceForeignImpl,
   getBalanceNative as getBalanceNativeImpl,
   getOriginFeeDetails as getOriginFeeDetailsImpl
 } from '@paraspell/sdk-core'

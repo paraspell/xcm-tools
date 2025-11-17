@@ -10,7 +10,7 @@ import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TSerializedApiCall
+  type TSerializedExtrinsics
 } from '../../types'
 import { assertAddressIsString, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
@@ -25,7 +25,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
   chain: TSubstrateChain,
   version: Version
-): Promise<TSerializedApiCall> => {
+): Promise<TSerializedExtrinsics> => {
   const { api, assetInfo: asset, senderAddress, address, destination } = options
 
   assertHasLocation(asset)
@@ -52,7 +52,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   return {
     module: 'PolkadotXcm',
     method: 'transfer_assets_using_type_and_then',
-    parameters: {
+    params: {
       dest: createVersionedDestination(version, chain, destination, getParaId('AssetHubPolkadot')),
       assets: {
         [version]: [
@@ -116,13 +116,15 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
     }
 
     if (destination == 'Ethereum') {
-      return api.callTxMethod(await createTypeAndThenTransfer(input, this.chain, this.version))
+      return api.deserializeExtrinsics(
+        await createTypeAndThenTransfer(input, this.chain, this.version)
+      )
     }
 
     return defaultTx
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 }

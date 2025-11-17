@@ -6,7 +6,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
+import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
@@ -37,7 +37,7 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     return transferXTokens(input, this.getNativeAssetSymbol())
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 
@@ -50,10 +50,10 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     const dest = { Id: address }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest,
           keep_alive: false
@@ -61,10 +61,10 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount: asset.amount

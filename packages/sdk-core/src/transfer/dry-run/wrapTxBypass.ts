@@ -14,13 +14,12 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal } from '../../balance'
 import { BYPASS_MINT_AMOUNT } from '../../constants'
 import { getPalletInstance } from '../../pallets'
-import { getAssetBalanceInternal } from '../../pallets/assets'
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
-import { getCurrencySelection } from '../../utils/asset'
 import { parseUnits } from '../../utils/unit'
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
@@ -82,10 +81,10 @@ const resultToExtrinsics = <TApi, TRes>(
   { assetStatusTx, balanceTx }: TSetBalanceRes
 ): TRes[] => {
   return [
-    ...(assetStatusTx ? [api.callTxMethod(assetStatusTx)] : []),
+    ...(assetStatusTx ? [api.deserializeExtrinsics(assetStatusTx)] : []),
     ...(assetStatusTx
-      ? [api.callDispatchAsMethod(api.callTxMethod(balanceTx), address)]
-      : [api.callTxMethod(balanceTx)])
+      ? [api.callDispatchAsMethod(api.deserializeExtrinsics(balanceTx), address)]
+      : [api.deserializeExtrinsics(balanceTx)])
   ]
 }
 
@@ -178,7 +177,7 @@ export const wrapTxBypass = async <TApi, TRes>(
     api,
     chain,
     address,
-    currency: getCurrencySelection(chain, asset)
+    asset
   })
 
   const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets)

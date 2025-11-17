@@ -32,10 +32,10 @@ class Phala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTransferTrans
 
     const amount = isAmountAll ? options.balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: dest,
         amount

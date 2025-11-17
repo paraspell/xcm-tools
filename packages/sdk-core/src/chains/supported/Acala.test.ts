@@ -53,7 +53,7 @@ describe('Acala', () => {
 
   it('should call transferLocalNativeAsset', async () => {
     const mockApi = {
-      callTxMethod: vi.fn(),
+      deserializeExtrinsics: vi.fn(),
       calculateTransactionFee: vi.fn()
     }
 
@@ -66,10 +66,10 @@ describe('Acala', () => {
 
     await acala.transferLocalNativeAsset(mockOptions)
 
-    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+    expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
       module: 'Currencies',
       method: 'transfer_native_currency',
-      parameters: {
+      params: {
         dest: { Id: 'address' },
         amount: 100n
       }
@@ -78,7 +78,7 @@ describe('Acala', () => {
 
   it('should transfer balance minus fee when amount is ALL', async () => {
     const mockApi = {
-      callTxMethod: vi.fn(),
+      deserializeExtrinsics: vi.fn(),
       calculateTransactionFee: vi.fn().mockResolvedValue(10n)
     }
 
@@ -93,10 +93,10 @@ describe('Acala', () => {
 
     await acala.transferLocalNativeAsset(mockOptions)
 
-    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+    expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
       module: 'Currencies',
       method: 'transfer_native_currency',
-      parameters: {
+      params: {
         dest: { Id: 'address' },
         amount: 990n
       }
@@ -105,7 +105,7 @@ describe('Acala', () => {
 
   it('should call transferLocalNonNativeAsset', () => {
     const mockApi = {
-      callTxMethod: vi.fn()
+      deserializeExtrinsics: vi.fn()
     }
 
     const mockOptions = {
@@ -117,10 +117,10 @@ describe('Acala', () => {
 
     acala.transferLocalNonNativeAsset(mockOptions)
 
-    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+    expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
       module: 'Currencies',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: { Id: 'address' },
         currency_id: { ForeignAsset: 1 },
         amount: 100n
@@ -130,7 +130,7 @@ describe('Acala', () => {
 
   it('should call transfer with balance when amount is ALL', () => {
     const mockApi = {
-      callTxMethod: vi.fn()
+      deserializeExtrinsics: vi.fn()
     }
 
     const mockOptions = {
@@ -143,10 +143,10 @@ describe('Acala', () => {
 
     acala.transferLocalNonNativeAsset(mockOptions)
 
-    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+    expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
       module: 'Currencies',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: { Id: 'address' },
         currency_id: { ForeignAsset: 1 },
         amount: 500n

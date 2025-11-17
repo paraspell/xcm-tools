@@ -1,17 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { getBalanceForeignInternal } from './getBalanceForeign'
 import { getBalanceNative } from './getBalanceNative'
-import { getEthErc20Balance } from './getEthErc20Balance'
-
-vi.mock('./getBalanceForeign', () => ({
-  getBalanceForeignInternal: vi.fn()
-}))
-
-vi.mock('./getEthErc20Balance', () => ({
-  getEthErc20Balance: vi.fn()
-}))
 
 describe('getBalanceNative', () => {
   const apiMock = {
@@ -36,33 +26,6 @@ describe('getBalanceNative', () => {
 
     expect(balance).toEqual(1000n)
     expect(spy).toHaveBeenCalled()
-  })
-
-  it('returns the correct balance when chain is Interlay', async () => {
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
-
-    const balance = await getBalanceNative({
-      address: '0x234',
-      chain: 'Interlay',
-      api: apiMock
-    })
-
-    expect(balance).toEqual(1500n)
-    expect(getBalanceForeignInternal).toHaveBeenCalled()
-  })
-
-  it('returns the correct balance for Ethereum chain', async () => {
-    vi.mocked(getEthErc20Balance).mockResolvedValue(888n)
-
-    const balance = await getBalanceNative({
-      address: '0xETH',
-      chain: 'Ethereum',
-      api: apiMock,
-      currency: { symbol: 'ETH' }
-    })
-
-    expect(balance).toEqual(888n)
-    expect(getEthErc20Balance).toHaveBeenCalledWith({ symbol: 'ETH' }, '0xETH')
   })
 
   it('throws when balance API call fails', async () => {

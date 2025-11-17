@@ -3,9 +3,9 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { concat, getAddress, keccak256, pad, toHex } from 'viem'
 
 import type { IPolkadotApi } from '../../api'
+import { InvalidParameterError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId } from '../../utils'
-import { formatAssetIdToERC20 } from '../assets/balance'
+import { assertHasId, formatAssetIdToERC20 } from '../../utils'
 
 const SIZE = 32
 const BALANCE_SLOT = 0
@@ -37,10 +37,14 @@ export class SystemPallet extends BaseAssetsPallet {
       balanceTx: {
         module: this.palletName,
         method: 'set_storage',
-        parameters: {
+        params: {
           items: [[storageKey, amountEncoded]]
         }
       }
     }
+  }
+
+  getBalance(): Promise<bigint> {
+    throw new InvalidParameterError('Method not implemented.')
   }
 }

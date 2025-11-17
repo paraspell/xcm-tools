@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
+import type { TSerializedExtrinsics, TWeight, TXcmVersioned } from '../../../types'
 import { createExecuteCall } from './createExecuteCall'
 
 describe('createExecuteCall', () => {
@@ -16,10 +16,10 @@ describe('createExecuteCall', () => {
       proofSize: 456n
     }
 
-    const expected: TSerializedApiCall = {
+    const expected: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'execute',
-      parameters: {
+      params: {
         message: fakeXcm,
         max_weight: {
           ref_time: 123n,

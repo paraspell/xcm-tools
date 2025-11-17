@@ -2,7 +2,7 @@ import type { TPallet } from '@paraspell/pallets'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import type {
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TXTokensCurrencySelection,
   TXTokensMethod,
   TXTokensTransferOptions
@@ -47,7 +47,7 @@ export const buildXTokensCall = <TApi, TRes>(
   input: TXTokensTransferOptions<TApi, TRes>,
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   const {
     api,
     origin,
@@ -91,6 +91,6 @@ export const buildXTokensCall = <TApi, TRes>(
   return {
     module: (pallet as TPallet) ?? 'XTokens',
     method: methodOverride ?? method,
-    parameters
+    params: parameters
   }
 }

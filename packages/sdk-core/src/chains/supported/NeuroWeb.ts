@@ -28,10 +28,10 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
 
     if (isAmountAll) {
       return Promise.resolve(
-        api.callTxMethod({
+        api.deserializeExtrinsics({
           module: 'Balances',
           method: 'transfer_all',
-          parameters: {
+          params: {
             dest: address,
             keep_alive: false
           }
@@ -40,10 +40,10 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     }
 
     return Promise.resolve(
-      api.callTxMethod({
+      api.deserializeExtrinsics({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: address,
           value: asset.amount
         }
@@ -60,10 +60,10 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
 
     const amount = isAmountAll ? balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: address,
         amount

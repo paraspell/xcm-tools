@@ -3,9 +3,9 @@ import { hasJunction, type TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { getMoonbeamErc20Balance } from '../../../balance'
 import { DOT_LOCATION } from '../../../constants'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
-import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 vi.mock('@paraspell/sdk-common', async importActual => {
   const actual = await importActual<typeof import('@paraspell/sdk-common')>()
@@ -15,9 +15,7 @@ vi.mock('@paraspell/sdk-common', async importActual => {
   }
 })
 
-vi.mock('./getMoonbeamErc20Balance', () => ({
-  getMoonbeamErc20Balance: vi.fn()
-}))
+vi.mock('../../../balance')
 
 describe('getBalanceForeignPolkadotXcm', () => {
   beforeEach(() => {
@@ -46,7 +44,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getBalanceAssetsPallet: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    const multiloc = {} as TLocation
+    const location = {} as TLocation
 
     const spy = vi.spyOn(api, 'getBalanceAssetsPallet')
 
@@ -54,7 +52,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
       symbol: 'DOT',
       decimals: 10,
       assetId: '1234',
-      location: multiloc
+      location
     })
 
     expect(res).toBe(MOONBEAM_BAL)

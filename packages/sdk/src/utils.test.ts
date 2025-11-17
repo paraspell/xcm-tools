@@ -6,8 +6,9 @@ import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
 import { createChainClient, createPapiApiCall, findFailingEvent } from './utils'
 
-vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')
+
+vi.mock('./PapiApi')
 
 describe('API Instance and Call Utility Functions with PapiApi', () => {
   const mockChain = {} as TSubstrateChain

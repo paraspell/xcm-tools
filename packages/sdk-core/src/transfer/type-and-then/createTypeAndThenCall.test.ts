@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
-import type { TSerializedApiCall, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
+import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
@@ -29,10 +29,10 @@ describe('createTypeAndThenCall', () => {
   const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = Version.V5
   const mockSenderAddress = '0x123'
-  const mockSerializedCall: TSerializedApiCall = {
+  const mockSerializedCall: TSerializedExtrinsics = {
     module: 'PolkadotXcm',
     method: 'mockMethod',
-    parameters: {}
+    params: {}
   }
   const mockCustomXcm: ReturnType<typeof createCustomXcm> = []
   const mockRefundInstruction: ReturnType<typeof createRefundInstruction> = { SetAppendix: [] }
@@ -71,7 +71,7 @@ describe('createTypeAndThenCall', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockApi.callTxMethod = vi.fn()
+    mockApi.deserializeExtrinsics = vi.fn()
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
     vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
@@ -249,7 +249,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
 
-    const spy = vi.spyOn(mockApi, 'callTxMethod')
+    const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await createTypeAndThenCall(mockChain, mockContext.options)
 

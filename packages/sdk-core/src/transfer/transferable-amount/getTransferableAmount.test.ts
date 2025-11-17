@@ -9,7 +9,7 @@ import {
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
+import { getAssetBalanceInternal } from '../../balance'
 import type { TGetTransferableAmountOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getOriginXcmFee } from '../fees'
@@ -17,7 +17,7 @@ import { getTransferableAmount } from './getTransferableAmount'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../utils')
-vi.mock('../../pallets/assets/balance')
+vi.mock('../../balance')
 vi.mock('../fees')
 
 describe('getTransferableAmount', () => {

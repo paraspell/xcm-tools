@@ -3,6 +3,7 @@ import type {
   TChainAssetsInfo,
   TDryRunXcmBaseOptions,
   TPallet,
+  TSerializedExtrinsics,
   WithAmount
 } from '@paraspell/sdk-core'
 import {
@@ -20,9 +21,7 @@ import {
   isSystemChain,
   localizeLocation,
   MissingChainApiError,
-  Parents,
   type TLocation,
-  type TSerializedApiCall,
   type TSubstrateChain,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -334,36 +333,12 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('convertLocationToAccount', () => {
-    it('returns the address when runtime conversion succeeds', async () => {
-      const convertLocationMock = vi
-        .fn()
-        .mockResolvedValue({ success: true, value: '5FConvertedAddress' })
-
-      const unsafe = papiApi.getApi().getUnsafeApi()
-
-      unsafe.apis.LocationToAccountApi.convert_location = convertLocationMock
-
-      const location = {
-        parents: Parents.ZERO,
-        interior: {
-          Here: null
-        }
-      }
-
-      const res = await papiApi.convertLocationToAccount(location)
-
-      expect(res).toBe('5FConvertedAddress')
-      expect(convertLocationMock).toHaveBeenCalledTimes(1)
-    })
-  })
-
-  describe('callTxMethod', () => {
+  describe('deserializeExtrinsics', () => {
     it('should create a transaction with the provided module, method, and parameters', () => {
-      const serializedCall: TSerializedApiCall = {
+      const serializedCall: TSerializedExtrinsics = {
         module: 'XcmPallet',
         method: 'methodName',
-        parameters: { param1: 'value1', param2: 'value2' }
+        params: { param1: 'value1', param2: 'value2' }
       }
 
       const mockTxMethod = vi.fn().mockReturnValue(mockTransaction)
@@ -375,7 +350,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const result = papiApi.callTxMethod(serializedCall)
+      const result = papiApi.deserializeExtrinsics(serializedCall)
 
       expect(result).toBe(mockTransaction)
       expect(mockTxMethod).toHaveBeenCalledOnce()

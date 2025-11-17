@@ -2,10 +2,10 @@ import { createPublicClient } from 'viem'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
+import { formatAssetIdToERC20 } from '../utils/asset'
 import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
-vi.mock('./formatAssetIdToERC20', () => ({
+vi.mock('../utils/asset', () => ({
   formatAssetIdToERC20: vi.fn((id: string) => (id.startsWith('0x') ? id : `0xmocked${id}`))
 }))
 

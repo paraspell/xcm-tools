@@ -23,7 +23,7 @@ vi.mock('./utils/buildXTokensCall', () => ({
 
 describe('transferXTokens', () => {
   const mockApi = {
-    callTxMethod: vi.fn()
+    deserializeExtrinsics: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const baseOptions = {
@@ -50,7 +50,7 @@ describe('transferXTokens', () => {
     }
 
     const currencySelection = '123'
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTokens(input, currencySelection)
 
@@ -79,7 +79,7 @@ describe('transferXTokens', () => {
     }
 
     const currencySelection = 'USD'
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     transferXTokens(input, currencySelection, 500)
 

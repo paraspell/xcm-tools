@@ -9,7 +9,7 @@ import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 import { RELAY_LOCATION } from '../../constants'
 import type {
   TPolkadotXCMTransferOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTypeAndThenCallContext,
   TTypeAndThenFees
 } from '../../types'
@@ -61,7 +61,7 @@ const resolveSystemAssetAmount = <TApi, TRes>(
 export const constructTypeAndThenCall = <TApi, TRes>(
   context: TTypeAndThenCallContext<TApi, TRes>,
   fees: TTypeAndThenFees | null = null
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   const {
     origin,
     assetInfo,
@@ -105,7 +105,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
   chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
   overrideReserve?: TSubstrateChain
-): Promise<TSerializedApiCall> => {
+): Promise<TSerializedExtrinsics> => {
   const context = await createTypeAndThenCallContext(chain, options, overrideReserve)
 
   const { origin, assetInfo } = context
@@ -118,7 +118,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
       : assetInfo.amount
 
     return Promise.resolve(
-      origin.api.callTxMethod(
+      origin.api.deserializeExtrinsics(
         constructTypeAndThenCall({
           ...context,
           assetInfo: {

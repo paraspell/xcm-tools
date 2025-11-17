@@ -25,10 +25,10 @@ describe('CurrenciesPallet.setBalance', () => {
     expect(assertHasId).toHaveBeenCalledWith(asset)
     expect(res.balanceTx.module).toBe('Currencies')
     expect(res.balanceTx.method).toBe('update_balance')
-    expect(res.balanceTx.parameters.who).toBe(address)
-    expect(typeof res.balanceTx.parameters.currency_id).toBe('number')
-    expect(res.balanceTx.parameters.currency_id).toBe(45)
-    expect(res.balanceTx.parameters.amount).toBe(999n)
+    expect(res.balanceTx.params.who).toBe(address)
+    expect(typeof res.balanceTx.params.currency_id).toBe('number')
+    expect(res.balanceTx.params.currency_id).toBe(45)
+    expect(res.balanceTx.params.amount).toBe(999n)
   })
 
   it('builds update_balance with numeric currency_id from numeric assetId', async () => {
@@ -40,9 +40,9 @@ describe('CurrenciesPallet.setBalance', () => {
 
     const res = await pallet.mint(address, asset, 0n, 'Hydration')
 
-    expect(res.balanceTx.parameters.who).toBe(address)
-    expect(res.balanceTx.parameters.currency_id).toBe(7)
-    expect(res.balanceTx.parameters.amount).toBe(1n)
+    expect(res.balanceTx.params.who).toBe(address)
+    expect(res.balanceTx.params.currency_id).toBe(7)
+    expect(res.balanceTx.params.amount).toBe(1n)
   })
 
   it('throws when assertHasId fails', () => {
@@ -71,9 +71,9 @@ describe('CurrenciesPallet.setBalance', () => {
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Karura')
     expect(mockGetCurrencySelection).toHaveBeenCalledWith(asset)
-    expect(res.balanceTx.parameters.who).toEqual({ Id: address })
-    expect(res.balanceTx.parameters.currency_id).toBe('KAR_ID')
-    expect(res.balanceTx.parameters.amount).toBe(15n)
+    expect(res.balanceTx.params.who).toEqual({ Id: address })
+    expect(res.balanceTx.params.currency_id).toBe('KAR_ID')
+    expect(res.balanceTx.params.amount).toBe(15n)
   })
 
   it('uses getCurrencySelection and Acala-like who on Acala', async () => {
@@ -90,8 +90,8 @@ describe('CurrenciesPallet.setBalance', () => {
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Acala')
     expect(mockGetCurrencySelection).toHaveBeenCalledWith(asset)
-    expect(res.balanceTx.parameters.who).toEqual({ Id: address })
-    expect(res.balanceTx.parameters.currency_id).toBe('ACA_ID')
-    expect(res.balanceTx.parameters.amount).toBe(22n)
+    expect(res.balanceTx.params.who).toEqual({ Id: address })
+    expect(res.balanceTx.params.currency_id).toBe('ACA_ID')
+    expect(res.balanceTx.params.amount).toBe(22n)
   })
 })

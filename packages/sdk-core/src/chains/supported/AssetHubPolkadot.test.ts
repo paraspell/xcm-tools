@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
   getNativeAssetSymbol,
   getOtherAssets,
@@ -54,7 +53,7 @@ describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<unknown, unknown>
 
   const mockApi = {
-    callTxMethod: vi.fn(),
+    deserializeExtrinsics: vi.fn(),
     getXcmWeight: vi.fn(),
     createApiForChain: vi.fn().mockResolvedValue({
       getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
@@ -166,7 +165,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod').mockResolvedValue('success')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue('success')
 
       const input = {
         ...mockInput,
@@ -215,9 +214,9 @@ describe('AssetHubPolkadot', () => {
         vi.mocked(handleExecuteTransfer).mockResolvedValue({
           module: 'System' as TPallet,
           method: 'remark',
-          parameters: { _remark: '0x' }
+          params: { _remark: '0x' }
         })
-        vi.mocked(mockApi.callTxMethod).mockResolvedValue(mockExtrinsic)
+        vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue(mockExtrinsic)
       })
 
       it.each([
@@ -232,9 +231,10 @@ describe('AssetHubPolkadot', () => {
             assetInfo: { symbol: assetSymbol, amount: 100n },
             feeAssetInfo: { symbol: feeAssetSymbol }
           } as TPolkadotXCMTransferOptions<unknown, unknown>
+          const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
           await assetHub.transferPolkadotXCM(input)
           expect(handleExecuteTransfer).toHaveBeenCalledWith('AssetHubPolkadot', input)
-          expect(mockApi.callTxMethod).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledTimes(1)
         }
       )
 
@@ -356,9 +356,9 @@ describe('AssetHubPolkadot', () => {
       expect(() => assetHub.transferLocalNonNativeAsset(input)).toThrow(InvalidCurrencyError)
     })
 
-    it('should call api.callTxMethod with correct parameters if assetId is defined', () => {
+    it('should call api.deserializeExtrinsics with correct parameters if assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -369,14 +369,14 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(isForeignAsset).mockReturnValueOnce(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       assetHub.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 123,
           target: { Id: mockInput.address },
           amount: BigInt(mockInput.assetInfo.amount)
@@ -386,7 +386,7 @@ describe('AssetHubPolkadot', () => {
 
     it('should call transfer_all when assetId is defined and amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -398,14 +398,14 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(isForeignAsset).mockReturnValueOnce(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       assetHub.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: 123,
           dest: { Id: mockInput.address },
           keep_alive: false
@@ -413,9 +413,9 @@ describe('AssetHubPolkadot', () => {
       })
     })
 
-    it('should call api.callTxMethod with correct parameters if assetId is not defined', () => {
+    it('should call api.deserializeExtrinsics with correct parameters if assetId is not defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -426,14 +426,14 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(isForeignAsset).mockReturnValueOnce(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       assetHub.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'ForeignAssets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: {},
           target: { Id: mockInput.address },
           amount: BigInt(mockInput.assetInfo.amount)
@@ -443,7 +443,7 @@ describe('AssetHubPolkadot', () => {
 
     it('should call transfer_all when assetId is undefined and amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -455,14 +455,14 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(isForeignAsset).mockReturnValueOnce(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       assetHub.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'ForeignAssets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: {},
           dest: { Id: mockInput.address },
           keep_alive: false

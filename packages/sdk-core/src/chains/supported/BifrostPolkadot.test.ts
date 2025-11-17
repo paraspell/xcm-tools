@@ -28,7 +28,7 @@ describe('BifrostPolkadot', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   const api = {
-    callTxMethod: vi.fn()
+    deserializeExtrinsics: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockPolkadotXCMInput = {
@@ -132,7 +132,7 @@ describe('BifrostPolkadot', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -143,10 +143,10 @@ describe('BifrostPolkadot', () => {
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { Token2: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
@@ -156,7 +156,7 @@ describe('BifrostPolkadot', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -168,10 +168,10 @@ describe('BifrostPolkadot', () => {
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { Token2: 1 },
           keep_alive: false

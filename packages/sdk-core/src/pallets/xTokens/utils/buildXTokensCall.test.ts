@@ -85,7 +85,7 @@ describe('buildXTokensCall', () => {
     expect(result).toEqual({
       module: 'XTokens',
       method: 'transfer',
-      parameters: {
+      params: {
         param1: 'value1',
         param2: 'value2'
       }

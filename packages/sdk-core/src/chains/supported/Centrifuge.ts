@@ -35,10 +35,10 @@ class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTr
     const currencyId = this.getCurrencySelection(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest,
           currency_id: currencyId,
           keep_alive: false
@@ -46,10 +46,10 @@ class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTr
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest,
         currency_id: currencyId,
         amount: asset.amount

@@ -67,7 +67,7 @@ describe('Ajuna', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
-      callTxMethod: vi.fn()
+      deserializeExtrinsics: vi.fn()
     }
 
     it('creates local transfer', () => {
@@ -79,10 +79,10 @@ describe('Ajuna', () => {
 
       ajuna.transferLocalNonNativeAsset(opts)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 1,
           target: { Id: 'addr' },
           amount: 100n
@@ -100,10 +100,10 @@ describe('Ajuna', () => {
 
       ajuna.transferLocalNonNativeAsset(opts)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: 1,
           dest: { Id: 'addr' },
           keep_alive: false

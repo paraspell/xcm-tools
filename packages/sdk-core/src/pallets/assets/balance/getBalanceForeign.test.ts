@@ -7,27 +7,12 @@ import { createChainClient } from '../../../utils'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
-import { getEthErc20Balance } from './getEthErc20Balance'
 
-vi.mock('../../../utils', () => ({
-  createChainClient: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn()
-}))
-
-vi.mock('./getBalanceForeignXTokens', () => ({
-  getBalanceForeignXTokens: vi.fn()
-}))
-
-vi.mock('./getBalanceForeignPolkadotXcm', () => ({
-  getBalanceForeignPolkadotXcm: vi.fn()
-}))
-
-vi.mock('./getEthErc20Balance', () => ({
-  getEthErc20Balance: vi.fn()
-}))
+vi.mock('../../../utils')
+vi.mock('./getBalanceForeignXTokens')
+vi.mock('./getBalanceForeignPolkadotXcm')
 
 describe('getBalanceForeign', () => {
   const mockApi = {
@@ -43,21 +28,6 @@ describe('getBalanceForeign', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123', decimals: 10 })
   })
 
-  it('should return Ethereum ERC20 balance if chain is Ethereum', async () => {
-    const mockBalance = 500n
-    const mockCurrency = { symbol: 'ETH' }
-    const mockAddress = '0x123'
-    vi.mocked(getEthErc20Balance).mockResolvedValue(mockBalance)
-    const result = await getBalanceForeign({
-      address: mockAddress,
-      chain: 'Ethereum',
-      currency: mockCurrency,
-      api: mockApi
-    })
-    expect(result).toBe(mockBalance)
-    expect(getEthErc20Balance).toHaveBeenCalledWith(mockCurrency, mockAddress)
-  })
-
   it('should use the provided API instance if passed', async () => {
     vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(1000n)
     await getBalanceForeign({
@@ -68,17 +38,6 @@ describe('getBalanceForeign', () => {
     })
     expect(createChainClient).not.toHaveBeenCalled()
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
-  })
-
-  it('should create an API instance if none is provided', async () => {
-    const spy = vi.spyOn(mockApi, 'init')
-    await getBalanceForeign({
-      address: 'address',
-      chain: 'Acala',
-      currency: { symbol: 'DOT' },
-      api: mockApi
-    })
-    expect(spy).toHaveBeenCalledWith('Acala')
   })
 
   it('returns balance for XTokens pallet', async () => {

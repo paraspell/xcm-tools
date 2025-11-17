@@ -1,5 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
+import { InvalidParameterError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
@@ -12,8 +13,8 @@ export class AssetManagerPallet extends BaseAssetsPallet {
     return Promise.resolve({
       balanceTx: {
         module: this.palletName,
-        method: 'updateBalance',
-        parameters: {
+        method: 'update_balance',
+        params: {
           who: { Id: address },
           currency_id: {
             ForeignAsset: assetId
@@ -22,5 +23,9 @@ export class AssetManagerPallet extends BaseAssetsPallet {
         }
       }
     })
+  }
+
+  getBalance(): Promise<bigint> {
+    throw new InvalidParameterError('No balance support.')
   }
 }

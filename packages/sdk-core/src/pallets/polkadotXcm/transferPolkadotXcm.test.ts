@@ -7,7 +7,7 @@ import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } f
 import { transferPolkadotXcm } from './transferPolkadotXcm'
 
 const mockApi = {
-  callTxMethod: vi.fn()
+  deserializeExtrinsics: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 const mockLocation: TLocation = {
@@ -45,14 +45,14 @@ describe('transferPolkadotXcm', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   it('should call api.tx[module][method] with correct parameters when fees is undefined', async () => {
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await transferPolkadotXcm(baseOptions, mockMethod, undefined)
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: mockMethod,
-      parameters: {
+      params: {
         assets: mockVersionedAssets,
         beneficiary: mockVersionedLocation,
         dest: mockVersionedLocation,
@@ -62,14 +62,14 @@ describe('transferPolkadotXcm', () => {
   })
 
   it('should call api.tx[module][method] with correct parameters when fees is "Unlimited"', async () => {
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await transferPolkadotXcm(baseOptions, mockMethod, 'Unlimited')
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: mockMethod,
-      parameters: {
+      params: {
         assets: mockVersionedAssets,
         beneficiary: mockVersionedLocation,
         dest: mockVersionedLocation,
@@ -80,14 +80,14 @@ describe('transferPolkadotXcm', () => {
   })
 
   it('should call api.tx[module][method] with correct parameters when fees is Limited', async () => {
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
+    const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await transferPolkadotXcm(baseOptions, mockMethod, { Limited: '1000' })
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: mockMethod,
-      parameters: {
+      params: {
         assets: mockVersionedAssets,
         beneficiary: mockVersionedLocation,
         dest: mockVersionedLocation,

@@ -39,12 +39,12 @@ describe('NeuroWeb', () => {
 
   describe('transferLocalNativeAsset', () => {
     let mockApi: IPolkadotApi<unknown, unknown>
-    let callTxMethod: ReturnType<typeof vi.fn>
+    let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
-      callTxMethod = vi.fn()
+      deserializeExtrinsics = vi.fn()
       mockApi = {
-        callTxMethod
+        deserializeExtrinsics
       } as unknown as IPolkadotApi<unknown, unknown>
     })
 
@@ -59,10 +59,10 @@ describe('NeuroWeb', () => {
 
       await neuroweb.transferLocalNativeAsset(mockOptions)
 
-      expect(callTxMethod).toHaveBeenCalledWith({
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           value: mockOptions.assetInfo.amount
         }
@@ -80,10 +80,10 @@ describe('NeuroWeb', () => {
 
       await neuroweb.transferLocalNativeAsset(mockOptions)
 
-      expect(callTxMethod).toHaveBeenCalledWith({
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           keep_alive: false
         }
@@ -93,12 +93,12 @@ describe('NeuroWeb', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     let mockApi: IPolkadotApi<unknown, unknown>
-    let callTxMethod: ReturnType<typeof vi.fn>
+    let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
-      callTxMethod = vi.fn()
+      deserializeExtrinsics = vi.fn()
       mockApi = {
-        callTxMethod
+        deserializeExtrinsics
       } as unknown as IPolkadotApi<unknown, unknown>
     })
 
@@ -113,10 +113,10 @@ describe('NeuroWeb', () => {
 
       neuroweb.transferLocalNonNativeAsset(mockOptions)
 
-      expect(callTxMethod).toHaveBeenCalledWith({
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 42n,
           target: mockOptions.address,
           amount: mockOptions.assetInfo.amount
@@ -127,7 +127,7 @@ describe('NeuroWeb', () => {
     it('should call Assets.transfer with full balance when isAmountAll is true', () => {
       const expectedResult = Symbol('transfer-result')
 
-      callTxMethod.mockReturnValue(expectedResult)
+      deserializeExtrinsics.mockReturnValue(expectedResult)
 
       const mockOptions = {
         api: mockApi,
@@ -139,10 +139,10 @@ describe('NeuroWeb', () => {
 
       const result = neuroweb.transferLocalNonNativeAsset(mockOptions)
 
-      expect(callTxMethod).toHaveBeenCalledWith({
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: 7n,
           target: mockOptions.address,
           amount: mockOptions.balance

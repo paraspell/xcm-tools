@@ -28,7 +28,7 @@ export const claimAssets = async <TApi, TRes>(
 
   const assets = resolveAssets(options, version)
 
-  const parameters = buildClaimAssetsParams<TApi, TRes>({
+  const params = buildClaimAssetsParams<TApi, TRes>({
     ...options,
     version,
     assets
@@ -37,8 +37,8 @@ export const claimAssets = async <TApi, TRes>(
   const call = {
     module: supportedPallet,
     method: 'claim_assets',
-    parameters
+    params
   }
 
-  return api.callTxMethod(call)
+  return api.deserializeExtrinsics(call)
 }

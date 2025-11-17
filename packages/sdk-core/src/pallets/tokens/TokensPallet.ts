@@ -6,6 +6,7 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
@@ -44,7 +45,7 @@ export class TokensPallet extends BaseAssetsPallet {
       balanceTx: {
         module: this.palletName,
         method: 'set_balance',
-        parameters: {
+        params: {
           who: { Id: address },
           currency_id: id,
           new_free: balance + amount,
@@ -52,5 +53,21 @@ export class TokensPallet extends BaseAssetsPallet {
         }
       }
     })
+  }
+
+  async getBalance<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo,
+    customCurrencyId?: unknown
+  ): Promise<bigint> {
+    const currencyId =
+      customCurrencyId === undefined ? (assertHasId(asset), asset.assetId) : customCurrencyId
+    const balance = await api.queryChainState<{ free: bigint }>({
+      module: this.palletName,
+      method: 'Accounts',
+      params: [address, currencyId]
+    })
+    return balance?.free ?? 0n
   }
 }

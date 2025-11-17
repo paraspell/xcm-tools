@@ -1,17 +1,17 @@
 import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
+import type { TSerializedExtrinsics, TWeight, TXcmVersioned } from '../../../types'
 
 export const createExecuteCall = (
   chain: TSubstrateChain,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xcm: TXcmVersioned<any>,
   maxWeight: TWeight
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   return {
     module: isRelayChain(chain) ? 'XcmPallet' : 'PolkadotXcm',
     method: 'execute',
-    parameters: {
+    params: {
       message: xcm,
       max_weight: {
         ref_time: maxWeight.refTime,

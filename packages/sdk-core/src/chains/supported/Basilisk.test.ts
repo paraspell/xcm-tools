@@ -42,9 +42,9 @@ describe('Basilisk', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    it('should call api.callTxMethod with correct parameters', async () => {
+    it('should call api.deserializeExtrinsics with correct parameters', async () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -53,14 +53,14 @@ describe('Basilisk', () => {
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       await basilisk.transferLocalNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: mockInput.address,
           value: BigInt(mockInput.assetInfo.amount)
         }
@@ -69,9 +69,9 @@ describe('Basilisk', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should call api.callTxMethod with correct parameters', () => {
+    it('should call api.deserializeExtrinsics with correct parameters', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -80,14 +80,14 @@ describe('Basilisk', () => {
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       basilisk.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: mockInput.address,
           currency_id: 123,
           amount: BigInt(mockInput.assetInfo.amount)

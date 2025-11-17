@@ -118,4 +118,4 @@ export const throwUnsupportedCurrency = (
   )
 }
 
-export { constructRelayToParaParameters } from './constructRelayToParaParameters'
+export { constructRelayToParaParams } from './constructRelayToParaParams'

@@ -64,7 +64,7 @@ describe('Kintsugi', () => {
   describe('transferLocalNativeAsset', () => {
     it('should call transferLocalNonNativeAsset', async () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -82,7 +82,7 @@ describe('Kintsugi', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -93,10 +93,10 @@ describe('Kintsugi', () => {
 
       kintsugi.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },
           value: BigInt(mockOptions.assetInfo.amount)
@@ -106,7 +106,7 @@ describe('Kintsugi', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -118,10 +118,10 @@ describe('Kintsugi', () => {
 
       kintsugi.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },
           keep_alive: false

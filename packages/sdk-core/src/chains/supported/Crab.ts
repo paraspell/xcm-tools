@@ -9,7 +9,7 @@ import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TSerializedApiCall
+  type TSerializedExtrinsics
 } from '../../types'
 import { getChain } from '../../utils'
 import Parachain from '../Parachain'
@@ -26,7 +26,7 @@ class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     throw new ScenarioNotSupportedError(this.chain, input.scenario)
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 

@@ -5,10 +5,11 @@ import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../../api'
 import { MIN_AMOUNT } from '../../constants'
 import { ChainNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TSerializedApiCall, TTransferLocalOptions } from '../../types'
+import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
@@ -27,18 +28,13 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     super(chain, info, ecosystem, version)
   }
 
-  getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {
-    const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
-    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: symbol }
-  }
-
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(): Promise<TSerializedApiCall> {
+  transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
   }
 
@@ -46,10 +42,10 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     const { api, assetInfo: asset, address, balance, senderAddress, isAmountAll } = options
 
     const createTx = (amount: bigint) =>
-      api.callTxMethod({
+      api.deserializeExtrinsics({
         module: 'Currencies',
         method: 'transfer_native_currency',
-        parameters: {
+        params: {
           dest: { Id: address },
           amount
         }
@@ -77,15 +73,27 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
 
     const amount = isAmountAll ? balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Currencies',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: { Id: address },
-        currency_id: this.getCurrencySelection(asset),
+        currency_id: this.getCustomCurrencyId(asset),
         amount
       }
     })
+  }
+
+  getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
+    const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
+    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: symbol }
+  }
+
+  getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo): Promise<bigint> {
+    if (asset.symbol.toLowerCase() === 'lcdot') {
+      throw new InvalidCurrencyError('LcDOT balance is not supported')
+    }
+    return super.getBalance(api, address, asset)
   }
 }
 

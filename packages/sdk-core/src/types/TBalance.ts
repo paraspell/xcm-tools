@@ -45,7 +45,7 @@ export type TGetBalanceForeignOptionsBase = {
   /**
    * The chain on which to query the balance.
    */
-  chain: TChain
+  chain: TSubstrateChain
 }
 
 export type TGetBalanceForeignOptions<TApi, TRes> = WithApi<
@@ -70,10 +70,7 @@ export type TGetBalanceForeignByAssetOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-/**
- * Retrieves the asset balance for a given account on a specified chain.
- */
-export type TGetAssetBalanceOptionsBase = {
+export type TGetBalanceCommonOptions = {
   /**
    * The address of the account.
    */
@@ -82,12 +79,29 @@ export type TGetAssetBalanceOptionsBase = {
    * The chain on which to query the balance.
    */
   chain: TChain
+}
+
+/**
+ * Retrieves the asset balance for a given account on a specified chain.
+ */
+export type TGetAssetBalanceOptionsBase = TGetBalanceCommonOptions & {
+  /**
+   * The resolved asset to query balance for.
+   */
+  asset: TAssetInfo
+}
+
+/**
+ * Retrieves the currency balance for a given account on a specified chain.
+ */
+export type TGetBalanceOptionsBase = TGetBalanceCommonOptions & {
   /**
    * The currency to query.
    */
   currency: TCurrencyCore
 }
 
+export type TGetBalanceOptions<TApi, TRes> = WithApi<TGetBalanceOptionsBase, TApi, TRes>
 export type TGetAssetBalanceOptions<TApi, TRes> = WithApi<TGetAssetBalanceOptionsBase, TApi, TRes>
 
 export type TGetOriginFeeDetailsOptionsBase = {

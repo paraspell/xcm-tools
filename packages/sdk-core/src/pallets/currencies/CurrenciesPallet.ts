@@ -1,6 +1,7 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import { InvalidParameterError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
@@ -16,7 +17,7 @@ export class CurrenciesPallet extends BaseAssetsPallet {
     const isAcalaLike = isKarura || isAcala
 
     const id = isAcalaLike
-      ? getChain(isKarura ? 'Karura' : 'Acala').getCurrencySelection(asset)
+      ? getChain(isKarura ? 'Karura' : 'Acala').getCustomCurrencyId(asset)
       : (assertHasId(asset), Number(asset.assetId))
 
     const { amount } = asset
@@ -25,12 +26,16 @@ export class CurrenciesPallet extends BaseAssetsPallet {
       balanceTx: {
         module: this.palletName,
         method: 'update_balance',
-        parameters: {
+        params: {
           who: isAcalaLike ? { Id: address } : address,
           currency_id: id,
           amount: balance + amount
         }
       }
     })
+  }
+
+  getBalance(): Promise<bigint> {
+    throw new InvalidParameterError('No balance support.')
   }
 }

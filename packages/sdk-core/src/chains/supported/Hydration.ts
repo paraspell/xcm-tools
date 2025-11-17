@@ -16,7 +16,7 @@ import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
@@ -61,10 +61,10 @@ class Hydration<TApi, TRes>
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, version, destination } = input
 
-    const call: TSerializedApiCall = {
+    const call: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: createVersionedDestination(
           version,
           this.chain,
@@ -87,7 +87,7 @@ class Hydration<TApi, TRes>
       }
     }
 
-    return api.callTxMethod(call)
+    return api.deserializeExtrinsics(call)
   }
 
   async transferPolkadotXCM<TApi, TRes>(
@@ -108,7 +108,7 @@ class Hydration<TApi, TRes>
       const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.callTxMethod(await handleExecuteTransfer(this.chain, input))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, input))
       }
     }
 
@@ -180,10 +180,10 @@ class Hydration<TApi, TRes>
 
     if (isAmountAll) {
       return Promise.resolve(
-        api.callTxMethod({
+        api.deserializeExtrinsics({
           module: 'Balances',
           method: 'transfer_all',
-          parameters: {
+          params: {
             dest: address,
             keep_alive: false
           }
@@ -192,10 +192,10 @@ class Hydration<TApi, TRes>
     }
 
     return Promise.resolve(
-      api.callTxMethod({
+      api.deserializeExtrinsics({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: address,
           value: asset.amount
         }
@@ -211,10 +211,10 @@ class Hydration<TApi, TRes>
     const currencyId = Number(asset.assetId)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: address,
           currency_id: currencyId,
           keep_alive: false
@@ -222,10 +222,10 @@ class Hydration<TApi, TRes>
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: address,
         currency_id: currencyId,
         amount: asset.amount

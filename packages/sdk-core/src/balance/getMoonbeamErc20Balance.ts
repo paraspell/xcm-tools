@@ -1,7 +1,7 @@
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
 
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
+import { formatAssetIdToERC20 } from '../utils'
 
 const ERC20_ABI = [
   {

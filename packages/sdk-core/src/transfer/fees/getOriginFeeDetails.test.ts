@@ -4,9 +4,9 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import * as balanceModule from '../../balance'
 import * as BuilderModule from '../../builder'
 import * as utilsModule from '../../utils'
-import * as balanceModule from './balance/getBalanceNative'
 import { getOriginFeeDetails } from './getOriginFeeDetails'
 
 const apiMock = {
@@ -27,7 +27,7 @@ describe('getOriginFeeDetails', () => {
     const ed = 1000000000000n
     const xcmFee = 1000000000n
 
-    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 
@@ -79,7 +79,7 @@ describe('getOriginFeeDetails', () => {
     const ed = 1000000000000n
     const xcmFee = 1000000000n
 
-    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 
@@ -131,7 +131,7 @@ describe('getOriginFeeDetails', () => {
     const ed = 1000000000000n
     const xcmFee = '1000000000'
 
-    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createChainClient').mockResolvedValue({})
 

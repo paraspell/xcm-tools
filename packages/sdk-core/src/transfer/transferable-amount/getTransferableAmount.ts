@@ -6,8 +6,8 @@ import {
 } from '@paraspell/assets'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
+import { getAssetBalanceInternal } from '../../balance'
 import { InvalidParameterError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type { TGetTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'
@@ -36,7 +36,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     api,
     address: senderAddress,
     chain,
-    currency
+    asset
   })
 
   const ed = getEdFromAssetOrThrow(asset)

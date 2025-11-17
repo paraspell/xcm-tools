@@ -32,7 +32,7 @@ describe('transferRelayToPara', () => {
     apiMock = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
-      callTxMethod: vi.fn().mockResolvedValue('callTxResult'),
+      deserializeExtrinsics: vi.fn().mockResolvedValue('callTxResult'),
       getConfig: vi.fn().mockReturnValue({}),
       clone: vi.fn().mockReturnValue({
         getApi: vi.fn().mockReturnValue({})
@@ -87,7 +87,7 @@ describe('transferRelayToPara', () => {
     } as TRelayToParaOptions<unknown, unknown>
 
     const transferSpy = vi.spyOn(chainMock, 'transferRelayToPara')
-    const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
+    const apiSpy = vi.spyOn(apiMock, 'deserializeExtrinsics')
 
     await transferRelayToPara(options)
 
@@ -104,7 +104,7 @@ describe('transferRelayToPara', () => {
     } as TRelayToParaOptions<unknown, unknown>
 
     const transferSpy = vi.spyOn(chainMock, 'transferRelayToPara')
-    const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
+    const apiSpy = vi.spyOn(apiMock, 'deserializeExtrinsics')
 
     await transferRelayToPara(options)
 
@@ -114,7 +114,7 @@ describe('transferRelayToPara', () => {
   })
 
   it('should handle exceptions', async () => {
-    apiMock.callTxMethod = vi.fn().mockRejectedValue(new Error('Some error'))
+    apiMock.deserializeExtrinsics = vi.fn().mockRejectedValue(new Error('Some error'))
 
     const options = {
       ...baseOptions,
