@@ -7,6 +7,8 @@ export const getChainDisplayName = (parachain: string) =>
     .trim();
 
 export const getChainNameNoEcosystem = (parachain: TSubstrateChain, ecosystem: TRelaychain) => {
+  if (parachain === ecosystem) return parachain;
+
   const end = parachain.endsWith(ecosystem);
   if (!end) return parachain;
 

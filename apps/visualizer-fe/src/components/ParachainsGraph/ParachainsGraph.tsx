@@ -88,11 +88,13 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       setSelectedChannel(channel);
     };
 
-  const selectedParachainChannels = channels.filter(channel =>
-    selectedParachains.some(
-      p => getParachainId(p) === channel.sender || getParachainId(p) === channel.recipient
-    )
-  );
+  const selectedParachainChannels = channels.filter(channel => {
+    return selectedParachains.some(
+      p =>
+        p === getParachainById(channel.sender, ecosystem) ||
+        p === getParachainById(channel.recipient, ecosystem)
+    );
+  });
   const RELAYCHAIN_ID = 0;
 
   const parachainRefs = useRef<{ [key: string]: Object3D | null }>({});
@@ -163,9 +165,11 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
           }
 
           const lineWidth = calculateLineWidth(channel.message_count);
-          const isHighlighted =
-            selectedParachains.some(p => getParachainId(p) === channel.sender) ||
-            selectedParachains.some(p => getParachainId(p) === channel.recipient);
+          const isHighlighted = selectedParachains.some(
+            p =>
+              p === getParachainById(channel.sender, ecosystem) ||
+              p === getParachainById(channel.recipient, ecosystem)
+          );
 
           const isSecondary = selectedParachainChannels.some(
             ch => ch.sender === channel.sender || ch.recipient === channel.recipient

@@ -365,12 +365,14 @@ describe('MessageService', () => {
           origin_para_id: paraIds[0],
           symbol: 'GOLD',
           count: '3',
+          ecosystem: ecosystemsList[0],
           amount: '69',
         },
         {
           origin_para_id: paraIds[1],
           symbol: 'SILVER',
           count: '5',
+          ecosystem: ecosystemsList[1],
           amount: '420',
         },
       ];
