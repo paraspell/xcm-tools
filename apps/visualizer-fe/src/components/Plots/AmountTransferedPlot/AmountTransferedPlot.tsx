@@ -5,7 +5,7 @@ import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
-import { getParachainColor, getParachainId } from '../../../utils/utils';
+import { getParachainColor } from '../../../utils/utils';
 import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
@@ -38,8 +38,9 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
       if (!acc[item.date]) {
         acc[item.date] = { date: item.date };
       }
-      const paraId = item.parachain ? getParachainId(item.parachain as TSubstrateChain) : null;
-      const parachainKey = paraId ? item.parachain || `ID ${paraId}` : t('charts.common.total');
+      const parachainKey = item.parachain
+        ? item.parachain || `ID ${item.parachain}`
+        : t('charts.common.total');
 
       acc[item.date][parachainKey] = Number(acc[item.date][parachainKey] || 0) + item.messageCount;
       acc[item.date][`${parachainKey} ${t('status.success')}`] = item.messageCountSuccess;
@@ -77,8 +78,9 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
 
   const series = Object.keys(
     counts.reduce<Record<string, boolean>>((result, item) => {
-      const paraId = item.parachain ? getParachainId(item.parachain as TSubstrateChain) : null;
-      const key = paraId ? item.parachain || `ID ${paraId}` : t('charts.common.total');
+      const key = item.parachain
+        ? item.parachain || `ID ${item.parachain}`
+        : t('charts.common.total');
       result[key] = true;
       return result;
     }, {})

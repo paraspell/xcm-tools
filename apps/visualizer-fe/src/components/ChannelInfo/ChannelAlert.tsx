@@ -19,7 +19,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useDeviceType } from '../../context/DeviceType/useDeviceType';
-import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelQuery } from '../../gql/graphql';
 import { getChainNameNoEcosystem } from '../../utils/getChainDisplayName';
@@ -35,7 +34,6 @@ type Props = {
 const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
   const { t } = useTranslation();
   const { dateRange } = useSelectedParachain();
-  const { selectedEcosystem } = useSelectedEcosystem();
   const { isMobile } = useDeviceType();
   const [startDate, endDate] = dateRange;
   const [value, setValue] = useState('from');
@@ -46,13 +44,19 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
   };
 
   const currentChannel = value === 'from' ? channelFrom : channelTo;
+  if (!currentChannel) {
+    return;
+  }
+
+  const ecosystem = (currentChannel.ecosystem.charAt(0).toUpperCase() +
+    currentChannel.ecosystem.slice(1)) as TRelaychain;
 
   const getLinkByEcosystem = (ecosystem: TRelaychain): string => {
     return `https://${ecosystem.toLowerCase()}.subscan.io/xcm_message?page=1&time_dimension=date`;
   };
 
   const generateExplorerLink = () => {
-    const baseUrl = getLinkByEcosystem(selectedEcosystem);
+    const baseUrl = getLinkByEcosystem(ecosystem);
     const fromChain = `&fromChain=${currentChannel?.sender}`;
     const toChain = `&toChain=${currentChannel?.recipient}`;
     const start = startDate ? `&date_start=${dayjs(startDate).format('YYYY-MM-DD')}` : '';
@@ -92,8 +96,8 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
                 {
                   value: 'from',
                   label: getChainNameNoEcosystem(
-                    getParachainById(channelFrom?.sender ?? 0, selectedEcosystem)!,
-                    selectedEcosystem
+                    getParachainById(channelFrom?.sender ?? 0, ecosystem)!,
+                    ecosystem
                   )
                 },
                 {
@@ -109,8 +113,8 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
                 {
                   value: 'to',
                   label: getChainNameNoEcosystem(
-                    getParachainById(channelFrom?.recipient ?? 0, selectedEcosystem)!,
-                    selectedEcosystem
+                    getParachainById(channelFrom?.recipient ?? 0, ecosystem)!,
+                    ecosystem
                   )
                 }
               ]}
