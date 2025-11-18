@@ -2,7 +2,7 @@ import type { TRelaychain } from '@paraspell/sdk';
 
 import kusamaPng from '../../../logos/kusama.png';
 import paseoPng from '../../../logos/paseo.png';
-import polkadotPng from '../../../logos/polkadot1.png';
+import polkadotPng from '../../../logos/polkadot.png';
 import westendPng from '../../../logos/westend.png';
 
 export const getRelaychainLogo = (ecosystem: TRelaychain) => {
