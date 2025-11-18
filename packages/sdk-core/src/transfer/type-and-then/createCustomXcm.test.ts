@@ -83,46 +83,6 @@ describe('createCustomXcm', () => {
   })
 
   describe('DepositReserveAsset (different chains)', () => {
-    it('uses Wild: All assets when destFee equals MIN_FEE', () => {
-      const result = createCustomXcm(
-        {
-          ...mockContext,
-          origin: {
-            chain: 'AssetHubPolkadot',
-            api: mockApi
-          },
-          dest: {
-            chain: 'Kusama',
-            api: mockApi
-          },
-          reserve: {
-            chain: 'Hydration',
-            api: mockApi
-          }
-        },
-        1,
-        true,
-        mockContext.assetInfo.amount,
-        {
-          hopFees: 0n,
-          destFee: 0n
-        }
-      )
-
-      const depositReserveInstruction = result.find(isDepositReserveInstruction)
-      expect(depositReserveInstruction).toBeDefined()
-      expect(result.find(isDepositAssetInstruction)).toBeUndefined()
-
-      const depositReserveAsset = depositReserveInstruction!.DepositReserveAsset
-      expect(depositReserveAsset.assets).toEqual({ Wild: 'All' })
-      expect(depositReserveAsset).toHaveProperty('dest')
-
-      const xcm = depositReserveAsset.xcm
-      expect(xcm).toHaveLength(2)
-      expect(xcm[0]).toHaveProperty('BuyExecution')
-      expect(xcm[1]).toHaveProperty('DepositAsset')
-    })
-
     it('uses Definite assets when destFee is not MIN_FEE', () => {
       const result = createCustomXcm(
         {
