@@ -30,7 +30,8 @@ class AcalaExchange extends ExchangeChain {
     options: TSwapOptions,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { papiApi, assetFrom, assetTo, amount, senderAddress, origin } = options;
+    const { papiApi, assetFrom, assetTo, amount, senderAddress, origin, isForFeeEstimation } =
+      options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
@@ -60,7 +61,7 @@ class AcalaExchange extends ExchangeChain {
 
     Logger.log('Native currency balance:', balance);
 
-    if (balance < totalNativeCurrencyFee) {
+    if (balance < totalNativeCurrencyFee && !isForFeeEstimation) {
       throw new AmountTooLowError(
         `The native currency balance on ${this.chain} is too low to cover the fees. Please provide a larger amount.`,
       );

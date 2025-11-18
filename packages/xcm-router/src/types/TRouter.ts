@@ -25,6 +25,7 @@ export type TSwapOptions = {
   senderAddress: string;
   feeCalcAddress: string;
   origin?: TOriginInfo;
+  isForFeeEstimation?: boolean;
 };
 
 export type TGetAmountOutOptions = {

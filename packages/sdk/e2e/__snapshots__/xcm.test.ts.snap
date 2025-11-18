@@ -21117,16 +21117,16 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > should create transfer tx from BifrostKusama to AssetHubKusama - (RMRK) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin BifrostKusama > ParaToPara > should create transfer tx from BifrostKusama to AssetHubKusama - (BNC) 1`] = `
 {
   "method": "transfer",
   "module": "XTokens",
   "parameters": {
     "amount": 1000000000000n,
     "currency_id": {
-      "type": "Token",
+      "type": "Native",
       "value": {
-        "type": "RMRK",
+        "type": "BNC",
       },
     },
     "dest": {
@@ -36536,7 +36536,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should create transfer tx from Karura to AssetHubKusama - (WBTC) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should create transfer tx from Karura to AssetHubKusama - (BNC) 1`] = `
 {
   "method": "transfer_multiasset",
   "module": "XTokens",
@@ -36550,19 +36550,24 @@ exports[`XCM - e2e > Transfer scenarios for origin Karura > ParaToPara > should 
         },
         "id": {
           "interior": {
-            "type": "X3",
+            "type": "X2",
             "value": [
               {
                 "type": "Parachain",
-                "value": 1000,
+                "value": 2001,
               },
               {
-                "type": "PalletInstance",
-                "value": "50",
-              },
-              {
-                "type": "GeneralIndex",
-                "value": 583233871038343550358870254801420167990802931247n,
+                "type": "GeneralKey",
+                "value": {
+                  "data": FixedSizeBinary {
+                    "asBytes": [Function],
+                    "asHex": [Function],
+                    "asOpaqueBytes": [Function],
+                    "asOpaqueHex": [Function],
+                    "asText": [Function],
+                  },
+                  "length": 2,
+                },
               },
             ],
           },
