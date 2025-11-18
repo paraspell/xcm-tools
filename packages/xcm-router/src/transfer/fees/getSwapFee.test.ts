@@ -37,7 +37,7 @@ describe('getSwapFee', () => {
 
     const result = await getSwapFee(exchange, options);
 
-    expect(createSwapTx).toHaveBeenCalledWith(exchange, options);
+    expect(createSwapTx).toHaveBeenCalledWith(exchange, options, true);
 
     expect(getOriginXcmFee).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -90,6 +90,7 @@ describe('getSwapFee', () => {
       expect.objectContaining({
         amount: 123n,
       }),
+      true,
     );
   });
 

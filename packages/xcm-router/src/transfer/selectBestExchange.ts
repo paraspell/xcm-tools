@@ -10,6 +10,7 @@ export const selectBestExchange = async (
   options: TCommonRouterOptions,
   originApi: PolkadotClient | undefined,
   builderOptions?: TRouterBuilderOptions,
+  isForFeeEstimation?: boolean,
 ): Promise<ExchangeChain> =>
   selectBestExchangeCommon(
     options,
@@ -37,6 +38,7 @@ export const selectBestExchange = async (
           papiApi: modifiedOptions.exchange.apiPapi,
           assetFrom: modifiedOptions.exchange.assetFrom,
           assetTo: modifiedOptions.exchange.assetTo,
+          isForFeeEstimation,
         },
         toDestTxFee,
       );

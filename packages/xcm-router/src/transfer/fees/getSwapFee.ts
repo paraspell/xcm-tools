@@ -17,8 +17,10 @@ export const getSwapFee = async (
   let txs: unknown[];
   let amountOut: bigint;
 
+  const isForFeeEstimation = true;
+
   try {
-    const swapResult = await createSwapTx(exchange, options);
+    const swapResult = await createSwapTx(exchange, options, isForFeeEstimation);
     txs = swapResult.txs;
     amountOut = swapResult.amountOut;
   } catch (e: unknown) {
@@ -44,7 +46,7 @@ export const getSwapFee = async (
         ? { amount: applyDecimalAbstraction(overrideAmount, assetFrom.decimals, true) }
         : {}),
     };
-    const { txs } = await createSwapTx(exchange, txOptions);
+    const { txs } = await createSwapTx(exchange, txOptions, isForFeeEstimation);
     return txs[0];
   };
 

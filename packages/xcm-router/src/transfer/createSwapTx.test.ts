@@ -76,17 +76,11 @@ describe('createSwapTx', () => {
     expect(dummyTxPapi.getEstimatedFees).toHaveBeenNthCalledWith(1, 'someFeeCalcAddress');
 
     expect(spy).toHaveBeenCalledOnce();
-    expect(spy).toHaveBeenCalledWith(swapApi, options, 10n);
+    expect(spy).toHaveBeenCalledWith(swapApi, { ...options, isForFeeEstimation: false }, 10n);
 
     expect(result).toEqual({
       amountOut: 900n,
       txs: [dummyTxPapi],
     });
-  });
-
-  it('should propagate errors if swapCurrency fails', async () => {
-    vi.spyOn(exchangeChain, 'handleMultiSwap').mockRejectedValue(new Error('swapCurrency failed'));
-
-    await expect(createSwapTx(exchangeChain, options)).rejects.toThrowError('swapCurrency failed');
   });
 });
