@@ -35,7 +35,6 @@ import {
   getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
-  InvalidParameterError,
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
@@ -215,21 +214,21 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   accountToUint8a(address: string): Uint8Array {
+    const result = getSs58AddressInfo(address)
+
+    if (!result.isValid) {
+      throw new InvalidAddressError(`Invalid address: ${address}`)
+    }
+
+    return result.publicKey
+  }
+
+  validateSubstrateAddress(address: string): boolean {
     try {
       const result = getSs58AddressInfo(address)
-
-      if (!result.isValid) {
-        throw new InvalidAddressError(`Invalid address: ${address}`)
-      }
-
-      return result.publicKey
-    } catch (error) {
-      // polkadot-api can throw generic errors (e.g., "Invalid checksum") for invalid addresses
-      // Wrap these in InvalidAddressError so the API returns 400 instead of 500
-      if (error instanceof Error) {
-        throw new InvalidAddressError(`Invalid address: ${address} - ${error.message}`)
-      }
-      throw new InvalidAddressError(`Invalid address: ${address}`)
+      return result.isValid
+    } catch {
+      return false
     }
   }
 

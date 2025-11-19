@@ -12,7 +12,7 @@ export const claimAssets = async <TApi, TRes>(
 ): Promise<TRes> => {
   const { api, chain, address } = options
 
-  validateAddress(address, chain)
+  validateAddress(address, chain, true, api)
 
   await api.init(chain, TX_CLIENT_TIMEOUT_MS)
 

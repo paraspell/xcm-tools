@@ -51,7 +51,7 @@ import { u32, type UInt } from '@polkadot/types'
 import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
-import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
+import { blake2AsHex, checkAddress, decodeAddress } from '@polkadot/util-crypto'
 
 import type { Extrinsic, TBalanceResponse, TPjsApi, TPjsApiOrUrl } from './types'
 
@@ -701,6 +701,15 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     // Disconnect api only if it was created automatically
     if (force || typeof api === 'string' || api === undefined) {
       await this.api.disconnect()
+    }
+  }
+
+  validateSubstrateAddress(address: string): boolean {
+    try {
+      const [isValid] = checkAddress(address, -1)
+      return isValid
+    } catch {
+      return false
     }
   }
 }

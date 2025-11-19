@@ -15,7 +15,6 @@ import {
   hasXcmPaymentApiSupport,
   InvalidAddressError,
   InvalidCurrencyError,
-  InvalidParameterError,
   isAssetEqual,
   isAssetXcEqual,
   isSystemChain,
@@ -1178,16 +1177,47 @@ describe('PapiApi', () => {
       expect(() => papiApi.accountToUint8a(badAddr)).toThrow('Invalid address: invalid_address')
       expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
     })
+  })
 
-    it('throws InvalidAddressError when getSs58AddressInfo throws an error (e.g., Invalid checksum)', () => {
+  describe('validateSubstrateAddress', () => {
+    it('returns true when the address is valid', () => {
+      const addr = '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
+
+      vi.mocked(getSs58AddressInfo).mockReturnValue({
+        isValid: true,
+        publicKey: new Uint8Array([1, 2, 3, 4]),
+        ss58Format: 42
+      })
+
+      const result = papiApi.validateSubstrateAddress(addr)
+
+      expect(result).toBe(true)
+      expect(getSs58AddressInfo).toHaveBeenCalledWith(addr)
+    })
+
+    it('returns false when the address is invalid (isValid: false)', () => {
+      const badAddr = 'invalid_address'
+
+      vi.mocked(getSs58AddressInfo).mockReturnValue({
+        isValid: false
+      })
+
+      const result = papiApi.validateSubstrateAddress(badAddr)
+
+      expect(result).toBe(false)
+      expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
+    })
+
+    it('returns false when getSs58AddressInfo throws an error', () => {
       const badAddr = 'invalid-address'
 
       vi.mocked(getSs58AddressInfo).mockImplementation(() => {
         throw new Error('Invalid checksum')
       })
 
-      expect(() => papiApi.accountToUint8a(badAddr)).toThrow(InvalidAddressError)
-      expect(() => papiApi.accountToUint8a(badAddr)).toThrow('Invalid address: invalid-address - Invalid checksum')
+      const result = papiApi.validateSubstrateAddress(badAddr)
+
+      expect(result).toBe(false)
       expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
     })
   })

@@ -22,7 +22,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   buildTx,
   feeAsset
 }: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
-  validateAddress(senderAddress, chain, false)
+  validateAddress(senderAddress, chain, false, api)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, chain, destination, currency)

@@ -109,7 +109,7 @@ describe('getMinTransferableAmountInternal', () => {
     // 2 + 3 + 7 + 10 + 1 = 23
     expect(res).toBe(23n)
 
-    expect(validateAddress).toHaveBeenCalledWith('SENDER', 'Acala', false)
+    expect(validateAddress).toHaveBeenCalledWith('SENDER', 'Acala', false, api)
     expect(api.clone).toHaveBeenCalled()
     expect(destApi.init).toHaveBeenCalledWith('Astar')
     expect(getAssetBalanceInternal).toHaveBeenCalledWith(

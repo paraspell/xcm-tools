@@ -28,7 +28,7 @@ describe('validateDestinationAddress', () => {
     validateDestinationAddress(address, destination)
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination, true, undefined)
   })
 
   it('should propagate InvalidAddressError thrown by validateAddress', () => {
@@ -48,7 +48,7 @@ describe('validateDestinationAddress', () => {
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination, true, undefined)
   })
 
   it('should propagate InvalidAddressError when EVM address is provided but destination is not EVM', () => {
@@ -68,7 +68,7 @@ describe('validateDestinationAddress', () => {
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination, true, undefined)
   })
 
   it('should not throw an error when validateAddress succeeds for a non-EVM chain and non-EVM address', () => {
@@ -82,7 +82,7 @@ describe('validateDestinationAddress', () => {
 
     expect(() => validateDestinationAddress(address, destination)).not.toThrow()
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(address, destination, true, undefined)
   })
 
   it('should not perform validation when address is not a string', () => {

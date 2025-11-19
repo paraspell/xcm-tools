@@ -3,6 +3,7 @@ import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../api'
 import { InvalidAddressError } from '../errors'
 import type { TAddress } from '../types'
 import { validateAddress } from './validateAddress'
@@ -97,5 +98,84 @@ describe('validateAddress', () => {
     expect(() => validateAddress(address, chain, false)).toThrow(
       'EVM address provided but chain is not an EVM chain.'
     )
+  })
+
+  it('should skip validation for public key format (0x prefix but not EVM address)', () => {
+    const address: TAddress = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12'
+    const chain: TChain = 'Polkadot'
+
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+
+    expect(() => validateAddress(address, chain)).not.toThrow()
+  })
+
+  it('should validate Substrate address when API is provided and address is valid', () => {
+    const address: TAddress = '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
+    const chain: TChain = 'Polkadot'
+    const mockApi = {
+      validateSubstrateAddress: vi.fn().mockReturnValue(true)
+    } as unknown as IPolkadotApi<unknown, unknown>
+
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+
+    expect(() => validateAddress(address, chain, true, mockApi)).not.toThrow()
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockApi.validateSubstrateAddress).toHaveBeenCalledWith(address)
+  })
+
+  it('should throw InvalidAddressError when API is provided and Substrate address is invalid', () => {
+    const address: TAddress = 'invalid-address'
+    const chain: TChain = 'Polkadot'
+    const mockApi = {
+      validateSubstrateAddress: vi.fn().mockReturnValue(false)
+    } as unknown as IPolkadotApi<unknown, unknown>
+
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+
+    expect(() => validateAddress(address, chain, true, mockApi)).toThrow(InvalidAddressError)
+    expect(() => validateAddress(address, chain, true, mockApi)).toThrow(
+      'Invalid address: invalid-address'
+    )
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockApi.validateSubstrateAddress).toHaveBeenCalledWith(address)
+  })
+
+  it('should not validate Substrate address when API is not provided', () => {
+    const address: TAddress = 'some-non-ethereum-address'
+    const chain: TChain = 'Acala'
+
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+
+    expect(() => validateAddress(address, chain)).not.toThrow()
+  })
+
+  it('should throw InvalidAddressError for invalid address that causes getSs58AddressInfo to throw (bug scenario)', () => {
+    const address: TAddress = 'invalid-address'
+    const chain: TChain = 'Polkadot'
+    const mockApi = {
+      validateSubstrateAddress: vi.fn().mockReturnValue(false)
+    } as unknown as IPolkadotApi<unknown, unknown>
+
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+
+    expect(() => validateAddress(address, chain, true, mockApi)).toThrow(InvalidAddressError)
+    expect(() => validateAddress(address, chain, true, mockApi)).toThrow(
+      'Invalid address: invalid-address'
+    )
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockApi.validateSubstrateAddress).toHaveBeenCalledWith(address)
+
+    try {
+      validateAddress(address, chain, true, mockApi)
+      expect.fail('Should have thrown InvalidAddressError')
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidAddressError)
+      expect((error as InvalidAddressError).constructor.name).toBe('InvalidAddressError')
+    }
   })
 })

@@ -8,7 +8,7 @@ export const dryRun = async <TApi, TRes>(
 ): Promise<TDryRunResult> => {
   const { api, senderAddress, origin } = options
 
-  validateAddress(senderAddress, origin, false)
+  validateAddress(senderAddress, origin, false, api)
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
   try {
