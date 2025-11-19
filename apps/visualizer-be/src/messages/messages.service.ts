@@ -409,6 +409,7 @@ export class MessageService {
 
     whereConditions.push('ecosystem = $1');
     whereConditions.push('origin_block_timestamp BETWEEN $2 AND $3');
+    whereConditions.push("from_account_id <> ''");
     parameters.push(ecosystem, startTime, endTime);
 
     if (paraIds.length > 0) {
@@ -433,12 +434,10 @@ export class MessageService {
       AccountXcmCountResult[]
     >(query, parameters);
 
-    return results
-      .filter((a) => a.from_account_id && a.from_account_id !== '')
-      .map((a) => ({
-        ecosystem,
-        id: a.from_account_id,
-        count: parseInt(a.message_count, 10),
-      }));
+    return results.map((a) => ({
+      ecosystem,
+      id: a.from_account_id,
+      count: parseInt(a.message_count, 10),
+    }));
   }
 }
