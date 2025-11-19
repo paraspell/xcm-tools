@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.3](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.2...assets-v11.14.3) (2025-11-19)
+
+
+### Bug Fixes
+
+* **assets:** Add missing Hydration assets ⚙️ ([071fdb1](https://github.com/paraspell/xcm-tools/commit/071fdb191aec4253ee461ea61060372989c0e6c3))
+
 ## [11.14.2](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.1...assets-v11.14.2) (2025-11-14)
 
 

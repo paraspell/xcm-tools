@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.14.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.2...xcm-router-v11.14.3) (2025-11-19)
+
+
+### Bug Fixes
+
+* Fix router moonbeam transfers & SDK acala balance 🔧 ([baaf2b8](https://github.com/paraspell/xcm-tools/commit/baaf2b8cbd3c7bb13c70ac5d32950e31d0c28994))
+* **xcm-router:** Fix AcalaDex balance validation in getXcmFees 🔧 ([#1470](https://github.com/paraspell/xcm-tools/issues/1470)) ([0aaf854](https://github.com/paraspell/xcm-tools/commit/0aaf854a9fd5ae890284294dafad2e58e51416ee))
+
 ## [11.14.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.1...xcm-router-v11.14.2) (2025-11-14)
 
 
