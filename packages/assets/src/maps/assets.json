@@ -3904,6 +3904,29 @@
         "alias": "DAI2"
       },
       {
+        "assetId": "1000762",
+        "symbol": "BILL",
+        "decimals": 12,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000075
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1001168",
         "symbol": "XON",
         "decimals": 12,
@@ -18298,6 +18321,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "1001165",
+        "symbol": "EURC",
+        "decimals": 6,
+        "existentialDeposit": "10000"
       },
       {
         "assetId": "1111",
