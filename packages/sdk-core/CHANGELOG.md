@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.2...sdk-core-v11.14.3) (2025-11-19)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix min transferable amount incorrect result 🛠️ ([#1469](https://github.com/paraspell/xcm-tools/issues/1469)) ([a964629](https://github.com/paraspell/xcm-tools/commit/a964629012989c0e18b3e590e6dc723e20681f97))
+
 ## [11.14.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.1...sdk-core-v11.14.2) (2025-11-14)
 
 
