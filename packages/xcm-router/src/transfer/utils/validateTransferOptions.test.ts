@@ -1,12 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../utils/validateDestinationAddress', () => ({
-  validateDestinationAddress: vi.fn(),
-}));
-
 import type { TTransferOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
 import { validateTransferOptions } from './validateTransferOptions';
+
+vi.mock('../../utils/validateDestinationAddress');
 
 describe('validateTransferOptions', () => {
   beforeEach(() => {
@@ -112,5 +110,19 @@ describe('validateTransferOptions', () => {
     } as TTransferOptions;
 
     expect(() => validateTransferOptions(mockOptions)).not.toThrow();
+  });
+
+  it('should require an EVM sender address when origin chain is EVM', () => {
+    const mockOptions = {
+      evmSenderAddress: undefined,
+      senderAddress: 'somePolkadotAddress',
+      recipientAddress: undefined,
+      from: 'Moonbeam',
+      to: undefined,
+    } as TTransferOptions;
+
+    expect(() => validateTransferOptions(mockOptions)).toThrow(
+      'EVM sender address must be provided for EVM chains.',
+    );
   });
 });

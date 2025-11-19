@@ -21,6 +21,7 @@ export const calculateFromExchangeFee = async (
 export const createSwapTx = async (
   exchange: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
+  isForFeeEstimation = false,
 ) => {
   const toDestTxFee = await calculateFromExchangeFee(options);
 
@@ -31,6 +32,7 @@ export const createSwapTx = async (
       papiApi: options.exchange.apiPapi,
       assetFrom: options.exchange.assetFrom,
       assetTo: options.exchange.assetTo,
+      isForFeeEstimation,
     },
     toDestTxFee,
   );

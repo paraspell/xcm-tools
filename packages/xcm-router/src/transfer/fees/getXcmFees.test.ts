@@ -11,14 +11,8 @@ import { getRouterFees } from '../getRouterFees';
 import { prepareTransformedOptions, validateTransferOptions } from '../utils';
 import { getXcmFees } from './getXcmFees';
 
-vi.mock('../getRouterFees', () => ({
-  getRouterFees: vi.fn(),
-}));
-
-vi.mock('../utils', () => ({
-  prepareTransformedOptions: vi.fn(),
-  validateTransferOptions: vi.fn(),
-}));
+vi.mock('../getRouterFees');
+vi.mock('../utils');
 
 describe('getXcmFees', () => {
   const initialOptions = { foo: 'bar' } as unknown as TBuildTransactionsOptions;
@@ -41,7 +35,7 @@ describe('getXcmFees', () => {
     const result = await getXcmFees(initialOptions);
 
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
-    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined);
+    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined, true);
     expect(getRouterFees).toHaveBeenCalledWith(transformed.dex, transformed.options);
     expect(result).toBe(feeResult);
   });

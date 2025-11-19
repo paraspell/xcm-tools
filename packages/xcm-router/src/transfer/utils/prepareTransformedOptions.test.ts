@@ -10,34 +10,18 @@ import { selectBestExchange } from '../selectBestExchange';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import { determineFeeCalcAddress } from './utils';
 
-vi.mock('../../exchanges/ExchangeChainFactory', () => ({
-  createExchangeInstance: vi.fn(),
-}));
+vi.mock('../../exchanges/ExchangeChainFactory');
+vi.mock('../selectBestExchange');
+vi.mock('./utils');
+vi.mock('../../assets');
 
-vi.mock('../selectBestExchange', () => ({
-  selectBestExchange: vi.fn(),
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  hasSupportForAsset: vi.fn(),
+  createChainClient: vi.fn(),
+  findAssetInfo: vi.fn(),
+  applyDecimalAbstraction: vi.fn(),
 }));
-
-vi.mock('./utils', () => ({
-  determineFeeCalcAddress: vi.fn(),
-}));
-
-vi.mock('../../assets', () => ({
-  getExchangeAssetByOriginAsset: vi.fn(),
-  getExchangeAsset: vi.fn(),
-  supportsExchangePair: vi.fn(),
-}));
-
-vi.mock('@paraspell/sdk', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('@paraspell/sdk')>();
-  return {
-    ...mod,
-    hasSupportForAsset: vi.fn(),
-    createChainClient: vi.fn(),
-    findAssetInfo: vi.fn(),
-    applyDecimalAbstraction: vi.fn(),
-  };
-});
 
 describe('prepareTransformedOptions', () => {
   beforeEach(() => {
@@ -64,7 +48,7 @@ describe('prepareTransformedOptions', () => {
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow();
 
-    expect(selectBestExchange).toHaveBeenCalledWith(mockOptions, undefined, undefined);
+    expect(selectBestExchange).toHaveBeenCalledWith(mockOptions, undefined, undefined, false);
   });
 
   test('throws error when origin asset is not found', async () => {

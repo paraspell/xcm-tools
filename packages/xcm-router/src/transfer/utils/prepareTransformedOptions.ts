@@ -11,6 +11,7 @@ import { determineFeeCalcAddress } from './utils';
 export const prepareTransformedOptions = async (
   options: TCommonRouterOptions,
   builderOptions?: TRouterBuilderOptions,
+  isForFeeEstimation = false,
 ): Promise<{
   dex: ExchangeChain;
   options: TTransformedOptions<TCommonRouterOptions>;
@@ -22,7 +23,7 @@ export const prepareTransformedOptions = async (
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
       ? createExchangeInstance(exchange)
-      : await selectBestExchange(options, originApi, builderOptions);
+      : await selectBestExchange(options, originApi, builderOptions, isForFeeEstimation);
 
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
 

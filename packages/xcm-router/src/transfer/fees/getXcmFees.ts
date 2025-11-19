@@ -11,6 +11,6 @@ export const getXcmFees = async (
   builderOptions?: TRouterBuilderOptions,
 ): Promise<TRouterXcmFeeResult> => {
   validateTransferOptions(initialOptions);
-  const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions, true);
   return getRouterFees(dex, options);
 };

@@ -3,15 +3,11 @@ import { getBalanceNative, isChainEvm } from '@paraspell/sdk';
 import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type { TExecuteRouterPlanOptions, TRouterPlan } from '../types';
+import type { TRouterPlan } from '../types';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 
-vi.mock('@paraspell/sdk', () => ({
-  isChainEvm: vi.fn(),
-  getBalanceNative: vi.fn(),
-  InvalidParameterError: class extends Error {},
-}));
+vi.mock('@paraspell/sdk');
 
 vi.mock('../utils/submitTransaction');
 
@@ -78,18 +74,6 @@ describe('executeRouterPlan', () => {
     expect(submitTransaction).toHaveBeenCalledTimes(2);
     expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockSigner);
     expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockEvmSigner);
-  });
-
-  test('should throw error for EVM transaction without EVM signer/sender', async () => {
-    const invalidOptions = {
-      ...baseOptions,
-      destination: 'Moonbeam',
-      evmSigner: undefined,
-      evmSenderAddress: undefined,
-    } as TExecuteRouterPlanOptions;
-    await expect(executeRouterPlan(mockPlan, invalidOptions)).rejects.toThrow(
-      'EVM signer and sender address must be provided for EVM chains.',
-    );
   });
 
   test('should handle empty plan gracefully', async () => {

@@ -1,4 +1,4 @@
-import { InvalidParameterError } from '@paraspell/sdk';
+import { InvalidParameterError, isChainEvm } from '@paraspell/sdk';
 
 import type { TRouterBuilderOptions } from '../types';
 import { type TTransferOptions } from '../types';
@@ -39,6 +39,7 @@ export const transfer = async (
   builderOptions?: TRouterBuilderOptions,
 ): Promise<void> => {
   const {
+    from,
     exchange: exchangeChain,
     signer,
     evmSigner,
@@ -55,6 +56,10 @@ export const transfer = async (
 
   if (evmSenderAddress !== undefined && evmSigner === undefined) {
     throw new InvalidParameterError('evmSigner is required when evmSenderAddress is provided');
+  }
+
+  if (from && isChainEvm(from) && !evmSigner) {
+    throw new InvalidParameterError('EVM signer must be provided for EVM origin chains.');
   }
 
   if (exchangeChain === undefined) {
