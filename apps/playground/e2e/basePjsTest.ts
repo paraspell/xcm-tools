@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { BrowserContext, chromium, Page, test } from "@playwright/test";
+import { BrowserContext, chromium, test } from "@playwright/test";
 import { PolkadotjsExtensionPage } from "./pom";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -54,11 +54,12 @@ export const setupPolkadotExtension = async (context: BrowserContext) => {
 
   await appPage.reload();
 
-  await appPage.getByTestId("btn-connect-wallet").click();
+  await appPage.getByRole('main').getByTestId('btn-connect-wallet').click();
+  await appPage.getByRole('button', { name: 'Polkadot{.js}' }).click();
 
   await extensionPage.connectAccountToHost();
 
-  await appPage.getByTestId("btn-account").click();
+  await appPage.getByTestId("btn-account-confirm").click();
 
   return { appPage, extensionPage };
 };

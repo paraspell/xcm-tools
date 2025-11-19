@@ -516,6 +516,7 @@ const XcmUtilsForm: FC<Props> = ({
             <Menu shadow="md" width={250} position="bottom-end">
               <Menu.Target>
                 <Button
+                  data-testid="btn-actions"
                   leftSection={<IconChevronDown />}
                   loading={loading}
                   variant="outline"
@@ -573,6 +574,7 @@ const XcmUtilsForm: FC<Props> = ({
                   Verify ED on Destination
                 </Menu.Item>
                 <Menu.Item
+                  data-testid="menu-item-transfer-info"
                   leftSection={<IconFileInfo size={16} />}
                   onClick={onSubmitGetTransferInfo}
                 >

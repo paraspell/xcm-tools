@@ -1,5 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 import { SUBSTRATE_CHAINS } from '@paraspell/sdk';
+import { createName } from './utils/selectorName';
 
 const performPalletTest = async (
   page: Page,
@@ -7,19 +8,17 @@ const performPalletTest = async (
   chain: string,
   useApi: boolean,
 ) => {
-  await page.goto('/xcm-sdk-sandbox');
+  await page.goto('/xcm-sdk/pallets');
 
-  await page.getByTestId('tab-pallets').click();
-
-  await page.getByTestId('select-chain').click();
-  await page.getByRole('option', { name: chain, exact: true }).click();
+  await page.getByTestId('select-chain').fill(chain);
+  await page.getByRole("option", {name: createName(chain)}).click();
 
   if (useApi) {
     await page.getByTestId('checkbox-api').check();
   }
 
   await page.getByTestId('select-func').click();
-  await page.getByRole('option', { name: funcName, exact: true }).click();
+  await page.getByRole("option", {name: funcName}).click();
 
   await page.getByTestId('submit').click();
 

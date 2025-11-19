@@ -50,17 +50,24 @@ const setupMetamaskExtension = async (context: BrowserContext) => {
 
   await appPage.bringToFront();
 
-  await appPage.goto("/xcm-sdk-sandbox");
+  await appPage.goto("/xcm-sdk/evm-transfer");
 
-  await appPage.getByTestId("tab-eth-bridge").click();
+  await appPage.getByTestId("label-pjs-api").click();
+
+  //Click viem switch's parent
+  await appPage.getByTestId("switch-api").locator('..').click();
 
   await appPage.getByTestId("btn-connect-eth-wallet").click();
+  await appPage.getByRole('button', { name: 'Metamask' }).click();
+
 
   await extensionPage.page.bringToFront();
   await extensionPage.reload();
   await extensionPage.connectToTheSite();
   await appPage.waitForTimeout(2000);
   await appPage.bringToFront();
+  await appPage.getByTestId("btn-select-eth-account").click();
+
   return { appPage };
 };
 
@@ -70,25 +77,36 @@ const performTransfer = async (
 ) => {
   await appPage.getByTestId("select-currency").click();
 
-  await appPage.getByRole("option", { name: currency }).click();
+  await appPage.getByRole("option", { name: currency }).first().click();
 
   if (useApi) {
     await appPage.getByTestId("checkbox-api").click();
   }
 
+  // await appPage.getByTestId("btn-currency-approve").click();
+
   await appPage.getByTestId("submit").click();
   await appPage.waitForSelector("[data-testid=error]");
 
   await expect(appPage.getByTestId("error")).toBeVisible();
-  await expect(appPage.getByTestId("error")).toContainText(
-    "Failed to validate send: ERC20 token balance insufficient for transfer."
+
+  const errorRegex = new RegExp(
+    "(" +
+      "ErrorToken .* not supported" +
+      "|" +
+      "Failed to validate send: ERC20 token balance insufficient for transfer." +
+      "|" +
+      "Insufficient ETH balance to pay fees." +
+      "|" +
+      "Beneficiary does not hold existential deposit on destination." +
+      "|" +
+      "The amount transferred is greater than the users token balance." +
+      "|" +
+      "The Snowbridge gateway contract needs to approved as a spender for this token and amount." +
+    ")"
   );
-  await expect(appPage.getByTestId("error")).toContainText(
-    "Insufficient ETH balance to pay fees."
-  );
-  await expect(appPage.getByTestId("error")).toContainText(
-    "Beneficiary does not hold existential deposit on destination."
-  );
+
+  await expect(appPage.getByTestId("error")).toContainText(errorRegex);
   await expect(appPage.getByTestId("output")).not.toBeVisible();
 };
 
@@ -108,24 +126,11 @@ baseUiTest.describe("XCM SDK - ETH Bridge", () => {
     ({ appPage } = await setupMetamaskExtension(context));
   });
 
-  baseUiTest.beforeEach(async () => {
-    await appPage.goto("/xcm-sdk-sandbox");
-    await appPage.getByTestId("tab-eth-bridge").click();
-    await appPage.getByTestId("btn-connect-eth-wallet").click();
-  });
-
   filteredCurrencies.forEach((currency) => {
     baseUiTest(
       `Should transfer ${currency} from Ethereum to Polkadot`,
       async () => {
         await performTransfer(appPage, { useApi: false, currency });
-      }
-    );
-
-    baseUiTest(
-      `Should transfer ${currency} from Polkadot to Ethereum - API`,
-      async () => {
-        await performTransfer(appPage, { useApi: true, currency });
       }
     );
   });

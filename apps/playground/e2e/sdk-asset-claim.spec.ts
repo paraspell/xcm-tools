@@ -1,29 +1,31 @@
 import { Page } from '@playwright/test';
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
 import { PolkadotjsExtensionPage } from './pom';
-import { TChainDotKsmWithRelayChains } from '@paraspell/sdk';
+import type { TChain } from '@paraspell/sdk';
+import { createName } from './utils/selectorName';
 
-const supportedChains = [
+
+ const supportedChains = [
   'Polkadot',
   'Kusama',
   'AssetHubPolkadot',
   'AssetHubKusama',
-] as TChainDotKsmWithRelayChains[];
+ ] as TChain[];
+
 
 const performAssetClaim = async (
   appPage: Page,
   extensionPage: PolkadotjsExtensionPage,
-  chain: TChainDotKsmWithRelayChains,
+  chain: TChain,
   {
     useApi,
   }: {
     useApi: boolean;
   },
 ) => {
-  await appPage.getByTestId('tab-asset-claim').click();
 
-  await appPage.getByTestId('select-origin').click();
-  await appPage.getByRole('option', { name: chain, exact: true }).click();
+  await appPage.getByTestId('select-origin').fill(chain);
+  await appPage.getByRole("option", {name: createName(chain)}).click();
 
   if (useApi) {
     await appPage.getByTestId('checkbox-api').click();
@@ -47,7 +49,7 @@ basePjsTest.describe('XCM SDK - Asset claim', () => {
   });
 
   basePjsTest.beforeEach(async () => {
-    await appPage.goto('/xcm-sdk-sandbox');
+    await appPage.goto('/xcm-sdk/asset-claim');
   });
 
   supportedChains.forEach((chain) => {
