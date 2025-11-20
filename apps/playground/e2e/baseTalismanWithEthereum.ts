@@ -32,7 +32,7 @@ const polkaAccount = {
 
 const ethAccount = {
   mnemonic:
-    'leg observe column teach until outside since school october dinner impact title',
+    'clerk agree address universe square swift jealous snow reflect novel prison limit indicate bulk north purity license that possible believe digital attend pigeon doctor',
   password: '1234qwe',
   name: 'EthereumUser',
 };
@@ -160,7 +160,7 @@ export const baseTalismanWithEthereumTest = test.extend<{
 
 export const setupTalismanExtension = async (
   context: BrowserContext,
-  importAccounts,
+  importAccounts: () => Promise<Page>
 ) => {
   const appPage = await context.newPage();
   await appPage.goto('/');
