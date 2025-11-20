@@ -259,10 +259,10 @@ describe('send', () => {
     await send(options)
 
     expect(validateAddress).toHaveBeenCalledWith(
+      apiMock,
       '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
       'Acala',
-      false,
-      apiMock
+      false
     )
   })
 

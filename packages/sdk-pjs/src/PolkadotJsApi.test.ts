@@ -16,7 +16,7 @@ import type { VoidFn } from '@polkadot/api/types'
 import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { blake2AsHex, checkAddress, decodeAddress } from '@polkadot/util-crypto'
+import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
@@ -34,11 +34,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
 
 vi.mock('@polkadot/api')
 
-vi.mock('@polkadot/util-crypto', () => ({
-  checkAddress: vi.fn(),
-  decodeAddress: vi.fn(),
-  blake2AsHex: vi.fn()
-}))
+vi.mock('@polkadot/util-crypto')
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
@@ -301,37 +297,27 @@ describe('PolkadotJsApi', () => {
   describe('validateSubstrateAddress', () => {
     it('should return true when the address is valid', () => {
       const address = '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
-      vi.mocked(checkAddress).mockReturnValue([
-        true,
-        '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
-      ] as [boolean, string | null])
+      vi.mocked(validateAddress).mockImplementation(() => {
+        // validateAddress from @polkadot/util-crypto doesn't throw when valid
+        return true
+      })
 
       const result = polkadotApi.validateSubstrateAddress(address)
 
       expect(result).toBe(true)
-      expect(checkAddress).toHaveBeenCalledWith(address, -1)
+      expect(validateAddress).toHaveBeenCalledWith(address)
     })
 
-    it('should return false when the address is invalid', () => {
+    it('should return false when validateAddress throws an error', () => {
       const address = 'invalid-address'
-      vi.mocked(checkAddress).mockReturnValue([false, null] as [boolean, string | null])
-
-      const result = polkadotApi.validateSubstrateAddress(address)
-
-      expect(result).toBe(false)
-      expect(checkAddress).toHaveBeenCalledWith(address, -1)
-    })
-
-    it('should return false when checkAddress throws an error', () => {
-      const address = 'invalid-address'
-      vi.mocked(checkAddress).mockImplementation(() => {
+      vi.mocked(validateAddress).mockImplementation(() => {
         throw new Error('Invalid address')
       })
 
       const result = polkadotApi.validateSubstrateAddress(address)
 
       expect(result).toBe(false)
-      expect(checkAddress).toHaveBeenCalledWith(address, -1)
+      expect(validateAddress).toHaveBeenCalledWith(address)
     })
   })
 

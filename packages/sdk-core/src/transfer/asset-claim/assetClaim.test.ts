@@ -52,7 +52,7 @@ describe('claimAssets', () => {
       parameters: argsMock
     })
 
-    expect(validateAddress).toHaveBeenCalledWith(options.address, mockChain, true, apiMock)
+    expect(validateAddress).toHaveBeenCalledWith(apiMock, options.address, mockChain, true)
   })
 
   it('should create an API instance if api is not provided', async () => {

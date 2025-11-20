@@ -224,12 +224,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   validateSubstrateAddress(address: string): boolean {
-    try {
-      const result = getSs58AddressInfo(address)
-      return result.isValid
-    } catch {
-      return false
-    }
+    const result = getSs58AddressInfo(address)
+    return result.isValid
   }
 
   callTxMethod({ module, method, parameters }: TSerializedApiCall) {

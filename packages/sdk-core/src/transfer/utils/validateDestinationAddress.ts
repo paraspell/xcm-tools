@@ -7,9 +7,9 @@ import { validateAddress } from '../../utils/validateAddress'
 export const validateDestinationAddress = <TApi, TRes>(
   address: TAddress,
   destination: TDestination,
-  api?: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes>
 ) => {
   if (typeof address === 'string' && !isTLocation(destination)) {
-    validateAddress(address, destination, true, api)
+    validateAddress(api, address, destination, true)
   }
 }

@@ -43,7 +43,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestination(origin, destination)
 
   validateDestinationAddress(address, destination, api)
-  if (senderAddress) validateAddress(senderAddress, origin, false, api)
+  if (senderAddress) validateAddress(api, senderAddress, origin, false)
 
   const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
 

@@ -1207,19 +1207,6 @@ describe('PapiApi', () => {
       expect(result).toBe(false)
       expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
     })
-
-    it('returns false when getSs58AddressInfo throws an error', () => {
-      const badAddr = 'invalid-address'
-
-      vi.mocked(getSs58AddressInfo).mockImplementation(() => {
-        throw new Error('Invalid checksum')
-      })
-
-      const result = papiApi.validateSubstrateAddress(badAddr)
-
-      expect(result).toBe(false)
-      expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
-    })
   })
 
   describe('getMethodName', () => {

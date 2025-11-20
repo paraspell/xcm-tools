@@ -28,7 +28,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   if (destination === 'Ethereum') return true
 
-  validateAddress(address, destination, true, api)
+  validateAddress(api, address, destination, true)
 
   if (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') {
     throw new InvalidParameterError(

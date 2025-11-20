@@ -7,10 +7,10 @@ import { InvalidAddressError } from '../errors'
 import type { TAddress } from '../types'
 
 export const validateAddress = <TApi, TRes>(
+  api: IPolkadotApi<TApi, TRes>,
   address: TAddress,
   chain: TChain,
-  isDestination = true,
-  api?: IPolkadotApi<TApi, TRes>
+  isDestination = true
 ) => {
   if (isTLocation(address)) return
 
@@ -37,7 +37,7 @@ export const validateAddress = <TApi, TRes>(
       return
     }
 
-    if (api && typeof address === 'string') {
+    if (typeof address === 'string') {
       const isValid = api.validateSubstrateAddress(address)
       if (!isValid) {
         throw new InvalidAddressError(`Invalid address: ${address}`)
