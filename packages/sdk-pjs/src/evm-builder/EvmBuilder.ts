@@ -93,8 +93,8 @@ export class EvmBuilderCore<
   async build(
     this: EvmBuilderCore<TApi, TRes, TPjsEvmBuilderOptions<TApi, TRes>>
   ): Promise<string> {
-    const { from, to, address, signer } = this._options
-    validateAddress(address, to)
+    const { from, to, address, signer, api } = this._options
+    validateAddress(api, address, to)
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
       if (isEthersSigner(signer)) {
