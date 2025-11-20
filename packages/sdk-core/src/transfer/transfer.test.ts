@@ -102,7 +102,7 @@ describe('send', () => {
 
     expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.feeAsset)
     expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
-    expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.to)
+    expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.to, apiMock)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
 
@@ -259,6 +259,7 @@ describe('send', () => {
     await send(options)
 
     expect(validateAddress).toHaveBeenCalledWith(
+      apiMock,
       '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
       'Acala',
       false

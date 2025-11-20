@@ -58,7 +58,7 @@ describe('EvmBuilderClass', () => {
 
     await expect(builder.build()).rejects.toThrow(InvalidParameterError)
 
-    expect(validateAddress).toHaveBeenCalledWith(address, 'Ethereum')
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Ethereum')
   })
 
   it('should call transferMoonbeamEvm if from is Moonbeam, Moonriver, or Darwinia', async () => {
@@ -72,7 +72,7 @@ describe('EvmBuilderClass', () => {
 
     await expect(builder.build()).rejects.toThrow(InvalidParameterError)
 
-    expect(validateAddress).toHaveBeenCalledWith(address, 'Polkadot')
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Polkadot')
   })
 
   it('should call transferEthToPolkadot if from is Ethereum', async () => {
@@ -86,7 +86,7 @@ describe('EvmBuilderClass', () => {
 
     await builder.build()
 
-    expect(validateAddress).toHaveBeenCalledWith(address, 'Polkadot')
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Polkadot')
     expect(transferEthToPolkadot).toHaveBeenCalledWith({
       api: mockApi,
       from: 'Ethereum',

@@ -1,6 +1,7 @@
 import { isTLocation } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
 import type { TAddress, TDestination } from '../../types'
 import { validateAddress } from '../../utils/validateAddress'
@@ -15,6 +16,8 @@ vi.mock('@paraspell/sdk-common', () => ({
 }))
 
 describe('validateDestinationAddress', () => {
+  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
+
   afterEach(() => {
     vi.clearAllMocks()
   })
@@ -25,10 +28,10 @@ describe('validateDestinationAddress', () => {
 
     vi.mocked(isTLocation).mockReturnValue(false)
 
-    validateDestinationAddress(address, destination)
+    validateDestinationAddress(address, destination, mockApi)
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, destination, true)
   })
 
   it('should propagate InvalidAddressError thrown by validateAddress', () => {
@@ -42,13 +45,15 @@ describe('validateDestinationAddress', () => {
       )
     })
 
-    expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError)
-    expect(() => validateDestinationAddress(address, destination)).toThrow(
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
+      InvalidAddressError
+    )
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
       'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.'
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, destination, true)
   })
 
   it('should propagate InvalidAddressError when EVM address is provided but destination is not EVM', () => {
@@ -62,13 +67,15 @@ describe('validateDestinationAddress', () => {
       )
     })
 
-    expect(() => validateDestinationAddress(address, destination)).toThrow(InvalidAddressError)
-    expect(() => validateDestinationAddress(address, destination)).toThrow(
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
+      InvalidAddressError
+    )
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
       'EVM address provided but destination chain is not an EVM chain.'
     )
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, destination, true)
   })
 
   it('should not throw an error when validateAddress succeeds for a non-EVM chain and non-EVM address', () => {
@@ -80,9 +87,9 @@ describe('validateDestinationAddress', () => {
       // Assume success, no error thrown
     })
 
-    expect(() => validateDestinationAddress(address, destination)).not.toThrow()
+    expect(() => validateDestinationAddress(address, destination, mockApi)).not.toThrow()
     expect(isTLocation).toHaveBeenCalledWith(destination)
-    expect(validateAddress).toHaveBeenCalledWith(address, destination)
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, destination, true)
   })
 
   it('should not perform validation when address is not a string', () => {
@@ -98,7 +105,7 @@ describe('validateDestinationAddress', () => {
     }
     const destination: TDestination = 'Acala'
 
-    validateDestinationAddress(address, destination)
+    validateDestinationAddress(address, destination, mockApi)
 
     expect(isTLocation).not.toHaveBeenCalled()
     expect(validateAddress).not.toHaveBeenCalled()
@@ -119,7 +126,7 @@ describe('validateDestinationAddress', () => {
 
     vi.mocked(isTLocation).mockReturnValue(true)
 
-    validateDestinationAddress(address, destination)
+    validateDestinationAddress(address, destination, mockApi)
 
     expect(isTLocation).toHaveBeenCalledWith(destination)
     expect(validateAddress).not.toHaveBeenCalled()
