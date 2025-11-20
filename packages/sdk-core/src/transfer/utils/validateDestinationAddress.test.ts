@@ -45,7 +45,9 @@ describe('validateDestinationAddress', () => {
       )
     })
 
-    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(InvalidAddressError)
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
+      InvalidAddressError
+    )
     expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
       'Destination chain is an EVM chain, but the address provided is not a valid Ethereum address.'
     )
@@ -65,7 +67,9 @@ describe('validateDestinationAddress', () => {
       )
     })
 
-    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(InvalidAddressError)
+    expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
+      InvalidAddressError
+    )
     expect(() => validateDestinationAddress(address, destination, mockApi)).toThrow(
       'EVM address provided but destination chain is not an EVM chain.'
     )
