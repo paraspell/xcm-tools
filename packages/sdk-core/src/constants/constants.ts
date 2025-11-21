@@ -24,6 +24,25 @@ export const RELAY_LOCATION: TLocation = {
   interior: { Here: null }
 }
 
+export const AH_REQUIRES_FEE_ASSET_LOCS: TLocation[] = [
+  {
+    parents: Parents.ONE,
+    interior: {
+      X3: [
+        {
+          Parachain: 1000
+        },
+        {
+          PalletInstance: 50
+        },
+        {
+          GeneralIndex: 50000075
+        }
+      ]
+    }
+  }
+]
+
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
 
 export const FEE_PADDING_FACTOR = 130n // 30% padding

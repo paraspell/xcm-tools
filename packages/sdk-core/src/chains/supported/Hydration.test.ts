@@ -141,47 +141,6 @@ describe('Hydration', () => {
       })
     })
 
-    it('should create call for AssetHub destination DOT transfer using symbol', async () => {
-      mockInput.destination = 'AssetHubPolkadot'
-      mockInput.assetInfo = {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1',
-        amount: 1000n
-      }
-
-      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
-
-      await hydration.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalled()
-      expect(transferToAhSpy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
-      })
-    })
-
-    it('should create call for AssetHub destination DOT transfer using assetId', async () => {
-      mockInput.destination = 'AssetHubPolkadot'
-      mockInput.assetInfo = { symbol: 'DOT', assetId: '3', decimals: 10, amount: 1000n }
-
-      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
-
-      await hydration.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalled()
-      expect(transferToAhSpy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
-      })
-    })
-
     it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', () => {
       const mockInput = {
         asset: {

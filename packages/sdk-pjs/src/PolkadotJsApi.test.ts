@@ -16,7 +16,7 @@ import type { VoidFn } from '@polkadot/api/types'
 import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
+import { validateAddress } from '@polkadot/util-crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
@@ -34,7 +34,10 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
 
 vi.mock('@polkadot/api')
 
-vi.mock('@polkadot/util-crypto')
+vi.mock('@polkadot/util-crypto', async importOriginal => ({
+  ...(await importOriginal()),
+  validateAddress: vi.fn()
+}))
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
@@ -43,19 +46,6 @@ describe('PolkadotJsApi', () => {
 
   beforeEach(async () => {
     vi.mocked(getChainProviders).mockReset()
-    vi.mocked(decodeAddress).mockImplementation((address: string) => {
-      if (address.startsWith('0x')) {
-        return new Uint8Array([0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef])
-      }
-      return new Uint8Array([
-        0x88, 0xca, 0x48, 0xe3, 0xe1, 0xd0, 0xf1, 0xc5, 0x0b, 0xd6, 0xb5, 0x04, 0xe1, 0x31, 0x2d,
-        0x21, 0xf5, 0xbd, 0x45, 0xed, 0x14, 0x7e, 0x3c, 0x30, 0xc7, 0x7e, 0xb5, 0xe4, 0xd6, 0x3b,
-        0xdc, 0x63
-      ])
-    })
-    vi.mocked(blake2AsHex).mockReturnValue(
-      '0x81e47a19e6b29b0a65b9591762ce5143ed30d0261e5d24a3201752506b20f15c'
-    )
     mockApiPromise = {
       createType: vi.fn().mockReturnValue({
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
