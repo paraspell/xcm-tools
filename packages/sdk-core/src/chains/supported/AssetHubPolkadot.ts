@@ -8,6 +8,7 @@ import {
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
+  deepEqual,
   isTLocation,
   isTrustedChain,
   Parents,
@@ -15,7 +16,7 @@ import {
   Version
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { AH_REQUIRES_FEE_ASSET_LOCS, DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
@@ -258,7 +259,11 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
     const isExternalAsset = assetInfo.location && assetInfo.location.parents === Parents.TWO
 
-    if (isExternalAsset) {
+    const requiresTypeThen = AH_REQUIRES_FEE_ASSET_LOCS.some(loc =>
+      deepEqual(loc, assetInfo.location)
+    )
+
+    if (isExternalAsset || requiresTypeThen) {
       const call = await createTypeAndThenCall(this.chain, options)
       return api.callTxMethod(call)
     }

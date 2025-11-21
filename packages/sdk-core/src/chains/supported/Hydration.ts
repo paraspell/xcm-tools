@@ -7,41 +7,22 @@ import {
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { hasJunction, Parents, Version } from '@paraspell/sdk-common'
+import { deepEqual, hasJunction, Version } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION } from '../../constants'
-import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
+import { AH_REQUIRES_FEE_ASSET_LOCS } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
+import { createTypeAndThenCall } from '../../transfer'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, createAsset, createBeneficiaryLocation } from '../../utils'
+import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
-
-const createCustomXcmAh = <TApi, TRes>(
-  { api, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  version: Version
-) => ({
-  [version]: [
-    {
-      DepositAsset: {
-        assets: { Wild: { AllCounted: 2 } },
-        beneficiary: createBeneficiaryLocation({
-          api,
-          address: address,
-          version
-        })
-      }
-    }
-  ]
-})
 
 class Hydration<TApi, TRes>
   extends Parachain<TApi, TRes>
@@ -56,38 +37,6 @@ class Hydration<TApi, TRes>
     version: Version = Version.V4
   ) {
     super(chain, info, ecosystem, version)
-  }
-
-  transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, version, destination } = input
-
-    const call: TSerializedApiCall = {
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      parameters: {
-        dest: createVersionedDestination(
-          version,
-          this.chain,
-          destination,
-          getParaId('AssetHubPolkadot')
-        ),
-        assets: {
-          [version]: [createAsset(version, asset.amount, DOT_LOCATION)]
-        },
-        assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: {
-          [version]: {
-            parents: Parents.ONE,
-            interior: 'Here'
-          }
-        },
-        fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: createCustomXcmAh(input, version),
-        weight_limit: 'Unlimited'
-      }
-    }
-
-    return api.callTxMethod(call)
   }
 
   async transferPolkadotXCM<TApi, TRes>(
@@ -112,7 +61,7 @@ class Hydration<TApi, TRes>
       }
     }
 
-    return this.transferToAssetHub(input)
+    return api.callTxMethod(await createTypeAndThenCall(this.chain, input))
   }
 
   transferMoonbeamWhAsset<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
@@ -167,11 +116,16 @@ class Hydration<TApi, TRes>
 
     const baseCanUseXTokens = super.canUseXTokens(options)
 
+    const requiresTypeThen = AH_REQUIRES_FEE_ASSET_LOCS.some(loc =>
+      deepEqual(loc, assetInfo.location)
+    )
+
     return (
       destination !== 'Ethereum' &&
       !(destination === 'AssetHubPolkadot' && assetInfo.symbol === 'DOT') &&
       baseCanUseXTokens &&
-      !feeAsset
+      !feeAsset &&
+      !requiresTypeThen
     )
   }
 

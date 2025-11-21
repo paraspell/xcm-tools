@@ -13,7 +13,7 @@ import type {
   TTypeAndThenCallContext,
   TTypeAndThenFees
 } from '../../types'
-import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
+import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -29,6 +29,8 @@ const buildAssets = (
 ) => {
   const assets = []
 
+  const shouldLocalizeAndSort = isRelayChain(chain) || chain.startsWith('AssetHub')
+
   if (!isDotAsset) {
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
@@ -37,11 +39,11 @@ const buildAssets = (
     createAsset(
       version,
       asset.amount,
-      isRelayChain(chain) ? localizeLocation(chain, asset.location) : asset.location
+      shouldLocalizeAndSort ? localizeLocation(chain, asset.location) : asset.location
     )
   )
 
-  return assets
+  return shouldLocalizeAndSort ? sortAssets(assets) : assets
 }
 
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'

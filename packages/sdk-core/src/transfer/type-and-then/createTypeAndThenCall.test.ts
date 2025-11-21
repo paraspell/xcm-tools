@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TSerializedApiCall, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
+import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -82,6 +82,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
+    vi.mocked(sortAssets).mockImplementation(assets => assets)
   })
 
   it('should handle DOT asset with RELAY_LOCATION', async () => {
