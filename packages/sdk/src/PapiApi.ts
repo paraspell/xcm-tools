@@ -34,7 +34,7 @@ import {
   getChain,
   getChainProviders,
   hasXcmPaymentApiSupport,
-  InvalidParameterError,
+  InvalidAddressError,
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
@@ -217,10 +217,15 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const result = getSs58AddressInfo(address)
 
     if (!result.isValid) {
-      throw new InvalidParameterError(`Invalid address: ${address}`)
+      throw new InvalidAddressError(`Invalid address: ${address}`)
     }
 
     return result.publicKey
+  }
+
+  validateSubstrateAddress(address: string): boolean {
+    const result = getSs58AddressInfo(address)
+    return result.isValid
   }
 
   callTxMethod({ module, method, parameters }: TSerializedApiCall) {

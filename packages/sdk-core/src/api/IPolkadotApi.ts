@@ -80,4 +80,10 @@ export interface IPolkadotApi<TApi, TRes> {
    * Convert a location to a chain account address using the runtime LocationToAccount API, if available.
    */
   convertLocationToAccount(location: TLocation): Promise<string | undefined>
+  /**
+   * Validate if a Substrate address is valid.
+   * @param address - The address to validate
+   * @returns true if the address is valid, false otherwise
+   */
+  validateSubstrateAddress(address: string): boolean
 }

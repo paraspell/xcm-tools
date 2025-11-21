@@ -44,7 +44,7 @@ describe('EvmBuilderClass', () => {
 
     await builder.build()
 
-    expect(validateAddress).toHaveBeenCalledWith(address, 'Ethereum')
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Ethereum')
     expect(transferMoonbeamToEth).toHaveBeenCalledWith({
       api: mockApi,
       from: 'Moonbeam',
@@ -67,7 +67,7 @@ describe('EvmBuilderClass', () => {
 
     await builder.build()
 
-    expect(validateAddress).toHaveBeenCalledWith(address, 'AssetHubPolkadot')
+    expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'AssetHubPolkadot')
     expect(transferMoonbeamEvm).toHaveBeenCalledWith({
       api: mockApi,
       from: 'Darwinia',

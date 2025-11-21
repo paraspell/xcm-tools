@@ -46,7 +46,7 @@ describe('getDryRunOrigin', () => {
       tx: {}
     })
 
-    expect(validateAddress).toHaveBeenCalledWith(address, chain, false)
+    expect(validateAddress).toHaveBeenCalledWith(apiMock, address, chain, false)
     expect(result).toEqual(mockResult)
     expect(initSpy).toHaveBeenCalledWith(chain, DRY_RUN_CLIENT_TIMEOUT_MS)
     expect(disconnectSpy).toHaveBeenCalled()

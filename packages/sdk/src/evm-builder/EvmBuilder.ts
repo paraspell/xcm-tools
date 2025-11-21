@@ -85,8 +85,8 @@ export class EvmBuilderCore<
    * @throws Error if any required parameters are missing.
    */
   async build(this: EvmBuilderCore<TApi, TRes, TEvmBuilderOptions<TApi, TRes>>): Promise<string> {
-    const { from, to, address } = this._options
-    validateAddress(address, to)
+    const { from, to, address, api } = this._options
+    validateAddress(api, address, to)
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
       return transferMoonbeamToEth(this._options)
