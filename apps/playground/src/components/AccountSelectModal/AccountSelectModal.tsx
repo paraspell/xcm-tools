@@ -52,7 +52,11 @@ const AccountSelectModal: FC<Props> = ({
           value={value}
           onChange={setValue}
         />
-        <Button mt="sm" onClick={onConfirmClick}>
+        <Button
+          mt="sm"
+          data-testid="btn-account-confirm"
+          onClick={onConfirmClick}
+        >
           Confirm
         </Button>
         {onDisconnect && (

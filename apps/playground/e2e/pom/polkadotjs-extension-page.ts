@@ -19,6 +19,7 @@ export class PolkadotjsExtensionPage {
   readonly repeatPasswordInput: Locator;
   readonly polkadotExtensionCard: Locator;
   readonly selectAllCheckbox: Locator;
+  readonly confirmPrivacyOrMigrationNoticeButton: Locator;
   extensionId: string;
 
   constructor(page: Page) {
@@ -52,6 +53,9 @@ export class PolkadotjsExtensionPage {
     );
     this.polkadotExtensionCard = page.locator("#detailsButton");
     this.selectAllCheckbox = page.locator("Select all");
+    this.confirmPrivacyOrMigrationNoticeButton = page.getByRole('button', {
+      name: /^(I Understand|Understood, let me continue)$/i
+    });
   }
 
   async firstOpen() {
@@ -60,6 +64,7 @@ export class PolkadotjsExtensionPage {
   }
 
   async clickConfirm() {
+    await this.confirmPrivacyOrMigrationNoticeButton.click({ force: true })
     await this.confirmButton.click({ force: true });
   }
 
@@ -114,7 +119,7 @@ export class PolkadotjsExtensionPage {
 
   async connectAccountToHost() {
     await this.page.locator("text=Select all").click();
-    await this.page.locator("button").click();
+    await this.page.getByRole('button', { name: 'Connect 1 account(s)' }).click();
   }
 
   async close() {
