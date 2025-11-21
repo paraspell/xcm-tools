@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.14.4](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.3...sdk-pjs-v11.14.4) (2025-11-21)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add SDK level address validation 📕 ([57c6a2c](https://github.com/paraspell/xcm-tools/commit/57c6a2c9aaef9d0e152d6f4f1de1fe668237f9bc))
+* **sdk-core:** Use TypeAndThen for BILL asset 🔧 ([ad07a47](https://github.com/paraspell/xcm-tools/commit/ad07a47dc59d9298ddc2c364db87c5efd42d078e))
+
 ## [11.14.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.2...sdk-pjs-v11.14.3) (2025-11-19)
 
 
