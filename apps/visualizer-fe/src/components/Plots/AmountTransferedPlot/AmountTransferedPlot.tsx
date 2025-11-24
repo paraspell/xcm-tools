@@ -5,6 +5,7 @@ import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
+import { formatDate } from '../../../utils/dateFormatter';
 import { getParachainColor } from '../../../utils/utils';
 import { formatNumber } from '../utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
@@ -48,7 +49,7 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
       return acc;
     }, {});
 
-    let data = Object.values(dataByDate);
+    let data = Object.values(dataByDate).sort((a, b) => a.date.localeCompare(b.date));
 
     if (showMedian) {
       data = data.map(day => {
@@ -71,6 +72,10 @@ const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showM
         return day;
       });
     }
+
+    // format date
+    data.map(day => (day.date = formatDate(day.date)));
+
     return data;
   };
 

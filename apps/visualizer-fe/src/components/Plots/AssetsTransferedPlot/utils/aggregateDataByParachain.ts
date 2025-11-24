@@ -3,12 +3,16 @@ import type { TFunction } from 'i18next';
 
 import type { TAggregatedData, TAssetCounts } from '../../../../types/types';
 
-export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TAggregatedData[] => {
+export const aggregateDataByParachain = (
+  counts: TAssetCounts,
+  t: TFunction,
+  selectedEcosystem: TRelaychain
+): TAggregatedData[] => {
   const accumulator: Record<string, TAggregatedData> = {};
   counts.forEach(asset => {
     const parachainKey = asset.parachain
       ? asset.parachain || `ID ${asset.parachain}`
-      : t('charts.common.total');
+      : `${t('charts.common.total')} - ${selectedEcosystem}`;
     if (!accumulator[parachainKey]) {
       accumulator[parachainKey] = {
         parachain: parachainKey,

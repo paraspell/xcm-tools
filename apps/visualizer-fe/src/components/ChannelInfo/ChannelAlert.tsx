@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelQuery } from '../../gql/graphql';
+import { formatDate } from '../../utils/dateFormatter';
 import { getChainNameNoEcosystem } from '../../utils/getChainDisplayName';
 import { getParachainById } from '../../utils/utils';
 
@@ -67,6 +68,8 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
 
   const padding = isMobile ? '75px' : 'xl';
   const explorerLink = generateExplorerLink();
+
+  const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 20 });
 
   return (
     <Box pos="absolute" top={0} left={0} p={padding}>
@@ -124,13 +127,13 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
           <Group align="center" gap="xs">
             <Text size="md">{t('charts.common.messageCount')}:</Text>
             <Text fw="bold" size="md">
-              {currentChannel?.message_count}
+              {nf.format(currentChannel?.message_count)}
             </Text>
           </Group>
           <Group align="center" gap="xs">
             <Text size="md">{t('main.network.selected.activatedAt')}:</Text>
             <Text fw="bold" size="md">
-              {dayjs((currentChannel?.active_at ?? 0) * 1000).format('YYYY/MM/DD')}{' '}
+              {formatDate(dayjs((currentChannel?.active_at ?? 0) * 1000))}{' '}
             </Text>
           </Group>
           <Group>
