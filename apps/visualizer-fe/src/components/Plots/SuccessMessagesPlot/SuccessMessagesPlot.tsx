@@ -1,8 +1,11 @@
 import { BarChart } from '@mantine/charts';
+import type { TSubstrateChain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsQuery } from '../../../gql/graphql';
 import { getChainDisplayName } from '../../../utils';
 import { formatNumber } from '../utils';
@@ -14,17 +17,26 @@ type Props = {
 
 const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
+  const { selectedParachains } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
 
-  const chartData = counts.map(c => {
-    const name = c.parachain ?? t('charts.common.total');
-    return {
-      label: getChainDisplayName(name),
-      ecosystem: c.ecosystem,
-      category: name,
-      success: c.success,
-      failed: c.failed
-    };
-  });
+  const order = new Map(selectedParachains.map((p, index) => [p, index]));
+  const chartData = counts
+    .map(c => {
+      const name = c.parachain ?? `${t('charts.common.total')} - ${selectedEcosystem}`;
+      return {
+        label: getChainDisplayName(name),
+        ecosystem: c.ecosystem,
+        category: name,
+        success: c.success,
+        failed: c.failed
+      };
+    })
+    .sort((a, b) => {
+      const aIndex = order.get(a.category as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+      const bIndex = order.get(b.category as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+      return aIndex - bIndex;
+    });
 
   const series = [
     { name: 'success', label: t('status.success'), color: 'green' },

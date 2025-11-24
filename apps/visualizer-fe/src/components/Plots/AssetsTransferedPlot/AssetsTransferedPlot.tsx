@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
+import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { TAssetCounts } from '../../../types/types';
 import { getChainDisplayName } from '../../../utils';
 import { formatNumber } from '../utils';
@@ -18,25 +20,32 @@ type Props = {
 
 const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showAmounts }, ref) => {
   const { t } = useTranslation();
+  const { selectedParachains } = useSelectedParachain();
+  const { selectedEcosystem } = useSelectedEcosystem();
 
   const aggregatedData = useMemo(() => {
-    return Object.values(aggregateDataByParachain(counts, t));
+    return Object.values(aggregateDataByParachain(counts, t, selectedEcosystem));
   }, [counts, t]);
 
   const series = useMemo(() => {
     return generateSeries(counts);
   }, [counts]);
 
-  const transformedData = useMemo(
-    () =>
-      aggregatedData.map(d => ({
+  const transformedData = useMemo(() => {
+    const order = new Map(selectedParachains.map((p, index) => [p, index]));
+    return aggregatedData
+      .map(d => ({
         parachain: d.parachain,
         ecosystem: d.ecosystem,
         display: getChainDisplayName(d.parachain as TSubstrateChain),
         ...(showAmounts ? d.amounts : d.counts)
-      })),
-    [aggregatedData, showAmounts]
-  );
+      }))
+      .sort((a, b) => {
+        const aIndex = order.get(a.parachain as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+        const bIndex = order.get(b.parachain as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+        return aIndex - bIndex;
+      });
+  }, [aggregatedData, showAmounts, selectedParachains]);
 
   return (
     <BarChart
