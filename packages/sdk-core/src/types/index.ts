@@ -1,5 +1,6 @@
 export * from './TApi'
 export * from './TAssetClaim'
+export * from './TAssets'
 export * from './TBalance'
 export * from './TBuilder'
 export * from './TConfig'
