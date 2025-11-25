@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.14.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.4...sdk-core-v11.14.5) (2025-11-25)
+
+
+### Code Refactoring
+
+* **sdk-core:** Fully refactor balance logic 🧹 ([028d65d](https://github.com/paraspell/xcm-tools/commit/028d65d975e93a614e10ed5a8e853cf5eab9fd7b))
+
+
+### Tests
+
+* **sdk-core:** Add missing balance unit tests 🧪 ([027a3d4](https://github.com/paraspell/xcm-tools/commit/027a3d4d04b5caedfa16e2928461ed20845c1d43))
+
 ## [11.14.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.3...sdk-core-v11.14.4) (2025-11-21)
 
 
