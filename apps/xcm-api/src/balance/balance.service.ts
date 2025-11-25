@@ -51,12 +51,16 @@ export class BalanceService {
   ) {
     validateChain(chain, CHAINS);
 
-    const balance = await getAssetBalance({
-      address,
-      currency,
-      chain: chain as TChain,
-    });
-    return balance === null ? 'null' : balance.toString();
+    try {
+      const balance = await getAssetBalance({
+        address,
+        currency,
+        chain: chain as TChain,
+      });
+      return balance === null ? 'null' : balance.toString();
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   getExistentialDeposit(chain: string, { currency }: ExistentialDepositDto) {
