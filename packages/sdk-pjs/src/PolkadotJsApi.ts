@@ -204,7 +204,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   getMethod(tx: Extrinsic): string {
-    return tx.method.toString()
+    return tx.method.method
   }
 
   getTypeThenAssetCount(tx: Extrinsic): number | undefined {
