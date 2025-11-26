@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.6](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.5...sdk-pjs-v11.14.6) (2025-11-26)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Fix tx method resolve function 🔧 ([ba65a78](https://github.com/paraspell/xcm-tools/commit/ba65a7876323fdb8ae43622e42f81fb877bfd218))
+
 ## [11.14.5](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v11.14.4...sdk-pjs-v11.14.5) (2025-11-25)
 
 
