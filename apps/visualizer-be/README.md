@@ -58,7 +58,7 @@ The production version of the XCM Visualizer is available at [https://xcm-visual
 
 To run the project locally, you need to have Node.js v.20^ installed, as well as PostgreSQL database.
 
-In backend folder create .env file following .env.example file. After your database is set up, you can import the database dump from the [xcm_database_dump.tar](https://drive.google.com/file/d/1mBYi9zh8iuEWtQtcZdg-sgGtRwJFRLje/view?usp=sharing) file to try the XCM Visualizer with the example data.
+In backend folder create .env file following .env.example file. After your database is set up, you can import the database dump from the [xcm_database_dump_2023_2024](https://drive.google.com/file/d/1v7z85kz-ez_0Vy8GffMEuWlWq2_T2dQq/view?usp=sharing) file to try the XCM Visualizer with the example data.
 
 Then, run the following commands:
 
