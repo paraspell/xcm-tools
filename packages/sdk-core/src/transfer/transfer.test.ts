@@ -62,7 +62,7 @@ describe('send', () => {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn(),
-      callTxMethod: vi.fn(),
+      deserializeExtrinsics: vi.fn(),
       getApiOrUrl: vi.fn(),
       getConfig: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
@@ -383,7 +383,9 @@ describe('send', () => {
       } as TSendOptions<unknown, unknown>
 
       const initSpy = vi.spyOn(apiMock, 'init')
-      const callTxSpy = vi.spyOn(apiMock, 'callTxMethod').mockResolvedValue('localTransferResult')
+      const callTxSpy = vi
+        .spyOn(apiMock, 'deserializeExtrinsics')
+        .mockResolvedValue('localTransferResult')
 
       const result = await send(options)
 
@@ -392,7 +394,7 @@ describe('send', () => {
       expect(callTxSpy).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: { Id: options.address },
           value: 100n
         }

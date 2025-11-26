@@ -7,7 +7,7 @@ import { addXcmVersionHeader, createBeneficiaryLocation, resolveParaId } from '.
 import { createVersionedAssets } from '../../utils/asset'
 import { createVersionedDestination } from './utils'
 
-export const constructRelayToParaParameters = <TApi, TRes>(
+export const constructRelayToParaParams = <TApi, TRes>(
   {
     api,
     origin,

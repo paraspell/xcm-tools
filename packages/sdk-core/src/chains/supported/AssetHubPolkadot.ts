@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
   getRelayChainSymbol,
@@ -8,6 +9,8 @@ import {
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import {
+  deepEqual,
+  hasJunction,
   isTLocation,
   isTrustedChain,
   Parents,
@@ -15,8 +18,10 @@ import {
   Version
 } from '@paraspell/sdk-common'
 
-import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import type { IPolkadotApi } from '../../api'
+import { AH_REQUIRES_FEE_ASSET_LOCS, DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../errors'
+import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { createTypeAndThenCall } from '../../transfer'
@@ -25,7 +30,7 @@ import type {
   TDestination,
   TPolkadotXcmMethod,
   TRelayToParaOverrides,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
 import {
@@ -88,10 +93,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
     const location = asset.symbol === this.getNativeAssetSymbol() ? DOT_LOCATION : asset.location
 
-    const call: TSerializedApiCall = {
+    const call: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: createVersionedDestination(
           this.version,
           this.chain,
@@ -126,7 +131,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       }
     }
 
-    return api.callTxMethod(call)
+    return api.deserializeExtrinsics(call)
   }
 
   public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
@@ -237,14 +242,14 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
       if (isSymbolMatch(assetInfo.symbol, 'KSM')) {
         const call = await createTypeAndThenCall(this.chain, options)
-        return api.callTxMethod(call)
+        return api.deserializeExtrinsics(call)
       }
 
       const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol())
       const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.callTxMethod(await handleExecuteTransfer(this.chain, options))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, options))
       }
     }
 
@@ -258,9 +263,13 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
     const isExternalAsset = assetInfo.location && assetInfo.location.parents === Parents.TWO
 
-    if (isExternalAsset) {
+    const requiresTypeThen = AH_REQUIRES_FEE_ASSET_LOCS.some(loc =>
+      deepEqual(loc, assetInfo.location)
+    )
+
+    if (isExternalAsset || requiresTypeThen) {
       const call = await createTypeAndThenCall(this.chain, options)
-      return api.callTxMethod(call)
+      return api.deserializeExtrinsics(call)
     }
 
     const method = this.getMethod(scenario, destination)
@@ -270,7 +279,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       method === 'transfer_assets' &&
       isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.chain))
     ) {
-      return api.callTxMethod(await createTypeAndThenCall(this.chain, options))
+      return api.deserializeExtrinsics(await createTypeAndThenCall(this.chain, options))
     }
 
     const modifiedInput = this.patchInput(options)
@@ -291,10 +300,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       const assetId = Number(asset.assetId)
       const dest = { Id: address }
       if (isAmountAll) {
-        return api.callTxMethod({
+        return api.deserializeExtrinsics({
           module: 'Assets',
           method: 'transfer_all',
-          parameters: {
+          params: {
             id: assetId,
             dest,
             keep_alive: false
@@ -302,10 +311,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
         })
       }
 
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           id: assetId,
           target: dest,
           amount: asset.amount
@@ -314,10 +323,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     }
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'ForeignAssets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: asset.location,
           dest: { Id: address },
           keep_alive: false
@@ -325,15 +334,34 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'ForeignAssets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: asset.location,
         target: { Id: address },
         amount: asset.amount
       }
     })
+  }
+
+  getBalanceForeign<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    const ASSETS_PALLET_ID = 50
+
+    const hasRequiredJunctions =
+      asset.location &&
+      hasJunction(asset.location, 'PalletInstance', ASSETS_PALLET_ID) &&
+      hasJunction(asset.location, 'GeneralIndex')
+
+    if (!asset.location || hasRequiredJunctions) {
+      return getPalletInstance('Assets').getBalance(api, address, asset)
+    }
+
+    return getPalletInstance('ForeignAssets').getBalance(api, address, asset)
   }
 }
 

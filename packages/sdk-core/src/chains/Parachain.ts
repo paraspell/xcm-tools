@@ -1,6 +1,6 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfo,
   findAssetInfoByLoc,
@@ -13,7 +13,7 @@ import {
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
+import { getOtherAssetsPallets, type TPallet } from '@paraspell/pallets'
 import type { TChain, TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
@@ -27,6 +27,8 @@ import {
   type TParachain
 } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../api'
+import { getAssetBalanceInternal } from '../balance'
 import { DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
@@ -36,9 +38,9 @@ import {
   TransferToAhNotSupported
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
-import { getAssetBalanceInternal } from '../pallets/assets'
+import { getPalletInstance } from '../pallets'
 import {
-  constructRelayToParaParameters,
+  constructRelayToParaParams,
   createDestination,
   createVersionedDestination
 } from '../pallets/xcmPallet/utils'
@@ -58,7 +60,7 @@ import type {
   TRelayToParaOverrides,
   TScenario,
   TSendInternalOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
@@ -300,7 +302,7 @@ abstract class Parachain<TApi, TRes> {
 
         const call = await createTypeAndThenCall(this.chain, options)
 
-        return api.callTxMethod(call)
+        return api.deserializeExtrinsics(call)
       }
 
       if (supportsPolkadotXCM(this)) {
@@ -383,7 +385,9 @@ abstract class Parachain<TApi, TRes> {
     return { transferType: 'typeAndThen' }
   }
 
-  async transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): Promise<TSerializedApiCall> {
+  async transferRelayToPara(
+    options: TRelayToParaOptions<TApi, TRes>
+  ): Promise<TSerializedExtrinsics> {
     const {
       api,
       version,
@@ -431,7 +435,7 @@ abstract class Parachain<TApi, TRes> {
     return {
       module: (pallet as TPallet) ?? 'XcmPallet',
       method: method ?? 'limited_teleport_assets',
-      parameters: constructRelayToParaParameters(options, version)
+      params: constructRelayToParaParams(options, version)
     }
   }
 
@@ -446,15 +450,7 @@ abstract class Parachain<TApi, TRes> {
   }
 
   async transferLocal(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    const {
-      api,
-      assetInfo: asset,
-      feeAsset,
-      address,
-      senderAddress,
-      currency,
-      isAmountAll
-    } = options
+    const { api, assetInfo: asset, feeAsset, address, senderAddress, isAmountAll } = options
 
     if (isTLocation(address)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
@@ -475,7 +471,7 @@ abstract class Parachain<TApi, TRes> {
         api,
         chain: this.chain,
         address: senderAddress,
-        currency: currency as TCurrencyCore
+        asset
       })
     } else {
       balance = MIN_AMOUNT
@@ -500,10 +496,10 @@ abstract class Parachain<TApi, TRes> {
 
     if (isAmountAll) {
       return Promise.resolve(
-        api.callTxMethod({
+        api.deserializeExtrinsics({
           module: 'Balances',
           method: 'transfer_all',
-          parameters: {
+          params: {
             dest,
             keep_alive: false
           }
@@ -512,10 +508,10 @@ abstract class Parachain<TApi, TRes> {
     }
 
     return Promise.resolve(
-      api.callTxMethod({
+      api.deserializeExtrinsics({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest,
           value: asset.amount
         }
@@ -532,10 +528,10 @@ abstract class Parachain<TApi, TRes> {
     const currencyId = BigInt(asset.assetId)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest,
           currency_id: currencyId,
           keep_alive: false
@@ -543,10 +539,10 @@ abstract class Parachain<TApi, TRes> {
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest,
         currency_id: currencyId,
         amount: asset.amount
@@ -629,10 +625,10 @@ abstract class Parachain<TApi, TRes> {
       customXcmOnDest = createCustomXcmOnDest(input, this.chain, messageId)
     }
 
-    const call: TSerializedApiCall = {
+    const call: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {
+      params: {
         dest: createVersionedDestination(
           version,
           this.chain,
@@ -652,7 +648,52 @@ abstract class Parachain<TApi, TRes> {
       }
     }
 
-    return api.callTxMethod(call)
+    return api.deserializeExtrinsics(call)
+  }
+
+  getBalanceNative(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    const palletInstance = getPalletInstance('System')
+    return palletInstance.getBalance(api, address, asset)
+  }
+
+  getCustomCurrencyId(_asset: TAssetInfo): unknown {
+    return undefined
+  }
+
+  async getBalanceForeign<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ) {
+    const pallets = getOtherAssetsPallets(this.chain)
+    let lastError: unknown
+
+    if (pallets.length === 0)
+      throw new InvalidParameterError(`No foreign asset pallets found for ${this.chain}`)
+
+    const customCurrencyId = this.getCustomCurrencyId(asset)
+
+    for (const pallet of pallets) {
+      const instance = getPalletInstance(pallet)
+
+      try {
+        return await instance.getBalance(api, address, asset, customCurrencyId)
+      } catch (e) {
+        lastError = e
+      }
+    }
+
+    throw lastError
+  }
+
+  getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo) {
+    const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
+    if (isNativeAsset) return this.getBalanceNative(api, address, asset)
+    return this.getBalanceForeign(api, address, asset)
   }
 }
 

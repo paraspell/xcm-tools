@@ -10,9 +10,9 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal } from '../../balance'
 import type { GeneralBuilder } from '../../builder'
 import { AmountTooLowError } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets/balance'
 import type {
   TDryRunResult,
   TGetXcmFeeResult,
@@ -30,7 +30,7 @@ vi.mock('../../utils')
 vi.mock('../utils')
 vi.mock('../fees')
 vi.mock('../dry-run')
-vi.mock('../../pallets/assets/balance')
+vi.mock('../../balance')
 
 const makeApis = () => {
   const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>
@@ -51,6 +51,9 @@ describe('getMinTransferableAmountInternal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(abstractDecimals).mockReturnValue(100n)
+    vi.mocked(isAssetEqual).mockImplementation(
+      (a: TAssetInfo, b: TAssetInfo) => a?.symbol === b?.symbol
+    )
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
     vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
     vi.mocked(isAssetEqual).mockImplementation(
@@ -115,7 +118,7 @@ describe('getMinTransferableAmountInternal', () => {
         api: destApi,
         address: 'DEST_ADDR',
         chain: 'Astar',
-        currency: expect.objectContaining({ location: expect.anything() })
+        asset: destAsset
       })
     )
     expect(abstractDecimals).toHaveBeenCalledWith(1n, 12, api)
@@ -174,9 +177,10 @@ describe('getMinTransferableAmountInternal', () => {
 
     expect(getAssetBalanceInternal).toHaveBeenCalledWith(
       expect.objectContaining({
-        currency: { symbol: 'A' }
+        asset
       })
     )
+
     expect(resolveFeeAsset).toHaveBeenCalled()
   })
 

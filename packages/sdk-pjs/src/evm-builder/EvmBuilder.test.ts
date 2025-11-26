@@ -32,7 +32,7 @@ vi.mock('../utils', () => ({
 
 const mockApi = {
   init: vi.fn(),
-  callTxMethod: vi.fn()
+  deserializeExtrinsics: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('EvmBuilderClass', () => {

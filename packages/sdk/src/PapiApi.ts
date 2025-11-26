@@ -19,26 +19,24 @@ import type {
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
+  TSerializedStateQuery,
   TSubstrateChain,
   TWeight
 } from '@paraspell/sdk-core'
 import {
-  assertHasId,
   assertHasLocation,
   BatchMode,
   ChainNotSupportedError,
   computeFeeFromDryRun,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
-  getChain,
   getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
-  isForeignAsset,
   isRelayChain,
   localizeLocation,
   MissingChainApiError,
@@ -228,9 +226,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return result.isValid
   }
 
-  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
-    const transformedParameters = transform(parameters)
-    return this.api.getUnsafeApi().tx[module][method](transformedParameters)
+  deserializeExtrinsics({ module, method, params }: TSerializedExtrinsics) {
+    const transformedParams = transform(params)
+    return this.api.getUnsafeApi().tx[module][method](transformedParams)
+  }
+
+  queryState<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
+    return this.api.getUnsafeApi().query[module][method].getValue(...params.map(transform))
+  }
+
+  queryRuntimeApi<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
+    return this.api.getUnsafeApi().apis[module][method](...params.map(transform))
   }
 
   callBatchMethod(calls: TPapiTransaction[], mode: BatchMode) {
@@ -338,156 +344,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         FixedSizeBinary.fromHex(contract),
         FixedSizeBinary.fromHex(slot)
       )
-  }
-
-  async getBalanceNative(address: string) {
-    const res = await this.api.getUnsafeApi().query.System.Account.getValue(address)
-
-    return res.data.free as bigint
-  }
-
-  async getBalanceForeignPolkadotXcm(chain: TSubstrateChain, address: string, asset: TAssetInfo) {
-    if (chain.startsWith('Kilt')) {
-      assertHasLocation(asset)
-      const res = await this.api
-        .getUnsafeApi()
-        .query.Fungibles.Account.getValue(transform(asset.location), address)
-
-      return res && res.balance ? BigInt(res.balance) : 0n
-    }
-
-    assertHasId(asset)
-
-    const res = await this.api
-      .getUnsafeApi()
-      .query.Assets.Account.getValue(
-        chain.startsWith('NeuroWeb') ? BigInt(asset.assetId) : asset.assetId,
-        address
-      )
-
-    return res && res.balance ? BigInt(res.balance) : 0n
-  }
-
-  async getMythosForeignBalance(address: string) {
-    const res = await this.api.getUnsafeApi().query.Balances.Account.getValue(address)
-
-    return res && res.free ? BigInt(res.free) : 0n
-  }
-
-  async getBalanceForeignAssetsPallet(address: string, location: TLocation) {
-    const transformedLocation = transform(location)
-
-    const res = await this.api
-      .getUnsafeApi()
-      .query.ForeignAssets.Account.getValue(transformedLocation, address)
-
-    return BigInt(res === undefined ? 0 : res.balance)
-  }
-
-  async getForeignAssetsByIdBalance(address: string, assetId: string) {
-    const res = await this.api.getUnsafeApi().query.ForeignAssets.Account.getValue(assetId, address)
-
-    return BigInt(res === undefined ? 0 : res.balance)
-  }
-
-  async getBalanceForeignBifrost(address: string, asset: TAssetInfo) {
-    const currencySelection = getChain('BifrostPolkadot').getCurrencySelection(asset)
-
-    const transformedParameters = transform(currencySelection)
-
-    const response = await this.api
-      .getUnsafeApi()
-      .query.Tokens.Accounts.getValue(address, transformedParameters)
-
-    const accountData = response ? response : null
-    return accountData ? BigInt(accountData.free.toString()) : 0n
-  }
-
-  async getBalanceNativeAcala(address: string, symbol: string) {
-    const transformedParameters = transform({ Token: symbol })
-
-    const response = await this.api
-      .getUnsafeApi()
-      .query.Tokens.Accounts.getValue(address, transformedParameters)
-
-    const accountData = response ? response : null
-    return accountData ? BigInt(accountData.free.toString()) : 0n
-  }
-
-  async getBalanceForeignXTokens(chain: TSubstrateChain, address: string, asset: TAssetInfo) {
-    let pallet = 'Tokens'
-
-    if (chain === 'Centrifuge' || chain === 'Altair') {
-      pallet = 'OrmlTokens'
-    }
-
-    if (chain === 'Peaq' || chain === 'Manta' || chain === 'Crust' || chain === 'Ajuna') {
-      assertHasId(asset)
-      const response = await this.api
-        .getUnsafeApi()
-        .query.Assets.Account.getValue(
-          chain === 'Manta' || chain === 'Crust' ? BigInt(asset.assetId) : asset.assetId,
-          address
-        )
-      return response ? BigInt(response.free.toString()) : 0n
-    }
-
-    if (chain === 'Unique') {
-      assertHasLocation(asset)
-      assertHasId(asset)
-      const unsafeApi = this.api.getUnsafeApi()
-
-      const collectionId = await unsafeApi.query.ForeignAssets.ForeignAssetToCollection.getValue(
-        transform(asset.location)
-      )
-
-      const balance = await unsafeApi.apis.UniqueApi.balance(
-        collectionId,
-        { type: 'Substrate', value: address },
-        asset.assetId
-      )
-
-      return balance.success ? BigInt(balance.value) : 0n
-    }
-
-    if (chain === 'Hydration') {
-      assertHasId(asset)
-      const response = await this.api
-        .getUnsafeApi()
-        .apis.CurrenciesApi.account(asset.assetId, address)
-      return response ? BigInt(response.free.toString()) : 0n
-    }
-
-    const response = await this.api.getUnsafeApi().query[pallet].Accounts.getEntries(address)
-
-    const entry = response.find(({ keyArgs }) => {
-      const [_address, assetItem] = keyArgs
-
-      return (
-        assetItem.toString().toLowerCase() === asset.symbol?.toLowerCase() ||
-        (isForeignAsset(asset) &&
-          assetItem.toString().toLowerCase() === asset.assetId?.toLowerCase()) ||
-        (typeof assetItem === 'object' &&
-          'value' in assetItem &&
-          assetItem.value.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
-        (typeof assetItem === 'object' &&
-          'value' in assetItem &&
-          assetItem.value.type &&
-          assetItem.value.type.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
-        (typeof assetItem === 'object' &&
-          'value' in assetItem &&
-          isForeignAsset(asset) &&
-          assetItem.value.toString().toLowerCase() === asset.assetId?.toLowerCase())
-      )
-    })
-
-    return entry?.value ? BigInt(entry.value.free.toString()) : 0n
-  }
-
-  async getBalanceAssetsPallet(address: string, assetId: bigint | number) {
-    const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
-
-    return BigInt(response === undefined ? 0 : response.balance)
   }
 
   async getFromRpc(module: string, method: string, key: string): Promise<string> {
@@ -978,14 +834,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     return Promise.resolve()
-  }
-
-  async convertLocationToAccount(location: TLocation): Promise<string | undefined> {
-    const res = await this.api
-      .getUnsafeApi()
-      .apis.LocationToAccountApi.convert_location({ type: Version.V4, value: transform(location) })
-
-    return res.success ? res.value : undefined
   }
 }
 

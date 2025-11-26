@@ -43,7 +43,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Currencies"]
+    "otherAssets": ["Currencies", "Tokens"]
   },
   "Astar": {
     "defaultPallet": "XTokens",
@@ -89,7 +89,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Tokens"]
+    "otherAssets": ["Tokens", "Currencies"]
   },
   "CoretimeKusama": {
     "defaultPallet": "PolkadotXcm",
@@ -127,7 +127,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Tokens"]
+    "otherAssets": ["Tokens", "OrmlTokens"]
   },
   "Darwinia": {
     "defaultPallet": "PolkadotXcm",
@@ -299,7 +299,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Tokens"]
+    "otherAssets": ["Tokens", "OrmlTokens"]
   },
   "Amplitude": {
     "defaultPallet": "XTokens",
@@ -376,7 +376,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Tokens"]
+    "otherAssets": ["Tokens", "Currencies"]
   },
   "CrustShadow": {
     "defaultPallet": "XTokens",
@@ -445,7 +445,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Currencies"]
+    "otherAssets": ["Currencies", "Tokens"]
   },
   "Kintsugi": {
     "defaultPallet": "XTokens",
@@ -713,7 +713,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["AssetManager"]
+    "otherAssets": ["AssetManager", "Tokens"]
   },
   "Collectives": {
     "defaultPallet": "PolkadotXcm",
@@ -1267,7 +1267,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Tokens"]
+    "otherAssets": ["Tokens", "Currencies"]
   },
   "HeimaPaseo": {
     "defaultPallet": "PolkadotXcm",
@@ -1412,7 +1412,7 @@
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["AssetManager"]
+    "otherAssets": ["AssetManager", "Tokens"]
   },
   "Westend": {
     "defaultPallet": "XcmPallet",

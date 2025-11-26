@@ -1,19 +1,15 @@
-import {
-  findNativeAssetInfoOrThrow,
-  type TAssetWithLocation,
-  type WithAmount
-} from '@paraspell/assets'
+import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import type {
   TPolkadotXCMTransferOptions,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTypeAndThenCallContext,
   TTypeAndThenFees
 } from '../../types'
-import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
+import { createAsset, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -29,6 +25,8 @@ const buildAssets = (
 ) => {
   const assets = []
 
+  const shouldLocalizeAndSort = isRelayChain(chain) || chain.startsWith('AssetHub')
+
   if (!isDotAsset) {
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
@@ -37,22 +35,21 @@ const buildAssets = (
     createAsset(
       version,
       asset.amount,
-      isRelayChain(chain) ? localizeLocation(chain, asset.location) : asset.location
+      shouldLocalizeAndSort ? localizeLocation(chain, asset.location) : asset.location
     )
   )
 
-  return assets
+  return shouldLocalizeAndSort ? sortAssets(assets) : assets
 }
 
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
 
 const resolveSystemAssetAmount = <TApi, TRes>(
-  { origin }: TTypeAndThenCallContext<TApi, TRes>,
+  { systemAsset }: TTypeAndThenCallContext<TApi, TRes>,
   isForFeeCalc: boolean,
   fees: TTypeAndThenFees
 ) => {
   if (isForFeeCalc) {
-    const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(origin.chain))
     return parseUnits(DEFAULT_SYSTEM_ASSET_AMOUNT, systemAsset.decimals)
   }
   return fees.destFee + fees.hopFees
@@ -61,7 +58,7 @@ const resolveSystemAssetAmount = <TApi, TRes>(
 export const constructTypeAndThenCall = <TApi, TRes>(
   context: TTypeAndThenCallContext<TApi, TRes>,
   fees: TTypeAndThenFees | null = null
-): TSerializedApiCall => {
+): TSerializedExtrinsics => {
   const {
     origin,
     assetInfo,
@@ -105,7 +102,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
   chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
   overrideReserve?: TSubstrateChain
-): Promise<TSerializedApiCall> => {
+): Promise<TSerializedExtrinsics> => {
   const context = await createTypeAndThenCallContext(chain, options, overrideReserve)
 
   const { origin, assetInfo } = context
@@ -118,7 +115,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
       : assetInfo.amount
 
     return Promise.resolve(
-      origin.api.callTxMethod(
+      origin.api.deserializeExtrinsics(
         constructTypeAndThenCall({
           ...context,
           assetInfo: {

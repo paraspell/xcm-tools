@@ -7,11 +7,7 @@ import type { TXTokensTransferOptions } from '../../../types'
 import { createAsset } from '../../../utils/asset'
 import { getModifiedCurrencySelection } from './currencySelection'
 
-vi.mock('@paraspell/assets', () => ({
-  isForeignAsset: vi.fn(),
-  getOtherAssets: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
-}))
+vi.mock('@paraspell/assets')
 
 describe('getModifiedCurrencySelection', () => {
   beforeEach(() => {

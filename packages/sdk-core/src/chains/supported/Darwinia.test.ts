@@ -52,7 +52,7 @@ describe('Darwinia', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should throw an error when asset is not a foreign asset', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -66,7 +66,7 @@ describe('Darwinia', () => {
 
     it('should throw an error when assetId is undefined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -80,7 +80,7 @@ describe('Darwinia', () => {
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -91,10 +91,10 @@ describe('Darwinia', () => {
 
       darwinia.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
-        parameters: {
+        params: {
           target: mockOptions.address,
           id: 1n,
           amount: BigInt(mockOptions.assetInfo.amount)
@@ -104,7 +104,7 @@ describe('Darwinia', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -116,10 +116,10 @@ describe('Darwinia', () => {
 
       darwinia.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockOptions.address,
           id: 1n,
           keep_alive: false

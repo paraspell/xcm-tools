@@ -1,7 +1,7 @@
 import { hasDryRunSupport } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
 import {
   assertAddressIsString,
   assertSenderAddress,
@@ -15,7 +15,7 @@ const createCallForReserve = async <TApi, TRes>(
   chain: TSubstrateChain,
   reserveChain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
-): Promise<{ call: TSerializedApiCall; success: boolean }> => {
+): Promise<{ call: TSerializedExtrinsics; success: boolean }> => {
   const { api, destination, address, senderAddress, currency, feeCurrency } = options
 
   const serialized = await createTypeAndThenCall(chain, options, reserveChain)
@@ -24,7 +24,7 @@ const createCallForReserve = async <TApi, TRes>(
   assertToIsString(destination, 'Location destination is not supported for reserve auto-selection.')
   assertSenderAddress(senderAddress)
 
-  const tx = api.callTxMethod(serialized)
+  const tx = api.deserializeExtrinsics(serialized)
   const dryRunResult = await dryRunInternal({
     api,
     tx,
@@ -49,7 +49,7 @@ const createCallForReserve = async <TApi, TRes>(
 export const createTypeThenAutoReserve = async <TApi, TRes>(
   chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
-): Promise<TSerializedApiCall> => {
+): Promise<TSerializedExtrinsics> => {
   // Use dry-run path only when BOTH origin and destination support it
   const originSupports = hasDryRunSupport(chain)
   const destSupports = options.destChain ? hasDryRunSupport(options.destChain) : false

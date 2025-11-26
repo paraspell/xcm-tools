@@ -12,7 +12,6 @@ import {
   Parents,
   type TPapiApiOrUrl,
   type TPapiTransaction,
-  validateAddress,
 } from '@paraspell/sdk';
 import type {
   Extrinsic,
@@ -87,7 +86,6 @@ const AssetClaim = () => {
     const signer = await getSigner();
 
     let api;
-    let builder;
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
@@ -109,7 +107,7 @@ const AssetClaim = () => {
           true,
         );
       } else {
-        builder = Builder({
+        const builder = Builder({
           abstractDecimals: true,
         });
         tx = await builder
@@ -123,8 +121,6 @@ const AssetClaim = () => {
           .address(address)
           .build();
         api = builder.getApi();
-        // Validate address using builder's IPolkadotApi instance
-        validateAddress(builder.api, selectedAccount.address, from, false);
       }
 
       if (apiType === 'PAPI') {

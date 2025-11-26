@@ -14,17 +14,15 @@ class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTr
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
 
-  private getCurrencySelection(asset: TAssetInfo) {
+  getCustomCurrencyId(asset: TAssetInfo) {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
-
     assertHasId(asset)
-
     return { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -32,13 +30,13 @@ class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTr
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = { Id: address }
-    const currencyId = this.getCurrencySelection(asset)
+    const currencyId = this.getCustomCurrencyId(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest,
           currency_id: currencyId,
           keep_alive: false
@@ -46,10 +44,10 @@ class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTr
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest,
         currency_id: currencyId,
         amount: asset.amount

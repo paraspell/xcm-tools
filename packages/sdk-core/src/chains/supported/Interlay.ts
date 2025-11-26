@@ -4,6 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -18,13 +19,13 @@ class Interlay<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
     super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }
 
-  getCurrencySelection(asset: TAssetInfo): TForeignOrTokenAsset {
+  getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
     return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: asset.symbol }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -35,13 +36,13 @@ class Interlay<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
-    const currencyId = this.getCurrencySelection(asset)
+    const currencyId = this.getCustomCurrencyId(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: address,
           currency_id: currencyId,
           keep_alive: false
@@ -49,15 +50,23 @@ class Interlay<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: address,
         currency_id: currencyId,
         value: asset.amount
       }
     })
+  }
+
+  getBalanceNative(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    return this.getBalanceForeign(api, address, asset)
   }
 }
 

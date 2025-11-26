@@ -2,7 +2,7 @@ import { hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
 import { getRelayChainOf } from '../../utils/chain/getRelayChainOf'
 import { dryRunInternal } from '../dry-run'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
@@ -15,8 +15,8 @@ vi.mock('../dry-run/dryRunInternal')
 vi.mock('../../utils/assertions')
 
 const mkApi = () => {
-  const callTxMethod = vi.fn((_s: TSerializedApiCall) => ({ tx: 'ok' }))
-  return { callTxMethod } as unknown as IPolkadotApi<unknown, unknown>
+  const deserializeExtrinsics = vi.fn((_s: TSerializedExtrinsics) => ({ tx: 'ok' }))
+  return { deserializeExtrinsics } as unknown as IPolkadotApi<unknown, unknown>
 }
 
 describe('createTypeThenAutoReserve', () => {
@@ -30,16 +30,16 @@ describe('createTypeThenAutoReserve', () => {
     currency: { symbol: 'DOT' }
   } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
 
-  const ahCall: TSerializedApiCall = {
+  const ahCall: TSerializedExtrinsics = {
     module: 'XcmPallet',
     method: 'transfer_assets_using_type_and_then',
-    parameters: { reserve: 'AssetHubPolkadot' }
+    params: { reserve: 'AssetHubPolkadot' }
   }
 
-  const relayCall: TSerializedApiCall = {
+  const relayCall: TSerializedExtrinsics = {
     module: 'XcmPallet',
     method: 'transfer_assets_using_type_and_then',
-    parameters: { reserve: 'Polkadot' }
+    params: { reserve: 'Polkadot' }
   }
 
   beforeEach(() => {
@@ -93,10 +93,10 @@ describe('createTypeThenAutoReserve', () => {
 
   it('when dry-run unsupported and no reserve, uses default createTypeAndThenCall', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(false)
-    const defaultCall: TSerializedApiCall = {
+    const defaultCall: TSerializedExtrinsics = {
       module: 'XcmPallet',
       method: 'default',
-      parameters: {}
+      params: {}
     }
     vi.mocked(createTypeAndThenCall).mockResolvedValue(defaultCall)
 

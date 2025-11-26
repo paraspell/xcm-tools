@@ -1,4 +1,4 @@
 export * from './createAsset'
-export * from './getCurrencySelection'
+export * from './formatAssetIdToERC20'
 export * from './overrideAsset'
 export * from './sortAssets'

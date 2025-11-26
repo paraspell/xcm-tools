@@ -10,7 +10,7 @@ vi.mock('../../utils', () => {
   return {
     assertHasId: vi.fn(),
     getChain: vi.fn(() => ({
-      getCurrencySelection: (_asset: unknown) => selectionValue
+      getCustomCurrencyId: (_asset: unknown) => selectionValue
     }))
   }
 })
@@ -35,7 +35,7 @@ describe('TokensPallet.setBalance', () => {
 
     expect(res.balanceTx.module).toBe('Tokens')
     expect(res.balanceTx.method).toBe('set_balance')
-    expect(res.balanceTx.parameters).toEqual({
+    expect(res.balanceTx.params).toEqual({
       who: { Id: address },
       currency_id: '123',
       new_free: 777n,
@@ -55,9 +55,9 @@ describe('TokensPallet.setBalance', () => {
     expect(getChain).toHaveBeenCalledTimes(1)
     expect(getChain).toHaveBeenCalledWith('BifrostKusama')
 
-    expect(res.balanceTx.parameters.who).toEqual({ Id: address })
-    expect(res.balanceTx.parameters.currency_id).toEqual({ Token: 'BNC' })
-    expect(res.balanceTx.parameters.new_free).toBe(5n)
-    expect(res.balanceTx.parameters.new_reserved).toBe(0n)
+    expect(res.balanceTx.params.who).toEqual({ Id: address })
+    expect(res.balanceTx.params.currency_id).toEqual({ Token: 'BNC' })
+    expect(res.balanceTx.params.new_free).toBe(5n)
+    expect(res.balanceTx.params.new_reserved).toBe(0n)
   })
 })

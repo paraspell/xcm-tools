@@ -2,7 +2,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../../constants'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TWeight } from '../../../types'
+import type { TSerializedExtrinsics, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
 import { createBeneficiaryLocation, localizeLocation } from '../../location'
@@ -28,10 +28,10 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
 
   const transformedLocation = localizeLocation(origin, asset.location)
 
-  const call: TSerializedApiCall = {
+  const call: TSerializedExtrinsics = {
     module: 'PolkadotXcm',
     method: 'execute',
-    parameters: {
+    params: {
       message: {
         [version]: [
           {
@@ -109,5 +109,5 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
     }
   }
 
-  return api.callTxMethod(call)
+  return api.deserializeExtrinsics(call)
 }

@@ -1,9 +1,8 @@
-import type { TCurrencyCore } from '@paraspell/assets'
-import { findAssetInfoOrThrow } from '@paraspell/assets'
+import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { assertHasId } from '../../../utils'
+import { assertHasId } from '../utils'
 
 const ERC20_ABI = [
   {
@@ -15,20 +14,17 @@ const ERC20_ABI = [
   }
 ] as const
 
-export const getEthErc20Balance = async (
-  currency: TCurrencyCore,
-  address: string
-): Promise<bigint> => {
+const ETHEREUM_RPC_URL = 'https://ethereum.publicnode.com/'
+
+export const getEthErc20Balance = async (asset: TAssetInfo, address: string): Promise<bigint> => {
   const client = createPublicClient({
     chain: mainnet,
-    transport: http('https://ethereum.publicnode.com/')
+    transport: http(ETHEREUM_RPC_URL)
   })
-
-  const asset = findAssetInfoOrThrow('Ethereum', currency, null)
 
   assertHasId(asset)
 
-  if (asset.symbol === 'ETH') {
+  if (asset.symbol === getNativeAssetSymbol('Ethereum')) {
     return await client.getBalance({ address: address as `0x${string}` })
   }
 

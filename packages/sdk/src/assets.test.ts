@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {
   claimAssets as claimAssetsImpl,
-  getAssetBalance as getAssetBalanceImpl,
-  getBalanceForeign as getBalanceForeignImpl,
+  getBalance as getAssetBalanceImpl,
+  getBalance as getBalanceForeignImpl,
   getBalanceNative as getBalanceNativeImpl
 } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
@@ -11,9 +11,7 @@ import { claimAssets, getAssetBalance, getBalanceForeign, getBalanceNative } fro
 import type { TPapiApi, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
-vi.mock('./utils', () => ({
-  createPapiApiCall: vi.fn()
-}))
+vi.mock('./utils')
 
 describe('API Call Wrappers', () => {
   it('should call createPapiApiCall with getBalanceNativeImpl for getBalanceNative', () => {

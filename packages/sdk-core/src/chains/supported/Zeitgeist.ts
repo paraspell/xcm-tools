@@ -25,17 +25,15 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
     super(chain, info, ecosystem, version)
   }
 
-  private getCurrencySelection(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {
+  getCustomCurrencyId(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'Ztg'
-
     assertHasId(asset)
-
     return { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -50,12 +48,12 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
 
     const amount = isAmountAll ? balance : asset.amount
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'AssetManager',
       method: 'transfer',
-      parameters: {
+      params: {
         dest: { Id: address },
-        currency_id: this.getCurrencySelection(asset),
+        currency_id: this.getCustomCurrencyId(asset),
         amount
       }
     })

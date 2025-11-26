@@ -4,21 +4,16 @@ import { concat, getAddress, keccak256, pad } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { assertHasId } from '../../utils'
-import { formatAssetIdToERC20 } from '../assets/balance'
+import { assertHasId, formatAssetIdToERC20 } from '../../utils'
 import { SystemPallet } from './SystemPallet'
 
-vi.mock('../../utils', () => ({
-  assertHasId: vi.fn()
-}))
-
-vi.mock('../assets/balance', () => ({
-  formatAssetIdToERC20: vi.fn(() => '0xERC20')
-}))
+vi.mock('../../utils')
 
 vi.mock('viem', () => ({
   concat: vi.fn((xs: unknown[]) => `concat:${(xs as string[]).join('+')}`),
   getAddress: vi.fn((k: string) => `addr:${k}`),
+  parseUnits: vi.fn(),
+  formatUnits: vi.fn(),
   keccak256: vi.fn((x: unknown) => `keccak:${String(x)}`),
   pad: vi.fn((v: unknown, opts: { size: number }) => `pad:${String(v)}:${opts.size}`),
   toHex: vi.fn((v: unknown) => `hex:${String(v)}`)
@@ -27,18 +22,16 @@ vi.mock('viem', () => ({
 describe('SystemPallet.setBalance', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(formatAssetIdToERC20).mockImplementation(() => `0xERC20`)
   })
 
   it('builds set_storage with encoded amount at the calculated slot', async () => {
     const pallet = new SystemPallet('System')
     const address = '0xAlice'
-    const chain = 'Moonbeam' as TSubstrateChain
-    const asset = { assetId: '123', amount: 321n } as unknown as WithAmount<TAssetInfo>
-    vi.mocked(assertHasId).mockImplementation(() => {})
+    const chain: TSubstrateChain = 'Moonbeam'
+    const asset = { assetId: '123', amount: 321n } as WithAmount<TAssetInfo>
     const api = {
-      getEvmStorage: vi.fn(async (_contract: string, _slot: string) =>
-        Promise.resolve('0xSTORAGEKEY')
-      )
+      getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:0:32`
@@ -58,6 +51,6 @@ describe('SystemPallet.setBalance', () => {
 
     expect(res.balanceTx.module).toBe('System')
     expect(res.balanceTx.method).toBe('set_storage')
-    expect(res.balanceTx.parameters.items).toEqual([['0xSTORAGEKEY', expectedAmount]])
+    expect(res.balanceTx.params.items).toEqual([['0xSTORAGEKEY', expectedAmount]])
   })
 })

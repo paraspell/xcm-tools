@@ -126,12 +126,12 @@ const performTest = async (
       .getByTestId('input-recipient-address')
       .fill('5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz');
   } else {
-    await appPage
-      .getByTestId('input-recipient-address')
-      .fill('0xbBB10bb8048630bC30c8f33C5c96aC9577990C16');
-
     appPage.getByTestId('connect-evm-wallet').click();
     await connectEVMAccount(appPage);
+
+    await appPage
+      .getByTestId('input-recipient-address')
+      .fill('0x11A1598991904CF7355224Da444C463E6797Ed52');
   }
 
   await appPage.getByTestId('input-amount').fill('10');
@@ -251,13 +251,11 @@ baseTalismanWithEthereumTest.describe(
   'RouterTransferForm Ethereum E2E Tests',
   () => {
     let appPage: Page;
-    let extensionPage: PolkadotjsExtensionPage;
-    let talismanExtensionPage: Page;
     baseTalismanWithEthereumTest.setTimeout(120000);
 
     baseTalismanWithEthereumTest.beforeAll(
       async ({ context, importAccounts }) => {
-        ({ appPage, talismanExtensionPage } = await setupTalismanExtension(
+        ({ appPage } = await setupTalismanExtension(
           context,
           importAccounts,
         ));

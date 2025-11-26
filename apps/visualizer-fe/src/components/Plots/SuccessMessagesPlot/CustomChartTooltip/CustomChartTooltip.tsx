@@ -114,7 +114,7 @@ const defaultProps: Partial<ChartTooltipProps & { withTotal?: boolean }> = {
 };
 
 const getParaId = (label?: string, total?: string): number | undefined => {
-  if (!label || label === total) return undefined;
+  if (!label || (total && label.includes(total))) return undefined;
   return getParachainId(label as TSubstrateChain);
 };
 

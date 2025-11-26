@@ -18,6 +18,7 @@ import {
 } from '@mantine/core';
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import subscanLogo from '../../../../assets/subscan.png';
 import { useSelectedParachain } from '../../../../context/SelectedParachain/useSelectedParachain';
@@ -88,8 +89,8 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string): number | undefined => {
-  if (!label || label === 'Total') return undefined;
+const getParaId = (label?: string, total?: string): number | undefined => {
+  if (!label || (total && label.includes(total))) return undefined;
   return getParachainId(label as TSubstrateChain);
 };
 
@@ -133,6 +134,8 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     ...others
   } = props;
 
+  const { t } = useTranslation();
+
   const theme = useMantineTheme();
 
   const getStyles = useStyles<ChartTooltipFactory>({
@@ -157,7 +160,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   const labels = getSeriesLabels(series);
   const _label = label || scatterLabel;
 
-  const paraId = getParaId(label as string);
+  const paraId = getParaId(label as string, t('charts.common.total'));
   const ecosystem = filteredPayload[0]?.payload.ecosystem;
 
   const [startDate, endDate] = dateRange;

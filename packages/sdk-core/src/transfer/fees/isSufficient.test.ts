@@ -1,5 +1,6 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
+  getEdFromAssetOrThrow,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
   isSymbolMatch
@@ -7,11 +8,13 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets/balance'
+import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 
 vi.mock('@paraspell/assets')
+
 vi.mock('../../pallets/assets/balance')
+vi.mock('../../balance')
 
 describe('isSufficientOrigin', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
@@ -29,8 +32,13 @@ describe('isSufficientOrigin', () => {
       if (chain === 'Astar') return 'ASTR'
       return 'DOT'
     })
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(50n)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000n)
+    vi.mocked(getExistentialDepositOrThrow).mockImplementation(chain => {
+      if (chain === origin) return 50n
+      if (chain === destination) return 30n
+      return 10n
+    })
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(50n)
+    vi.mocked(getBalanceNative).mockResolvedValue(1000n)
   })
 
   it('returns undefined when feeAsset is provided', async () => {
@@ -65,7 +73,7 @@ describe('isSufficientOrigin', () => {
     expect(isSymbolMatch).toHaveBeenCalledWith('ACA', 'ACA')
     expect(isSymbolMatch).toHaveBeenCalledWith('ACA', 'ASTR')
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(origin)
-    expect(getBalanceNativeInternal).toHaveBeenCalledWith({
+    expect(getBalanceNative).toHaveBeenCalledWith({
       api: mockApi,
       chain: origin,
       address: senderAddress
@@ -75,7 +83,7 @@ describe('isSufficientOrigin', () => {
 
   it('returns false when native asset to both origin and destination with insufficient balance', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(150n) // 150 - 50 - 100 - 50 = -50
+    vi.mocked(getBalanceNative).mockResolvedValue(150n) // 150 - 50 - 100 - 50 = -50
 
     const result = await isSufficientOrigin(
       mockApi,
@@ -95,7 +103,7 @@ describe('isSufficientOrigin', () => {
     vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
       return assetSymbol === nativeSymbol
     })
-    vi.mocked(getAssetBalance).mockResolvedValue(200n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(200n)
 
     const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
     const result = await isSufficientOrigin(
@@ -109,13 +117,13 @@ describe('isSufficientOrigin', () => {
       undefined
     )
 
-    expect(getAssetBalance).toHaveBeenCalledWith({
+    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       chain: origin,
       address: senderAddress,
-      currency
+      asset: nonNativeAsset
     })
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(origin, currency)
+    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(nonNativeAsset)
     expect(result).toBe(true)
   })
 
@@ -123,7 +131,7 @@ describe('isSufficientOrigin', () => {
     vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
       return assetSymbol === nativeSymbol
     })
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(100n) // 100 - 50 - 100 = -50
+    vi.mocked(getBalanceNative).mockResolvedValue(100n) // 100 - 50 - 100 = -50
 
     const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
     const result = await isSufficientOrigin(
@@ -144,7 +152,7 @@ describe('isSufficientOrigin', () => {
     vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
       return assetSymbol === nativeSymbol
     })
-    vi.mocked(getAssetBalance).mockResolvedValue(30n) // 30 - 50 = -20
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(30n) // 30 - 50 = -20
 
     const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
     const result = await isSufficientOrigin(
@@ -194,7 +202,7 @@ describe('isSufficientDestination', () => {
     vi.clearAllMocks()
     vi.mocked(getNativeAssetSymbol).mockReturnValue('ASTR')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(30n)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(200n)
+    vi.mocked(getBalanceNative).mockResolvedValue(200n)
   })
 
   it('returns undefined when asset is not native to destination', async () => {
@@ -228,7 +236,7 @@ describe('isSufficientDestination', () => {
 
     expect(isSymbolMatch).toHaveBeenCalledWith('ASTR', 'ASTR')
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(destination)
-    expect(getBalanceNativeInternal).toHaveBeenCalledWith({
+    expect(getBalanceNative).toHaveBeenCalledWith({
       api: mockApi,
       chain: destination,
       address: address
@@ -239,7 +247,7 @@ describe('isSufficientDestination', () => {
 
   it('returns false when native asset with insufficient balance', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(50n)
+    vi.mocked(getBalanceNative).mockResolvedValue(50n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(200n)
 
     const result = await isSufficientDestination(
@@ -257,7 +265,7 @@ describe('isSufficientDestination', () => {
 
   it('handles edge case where balance + amount equals existential deposit + fee', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(30n)
+    vi.mocked(getBalanceNative).mockResolvedValue(30n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(50n)
 
     const result = await isSufficientDestination(

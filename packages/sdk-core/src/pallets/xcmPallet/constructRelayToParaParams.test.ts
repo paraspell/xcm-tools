@@ -7,14 +7,14 @@ import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { addXcmVersionHeader, createBeneficiaryLocation, resolveParaId } from '../../utils'
 import { createVersionedAssets } from '../../utils/asset'
-import { constructRelayToParaParameters } from './constructRelayToParaParameters'
+import { constructRelayToParaParams } from './constructRelayToParaParams'
 import { createVersionedDestination } from './utils'
 
 vi.mock('../../utils')
 vi.mock('./utils')
 vi.mock('../../utils/asset')
 
-describe('constructRelayToParaParameters', () => {
+describe('constructRelayToParaParams', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
   const mockAmount = 1000n
   const mockAddress = 'address123'
@@ -52,7 +52,7 @@ describe('constructRelayToParaParameters', () => {
 
   it('should construct parameters with location destination', () => {
     const version = Version.V4
-    const result = constructRelayToParaParameters(options, version)
+    const result = constructRelayToParaParams(options, version)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
       version,
@@ -80,7 +80,7 @@ describe('constructRelayToParaParameters', () => {
 
   it('should construct parameters without fee for location destination', () => {
     const version = Version.V4
-    const result = constructRelayToParaParameters(options, version)
+    const result = constructRelayToParaParams(options, version)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
       version,
@@ -110,7 +110,7 @@ describe('constructRelayToParaParameters', () => {
     const paraIdTo = undefined
     const version = Version.V4
 
-    const result = constructRelayToParaParameters(
+    const result = constructRelayToParaParams(
       {
         ...options,
         paraIdTo

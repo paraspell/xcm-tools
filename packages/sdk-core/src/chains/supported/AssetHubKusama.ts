@@ -1,8 +1,10 @@
 // Contains detailed structure of XCM call construction for AssetHubKusama Parachain
 
+import type { TAssetInfo } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { isTLocation, isTrustedChain, Version } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -59,6 +61,18 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     return getChain<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
       options
+    )
+  }
+
+  getBalanceForeign<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    return getChain<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').getBalanceForeign(
+      api,
+      address,
+      asset
     )
   }
 }

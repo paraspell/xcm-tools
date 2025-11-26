@@ -71,7 +71,7 @@ describe('Hydration', () => {
 
     beforeEach(() => {
       mockApi = {
-        callTxMethod: vi.fn().mockReturnValue(mockExtrinsic),
+        deserializeExtrinsics: vi.fn().mockReturnValue(mockExtrinsic),
         createApiForChain: vi.fn().mockResolvedValue({
           getFromRpc: vi.fn().mockResolvedValue('0x0000000000000000'),
           disconnect: vi.fn()
@@ -119,8 +119,8 @@ describe('Hydration', () => {
       vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     })
 
-    it('should call api.callTxMethod with correct parameters', async () => {
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+    it('should call api.deserializeExtrinsics with correct parameters', async () => {
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
@@ -137,48 +137,7 @@ describe('Hydration', () => {
       expect(spy).toHaveBeenCalledWith({
         module: 'PolkadotXcm',
         method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
-      })
-    })
-
-    it('should create call for AssetHub destination DOT transfer using symbol', async () => {
-      mockInput.destination = 'AssetHubPolkadot'
-      mockInput.assetInfo = {
-        symbol: 'DOT',
-        decimals: 10,
-        assetId: '1',
-        amount: 1000n
-      }
-
-      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
-
-      await hydration.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalled()
-      expect(transferToAhSpy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
-      })
-    })
-
-    it('should create call for AssetHub destination DOT transfer using assetId', async () => {
-      mockInput.destination = 'AssetHubPolkadot'
-      mockInput.assetInfo = { symbol: 'DOT', assetId: '3', decimals: 10, amount: 1000n }
-
-      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
-
-      await hydration.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalled()
-      expect(transferToAhSpy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        parameters: expect.any(Object)
+        params: expect.any(Object)
       })
     })
 
@@ -287,9 +246,9 @@ describe('Hydration', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    it('should call api.callTxMethod with correct parameters', async () => {
+    it('should call api.deserializeExtrinsics with correct parameters', async () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -299,14 +258,14 @@ describe('Hydration', () => {
         balance: 2000n
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       await hydration.transferLocalNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: mockInput.address,
           value: BigInt(mockInput.assetInfo.amount)
         }
@@ -315,7 +274,7 @@ describe('Hydration', () => {
 
     it('should call transfer_all when amount is ALL', async () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -327,14 +286,14 @@ describe('Hydration', () => {
         isAmountAll: true
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       await hydration.transferLocalNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockInput.address,
           keep_alive: false
         }
@@ -345,7 +304,7 @@ describe('Hydration', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should throw InvalidCurrencyError if asset is not a foreign asset', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -359,7 +318,7 @@ describe('Hydration', () => {
 
     it('should throw InvalidCurrencyError if assetId is undefined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -371,9 +330,9 @@ describe('Hydration', () => {
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
     })
 
-    it('should call api.callTxMethod with correct parameters', () => {
+    it('should call api.deserializeExtrinsics with correct parameters', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -382,14 +341,14 @@ describe('Hydration', () => {
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       hydration.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: mockInput.address,
           currency_id: 123,
           amount: BigInt(mockInput.assetInfo.amount)
@@ -399,7 +358,7 @@ describe('Hydration', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       const mockInput = {
@@ -409,14 +368,14 @@ describe('Hydration', () => {
         isAmountAll: true
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       hydration.transferLocalNonNativeAsset(mockInput)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: mockInput.address,
           currency_id: 123,
           keep_alive: false

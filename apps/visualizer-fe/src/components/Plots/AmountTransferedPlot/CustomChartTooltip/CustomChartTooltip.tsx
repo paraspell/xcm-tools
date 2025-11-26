@@ -121,8 +121,8 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string): number | undefined => {
-  if (!label || label === 'Total') return undefined;
+const getParaId = (label?: string, total?: string): number | undefined => {
+  if (!label || (total && label.includes(total))) return undefined;
   return getParachainId(label as TSubstrateChain);
 };
 
@@ -227,8 +227,8 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     if (
       parachainName !== undefined &&
       parachainName !== 'undefined' &&
-      parachainName !== 'Median' &&
-      parachainName !== 'Total'
+      !parachainName.includes(t('charts.amounts.median')) &&
+      !parachainName.includes(t('charts.common.total'))
     ) {
       paraId = getParaId(parachainName);
     }

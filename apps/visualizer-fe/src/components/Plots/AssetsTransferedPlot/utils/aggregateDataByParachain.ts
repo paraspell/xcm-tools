@@ -1,14 +1,18 @@
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import type { TRelaychain } from '@paraspell/sdk';
 import type { TFunction } from 'i18next';
 
 import type { TAggregatedData, TAssetCounts } from '../../../../types/types';
-import { getParachainId } from '../../../../utils/utils';
 
-export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TAggregatedData[] => {
+export const aggregateDataByParachain = (
+  counts: TAssetCounts,
+  t: TFunction,
+  selectedEcosystem: TRelaychain
+): TAggregatedData[] => {
   const accumulator: Record<string, TAggregatedData> = {};
   counts.forEach(asset => {
-    const paraId = asset.parachain ? getParachainId(asset.parachain as TSubstrateChain) : null;
-    const parachainKey = paraId ? asset.parachain || `ID ${paraId}` : t('charts.common.total');
+    const parachainKey = asset.parachain
+      ? asset.parachain || `ID ${asset.parachain}`
+      : `${t('charts.common.total')} - ${selectedEcosystem}`;
     if (!accumulator[parachainKey]) {
       accumulator[parachainKey] = {
         parachain: parachainKey,

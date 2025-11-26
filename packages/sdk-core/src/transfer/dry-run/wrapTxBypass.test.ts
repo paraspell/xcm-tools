@@ -1,24 +1,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import {
-  findAssetInfo,
-  findAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  isForeignAsset
-} from '@paraspell/assets'
+import { findAssetInfo, findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { getAssetBalanceInternal } from '../../balance'
 import { getPalletInstance } from '../../pallets'
-import { getAssetBalanceInternal } from '../../pallets/assets'
-import { getCurrencySelection } from '../../utils/asset'
 import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
-vi.mock('@paraspell/assets', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/assets')>()),
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
   findAssetInfo: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
@@ -45,22 +38,23 @@ vi.mock('../../pallets', () => ({
   }))
 }))
 
-vi.mock('../../pallets/assets')
+vi.mock('../../balance')
 
 vi.mock('../../utils/unit', () => ({
   parseUnits: vi.fn((v: string) => BigInt(v))
 }))
 
 const mkApi = () => {
-  const callTxMethod = vi.fn((tx: { method: string }) => `call:${tx.method}`)
+  const deserializeExtrinsics = vi.fn((tx: { method: string }) => `call:${tx.method}`)
   const callDispatchAsMethod = vi.fn(
     (inner: unknown, addr: string) => `dispatchAs(${addr})->${String(inner)}`
   )
   const callBatchMethod = vi.fn((arr: unknown[], mode: unknown) => ({ arr, mode }))
-  return { callTxMethod, callDispatchAsMethod, callBatchMethod } as unknown as IPolkadotApi<
-    unknown,
-    unknown
-  >
+  return {
+    deserializeExtrinsics,
+    callDispatchAsMethod,
+    callBatchMethod
+  } as unknown as IPolkadotApi<unknown, unknown>
 }
 
 describe('wrapTxBypass (existing cases)', () => {
@@ -236,39 +230,6 @@ describe('wrapTxBypass (existing cases)', () => {
       'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDT',
       'dispatchAs(Alice)->ORIG_TX'
     ])
-  })
-})
-
-describe('getCurrencySelection (new coverage)', () => {
-  const CHAIN: TSubstrateChain = 'Acala'
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('returns location when provided', () => {
-    const asset = {
-      symbol: 'XYZ',
-      location: { parents: 0, interior: { Here: null } }
-    } as TAssetInfo
-    const res = getCurrencySelection(CHAIN, asset)
-    expect('location' in res).toBe(true)
-  })
-
-  it('returns id when foreign + assetId present', () => {
-    const asset = {
-      assetId: '1234',
-      symbol: 'USDC'
-    } as TAssetInfo
-    expect(isForeignAsset(asset)).toBe(true)
-    const res = getCurrencySelection(CHAIN, asset)
-    expect(res).toEqual({ id: '1234' })
-  })
-
-  it('falls back to symbol otherwise', () => {
-    const asset = { symbol: 'DOT' } as TAssetInfo
-    const res = getCurrencySelection(CHAIN, asset)
-    expect(res).toEqual({ symbol: 'DOT' })
   })
 })
 

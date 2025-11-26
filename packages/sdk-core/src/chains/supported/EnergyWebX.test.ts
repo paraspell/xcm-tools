@@ -7,9 +7,7 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type EnergyWebX from './EnergyWebX'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('EnergyWebX', () => {
   let chain: EnergyWebX<unknown, unknown>

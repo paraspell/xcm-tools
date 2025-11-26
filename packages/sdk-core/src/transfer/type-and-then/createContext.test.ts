@@ -1,4 +1,4 @@
-import type { TAssetWithLocation } from '@paraspell/assets'
+import { findNativeAssetInfoOrThrow, type TAssetWithLocation } from '@paraspell/assets'
 import {
   isRelayChain,
   isSubstrateBridge,
@@ -21,6 +21,8 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
   isSubstrateBridge: vi.fn(),
   isTLocation: vi.fn()
 }))
+
+vi.mock('@paraspell/assets')
 
 vi.mock('../../utils')
 vi.mock('../../constants', () => ({
@@ -64,6 +66,12 @@ describe('createTypeAndThenCallContext', () => {
     location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
   } as TAssetWithLocation
 
+  const mockSystemAsset = {
+    symbol: 'DOT',
+    decimals: 12,
+    location: RELAY_LOCATION
+  }
+
   const mockClonedApi = {
     init: vi.fn().mockResolvedValue(undefined)
   }
@@ -86,6 +94,7 @@ describe('createTypeAndThenCallContext', () => {
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
   })
 
@@ -110,6 +119,7 @@ describe('createTypeAndThenCallContext', () => {
       isSubBridge: false,
       isRelayAsset: false,
       assetInfo: mockAsset,
+      systemAsset: mockSystemAsset,
       options
     })
   })
@@ -128,6 +138,7 @@ describe('createTypeAndThenCallContext', () => {
       isSubBridge: false,
       isRelayAsset: false,
       assetInfo: mockAsset,
+      systemAsset: mockSystemAsset,
       options: mockOptions
     })
   })

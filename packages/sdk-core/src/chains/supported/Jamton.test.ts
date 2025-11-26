@@ -10,22 +10,10 @@ import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import { getChain } from '../../utils/getChain'
 import type Jamton from './Jamton'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
-vi.mock('@paraspell/assets', () => ({
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  findAssetInfoOrThrow: vi.fn(),
-  isForeignAsset: vi.fn(),
-  isSymbolMatch: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  assertHasLocation: vi.fn(),
-  assertHasId: vi.fn(),
-  createAsset: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
+vi.mock('../../utils')
 
 describe('Jamton', () => {
   let jamton: Jamton<unknown, unknown>

@@ -3,7 +3,7 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createDestination } from '../../../pallets/xcmPallet/utils'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
+import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
 import { assertHasLocation } from '../../assertions'
 import { createBeneficiaryLocation, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
@@ -38,9 +38,9 @@ describe('createExecuteExchangeXcm', () => {
     vi.clearAllMocks()
   })
 
-  it('should construct the correct call and return the api.callTxMethod result when version is provided', () => {
+  it('should construct the correct call and return the api.deserializeExtrinsics result when version is provided', () => {
     const fakeApi = {
-      callTxMethod: vi.fn().mockReturnValue('result')
+      deserializeExtrinsics: vi.fn().mockReturnValue('result')
     }
     const input = {
       api: fakeApi,
@@ -65,18 +65,18 @@ describe('createExecuteExchangeXcm', () => {
     expect(assertHasLocation).toHaveBeenCalledOnce()
 
     expect(result).toBe('result')
-    expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
+    expect(fakeApi.deserializeExtrinsics).toHaveBeenCalledTimes(1)
 
-    const callArg = fakeApi.callTxMethod.mock.calls[0][0] as TSerializedApiCall
+    const callArg = fakeApi.deserializeExtrinsics.mock.calls[0][0] as TSerializedExtrinsics
     expect(callArg.module).toBe('PolkadotXcm')
     expect(callArg.method).toBe('execute')
-    expect(callArg.parameters.max_weight).toEqual({
+    expect(callArg.params.max_weight).toEqual({
       ref_time: weight.refTime,
       proof_size: weight.proofSize
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const message = (callArg.parameters.message as Record<string, any>)[Version.V4]
+    const message = (callArg.params.message as Record<string, any>)[Version.V4]
     expect(message).toHaveLength(3)
 
     // 1. WithdrawAsset
@@ -130,7 +130,7 @@ describe('createExecuteExchangeXcm', () => {
 
   it('should default to Version.V4 when version is not provided', () => {
     const fakeApi = {
-      callTxMethod: vi.fn().mockReturnValue('defaultResult')
+      deserializeExtrinsics: vi.fn().mockReturnValue('defaultResult')
     }
     const input = {
       api: fakeApi,

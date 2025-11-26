@@ -1,1 +1,1 @@
-export * from './constructRelayToParaParameters'
+export * from './constructRelayToParaParams'

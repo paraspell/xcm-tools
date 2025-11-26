@@ -150,7 +150,7 @@ describe('transform', () => {
     }
     const expected2 = {
       type: 'GeneralIndex',
-      value: 10
+      value: 10n
     }
     expect(transform(input2)).toEqual(expected2)
   })
@@ -414,7 +414,7 @@ describe('transform', () => {
         },
         {
           type: 'GeneralIndex',
-          value: 2
+          value: 2n
         }
       ]
     }
@@ -497,7 +497,7 @@ describe('transform', () => {
       dest_weight: undefined,
       some_field: {
         type: 'GeneralIndex',
-        value: 10
+        value: 10n
       }
     }
     expect(transform(input)).toEqual(expected)

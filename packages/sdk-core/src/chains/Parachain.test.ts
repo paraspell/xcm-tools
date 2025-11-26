@@ -1,9 +1,12 @@
+import type { WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoByLoc,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  isForeignAsset
+  isForeignAsset,
+  type TAssetInfo
 } from '@paraspell/assets'
+import { getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,13 +20,14 @@ import {
   NoXCMSupportImplementedError,
   TransferToAhNotSupported
 } from '../errors'
-import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
+import { getPalletInstance } from '../pallets'
+import { constructRelayToParaParams } from '../pallets/xcmPallet/utils'
 import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   TRelayToParaOptions,
   TRelayToParaOverrides,
-  TSerializedApiCall,
+  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../types'
 import {
@@ -32,6 +36,7 @@ import {
   type TSendInternalOptions,
   type TXTransferTransferOptions
 } from '../types'
+import type { BaseAssetsPallet } from '../types/TAssets'
 import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
 import Parachain from './Parachain'
 
@@ -60,7 +65,7 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
   const actual = await vi.importActual('../pallets/xcmPallet/utils')
   return {
     ...actual,
-    constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
+    constructRelayToParaParams: vi.fn().mockReturnValue('parameters'),
     createVersionedDestination: vi.fn().mockReturnValue('polkadotXcmHeader'),
     createDestination: vi.fn()
   }
@@ -70,6 +75,14 @@ vi.mock('../utils/asset', () => ({
   createAsset: vi.fn().mockReturnValue('asset'),
   createVersionedAssets: vi.fn().mockReturnValue('currencySpec')
 }))
+
+vi.mock('@paraspell/pallets', async () => {
+  const actual = await vi.importActual('@paraspell/pallets')
+  return {
+    ...actual,
+    getOtherAssetsPallets: vi.fn()
+  }
+})
 
 vi.mock('@paraspell/assets', async () => {
   const actual = await vi.importActual('@paraspell/assets')
@@ -83,6 +96,8 @@ vi.mock('@paraspell/assets', async () => {
     InvalidCurrencyError: class extends Error {}
   }
 })
+
+vi.mock('../pallets')
 
 vi.mock('./config', () => ({
   getChainProviders: vi.fn().mockReturnValue(['provider1', 'provider2']),
@@ -163,7 +178,7 @@ describe('Parachain', () => {
     hasMethod: vi.fn(),
     accountToHex: vi.fn(),
     createApiForChain: vi.fn(),
-    callTxMethod: vi.fn(),
+    deserializeExtrinsics: vi.fn(),
     getFromRpc: vi.fn(),
     clone: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
@@ -171,6 +186,9 @@ describe('Parachain', () => {
   beforeEach(() => {
     chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getPalletInstance).mockReset()
+    vi.mocked(getOtherAssetsPallets).mockReset()
+    vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
   })
 
   it('should create an instance', () => {
@@ -435,17 +453,19 @@ describe('Parachain', () => {
   it('uses type-and-then call for external asset routed via AssetHub', async () => {
     const chain = new OnlyPolkadotXCMParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
-    const mockCall: TSerializedApiCall = {
+    const mockCall: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {}
+      params: {}
     }
 
     vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
     vi.mocked(resolveDestChain).mockReturnValue('Moonbeam')
 
     const hasMethodSpy = vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
-    const callTxMethodSpy = vi.spyOn(api, 'callTxMethod').mockResolvedValue('callResult')
+    const deserializeExtrinsicsSpy = vi
+      .spyOn(api, 'deserializeExtrinsics')
+      .mockResolvedValue('callResult')
 
     const options = {
       api,
@@ -474,7 +494,7 @@ describe('Parachain', () => {
         destination: options.to
       })
     )
-    expect(callTxMethodSpy).toHaveBeenCalledWith(mockCall)
+    expect(deserializeExtrinsicsSpy).toHaveBeenCalledWith(mockCall)
     expect(result).toBe('callResult')
   })
 
@@ -538,7 +558,7 @@ describe('Parachain', () => {
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(options.api, 'callTxMethod')
+    const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
 
     vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123', decimals: 18 })
 
@@ -547,7 +567,7 @@ describe('Parachain', () => {
     expect(spy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
-      parameters: expect.any(Object)
+      params: expect.any(Object)
     })
   })
 
@@ -636,14 +656,14 @@ describe('Parachain', () => {
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(options.api, 'callTxMethod')
+      const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
 
       await chain.transferLocalNativeAsset(options)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
         method: 'transfer_keep_alive',
-        parameters: {
+        params: {
           dest: { Id: options.address },
           value: BigInt(options.assetInfo.amount)
         }
@@ -684,19 +704,129 @@ describe('Parachain', () => {
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(options.api, 'callTxMethod')
+      const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
 
       chain.transferLocalNonNativeAsset(options)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: options.address },
           currency_id: 10n,
           amount: BigInt(options.assetInfo.amount)
         }
       })
+    })
+  })
+
+  describe('getBalanceNative', () => {
+    it('delegates to the System pallet', async () => {
+      const systemPallet = {
+        getBalance: vi.fn().mockResolvedValue(42n)
+      }
+
+      vi.mocked(getPalletInstance).mockReturnValueOnce(systemPallet as unknown as BaseAssetsPallet)
+
+      const asset = { symbol: 'DOT', amount: 10n } as WithAmount<TAssetInfo>
+
+      const result = await chain.getBalanceNative(api, '5FMock', asset)
+
+      expect(getPalletInstance).toHaveBeenCalledWith('System')
+      expect(systemPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset)
+      expect(result).toBe(42n)
+    })
+  })
+
+  describe('getBalanceForeign', () => {
+    it('throws when no foreign asset pallets are registered', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce([])
+
+      await expect(
+        chain.getBalanceForeign(api, '5FMock', {
+          symbol: 'USDT'
+        } as TAssetInfo)
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('tries pallets sequentially until balance resolves', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens', 'ForeignAssets'])
+
+      const tokensPallet = {
+        getBalance: vi.fn().mockRejectedValue(new Error('Tokens failed'))
+      }
+      const foreignAssetsPallet = {
+        getBalance: vi.fn().mockResolvedValue(55n)
+      }
+
+      vi.mocked(getPalletInstance).mockImplementation(pallet => {
+        if (pallet === 'Tokens') return tokensPallet as unknown as BaseAssetsPallet
+        if (pallet === 'ForeignAssets') return foreignAssetsPallet as unknown as BaseAssetsPallet
+        throw new Error('Unexpected pallet')
+      })
+
+      const customId = Symbol('custom')
+      vi.spyOn(chain, 'getCustomCurrencyId').mockReturnValue(customId)
+
+      const asset = { symbol: 'USDT' } as TAssetInfo
+
+      const result = await chain.getBalanceForeign(api, '5FMock', asset)
+
+      expect(tokensPallet.getBalance).toHaveBeenCalled()
+      expect(foreignAssetsPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset, customId)
+      expect(result).toBe(55n)
+    })
+
+    it('throws the last encountered error when every pallet fails', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens'])
+
+      const expectedError = new Error('all failed')
+      const failingPallet = {
+        getBalance: vi.fn().mockRejectedValue(expectedError)
+      }
+
+      vi.mocked(getPalletInstance).mockReturnValueOnce(failingPallet as unknown as BaseAssetsPallet)
+
+      await expect(
+        chain.getBalanceForeign(api, '5FMock', {
+          symbol: 'USDT'
+        } as TAssetInfo)
+      ).rejects.toThrow(expectedError)
+    })
+  })
+
+  describe('getCustomCurrencyId', () => {
+    it('returns undefined by default', () => {
+      const dummyAsset = { symbol: 'USDT' } as TAssetInfo
+      expect(chain.getCustomCurrencyId(dummyAsset)).toBeUndefined()
+    })
+  })
+
+  describe('getBalance', () => {
+    it('routes native assets to getBalanceNative', async () => {
+      const nativeAsset = { symbol: 'DOT' } as TAssetInfo
+
+      const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(11n)
+      const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(0n)
+
+      const result = await chain.getBalance(api, '5FMock', nativeAsset)
+
+      expect(nativeSpy).toHaveBeenCalledWith(api, '5FMock', nativeAsset)
+      expect(foreignSpy).not.toHaveBeenCalled()
+      expect(result).toBe(11n)
+    })
+
+    it('routes non-native assets to getBalanceForeign', async () => {
+      const foreignAsset = { symbol: 'USDT' } as TAssetInfo
+
+      const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(0n)
+      const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(22n)
+
+      const result = await chain.getBalance(api, '5FMock', foreignAsset)
+
+      expect(nativeSpy).not.toHaveBeenCalled()
+      expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignAsset)
+      expect(result).toBe(22n)
     })
   })
 
@@ -726,10 +856,10 @@ describe('Parachain', () => {
       paraIdTo: 2000
     } as TRelayToParaOptions<unknown, unknown>
 
-    const mockCall: TSerializedApiCall = {
+    const mockCall: TSerializedExtrinsics = {
       module: 'XcmPallet',
       method: 'transfer_assets_using_type_and_then',
-      parameters: {}
+      params: {}
     }
 
     beforeEach(() => {
@@ -738,8 +868,8 @@ describe('Parachain', () => {
       vi.mocked(resolveDestChain).mockReturnValue('Acala')
       vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
       vi.mocked(createTypeThenAutoReserve).mockResolvedValue(mockCall)
-      vi.mocked(constructRelayToParaParameters).mockReturnValue(
-        'parameters' as unknown as Record<string, unknown>
+      vi.mocked(constructRelayToParaParams).mockReturnValue(
+        'params' as unknown as Record<string, unknown>
       )
     })
 
@@ -780,10 +910,10 @@ describe('Parachain', () => {
       expect(result).toEqual({
         module: 'XcmPallet',
         method: 'limited_transfer_assets',
-        parameters: 'parameters'
+        params: 'params'
       })
 
-      expect(constructRelayToParaParameters).toHaveBeenCalledWith(options, version)
+      expect(constructRelayToParaParams).toHaveBeenCalledWith(options, version)
     })
 
     it('should respect methodOverride when provided', async () => {

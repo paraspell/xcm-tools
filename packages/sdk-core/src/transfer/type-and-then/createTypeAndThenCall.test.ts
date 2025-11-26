@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
-import type { TSerializedApiCall, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { createAsset, getRelayChainOf, localizeLocation, parseUnits } from '../../utils'
+import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
+import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -29,10 +29,10 @@ describe('createTypeAndThenCall', () => {
   const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = Version.V5
   const mockSenderAddress = '0x123'
-  const mockSerializedCall: TSerializedApiCall = {
+  const mockSerializedCall: TSerializedExtrinsics = {
     module: 'PolkadotXcm',
     method: 'mockMethod',
-    parameters: {}
+    params: {}
   }
   const mockCustomXcm: ReturnType<typeof createCustomXcm> = []
   const mockRefundInstruction: ReturnType<typeof createRefundInstruction> = { SetAppendix: [] }
@@ -59,6 +59,7 @@ describe('createTypeAndThenCall', () => {
       decimals: 12,
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
     },
+    systemAsset: mockSystemAsset,
     options: {
       api: mockApi,
       senderAddress: mockSenderAddress,
@@ -71,7 +72,7 @@ describe('createTypeAndThenCall', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockApi.callTxMethod = vi.fn()
+    mockApi.deserializeExtrinsics = vi.fn()
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
     vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
@@ -81,7 +82,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
+    vi.mocked(sortAssets).mockImplementation(assets => assets)
   })
 
   it('should handle DOT asset with RELAY_LOCATION', async () => {
@@ -237,7 +238,6 @@ describe('createTypeAndThenCall', () => {
     const result = constructTypeAndThenCall(mockContext)
 
     expect(result).toBe(mockSerializedCall)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith(mockChain)
     expect(parseUnits).toHaveBeenCalledWith('1', 12)
     expect(createCustomXcm).toHaveBeenCalledWith(mockContext, 2, true, 1n, {
       hopFees: 0n,
@@ -249,7 +249,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
 
-    const spy = vi.spyOn(mockApi, 'callTxMethod')
+    const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await createTypeAndThenCall(mockChain, mockContext.options)
 

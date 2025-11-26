@@ -7,9 +7,7 @@ import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types
 import { getChain } from '../../utils/getChain'
 import type Altair from './Altair'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Altair', () => {
   let altair: Altair<unknown, unknown>
@@ -50,7 +48,7 @@ describe('Altair', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -61,10 +59,10 @@ describe('Altair', () => {
 
       altair.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
@@ -74,7 +72,7 @@ describe('Altair', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -86,10 +84,10 @@ describe('Altair', () => {
 
       altair.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           keep_alive: false

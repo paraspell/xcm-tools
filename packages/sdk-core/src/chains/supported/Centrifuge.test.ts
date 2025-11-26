@@ -51,7 +51,7 @@ describe('Centrifuge', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -62,10 +62,10 @@ describe('Centrifuge', () => {
 
       centrifuge.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
@@ -75,7 +75,7 @@ describe('Centrifuge', () => {
 
     it('should call transfer_all when amount is ALL', () => {
       const mockApi = {
-        callTxMethod: vi.fn()
+        deserializeExtrinsics: vi.fn()
       }
 
       const mockOptions = {
@@ -87,10 +87,10 @@ describe('Centrifuge', () => {
 
       centrifuge.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },
           keep_alive: false

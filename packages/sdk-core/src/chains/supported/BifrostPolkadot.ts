@@ -33,7 +33,7 @@ class BifrostPolkadot<TApi, TRes>
     super(chain, info, ecosystem, version)
   }
 
-  getCurrencySelection(asset: TAssetInfo) {
+  getCustomCurrencyId(asset: TAssetInfo) {
     const nativeAssetSymbol = this.getNativeAssetSymbol()
 
     if (asset.symbol === nativeAssetSymbol) {
@@ -58,7 +58,7 @@ class BifrostPolkadot<TApi, TRes>
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
-    const currencySelection = this.getCurrencySelection(asset)
+    const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -86,13 +86,13 @@ class BifrostPolkadot<TApi, TRes>
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = { Id: address }
-    const currencyId = this.getCurrencySelection(asset)
+    const currencyId = this.getCustomCurrencyId(asset)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Tokens',
         method: 'transfer_all',
-        parameters: {
+        params: {
           dest,
           currency_id: currencyId,
           keep_alive: false
@@ -100,10 +100,10 @@ class BifrostPolkadot<TApi, TRes>
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Tokens',
       method: 'transfer',
-      parameters: {
+      params: {
         dest,
         currency_id: currencyId,
         amount: asset.amount

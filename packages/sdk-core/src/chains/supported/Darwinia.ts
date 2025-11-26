@@ -35,10 +35,10 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     const assetId = BigInt(asset.assetId)
 
     if (isAmountAll) {
-      return api.callTxMethod({
+      return api.deserializeExtrinsics({
         module: 'Assets',
         method: 'transfer_all',
-        parameters: {
+        params: {
           id: assetId,
           dest: address,
           keep_alive: false
@@ -46,10 +46,10 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
       })
     }
 
-    return api.callTxMethod({
+    return api.deserializeExtrinsics({
       module: 'Assets',
       method: 'transfer',
-      parameters: {
+      params: {
         id: assetId,
         target: address,
         amount: asset.amount

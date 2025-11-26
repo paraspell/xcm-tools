@@ -107,7 +107,7 @@ describe('getOtherAssetsPallets', () => {
 
   it('should return Assets, ForeignAssets pallets for Acala', () => {
     const chain: TChain = 'Acala'
-    const otherAssetsPallets: TPallet[] = ['Currencies']
+    const otherAssetsPallets: TPallet[] = ['Currencies', 'Tokens']
     const pallets = getOtherAssetsPallets(chain)
     expect(pallets).toEqual(otherAssetsPallets)
   })
