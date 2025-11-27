@@ -25,4 +25,15 @@ describe('normalizeSymbol', () => {
   it('does not remove "xc" if not at the beginning', () => {
     expect(normalizeSymbol('myxcDOT')).toBe('myxcdot')
   })
+
+  it('removes ".e" suffix and lowercases the symbol', () => {
+    expect(normalizeSymbol('DOT.e')).toBe('dot')
+    expect(normalizeSymbol('KSM.E')).toBe('ksm')
+    expect(normalizeSymbol('eth.e')).toBe('eth')
+  })
+
+  it('lowercases the symbol if it does not end with ".e"', () => {
+    expect(normalizeSymbol('BTC')).toBe('btc')
+    expect(normalizeSymbol('ksm')).toBe('ksm')
+  })
 })

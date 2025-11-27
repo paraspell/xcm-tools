@@ -60,11 +60,11 @@ describe('Laos', () => {
         assetInfo: { symbol: 'LAOS' },
         destination: 'AssetHubPolkadot'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => laos.transferPolkadotXCM(input)).toThrowError(TransferToAhNotSupported)
+      expect(() => laos.transferPolkadotXCM(input)).toThrow(TransferToAhNotSupported)
     })
 
     it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-      expect(() => laos.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+      expect(() => laos.transferRelayToPara()).toThrow(ChainNotSupportedError)
     })
   })
 })

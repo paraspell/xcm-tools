@@ -57,10 +57,10 @@ describe('XcmPallet utils', () => {
         parents: Parents.ONE,
         interior: { X1: { AccountKey20: { key: '0x123', network: undefined } } } // No Parachain junction
       }
-      expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrow(
         InvalidParameterError
       )
-      expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrow(
         'Parachain ID not found in destination location.'
       )
     })
@@ -70,10 +70,10 @@ describe('XcmPallet utils', () => {
         parents: Parents.ONE,
         interior: { X1: { Parachain: 9999 } }
       }
-      expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrow(
         InvalidParameterError
       )
-      expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrow(
         'Chain with specified paraId not found in destination location.'
       )
 
@@ -81,10 +81,10 @@ describe('XcmPallet utils', () => {
         parents: Parents.ONE,
         interior: { X1: { Parachain: 2004 } }
       }
-      expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrow(
         InvalidParameterError
       )
-      expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrowError(
+      expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrow(
         'Chain with specified paraId not found in destination location.'
       )
     })

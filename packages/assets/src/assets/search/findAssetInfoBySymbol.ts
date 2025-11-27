@@ -1,4 +1,4 @@
-import type { TChain } from '@paraspell/sdk-common'
+import { deepEqual, getJunctionValue, type TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
@@ -9,7 +9,6 @@ import type {
   TForeignAssetInfo,
   TNativeAssetInfo
 } from '../../types'
-import { getOtherAssets } from '../assets'
 import { findBestMatches } from './findBestMatches'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
@@ -17,18 +16,32 @@ const removePrefix = (symbol: string) => symbol.slice(2)
 
 const removeSuffix = (symbol: string) => symbol.slice(0, -2)
 
-const findEthAssetBySymbol = (symbol: string): TForeignAssetInfo | undefined => {
-  const ethereumAssets = getOtherAssets('Ethereum')
-  return findBestMatches(ethereumAssets, symbol)[0]
+const findEthAssetBySymbol = (
+  symbol: string,
+  otherAssets: TForeignAssetInfo[]
+): TForeignAssetInfo | undefined => {
+  const ethCompatibleAssets = otherAssets.filter(
+    asset =>
+      asset.location &&
+      deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
+        Ethereum: {
+          chainId: 1
+        }
+      })
+  )
+  return findBestMatches(ethCompatibleAssets, symbol)[0]
 }
 
-const findEthMatch = (symbol: string): TForeignAssetInfo | undefined => {
-  const match = findEthAssetBySymbol(symbol)
+const findEthMatch = (
+  symbol: string,
+  otherAssets: TForeignAssetInfo[]
+): TForeignAssetInfo | undefined => {
+  const match = findEthAssetBySymbol(symbol, otherAssets)
   if (match) return match
 
   const altSymbol = symbol.toLowerCase().endsWith('.e') ? removeSuffix(symbol) : `${symbol}.e`
 
-  return findEthAssetBySymbol(altSymbol.toLowerCase())
+  return findEthAssetBySymbol(altSymbol.toLowerCase(), otherAssets)
 }
 
 const findWithXcVariant = <T extends TBaseAssetInfo>(items: T[], value: string): T[] => {
@@ -81,7 +94,7 @@ export const findAssetInfoBySymbol = (
       let otherAssetsMatches: TForeignAssetInfo[] = []
 
       if (destination === 'Ethereum') {
-        return findEthMatch(value)
+        return findEthMatch(value, otherAssets)
       }
 
       if (lowerSymbol.endsWith('.e')) {
@@ -99,7 +112,7 @@ export const findAssetInfoBySymbol = (
         foundAsset = pickOtherOrThrow(value, otherAssetsMatches)
         if (foundAsset) return foundAsset
 
-        const ethAsset = findEthAssetBySymbol(strippedSymbol)
+        const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets)
         if (ethAsset) return ethAsset
 
         // If still not found, search normal assets without suffix
@@ -131,7 +144,7 @@ export const findAssetInfoBySymbol = (
     let nativeAssetsMatches: TNativeAssetInfo[] = []
 
     if (destination === 'Ethereum') {
-      return findEthMatch(symbol)
+      return findEthMatch(symbol, otherAssets)
     }
 
     if (lowerSymbol.endsWith('.e')) {
@@ -152,7 +165,7 @@ export const findAssetInfoBySymbol = (
       if (foundAsset) return foundAsset
 
       // Search in Ethereum assets without the '.e' suffix
-      const ethAsset = findEthAssetBySymbol(strippedSymbol)
+      const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets)
       if (ethAsset) return ethAsset
 
       // If still not found, search normal assets without suffix

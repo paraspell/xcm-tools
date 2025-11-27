@@ -39,26 +39,18 @@ describe('findAssetInfoOrThrow', () => {
     const destination: TChain = 'Astar'
     const ethereumAsset: TAssetInfo = { symbol: 'USDT', decimals: 6, assetId: 'USDT_ETH' }
 
-    vi.mocked(findAssetInfo)
-      .mockImplementationOnce((n, c, d) => {
-        if (n === 'AssetHubPolkadot' && c === mockCurrencyObject && d === destination) {
-          return null
-        }
-        return null
-      })
-      .mockImplementationOnce((n, c, d) => {
-        if (n === 'Ethereum' && c === mockCurrencyObject && d === null) {
-          return ethereumAsset
-        }
-        return null
-      })
+    vi.mocked(findAssetInfo).mockImplementationOnce((n, c, d) => {
+      if (n === 'AssetHubPolkadot' && c === mockCurrencyObject && d === destination) {
+        return ethereumAsset
+      }
+      return null
+    })
 
     const result = findAssetInfoOrThrow(chain, mockCurrencyObject, destination)
 
     expect(result).toEqual(ethereumAsset)
-    expect(findAssetInfo).toHaveBeenCalledTimes(2)
+    expect(findAssetInfo).toHaveBeenCalledTimes(1)
     expect(findAssetInfo).toHaveBeenNthCalledWith(1, chain, mockCurrencyObject, destination)
-    expect(findAssetInfo).toHaveBeenNthCalledWith(2, 'Ethereum', mockCurrencyObject, null)
   })
 
   it('should throw InvalidCurrencyError if chain is AssetHubPolkadot and both primary and Ethereum fallback fail', () => {
@@ -71,9 +63,8 @@ describe('findAssetInfoOrThrow', () => {
     expect(() => findAssetInfoOrThrow(chain, currencyInput, destination)).toThrow(
       `Asset ${JSON.stringify(currencyInput)} not found on ${chain}`
     )
-    expect(findAssetInfo).toHaveBeenCalledTimes(2)
+    expect(findAssetInfo).toHaveBeenCalledTimes(1)
     expect(findAssetInfo).toHaveBeenNthCalledWith(1, chain, currencyInput, destination)
-    expect(findAssetInfo).toHaveBeenNthCalledWith(2, 'Ethereum', currencyInput, null)
   })
 
   it('should throw InvalidCurrencyError if chain is not AssetHubPolkadot and findAsset fails', () => {

@@ -54,13 +54,13 @@ describe('getExchangeAsset', () => {
 
   test('should throw error for multiasset or override location currencies', () => {
     const currency = ['some-asset'] as unknown as TCurrencyInput;
-    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrow(
       'XCM Router does not support location override or multi-asset currencies yet.',
     );
 
     const currency2 = { location: { override: true } } as unknown as TCurrencyInput;
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true);
-    expect(() => getExchangeAsset(mockExchange, currency2)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency2)).toThrow(
       'XCM Router does not support location override or multi-asset currencies yet.',
     );
   });
@@ -69,7 +69,7 @@ describe('getExchangeAsset', () => {
     const currency = { symbol: { Token: 'DOT' } } as unknown as TCurrencyInput;
     vi.mocked(isSymbolSpecifier).mockReturnValue(true);
 
-    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrow(
       'Cannot use currency specifiers when using exchange auto select',
     );
   });
@@ -88,7 +88,7 @@ describe('getExchangeAsset', () => {
     const currency = { symbol: 'DOT' } as TCurrencyInput;
     vi.mocked(findBestMatches).mockReturnValue([mockNativeAsset, mockNativeAsset]);
 
-    expect(() => getExchangeAsset(mockExchange, currency, true)).toThrowError(
+    expect(() => getExchangeAsset(mockExchange, currency, true)).toThrow(
       `Multiple assets found for symbol DOT. Please specify the asset by location.`,
     );
   });
@@ -139,7 +139,7 @@ describe('getExchangeAsset', () => {
   test('should throw error for invalid currency input', () => {
     const currency = {} as TCurrencyInput;
 
-    expect(() => getExchangeAsset(mockExchange, currency)).toThrowError('Invalid currency input');
+    expect(() => getExchangeAsset(mockExchange, currency)).toThrow('Invalid currency input');
   });
 
   test('should enhance foreign assets with location from otherAssets', () => {

@@ -35,7 +35,7 @@ describe('BridgeHubKusama', () => {
       unknown
     >
 
-    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrowError(
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
       new ScenarioNotSupportedError(
         chain.chain,
         'ParaToPara',

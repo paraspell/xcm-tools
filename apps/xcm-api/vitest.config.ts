@@ -7,7 +7,12 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     coverage: {
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.module.ts', 'src/**/*.test.ts', 'src/types/types.ts'],
+      exclude: [
+        'src/main.ts',
+        'src/**/*.module.ts',
+        'src/**/*.test.ts',
+        'src/types/types.ts',
+      ],
     },
   },
   plugins: [

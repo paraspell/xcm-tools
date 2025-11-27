@@ -58,7 +58,7 @@ describe('Crust', () => {
     }
     vi.spyOn(crust, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
-    expect(() => crust.transferXTokens(invalidInput)).toThrowError(InvalidCurrencyError)
+    expect(() => crust.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
   })
 
   describe('transferLocalNonNativeAsset', () => {

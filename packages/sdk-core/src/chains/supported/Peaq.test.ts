@@ -40,11 +40,11 @@ describe('Peaq', () => {
       unknown
     >
 
-    expect(() => chain.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
+    expect(() => chain.transferXTokens(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 
   describe('transferLocalNonNativeAsset', () => {

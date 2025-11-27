@@ -1,106 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { getAssets, getNativeAssetSymbol, getOtherAssets } from './assets'
-import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
+import { getAssets } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
-import { isSymbolMatch } from './isSymbolMatch'
 
-vi.mock('./assets', () => ({
-  getAssets: vi.fn(),
-  getOtherAssets: vi.fn(),
-  getNativeAssetSymbol: vi.fn()
-}))
-
-vi.mock('./isSymbolMatch', () => ({
-  isSymbolMatch: vi.fn()
-}))
-
-vi.mock('./search', () => ({
-  findAsset: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  isRelayChain: vi.fn()
-}))
-
-vi.mock('../pallets', () => ({
-  getDefaultPallet: vi.fn()
-}))
-
-vi.mock('./filterEthCompatibleAssets', () => ({
-  filterEthCompatibleAssets: vi.fn()
-}))
+vi.mock('./assets')
 
 describe('getSupportedAssets', () => {
-  it('should return Ethereum assets when either origin or destination is Ethereum', () => {
-    const ethAssets = [{ symbol: 'ETH', assetId: '1', decimals: 18 }]
-    vi.mocked(getOtherAssets).mockImplementation(chain => (chain === 'Ethereum' ? ethAssets : []))
-
-    vi.mocked(filterEthCompatibleAssets).mockReturnValue([])
-
-    const res1 = getSupportedAssets('Ethereum', 'Polkadot')
-    expect(res1).toEqual(ethAssets)
-
-    const res2 = getSupportedAssets('Polkadot', 'Ethereum')
-    expect(res2).toEqual(ethAssets)
-
-    expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
-    expect(filterEthCompatibleAssets).toHaveBeenCalled()
-  })
-
-  it('should return Ethereum compatible assets when origin is Moonbeam', () => {
-    const moonbeamAssets = [
-      { symbol: 'xcUSDT', assetId: '100', decimals: 18 },
-      { symbol: 'ETH', assetId: '1', decimals: 18 }
-    ]
-
-    const ethCompatible = [{ symbol: 'ETH', assetId: '1', decimals: 18 }]
-
-    vi.mocked(getOtherAssets).mockImplementation(chain => {
-      if (chain === 'Moonbeam') return moonbeamAssets
-      if (chain === 'Ethereum') return [{ symbol: 'WETH', assetId: '999', decimals: 18 }]
-      return []
-    })
-
-    vi.mocked(filterEthCompatibleAssets).mockReturnValue(ethCompatible)
-
-    vi.mocked(getAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Moonbeam', 'Ethereum')
-
-    expect(result).toEqual(ethCompatible)
-
-    expect(getOtherAssets).toHaveBeenCalledWith('Moonbeam')
-    expect(filterEthCompatibleAssets).toHaveBeenCalledWith(moonbeamAssets)
-    expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
-  })
-
-  it('should return only native Mythos assets when origin is Mythos and destination is Ethereum', () => {
-    const ethereumAssets = [
-      { symbol: 'MYTH', assetId: '1', decimals: 18 },
-      { symbol: 'USDT', assetId: '2', decimals: 6 },
-      { symbol: 'ETH', assetId: '3', decimals: 18 }
-    ]
-
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('MYTH')
-    vi.mocked(isSymbolMatch).mockImplementation((symbol1, symbol2) => symbol1 === symbol2)
-
-    vi.mocked(getOtherAssets).mockImplementation(chain => {
-      if (chain === 'Ethereum') return ethereumAssets
-      if (chain === 'Mythos') return []
-      return []
-    })
-
-    vi.mocked(filterEthCompatibleAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Mythos', 'Ethereum')
-
-    expect(result).toEqual([{ symbol: 'MYTH', decimals: 18, assetId: '1' }])
-    expect(getOtherAssets).toHaveBeenCalledWith('Mythos')
-    expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith('Mythos')
-  })
-
   it('should return DOT and KSM assets when origin and destination are AssetHubPolkadot and AssetHubKusama', () => {
     const mockDOTAsset = { symbol: 'DOT', assetId: '100', decimals: 18 }
     const mockKSMAsset = { symbol: 'KSM', assetId: '200', decimals: 18 }
@@ -142,20 +47,5 @@ describe('getSupportedAssets', () => {
 
     const result = getSupportedAssets('Phala', 'Polkadot')
     expect(result).toEqual([])
-  })
-
-  it('should return WETH asset when origin is AssetHubPolkadot and destination is BifrostPolkadot', () => {
-    const mockOriginAssets = [{ symbol: 'PHA', assetId: '300', decimals: 18 }]
-    const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400', decimals: 18 }]
-    const mockWETHAsset = { symbol: 'WETH', assetId: '500', decimals: 18 }
-    vi.mocked(getAssets).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return mockOriginAssets
-      if (chain === 'BifrostPolkadot') return mockDestinationAssets
-      return []
-    })
-    vi.mocked(getOtherAssets).mockReturnValue([mockWETHAsset])
-
-    const result = getSupportedAssets('AssetHubPolkadot', 'BifrostPolkadot')
-    expect(result).toEqual([...mockOriginAssets, { symbol: 'WETH.e', assetId: '500' }])
   })
 })

@@ -28,7 +28,7 @@ describe('throwDuplicateAssetError', () => {
         [{ symbol: 'DOT', isNative: true } as TNativeAssetInfo],
         [{ symbol: 'USDT', alias: 'USDT1', assetId: '100' } as TForeignAssetInfo]
       )
-    ).toThrowError(
+    ).toThrow(
       new DuplicateAssetError(
         `Multiple matches found for symbol ${symbol}. Please specify with Native() or Foreign() selector.`
       )
@@ -45,7 +45,7 @@ describe('throwDuplicateAssetError', () => {
           { alias: 'USDT2', assetId: '200' } as TForeignAssetInfo
         ]
       )
-    ).toThrowError(
+    ).toThrow(
       new DuplicateAssetError(
         `Multiple foreign assets found for symbol ${symbol}. Please specify with ForeignAbstract() selector. Available aliases: USDT1 (ID:100), USDT2 (ID:200)`
       )
@@ -70,7 +70,7 @@ describe('throwDuplicateAssetError', () => {
           } as TForeignAssetInfo
         ]
       )
-    ).toThrowError(
+    ).toThrow(
       new DuplicateAssetError(
         `Multiple foreign assets found for symbol ${symbol}. Please specify with ForeignAbstract() selector. Available aliases: USDT1 (Location:${JSON.stringify(
           {
@@ -100,7 +100,7 @@ describe('throwDuplicateAssetError', () => {
           } as TForeignAssetInfo
         ]
       )
-    ).toThrowError(
+    ).toThrow(
       new DuplicateAssetError(
         `Multiple foreign assets found for symbol ${symbol}. Please specify with ForeignAbstract() selector. Available aliases: USDT1 (Location:${JSON.stringify(
           {}

@@ -33,7 +33,7 @@ describe('Crab', () => {
       unknown
     >
 
-    expect(() => crab.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
+    expect(() => crab.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should call transferPolkadotXCM with limited_reserve_transfer_assets for non-ParaToPara scenario', async () => {
@@ -46,6 +46,6 @@ describe('Crab', () => {
   })
 
   it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => crab.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => crab.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 })

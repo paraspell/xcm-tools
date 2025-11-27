@@ -1,5 +1,6 @@
 import { getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
+import { isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
@@ -30,14 +31,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   validateAddress(api, address, destination, true)
 
-  if (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') {
+  const isSubBridge = isSubstrateBridge(origin, destination)
+
+  if (isSubBridge) {
     throw new InvalidParameterError(
-      'Kusama is outside of Polkadot ecosystem, thus function is unable to verify the existential deposit for it.'
-    )
-  }
-  if (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot') {
-    throw new InvalidParameterError(
-      'Polkadot is outside of Kusama ecosystem, thus function is unable to verify the existential deposit for it.'
+      'Unable to verify the existential deposit for substrate bridge scenarios'
     )
   }
 

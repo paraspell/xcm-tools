@@ -507,7 +507,7 @@ describe('Parachain', () => {
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
 
-    await expect(chain.transfer(options)).rejects.toThrowError(NoXCMSupportImplementedError)
+    await expect(chain.transfer(options)).rejects.toThrow(NoXCMSupportImplementedError)
   })
 
   it('should not call transferXTokens when canUseXTokens returns false', async () => {
@@ -578,7 +578,7 @@ describe('Parachain', () => {
       senderAddress: '0x456',
       address: DOT_LOCATION
     } as TPolkadotXCMTransferOptions<unknown, unknown>
-    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrowError(
+    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(
       'Location address is not supported for this transfer type.'
     )
   })
@@ -839,7 +839,7 @@ describe('Parachain', () => {
 
     vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
-    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrowError(BridgeHaltedError)
+    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(BridgeHaltedError)
   })
 
   describe('transferRelayToPara', () => {

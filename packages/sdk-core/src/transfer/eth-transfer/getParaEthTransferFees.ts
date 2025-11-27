@@ -2,7 +2,8 @@ import type { IPolkadotApi } from '../../api'
 import { ASSET_HUB_EXECUTION_FEE } from '../../constants'
 
 export const getParaEthTransferFees = async <TApi, TRes>(
-  ahApi: IPolkadotApi<TApi, TRes>
+  ahApi: IPolkadotApi<TApi, TRes>,
+  shouldDisconnect = true
 ): Promise<[bigint, bigint]> => {
   const DEFAULT_FEE = 2_750_872_500_000n
 
@@ -14,7 +15,7 @@ export const getParaEthTransferFees = async <TApi, TRes>(
 
   const leFeeHex = feeStorageItem.replace('0x', '')
 
-  await ahApi.disconnect()
+  if (shouldDisconnect) await ahApi.disconnect()
 
   const bytes = leFeeHex.match(/.{1,2}/g) || []
   const reversedHex = bytes.reverse().join('')

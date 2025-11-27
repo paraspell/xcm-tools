@@ -96,7 +96,7 @@ describe('transferMoonbeamEvm', () => {
         address: mockAddress,
         currency: mockCurrency
       })
-    ).rejects.toThrowError('Currency must be a foreign asset with valid assetId')
+    ).rejects.toThrow('Currency must be a foreign asset with valid assetId')
   })
 
   it('formats foreign asset ID if the asset is foreign', async () => {
@@ -176,7 +176,7 @@ describe('transferMoonbeamEvm', () => {
         address: mockAddress,
         currency: []
       } as TEvmBuilderOptions<unknown, unknown>)
-    ).rejects.toThrowError()
+    ).rejects.toThrow()
   })
 
   it('throws if trying to override location', async () => {
@@ -192,6 +192,6 @@ describe('transferMoonbeamEvm', () => {
           amount: 1000
         }
       } as TEvmBuilderOptions<unknown, unknown>)
-    ).rejects.toThrowError()
+    ).rejects.toThrow()
   })
 })
