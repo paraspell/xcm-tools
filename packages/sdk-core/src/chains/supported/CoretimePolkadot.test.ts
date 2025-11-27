@@ -26,7 +26,7 @@ describe('CoretimePolkadot', () => {
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
     const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
-    expect(() => chain.transferPolkadotXCM(input)).toThrowError(ScenarioNotSupportedError)
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
   it('canReceiveFrom returns false for Hydration and Moonbeam', () => {

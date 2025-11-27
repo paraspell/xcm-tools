@@ -107,7 +107,7 @@ describe('BifrostExchange', () => {
 
       await expect(
         chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError('Currency from not found');
+      ).rejects.toThrow('Currency from not found');
     });
 
     it('should throw an error if currency to token is not found', async () => {
@@ -117,7 +117,7 @@ describe('BifrostExchange', () => {
 
       await expect(
         chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError('Currency to not found');
+      ).rejects.toThrow('Currency to not found');
     });
 
     it('throws AmountTooLowError when input amount is negative (amountWithoutFee.isNegative)', async () => {
@@ -130,7 +130,7 @@ describe('BifrostExchange', () => {
           },
           mockToDestTransactionFee,
         ),
-      ).rejects.toThrowError(AmountTooLowError);
+      ).rejects.toThrow(AmountTooLowError);
     });
 
     it('should throw an error if extrinsic is null', async () => {
@@ -140,7 +140,7 @@ describe('BifrostExchange', () => {
 
       await expect(
         chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError('Extrinsic is null');
+      ).rejects.toThrow('Extrinsic is null');
     });
 
     it('should throw an error if the amount is too small to cover the fees', async () => {
@@ -161,7 +161,7 @@ describe('BifrostExchange', () => {
           },
           mockToDestTransactionFee,
         ),
-      ).rejects.toThrowError(AmountTooLowError);
+      ).rejects.toThrow(AmountTooLowError);
     });
 
     it('should return the extrinsic and final amountOut if successful', async () => {
@@ -221,7 +221,7 @@ describe('BifrostExchange', () => {
     it('should throw an error if currency from token is not found', async () => {
       vi.mocked(findToken).mockImplementationOnce(() => undefined);
 
-      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrowError(
+      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrow(
         'Currency from not found',
       );
     });
@@ -231,7 +231,7 @@ describe('BifrostExchange', () => {
         .mockImplementationOnce((tm, symbol) => tm[symbol])
         .mockImplementationOnce(() => undefined);
 
-      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrowError(
+      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrow(
         'Currency to not found',
       );
     });

@@ -1,30 +1,41 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import type { TForeignAssetInfo } from '@paraspell/assets'
-import { InvalidCurrencyError } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import { findAssetInfoOrThrow } from '@paraspell/assets'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import {
-  ChainNotSupportedError,
-  InvalidParameterError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getParaEthTransferFees } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
+import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 import { createTypeAndThenTransfer } from './Mythos'
 
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  findAssetInfoOrThrow: vi.fn()
+}))
+
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
 vi.mock('../../transfer')
+vi.mock('../../utils/assertions')
 vi.mock('../../utils/ethereum/generateMessageId')
 vi.mock('../../utils/ethereum/createCustomXcmOnDest')
+vi.mock('../../utils/fees/getMythosOriginFee')
+
+const ethAsset: TForeignAssetInfo = {
+  symbol: 'MYTH',
+  decimals: 12,
+  assetId: '0x123',
+  location: { parents: 2, interior: { X2: [] } }
+}
 
 describe('Mythos', () => {
   let mythos: Mythos<unknown, unknown>
@@ -37,6 +48,7 @@ describe('Mythos', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mythos = getChain<unknown, unknown, 'Mythos'>('Mythos')
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
   })
 
   it('should initialize with correct values', () => {
@@ -74,16 +86,8 @@ describe('Mythos', () => {
       unknown
     >
 
-    await expect(mythos.transferPolkadotXCM(invalidInput)).rejects.toThrowError(
+    await expect(mythos.transferPolkadotXCM(invalidInput)).rejects.toThrow(
       ScenarioNotSupportedError
-    )
-  })
-
-  it('should throw InvalidCurrencyError for unsupported currency', async () => {
-    vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('NOT_MYTH')
-
-    await expect(mythos.transferPolkadotXCM(mockInput)).rejects.toThrowError(
-      new InvalidCurrencyError(`Chain Mythos does not support currency MYTH`)
     )
   })
 
@@ -107,7 +111,7 @@ describe('Mythos', () => {
   })
 
   it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => mythos.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => mythos.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 
   describe('Ethereum transfers', () => {
@@ -154,12 +158,10 @@ describe('Mythos', () => {
         mockApi,
         mockEthereumInput.senderAddress,
         expect.any(Number),
-        '123',
+        ethAsset.assetId,
         mockEthereumInput.address,
         100n
       )
-      expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
-      expect(mockApi.quoteAhPrice).toHaveBeenCalled()
       expect(mockApi.deserializeExtrinsics).toHaveBeenCalled()
       expect(result).toBe('ethereum_tx_result')
     })
@@ -191,11 +193,7 @@ describe('Mythos', () => {
 })
 
 describe('createTypeAndThenTransfer', () => {
-  const mockApi = {
-    clone: vi.fn(),
-    init: vi.fn(),
-    quoteAhPrice: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
 
   const mockOptions = {
     api: mockApi,
@@ -203,8 +201,7 @@ describe('createTypeAndThenTransfer', () => {
     assetInfo: {
       symbol: 'MYTH',
       amount: 1000n,
-      location: { parents: 0, interior: 'Here' },
-      assetId: '123'
+      location: { parents: 0, interior: 'Here' }
     },
     currency: { symbol: 'MYTH' },
     senderAddress: '0x1234567890123456789012345678901234567890',
@@ -212,37 +209,17 @@ describe('createTypeAndThenTransfer', () => {
     destination: 'Ethereum'
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
+  const ORIGIN_FEE = 200n
+
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
-    vi.spyOn(mockApi, 'init').mockResolvedValue(undefined)
-  })
-
-  it('should throw InvalidCurrencyError for non-foreign assets', async () => {
-    const optionsWithNonForeignAsset = {
-      ...mockOptions,
-      assetInfo: { ...mockOptions.assetInfo, assetId: undefined }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    await expect(
-      createTypeAndThenTransfer(optionsWithNonForeignAsset, 'Mythos', Version.V4)
-    ).rejects.toThrowError(InvalidCurrencyError)
-  })
-
-  it('should throw InvalidParameterError when DOT pool is not found', async () => {
-    vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
-    vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-    vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(undefined)
-
-    await expect(createTypeAndThenTransfer(mockOptions, 'Mythos', Version.V4)).rejects.toThrowError(
-      new InvalidParameterError('Pool DOT -> MYTH not found.')
-    )
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
+    vi.mocked(getMythosOriginFee).mockResolvedValue(ORIGIN_FEE)
   })
 
   it('should successfully create transfer call with sufficient balance', async () => {
     vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-    vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -267,7 +244,6 @@ describe('createTypeAndThenTransfer', () => {
   it('should call all required functions with correct parameters', async () => {
     vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-    vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -278,14 +254,16 @@ describe('createTypeAndThenTransfer', () => {
       mockApi,
       mockOptions.senderAddress,
       expect.any(Number), // paraId
-      (mockOptions.assetInfo as TForeignAssetInfo).assetId,
+      ethAsset.assetId,
       mockOptions.address,
       mockOptions.assetInfo.amount
     )
-    expect(mockApi.clone).toHaveBeenCalled()
-    expect(mockApi.init).toHaveBeenCalledWith('AssetHubPolkadot')
-    expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
-    expect(createCustomXcmOnDest).toHaveBeenCalledWith(mockOptions, 'Mythos', 'message_id_123')
+    expect(createCustomXcmOnDest).toHaveBeenCalledWith(
+      mockOptions,
+      'Mythos',
+      'message_id_123',
+      ethAsset
+    )
   })
 
   it('should handle different asset amounts correctly', async () => {
@@ -296,7 +274,6 @@ describe('createTypeAndThenTransfer', () => {
 
     vi.mocked(generateMessageId).mockResolvedValue('message_id_large')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-    vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(2000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -311,8 +288,11 @@ describe('createTypeAndThenTransfer', () => {
         assets: {
           [Version.V4]: expect.arrayContaining([
             expect.objectContaining({
-              id: largeAmountOptions.assetInfo.location,
-              fun: { Fungible: 999999999999n }
+              id: {
+                parents: Parents.ZERO,
+                interior: 'Here'
+              },
+              fun: { Fungible: ORIGIN_FEE }
             })
           ])
         },

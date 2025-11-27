@@ -27,8 +27,6 @@ describe('ZodValidationPipe', () => {
     const pipe = new ZodValidationPipe(invalidSchema);
     const invalidValue = { age: -5 };
 
-    expect(() => pipe.transform(invalidValue)).toThrowError(
-      BadRequestException,
-    );
+    expect(() => pipe.transform(invalidValue)).toThrow(BadRequestException);
   });
 });

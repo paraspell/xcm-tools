@@ -30,7 +30,7 @@ describe('PeopleKusama', () => {
     it('should throw an error when scenario is ParaToPara', () => {
       const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      expect(() => chain.transferPolkadotXCM(input)).toThrowError(ScenarioNotSupportedError)
+      expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
 
     it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {

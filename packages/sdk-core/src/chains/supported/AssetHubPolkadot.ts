@@ -79,7 +79,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       throw new InvalidParameterError('Location address is not supported for Ethereum transfers')
     }
 
-    assertIsForeign(asset)
     assertHasLocation(asset)
 
     const messageId = await generateMessageId(
@@ -116,7 +115,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
                 assets: { Wild: { AllCounted: 1 } },
                 beneficiary: createBeneficiaryLocation({
                   api,
-                  address: address,
+                  address,
                   version
                 })
               }
@@ -143,7 +142,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       throw new BridgeHaltedError()
     }
 
-    assertIsForeign(asset)
     assertHasLocation(asset)
 
     if (

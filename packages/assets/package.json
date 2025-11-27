@@ -47,7 +47,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@snowbridge/registry": "^0.2.17",
-    "@vitest/coverage-v8": "^4.0.6",
+    "@vitest/coverage-v8": "^4.0.14",
     "dotenv": "^17.2.3",
     "rollup": "^4.53.3",
     "rollup-plugin-dts": "^6.3.0",

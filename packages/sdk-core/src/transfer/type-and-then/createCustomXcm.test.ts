@@ -297,7 +297,7 @@ describe('createCustomXcm', () => {
             destFee: 200n
           }
         )
-      ).toThrowError(AmountTooLowError)
+      ).toThrow(AmountTooLowError)
     })
   })
 

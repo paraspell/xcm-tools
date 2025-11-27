@@ -312,7 +312,7 @@ describe('convert', () => {
       convertXCMToUrls(xcmCallArguments);
     };
 
-    expect(t).toThrowError(ZodError);
+    expect(t).toThrow(ZodError);
   });
 
   it('convert location to URL with plurality', () => {

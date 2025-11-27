@@ -1,9 +1,7 @@
-import type { TChain } from '@paraspell/sdk-common'
+import { isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
 
-import type { TAssetInfo, TForeignAssetInfo } from '../types'
-import { getAssets, getNativeAssetSymbol, getOtherAssets } from './assets'
-import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
-import { isSymbolMatch } from './isSymbolMatch'
+import type { TAssetInfo } from '../types'
+import { getAssets } from './assets'
 import { normalizeSymbol } from './normalizeSymbol'
 
 /**
@@ -17,43 +15,15 @@ export const getSupportedAssets = (origin: TChain, destination: TChain): TAssetI
   const originAssets = getAssets(origin)
   const destinationAssets = getAssets(destination)
 
-  if (destination === 'Ethereum' || origin === 'Ethereum') {
-    const otherAssets = getOtherAssets(origin)
-    const ethereumCompatibleAssets = filterEthCompatibleAssets(otherAssets)
-    const ethereumAssets = getOtherAssets('Ethereum')
+  const isSubBridge = isSubstrateBridge(origin, destination)
 
-    if (origin === 'Moonbeam') {
-      return ethereumCompatibleAssets
-    }
-
-    if (origin === 'Mythos') {
-      return ethereumAssets.filter(asset =>
-        isSymbolMatch(asset.symbol, getNativeAssetSymbol(origin))
-      )
-    }
-
-    return [...ethereumCompatibleAssets, ...ethereumAssets]
-  }
-
-  if (
-    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
-    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
-  ) {
+  if (isSubBridge) {
     return originAssets.filter(asset => asset.symbol === 'KSM' || asset.symbol === 'DOT')
   }
 
   const supportedAssets = originAssets.filter(asset =>
     destinationAssets.some(a => normalizeSymbol(a.symbol) === normalizeSymbol(asset.symbol))
   )
-
-  if (origin === 'AssetHubPolkadot' && destination === 'BifrostPolkadot') {
-    const wethAsset = getOtherAssets('Ethereum').find(({ symbol }) => symbol === 'WETH')
-    if (wethAsset)
-      supportedAssets.push({
-        assetId: wethAsset.assetId,
-        symbol: `${wethAsset.symbol}.e`
-      } as TForeignAssetInfo)
-  }
 
   return supportedAssets
 }

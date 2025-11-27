@@ -54,6 +54,6 @@ describe('AjunaPaseo', () => {
   })
 
   it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 })

@@ -3,11 +3,11 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfo,
-  findAssetInfoByLoc,
+  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
-  getOtherAssets,
   getRelayChainSymbol,
-  InvalidCurrencyError,
+  isAssetEqual,
   isChainEvm,
   isForeignAsset,
   isSymbolMatch,
@@ -23,7 +23,6 @@ import {
   isTLocation,
   isTrustedChain,
   Parents,
-  replaceBigInt,
   type TParachain
 } from '@paraspell/sdk-common'
 
@@ -186,6 +185,7 @@ abstract class Parachain<TApi, TRes> {
       (isRelayAsset &&
         supportsTypeThen &&
         destChain &&
+        !isExternalChain(destChain) &&
         !feeAsset &&
         (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
       isSubBridge
@@ -584,13 +584,11 @@ abstract class Parachain<TApi, TRes> {
 
     const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
 
-    const ethAssetInfo = findAssetInfoByLoc(getOtherAssets('Ethereum'), asset.location)
+    const ethAssetInfo = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
 
-    if (!ethAssetInfo) {
-      throw new InvalidCurrencyError(
-        `Could not obtain Ethereum asset address for ${JSON.stringify(asset, replaceBigInt)}`
-      )
-    }
+    const systemAssetInfo = findNativeAssetInfoOrThrow(getRelayChainOf(this.chain))
+    const shouldIncludeFeeAsset =
+      (feeAsset && !isAssetEqual(feeAsset, asset)) || !isAssetEqual(asset, systemAssetInfo)
 
     let customXcmOnDest
 
@@ -622,7 +620,7 @@ abstract class Parachain<TApi, TRes> {
         asset.amount
       )
 
-      customXcmOnDest = createCustomXcmOnDest(input, this.chain, messageId)
+      customXcmOnDest = createCustomXcmOnDest(input, this.chain, messageId, ethAssetInfo)
     }
 
     const call: TSerializedExtrinsics = {
@@ -636,12 +634,15 @@ abstract class Parachain<TApi, TRes> {
           getParaId('AssetHubPolkadot')
         ),
         assets: addXcmVersionHeader(
-          [...(!feeAsset ? [createAsset(version, fee, DOT_LOCATION)] : []), ethAsset],
+          [...(shouldIncludeFeeAsset ? [createAsset(version, fee, DOT_LOCATION)] : []), ethAsset],
           version
         ),
 
         assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: addXcmVersionHeader(feeAsset?.location ?? DOT_LOCATION, version),
+        remote_fees_id: addXcmVersionHeader(
+          feeAsset?.location ?? (shouldIncludeFeeAsset ? DOT_LOCATION : asset.location),
+          version
+        ),
         fees_transfer_type: 'DestinationReserve',
         custom_xcm_on_dest: customXcmOnDest,
         weight_limit: 'Unlimited'

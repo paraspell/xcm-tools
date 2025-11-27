@@ -159,7 +159,7 @@ describe('AcalaExchange', () => {
           } as TSwapOptions,
           0n,
         ),
-      ).rejects.toThrowError(AmountTooLowError);
+      ).rejects.toThrow(AmountTooLowError);
     });
 
     it('should throw AmountTooLowError when amountWithoutFee is negative in swapCurrency', async () => {

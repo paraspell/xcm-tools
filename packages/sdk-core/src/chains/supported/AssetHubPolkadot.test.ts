@@ -96,7 +96,7 @@ describe('AssetHubPolkadot', () => {
     it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([])
 
-      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
+      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrow(
         InvalidCurrencyError
       )
     })
@@ -107,9 +107,7 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
-      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
-        BridgeHaltedError
-      )
+      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrow(BridgeHaltedError)
     })
 
     it('should process a valid ETH transfer', async () => {
@@ -144,7 +142,7 @@ describe('AssetHubPolkadot', () => {
     it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([])
 
-      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError(
+      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrow(
         InvalidCurrencyError
       )
     })
@@ -155,7 +153,7 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
-      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError(
+      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrow(
         BridgeHaltedError
       )
     })

@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { findAssetInfoOrThrow } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { Parents, replaceBigInt, Version } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -12,7 +12,12 @@ import {
   type TPolkadotXCMTransferOptions,
   type TSerializedExtrinsics
 } from '../../types'
-import { assertAddressIsString, assertHasLocation, assertSenderAddress } from '../../utils'
+import {
+  assertAddressIsString,
+  assertHasId,
+  assertHasLocation,
+  assertSenderAddress
+} from '../../utils/assertions'
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
@@ -28,21 +33,18 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
 ): Promise<TSerializedExtrinsics> => {
   const { api, assetInfo: asset, senderAddress, address, destination } = options
 
-  assertHasLocation(asset)
+  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
+
+  assertHasLocation(ethAsset)
+  assertHasId(ethAsset)
   assertAddressIsString(address)
   assertSenderAddress(senderAddress)
-
-  if (!isForeignAsset(asset) || !asset.assetId) {
-    throw new InvalidCurrencyError(
-      `Asset ${JSON.stringify(asset, replaceBigInt)} is not a foreign asset`
-    )
-  }
 
   const messageId = await generateMessageId(
     api,
     senderAddress,
     getParaId(chain),
-    asset.assetId,
+    ethAsset.assetId,
     address,
     asset.amount
   )
@@ -60,7 +62,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
             parents: Parents.ZERO,
             interior: 'Here'
           }),
-          createAsset(version, asset.amount, asset.location)
+          createAsset(version, asset.amount, ethAsset.location)
         ]
       },
       assets_transfer_type: 'DestinationReserve',
@@ -71,7 +73,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
         }
       },
       fees_transfer_type: 'Teleport',
-      custom_xcm_on_dest: createCustomXcmOnDest(options, chain, messageId),
+      custom_xcm_on_dest: createCustomXcmOnDest(options, chain, messageId, ethAsset),
       weight_limit: 'Unlimited'
     }
   }
@@ -83,16 +85,9 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
   }
 
   private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, assetInfo: asset, destination } = input
+    const { scenario, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.chain, scenario)
-    }
-
-    const nativeSymbol = this.getNativeAssetSymbol()
-    if (asset.symbol !== nativeSymbol) {
-      throw new InvalidCurrencyError(
-        `Chain ${this.chain} does not support currency ${asset.symbol}`
-      )
     }
 
     return transferPolkadotXcm(

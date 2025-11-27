@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
 import { getRelayChainOf } from '../../utils'
-import { validateAssetSupport } from './validateAssetSupport'
+import { validateAssetSupport, validateEthereumAsset } from './validateAssetSupport'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
@@ -278,5 +278,161 @@ describe('validateAssetSupport', () => {
     const asset = { symbol: 'TEST' } as TAssetInfo
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
+  })
+
+  it('should call validateEthereumAsset', () => {
+    const options = {
+      from: 'AssetHubPolkadot',
+      to: 'Ethereum',
+      currency: { symbol: 'DOT' }
+    } as TSendOptions<unknown, unknown>
+
+    const assetCheckEnabled = true
+    const isBridge = false
+    const asset = {
+      symbol: 'DOT',
+      location: {
+        parents: Parents.ONE,
+        interior: { Here: null }
+      }
+    } as TAssetInfo
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
+
+    const invalidAsset = {
+      symbol: 'INVALID',
+      location: {
+        parents: Parents.ONE,
+        interior: { X1: [{ PalletInstance: 50 }] }
+      }
+    } as unknown as TAssetInfo
+
+    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, invalidAsset)).toThrow(
+      InvalidCurrencyError
+    )
+  })
+})
+
+describe('validateEthereumAsset', () => {
+  it('should return early when asset is null', () => {
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', null)).not.toThrow()
+  })
+
+  it('should return early when destination is not Ethereum', () => {
+    const asset = {
+      symbol: 'TEST',
+      location: {
+        parents: Parents.ONE,
+        interior: { X1: [{ PalletInstance: 50 }] }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Acala', asset)).not.toThrow()
+  })
+
+  it('should return early when origin is Mythos', () => {
+    const asset = {
+      symbol: 'TEST',
+      location: {
+        parents: Parents.ONE,
+        interior: { X1: [{ PalletInstance: 50 }] }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('Mythos', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('should not throw for asset with Ethereum GlobalConsensus location', () => {
+    const asset = {
+      symbol: 'WETH',
+      location: {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            { AccountKey20: { key: '0x1234567890abcdef1234567890abcdef12345678' } }
+          ]
+        }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('should not throw for asset with RELAY_LOCATION (DOT)', () => {
+    const asset = {
+      symbol: 'DOT',
+      location: {
+        parents: Parents.ONE,
+        interior: { Here: null }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('should not throw for asset with Kusama GlobalConsensus location', () => {
+    const asset = {
+      symbol: 'KSM',
+      location: {
+        parents: 2,
+        interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('should throw InvalidCurrencyError for non-Ethereum-compatible asset', () => {
+    const asset = {
+      symbol: 'FOREIGN',
+      location: {
+        parents: Parents.ONE,
+        interior: {
+          X2: [{ Parachain: 2000 }, { PalletInstance: 50 }]
+        }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      'is not transferable to Ethereum'
+    )
+  })
+
+  it('should throw InvalidCurrencyError for asset with wrong GlobalConsensus', () => {
+    const asset = {
+      symbol: 'WRONG',
+      location: {
+        parents: Parents.TWO,
+        interior: {
+          X1: [{ GlobalConsensus: { Polkadot: null } }]
+        }
+      }
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      'is not transferable to Ethereum'
+    )
+  })
+
+  it('should throw InvalidCurrencyError for asset without location', () => {
+    const asset = {
+      symbol: 'NOLOC'
+    } as TAssetInfo
+
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+      'is not transferable to Ethereum'
+    )
   })
 })

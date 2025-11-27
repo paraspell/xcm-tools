@@ -59,10 +59,7 @@ export const getNativeAssets = (chain: TChain): TNativeAssetInfo[] =>
  * @returns An array of other asset details.
  */
 export const getOtherAssets = (chain: TChain): TForeignAssetInfo[] => {
-  const otherAssets = getAssetsObject(chain).otherAssets
-  return chain === 'AssetHubPolkadot'
-    ? [...otherAssets, ...getAssetsObject('Ethereum').otherAssets]
-    : otherAssets
+  return getAssetsObject(chain).otherAssets
 }
 
 /**
@@ -86,13 +83,7 @@ export const getAllAssetsSymbols = (chain: TChain): string[] => {
   const { nativeAssets, otherAssets } = getAssetsObject(chain)
   const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
   const otherAssetsSymbols = otherAssets.map(({ symbol }) => symbol)
-
-  const ethAssetsSymbols =
-    chain === 'AssetHubPolkadot'
-      ? getAssetsObject('Ethereum').otherAssets.map(({ symbol }) => symbol)
-      : []
-
-  return [...nativeAssetsSymbols, ...otherAssetsSymbols, ...ethAssetsSymbols]
+  return [...nativeAssetsSymbols, ...otherAssetsSymbols]
 }
 
 /**
@@ -101,10 +92,8 @@ export const getAllAssetsSymbols = (chain: TChain): string[] => {
  * @param chain - The chain for which to get the native asset symbol.
  * @returns The symbol of the native asset.
  */
-export const getNativeAssetSymbol = (chain: TChain): string => {
-  if (chain === 'Ethereum') return 'ETH'
-  return getAssetsObject(chain).nativeAssetSymbol
-}
+export const getNativeAssetSymbol = (chain: TChain): string =>
+  getAssetsObject(chain).nativeAssetSymbol
 
 /**
  * Determines whether a specified chain supports an asset with the given symbol.

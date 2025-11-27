@@ -7,25 +7,23 @@ import {
   Version,
   getRelayChainOf,
   TSubstrateChain,
-  TRelaychain,
   PARACHAINS,
-  SUBSTRATE_CHAINS,
   TBuilderOptions,
   TSendBaseOptionsWithSenderAddress,
   getChain,
   isRelayChain,
   TSendInternalOptions,
   RELAYCHAINS,
-  isSystemChain
+  isSystemChain,
+  hasJunction,
+  assertHasLocation
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
 import {
   findAssetInfo,
-  Foreign,
   ForeignAbstract,
-  getNativeAssetSymbol,
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
@@ -173,15 +171,22 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describe.sequential('Ethereum transfers', async () => {
-      const ethAssetSymbols = getOtherAssets('Ethereum').map(asset => asset.symbol)
+      const ethAssets = getOtherAssets('AssetHubPolkadot').filter(
+        asset =>
+          asset.location &&
+          hasJunction(asset.location, 'GlobalConsensus', {
+            Ethereum: { chainId: 1 }
+          })
+      )
       const api = await createOrGetApiInstanceForChain('AssetHubPolkadot')
-      ethAssetSymbols.forEach(symbol => {
-        if (!symbol) return
-        it(`should create transfer tx - ${symbol} from AssetHubPolkadot to Ethereum`, async () => {
+      ethAssets.forEach(asset => {
+        if (!asset.location) return
+        it(`should create transfer tx - ${asset.symbol} from AssetHubPolkadot to Ethereum`, async () => {
+          assertHasLocation(asset)
           const builder = Builder(api)
             .from('AssetHubPolkadot')
             .to('Ethereum')
-            .currency({ symbol, amount: MOCK_AMOUNT })
+            .currency({ location: asset.location, amount: MOCK_AMOUNT })
             .address(MOCK_ETH_ADDRESS)
             .senderAddress(MOCK_ADDRESS)
           await validateTransfer(builder, signer)

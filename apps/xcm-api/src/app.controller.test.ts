@@ -32,7 +32,7 @@ describe('AppController', () => {
     it('should throw an error when NODE_ENV is not production', () => {
       process.env.NODE_ENV = 'development';
 
-      expect(() => appController.sentryTest()).toThrowError('Sentry test');
+      expect(() => appController.sentryTest()).toThrow('Sentry test');
     });
   });
 });

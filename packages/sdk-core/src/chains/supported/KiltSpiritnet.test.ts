@@ -52,6 +52,6 @@ describe('KiltSpiritnet', () => {
   })
 
   it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => kiltSpiritnet.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => kiltSpiritnet.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 })

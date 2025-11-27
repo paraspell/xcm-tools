@@ -49,6 +49,6 @@ describe('Quartz', () => {
         symbol: 'DOT'
       }
     } as TXTokensTransferOptions<unknown, unknown>
-    expect(() => quartz.transferXTokens(input)).toThrowError()
+    expect(() => quartz.transferXTokens(input)).toThrow()
   })
 })
