@@ -8,14 +8,14 @@ export const useAutoFillWalletAddress = <
   TFormValues extends Record<string, any>,
 >(
   form: UseFormReturnType<TFormValues>,
-  fieldName: keyof TFormValues & string,
+  fieldName: keyof TFormValues,
 ): void => {
   const { selectedAccount } = useWallet();
 
   useEffect(() => {
     if (selectedAccount?.address) {
       form.setFieldValue(
-        fieldName,
+        fieldName as string,
         selectedAccount.address as TFormValues[typeof fieldName],
       );
     }

@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
+import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TSerializedExtrinsics,
@@ -31,14 +31,6 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
     throw new ChainNotSupportedError()
-  }
-
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return true
-  }
-
-  isReceivingTempDisabled(_scenario: TScenario): boolean {
-    return true
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

@@ -5,11 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AMOUNT_ALL } from '../../constants'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  TSendInternalOptions,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Peaq from './Peaq'
 
@@ -21,8 +17,6 @@ describe('Peaq', () => {
     asset: { assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
-
-  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
 
   beforeEach(() => {
     chain = getChain<unknown, unknown, 'Peaq'>('Peaq')
@@ -130,13 +124,5 @@ describe('Peaq', () => {
         }
       })
     })
-  })
-
-  it('isSendingTempDisabled should return true', () => {
-    expect(chain.isSendingTempDisabled(sendOptions)).toBe(true)
-  })
-
-  it('isReceivingTempDisabled should return true', () => {
-    expect(chain.isReceivingTempDisabled('ParaToPara')).toBe(true)
   })
 })

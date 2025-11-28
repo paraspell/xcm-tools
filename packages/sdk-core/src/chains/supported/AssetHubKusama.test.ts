@@ -35,11 +35,6 @@ describe('transferPolkadotXCM', () => {
   })
 
   describe('getMethod', () => {
-    it('should return transfer_assets for IntegriteeKusama destination', () => {
-      const method = chain.getMethod('ParaToPara', 'IntegriteeKusama')
-      expect(method).toBe('transfer_assets')
-    })
-
     it('should return limited_reserve_transfer_assets for ParaToPara to non-trusted chain', () => {
       const method = chain.getMethod('ParaToPara', 'Karura')
       expect(method).toBe('limited_reserve_transfer_assets')

@@ -35,9 +35,6 @@ import Heima from '../chains/supported/Heima'
 import HeimaPaseo from '../chains/supported/HeimaPaseo'
 import Hydration from '../chains/supported/Hydration'
 import HydrationPaseo from '../chains/supported/HydrationPaseo'
-import IntegriteeKusama from '../chains/supported/IntegriteeKusama'
-import IntegriteePaseo from '../chains/supported/IntegriteePaseo'
-import IntegriteePolkadot from '../chains/supported/IntegriteePolkadot'
 import Interlay from '../chains/supported/Interlay'
 import Jamton from '../chains/supported/Jamton'
 import Karura from '../chains/supported/Karura'
@@ -53,7 +50,6 @@ import Mythos from '../chains/supported/Mythos'
 import NeuroWeb from '../chains/supported/NeuroWeb'
 import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
 import Nodle from '../chains/supported/Nodle'
-import NodlePaseo from '../chains/supported/NodlePaseo'
 import PAssetHub from '../chains/supported/PAssetHub'
 import Peaq from '../chains/supported/Peaq'
 import Pendulum from '../chains/supported/Pendulum'
@@ -86,7 +82,6 @@ export const chains = <TApi, TRes>() => ({
   Darwinia: new Darwinia<TApi, TRes>(),
   EnergyWebX: new EnergyWebX<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
-  IntegriteePolkadot: new IntegriteePolkadot<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
   Jamton: new Jamton<TApi, TRes>(),
@@ -110,7 +105,6 @@ export const chains = <TApi, TRes>() => ({
   AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
   BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
   CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
-  IntegriteeKusama: new IntegriteeKusama<TApi, TRes>(),
   Encointer: new Encointer<TApi, TRes>(),
   Altair: new Altair<TApi, TRes>(),
   Amplitude: new Amplitude<TApi, TRes>(),
@@ -141,7 +135,6 @@ export const chains = <TApi, TRes>() => ({
   BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),
   CoretimePaseo: new CoretimePaseo<TApi, TRes>(),
   EnergyWebXPaseo: new EnergyWebXPaseo<TApi, TRes>(),
-  IntegriteePaseo: new IntegriteePaseo<TApi, TRes>(),
   KiltPaseo: new KiltPaseo<TApi, TRes>(),
   PAssetHub: new PAssetHub<TApi, TRes>(),
   PeoplePaseo: new PeoplePaseo<TApi, TRes>(),
@@ -151,6 +144,5 @@ export const chains = <TApi, TRes>() => ({
   HydrationPaseo: new HydrationPaseo<TApi, TRes>(),
   LaosPaseo: new LaosPaseo<TApi, TRes>(),
   NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes>(),
-  NodlePaseo: new NodlePaseo<TApi, TRes>(),
   ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes>()
 })

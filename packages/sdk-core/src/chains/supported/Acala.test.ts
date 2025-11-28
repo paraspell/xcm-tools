@@ -25,7 +25,7 @@ describe('Acala', () => {
     expect(acala.chain).toBe('Acala')
     expect(acala.info).toBe('acala')
     expect(acala.ecosystem).toBe('Polkadot')
-    expect(acala.version).toBe(Version.V4)
+    expect(acala.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {

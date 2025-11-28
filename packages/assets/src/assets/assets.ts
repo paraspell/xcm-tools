@@ -158,7 +158,7 @@ export const hasDryRunSupport = (chain: TChain): boolean => {
 
 export const hasXcmPaymentApiSupport = (chain: TChain): boolean => {
   // These chains have XcmPaymentApi but it's not working
-  const DISABLED_CHAINS: TChain[] = ['IntegriteePaseo', 'Basilisk', 'Jamton']
+  const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
   return getAssetsObject(chain).supportsXcmPaymentApi && !DISABLED_CHAINS.includes(chain)
 }
 

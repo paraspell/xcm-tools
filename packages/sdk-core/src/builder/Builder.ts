@@ -323,6 +323,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   async getXcmFee<TDisableFallback extends boolean = false>(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback

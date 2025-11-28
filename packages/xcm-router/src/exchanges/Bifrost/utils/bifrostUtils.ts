@@ -40,12 +40,12 @@ export function getPairs(
       const [currencyA, currencyB] = currencies;
       return Boolean(
         chainId &&
-          (chainId === ParachainId.BIFROST_KUSAMA || chainId === ParachainId.BIFROST_POLKADOT) &&
-          currencyA &&
-          currencyB &&
-          currencyA.chainId === currencyB.chainId &&
-          chainId === currencyA.chainId &&
-          !currencyA.wrapped.equals(currencyB.wrapped),
+        (chainId === ParachainId.BIFROST_KUSAMA || chainId === ParachainId.BIFROST_POLKADOT) &&
+        currencyA &&
+        currencyB &&
+        currencyA.chainId === currencyB.chainId &&
+        chainId === currencyA.chainId &&
+        !currencyA.wrapped.equals(currencyB.wrapped),
       );
     })
     .reduce<[Token[], Token[], PairPrimitivesAssetId[]]>(

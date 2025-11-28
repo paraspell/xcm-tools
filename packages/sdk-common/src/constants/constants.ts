@@ -13,7 +13,6 @@ export const PARACHAINS = [
   'Darwinia',
   'EnergyWebX',
   'Hydration',
-  'IntegriteePolkadot',
   'Interlay',
   'Heima',
   'Jamton',
@@ -37,7 +36,6 @@ export const PARACHAINS = [
   // Kusama chains
   'AssetHubKusama',
   'BridgeHubKusama',
-  'IntegriteeKusama',
   'Karura',
   'Kintsugi',
   'Moonriver',
@@ -71,11 +69,9 @@ export const PARACHAINS = [
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
-  'IntegriteePaseo',
   'KiltPaseo',
   'LaosPaseo',
   'NeuroWebPaseo',
-  'NodlePaseo',
   'PAssetHub',
   'PeoplePaseo',
   'ZeitgeistPaseo'
