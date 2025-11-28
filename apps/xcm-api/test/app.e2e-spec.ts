@@ -879,6 +879,7 @@ describe('XCM API (e2e)', () => {
         .to(to)
         .currency(currency)
         .address(address)
+        .senderAddress(address)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -892,6 +893,7 @@ describe('XCM API (e2e)', () => {
               to,
               currency,
               address,
+              senderAddress: address,
             },
           ],
           options: {
@@ -926,8 +928,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
-      const from: TChain = 'AssetHubPolkadot';
-      const to: TChain = 'Hydration';
+      const from: TChain = 'Hydration';
+      const to: TChain = 'AssetHubPolkadot';
       const currency: TLocation = {
         parents: 0,
         interior: {

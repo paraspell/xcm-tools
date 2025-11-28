@@ -16,12 +16,12 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
       NODE_OPTIONS: "--max_old_space_size=8192"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set alternate npm integrity keys
         run: |
           echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: "pnpm"

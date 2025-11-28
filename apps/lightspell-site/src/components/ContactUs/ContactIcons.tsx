@@ -3,8 +3,10 @@ import { IconAt, IconMapPin, IconSun } from "@tabler/icons-react";
 
 import classes from "./ContactIcons.module.css";
 
-interface ContactIconProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
+interface ContactIconProps extends Omit<
+  React.ComponentPropsWithoutRef<"div">,
+  "title"
+> {
   icon: typeof IconSun;
   title: React.ReactNode;
   description: React.ReactNode;

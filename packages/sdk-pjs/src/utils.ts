@@ -33,5 +33,6 @@ export const isEthersSigner = (signer: Signer | WalletClient): signer is Signer 
   typeof signer === 'object' && signer !== null && 'provider' in signer
 
 export const isEthersContract = (
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   contract: Contract | GetContractReturnType<Abi | readonly unknown[]>
 ): contract is Contract => !('abi' in contract)

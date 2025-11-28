@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TTransferLocalOptions } from '../../types'
+import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import Parachain from '../Parachain'
@@ -21,6 +21,14 @@ class RobonomicsKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     return getChain<TApi, TRes, 'RobonomicsPolkadot'>(
       'RobonomicsPolkadot'
     ).transferLocalNonNativeAsset(options)
+  }
+
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
+    return true
   }
 }
 

@@ -29,7 +29,7 @@ describe('Ajuna', () => {
     expect(ajuna.chain).toBe('Ajuna')
     expect(ajuna.info).toBe('ajuna')
     expect(ajuna.ecosystem).toBe('Polkadot')
-    expect(ajuna.version).toBe(Version.V4)
+    expect(ajuna.version).toBe(Version.V5)
   })
 
   describe('transferXTokens', () => {

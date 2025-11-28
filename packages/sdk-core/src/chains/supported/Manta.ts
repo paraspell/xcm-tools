@@ -4,7 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TScenario, TSendInternalOptions, TTransferLocalOptions } from '../../types'
+import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TMantaAsset, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
@@ -32,14 +32,6 @@ class Manta<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     }
 
     return transferXTokens(input, currencySelection)
-  }
-
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
-    return true
-  }
-
-  isReceivingTempDisabled(_scenario: TScenario): boolean {
-    return true
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

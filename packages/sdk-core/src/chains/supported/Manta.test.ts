@@ -4,17 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AMOUNT_ALL } from '../../constants'
 import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  TSendInternalOptions,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Manta from './Manta'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Manta', () => {
   let manta: Manta<unknown, unknown>
@@ -144,18 +138,6 @@ describe('Manta', () => {
           amount: mockOptions.balance
         }
       })
-    })
-  })
-
-  describe('temporary disablement flags', () => {
-    const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
-
-    it('isSendingTempDisabled should return true', () => {
-      expect(manta.isSendingTempDisabled(sendOptions)).toBe(true)
-    })
-
-    it('isReceivingTempDisabled should return true', () => {
-      expect(manta.isReceivingTempDisabled('ParaToPara')).toBe(true)
     })
   })
 })

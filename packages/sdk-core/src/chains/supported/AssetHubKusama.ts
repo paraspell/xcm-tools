@@ -47,8 +47,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
   getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
     const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
 
-    if (destination === 'IntegriteeKusama') return 'transfer_assets'
-
     return scenario === 'ParaToPara' && !isTrusted
       ? 'limited_reserve_transfer_assets'
       : 'limited_teleport_assets'

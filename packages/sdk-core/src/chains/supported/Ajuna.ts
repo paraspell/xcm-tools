@@ -16,7 +16,7 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
     ecosystem: TRelaychain = 'Polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
   }
