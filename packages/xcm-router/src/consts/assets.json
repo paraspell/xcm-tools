@@ -234,6 +234,26 @@
         }
       },
       {
+        "symbol": "BNC",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "USDC",
         "decimals": 6,
         "location": {
@@ -650,6 +670,26 @@
             "X1": [
               {
                 "Parachain": 2123
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "BNC",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
