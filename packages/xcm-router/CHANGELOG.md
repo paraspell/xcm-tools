@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.14.7](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.6...xcm-router-v11.14.7) (2025-11-29)
+
+
+### Code Refactoring
+
+* Improve transfers to Ethereum ✨ ([303f0a2](https://github.com/paraspell/xcm-tools/commit/303f0a2c233bdeb3f8b571766c98576b4c1c1ae3))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🔧 ([1d7a4c3](https://github.com/paraspell/xcm-tools/commit/1d7a4c37cbcf94438b29a1c6e2be2874fc49f7db))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([f6a85eb](https://github.com/paraspell/xcm-tools/commit/f6a85eb363ec455bf83f9c278565abee72eac73c))
+
 ## [11.14.6](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.5...xcm-router-v11.14.6) (2025-11-26)
 
 
