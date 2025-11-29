@@ -2,6 +2,7 @@ import { Button, JsonInput, Paper, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
 
+import { useXcmAnalyserFilterSync, useXcmAnalyserState } from '../../hooks';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 
 const PLACEHOLDER_LOCATION = `{
@@ -24,12 +25,16 @@ type Props = {
 };
 
 const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
+  const urlValues = useXcmAnalyserState();
+
   const form = useForm<FormValues>({
     initialValues: {
-      input: '',
-      useApi: false,
+      input: urlValues.input,
+      useApi: urlValues.useApi,
     },
   });
+
+  useXcmAnalyserFilterSync(form);
 
   return (
     <Paper p="xl" shadow="md">

@@ -24,6 +24,7 @@ import { darwinia, mainnet, moonbeam, moonriver } from 'viem/chains';
 import { Web3 } from 'web3';
 
 import { useWallet } from '../../hooks';
+import EvmTrasferStateProvider from '../../providers/EvmTransferState/EvmTransferStateProvider';
 import type { EIP6963ProviderDetail, TEvmSubmitType } from '../../types';
 import {
   showErrorNotification,
@@ -406,11 +407,13 @@ const EvmTransfer = () => {
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
             : 'Connect Ethereum Wallet'}
         </Button>
-        <EvmTransferForm
-          onSubmit={onSubmit}
-          loading={loading}
-          provider={provider}
-        />
+        <EvmTrasferStateProvider>
+          <EvmTransferForm
+            onSubmit={onSubmit}
+            loading={loading}
+            provider={provider}
+          />
+        </EvmTrasferStateProvider>
       </Stack>
       <Center ref={targetRef}>
         {alertOpened && (

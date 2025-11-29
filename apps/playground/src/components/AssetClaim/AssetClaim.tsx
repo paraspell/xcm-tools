@@ -25,6 +25,7 @@ import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
+import AssetClaimStateProvider from '../../providers/AssetClaimState/AssetClaimStateProvider';
 import { getTxFromApi } from '../../utils';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import {
@@ -198,7 +199,9 @@ const AssetClaim = () => {
             Recover assets that have been trapped in the cross-chain transfers.
           </Text>
         </Box>
-        <AssetClaimForm onSubmit={onSubmit} loading={loading} />
+        <AssetClaimStateProvider>
+          <AssetClaimForm onSubmit={onSubmit} loading={loading} />
+        </AssetClaimStateProvider>
       </Stack>
       <Center ref={targetRef}>
         {alertOpened && (

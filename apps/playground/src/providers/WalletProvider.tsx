@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
 import { DAPP_NAME } from '../constants';
+import { useSelectedApiType } from '../hooks';
+import { useSelectedApiTypeFilterSync } from '../hooks/useFilterSync';
 import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
 import { WalletContext } from './WalletContext';
@@ -60,10 +62,13 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   ] = useDisclosure(false);
 
   const [isLoadingExtensions, setIsLoadingExtensions] = useState(false);
+  const { selectedApiType, setSelectedApiType } = useSelectedApiType();
 
   const [apiType, setApiType] = useState<TApiType>(
-    getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
+    selectedApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
   );
+
+  useSelectedApiTypeFilterSync();
 
   const [extensions, setExtensions] = useState<string[]>([]);
   const [injectedExtension, setInjectedExtension] =
@@ -81,6 +86,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   useEffect(() => {
     if (apiType) {
       localStorage.setItem(STORAGE_API_TYPE_KEY, apiType);
+      setSelectedApiType(apiType);
     }
   }, [apiType]);
 

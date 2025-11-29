@@ -14,6 +14,7 @@ import tsLang from 'highlight.js/lib/languages/typescript';
 import { BrowserRouter } from 'react-router-dom';
 
 import { AppShell } from './components/AppShell/AppShell';
+import SelectedApiTypeProvider from './providers/SelectedApiType/SelectedApiTypeProvider';
 import { WalletProvider } from './providers/WalletProvider';
 import { theme } from './theme/themeConfig';
 
@@ -24,12 +25,14 @@ const highlightJsAdapter = createHighlightJsAdapter(hljs);
 const App = () => (
   <BrowserRouter>
     <MantineProvider theme={theme}>
-      <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
-        <Notifications />
-        <WalletProvider>
-          <AppShell />
-        </WalletProvider>
-      </CodeHighlightAdapterProvider>
+      <SelectedApiTypeProvider>
+        <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
+          <Notifications />
+          <WalletProvider>
+            <AppShell />
+          </WalletProvider>
+        </CodeHighlightAdapterProvider>
+      </SelectedApiTypeProvider>
     </MantineProvider>
   </BrowserRouter>
 );

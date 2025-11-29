@@ -24,12 +24,13 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
 import {
   useAutoFillWalletAddress,
   useCurrencyOptions,
   useFeeCurrencyOptions,
   useWallet,
+  useXcmTransferFilterSync,
+  useXcmTransferState,
 } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
@@ -87,32 +88,18 @@ const XcmTransferForm: FC<Props> = ({
   initialValues,
   isVisible = true,
 }) => {
+  const urlValues = useXcmTransferState();
+
   const form = useForm<FormValues>({
     initialValues: initialValues ?? {
-      from: 'Astar',
-      to: 'Hydration',
-      currencies: [
-        {
-          currencyOptionId: '',
-          customCurrency: '',
-          amount: '10',
-          isCustomCurrency: false,
-          isMax: false,
-          customCurrencyType: 'id',
-          customCurrencySymbolSpecifier: 'auto',
-        },
-      ],
-      feeAsset: {
-        currencyOptionId: '',
-        customCurrency: '',
-        isCustomCurrency: false,
-        customCurrencyType: 'id',
-        customCurrencySymbolSpecifier: 'auto',
-      },
-      address: DEFAULT_ADDRESS,
-      ahAddress: '',
-      useApi: false,
-      useXcmFormatCheck: false,
+      from: urlValues.from,
+      to: urlValues.to,
+      currencies: urlValues.currencies,
+      feeAsset: urlValues.feeAsset,
+      address: urlValues.address,
+      ahAddress: urlValues.ahAddress,
+      useApi: urlValues.useApi,
+      useXcmFormatCheck: urlValues.useXcmFormatCheck,
     },
 
     validate: {
@@ -166,6 +153,7 @@ const XcmTransferForm: FC<Props> = ({
   });
 
   useAutoFillWalletAddress(form, 'address');
+  useXcmTransferFilterSync(form);
 
   const { from, to, currencies, useApi } = form.getValues();
 

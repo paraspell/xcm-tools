@@ -39,6 +39,7 @@ import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/Xc
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
 import { useWallet } from '../../hooks';
+import XcmRouterStateProvider from '../../providers/XcmRouterState/XcmRouterStateProvider';
 import type { TRouterSubmitType } from '../../types';
 import { fetchFromApi, submitTransactionPapi } from '../../utils';
 import {
@@ -822,8 +823,9 @@ export const XcmRouter = () => {
               parachains using XCM.
             </Text>
           </Box>
-
-          <XcmRouterForm onSubmit={onSubmit} loading={loading} />
+          <XcmRouterStateProvider>
+            <XcmRouterForm onSubmit={onSubmit} loading={loading} />
+          </XcmRouterStateProvider>
         </Stack>
         <Box ref={targetRef}>
           {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (

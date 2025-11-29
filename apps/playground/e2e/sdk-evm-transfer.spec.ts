@@ -83,6 +83,8 @@ const performTransfer = async (
     await appPage.getByTestId("checkbox-api").click();
   }
 
+  // await appPage.getByTestId("btn-currency-approve").click();
+
   await appPage.getByTestId("submit").click();
   await appPage.waitForSelector("[data-testid=error]");
 

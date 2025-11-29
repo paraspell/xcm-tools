@@ -5,7 +5,11 @@ import { PALLETS, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
-import { useWallet } from '../../hooks';
+import {
+  usePalletQueryFilterSync,
+  usePalletQueryState,
+  useWallet,
+} from '../../hooks';
 import type { TPalletsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -23,16 +27,18 @@ type Props = {
 };
 
 const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
+  const urlValues = usePalletQueryState();
   const form = useForm<FormValues>({
     initialValues: {
-      func: 'ALL_PALLETS',
-      chain: 'Acala',
-      pallet: 'XTokens',
-      useApi: false,
+      func: urlValues.func,
+      chain: urlValues.chain,
+      pallet: urlValues.pallet,
+      useApi: urlValues.useApi,
     },
   });
 
   const { useApi, func } = form.getValues();
+  usePalletQueryFilterSync(form);
 
   const { setIsUseXcmApiSelected } = useWallet();
 

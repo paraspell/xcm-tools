@@ -42,11 +42,12 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
 import {
   useAutoFillWalletAddress,
   useRouterCurrencyOptions,
   useWallet,
+  useXcmRouterFilterSync,
+  useXcmRouterState,
 } from '../../hooks';
 import type { TRouterSubmitType, TWalletAccount } from '../../types';
 import { isValidWalletAddress } from '../../utils';
@@ -124,17 +125,19 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     form.setFieldValue('evmInjectorAddress', selectedAccount.address);
   }, [selectedAccount, injectedExtension]);
 
+  const urlValues = useXcmRouterState();
+
   const form = useForm<TRouterFormValues>({
     initialValues: {
-      from: 'Astar',
-      exchange: undefined,
-      to: 'Hydration',
-      currencyFromOptionId: '',
-      currencyToOptionId: '',
-      amount: '10',
-      recipientAddress: DEFAULT_ADDRESS,
-      slippagePct: '1',
-      useApi: false,
+      from: urlValues.from,
+      exchange: urlValues.exchange,
+      to: urlValues.to,
+      currencyFromOptionId: urlValues.currencyFromOptionId,
+      currencyToOptionId: urlValues.currencyToOptionId,
+      amount: urlValues.amount,
+      recipientAddress: urlValues.recipientAddress,
+      slippagePct: urlValues.slippagePct,
+      useApi: urlValues.useApi,
     },
 
     validate: {
@@ -160,6 +163,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   });
 
   useAutoFillWalletAddress(form, 'recipientAddress');
+  useXcmRouterFilterSync(form);
 
   const { from, to, exchange } = form.getValues();
 

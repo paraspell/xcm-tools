@@ -19,10 +19,23 @@ import {
 import { type FC, useEffect, useRef } from 'react';
 
 import { ASSET_QUERIES } from '../../consts';
-import { useAutoFillWalletAddress, useWallet } from '../../hooks';
+import {
+  useAssetQueryFilterSync,
+  useAssetQueryState,
+  useAutoFillWalletAddress,
+  useWallet,
+} from '../../hooks';
 import type { TAssetsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+
+export type TCustomCurrencySymbolSpecifier =
+  | 'auto'
+  | 'native'
+  | 'foreign'
+  | 'foreignAbstract';
+
+export type TCurrencyType = 'id' | 'symbol' | 'location';
 
 export type FormValues = {
   func: TAssetsQuery;
@@ -32,12 +45,8 @@ export type FormValues = {
   amount: string;
   address: string;
   useApi: boolean;
-  currencyType?: 'id' | 'symbol' | 'location';
-  customCurrencySymbolSpecifier?:
-    | 'auto'
-    | 'native'
-    | 'foreign'
-    | 'foreignAbstract';
+  currencyType?: TCurrencyType;
+  customCurrencySymbolSpecifier?: TCustomCurrencySymbolSpecifier;
 };
 
 type Props = {
@@ -46,20 +55,24 @@ type Props = {
 };
 
 export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
+  const urlValues = useAssetQueryState();
+
   const form = useForm<FormValues>({
     initialValues: {
-      func: 'ASSETS_OBJECT',
-      chain: 'Acala',
-      destination: 'Astar',
-      currency: '',
-      address: '',
-      amount: '',
-      useApi: false,
-      currencyType: 'symbol',
+      func: urlValues.func,
+      chain: urlValues.chain,
+      destination: urlValues.destination,
+      currency: urlValues.currency,
+      address: urlValues.address,
+      amount: urlValues.amount,
+      useApi: urlValues.useApi,
+      currencyType: urlValues.currencyType,
+      customCurrencySymbolSpecifier: urlValues.customCurrencySymbolSpecifier,
     },
   });
 
   useAutoFillWalletAddress(form, 'address');
+  useAssetQueryFilterSync(form);
 
   const { func, chain, currencyType, useApi } = form.getValues();
 
@@ -118,15 +131,15 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   }, [chainList, chain]);
 
-  useEffect(() => {
+  const onSelectCurrencyTypeClick = () => {
+    form.setFieldValue('currency', '');
+  };
+
+  const onSelectFunctionClick = () => {
     if (showSymbolInput) {
       form.setFieldValue('currency', '');
       form.setFieldValue('currencyType', 'symbol');
     }
-  }, [func]);
-
-  const onSelectCurrencyTypeClick = () => {
-    form.setFieldValue('currency', '');
   };
 
   const isRelay = isRelayChain(chain);
@@ -171,6 +184,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             required
             allowDeselect={false}
             data-testid="select-func"
+            onSelect={onSelectFunctionClick}
             {...form.getInputProps('func')}
           />
 

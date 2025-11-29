@@ -32,6 +32,7 @@ import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
+import XcmTransferStateProvider from '../../providers/XcmTrasferState/XcmTransferStateProvider';
 import type { TSubmitType } from '../../types';
 import { fetchFromApi } from '../../utils';
 import {
@@ -530,7 +531,9 @@ const XcmUtils = () => {
               Query XCM information and fees.
             </Text>
           </Box>
-          <XcmTransferForm onSubmit={onSubmit} loading={loading} />
+          <XcmTransferStateProvider>
+            <XcmTransferForm onSubmit={onSubmit} loading={loading} />
+          </XcmTransferStateProvider>
         </Stack>
         <Center ref={targetRef}>
           {errorAlertOpened && error && (
