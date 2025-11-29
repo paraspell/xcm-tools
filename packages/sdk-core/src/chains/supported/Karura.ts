@@ -6,7 +6,7 @@ import Acala from './Acala'
 
 class Karura<TApi, TRes> extends Acala<TApi, TRes> {
   constructor() {
-    super('Karura', 'karura', 'Kusama', Version.V4)
+    super('Karura', 'karura', 'Kusama', Version.V5)
   }
 }
 

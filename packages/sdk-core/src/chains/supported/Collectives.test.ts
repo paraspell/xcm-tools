@@ -34,7 +34,7 @@ describe('Collectives', () => {
       destChain: 'Moonbeam'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrowError(
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
       new ScenarioNotSupportedError(
         chain.chain,
         'ParaToPara',

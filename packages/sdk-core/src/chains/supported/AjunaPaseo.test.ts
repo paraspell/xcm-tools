@@ -22,7 +22,7 @@ describe('AjunaPaseo', () => {
     expect(chain.chain).toBe('AjunaPaseo')
     expect(chain.info).toBe('Ajuna(paseo)')
     expect(chain.ecosystem).toBe('Paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 
   it('should not suppoert ParaToRelay scenario', () => {
@@ -54,6 +54,6 @@ describe('AjunaPaseo', () => {
   })
 
   it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrowError(ChainNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
   })
 })

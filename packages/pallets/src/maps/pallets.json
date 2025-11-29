@@ -476,10 +476,6 @@
       {
         "name": "PolkadotXcm",
         "index": 103
-      },
-      {
-        "name": "Assets",
-        "index": 104
       }
     ],
     "nativeAssets": "Balances",
@@ -1376,21 +1372,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "ForeignAssets"]
   },
-  "NodlePaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 2
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 35
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "ZeitgeistPaseo": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -1477,75 +1458,6 @@
       {
         "name": "Assets",
         "index": 60
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
-  "IntegriteeKusama": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 34
-      },
-      {
-        "name": "Assets",
-        "index": 41
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
-  "IntegriteePaseo": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 34
-      },
-      {
-        "name": "Assets",
-        "index": 41
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
-  "IntegriteePolkadot": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 34
-      },
-      {
-        "name": "Assets",
-        "index": 41
       }
     ],
     "nativeAssets": "Balances",

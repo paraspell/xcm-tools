@@ -57,6 +57,6 @@ describe('CrustShadow', () => {
     }
     vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
-    expect(() => crustShadow.transferXTokens(invalidInput)).toThrowError(InvalidCurrencyError)
+    expect(() => crustShadow.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
   })
 })

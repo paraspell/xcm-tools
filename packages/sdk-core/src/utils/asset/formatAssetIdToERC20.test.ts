@@ -11,12 +11,12 @@ describe('formatAssetIdToERC20', () => {
 
   it('should throw an error if the string is shorter than 38 digits', () => {
     const invalidId = '1234567890123456789012345678901234567' // 37 digits
-    expect(() => formatAssetIdToERC20(invalidId)).toThrowError()
+    expect(() => formatAssetIdToERC20(invalidId)).toThrow()
   })
 
   it('should throw an error if the string is longer than 39 digits', () => {
     const invalidId = '1234567890123456789012345678901234567890' // 40 digits
-    expect(() => formatAssetIdToERC20(invalidId)).toThrowError()
+    expect(() => formatAssetIdToERC20(invalidId)).toThrow()
   })
 
   it('should correctly format a 38-digit numeric string to a hex string', () => {

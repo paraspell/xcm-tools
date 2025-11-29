@@ -58,7 +58,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       return 0n
     }
 
-    const attempt = async (chain: TChain | TSubstrateChain, curr: TCurrencyCore, amt: bigint) => {
+    const attempt = async (chain: TChain, curr: TCurrencyCore, amt: bigint) => {
       const assetInfo = findAssetInfoOrThrow(chain, curr, destination)
 
       if (assetInfo.location) {

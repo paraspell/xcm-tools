@@ -1,5 +1,36 @@
 # Changelog
 
+## [11.14.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.6...sdk-core-v11.14.7) (2025-11-29)
+
+
+### Code Refactoring
+
+* Improve transfers to Ethereum ✨ ([303f0a2](https://github.com/paraspell/xcm-tools/commit/303f0a2c233bdeb3f8b571766c98576b4c1c1ae3))
+
+
+### Build System
+
+* Perform a monthly maintenance check 🔧 ([1d7a4c3](https://github.com/paraspell/xcm-tools/commit/1d7a4c37cbcf94438b29a1c6e2be2874fc49f7db))
+
+## [11.14.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.5...sdk-core-v11.14.6) (2025-11-26)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [11.14.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.4...sdk-core-v11.14.5) (2025-11-25)
+
+
+### Code Refactoring
+
+* **sdk-core:** Fully refactor balance logic 🧹 ([028d65d](https://github.com/paraspell/xcm-tools/commit/028d65d975e93a614e10ed5a8e853cf5eab9fd7b))
+
+
+### Tests
+
+* **sdk-core:** Add missing balance unit tests 🧪 ([027a3d4](https://github.com/paraspell/xcm-tools/commit/027a3d4d04b5caedfa16e2928461ed20845c1d43))
+
 ## [11.14.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.3...sdk-core-v11.14.4) (2025-11-21)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-pjs",
-  "version": "11.14.4",
+  "version": "11.14.7",
   "description": "Polkadot.js based SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   },
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "0.2.12",
-    "@snowbridge/contract-types": "0.2.12",
+    "@snowbridge/api": "0.2.17",
+    "@snowbridge/contract-types": "0.2.17",
     "ethers": "^6.15.0",
-    "viem": "^2.38.5"
+    "viem": "^2.40.3"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",
@@ -56,12 +56,11 @@
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.0.6",
-    "axios": "^1.13.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
-    "prettier": "^3.6.2",
-    "rollup": "^4.52.5",
-    "rollup-plugin-dts": "^6.2.3",
+    "rollup": "^4.53.3",
+    "rollup-plugin-dts": "^6.3.0",
     "tslib": "^2.8.1"
   }
 }

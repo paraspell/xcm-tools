@@ -46,23 +46,21 @@ describe('resolveModuleError', () => {
     const error: TModuleError = { index: '3', error: '0x00' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'XTransfer' }])
 
-    expect(() => resolveModuleError(mockChain, error)).toThrowError(
-      'Pallet XTransfer is not supported'
-    )
+    expect(() => resolveModuleError(mockChain, error)).toThrow('Pallet XTransfer is not supported')
   })
 
   it('should throw an error if pallet is not found', () => {
     const error: TModuleError = { index: '4', error: '0x00' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([])
 
-    expect(() => resolveModuleError(mockChain, error)).toThrowError('Pallet with index 4 not found')
+    expect(() => resolveModuleError(mockChain, error)).toThrow('Pallet with index 4 not found')
   })
 
   it('should throw an error if error index is not found in the pallet', () => {
     const error: TModuleError = { index: '1', error: '0xff' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 1, name: 'XTokens' }])
 
-    expect(() => resolveModuleError(mockChain, error)).toThrowError(
+    expect(() => resolveModuleError(mockChain, error)).toThrow(
       'Error index 255 not found in XTokens pallet'
     )
   })

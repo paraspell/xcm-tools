@@ -45,4 +45,20 @@ describe('getParaEthTransferFees', () => {
     expect(transferAssethubExecutionFee).toBe(2420000000n)
     expect(spy).toHaveBeenCalled()
   })
+
+  it('should not disconnect when shouldDisconnect is false', async () => {
+    const mockAhApi = {
+      getFromRpc: vi.fn().mockResolvedValueOnce('0x01000000'),
+      disconnect: vi.fn().mockResolvedValueOnce(undefined)
+    } as unknown as IPolkadotApi<unknown, unknown>
+
+    const spy = vi.spyOn(mockAhApi, 'disconnect')
+    const [transferBridgeFee, transferAssethubExecutionFee] = await getParaEthTransferFees(
+      mockAhApi,
+      false
+    )
+    expect(transferBridgeFee).toBe(1n)
+    expect(transferAssethubExecutionFee).toBe(2420000000n)
+    expect(spy).not.toHaveBeenCalled()
+  })
 })

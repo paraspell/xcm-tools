@@ -11,15 +11,9 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TExchangeChain, TTransferOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
-vi.mock('@paraspell/sdk', () => ({
-  findAssetInfo: vi.fn(),
-  hasSupportForAsset: vi.fn(),
-}));
+vi.mock('@paraspell/sdk');
 
-vi.mock('../../assets', () => ({
-  getExchangeAsset: vi.fn(),
-  getExchangeAssetByOriginAsset: vi.fn(),
-}));
+vi.mock('../../assets');
 
 const dex = {
   chain: 'CHAIN_A',
@@ -96,7 +90,7 @@ describe('resolveAssets', () => {
     } as unknown as TTransferOptions;
 
     vi.mocked(findAssetInfo).mockReturnValueOnce(null);
-    expect(() => resolveAssets(dex, options)).toThrowError();
+    expect(() => resolveAssets(dex, options)).toThrow();
   });
 
   it('throws error when asset from exchange is not found (origin specified)', () => {
@@ -111,7 +105,7 @@ describe('resolveAssets', () => {
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(undefined);
 
-    expect(() => resolveAssets(dex, options)).toThrowError();
+    expect(() => resolveAssets(dex, options)).toThrow();
   });
 
   it('throws error when asset from exchange is not found (non-origin specified)', () => {
@@ -131,7 +125,7 @@ describe('resolveAssets', () => {
       },
     );
 
-    expect(() => resolveAssets(dex, options)).toThrowError();
+    expect(() => resolveAssets(dex, options)).toThrow();
   });
 
   it('throws error when destination specified and asset to is not supported', () => {
@@ -154,7 +148,7 @@ describe('resolveAssets', () => {
     );
 
     vi.mocked(hasSupportForAsset).mockReturnValueOnce(false);
-    expect(() => resolveAssets(dex, options)).toThrowError();
+    expect(() => resolveAssets(dex, options)).toThrow();
   });
 
   it('returns correct assets when destination is specified and supported', () => {

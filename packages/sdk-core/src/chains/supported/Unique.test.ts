@@ -51,7 +51,7 @@ describe('Unique', () => {
         symbol: 'DOT'
       }
     } as TXTokensTransferOptions<unknown, unknown>
-    expect(() => unique.transferXTokens(input)).toThrowError()
+    expect(() => unique.transferXTokens(input)).toThrow()
   })
 
   it('should throw an error when trying to create a local foreign asset transfer', () => {
@@ -64,6 +64,6 @@ describe('Unique', () => {
       to: 'Unique'
     } as TTransferLocalOptions<unknown, unknown>
 
-    expect(() => unique.transferLocalNonNativeAsset(input)).toThrowError(ScenarioNotSupportedError)
+    expect(() => unique.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
   })
 })

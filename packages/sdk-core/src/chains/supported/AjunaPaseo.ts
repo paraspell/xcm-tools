@@ -12,7 +12,7 @@ import Parachain from '../Parachain'
 
 class AjunaPaseo<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('AjunaPaseo', 'Ajuna(paseo)', 'Paseo', Version.V4)
+    super('AjunaPaseo', 'Ajuna(paseo)', 'Paseo', Version.V5)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

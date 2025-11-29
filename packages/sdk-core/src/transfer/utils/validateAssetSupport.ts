@@ -17,6 +17,7 @@ import {
   replaceBigInt
 } from '@paraspell/sdk-common'
 
+import { RELAY_LOCATION } from '../../constants'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
 import { getRelayChainOf } from '../../utils'
@@ -43,6 +44,37 @@ const validateBridgeAsset = (
   if (!(isNativeAsset || isBridgedAsset)) {
     throw new InvalidCurrencyError(
       `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
+    )
+  }
+}
+
+export const validateEthereumAsset = (
+  origin: TSubstrateChain,
+  destination: TDestination,
+  asset: TAssetInfo | null
+) => {
+  if (!asset || destination !== 'Ethereum' || origin === 'Mythos') return
+
+  const ADDITIONAL_ALLOWED_LOCATIONS = [
+    RELAY_LOCATION,
+    {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+    }
+  ]
+
+  const isEthCompatibleAsset =
+    (asset.location?.parents === Parents.TWO &&
+      deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
+        Ethereum: {
+          chainId: 1
+        }
+      })) ||
+    ADDITIONAL_ALLOWED_LOCATIONS.some(loc => deepEqual(asset.location, loc))
+
+  if (!isEthCompatibleAsset) {
+    throw new InvalidCurrencyError(
+      `Currency ${JSON.stringify(asset, replaceBigInt)} is not transferable to Ethereum.`
     )
   }
 }
@@ -75,4 +107,5 @@ export const validateAssetSupport = <TApi, TRes>(
   }
 
   validateBridgeAsset(origin, destination, asset, currency, isBridge)
+  validateEthereumAsset(origin, destination, asset)
 }

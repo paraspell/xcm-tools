@@ -11,7 +11,7 @@ import {
 } from './getExistentialDeposit'
 import { findAssetInfo, findAssetInfoOrThrow } from './search'
 
-vi.mock('./assets', () => ({ getNativeAssetSymbol: vi.fn() }))
+vi.mock('./assets')
 vi.mock('./search')
 
 describe('getExistentialDeposit', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "11.14.4",
+  "version": "11.14.7",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -37,12 +37,12 @@
   },
   "dependencies": {
     "@noble/hashes": "^1.8.0",
-    "@polkadot-api/legacy-provider": "^0.3.3",
+    "@polkadot-api/legacy-provider": "^0.3.6",
     "@paraspell/sdk-core": "workspace:*",
-    "viem": "^2.38.5"
+    "viem": "^2.40.3"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.20.5 < 2"
+    "polkadot-api": ">= 1.22.0 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
@@ -56,12 +56,11 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
-    "@vitest/coverage-v8": "^4.0.6",
-    "axios": "^1.13.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
-    "prettier": "^3.6.2",
-    "rollup": "^4.52.5",
-    "rollup-plugin-dts": "^6.2.3",
+    "rollup": "^4.53.3",
+    "rollup-plugin-dts": "^6.3.0",
     "tslib": "^2.8.1"
   }
 }

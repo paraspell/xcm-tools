@@ -4,8 +4,12 @@
  * @param symbol - The symbol to normalize.
  * @returns The normalized symbol.
  */
-export const normalizeSymbol = (symbol: string | undefined): string => {
+export const normalizeSymbol = (symbol?: string): string => {
   if (!symbol) return ''
-  const lowerSymbol = symbol.toLowerCase()
-  return lowerSymbol.startsWith('xc') ? lowerSymbol.substring(2) : lowerSymbol
+
+  let s = symbol.toLowerCase()
+  if (s.startsWith('xc')) s = s.substring(2)
+  if (s.endsWith('.e')) s = s.slice(0, -2)
+
+  return s
 }

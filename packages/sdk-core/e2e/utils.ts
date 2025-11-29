@@ -9,15 +9,7 @@ import { isRelayChain, SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@parasp
 import { getChain } from '../src'
 import { resolveScenario } from '../src/utils/transfer/resolveScenario'
 
-const supportsOnlyNativeAsset: TChain[] = [
-  'Nodle',
-  'Pendulum',
-  'Phala',
-  'Ajuna',
-  'AjunaPaseo',
-  'IntegriteeKusama',
-  'IntegriteePaseo'
-]
+const supportsOnlyNativeAsset: TChain[] = ['Nodle', 'Pendulum', 'Phala', 'Ajuna', 'AjunaPaseo']
 
 const assetIdRequired: TChain[] = [
   'Manta',
@@ -36,8 +28,6 @@ export const doesNotSupportParaToRelay: TChain[] = [
   'Pendulum',
   'Ajuna',
   'AjunaPaseo',
-  'IntegriteeKusama',
-  'IntegriteePaseo',
   'EnergyWebX',
   'EnergyWebXPaseo'
 ]

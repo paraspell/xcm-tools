@@ -294,10 +294,10 @@ describe('PolkadotJsApi', () => {
   describe('getMethod', () => {
     it('should return the method', () => {
       const tx = {
-        method: ''
+        method: { method: '' }
       } as unknown as Extrinsic
       const result = polkadotApi.getMethod(tx)
-      expect(result).toBe(tx.method)
+      expect(result).toBe(tx.method.method)
     })
   })
 
@@ -305,7 +305,7 @@ describe('PolkadotJsApi', () => {
     it('returns the asset count when assets argument is present', () => {
       const assets = [{}, {}]
       const tx = {
-        method: 'transferAssetsUsingTypeAndThen',
+        method: { method: 'transferAssetsUsingTypeAndThen' },
         toHuman: vi.fn().mockReturnValue({
           method: {
             args: {

@@ -13,7 +13,7 @@ export const getMythosOriginFee = async <TApi, TRes>(
   const ahApi = api.clone()
   await ahApi.init('AssetHubPolkadot')
 
-  const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi)
+  const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi, false)
 
   const nativeAsset = findNativeAssetInfoOrThrow('Mythos')
   assertHasLocation(nativeAsset)
@@ -23,6 +23,8 @@ export const getMythosOriginFee = async <TApi, TRes>(
     nativeAsset.location,
     bridgeFee + ahExecutionFee
   )
+
+  await ahApi.disconnect()
 
   if (!feeConverted) {
     throw new InvalidParameterError(`Pool DOT -> ${nativeAsset.symbol} not found.`)

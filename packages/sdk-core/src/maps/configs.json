@@ -102,10 +102,6 @@
         "endpoint": "wss://rpc.astar.network"
       },
       {
-        "name": "Blast",
-        "endpoint": "wss://astar.public.blastapi.io"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://astar-rpc.n.dwellir.com"
       },
@@ -210,10 +206,6 @@
         "endpoint": "wss://rpc.darwinia.network"
       },
       {
-        "name": "Dwellir",
-        "endpoint": "wss://darwinia-rpc.n.dwellir.com"
-      },
-      {
         "name": "Subquery",
         "endpoint": "wss://darwinia.rpc.subquery.network/public/ws"
       }
@@ -250,17 +242,6 @@
       {
         "name": "IBP2",
         "endpoint": "wss://hydration.dotters.network"
-      }
-    ]
-  },
-  "IntegriteePolkadot": {
-    "name": "Integritee Network",
-    "info": "integritee",
-    "paraId": 2039,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://polkadot.api.integritee.network"
       }
     ]
   },
@@ -313,10 +294,6 @@
       {
         "name": "Allnodes",
         "endpoint": "wss://moonbeam-rpc.publicnode.com"
-      },
-      {
-        "name": "Blast",
-        "endpoint": "wss://moonbeam.public.blastapi.io"
       },
       {
         "name": "IBP1",
@@ -462,10 +439,6 @@
     "paraId": 2026,
     "providers": [
       {
-        "name": "Dwellir",
-        "endpoint": "wss://nodle-rpc.dwellir.com"
-      },
-      {
         "name": "OnFinality",
         "endpoint": "wss://nodle-parachain.api.onfinality.io/public-ws"
       }
@@ -501,14 +474,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://phala-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Helikon",
-        "endpoint": "wss://rpc.helikon.io/phala"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://phala.api.onfinality.io/public-ws"
       },
       {
         "name": "RadiumBlock",
@@ -746,21 +711,6 @@
       }
     ]
   },
-  "IntegriteeKusama": {
-    "name": "Integritee Network",
-    "info": "integritee",
-    "paraId": 2015,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://kusama.api.integritee.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://integritee-kusama.api.onfinality.io/public-ws"
-      }
-    ]
-  },
   "Karura": {
     "name": "Karura",
     "info": "karura",
@@ -975,10 +925,6 @@
       {
         "name": "Darwinia",
         "endpoint": "wss://crab-rpc.darwinia.network/"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://darwiniacrab-rpc.n.dwellir.com"
       }
     ]
   },
@@ -1104,10 +1050,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://westend-asset-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "Permanence DAO EU",
-        "endpoint": "wss://asset-hub-westend.rpc.permanence.io"
       }
     ]
   },
@@ -1236,6 +1178,10 @@
       {
         "name": "Liebi",
         "endpoint": "wss://bifrost-rpc.paseo.liebi.com/ws"
+      },
+      {
+        "name": "Liebi2",
+        "endpoint": "wss://bifrost-rpc.paseo2.liebi.com/ws"
       }
     ]
   },
@@ -1302,17 +1248,6 @@
       }
     ]
   },
-  "IntegriteePaseo": {
-    "name": "Integritee Network (Paseo)",
-    "info": "integritee",
-    "paraId": 2039,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://paseo.api.integritee.network"
-      }
-    ]
-  },
   "KiltPaseo": {
     "name": "KILT Peregrine",
     "info": "kilt",
@@ -1343,17 +1278,6 @@
       {
         "name": "TraceLabs",
         "endpoint": "wss://parachain-testnet-rpc.origin-trail.network/"
-      }
-    ]
-  },
-  "NodlePaseo": {
-    "name": "Nodle",
-    "info": "NodleParadis",
-    "paraId": 2026,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://node-7273232234617282560.nv.onfinality.io/ws?apikey=b937a7d7-7395-49b9-b745-60a0342fa365"
       }
     ]
   },

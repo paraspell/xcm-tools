@@ -1,6 +1,5 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
-  findAssetInfoByLoc,
   findAssetInfoOrThrow,
   isForeignAsset,
   isOverrideLocationSpecifier
@@ -18,14 +17,7 @@ import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfoByLoc: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
-  getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }]),
-  isForeignAsset: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
-}))
+vi.mock('@paraspell/assets')
 
 vi.mock('../../getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
@@ -96,27 +88,33 @@ describe('transferMoonbeamToEth', () => {
     }))
   }
 
+  const moonbeamAsset = {
+    symbol: 'WETH',
+    decimals: 18,
+    location: { valid: 'location' } as unknown as TLocation,
+    assetId: '0xmockedAssetId'
+  }
+
+  const ethereumAsset = {
+    symbol: 'WETH',
+    decimals: 18,
+    assetId: '0xethAssetId'
+  }
+
   const baseOptions = {
     api: mockApi,
     from: 'Moonbeam',
     to: 'Ethereum',
     address: '0xmockedAddress',
     ahAddress: '0xmockedAhAddress',
-    currency: { amount: 1000 }
+    currency: { symbol: 'WETH', amount: 1000 }
   } as unknown as TEvmBuilderOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: '',
-      decimals: 18,
-      location: { valid: 'location' } as unknown as TLocation,
-      assetId: '0xmockedAssetId'
-    })
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({
-      symbol: '',
-      assetId: '0xethAssetId',
-      decimals: 18
+    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'Ethereum') return ethereumAsset
+      return moonbeamAsset
     })
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
@@ -138,7 +136,7 @@ describe('transferMoonbeamToEth', () => {
         ...baseOptions,
         currency: [] as unknown as TCurrencyInputWithAmount
       })
-    ).rejects.toThrow('Multi-assets are not yet supported')
+    ).rejects.toThrow('Multi-assets are not yet supported for EVM transfers')
   })
 
   it('should throw error for override location', async () => {
@@ -148,20 +146,18 @@ describe('transferMoonbeamToEth', () => {
         ...baseOptions,
         currency: { location: { type: 'override' } } as unknown as TCurrencyInputWithAmount
       })
-    ).rejects.toThrow('Override location is not supported')
-  })
-
-  it('should throw error for non-foreign asset', async () => {
-    vi.mocked(isForeignAsset).mockReturnValue(false)
-    await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(
-      'Currency must be a foreign asset'
-    )
+    ).rejects.toThrow('Override location is not supported for EVM transfers')
   })
 
   it('should throw error when Ethereum asset not found', async () => {
-    vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
+    vi.mocked(findAssetInfoOrThrow)
+      .mockImplementationOnce(() => moonbeamAsset)
+      .mockImplementationOnce(() => {
+        throw new Error('Asset {"symbol":"WETH"} not found on Ethereum')
+      })
+
     await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(
-      'Could not obtain Ethereum asset address'
+      'Asset {"symbol":"WETH"} not found on Ethereum'
     )
   })
 

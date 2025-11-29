@@ -1,5 +1,6 @@
 import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
+import { isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { UnableToComputeError } from '../../errors'
@@ -60,11 +61,9 @@ export const buildDestInfo = async <TApi, TRes>({
 
   let receivedAmount: bigint | UnableToComputeError
 
-  const isAssetHubToAssetHubRoute =
-    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot') ||
-    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama')
+  const isSubBridge = isSubstrateBridge(origin, destination)
 
-  if (isAssetHubToAssetHubRoute) {
+  if (isSubBridge) {
     const nativeAssetOfOriginSymbol = getNativeAssetSymbol(origin)
     let isOriginAssetNative = false
 

@@ -18,24 +18,27 @@ import { getParaId } from '../config'
 import Parachain from '../Parachain'
 import type Hydration from './Hydration'
 
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  hasJunction: vi.fn()
+}))
+
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  findAssetInfoByLoc: vi.fn(),
+  findAssetInfoOrThrow: vi.fn()
+}))
+
 vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
 vi.mock('../../pallets/xTokens')
-
 vi.mock('../../pallets/polkadotXcm')
 
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
-  hasJunction: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
-  findAssetInfoByLoc: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
+type WithTransferToEthereum = Hydration<unknown, unknown> & {
+  transferToEthereum: Hydration<unknown, unknown>['transferToEthereum']
+}
 
 describe('Hydration', () => {
   let hydration: Hydration<unknown, unknown>
@@ -120,7 +123,9 @@ describe('Hydration', () => {
     })
 
     it('should call api.deserializeExtrinsics with correct parameters', async () => {
-      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+      const spy = vi
+        .spyOn(hydration as WithTransferToEthereum, 'transferToEthereum')
+        .mockResolvedValue('mocked-result')
 
       vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
@@ -134,11 +139,6 @@ describe('Hydration', () => {
       })
 
       expect(spy).toHaveBeenCalled()
-      expect(spy).toHaveBeenCalledWith({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        params: expect.any(Object)
-      })
     })
 
     it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', () => {

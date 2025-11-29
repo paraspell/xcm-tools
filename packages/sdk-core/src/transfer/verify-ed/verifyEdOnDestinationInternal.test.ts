@@ -200,7 +200,7 @@ describe('verifyEdOnDestinationInternal', () => {
        As a result, fee estimation is only available through PaymentInfo, which provides the cost in the native asset.
        This limitation restricts support to transfers involving the native asset of the Destination chain only.`
 
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrowError(
+    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
       new UnableToComputeError(msg)
     )
   })

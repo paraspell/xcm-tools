@@ -16,13 +16,12 @@ vi.mock('./padFee')
 
 describe('getMythosOriginFee', () => {
   const mockApi = {
-    clone: vi.fn(),
-    init: vi.fn(),
-    quoteAhPrice: vi.fn()
+    clone: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockClone = {
     init: vi.fn(),
+    disconnect: vi.fn(),
     quoteAhPrice: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
@@ -50,7 +49,7 @@ describe('getMythosOriginFee', () => {
 
     expect(cloneSpy).toHaveBeenCalled()
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
-    expect(getParaEthTransferFees).toHaveBeenCalledWith(mockClone)
+    expect(getParaEthTransferFees).toHaveBeenCalledWith(mockClone, false)
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Mythos')
     expect(assertHasLocation).toHaveBeenCalled()
     expect(quoteSpy).toHaveBeenCalledWith(expect.anything(), { parents: 1, interior: [] }, 150n)

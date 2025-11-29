@@ -9,11 +9,7 @@ export const findAssetInfoOrThrow = (
   currency: TCurrencyInput,
   destination: TChain | null
 ): TAssetInfo => {
-  const asset =
-    findAssetInfo(chain, currency, destination) ??
-    (chain === 'AssetHubPolkadot' || chain === 'Mythos'
-      ? findAssetInfo('Ethereum', currency, null)
-      : null)
+  const asset = findAssetInfo(chain, currency, destination)
 
   if (!asset) {
     throw new InvalidCurrencyError(

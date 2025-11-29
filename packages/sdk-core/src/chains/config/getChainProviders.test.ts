@@ -45,9 +45,7 @@ describe('getChainProviders', () => {
       providers: []
     })
 
-    expect(() => getChainProviders(mockChain)).toThrowError(
-      `No providers found for chain ${mockChain}`
-    )
+    expect(() => getChainProviders(mockChain)).toThrow(`No providers found for chain ${mockChain}`)
     expect(getChainConfig).toHaveBeenCalledWith(mockChain)
   })
 

@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-core",
-  "version": "11.14.4",
+  "version": "11.14.7",
   "description": "SDK core for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -41,23 +41,22 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^2.0.0",
-    "viem": "^2.38.5"
+    "viem": "^2.40.3"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
     "@babel/preset-env": "^7.28.5",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@polkadot/api": "^16.4.9",
-    "@polkadot/types": "^16.4.9",
+    "@polkadot/api": "^16.5.3",
+    "@polkadot/types": "^16.5.3",
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.0.6",
-    "axios": "^1.13.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
-    "prettier": "^3.6.2",
-    "rollup": "^4.52.5",
-    "rollup-plugin-dts": "^6.2.3",
+    "rollup": "^4.53.3",
+    "rollup-plugin-dts": "^6.3.0",
     "ts-morph": "^27.0.2",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1"

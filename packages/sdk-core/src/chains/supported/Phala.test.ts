@@ -40,7 +40,7 @@ describe('Phala', () => {
   it('should throw InvalidCurrencyError for unsupported currency', () => {
     vi.spyOn(phala, 'getNativeAssetSymbol').mockReturnValue('NOT_PHA')
 
-    expect(() => phala.transferXTransfer(mockInput)).toThrowError(
+    expect(() => phala.transferXTransfer(mockInput)).toThrow(
       new InvalidCurrencyError(`Chain Phala does not support currency PHA`)
     )
   })
