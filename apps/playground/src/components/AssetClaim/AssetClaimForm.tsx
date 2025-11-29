@@ -1,16 +1,21 @@
 import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TSubstrateChain } from '@paraspell/sdk';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect } from 'react';
 
 import { DEFAULT_ADDRESS } from '../../constants';
 import { useAutoFillWalletAddress, useWallet } from '../../hooks';
 import { isValidWalletAddress } from '../../utils';
+import {
+  parseAsAssetClaimChain,
+  parseAsRecipientAddress,
+} from '../../utils/routes/parsers';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
-const SUPPORTED_CHAINS: TSubstrateChain[] = [
+export const ASSET_CLAIM_SUPPORTED_CHAINS: TSubstrateChain[] = [
   'Polkadot',
   'Kusama',
   'AssetHubPolkadot',
@@ -30,13 +35,15 @@ type Props = {
 };
 
 const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
+  const [queryState, setQueryState] = useQueryStates({
+    from: parseAsAssetClaimChain.withDefault('Polkadot'),
+    amount: parseAsString.withDefault(''),
+    address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    useApi: parseAsBoolean.withDefault(false),
+  });
+
   const form = useForm<FormValues>({
-    initialValues: {
-      from: 'Polkadot',
-      amount: '10',
-      address: DEFAULT_ADDRESS,
-      useApi: false,
-    },
+    initialValues: queryState,
 
     validate: {
       address: (value) =>
@@ -48,6 +55,9 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   });
 
   useAutoFillWalletAddress(form, 'address');
+  useEffect(() => {
+    void setQueryState(form.values);
+  }, [form.values, setQueryState]);
 
   const { useApi } = form.getValues();
 
@@ -72,7 +82,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           <ParachainSelect
             label="Chain"
             placeholder="Pick value"
-            data={SUPPORTED_CHAINS}
+            data={ASSET_CLAIM_SUPPORTED_CHAINS}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />

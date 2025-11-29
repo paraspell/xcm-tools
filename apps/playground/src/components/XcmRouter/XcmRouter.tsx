@@ -822,7 +822,6 @@ export const XcmRouter = () => {
               parachains using XCM.
             </Text>
           </Box>
-
           <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
