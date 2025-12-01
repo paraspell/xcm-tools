@@ -93,9 +93,12 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   useEffect(() => {
     if (apiType) {
       localStorage.setItem(STORAGE_API_TYPE_KEY, apiType);
+      if (location.pathname === PageRoute.DEFAULT) {
+        return;
+      }
       void setQueryApiType(apiType);
     }
-  }, [apiType, setQueryApiType]);
+  }, [apiType, setQueryApiType, location.pathname]);
 
   useEffect(() => {
     if (!isInitialized) return;

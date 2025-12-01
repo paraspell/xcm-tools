@@ -150,7 +150,7 @@ const XcmTransferForm: FC<Props> = ({
   });
 
   const form = useForm<FormValues>({
-    initialValues: queryState,
+    initialValues: initialValues ?? queryState,
 
     validate: {
       address: (value, values) => {
