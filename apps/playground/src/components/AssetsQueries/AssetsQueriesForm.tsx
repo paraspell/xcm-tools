@@ -16,13 +16,31 @@ import {
   isRelayChain,
   PARACHAINS,
 } from '@paraspell/sdk';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect, useRef } from 'react';
 
+import { DEFAULT_ADDRESS } from '../../constants';
 import { ASSET_QUERIES } from '../../consts';
 import { useAutoFillWalletAddress, useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
+import {
+  parseAsAssetQuery,
+  parseAsChain,
+  parseAsCurrencyType,
+  parseAsCustomCurrencySymbolSpecifier,
+  parseAsRecipientAddress,
+  parseAsSubstrateChain,
+} from '../../utils/routes/parsers';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+
+export type TCustomCurrencySymbolSpecifier =
+  | 'auto'
+  | 'native'
+  | 'foreign'
+  | 'foreignAbstract';
+
+export type TCurrencyType = 'id' | 'symbol' | 'location';
 
 export type FormValues = {
   func: TAssetsQuery;
@@ -32,12 +50,8 @@ export type FormValues = {
   amount: string;
   address: string;
   useApi: boolean;
-  currencyType?: 'id' | 'symbol' | 'location';
-  customCurrencySymbolSpecifier?:
-    | 'auto'
-    | 'native'
-    | 'foreign'
-    | 'foreignAbstract';
+  currencyType?: TCurrencyType;
+  customCurrencySymbolSpecifier?: TCustomCurrencySymbolSpecifier;
 };
 
 type Props = {
@@ -46,18 +60,26 @@ type Props = {
 };
 
 export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
-  const form = useForm<FormValues>({
-    initialValues: {
-      func: 'ASSETS_OBJECT',
-      chain: 'Acala',
-      destination: 'Astar',
-      currency: '',
-      address: '',
-      amount: '',
-      useApi: false,
-      currencyType: 'symbol',
-    },
+  const [queryState, setQueryState] = useQueryStates({
+    func: parseAsAssetQuery.withDefault('ASSETS_OBJECT'),
+    chain: parseAsSubstrateChain.withDefault('Acala'),
+    destination: parseAsChain.withDefault('Astar'),
+    currency: parseAsString.withDefault(''),
+    address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    amount: parseAsString.withDefault(''),
+    useApi: parseAsBoolean.withDefault(false),
+    currencyType: parseAsCurrencyType.withDefault('symbol' as TCurrencyType),
+    customCurrencySymbolSpecifier:
+      parseAsCustomCurrencySymbolSpecifier.withDefault('auto'),
   });
+
+  const form = useForm<FormValues>({
+    initialValues: queryState,
+  });
+
+  useEffect(() => {
+    void setQueryState(form.values);
+  }, [form.values, setQueryState]);
 
   useAutoFillWalletAddress(form, 'address');
 
@@ -118,15 +140,15 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   }, [chainList, chain]);
 
-  useEffect(() => {
+  const onSelectCurrencyTypeClick = () => {
+    form.setFieldValue('currency', '');
+  };
+
+  const onSelectFunctionClick = () => {
     if (showSymbolInput) {
       form.setFieldValue('currency', '');
       form.setFieldValue('currencyType', 'symbol');
     }
-  }, [func]);
-
-  const onSelectCurrencyTypeClick = () => {
-    form.setFieldValue('currency', '');
   };
 
   const isRelay = isRelayChain(chain);
@@ -171,6 +193,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             required
             allowDeselect={false}
             data-testid="select-func"
+            onSelect={onSelectFunctionClick}
             {...form.getInputProps('func')}
           />
 

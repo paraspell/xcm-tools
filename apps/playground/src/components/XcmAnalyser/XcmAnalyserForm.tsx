@@ -1,6 +1,7 @@
 import { Button, JsonInput, Paper, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { FC } from 'react';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { type FC, useEffect } from 'react';
 
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 
@@ -24,12 +25,18 @@ type Props = {
 };
 
 const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
-  const form = useForm<FormValues>({
-    initialValues: {
-      input: '',
-      useApi: false,
-    },
+  const [queryState, setQueryState] = useQueryStates({
+    input: parseAsString.withDefault(''),
+    useApi: parseAsBoolean.withDefault(false),
   });
+
+  const form = useForm<FormValues>({
+    initialValues: queryState,
+  });
+
+  useEffect(() => {
+    void setQueryState(form.values);
+  }, [form.values, setQueryState]);
 
   return (
     <Paper p="xl" shadow="md">

@@ -5,6 +5,7 @@ import {
   web3FromAddress,
   web3FromSource,
 } from '@polkadot/extension-dapp';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import {
   connectInjectedExtension,
   getInjectedExtensions,
@@ -12,8 +13,10 @@ import {
 } from 'polkadot-api/pjs-signer';
 import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
+import { PageRoute } from '../components/PageRoute';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
 import { DAPP_NAME } from '../constants';
 import type { TApiType, TWalletAccount } from '../types';
@@ -60,9 +63,18 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   ] = useDisclosure(false);
 
   const [isLoadingExtensions, setIsLoadingExtensions] = useState(false);
+  const [queryApiType, setQueryApiType] = useQueryState(
+    'apiType',
+    parseAsStringLiteral(['PAPI', 'PJS'])
+      .withDefault('PAPI')
+      .withOptions({ shallow: false }),
+  );
+  const location = useLocation();
+  const isRouter = location.pathname === PageRoute.XCM_ROUTER.toString();
+  const selectedApiType = isRouter ? 'PAPI' : queryApiType;
 
   const [apiType, setApiType] = useState<TApiType>(
-    getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
+    selectedApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
   );
 
   const [extensions, setExtensions] = useState<string[]>([]);
@@ -81,8 +93,12 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   useEffect(() => {
     if (apiType) {
       localStorage.setItem(STORAGE_API_TYPE_KEY, apiType);
+      if (location.pathname === PageRoute.DEFAULT) {
+        return;
+      }
+      void setQueryApiType(apiType);
     }
-  }, [apiType]);
+  }, [apiType, setQueryApiType, location.pathname]);
 
   useEffect(() => {
     if (!isInitialized) return;
