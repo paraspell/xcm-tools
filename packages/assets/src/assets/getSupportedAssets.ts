@@ -2,7 +2,7 @@ import { isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
 
 import type { TAssetInfo } from '../types'
 import { getAssets } from './assets'
-import { normalizeSymbol } from './normalizeSymbol'
+import { isAssetXcEqual } from './isAssetXcEqual'
 
 /**
  * Retrieves the list of assets that are supported for transfers between two specified chains.
@@ -22,7 +22,7 @@ export const getSupportedAssets = (origin: TChain, destination: TChain): TAssetI
   }
 
   const supportedAssets = originAssets.filter(asset =>
-    destinationAssets.some(a => normalizeSymbol(a.symbol) === normalizeSymbol(asset.symbol))
+    destinationAssets.some(a => isAssetXcEqual(a, asset))
   )
 
   return supportedAssets

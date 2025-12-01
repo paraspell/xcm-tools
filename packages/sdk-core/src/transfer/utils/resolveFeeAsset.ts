@@ -2,8 +2,8 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfo, isTAsset, type TCurrencyInput } from '@paraspell/assets'
 import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination } from '../../types'
+import { throwUnsupportedCurrency } from '../../utils'
 
 export const resolveFeeAsset = (
   feeAsset: TCurrencyInput,
