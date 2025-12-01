@@ -12,22 +12,16 @@ import { InvalidParameterError } from '../../errors'
 import { getRelayChainOf } from '../../utils'
 import { createDestination, resolveTChainFromLocation } from './utils'
 
-vi.mock('@paraspell/sdk-common', async importActual => {
-  const actual = await importActual<typeof import('@paraspell/sdk-common')>()
-  return {
-    ...actual,
-    isSubstrateBridge: vi.fn(),
-    isExternalChain: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  isSubstrateBridge: vi.fn(),
+  isExternalChain: vi.fn()
+}))
 
-vi.mock('../../utils', async importActual => {
-  const actual = await importActual<typeof import('../../utils')>()
-  return {
-    ...actual,
-    getRelayChainOf: vi.fn(actual.getRelayChainOf)
-  }
-})
+vi.mock('../../utils', async importActual => ({
+  ...(await importActual()),
+  getRelayChainOf: vi.fn()
+}))
 
 describe('XcmPallet utils', () => {
   describe('createDestination', () => {

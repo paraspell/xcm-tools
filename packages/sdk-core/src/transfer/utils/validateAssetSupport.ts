@@ -1,7 +1,7 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
+  findAssetInfoOnDest,
   findNativeAssetInfoOrThrow,
-  hasSupportForAsset,
   InvalidCurrencyError,
   isAssetEqual,
   type TAssetInfo
@@ -11,16 +11,14 @@ import {
   deepEqual,
   getJunctionValue,
   isExternalChain,
-  isRelayChain,
   isTLocation,
   Parents,
   replaceBigInt
 } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
-import { getRelayChainOf } from '../../utils'
+import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 
 const validateBridgeAsset = (
   origin: TSubstrateChain,
@@ -85,25 +83,20 @@ export const validateAssetSupport = <TApi, TRes>(
   isBridge: boolean,
   asset: TAssetInfo | null
 ) => {
-  const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
   const isLocationDestination = typeof destination === 'object'
 
+  if (asset === null && assetCheckEnabled) {
+    throwUnsupportedCurrency(currency, origin)
+  }
+
   if (
-    !isBridge &&
-    !isRelayDestination &&
     !isLocationDestination &&
-    asset?.symbol !== undefined &&
     assetCheckEnabled &&
-    !('id' in currency) &&
-    !hasSupportForAsset(destination, asset.symbol)
+    !findAssetInfoOnDest(origin, destination, currency, asset)
   ) {
     throw new InvalidCurrencyError(
       `Destination chain ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
-  }
-
-  if (asset === null && assetCheckEnabled) {
-    throwUnsupportedCurrency(currency, origin)
   }
 
   validateBridgeAsset(origin, destination, asset, currency, isBridge)

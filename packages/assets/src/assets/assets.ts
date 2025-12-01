@@ -18,9 +18,7 @@ const assetsMap = assetsMapJson as TAssetJsonMap
  */
 export const getAssetsObject = (chain: TChain): TChainAssetsInfo => assetsMap[chain]
 
-export const isChainEvm = (chain: TChain): boolean => {
-  return assetsMap[chain].isEVM
-}
+export const isChainEvm = (chain: TChain): boolean => assetsMap[chain].isEVM
 
 /**
  * Retrieves the asset ID for a given symbol on a specified chain.
@@ -124,6 +122,7 @@ export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
 
   return chainSymbols.some(chainSymbol => symbolsToCheck.has(chainSymbol))
 }
+
 /**
  * Retrieves the number of decimals for an asset with the given symbol on a specified chain.
  *

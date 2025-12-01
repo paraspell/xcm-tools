@@ -4,20 +4,13 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import { throwUnsupportedCurrency } from '../../utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
-vi.mock('@paraspell/assets', () => ({
-  findAssetInfo: vi.fn()
-}))
+vi.mock('@paraspell/assets')
+vi.mock('@paraspell/sdk-common')
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isTLocation: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  throwUnsupportedCurrency: vi.fn()
-}))
+vi.mock('../../utils')
 
 describe('resolveFeeAsset', () => {
   beforeEach(() => {
