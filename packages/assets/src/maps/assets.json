@@ -2751,7 +2751,7 @@
     "otherAssets": [
       {
         "assetId": "1000000002",
-        "symbol": "GXON",
+        "symbol": "gXON",
         "decimals": 12,
         "existentialDeposit": "1000000000"
       },
@@ -4115,6 +4115,12 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "42",
+        "symbol": "EURC",
+        "decimals": 6,
+        "existentialDeposit": "14000"
       },
       {
         "assetId": "102",

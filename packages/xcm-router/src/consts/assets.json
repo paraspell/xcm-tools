@@ -1453,21 +1453,6 @@
         }
       },
       {
-        "symbol": "PHA",
-        "decimals": 12,
-        "assetId": "8",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2035
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "AJUN",
         "decimals": 12,
         "assetId": "32",
