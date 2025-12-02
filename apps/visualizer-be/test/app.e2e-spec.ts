@@ -248,6 +248,44 @@ describe('XCM API (e2e)', () => {
         });
       });
 
+      it('messageCounts with empty parachain list and valid time range', async () => {
+        let parachains = [];
+        const startTime = new Date('2018-01-20T00:00:00Z');
+        const endTime = new Date('2025-02-10T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query messageCounts($ecosystem: String, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                messageCounts(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  success
+                  failed
+                }
+              }
+          `,
+            variables: {
+              ecosystem,
+              parachains: parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.messageCounts).toBeInstanceOf(Array);
+        expect(response.body.data.messageCounts.length).toBeGreaterThan(0);
+        response.body.data.messageCounts.forEach((count) => {
+          expect(count).toMatchObject({
+            parachain: null,
+            success: expect.any(Number),
+            failed: expect.any(Number),
+          });
+        });
+      });
+
       it('messageCounts with valid parachains and time range with no expected data', async () => {
         const parachains = ['AssetHubPolkadot', 'Acala'];
         const startTime = new Date('2017-07-01T00:00:00Z');
@@ -288,7 +326,44 @@ describe('XCM API (e2e)', () => {
           },
         ]);
       });
+
+      it('messageCounts with empty parachain list and time range with no expected data', async () => {
+        const parachains = [];
+        const startTime = new Date('2017-07-01T00:00:00Z');
+        const endTime = new Date('2017-07-31T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query messageCounts($ecosystem: String, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                messageCounts(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  success
+                  failed
+                }
+              }
+          `,
+            variables: {
+              ecosystem,
+              parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.messageCounts).toEqual([
+          {
+            parachain: null,
+            success: 0,
+            failed: 0,
+          }
+        ]);
+      });
     });
+
 
     describe('messageCountsByDay', () => {
       it('messageCountsByDay with valid parachains and known time range', async () => {
@@ -333,8 +408,83 @@ describe('XCM API (e2e)', () => {
         });
       });
 
+      it('messageCountsByDay with empty parachain list and known time range', async () => {
+        const parachains = [];
+        const startTime = new Date('2023-01-01T00:00:00Z');
+        const endTime = new Date('2023-01-07T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query messageCountsByDay($ecosystem: String!, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                messageCountsByDay(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  date
+                  messageCount
+                  messageCountSuccess
+                  messageCountFailed
+                }
+              }
+          `,
+            variables: {
+              ecosystem,
+              parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.messageCountsByDay).toBeInstanceOf(Array);
+        expect(response.body.data.messageCountsByDay.length).toBeGreaterThan(0);
+        response.body.data.messageCountsByDay.forEach((count) => {
+          expect(count).toMatchObject({
+            parachain: null,
+            date: expect.any(String),
+            messageCount: expect.any(Number),
+            messageCountSuccess: expect.any(Number),
+            messageCountFailed: expect.any(Number),
+          });
+        });
+      });
+
       it('messageCountsByDay with valid chains and time range with no expected data', async () => {
         const parachains = ['AssetHubPolkadot', 'Acala'];
+        const startTime = new Date('2018-01-01T00:00:00Z');
+        const endTime = new Date('2018-01-07T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query messageCountsByDay($ecosystem: String!, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                messageCountsByDay(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  date
+                  messageCount
+                  messageCountSuccess
+                  messageCountFailed
+                }
+              }
+            `,
+            variables: {
+              ecosystem,
+              parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.messageCountsByDay).toBeInstanceOf(Array);
+        expect(response.body.data.messageCountsByDay.length).toBe(0);
+      });
+
+      it('messageCountsByDay with empty parachain list and time range with no expected data', async () => {
+        const parachains = [];
         const startTime = new Date('2018-01-01T00:00:00Z');
         const endTime = new Date('2018-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -408,8 +558,78 @@ describe('XCM API (e2e)', () => {
         });
       });
 
+      it('assetCountsBySymbol with empty parachain list and valid time range with expected data', async () => {
+        const parachains = [];
+        const startTime = new Date('2023-01-01T00:00:00Z');
+        const endTime = new Date('2023-01-07T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query assetCountsBySymbol($ecosystem: String!, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                assetCountsBySymbol(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  symbol
+                  count
+                }
+              }
+            `,
+            variables: {
+              ecosystem,
+              parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.assetCountsBySymbol).toBeInstanceOf(Array);
+        expect(response.body.data.assetCountsBySymbol.length).toBeGreaterThan(
+          0,
+        );
+        response.body.data.assetCountsBySymbol.forEach((count) => {
+          expect(count).toMatchObject({
+            parachain: null,
+            symbol: expect.any(String),
+            count: expect.any(Number),
+          });
+        });
+      });
+
       it('assetCountsBySymbol with valid parachains and time range with no expected data', async () => {
         const parachains = ['AssetHubPolkadot', 'Acala'];
+        const startTime = new Date('2018-01-01T00:00:00Z');
+        const endTime = new Date('2018-01-07T23:59:59Z');
+        const ecosystem = 'polkadot';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query assetCountsBySymbol($ecosystem: String!, $parachains: [String!]!, $startTime: Timestamp!, $endTime: Timestamp!) {
+                assetCountsBySymbol(ecosystem: $ecosystem, parachains: $parachains, startTime: $startTime, endTime: $endTime) {
+                  parachain
+                  symbol
+                  count
+                }
+              }
+            `,
+            variables: {
+              ecosystem,
+              parachains,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.assetCountsBySymbol).toEqual([]);
+      });
+
+      it('assetCountsBySymbol with empty parachain list and time range with no expected data', async () => {
+        const parachains = [];
         const startTime = new Date('2018-01-01T00:00:00Z');
         const endTime = new Date('2018-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -491,11 +711,105 @@ describe('XCM API (e2e)', () => {
         });
       });
 
+      it('accountCounts with empty paraIds list and accounts exceeding the specified threshold', async () => {
+        const threshold = 10;
+        const paraIds = [];
+        const startTime = new Date('2023-01-01T00:00:00Z');
+        const endTime = new Date('2023-01-31T23:59:59Z');
+        const ecosystem = 'kusama';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query accountCounts(
+                $ecosystem: String!
+                $threshold: Int!
+                $paraIds: [Int!]
+                $startTime: Timestamp!
+                $endTime: Timestamp!
+              ) {
+                accountCounts(
+                  ecosystem: $ecosystem
+                  threshold: $threshold
+                  paraIds: $paraIds
+                  startTime: $startTime
+                  endTime: $endTime
+                ) {
+                  id
+                  count
+                }
+              }
+            `,
+            variables: {
+              ecosystem,
+              threshold: threshold,
+              paraIds: paraIds,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.accountCounts).toBeInstanceOf(Array);
+        expect(response.body.data.accountCounts.length).toBeGreaterThan(0);
+        response.body.data.accountCounts.forEach((account) => {
+          expect(account).toMatchObject({
+            id: expect.any(String),
+            count: expect.any(Number),
+          });
+          expect(account.count).toBeGreaterThan(threshold);
+        });
+      });
+
       it('accountCounts with no accounts exceeding the specified threshold', async () => {
         const threshold = 100;
         const paraIds = [2012, 2004];
         const startTime = new Date('2023-01-01T00:00:00Z');
         const endTime = new Date('2023-01-02T23:59:59Z');
+        const ecosystem = 'kusama';
+
+        const response = await request(app.getHttpServer())
+          .post('/graphql')
+          .send({
+            query: `
+              query accountCounts(
+                $ecosystem: String!
+                $threshold: Int!
+                $paraIds: [Int!]
+                $startTime: Timestamp!
+                $endTime: Timestamp!
+              ) {
+                accountCounts(
+                  ecosystem: $ecosystem
+                  threshold: $threshold
+                  paraIds: $paraIds
+                  startTime: $startTime
+                  endTime: $endTime
+                ) {
+                  id
+                  count
+                }
+              }
+            `,
+            variables: {
+              ecosystem,
+              threshold: threshold,
+              paraIds: paraIds,
+              startTime: startTime.getTime() / 1000,
+              endTime: endTime.getTime() / 1000,
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data.accountCounts).toEqual([]);
+      });
+
+      it('accountCounts with empty paraIds list and no accounts exceeding the specified threshold', async () => {
+        const threshold = 100;
+        const paraIds = [];
+        const startTime = new Date('2022-01-01T00:00:00Z');
+        const endTime = new Date('2022-01-02T23:59:59Z');
         const ecosystem = 'kusama';
 
         const response = await request(app.getHttpServer())
