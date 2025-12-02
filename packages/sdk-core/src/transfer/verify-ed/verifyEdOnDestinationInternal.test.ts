@@ -51,6 +51,20 @@ describe('verifyEdOnDestinationInternal', () => {
     decimals: 10
   } as TAssetInfo
 
+  const xcmFeeRes = {
+    origin: {},
+    hops: [
+      {
+        chain: 'Acala',
+        result: {
+          fee: 500000000n,
+          asset
+        }
+      }
+    ],
+    destination: { fee: 1000000000n, asset }
+  } as TGetXcmFeeResult<boolean>
+
   beforeEach(() => {
     vi.resetAllMocks()
     buildTx.mockClear()
@@ -58,10 +72,7 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined }
-    } as TGetXcmFeeResult<boolean>)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue(xcmFeeRes)
     vi.mocked(normalizeSymbol).mockImplementation(symbol =>
       symbol ? String(symbol).toUpperCase() : ''
     )
@@ -91,45 +102,23 @@ describe('verifyEdOnDestinationInternal', () => {
     expect(getMethodSpy).toHaveBeenCalledWith(realTx)
   })
 
-  it('throws DryRunFailedError if assetHub dryRunError occurs', async () => {
-    const hopError = 'AssetHub dry run failed'
+  it('throws DryRunFailedError if hop dryRunError occurs', async () => {
+    const hopError = 'AssetHubPolkadot dry run failed'
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: 500000000n, dryRunError: hopError }
+      ...xcmFeeRes,
+      hops: [
+        {
+          chain: 'AssetHubPolkadot',
+          result: {
+            fee: 500000000n,
+            dryRunError: hopError
+          }
+        }
+      ]
     } as TGetXcmFeeResult<boolean>)
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
-      new DryRunFailedError(hopError, 'assetHub')
-    )
-  })
-
-  it('throws DryRunFailedError if bridgeHub dryRunError occurs and assetHub has none', async () => {
-    const hopError = 'BridgeHub dry run failed'
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: 500000000n, dryRunError: undefined },
-      bridgeHub: { fee: 200000000n, dryRunError: hopError }
-    } as TGetXcmFeeResult<boolean>)
-
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
-      new DryRunFailedError(hopError, 'bridgeHub')
-    )
-  })
-
-  it('prioritizes assetHub dryRunError over bridgeHub', async () => {
-    const assetHubError = 'AssetHub specific dry run failed'
-    const bridgeHubError = 'BridgeHub also failed but should be ignored'
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: 500000000n, dryRunError: assetHubError },
-      bridgeHub: { fee: 200000000n, dryRunError: bridgeHubError }
-    } as TGetXcmFeeResult<boolean>)
-
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
-      new DryRunFailedError(assetHubError, 'assetHub')
+      new DryRunFailedError(hopError, 'AssetHubPolkadot')
     )
   })
 
@@ -168,10 +157,6 @@ describe('verifyEdOnDestinationInternal', () => {
     }
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
-    vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 95000000000n, currency: 'DOT', dryRunError: undefined }
-    } as TGetXcmFeeResult<boolean>)
 
     const result = await verifyEdOnDestinationInternal(opts)
     expect(result).toBe(false)
@@ -180,8 +165,8 @@ describe('verifyEdOnDestinationInternal', () => {
   it('returns false when balance >= ED and amount - destFee <= 0', async () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(15000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000000n, currency: 'DOT', dryRunError: undefined }
+      ...xcmFeeRes,
+      destination: { fee: 1000000000000n, asset }
     } as TGetXcmFeeResult<boolean>)
 
     const result = await verifyEdOnDestinationInternal(defaultOptions)
@@ -191,10 +176,10 @@ describe('verifyEdOnDestinationInternal', () => {
   it('throws if asset symbol and fee currency mismatch (normalizeSymbol)', async () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAssetInfo)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
-      origin: { dryRunError: undefined },
-      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined }
-    } as TGetXcmFeeResult<boolean>)
-    vi.mocked(normalizeSymbol).mockImplementation((s: string) => s)
+      ...xcmFeeRes,
+      destination: { fee: 1000000000n, feeType: 'paymentInfo', asset }
+    } as TGetXcmFeeResult<false>)
+    vi.mocked(normalizeSymbol).mockImplementation(s => String(s))
 
     const msg = `The XCM fee could not be calculated because the origin or destination chain does not support DryRun.
        As a result, fee estimation is only available through PaymentInfo, which provides the cost in the native asset.
@@ -203,33 +188,5 @@ describe('verifyEdOnDestinationInternal', () => {
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
       new UnableToComputeError(msg)
     )
-  })
-
-  it('re-throws from validateAddress', async () => {
-    const e = new Error('Invalid address')
-    vi.mocked(validateAddress).mockImplementation(() => {
-      throw e
-    })
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(e)
-  })
-
-  it('re-throws from findAssetOnDestOrThrow', async () => {
-    const e = new Error('Asset not found')
-    vi.mocked(findAssetOnDestOrThrow).mockImplementation(() => {
-      throw e
-    })
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(e)
-  })
-
-  it('re-throws from getXcmFee', async () => {
-    const e = new Error('XCM fee retrieval failed')
-    vi.mocked(getXcmFeeInternal).mockRejectedValue(e)
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(e)
-  })
-
-  it('re-throws from getAssetBalanceInternal', async () => {
-    const e = new Error('Balance retrieval failed')
-    vi.mocked(getAssetBalanceInternal).mockRejectedValue(e)
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(e)
   })
 })

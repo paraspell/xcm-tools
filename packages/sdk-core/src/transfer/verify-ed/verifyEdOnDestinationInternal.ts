@@ -1,4 +1,10 @@
-import { getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import {
+  getEdFromAssetOrThrow,
+  isAssetXcEqual,
+  isSymbolMatch,
+  normalizeSymbol
+} from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
@@ -8,18 +14,20 @@ import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../type
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 
-export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
-  let totalFee = 0n
+export const calculateTotalXcmFee = (
+  asset: TAssetInfo,
+  feeResult: TGetXcmFeeResult<false>
+): bigint => {
+  const totalHopFee = feeResult.hops.reduce(
+    (acc, hop) => (isAssetXcEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc),
+    0n
+  )
 
-  if (feeResult.assetHub?.fee !== undefined) {
-    totalFee += feeResult.assetHub.fee
-  }
+  const destFee = isAssetXcEqual(feeResult.destination.asset, asset)
+    ? feeResult.destination.fee
+    : 0n
 
-  if (feeResult.destination.fee !== undefined) {
-    totalFee += feeResult.destination.fee
-  }
-
-  return totalFee
+  return totalHopFee + destFee
 }
 
 export const verifyEdOnDestinationInternal = async <TApi, TRes>(
@@ -74,21 +82,23 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   const {
     origin: { dryRunError },
-    assetHub: assetHubFeeResult,
-    bridgeHub: bridgeHubFeeResult,
-    destination: { fee: destFee, currency: destFeeCurrency, dryRunError: destDryRunError }
+    hops,
+    destination: {
+      fee: destFee,
+      feeType: destFeeType,
+      asset: destFeeAsset,
+      dryRunError: destDryRunError
+    }
   } = xcmFeeResult
 
   if (dryRunError) {
     throw new DryRunFailedError(dryRunError, 'origin')
   }
 
-  const hopDryRunError = assetHubFeeResult?.dryRunError || bridgeHubFeeResult?.dryRunError
-  if (hopDryRunError) {
-    throw new DryRunFailedError(
-      hopDryRunError,
-      assetHubFeeResult?.dryRunError ? 'assetHub' : 'bridgeHub'
-    )
+  const erroredHop = hops.find(hop => hop.result.dryRunError)
+  const hopError = erroredHop?.result.dryRunError
+  if (hopError) {
+    throw new DryRunFailedError(hopError, erroredHop.chain)
   }
 
   if (destDryRunError) {
@@ -97,7 +107,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
     )
   }
 
-  if (normalizeSymbol(asset.symbol) !== normalizeSymbol(destFeeCurrency)) {
+  const isUnableToCompute =
+    !isSymbolMatch(normalizeSymbol(destAsset.symbol), normalizeSymbol(destFeeAsset.symbol)) &&
+    destFeeType === 'paymentInfo'
+
+  if (isUnableToCompute) {
     throw new UnableToComputeError(
       `The XCM fee could not be calculated because the origin or destination chain does not support DryRun.
        As a result, fee estimation is only available through PaymentInfo, which provides the cost in the native asset.
@@ -107,7 +121,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 
   const tx = await buildTx()
 
-  const totalFee = calculateTotalXcmFee(xcmFeeResult)
+  const totalFee = calculateTotalXcmFee(asset, xcmFeeResult)
   const method = api.getMethod(tx)
 
   let feeToSubtract: bigint

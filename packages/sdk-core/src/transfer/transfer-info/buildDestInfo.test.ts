@@ -127,6 +127,7 @@ describe('buildDestInfo', () => {
       api: mockApi,
       destFeeDetail: {
         fee: DEFAULT_FEE,
+        feeType: 'paymentInfo',
         currency: 'OTHER',
         asset: { symbol: 'OTHER' }
       } as TXcmFeeDetail
