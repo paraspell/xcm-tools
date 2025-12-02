@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.7...sdk-core-v11.14.8) (2025-12-02)
+
+
+### Bug Fixes
+
+* **sdk-core:** Take fee paying asset into consideration in some functions 🧹 ([17c390e](https://github.com/paraspell/xcm-tools/commit/17c390e9188dc257892b952918f2d6467ecef509))
+
 ## [11.14.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.6...sdk-core-v11.14.7) (2025-11-29)
 
 
