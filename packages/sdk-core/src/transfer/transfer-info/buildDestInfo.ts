@@ -1,4 +1,4 @@
-import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { findAssetOnDestOrThrow, getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
@@ -35,29 +35,28 @@ export const buildDestInfo = async <TApi, TRes>({
 
   const destAmount = isFeeAssetAh ? currency.amount - originFee : currency.amount
 
+  const destFeeAssetEqual = isSymbolMatch(destFeeDetail.asset.symbol, destAsset.symbol)
+  const effectiveDestFee = destFeeAssetEqual ? (destFeeDetail.fee as bigint) : 0n
+
   const effectiveAmountForBalance = destAmount - totalHopFee
 
   const destBalanceSufficient =
-    effectiveAmountForBalance - (destFeeDetail.fee as bigint) > (destBalance < edDest ? edDest : 0n)
+    effectiveAmountForBalance - effectiveDestFee > (destBalance < edDest ? edDest : 0n)
 
-  const destBalanceSufficientResult =
-    destFeeDetail.currency !== destAsset.symbol && destination !== 'Ethereum'
-      ? new UnableToComputeError(
-          'Unable to compute if dest balance will be sufficient. Fee currency is not the same'
-        )
-      : destBalanceSufficient
+  const destBalanceAfter = destBalance - effectiveDestFee + effectiveAmountForBalance
 
-  const destBalanceAfter =
-    destBalance -
-    (destFeeDetail.currency === destAsset.symbol ? (destFeeDetail.fee as bigint) : 0n) +
-    effectiveAmountForBalance
+  const createUnableToComputeError = () =>
+    new UnableToComputeError(
+      'Unable to compute if dest balance will be sufficient. Fee currency is not the same'
+    )
 
-  const destbalanceAfterResult =
-    destFeeDetail.currency !== destAsset.symbol && destination !== 'Ethereum'
-      ? new UnableToComputeError(
-          'Unable to compute if dest balance will be sufficient. Fee currency is not the same'
-        )
-      : destBalanceAfter
+  const isUnableToCompute = destFeeDetail.feeType === 'paymentInfo' && !destFeeAssetEqual
+
+  const destbalanceAfterResult = isUnableToCompute ? createUnableToComputeError() : destBalanceAfter
+
+  const destBalanceSufficientResult = isUnableToCompute
+    ? createUnableToComputeError()
+    : destBalanceSufficient
 
   let receivedAmount: bigint | UnableToComputeError
 
@@ -110,7 +109,7 @@ export const buildDestInfo = async <TApi, TRes>({
     ? destBalanceAfter
     : destXcmFeeBalance -
       (destFeeDetail.fee as bigint) +
-      (destFeeDetail.currency === destAsset.symbol ? effectiveAmountForBalance : 0n)
+      (destFeeAssetEqual ? effectiveAmountForBalance : 0n)
 
   return {
     receivedCurrency: {
@@ -126,7 +125,7 @@ export const buildDestInfo = async <TApi, TRes>({
       fee: destFeeDetail.fee as bigint,
       balance: destXcmFeeBalance,
       balanceAfter: destXcmFeeBalanceAfter,
-      currencySymbol: destFeeDetail.currency,
+      currencySymbol: destFeeDetail.asset.symbol,
       asset: destFeeDetail.asset
     }
   }
