@@ -2,8 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findAssetOnDestOrThrow,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol
+  findNativeAssetInfoOrThrow
 } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -22,8 +21,8 @@ import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 import { getXcmFeeOnce } from './getXcmFeeOnce'
 
 vi.mock('@paraspell/assets')
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
@@ -57,7 +56,6 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
 
 describe('getXcmFeeOnce', () => {
   const xcmFeeResCurrency = {
-    currency: 'ACA',
     asset: { symbol: 'ACA', decimals: 12 } as TAssetInfo
   }
 
@@ -72,7 +70,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -96,7 +94,6 @@ describe('getXcmFeeOnce', () => {
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
-        currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 },
         dryRunError: 'Simulation failed'
       },
@@ -104,8 +101,7 @@ describe('getXcmFeeOnce', () => {
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
-        currency: 'GLMR',
-        asset: { symbol: 'ACA' }
+        asset: { symbol: 'GLMR' }
       }
     })
   })
@@ -114,7 +110,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(getMythosOriginFee).mockResolvedValue(500n)
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'MYTH', decimals: 18 } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ETH' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ETH' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -123,16 +119,12 @@ describe('getXcmFeeOnce', () => {
       dryRunError: undefined,
       forwardedXcms: [null, [{}]],
       destParaId: 1000,
-      currency: 'MYTH',
       asset: { symbol: 'MYTH' } as TAssetInfo
     })
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      lastProcessedChain: 'Mythos',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Mythos'
     })
 
     const bridgeSpy = vi.mocked(addEthereumBridgeFees)
@@ -150,7 +142,7 @@ describe('getXcmFeeOnce', () => {
     expect(res.destination).toMatchObject({
       fee: 0n,
       feeType: 'noFeeRequired',
-      currency: 'ETH'
+      asset: { symbol: 'ETH' }
     })
 
     expect(bridgeSpy).not.toHaveBeenCalled()
@@ -160,7 +152,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -182,15 +174,13 @@ describe('getXcmFeeOnce', () => {
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
-        currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 }
       },
       hops: [],
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
-        currency: 'GLMR',
-        asset: { symbol: 'ACA' }
+        asset: { symbol: 'GLMR' }
       }
     })
   })
@@ -199,7 +189,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -213,10 +203,7 @@ describe('getXcmFeeOnce', () => {
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      lastProcessedChain: 'Acala',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Acala'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -229,7 +216,6 @@ describe('getXcmFeeOnce', () => {
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 }
       },
       hops: [],
@@ -237,11 +223,8 @@ describe('getXcmFeeOnce', () => {
         fee: 0n,
         feeType: 'noFeeRequired',
         sufficient: true,
-        currency: 'GLMR',
-        asset: { symbol: 'ACA' }
-      },
-      failureChain: undefined,
-      failureReason: undefined
+        asset: { symbol: 'GLMR' }
+      }
     })
   })
 
@@ -249,9 +232,9 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -271,18 +254,11 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT'
+            asset: { symbol: 'DOT' }
           }
         }
       ],
-      lastProcessedChain: 'AssetHubPolkadot',
-      destination: undefined,
-      assetHub: {
-        fee: 3_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT'
-      },
-      bridgeHub: undefined
+      lastProcessedChain: 'AssetHubPolkadot'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -293,13 +269,7 @@ describe('getXcmFeeOnce', () => {
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 }
-      },
-      assetHub: {
-        fee: 3_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT'
       },
       hops: [
         {
@@ -307,7 +277,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT'
+            asset: { symbol: 'DOT' }
           }
         }
       ],
@@ -315,11 +285,8 @@ describe('getXcmFeeOnce', () => {
         fee: 0n,
         feeType: 'noFeeRequired',
         sufficient: true,
-        currency: 'GLMR',
-        asset: { symbol: 'ACA' }
-      },
-      failureChain: undefined,
-      failureReason: undefined
+        asset: { symbol: 'GLMR' }
+      }
     })
   })
 
@@ -327,9 +294,9 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -349,27 +316,18 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT',
+            asset: { symbol: 'DOT' },
             dryRunError: 'Hop failed'
           }
         }
       ],
-      lastProcessedChain: 'AssetHubPolkadot',
-      destination: undefined,
-      assetHub: {
-        fee: 3_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT',
-        dryRunError: 'Hop failed'
-      },
-      bridgeHub: undefined
+      lastProcessedChain: 'AssetHubPolkadot'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
     vi.mocked(getDestXcmFee).mockResolvedValue({
       asset: { symbol: 'GLMR', decimals: 12 } as TAssetInfo,
-      currency: 'GLMR',
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -380,18 +338,11 @@ describe('getXcmFeeOnce', () => {
 
     expect(res).toEqual({
       failureReason: 'Hop failed',
-      failureChain: 'assetHub',
+      failureChain: 'AssetHubPolkadot',
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
-        currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 }
-      },
-      assetHub: {
-        fee: 3_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT',
-        dryRunError: 'Hop failed'
       },
       hops: [
         {
@@ -399,7 +350,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT',
+            asset: { symbol: 'DOT' },
             dryRunError: 'Hop failed'
           }
         }
@@ -408,19 +359,18 @@ describe('getXcmFeeOnce', () => {
         fee: 2_000n,
         feeType: 'paymentInfo',
         sufficient: undefined,
-        currency: 'GLMR',
-        asset: { symbol: 'ACA' }
+        asset: { symbol: 'GLMR' }
       }
     })
   })
 
   it('handles multiple hops including AssetHub and BridgeHub', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      if (chain === 'BridgeHubPolkadot') return 'DOT'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -439,7 +389,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'dryRun',
-            currency: 'ACA',
+            asset: { symbol: 'ACA' },
             sufficient: true
           }
         },
@@ -448,25 +398,12 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 4_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT',
+            asset: { symbol: 'DOT' },
             sufficient: false
           }
         }
       ],
-      lastProcessedChain: 'BridgeHubPolkadot',
-      destination: undefined,
-      assetHub: {
-        fee: 3_000n,
-        feeType: 'dryRun',
-        currency: 'ACA',
-        sufficient: true
-      },
-      bridgeHub: {
-        fee: 4_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT',
-        sufficient: false
-      }
+      lastProcessedChain: 'BridgeHubPolkadot'
     })
 
     vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
@@ -484,39 +421,26 @@ describe('getXcmFeeOnce', () => {
         result: {
           fee: 3000n,
           feeType: 'dryRun',
-          currency: 'ACA',
+          asset: { symbol: 'ACA' },
           sufficient: true
         }
       },
       {
         chain: 'BridgeHubPolkadot',
         result: {
-          fee: 1000n,
+          fee: 4000n,
           feeType: 'paymentInfo',
-          currency: 'DOT',
+          asset: { symbol: 'DOT' },
           sufficient: false
         }
       }
     ])
 
-    expect(res.assetHub).toEqual({
-      fee: 3000n,
-      feeType: 'dryRun',
-      currency: 'ACA',
-      sufficient: true
-    })
-    expect(res.bridgeHub).toEqual({
-      fee: 1000n,
-      feeType: 'paymentInfo',
-      currency: 'ACA',
-      asset: { symbol: 'ACA', decimals: 12 },
-      sufficient: false
-    })
     expect(res.destination).toMatchObject({
       fee: 0n,
       feeType: 'noFeeRequired',
       sufficient: true,
-      currency: 'GLMR'
+      asset: { symbol: 'GLMR' }
     })
   })
 
@@ -527,11 +451,11 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(initialAsset)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      if (chain === 'Hydration') return 'HDX'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      if (chain === 'Hydration') return { symbol: 'HDX' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
 
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -551,7 +475,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 2_000n,
             feeType: 'dryRun',
-            currency: 'ACA',
+            asset: { symbol: 'ACA' },
             sufficient: true
           }
         },
@@ -560,7 +484,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'dryRun',
-            currency: 'ACA',
+            asset: { symbol: 'ACA' },
             sufficient: true
           }
         }
@@ -569,16 +493,9 @@ describe('getXcmFeeOnce', () => {
       destination: {
         fee: 4_000n,
         feeType: 'dryRun',
-        currency: 'USDT',
+        asset: { symbol: 'USDT' },
         sufficient: false
-      },
-      assetHub: {
-        fee: 2_000n,
-        feeType: 'dryRun',
-        currency: 'ACA',
-        sufficient: true
-      },
-      bridgeHub: undefined
+      }
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -599,7 +516,7 @@ describe('getXcmFeeOnce', () => {
       result: {
         fee: 2_000n,
         feeType: 'dryRun',
-        currency: 'ACA',
+        asset: { symbol: 'ACA' },
         sufficient: true
       }
     })
@@ -608,7 +525,7 @@ describe('getXcmFeeOnce', () => {
       result: {
         fee: 3_000n,
         feeType: 'dryRun',
-        currency: 'ACA',
+        asset: { symbol: 'ACA' },
         sufficient: true
       }
     })
@@ -616,14 +533,14 @@ describe('getXcmFeeOnce', () => {
     expect(res.destination).toMatchObject({
       fee: 4_000n,
       feeType: 'dryRun',
-      currency: 'USDT',
+      asset: { symbol: 'USDT' },
       sufficient: false
     })
   })
 
   it('handles Ethereum as destination with noFeeRequired', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ETH' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -636,10 +553,7 @@ describe('getXcmFeeOnce', () => {
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      lastProcessedChain: 'Acala',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Acala'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -650,15 +564,15 @@ describe('getXcmFeeOnce', () => {
       fee: 0n,
       feeType: 'noFeeRequired',
       sufficient: true,
-      currency: 'ETH'
+      asset: { symbol: 'ETH' }
     })
   })
 
   it('handles bridge hub fee updates after Ethereum bridge processing', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'BridgeHubPolkadot') return 'DOT'
-      return 'ACA'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'ACA' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -675,37 +589,28 @@ describe('getXcmFeeOnce', () => {
         {
           chain: 'BridgeHubPolkadot',
           result: {
-            fee: 2_000n,
+            fee: 1_000n,
             feeType: 'paymentInfo',
-            currency: 'DOT'
+            asset: { symbol: 'DOT' }
           }
         }
       ],
-      lastProcessedChain: 'BridgeHubPolkadot',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: {
-        fee: 2_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT'
-      }
+      lastProcessedChain: 'BridgeHubPolkadot'
     })
 
     vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
       ...xcmFeeResultbase,
-      feeType: 'paymentInfo',
-      currency: 'DOT'
+      feeType: 'paymentInfo'
     })
 
     const res = await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
     expect(res.hops[0].result.fee).toBe(1_000n)
-    expect(res.bridgeHub?.fee).toBe(1_000n)
   })
 
   it('handles sufficient field being undefined in origin fee', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -719,10 +624,7 @@ describe('getXcmFeeOnce', () => {
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      lastProcessedChain: 'Acala',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Acala'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -734,7 +636,7 @@ describe('getXcmFeeOnce', () => {
 
   it('handles weight field in origin fee', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -748,10 +650,7 @@ describe('getXcmFeeOnce', () => {
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      lastProcessedChain: 'Acala',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Acala'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -764,10 +663,10 @@ describe('getXcmFeeOnce', () => {
 
   it('handles hop failure with different chain in failureChain detection', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
-      if (chain === 'CustomChain') return 'CUSTOM'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
+      if (chain === 'Altair') return { symbol: 'CUSTOM' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -786,15 +685,12 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
-            currency: 'CUSTOM',
+            asset: { symbol: 'CUSTOM' },
             dryRunError: 'Custom chain failed'
           }
         }
       ],
-      lastProcessedChain: 'Quartz',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: undefined
+      lastProcessedChain: 'Quartz'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -809,47 +705,9 @@ describe('getXcmFeeOnce', () => {
     expect(res.failureReason).toBe('Custom chain failed')
   })
 
-  it('handles bridgeHub dry run error in failureChain detection', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-
-    vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'dryRun',
-      dryRunError: undefined,
-      forwardedXcms: undefined,
-      destParaId: undefined
-    })
-
-    vi.mocked(traverseXcmHops).mockResolvedValue({
-      hops: [],
-      lastProcessedChain: 'Acala',
-      destination: undefined,
-      assetHub: undefined,
-      bridgeHub: {
-        fee: 2_000n,
-        feeType: 'paymentInfo',
-        currency: 'DOT',
-        dryRunError: 'BridgeHub failed'
-      }
-    })
-
-    vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'paymentInfo',
-      dryRunError: 'BridgeHub failed'
-    })
-
-    const res = await getXcmFeeOnce(createOptions())
-
-    expect(res.failureChain).toBe('bridgeHub')
-    expect(res.failureReason).toBe('BridgeHub failed')
-  })
-
   it('handles destination dry run error in failureChain detection', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -866,11 +724,9 @@ describe('getXcmFeeOnce', () => {
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
-        currency: 'GLMR',
+        asset: { symbol: 'GLMR' },
         dryRunError: 'Destination failed'
-      },
-      assetHub: undefined,
-      bridgeHub: undefined
+      }
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -883,7 +739,7 @@ describe('getXcmFeeOnce', () => {
 
   it('handles case where no failures occur', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -900,10 +756,8 @@ describe('getXcmFeeOnce', () => {
       destination: {
         fee: 2_000n,
         feeType: 'dryRun',
-        currency: 'GLMR'
-      },
-      assetHub: undefined,
-      bridgeHub: undefined
+        asset: { symbol: 'GLMR' }
+      }
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -916,7 +770,7 @@ describe('getXcmFeeOnce', () => {
 
   it('handles case with no hops and traversal reaches destination successfully', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -933,11 +787,9 @@ describe('getXcmFeeOnce', () => {
       destination: {
         fee: 2_000n,
         feeType: 'dryRun',
-        currency: 'GLMR',
+        asset: { symbol: 'GLMR' },
         sufficient: true
-      },
-      assetHub: undefined,
-      bridgeHub: undefined
+      }
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -948,13 +800,13 @@ describe('getXcmFeeOnce', () => {
       fee: 2_000n,
       feeType: 'dryRun',
       sufficient: true,
-      currency: 'GLMR'
+      asset: { symbol: 'GLMR' }
     })
   })
 
   it('handles convertToFeeDetail with all optional fields', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -972,22 +824,14 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: undefined,
             feeType: undefined,
-            currency: 'DOT',
+            asset: { symbol: 'DOT' },
             sufficient: false,
             dryRunError: 'Some error'
           }
         }
       ],
       lastProcessedChain: 'AssetHubPolkadot',
-      destination: undefined,
-      assetHub: {
-        fee: undefined,
-        feeType: undefined,
-        currency: 'DOT',
-        sufficient: false,
-        dryRunError: 'Some error'
-      },
-      bridgeHub: undefined
+      destination: undefined
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -999,12 +843,7 @@ describe('getXcmFeeOnce', () => {
     const res = await getXcmFeeOnce(createOptions())
 
     expect(res.hops[0].result).toEqual({
-      currency: 'DOT',
-      sufficient: false,
-      dryRunError: 'Some error'
-    })
-    expect(res.assetHub).toEqual({
-      currency: 'DOT',
+      asset: { symbol: 'DOT' },
       sufficient: false,
       dryRunError: 'Some error'
     })
@@ -1024,7 +863,7 @@ describe('getXcmFeeOnce', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -1064,13 +903,10 @@ describe('getXcmFeeOnce', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
-      symbol: 'ACA'
-    } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'Acala') return 'ACA'
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      return 'GLMR'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
+      if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'GLMR' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -1089,20 +925,11 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 2_000n,
             feeType: 'dryRun',
-            currency: 'DOT',
             dryRunError: 'Failed at AssetHub'
           }
         }
       ],
-      lastProcessedChain: 'AssetHubPolkadot',
-      destination: undefined,
-      assetHub: {
-        fee: 2_000n,
-        feeType: 'dryRun',
-        currency: 'DOT',
-        dryRunError: 'Failed at AssetHub'
-      },
-      bridgeHub: undefined
+      lastProcessedChain: 'AssetHubPolkadot'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -1122,9 +949,8 @@ describe('getXcmFeeOnce', () => {
       fee: 1_000n,
       feeType: 'paymentInfo',
       sufficient: false,
-      currency: 'GLMR',
       asset: {
-        symbol: 'ACA'
+        symbol: 'GLMR'
       }
     })
   })
@@ -1132,7 +958,7 @@ describe('getXcmFeeOnce', () => {
   it('covers processHop currency logic: destination equals currentChain', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'MAPPED_ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -1164,9 +990,7 @@ describe('getXcmFeeOnce', () => {
           }
         ],
         lastProcessedChain: 'Moonbeam',
-        destination: hopResult,
-        assetHub: undefined,
-        bridgeHub: undefined
+        destination: hopResult
       }
     })
 
@@ -1188,7 +1012,7 @@ describe('getXcmFeeOnce', () => {
   it('covers processHop currency logic: hasPassedExchange with swapConfig', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'USDT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -1220,9 +1044,7 @@ describe('getXcmFeeOnce', () => {
           }
         ],
         lastProcessedChain: 'Moonbeam',
-        destination: hopResult,
-        assetHub: undefined,
-        bridgeHub: undefined
+        destination: hopResult
       }
     })
 
@@ -1249,9 +1071,9 @@ describe('getXcmFeeOnce', () => {
 
   it('test bridgeHub fee update when fees differ', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
-      if (chain === 'BridgeHubPolkadot') return 'DOT'
-      return 'ACA'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
+      return { symbol: 'ACA' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
@@ -1266,7 +1088,7 @@ describe('getXcmFeeOnce', () => {
     const originalBridgeHubResult = {
       fee: 2_000n,
       feeType: 'paymentInfo' as const,
-      currency: 'DOT'
+      asset: { symbol: 'DOT' }
     }
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -1277,28 +1099,24 @@ describe('getXcmFeeOnce', () => {
         }
       ],
       lastProcessedChain: 'BridgeHubPolkadot',
-      destination: undefined,
-      assetHub: undefined,
       bridgeHub: originalBridgeHubResult
     })
 
     const updatedBridgeHubResult = {
       fee: 5_000n,
       feeType: 'paymentInfo' as const,
-      currency: 'DOT'
+      asset: { symbol: 'DOT' }
     }
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(updatedBridgeHubResult)
 
     const res = await getXcmFeeOnce(createOptions())
 
     expect(res.hops[0].result.fee).toBe(5_000n)
-    expect(res.bridgeHub?.fee).toBe(5_000n)
   })
 
   it('handles processHop currency logic: Ethereum destination with AssetHub hop', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
@@ -1323,11 +1141,13 @@ describe('getXcmFeeOnce', () => {
       } as HopProcessParams<unknown, unknown>)
 
       return {
-        hops: [],
-        lastProcessedChain: 'AssetHubPolkadot',
-        destination: undefined,
-        assetHub: hopResult,
-        bridgeHub: undefined
+        hops: [
+          {
+            chain: 'AssetHubPolkadot',
+            result: hopResult
+          }
+        ],
+        lastProcessedChain: 'AssetHubPolkadot'
       }
     })
 
@@ -1340,6 +1160,6 @@ describe('getXcmFeeOnce', () => {
 
     await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith('Ethereum')
+    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum')
   })
 })

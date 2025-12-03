@@ -67,7 +67,7 @@ export const getTransferInfo = async <TApi, TRes>({
     const edOrigin = getExistentialDepositOrThrow(origin, currency)
 
     const {
-      origin: { fee: originFee, currency: originFeeCurrency, asset: originFeeAsset },
+      origin: { fee: originFee, asset: originFeeAsset },
       assetHub: assetHubFeeResult,
       bridgeHub: bridgeHubFeeResult,
       destination: destFeeDetail,
@@ -104,7 +104,7 @@ export const getTransferInfo = async <TApi, TRes>({
       assetHub = await buildHopInfo({
         api,
         chain: `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain,
-        feeData: assetHubFeeResult as { fee: bigint; currency: string },
+        fee: assetHubFeeResult.fee,
         originChain: origin,
         currency,
         asset: assetHubFeeResult.asset,
@@ -119,7 +119,7 @@ export const getTransferInfo = async <TApi, TRes>({
       bridgeHub = await buildHopInfo({
         api,
         chain: bridgeHubChain,
-        feeData: bridgeHubFeeResult as { fee: bigint; currency: string },
+        fee: bridgeHubFeeResult.fee,
         originChain: origin,
         currency,
         asset: bridgeHubFeeResult.asset,
@@ -136,7 +136,7 @@ export const getTransferInfo = async <TApi, TRes>({
           const result = await buildHopInfo({
             api,
             chain: hop.chain as TSubstrateChain,
-            feeData: hop.result as { fee: bigint; currency: string },
+            fee: hop.result.fee,
             originChain: origin,
             currency,
             asset: hop.result.asset,
@@ -183,16 +183,13 @@ export const getTransferInfo = async <TApi, TRes>({
           sufficient: originBalanceSufficient,
           balance: originBalance,
           balanceAfter: originBalanceAfter,
-          currencySymbol: originAsset.symbol,
-          asset: originAsset,
-          existentialDeposit: edOrigin
+          asset: originAsset
         },
         xcmFee: {
           sufficient: originBalanceNativeSufficient,
           fee: originFee,
           balance: originBalanceFee,
           balanceAfter: originBalanceFeeAfter,
-          currencySymbol: originFeeCurrency,
           asset: originFeeAsset
         }
       },

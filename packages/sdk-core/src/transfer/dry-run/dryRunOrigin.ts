@@ -13,15 +13,7 @@ export const dryRunOrigin = async <TApi, TRes>(
 
   await api.init(chain, DRY_RUN_CLIENT_TIMEOUT_MS)
   try {
-    const result = await api.getDryRunCall(options)
-    if (result.success) {
-      return {
-        ...result,
-        currency: getNativeAssetSymbol(chain)
-      }
-    } else {
-      return result
-    }
+    return await api.getDryRunCall(options)
   } finally {
     await api.disconnect()
   }

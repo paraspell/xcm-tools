@@ -69,8 +69,7 @@ describe('computeAllFees', () => {
     const feeDetail: TXcmFeeDetail = {
       fee: 0n,
       feeType: 'dryRun',
-      asset: context.assetInfo,
-      currency: 'DOT'
+      asset: context.assetInfo
     }
 
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
@@ -108,8 +107,7 @@ describe('computeAllFees', () => {
     const feeDetail: TXcmFeeDetail = {
       fee: 0n,
       feeType: 'dryRun',
-      asset: context.assetInfo,
-      currency: 'DOT'
+      asset: context.assetInfo
     }
 
     vi.mocked(getXcmFeeInternal).mockResolvedValue({

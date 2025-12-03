@@ -1,5 +1,9 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol
+} from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -56,6 +60,7 @@ describe('getXcmFeeEstimate', () => {
 
   it('returns bridge constants polkadot → kusama with sufficiency checks', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
@@ -72,11 +77,10 @@ describe('getXcmFeeEstimate', () => {
     expect(res).toEqual({
       origin: {
         fee: 682_395_810n,
-        currency: 'DOT',
         asset: { symbol: 'DOT', decimals: 10 },
         sufficient: true
       },
-      destination: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true }
+      destination: { fee: 12_016_807_000n, asset: { symbol: 'KSM' }, sufficient: true }
     })
 
     expect(isSufficientOrigin).toHaveBeenCalledWith(
@@ -101,6 +105,7 @@ describe('getXcmFeeEstimate', () => {
 
   it('returns bridge constants kusama → polkadot with sufficiency checks', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'KSM' } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
@@ -117,13 +122,12 @@ describe('getXcmFeeEstimate', () => {
     expect(res).toEqual({
       origin: {
         fee: 12_016_807_000n,
-        currency: 'KSM',
         asset: {
           symbol: 'KSM'
         },
         sufficient: true
       },
-      destination: { fee: 682_395_810n, currency: 'DOT', sufficient: true }
+      destination: { fee: 682_395_810n, asset: { symbol: 'DOT' }, sufficient: true }
     })
 
     expect(isSufficientOrigin).toHaveBeenCalledWith(
@@ -150,18 +154,17 @@ describe('getXcmFeeEstimate', () => {
     const rawOrigin = 1000n
     const rawDest = 2000n
 
+    const unitAsset = { symbol: 'UNIT', decimals: 12 } as TAssetInfo
+
     vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({
       fee: rawOrigin,
-      currency: 'UNIT',
-      asset: {
-        symbol: 'UNIT',
-        decimals: 12
-      } as TAssetInfo,
+      asset: unitAsset,
       sufficient: true
     })
     vi.mocked(padFee).mockImplementationOnce(() => 2600n)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ABC' } as TAssetInfo)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('UNIT')
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(unitAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue(unitAsset.symbol)
     vi.mocked(getReverseTxFee).mockResolvedValue(rawDest)
 
     const { api, destApi } = makeApi(rawOrigin, rawDest)
@@ -188,11 +191,10 @@ describe('getXcmFeeEstimate', () => {
     expect(res).toEqual({
       origin: {
         fee: rawOrigin,
-        currency: 'UNIT',
-        asset: { symbol: 'UNIT', decimals: 12 },
+        asset: unitAsset,
         sufficient: true
       },
-      destination: { fee: rawDest, currency: 'UNIT', sufficient: true }
+      destination: { fee: rawDest, asset: unitAsset, sufficient: true }
     })
 
     expect(getOriginXcmFeeEstimate).toHaveBeenCalledWith({

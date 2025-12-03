@@ -56,7 +56,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
     return {
       fee: paddedFee,
-      currency: nativeAssetSymbol,
       asset: resolvedFeeAsset ?? asset,
       feeType: 'paymentInfo',
       sufficient
@@ -82,7 +81,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
       return {
         dryRunError: dryRunResult.failureReason,
         dryRunSubError: dryRunResult.failureSubReason,
-        currency: dryRunResult.currency,
         asset: dryRunResult.asset
       }
     }
@@ -92,7 +90,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
     return {
       fee: paddedFee,
-      currency: dryRunResult.currency,
       asset: dryRunResult.asset,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
@@ -107,7 +104,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
     fee,
     feeType: 'dryRun',
     sufficient: true,
-    currency: dryRunResult.currency,
     asset: dryRunResult.asset,
     forwardedXcms,
     destParaId,
