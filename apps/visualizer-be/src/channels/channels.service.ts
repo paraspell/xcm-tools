@@ -129,7 +129,7 @@ export class ChannelService {
         AND ch.status = 'accepted'
         AND (ch.sender = $2 AND ch.recipient = $3)
       GROUP BY
-        ch.sender, ch.recipient, ch.id, ch.status, ch.active_at;
+        ch.sender, ch.recipient, ch.id, ch.status;
     `;
 
     const result = await this.channelRepository.query<
