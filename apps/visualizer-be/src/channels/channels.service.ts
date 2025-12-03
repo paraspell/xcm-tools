@@ -64,26 +64,26 @@ export class ChannelService {
     endTime: number,
   ): Promise<Partial<Channel>[]> {
     const query = `
-      SELECT 
+      SELECT
         LEAST(ch.sender, ch.recipient) AS "senderId",
         GREATEST(ch.sender, ch.recipient) AS "recipientId",
         COUNT(msg.message_hash)       AS "totalCount",
         MIN(ch.id)                    AS "id",
         $1::text                      AS "ecosystem"
       FROM channels ch
-      JOIN messages msg ON 
-        msg.ecosystem = $1 AND 
+      JOIN messages msg ON
+        msg.ecosystem = $1 AND
         (
-          (msg.origin_para_id = ch.sender AND msg.dest_para_id = ch.recipient) OR 
+          (msg.origin_para_id = ch.sender AND msg.dest_para_id = ch.recipient) OR
           (msg.origin_para_id = ch.recipient AND msg.dest_para_id = ch.sender)
         )
         AND msg.origin_block_timestamp >= $2
         AND msg.origin_block_timestamp <= $3
-      WHERE 
+      WHERE
         ch.ecosystem = $1
         AND ch.status = 'accepted'
         AND ch.active_at <= $3
-      GROUP BY 
+      GROUP BY
         LEAST(ch.sender, ch.recipient),
         GREATEST(ch.sender, ch.recipient),
         $1::text
@@ -113,23 +113,23 @@ export class ChannelService {
     recipient: number,
   ): Promise<Partial<Channel>> {
     const query = `
-      SELECT 
+      SELECT
         ch.sender AS "senderId",
         ch.recipient AS "recipientId",
         ch.active_at AS "active_at",
         COUNT(msg.message_hash) AS "totalCount",
         ch.id AS "id",
         ch.status AS "status"
-      FROM 
+      FROM
         channels ch
-      LEFT JOIN 
+      LEFT JOIN
         messages msg ON (msg.origin_para_id = ch.sender AND msg.dest_para_id = ch.recipient)
-      WHERE 
+      WHERE
         ch.ecosystem = $1
         AND ch.status = 'accepted'
         AND (ch.sender = $2 AND ch.recipient = $3)
-      GROUP BY 
-        ch.sender, ch.recipient, ch.id, ch.status;
+      GROUP BY
+        ch.sender, ch.recipient, ch.id, ch.status, ch.active_at;
     `;
 
     const result = await this.channelRepository.query<
