@@ -4,18 +4,20 @@ import { describe, expect, it } from 'vitest'
 import type { TDryRunChainResult, TDryRunResult, THopInfo } from '../../types'
 import { getFailureInfo } from './getFailureInfo'
 
-const makeSuccessResult = (currency: string): TDryRunChainResult => ({
+const makeSuccessResult = (symbol: string): TDryRunChainResult => ({
   success: true,
   fee: 1n,
-  currency,
-  asset: {} as TAssetInfo,
+  asset: {
+    symbol
+  } as TAssetInfo,
   forwardedXcms: []
 })
 
-const makeFailureResult = (currency: string, failureReason: string): TDryRunChainResult => ({
+const makeFailureResult = (symbol: string, failureReason: string): TDryRunChainResult => ({
   success: false,
-  currency,
-  asset: {} as TAssetInfo,
+  asset: {
+    symbol
+  } as TAssetInfo,
   failureReason
 })
 

@@ -27,7 +27,6 @@ describe('dryRun', () => {
         fee: 1000n,
         forwardedXcms: [],
         destParaId: 0,
-        currency: 'DOT',
         asset: {
           symbol: 'DOT',
           decimals: 10

@@ -10,17 +10,12 @@ export type THopTransferInfo = {
   chain: TChain
   result: {
     xcmFee: TXcmFeeBase
-    existentialDeposit: bigint
-    /** @deprecated use `asset` property instead */
-    currencySymbol: string
     asset: TAssetInfo
   }
 }
 
 export type TXcmFeeBase = {
   fee: bigint
-  /** @deprecated use `asset` property instead */
-  currencySymbol: string
   asset: TAssetInfo
 }
 
@@ -31,10 +26,7 @@ export type TTransferInfo = {
       sufficient: boolean
       balance: bigint
       balanceAfter: bigint
-      /** @deprecated use `asset` property instead */
-      currencySymbol: string
       asset: TAssetInfo
-      existentialDeposit: bigint
     }
     xcmFee: TXcmFeeBase & {
       sufficient: boolean
@@ -43,15 +35,10 @@ export type TTransferInfo = {
     }
   }
   assetHub?: {
-    /** @deprecated use `asset` property instead */
-    currencySymbol: string
     asset: TAssetInfo
-    existentialDeposit: bigint
     xcmFee: TXcmFeeBase
   }
   bridgeHub?: {
-    /** @deprecated use `asset` property instead */
-    currencySymbol: string
     asset: TAssetInfo
     xcmFee: TXcmFeeBase
   }
@@ -62,10 +49,7 @@ export type TTransferInfo = {
       receivedAmount: bigint | UnableToComputeError
       balance: bigint
       balanceAfter: bigint | UnableToComputeError
-      /** @deprecated use `asset` property instead */
-      currencySymbol: string
       asset: TAssetInfo
-      existentialDeposit: bigint
     }
     xcmFee: TXcmFeeBase & {
       balanceAfter: bigint | UnableToComputeError
@@ -76,10 +60,7 @@ export type TTransferInfo = {
 export type BuildHopInfoOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   chain: TSubstrateChain
-  feeData: {
-    fee: bigint
-    currency: string
-  }
+  fee: bigint
   originChain: TSubstrateChain
   currency: TCurrencyCore
   asset: TAssetInfo

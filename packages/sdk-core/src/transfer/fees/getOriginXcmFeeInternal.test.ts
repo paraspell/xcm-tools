@@ -52,7 +52,6 @@ describe('getOriginXcmFeeInternal', () => {
 
     expect(res).toEqual({
       fee: 150n,
-      currency: mockSymbol,
       asset: mockAsset,
       feeType: 'paymentInfo',
       sufficient: true
@@ -79,7 +78,6 @@ describe('getOriginXcmFeeInternal', () => {
     vi.spyOn(api, 'getDryRunCall').mockResolvedValue({
       success: true,
       fee: 200n,
-      currency: 'DOT',
       asset: mockAsset,
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 42
@@ -99,7 +97,6 @@ describe('getOriginXcmFeeInternal', () => {
 
     expect(res).toEqual({
       fee: 200n,
-      currency: 'DOT',
       asset: mockAsset,
       feeType: 'dryRun',
       sufficient: true,
@@ -119,7 +116,6 @@ describe('getOriginXcmFeeInternal', () => {
     vi.spyOn(api, 'getDryRunCall').mockResolvedValue({
       success: false,
       failureReason: 'boom',
-      currency: 'DOT',
       asset: mockAsset
     })
 
@@ -135,7 +131,7 @@ describe('getOriginXcmFeeInternal', () => {
       disableFallback: true
     })
 
-    expect(res).toEqual({ dryRunError: 'boom', currency: 'DOT', asset: mockAsset })
+    expect(res).toEqual({ dryRunError: 'boom', asset: mockAsset })
     expect('fee' in res).toBe(false)
     expect(feeCalcSpy).not.toHaveBeenCalled()
     expect(isSufficientOrigin).not.toHaveBeenCalled()
@@ -149,7 +145,6 @@ describe('getOriginXcmFeeInternal', () => {
     vi.spyOn(api, 'getDryRunCall').mockResolvedValue({
       success: false,
       failureReason: 'fail',
-      currency: 'DOT',
       asset: mockAsset
     })
 
@@ -169,7 +164,6 @@ describe('getOriginXcmFeeInternal', () => {
 
     expect(res).toEqual({
       fee: 999n,
-      currency: 'DOT',
       asset: mockAsset,
       feeType: 'paymentInfo',
       dryRunError: 'fail',

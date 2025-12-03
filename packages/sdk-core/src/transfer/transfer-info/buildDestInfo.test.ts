@@ -30,7 +30,7 @@ describe('buildDestInfo', () => {
   const DEFAULT_AMOUNT = 20000000000n
   const LOCATION: TLocation = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 
-  const asset = {
+  const glmrAsset = {
     symbol: 'GLMR',
     assetId: 'glmrid',
     decimals: 18,
@@ -50,7 +50,7 @@ describe('buildDestInfo', () => {
       clone: vi.fn().mockReturnValue(mockClonedApi)
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(glmrAsset)
 
     baseOptions = {
       api: mockApi,
@@ -62,10 +62,7 @@ describe('buildDestInfo', () => {
       isFeeAssetAh: false,
       destFeeDetail: {
         fee: DEFAULT_FEE,
-        currency: 'GLMR',
-        asset: {
-          symbol: 'GLMR'
-        }
+        asset: glmrAsset
       } as TXcmFeeDetail,
       totalHopFee: 0n,
       bridgeFee: undefined
@@ -102,12 +99,11 @@ describe('buildDestInfo', () => {
       api: mockClonedApi,
       address: options.address,
       chain: options.destination,
-      asset
+      asset: glmrAsset
     })
 
-    expect(result.receivedCurrency.currencySymbol).toBe('GLMR')
+    expect(result.receivedCurrency.asset).toBe(glmrAsset)
     expect(result.receivedCurrency.balance).toBe(DEFAULT_BALANCE)
-    expect(result.receivedCurrency.existentialDeposit).toBe(BigInt(DEFAULT_ED))
     expect(result.receivedCurrency.sufficient).toBe(true)
     const expectedReceived = DEFAULT_AMOUNT - DEFAULT_FEE
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
@@ -115,7 +111,7 @@ describe('buildDestInfo', () => {
       DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT)
     )
 
-    expect(result.xcmFee.currencySymbol).toBe('GLMR')
+    expect(result.xcmFee.asset).toBe(glmrAsset)
     expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
@@ -128,7 +124,6 @@ describe('buildDestInfo', () => {
       destFeeDetail: {
         fee: DEFAULT_FEE,
         feeType: 'paymentInfo',
-        currency: 'OTHER',
         asset: { symbol: 'OTHER' }
       } as TXcmFeeDetail
     }
@@ -173,7 +168,6 @@ describe('buildDestInfo', () => {
         totalHopFee: 0n,
         destFeeDetail: {
           fee: DEFAULT_FEE,
-          currency: 'DOT',
           asset: { symbol: 'DOT' }
         } as TXcmFeeDetail,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
@@ -201,7 +195,6 @@ describe('buildDestInfo', () => {
         api: mockApi,
         destFeeDetail: {
           fee: DEFAULT_FEE,
-          currency: 'DOT',
           asset: { symbol: 'DOT' }
         } as TXcmFeeDetail,
         totalHopFee: 0n,
@@ -233,7 +226,6 @@ describe('buildDestInfo', () => {
         api: mockApi,
         destFeeDetail: {
           fee: DEFAULT_FEE,
-          currency: 'USDT',
           asset: { symbol: 'USDT' }
         } as TXcmFeeDetail,
         totalHopFee: 0n,
@@ -261,7 +253,6 @@ describe('buildDestInfo', () => {
       api: mockApi,
       destFeeDetail: {
         fee: DEFAULT_FEE,
-        currency: 'USDT',
         asset: { symbol: 'USDT' }
       } as TXcmFeeDetail,
       currency: {
@@ -315,7 +306,6 @@ describe('buildDestInfo', () => {
       isFeeAssetAh: true,
       destFeeDetail: {
         fee: DEFAULT_FEE,
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' }
       } as TXcmFeeDetail
     }
@@ -335,7 +325,6 @@ describe('buildDestInfo', () => {
       isFeeAssetAh: false,
       destFeeDetail: {
         fee: DEFAULT_FEE,
-        currency: 'SOME_OTHER_FEE_TOKEN',
         asset: {
           symbol: 'SOME_OTHER_FEE_TOKEN'
         }

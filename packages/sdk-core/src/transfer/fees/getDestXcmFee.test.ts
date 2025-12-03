@@ -60,7 +60,6 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -106,7 +105,6 @@ describe('getDestXcmFee', () => {
       fee: 0n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -151,7 +149,6 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -198,7 +195,6 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -210,7 +206,6 @@ describe('getDestXcmFee', () => {
       fee: 200n,
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320,
-      currency: 'DOT',
       asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
     }
     const api = createApi(dryRunObj)
@@ -234,8 +229,7 @@ describe('getDestXcmFee', () => {
       sufficient: true,
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320,
-      asset: { symbol: 'UNIT' },
-      currency: 'UNIT'
+      asset: { symbol: 'UNIT' }
     })
     expect(isSufficientDestination).not.toHaveBeenCalled()
   })
@@ -245,7 +239,6 @@ describe('getDestXcmFee', () => {
     const api = createApi({
       success: false,
       failureReason: 'fail',
-      currency: 'DOT',
       asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
     })
 
@@ -272,7 +265,6 @@ describe('getDestXcmFee', () => {
       feeType: 'paymentInfo',
       dryRunError: 'fail',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: false
     })
   })
@@ -282,7 +274,6 @@ describe('getDestXcmFee', () => {
     const api = createApi({
       success: false,
       failureReason: 'boom',
-      currency: 'DOT',
       asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo
     })
 
@@ -342,7 +333,6 @@ describe('getDestXcmFee', () => {
       fee: 321n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -386,7 +376,6 @@ describe('getDestXcmFee', () => {
       fee: 777n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
   })
@@ -412,7 +401,6 @@ describe('getDestXcmFee', () => {
       fee: 0n,
       feeType: 'paymentInfo',
       asset: { symbol: 'UNIT' },
-      currency: 'UNIT',
       sufficient: true
     })
     expect(getReverseTxFee).not.toHaveBeenCalled()

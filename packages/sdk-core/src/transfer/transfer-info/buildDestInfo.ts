@@ -117,15 +117,12 @@ export const buildDestInfo = async <TApi, TRes>({
       receivedAmount,
       balance: destBalance,
       balanceAfter: destbalanceAfterResult,
-      currencySymbol: destAsset.symbol,
-      asset: destAsset,
-      existentialDeposit: edDest
+      asset: destAsset
     },
     xcmFee: {
       fee: destFeeDetail.fee as bigint,
       balance: destXcmFeeBalance,
       balanceAfter: destXcmFeeBalanceAfter,
-      currencySymbol: destFeeDetail.asset.symbol,
       asset: destFeeDetail.asset
     }
   }

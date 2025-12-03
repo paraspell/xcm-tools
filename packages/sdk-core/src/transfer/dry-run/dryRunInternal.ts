@@ -5,7 +5,6 @@ import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol,
   hasDryRunSupport
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -109,7 +108,6 @@ export const dryRunInternal = async <TApi, TRes>(
     if (!hasDryRunSupport(currentChain)) {
       return {
         success: false,
-        currency: currentAsset.symbol,
         asset: currentAsset,
         failureReason: `DryRunApi is not available on chain ${currentChain}`
       }
@@ -130,7 +128,7 @@ export const dryRunInternal = async <TApi, TRes>(
       amount
     })
 
-    return { ...hopDryRun, currency: hopAsset.symbol, asset: hopAsset }
+    return { ...hopDryRun, asset: hopAsset }
   }
 
   const traversalResult = await traverseXcmHops({
@@ -180,7 +178,6 @@ export const dryRunInternal = async <TApi, TRes>(
   const bridgeHubWithCurrency = processedBridgeHub?.success
     ? {
         ...processedBridgeHub,
-        currency: getNativeAssetSymbol(bridgeHubChain),
         asset: findNativeAssetInfoOrThrow(bridgeHubChain)
       }
     : processedBridgeHub
