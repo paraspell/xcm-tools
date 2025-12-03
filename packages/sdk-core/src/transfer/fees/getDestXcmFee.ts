@@ -111,8 +111,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       fee,
       feeType: 'paymentInfo',
       sufficient,
-      asset,
-      currency: asset.symbol
+      asset
     }
   }
 
@@ -144,8 +143,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
       dryRunError: dryRunResult.failureReason,
       dryRunSubError: dryRunResult.failureSubReason,
       sufficient: false,
-      asset,
-      currency: asset.symbol
+      asset
     }
   }
 
@@ -157,7 +155,6 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     sufficient: true,
     forwardedXcms: newForwardedXcms,
     destParaId,
-    asset,
-    currency: asset.symbol
+    asset
   }
 }

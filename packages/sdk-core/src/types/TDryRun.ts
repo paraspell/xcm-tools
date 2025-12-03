@@ -93,8 +93,6 @@ export type TDryRunXcmBaseOptions<TRes> = {
 export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions<TRes>, TApi, TRes>
 
 export type TDryRunResBase = {
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
 }
 

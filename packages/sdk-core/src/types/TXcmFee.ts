@@ -125,8 +125,6 @@ export type THubKey = 'assetHub' | 'bridgeHub'
 export type TFeeType = 'dryRun' | 'paymentInfo' | 'noFeeRequired'
 
 type TXcmFeeBase = {
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
   weight?: TWeight
   sufficient?: boolean
@@ -158,8 +156,6 @@ export type TXcmFeeHopResult = {
   dryRunSubError?: string
   forwardedXcms?: any
   destParaId?: number
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
 }
 
@@ -196,8 +192,6 @@ export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
 
 export type TGetXcmFeeEstimateDetail = {
   fee: bigint
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
   sufficient?: boolean
 }

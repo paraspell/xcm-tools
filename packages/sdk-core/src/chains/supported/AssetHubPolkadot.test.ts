@@ -271,7 +271,7 @@ describe('AssetHubPolkadot', () => {
       expect(handleMythosTransferSpy).toHaveBeenCalledWith(mockInput)
     })
 
-    it('should modify input for USDT currencySymbol', async () => {
+    it('should modify input for USDT currency symbol', async () => {
       mockInput.assetInfo = {
         symbol: 'USDT',
         amount: 1000n,

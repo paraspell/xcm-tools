@@ -28,7 +28,6 @@ describe('getOriginXcmFee', () => {
     const forced = {
       fee: 1n,
       feeType: 'dryRun',
-      currency: 'DOT',
       sufficient: true,
       forwardedXcms: [],
       destParaId: 2000
@@ -37,7 +36,6 @@ describe('getOriginXcmFee', () => {
     const real = {
       fee: 0n,
       feeType: 'dryRun',
-      currency: 'DOT',
       sufficient: false
     } as TXcmFeeDetail
 
@@ -72,14 +70,12 @@ describe('getOriginXcmFee', () => {
     const forced = {
       fee: 1n,
       feeType: 'dryRun',
-      currency: 'DOT',
       sufficient: true
     } as TXcmFeeDetail
 
     const real = {
       fee: 0n,
-      feeType: 'dryRun',
-      currency: 'DOT'
+      feeType: 'dryRun'
     } as TXcmFeeDetail
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValueOnce(real)
@@ -109,7 +105,7 @@ describe('getOriginXcmFee', () => {
     const forced = {
       fee: 5n,
       feeType: 'dryRun',
-      currency: 'DOT',
+      asset: { symbol: 'DOT' },
       sufficient: true
     } as TXcmFeeDetail
 
@@ -123,6 +119,6 @@ describe('getOriginXcmFee', () => {
 
     expect(res.sufficient).toBe(false)
     expect(res.fee).toBe(5n)
-    expect(res.currency).toEqual('DOT')
+    expect(res.asset.symbol).toEqual('DOT')
   })
 })

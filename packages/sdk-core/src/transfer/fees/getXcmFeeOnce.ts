@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol
-} from '@paraspell/assets'
+import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -153,7 +149,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
           sufficient: sufficientOriginFee,
-          currency: originAsset.symbol,
           asset: originAsset,
           ...(originDryRunError && { dryRunError: originDryRunError }),
           ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
@@ -162,7 +157,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
-          currency: getNativeAssetSymbol(destination),
           asset: findNativeAssetInfoOrThrow(destination)
         } as TXcmFeeDetail,
         hops: []
@@ -252,7 +246,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
 
   // Handle case where we failed before reaching destination
   let destFee: bigint | undefined = 0n
-  let destCurrency: string | undefined
   let destAsset: TAssetInfo | undefined
   let destFeeType: TFeeType | undefined =
     destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
@@ -267,7 +260,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
     destDryRunError = destResult.dryRunError
     destDryRunSubError = destResult.dryRunSubError
     destSufficient = destResult.sufficient
-    destCurrency = destResult.currency
     destAsset = destResult.asset
   } else if (
     traversalResult.hops.length > 0 &&
@@ -301,13 +293,11 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
     destFee = destFallback.fee
     destFeeType = destFallback.feeType
     destSufficient = destFallback.sufficient
-    destCurrency = getNativeAssetSymbol(destination)
     destAsset = findNativeAssetInfoOrThrow(destination)
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'
     destSufficient = true
-    destCurrency = getNativeAssetSymbol(destination)
     destAsset = findNativeAssetInfoOrThrow(destination)
   }
 
@@ -339,7 +329,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
       ...(result.fee !== undefined && { fee: result.fee }),
       ...(result.feeType && { feeType: result.feeType }),
       ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
-      currency: result.currency,
       asset: result.asset,
       ...(result.dryRunError && { dryRunError: result.dryRunError }),
       ...(result.dryRunSubError && { dryRunSubError: result.dryRunSubError })
@@ -351,7 +340,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
       ...(originFee && { fee: originFee }),
       ...(originFeeType && { feeType: originFeeType }),
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
-      currency: originAsset.symbol,
       asset: originAsset,
       ...(originDryRunError && { dryRunError: originDryRunError }),
       ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
@@ -362,7 +350,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
       ...(destFee !== undefined && { fee: destFee }),
       ...(destFeeType && { feeType: destFeeType }),
       sufficient: destSufficient,
-      currency: destCurrency,
       asset: destAsset,
       ...(destDryRunError && { dryRunError: destDryRunError }),
       ...(destDryRunSubError && { dryRunSubError: destDryRunSubError })
