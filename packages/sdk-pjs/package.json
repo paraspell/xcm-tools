@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-pjs",
-  "version": "11.14.8",
+  "version": "11.14.9",
   "description": "Polkadot.js based SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
