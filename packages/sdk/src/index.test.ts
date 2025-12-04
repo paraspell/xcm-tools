@@ -16,7 +16,6 @@ describe('Index Exports', () => {
           'getBalanceForeign',
           'getAssetBalance',
           'claimAssets',
-          'getOriginFeeDetails',
           'Builder',
           'GeneralBuilder',
           'EvmBuilder',
@@ -53,7 +52,6 @@ describe('Index Exports', () => {
     expect(moduleExports.getBalanceForeign).toBeDefined()
     expect(moduleExports.getAssetBalance).toBeDefined()
     expect(moduleExports.claimAssets).toBeDefined()
-    expect(moduleExports.getOriginFeeDetails).toBeDefined()
   })
 
   it('should export builder classes', () => {

@@ -11,6 +11,13 @@ import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 const BRIDGE_FEE_DOT = 682_395_810n // 0.068239581 DOT
 const BRIDGE_FEE_KSM = 12_016_807_000n // 0.012016807 KSM
 
+/**
+ * @deprecated This function is deprecated and will be removed in a future version.
+ * Please use `builder.getXcmFee()` instead, where `builder` is an instance of `Builder()`.
+ * Will be removed in v13.
+ * For more details, see the documentation:
+ * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
+ */
 export const getXcmFeeEstimate = async <TApi, TRes>(
   options: TGetXcmFeeEstimateOptions<TApi, TRes>
 ): Promise<TGetXcmFeeEstimateResult> => {

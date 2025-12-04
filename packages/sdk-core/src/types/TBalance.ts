@@ -1,10 +1,4 @@
-import type {
-  TAssetInfo,
-  TCurrencyCore,
-  TCurrencyInput,
-  WithAmount,
-  WithComplexAmount
-} from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
@@ -103,43 +97,6 @@ export type TGetBalanceOptionsBase = TGetBalanceCommonOptions & {
 
 export type TGetBalanceOptions<TApi, TRes> = WithApi<TGetBalanceOptionsBase, TApi, TRes>
 export type TGetAssetBalanceOptions<TApi, TRes> = WithApi<TGetAssetBalanceOptionsBase, TApi, TRes>
-
-export type TGetOriginFeeDetailsOptionsBase = {
-  /**
-   * The origin chain.
-   */
-  origin: TSubstrateChain
-  /**
-   * The destination chain.
-   */
-  destination: TChain
-  /**
-   * The currency to transfer.
-   */
-  currency: WithComplexAmount<TCurrencyCore>
-  /**
-   * The origin account.
-   */
-  account: string
-  /**
-   * The destination account.
-   */
-  accountDestination: string
-  /**
-   * The address of the account.
-   */
-  ahAddress?: string
-  /**
-   * The fee margin percentage.
-   */
-  feeMarginPercentage?: number
-}
-
-export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
-  TGetOriginFeeDetailsOptionsBase,
-  TApi,
-  TRes
->
 
 export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
