@@ -9,22 +9,18 @@ import {
   getAssetsObject,
   getFeeAssets,
   getNativeAssets,
-  getOriginFeeDetails,
   getOtherAssets,
   getRelayChainSymbol,
   getSupportedAssets,
   getSupportedDestinations,
   hasSupportForAsset,
-  SUBSTRATE_CHAINS,
   TChain,
-  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetLocationDto } from './dto/AssetLocationDto.js';
 import { FindAssetDto } from './dto/FindAssetDto.js';
-import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 
 @Injectable()
@@ -107,22 +103,6 @@ export class AssetsService {
 
     try {
       return getSupportedDestinations(chain as TChain, currency);
-    } catch (e) {
-      return handleXcmApiError(e);
-    }
-  }
-
-  async getOriginFeeDetails(params: OriginFeeDetailsDto) {
-    const { origin, destination } = params;
-    validateChain(origin, SUBSTRATE_CHAINS);
-    validateChain(destination, CHAINS);
-
-    try {
-      return await getOriginFeeDetails({
-        ...params,
-        origin: origin as TSubstrateChain,
-        destination: destination as TChain,
-      });
     } catch (e) {
       return handleXcmApiError(e);
     }

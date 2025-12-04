@@ -2,8 +2,7 @@ import {
   claimAssets as claimAssetsImpl,
   getBalance as getAssetBalanceImpl,
   getBalance as getBalanceForeignImpl,
-  getBalanceNative as getBalanceNativeImpl,
-  getOriginFeeDetails as getOriginFeeDetailsImpl
+  getBalanceNative as getBalanceNativeImpl
 } from '@paraspell/sdk-core'
 
 import type { TPapiApi, TPapiTransaction } from './types'
@@ -38,17 +37,6 @@ export const getAssetBalance = createPapiApiCall(getAssetBalanceImpl<TPapiApi, T
  * @returns An extrinsic representing the claim transaction.
  */
 export const claimAssets = createPapiApiCall(claimAssetsImpl<TPapiApi, TPapiTransaction>)
-
-/**
- * @deprecated This function is deprecated and will be removed in a future version.
- * Please use `builder.getOriginXcmFee()` or `builder.getOriginXcmFeeEstimate()` instead,
- * where `builder` is an instance of `Builder()`. Will be removed in v12
- * For more details, please refer to the documentation:
- * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
- */
-export const getOriginFeeDetails = createPapiApiCall(
-  getOriginFeeDetailsImpl<TPapiApi, TPapiTransaction>
-)
 
 export {
   findAssetInfo,
