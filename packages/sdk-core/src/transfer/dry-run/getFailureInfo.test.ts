@@ -28,12 +28,7 @@ const makeHop = (chain: THopInfo['chain'], result: TDryRunChainResult): THopInfo
 
 const makeResult = (overrides: Partial<TDryRunResult>): TDryRunResult => ({
   origin: makeSuccessResult('DOT'),
-  destination: undefined,
-  assetHub: undefined,
-  bridgeHub: undefined,
   hops: [],
-  failureChain: undefined,
-  failureReason: undefined,
   ...overrides
 })
 
@@ -50,18 +45,6 @@ describe('getFailureInfo', () => {
     expect(failureInfo.failureReason).toBe('Destination failed')
   })
 
-  it('returns assetHub failure before hops', () => {
-    const failure = makeFailureResult('DOT', 'Asset hub failed')
-    const hop = makeHop('Acala', makeFailureResult('ACA', 'Hop failed'))
-
-    const result = makeResult({ assetHub: failure, hops: [hop] })
-
-    const failureInfo = getFailureInfo(result)
-
-    expect(failureInfo.failureChain).toBe('assetHub')
-    expect(failureInfo.failureReason).toBe('Asset hub failed')
-  })
-
   it('returns hop failure when no chain failure detected', () => {
     const failureHop = makeHop('Astar', makeFailureResult('ASTR', 'Hop failure'))
 
@@ -76,8 +59,6 @@ describe('getFailureInfo', () => {
   it('returns empty object when no failures detected', () => {
     const result = makeResult({
       destination: makeSuccessResult('DOT'),
-      assetHub: makeSuccessResult('DOT'),
-      bridgeHub: makeSuccessResult('DOT'),
       hops: [makeHop('Hydration', makeSuccessResult('DOT'))]
     })
 

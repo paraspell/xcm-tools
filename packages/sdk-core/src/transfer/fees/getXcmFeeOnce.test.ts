@@ -387,7 +387,7 @@ describe('getXcmFeeOnce', () => {
         {
           chain: 'AssetHubPolkadot',
           result: {
-            fee: 3_000n,
+            fee: 3000n,
             feeType: 'dryRun',
             asset: { symbol: 'ACA' },
             sufficient: true
@@ -396,7 +396,7 @@ describe('getXcmFeeOnce', () => {
         {
           chain: 'BridgeHubPolkadot',
           result: {
-            fee: 4_000n,
+            fee: 4000n,
             feeType: 'paymentInfo',
             asset: { symbol: 'DOT' },
             sufficient: false
@@ -428,7 +428,7 @@ describe('getXcmFeeOnce', () => {
       {
         chain: 'BridgeHubPolkadot',
         result: {
-          fee: 4000n,
+          fee: 1000n,
           feeType: 'paymentInfo',
           asset: { symbol: 'DOT' },
           sufficient: false
@@ -1098,8 +1098,7 @@ describe('getXcmFeeOnce', () => {
           result: originalBridgeHubResult
         }
       ],
-      lastProcessedChain: 'BridgeHubPolkadot',
-      bridgeHub: originalBridgeHubResult
+      lastProcessedChain: 'BridgeHubPolkadot'
     })
 
     const updatedBridgeHubResult = {

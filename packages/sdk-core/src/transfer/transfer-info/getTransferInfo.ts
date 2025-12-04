@@ -11,7 +11,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
 import { InvalidParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { abstractDecimals } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
@@ -68,8 +68,6 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const {
       origin: { fee: originFee, asset: originFeeAsset },
-      assetHub: assetHubFeeResult,
-      bridgeHub: bridgeHubFeeResult,
       destination: destFeeDetail,
       hops
     } = await getXcmFeeInternal({
@@ -99,35 +97,6 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const originBalanceSufficient = originBalanceAfter >= edOrigin
 
-    let assetHub
-    if (assetHubFeeResult) {
-      assetHub = await buildHopInfo({
-        api,
-        chain: `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain,
-        fee: assetHubFeeResult.fee,
-        originChain: origin,
-        currency,
-        asset: assetHubFeeResult.asset,
-        senderAddress,
-        ahAddress
-      })
-    }
-
-    let bridgeHub
-    if (bridgeHubFeeResult) {
-      const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-      bridgeHub = await buildHopInfo({
-        api,
-        chain: bridgeHubChain,
-        fee: bridgeHubFeeResult.fee,
-        originChain: origin,
-        currency,
-        asset: bridgeHubFeeResult.asset,
-        senderAddress,
-        ahAddress
-      })
-    }
-
     let builtHops: TTransferInfo['hops'] = []
 
     if (hops && hops.length > 0) {
@@ -156,6 +125,8 @@ export const getTransferInfo = async <TApi, TRes>({
       0n
     )
 
+    const bridgeHop = hops.find(hop => hop.chain.startsWith('BridgeHub'))
+
     const destinationInfo = await buildDestInfo({
       api,
       origin,
@@ -169,7 +140,7 @@ export const getTransferInfo = async <TApi, TRes>({
       isFeeAssetAh: !!isFeeAssetAh,
       destFeeDetail,
       totalHopFee,
-      bridgeFee: bridgeHubFeeResult?.fee
+      bridgeFee: bridgeHop?.result.fee
     })
 
     return {
@@ -193,8 +164,6 @@ export const getTransferInfo = async <TApi, TRes>({
           asset: originFeeAsset
         }
       },
-      assetHub,
-      bridgeHub,
       hops: builtHops,
       destination: destinationInfo
     }

@@ -6,10 +6,10 @@ import { type TSubstrateChain } from '@paraspell/sdk-common'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
   HopProcessParams,
+  TChainEndpoint,
   TFeeType,
   TGetXcmFeeInternalOptions,
   TGetXcmFeeResult,
-  TXcmFeeChain,
   TXcmFeeDetail,
   TXcmFeeHopInfo,
   TXcmFeeHopResult
@@ -22,10 +22,10 @@ import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
 const getFailureInfo = (
-  chains: Partial<Record<TXcmFeeChain, TXcmFeeDetail>>,
+  chains: Partial<Record<TChainEndpoint, TXcmFeeDetail>>,
   hops: TXcmFeeHopInfo[]
 ): {
-  failureChain?: TXcmFeeChain
+  failureChain?: TChainEndpoint
   failureReason?: string
   failureSubReason?: string
 } => {
@@ -35,18 +35,6 @@ const getFailureInfo = (
       failureChain: 'origin',
       failureReason: chains.origin.dryRunError,
       failureSubReason: chains.origin.dryRunSubError
-    }
-  if (chains.assetHub?.dryRunError)
-    return {
-      failureChain: 'assetHub',
-      failureReason: chains.assetHub.dryRunError,
-      failureSubReason: chains.assetHub.dryRunSubError
-    }
-  if (chains.bridgeHub?.dryRunError)
-    return {
-      failureChain: 'bridgeHub',
-      failureReason: chains.bridgeHub.dryRunError,
-      failureSubReason: chains.bridgeHub.dryRunSubError
     }
   if (chains.destination?.dryRunError)
     return {
@@ -59,7 +47,7 @@ const getFailureInfo = (
   for (const hop of hops) {
     if (hop.result.dryRunError) {
       return {
-        failureChain: hop.chain as TXcmFeeChain,
+        failureChain: hop.chain,
         failureReason: hop.result.dryRunError,
         failureSubReason: hop.result.dryRunSubError
       }
@@ -302,18 +290,17 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   }
 
   // Process Ethereum bridge fees
+  const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
   const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
 
+  const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
+
   const processedBridgeHub = isMythosToEthereum
-    ? traversalResult.bridgeHub
-    : await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
+    ? bridgeHubHop?.result
+    : await addEthereumBridgeFees(api, bridgeHubHop?.result, destination, assetHubChain)
 
   // Update bridge hub fee in hops if needed
-  if (
-    processedBridgeHub &&
-    traversalResult.bridgeHub &&
-    processedBridgeHub.fee !== traversalResult.bridgeHub.fee
-  ) {
+  if (processedBridgeHub && bridgeHubHop && processedBridgeHub.fee !== bridgeHubHop.result.fee) {
     const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
     const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1) {
@@ -326,33 +313,31 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
 
   const convertToFeeDetail = (result: TXcmFeeHopResult): TXcmFeeDetail =>
     ({
-      ...(result.fee !== undefined && { fee: result.fee }),
-      ...(result.feeType && { feeType: result.feeType }),
+      fee: result.fee,
+      feeType: result.feeType,
       ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
       asset: result.asset,
-      ...(result.dryRunError && { dryRunError: result.dryRunError }),
-      ...(result.dryRunSubError && { dryRunSubError: result.dryRunSubError })
+      dryRunError: result.dryRunError,
+      dryRunSubError: result.dryRunSubError
     }) as TXcmFeeDetail
 
   const result: TGetXcmFeeResult = {
     origin: {
-      ...(originWeight && { weight: originWeight }),
-      ...(originFee && { fee: originFee }),
-      ...(originFeeType && { feeType: originFeeType }),
+      weight: originWeight,
+      fee: originFee,
+      feeType: originFeeType,
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
       asset: originAsset,
-      ...(originDryRunError && { dryRunError: originDryRunError }),
-      ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
+      dryRunError: originDryRunError,
+      dryRunSubError: originDryRunSubError
     } as TXcmFeeDetail,
-    ...(traversalResult.assetHub && { assetHub: convertToFeeDetail(traversalResult.assetHub) }),
-    ...(processedBridgeHub && { bridgeHub: convertToFeeDetail(processedBridgeHub) }),
     destination: {
-      ...(destFee !== undefined && { fee: destFee }),
-      ...(destFeeType && { feeType: destFeeType }),
+      fee: destFee,
+      feeType: destFeeType,
       sufficient: destSufficient,
       asset: destAsset,
-      ...(destDryRunError && { dryRunError: destDryRunError }),
-      ...(destDryRunSubError && { dryRunSubError: destDryRunSubError })
+      dryRunError: destDryRunError,
+      dryRunSubError: destDryRunSubError
     } as TXcmFeeDetail,
     hops: traversalResult.hops.map(hop => ({
       chain: hop.chain,
@@ -363,8 +348,6 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   const { failureChain, failureReason } = getFailureInfo(
     {
       origin: result.origin,
-      assetHub: result.assetHub,
-      bridgeHub: result.bridgeHub,
       destination: result.destination
     },
     result.hops

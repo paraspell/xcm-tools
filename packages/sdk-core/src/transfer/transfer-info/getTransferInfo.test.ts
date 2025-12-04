@@ -15,11 +15,11 @@ import { InvalidParameterError } from '../../errors'
 import type {
   TGetTransferInfoOptions,
   TGetXcmFeeResult,
-  TTransferInfo,
+  THopTransferInfo,
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { abstractDecimals } from '../../utils'
 import { getXcmFee } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
@@ -110,7 +110,6 @@ describe('getTransferInfo', () => {
       destination: { fee: 70000000n, asset: dotAsset }
     } as TGetXcmFeeResult)
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(buildHopInfo).mockResolvedValue({
       asset: dotAsset,
@@ -220,8 +219,6 @@ describe('getTransferInfo', () => {
 
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
-      assetHub: undefined,
-      bridgeHub: undefined,
       hops: mockHopsFromFee as TXcmFeeHopInfo[],
       destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
     })
@@ -229,7 +226,7 @@ describe('getTransferInfo', () => {
     vi.mocked(buildHopInfo).mockImplementation(({ chain }) => {
       if (chain === 'Hydration') return Promise.resolve(mockHydraHopInfo)
       if (chain === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
-      return Promise.resolve({} as TTransferInfo['assetHub'])
+      return Promise.resolve({} as THopTransferInfo['result'])
     })
 
     const options = { ...baseOptions, api: mockApi }
@@ -250,9 +247,6 @@ describe('getTransferInfo', () => {
         fee: mockHopsFromFee[1].result.fee
       })
     )
-
-    expect(result.assetHub).toBeUndefined()
-    expect(result.bridgeHub).toBeUndefined()
 
     expect(result.hops).toBeDefined()
     expect(result.hops).toHaveLength(2)
@@ -347,38 +341,7 @@ describe('getTransferInfo', () => {
     expect(result.origin.xcmFee.balanceAfter).toBe(originBalanceFeeVal - originFeeVal)
   })
 
-  it('should not build assetHub info if assetHubFeeResult is undefined', async () => {
-    vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
-      assetHub: undefined,
-      bridgeHub: { fee: 60000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
-      hops: [],
-      destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
-    })
-    const options = { ...baseOptions, api: mockApi }
-    const result = await getTransferInfo(options)
-
-    expect(result.assetHub).toBeUndefined()
-    expect(buildHopInfo).toHaveBeenCalledTimes(1)
-  })
-
-  it('should not build bridgeHub info if bridgeHubFeeResult is undefined', async () => {
-    vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
-      assetHub: { fee: 50000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
-      bridgeHub: undefined,
-      hops: [],
-      destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
-    })
-    const options = { ...baseOptions, api: mockApi }
-    const result = await getTransferInfo(options)
-
-    expect(result.bridgeHub).toBeUndefined()
-    expect(buildHopInfo).toHaveBeenCalledTimes(1)
-  })
-
   it('should correctly determine hop chains if origin is Polkadot based', async () => {
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
       api: mockApi,

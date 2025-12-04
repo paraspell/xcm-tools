@@ -915,7 +915,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 1000n, proofSize: 2000n },
         forwardedXcms: expect.any(Object),
@@ -942,7 +941,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: undefined,
         forwardedXcms: [],
@@ -969,7 +967,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeOtherReason',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -992,7 +989,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1015,7 +1011,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'JsonOnlyFailureReason',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1038,7 +1033,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: '{}',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1071,7 +1065,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo,
         weight: { refTime: 123n, proofSize: 456n },
         forwardedXcms: [],
@@ -1148,7 +1141,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: xcmFee,
-        currency: 'USDT',
         asset: feeAsset,
         weight: { refTime: 555n, proofSize: 666n },
         forwardedXcms: expectedForwarded,
@@ -1221,7 +1213,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1257,7 +1248,6 @@ describe('PolkadotJsApi', () => {
         success: false,
         failureReason: 'VersionedConversionFailed',
         failureSubReason: undefined,
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1319,7 +1309,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'Some unexpected error',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1361,7 +1350,6 @@ describe('PolkadotJsApi', () => {
         feeAsset
       })
 
-      expect(result.currency).toBe('USDC')
       expect(result.asset).toEqual(feeAsset)
     })
 
@@ -1463,7 +1451,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1000n,
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: {
           refTime: 111n,
@@ -1503,7 +1490,6 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ModuleError',
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo
       })
     })
@@ -1551,7 +1537,6 @@ describe('PolkadotJsApi', () => {
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found',
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo
       })
     })

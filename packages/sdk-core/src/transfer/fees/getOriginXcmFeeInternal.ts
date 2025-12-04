@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
@@ -34,8 +34,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
     : undefined
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
-
-  const nativeAssetSymbol = getNativeAssetSymbol(origin)
 
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
