@@ -1,19 +1,13 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import {
-  CHAINS,
-  InvalidAddressError,
-  SUBSTRATE_CHAINS,
-  type TChain,
-} from '@paraspell/sdk';
+import { CHAINS, type TChain } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as utils from '../utils.js';
 import { AssetsService } from './assets.service.js';
-import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -587,110 +581,6 @@ describe('AssetsService', () => {
       expect(getSupportedDestinationsSpy).toHaveBeenCalledWith(chain, {
         symbol: 'KSM',
       });
-    });
-  });
-
-  describe('getOriginFeeDetails', () => {
-    it('should return origin fee details for a valid origin and destination chain', async () => {
-      const originChain = 'Acala';
-      const destChain = 'Karura';
-
-      const getOriginFeeDetailsSpy = vi
-        .spyOn(paraspellSdk, 'getOriginFeeDetails')
-        .mockResolvedValue({ xcmFee: 1n, sufficientForXCM: true });
-
-      const validateChainSpy = vi.spyOn(utils, 'validateChain');
-
-      const result = await service.getOriginFeeDetails({
-        origin: originChain,
-        destination: destChain,
-      } as OriginFeeDetailsDto);
-
-      expect(result).toEqual({ xcmFee: 1n, sufficientForXCM: true });
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        originChain,
-        SUBSTRATE_CHAINS,
-      );
-      expect(validateChainSpy).toHaveBeenCalledWith(destChain, CHAINS);
-      expect(getOriginFeeDetailsSpy).toHaveBeenCalledWith({
-        origin: originChain,
-        destination: destChain,
-      });
-    });
-
-    it('should throw BadRequestException for invalid origin chain', async () => {
-      const originChain = 'InvalidChain';
-      const destChain = 'Karura';
-
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      await expect(
-        service.getOriginFeeDetails({
-          origin: originChain,
-          destination: destChain,
-        } as OriginFeeDetailsDto),
-      ).rejects.toThrow(BadRequestException);
-
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        originChain,
-        SUBSTRATE_CHAINS,
-      );
-    });
-
-    it('should throw BadRequestException for invalid destination chain', async () => {
-      const originChain = 'Acala';
-      const destChain = 'InvalidChain';
-
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation((chain: string) => {
-          if (chain === 'Acala') {
-            return;
-          }
-          throw new BadRequestException();
-        });
-
-      await expect(
-        service.getOriginFeeDetails({
-          origin: originChain,
-          destination: destChain,
-        } as OriginFeeDetailsDto),
-      ).rejects.toThrow(BadRequestException);
-
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        originChain,
-        SUBSTRATE_CHAINS,
-      );
-      expect(validateChainSpy).toHaveBeenCalledWith(destChain, CHAINS);
-    });
-
-    it('should throw a BadRequestException if an error occurs inside SDK', async () => {
-      const originChain = 'Acala';
-      const destChain = 'Karura';
-
-      const getOriginFeeDetailsSpy = vi
-        .spyOn(paraspellSdk, 'getOriginFeeDetails')
-        .mockRejectedValue(new InvalidAddressError('Invalid address'));
-
-      const validateChainSpy = vi.spyOn(utils, 'validateChain');
-
-      await expect(
-        service.getOriginFeeDetails({
-          origin: originChain,
-          destination: destChain,
-        } as OriginFeeDetailsDto),
-      ).rejects.toThrow(BadRequestException);
-
-      expect(getOriginFeeDetailsSpy).toHaveBeenCalled();
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        originChain,
-        SUBSTRATE_CHAINS,
-      );
-      expect(validateChainSpy).toHaveBeenCalledWith(destChain, CHAINS);
     });
   });
 

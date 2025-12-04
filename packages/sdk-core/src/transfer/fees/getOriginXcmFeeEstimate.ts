@@ -6,6 +6,13 @@ import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils'
 import { isSufficientOrigin } from './isSufficient'
 
+/**
+ * @deprecated This function is deprecated and will be removed in a future version.
+ * Please use `builder.getOriginXcmFee()` instead, where `builder` is an instance of `Builder()`.
+ * Will be removed in v13.
+ * For more details, see the documentation:
+ * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
+ */
 export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   api,
   tx,

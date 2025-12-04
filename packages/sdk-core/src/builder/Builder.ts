@@ -380,7 +380,13 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
-   * Estimates the origin and destination XCM fee using paymentInfo function.
+   * Estimates the origin and destination XCM fee using the `paymentInfo` function.
+   *
+   * @deprecated This function is deprecated and will be removed in a future version.
+   * Please use `builder.getXcmFee()` instead, where `builder` is an instance of `Builder()`.
+   * Will be removed in v13.
+   * For more details, see the documentation:
+   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
    *
    * @returns An origin and destination fee estimate.
    */
@@ -411,6 +417,12 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
   /**
    * Estimates the origin XCM fee using paymentInfo function.
+   *
+   * @deprecated This function is deprecated and will be removed in a future version.
+   * Please use `builder.getOriginXcmFee()` instead, where `builder` is an instance of `Builder()`.
+   * Will be removed in v13.
+   * For more details, see the documentation:
+   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
    *
    * @returns An origin fee estimate.
    */
