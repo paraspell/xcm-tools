@@ -168,7 +168,6 @@ describe('getMinTransferableAmount', () => {
     const swapDetail: TXcmFeeDetail = {
       fee: 20n,
       feeType: 'dryRun',
-      currency: 'HDX',
       asset: createAssetInfo('HDX'),
     };
     vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });

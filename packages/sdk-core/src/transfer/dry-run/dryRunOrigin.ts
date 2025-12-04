@@ -1,5 +1,3 @@
-import { getNativeAssetSymbol } from '@paraspell/assets'
-
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TDryRunCallOptions, TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'

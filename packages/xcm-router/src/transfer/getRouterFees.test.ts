@@ -43,24 +43,24 @@ describe('getRouterFees', () => {
   let baseChain: TParachain;
   let options: TTransformedOptions<TBuildTransactionsOptions>;
 
-  const swapFee = { fee: 1234n, currency: 'FOO' } as TXcmFeeDetail;
+  const swapFee = { fee: 1234n, asset: { symbol: 'FOO' } } as TXcmFeeDetail;
   const swapAmountOut = 5000n;
   const toExchangeFeeValue = {
-    origin: { fee: 10n, currency: 'BAR' } as TXcmFeeDetail,
-    destination: { fee: 15n, currency: 'BAR' } as TXcmFeeDetail,
-    hops: [{ chain: 'AssetHubPolkadot', result: { fee: 5n, currency: 'DOT' } }],
+    origin: { fee: 10n, asset: { symbol: 'BAR' } } as TXcmFeeDetail,
+    destination: { fee: 15n, asset: { symbol: 'BAR' } } as TXcmFeeDetail,
+    hops: [{ chain: 'AssetHubPolkadot', result: { fee: 5n, asset: { symbol: 'DOT' } } }],
   } as TGetXcmFeeResult;
   const toDestFeeValue = {
-    origin: { fee: 20n, currency: 'BAZ' } as TXcmFeeDetail,
-    destination: { fee: 25n, currency: 'BAZ' } as TXcmFeeDetail,
-    hops: [{ chain: 'AssetHubKusama', result: { fee: 3n, currency: 'KSM' } }],
+    origin: { fee: 20n, asset: { symbol: 'BAZ' } } as TXcmFeeDetail,
+    destination: { fee: 25n, asset: { symbol: 'BAZ' } } as TXcmFeeDetail,
+    hops: [{ chain: 'AssetHubKusama', result: { fee: 3n, asset: { symbol: 'KSM' } } }],
   } as TGetXcmFeeResult;
   const executeTransferResult = {
-    origin: { fee: 100n, currency: 'EXECUTE' } as TXcmFeeDetail,
-    destination: { fee: 200n, currency: 'EXECUTE' } as TXcmFeeDetail,
+    origin: { fee: 100n, asset: { symbol: 'EXECUTE' } } as TXcmFeeDetail,
+    destination: { fee: 200n, asset: { symbol: 'EXECUTE' } } as TXcmFeeDetail,
     hops: [
-      { chain: 'AssetHubPolkadot', result: { fee: 50n, currency: 'DOT' } },
-      { chain: 'Hydration', result: { fee: 75n, currency: 'HDX' } },
+      { chain: 'AssetHubPolkadot', result: { fee: 50n, asset: { symbol: 'DOT' } } },
+      { chain: 'Hydration', result: { fee: 75n, asset: { symbol: 'HDX' } } },
     ],
   } as TGetXcmFeeResult;
 
@@ -122,8 +122,12 @@ describe('getRouterFees', () => {
           isExchange: true,
         },
         hops: [
-          { chain: 'AssetHubPolkadot', result: { fee: 50n, currency: 'DOT' }, isExchange: true },
-          { chain: 'Hydration', result: { fee: 75n, currency: 'HDX' } },
+          {
+            chain: 'AssetHubPolkadot',
+            isExchange: true,
+            result: { fee: 50n, asset: { symbol: 'DOT' } },
+          },
+          { chain: 'Hydration', result: { fee: 75n, asset: { symbol: 'HDX' } } },
         ],
       });
     });
@@ -238,7 +242,7 @@ describe('getRouterFees', () => {
     const result = await getRouterFees(hydrationDex, localOptions);
 
     expect(result.origin).toEqual(
-      expect.objectContaining({ currency: executeTransferResult.origin.currency }),
+      expect.objectContaining({ asset: executeTransferResult.origin.asset }),
     );
     expect(result.origin.isExchange).toBe(true);
     expect(result.destination.isExchange).toBeUndefined();

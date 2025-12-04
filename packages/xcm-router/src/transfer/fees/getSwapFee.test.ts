@@ -30,7 +30,6 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
-      currency: 'DOT',
       asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
     });
@@ -55,7 +54,6 @@ describe('getSwapFee', () => {
       result: {
         fee: 1n,
         feeType: 'paymentInfo',
-        currency: 'DOT',
         asset: { symbol: 'DOT' },
       } as TXcmFeeDetail,
       amountOut: 100n,
@@ -69,7 +67,6 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
-      currency: 'DOT',
       asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
     });
@@ -105,7 +102,6 @@ describe('getSwapFee', () => {
     vi.mocked(createSwapTx).mockRejectedValueOnce(new AmountTooLowError());
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 3n,
-      currency: 'DOT',
       asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
     });
@@ -141,7 +137,6 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
-      currency: 'DOT',
       asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
       dryRunError: dryError,
@@ -163,7 +158,6 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
-      currency: 'DOT',
       asset: { symbol: 'DOT' } as TAssetInfo,
       feeType: 'paymentInfo',
     });

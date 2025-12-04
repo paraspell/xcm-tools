@@ -4,7 +4,7 @@ import {
   getExistentialDepositOrThrow
 } from '@paraspell/assets'
 
-import type { BuildHopInfoOptions, TTransferInfo } from '../../types'
+import type { BuildHopInfoOptions, THopTransferInfo } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes>({
   api,
@@ -31,7 +31,7 @@ export const buildHopInfo = async <TApi, TRes>({
       return {
         asset: nativeAsset,
         xcmFee: xcmFeeDetails
-      } as TTransferInfo['assetHub']
+      } as THopTransferInfo['result']
     } else {
       const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
 

@@ -34,15 +34,7 @@ export type TTransferInfo = {
       balanceAfter: bigint
     }
   }
-  assetHub?: {
-    asset: TAssetInfo
-    xcmFee: TXcmFeeBase
-  }
-  bridgeHub?: {
-    asset: TAssetInfo
-    xcmFee: TXcmFeeBase
-  }
-  hops?: THopTransferInfo[]
+  hops: THopTransferInfo[]
   destination: {
     receivedCurrency: {
       sufficient: boolean | UnableToComputeError
