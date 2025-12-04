@@ -1,13 +1,11 @@
-import type { TDryRunChain, TDryRunChainResult, TDryRunResult } from '../../types'
+import type { TChainEndpoint, TDryRunChainResult, TDryRunResult } from '../../types'
 
 export const getFailureInfo = (
   result: TDryRunResult
 ): Pick<TDryRunResult, 'failureReason' | 'failureSubReason' | 'failureChain'> => {
-  const orderedChecks: { chain: TDryRunChain; chainResult?: TDryRunChainResult }[] = [
+  const orderedChecks: { chain: TChainEndpoint; chainResult?: TDryRunChainResult }[] = [
     { chain: 'origin', chainResult: result.origin },
     { chain: 'destination', chainResult: result.destination },
-    { chain: 'assetHub', chainResult: result.assetHub },
-    { chain: 'bridgeHub', chainResult: result.bridgeHub },
     ...result.hops.map(hop => ({ chain: hop.chain, chainResult: hop.result }))
   ]
 

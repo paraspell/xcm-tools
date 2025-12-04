@@ -17,12 +17,6 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...forced,
       origin: { ...forced.origin, sufficient: real.origin.sufficient },
       destination: { ...forced.destination, sufficient: real.destination.sufficient },
-      ...(forced.assetHub
-        ? { assetHub: { ...forced.assetHub, sufficient: real.assetHub?.sufficient } }
-        : {}),
-      ...(forced.bridgeHub
-        ? { bridgeHub: { ...forced.bridgeHub, sufficient: real.bridgeHub?.sufficient } }
-        : {}),
       hops: forced.hops.map((hop, i) => ({
         ...hop,
         result: { ...hop.result, sufficient: real.hops[i]?.result?.sufficient }
@@ -37,8 +31,6 @@ export const getXcmFeeInternal = async <TApi, TRes, TDisableFallback extends boo
       ...forced,
       origin: { ...forced.origin, sufficient: false },
       destination: { ...forced.destination, sufficient: false },
-      ...(forced.assetHub ? { assetHub: { ...forced.assetHub, sufficient: false } } : {}),
-      ...(forced.bridgeHub ? { bridgeHub: { ...forced.bridgeHub, sufficient: false } } : {}),
       hops: forced.hops.map(hop => ({
         ...hop,
         result: { ...hop.result, sufficient: false }

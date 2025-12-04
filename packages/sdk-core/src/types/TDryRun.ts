@@ -118,16 +118,14 @@ export type THopInfo = {
   result: TDryRunChainResult
 }
 
-export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub' | TChain
+export type TChainEndpoint = 'origin' | 'destination' | TChain
 
 export type TDryRunResult = {
   failureReason?: string
   failureSubReason?: string
-  failureChain?: TDryRunChain
+  failureChain?: TChainEndpoint
   origin: TDryRunChainResult
   destination?: TDryRunChainResult
-  assetHub?: TDryRunChainResult
-  bridgeHub?: TDryRunChainResult
   hops: THopInfo[]
 }
 
@@ -154,8 +152,6 @@ export type HopProcessParams<TApi, TRes> = {
   forwardedXcms: any
   hasPassedExchange: boolean
   isDestination: boolean
-  isAssetHub: boolean
-  isBridgeHub: boolean
 }
 
 export type HopTraversalConfig<TApi, TRes, THopResult> = {
@@ -181,8 +177,6 @@ export type HopTraversalResult<THopResult> = {
     chain: TSubstrateChain
     result: THopResult
   }>
-  assetHub?: THopResult
-  bridgeHub?: THopResult
   destination?: THopResult
   lastProcessedChain?: TSubstrateChain
 }
