@@ -1,8 +1,10 @@
-import { AccountXcmCountType } from './account-msg-count.model';
-import { AssetCount } from './asset-count.model';
-import { MessageCount } from './message-count.model';
-import { MessageCountByDay } from './message-count-by-day.model';
-import { MessageCountByStatus } from './message-count-by-status.model';
+import { describe, expect, it } from 'vitest';
+
+import { AccountXcmCountType } from './account-msg-count.model.js';
+import { AssetCount } from './asset-count.model.js';
+import { MessageCount } from './message-count.model.js';
+import { MessageCountByDay } from './message-count-by-day.model.js';
+import { MessageCountByStatus } from './message-count-by-status.model.js';
 
 describe('AccountXcmCountType', () => {
   it('should create an AccountXcmCountType object with the correct fields', () => {
@@ -152,12 +154,12 @@ describe('MessageCountByStatus', () => {
   it('should handle edge cases for success and failed fields', () => {
     const messageCountByStatus = new MessageCountByStatus();
     messageCountByStatus.ecosystem = '';
-    messageCountByStatus.parachain = null;
+    messageCountByStatus.parachain = undefined;
     messageCountByStatus.success = 0;
     messageCountByStatus.failed = 0;
 
     expect(messageCountByStatus.ecosystem).toBe('');
-    expect(messageCountByStatus.parachain).toBe(null);
+    expect(messageCountByStatus.parachain).toBeUndefined();
     expect(messageCountByStatus.success).toBe(0);
     expect(messageCountByStatus.failed).toBe(0);
   });

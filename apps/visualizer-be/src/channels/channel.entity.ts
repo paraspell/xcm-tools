@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { returnInt } from '../utils/graphql.utils';
+import { returnInt } from '../utils/graphqlUtils.js';
 
 @ObjectType()
 @Entity('channels')

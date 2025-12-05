@@ -8,13 +8,17 @@ import { createPolkadotJsApiCall } from './utils'
 vi.mock('./utils')
 
 describe('API Call Wrappers', () => {
-  it('should call createPolkadotJsApiCall with getBalanceImpl for getBalance', () => {
-    getBalance
+  it('should call createPolkadotJsApiCall with getBalanceImpl for getBalance', async () => {
+    await getBalance({ chain: 'Acala', address: '0x123' })
     expect(createPolkadotJsApiCall).toHaveBeenCalledWith(getBalanceImpl<TPjsApi, Extrinsic>)
   })
 
-  it('should call createPolkadotJsApiCall with claimAssetsImpl for claimAssets', () => {
-    claimAssets
+  it('should call createPolkadotJsApiCall with claimAssetsImpl for claimAssets', async () => {
+    await claimAssets({
+      chain: 'Acala',
+      address: '0x123',
+      currency: { symbol: 'DOT', amount: 100n }
+    })
     expect(createPolkadotJsApiCall).toHaveBeenCalledWith(claimAssetsImpl<TPjsApi, Extrinsic>)
   })
 })

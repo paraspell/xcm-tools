@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-import { returnInt } from '../utils/graphql.utils';
+import { returnInt } from '../utils/graphqlUtils.js';
 
 export const returnID = () => ID;
 export const returnAssetArray = () => [Asset];

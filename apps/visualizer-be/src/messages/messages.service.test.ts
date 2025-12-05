@@ -3,22 +3,23 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { getParaId, getRelayChainOf, getTChain } from '@paraspell/sdk';
-import type { Repository } from 'typeorm';
+import type { FindOptionsWhere, Repository, SelectQueryBuilder } from 'typeorm';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CountOption } from './count-option';
-import { Message } from './message.entity';
-import { MessageService } from './messages.service';
+import { CountOption } from '../types.js';
+import { Message } from './message.entity.js';
+import { MessageService } from './messages.service.js';
 
 describe('MessageService', () => {
   let service: MessageService;
-  let mockRepository: Partial<Record<keyof Repository<Message>, jest.Mock>>;
+  let mockRepository: Repository<Message>;
 
   beforeEach(async () => {
     mockRepository = {
-      count: jest.fn(),
-      createQueryBuilder: jest.fn(),
-      query: jest.fn(),
-    };
+      count: vi.fn(),
+      createQueryBuilder: vi.fn(),
+      query: vi.fn(),
+    } as unknown as Repository<Message>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -40,9 +41,12 @@ describe('MessageService', () => {
     const parachains: TSubstrateChain[] = ['AssetHubPolkadot', 'Acala'];
 
     it('should return status counts for each paraId when paraIds are provided', async () => {
-      mockRepository.count.mockImplementation(({ where: { status } }) =>
-        Promise.resolve(status === 'success' ? 3 : 1),
-      );
+      const countSpy = vi.spyOn(mockRepository, 'count');
+
+      countSpy.mockImplementation((options) => {
+        const status = (options?.where as FindOptionsWhere<Message>).status;
+        return Promise.resolve(status === 'success' ? 3 : 1);
+      });
 
       const expectedEcosystems = parachains.map((chain) =>
         getRelayChainOf(chain).toLowerCase(),
@@ -69,8 +73,8 @@ describe('MessageService', () => {
           failed: 1,
         },
       ]);
-      expect(mockRepository.count).toHaveBeenCalledTimes(4);
-      expect(mockRepository.count).toHaveBeenCalledWith(
+      expect(countSpy).toHaveBeenCalledTimes(4);
+      expect(countSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             ecosystem,
@@ -79,7 +83,7 @@ describe('MessageService', () => {
           }),
         }),
       );
-      expect(mockRepository.count).toHaveBeenCalledWith(
+      expect(countSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             ecosystem,
@@ -91,9 +95,12 @@ describe('MessageService', () => {
     });
 
     it('should return aggregated status counts when no paraIds are provided', async () => {
-      mockRepository.count.mockImplementation(({ where: { status } }) =>
-        Promise.resolve(status === 'success' ? 10 : 5),
-      );
+      const countSpy = vi.spyOn(mockRepository, 'count');
+
+      countSpy.mockImplementation((options) => {
+        const status = (options?.where as FindOptionsWhere<Message>).status;
+        return Promise.resolve(status === 'success' ? 10 : 5);
+      });
 
       const results = await service.countMessagesByStatus(
         ecosystem,
@@ -103,8 +110,8 @@ describe('MessageService', () => {
       );
 
       expect(results).toEqual([{ ecosystem, success: 10, failed: 5 }]);
-      expect(mockRepository.count).toHaveBeenCalledTimes(2);
-      expect(mockRepository.count).toHaveBeenCalledWith(
+      expect(countSpy).toHaveBeenCalledTimes(2);
+      expect(countSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ status: 'success' }),
         }),
@@ -120,15 +127,18 @@ describe('MessageService', () => {
 
     it('should return message counts by day for each paraId', async () => {
       const [assetHubParaId, acalaParaId] = parachains.map((p) => getParaId(p));
-      mockRepository.createQueryBuilder.mockReturnValueOnce({
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        groupBy: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        addOrderBy: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([
+
+      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
+
+      createSpy.mockReturnValueOnce({
+        select: vi.fn().mockReturnThis(),
+        addSelect: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        andWhere: vi.fn().mockReturnThis(),
+        groupBy: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        addOrderBy: vi.fn().mockReturnThis(),
+        getRawMany: vi.fn().mockResolvedValue([
           {
             ecosystem,
             paraId: assetHubParaId.toString(),
@@ -157,7 +167,7 @@ describe('MessageService', () => {
             message_count_failed: '2',
           },
         ]),
-      });
+      } as unknown as SelectQueryBuilder<Message>);
 
       const results = await service.countMessagesByDay(
         ecosystem,
@@ -193,18 +203,20 @@ describe('MessageService', () => {
         },
       ]);
 
-      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+      expect(createSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should return message counts by day when no paraIds are provided', async () => {
-      mockRepository.createQueryBuilder.mockReturnValueOnce({
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        groupBy: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([
+      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
+
+      createSpy.mockReturnValueOnce({
+        select: vi.fn().mockReturnThis(),
+        addSelect: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        andWhere: vi.fn().mockReturnThis(),
+        groupBy: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        getRawMany: vi.fn().mockResolvedValue([
           {
             ecosystem,
             date: '2023-09-01',
@@ -220,7 +232,7 @@ describe('MessageService', () => {
             message_count_failed: '1',
           },
         ]),
-      });
+      } as unknown as SelectQueryBuilder<Message>);
 
       const results = await service.countMessagesByDay(
         ecosystem,
@@ -248,7 +260,7 @@ describe('MessageService', () => {
         },
       ]);
 
-      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+      expect(createSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -261,30 +273,24 @@ describe('MessageService', () => {
       { ecosystem, paraId: 102, totalCount: '5' },
     ];
 
-    type MockQueryBuilder = {
-      select: jest.Mock;
-      addSelect: jest.Mock;
-      where: jest.Mock;
-      groupBy: jest.Mock;
-      getRawMany: jest.Mock;
-      addGroupBy: jest.Mock;
-    };
-
     it.each([
       [CountOption.ORIGIN, 'message.origin_para_id', 'paraId'],
       [CountOption.DESTINATION, 'message.dest_para_id', 'paraId'],
     ])(
       'should return message counts for %s',
       async (countBy, selectColumn, alias) => {
-        const mockQueryBuilder: MockQueryBuilder = {
-          select: jest.fn().mockReturnThis(),
-          addSelect: jest.fn().mockReturnThis(),
-          where: jest.fn().mockReturnThis(),
-          groupBy: jest.fn().mockReturnThis(),
-          getRawMany: jest.fn().mockResolvedValue(mockCounts),
-          addGroupBy: jest.fn().mockReturnThis(),
-        };
-        mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+        const mockQueryBuilder = {
+          select: vi.fn().mockReturnThis(),
+          addSelect: vi.fn().mockReturnThis(),
+          where: vi.fn().mockReturnThis(),
+          groupBy: vi.fn().mockReturnThis(),
+          getRawMany: vi.fn().mockResolvedValue(mockCounts),
+          addGroupBy: vi.fn().mockReturnThis(),
+        } as unknown as SelectQueryBuilder<Message>;
+        const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
+        createSpy.mockReturnValue(mockQueryBuilder);
+
+        const selectSpy = vi.spyOn(mockQueryBuilder, 'select');
 
         const results = await service.getTotalMessageCounts(
           ecosystem,
@@ -300,37 +306,35 @@ describe('MessageService', () => {
             totalCount: parseInt(item.totalCount),
           })),
         );
-        expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
-        expect(mockQueryBuilder.select).toHaveBeenCalledWith(
-          selectColumn,
-          alias,
-        );
+        expect(createSpy).toHaveBeenCalledTimes(1);
+        expect(selectSpy).toHaveBeenCalledWith(selectColumn, alias);
       },
     );
 
     it('should combine counts for both origin and destination', async () => {
-      const mockQueryBuilderOrigin: MockQueryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        groupBy: jest.fn().mockReturnThis(),
-        getRawMany: jest
+      const mockQueryBuilderOrigin = {
+        select: vi.fn().mockReturnThis(),
+        addSelect: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        groupBy: vi.fn().mockReturnThis(),
+        getRawMany: vi
           .fn()
           .mockResolvedValue([{ ecosystem, paraId: 101, totalCount: '5' }]),
-        addGroupBy: jest.fn().mockReturnThis(),
-      };
-      const mockQueryBuilderDestination: MockQueryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        groupBy: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue([
+        addGroupBy: vi.fn().mockReturnThis(),
+      } as unknown as SelectQueryBuilder<Message>;
+      const mockQueryBuilderDestination = {
+        select: vi.fn().mockReturnThis(),
+        addSelect: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        groupBy: vi.fn().mockReturnThis(),
+        getRawMany: vi.fn().mockResolvedValue([
           { ecosystem, paraId: 101, totalCount: '7' },
           { ecosystem, paraId: 102, totalCount: '3' },
         ]),
-        addGroupBy: jest.fn().mockReturnThis(),
-      };
-      mockRepository.createQueryBuilder
+        addGroupBy: vi.fn().mockReturnThis(),
+      } as unknown as SelectQueryBuilder<Message>;
+      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
+      createSpy
         .mockReturnValueOnce(mockQueryBuilderOrigin)
         .mockReturnValueOnce(mockQueryBuilderDestination);
 
@@ -345,7 +349,7 @@ describe('MessageService', () => {
         { ecosystem, paraId: 101, totalCount: 12 },
         { ecosystem, paraId: 102, totalCount: 3 },
       ]);
-      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
+      expect(createSpy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -376,7 +380,10 @@ describe('MessageService', () => {
           amount: '420',
         },
       ];
-      mockRepository.query.mockResolvedValue(mockResult);
+
+      const querySpy = vi.spyOn(mockRepository, 'query');
+
+      querySpy.mockResolvedValue(mockResult);
 
       const results = await service.countAssetsBySymbol(
         ecosystem,
@@ -409,7 +416,7 @@ describe('MessageService', () => {
           amount: '420',
         },
       ]);
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
         paraIds,
         ecosystemsList,
         startTime,
@@ -422,7 +429,10 @@ describe('MessageService', () => {
         { ecosystem, symbol: 'GOLD', count: '10', amount: '69' },
         { ecosystem, symbol: 'SILVER', count: '7', amount: '420' },
       ];
-      mockRepository.query.mockResolvedValue(mockResult);
+
+      const querySpy = vi.spyOn(mockRepository, 'query');
+
+      querySpy.mockResolvedValue(mockResult);
 
       const results = await service.countAssetsBySymbol(
         ecosystem,
@@ -435,7 +445,7 @@ describe('MessageService', () => {
         { ecosystem, symbol: 'GOLD', count: 10, amount: '69' },
         { ecosystem, symbol: 'SILVER', count: 7, amount: '420' },
       ]);
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
         ecosystem,
         startTime,
         endTime,
@@ -455,7 +465,8 @@ describe('MessageService', () => {
         { ecosystem, from_account_id: 'account1', message_count: '6' },
         { ecosystem, from_account_id: 'account2', message_count: '7' },
       ];
-      mockRepository.query.mockResolvedValue(mockResult);
+      const querySpy = vi.spyOn(mockRepository, 'query');
+      querySpy.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
         ecosystem,
@@ -471,7 +482,7 @@ describe('MessageService', () => {
       ]);
 
       // Ensure that the WHERE clause includes paraIds
-      expect(mockRepository.query).toHaveBeenCalledWith(
+      expect(querySpy).toHaveBeenCalledWith(
         expect.stringContaining(
           'WHERE ecosystem = $1 AND origin_block_timestamp BETWEEN',
         ),
@@ -483,7 +494,9 @@ describe('MessageService', () => {
       const mockResult = [
         { ecosystem, from_account_id: 'account3', message_count: '8' },
       ];
-      mockRepository.query.mockResolvedValue(mockResult);
+
+      const querySpy = vi.spyOn(mockRepository, 'query');
+      querySpy.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
         ecosystem,
@@ -496,14 +509,16 @@ describe('MessageService', () => {
       expect(results).toEqual([{ ecosystem, id: 'account3', count: 8 }]);
 
       // Ensure that the WHERE clause does not include paraIds
-      expect(mockRepository.query).toHaveBeenCalledWith(
+      expect(querySpy).toHaveBeenCalledWith(
         expect.not.stringContaining('origin_para_id IN'),
         [ecosystem, startTime, endTime, threshold],
       );
     });
 
     it('should handle exceptions', async () => {
-      mockRepository.query.mockRejectedValue(new Error('Database error'));
+      const querySpy = vi.spyOn(mockRepository, 'query');
+
+      querySpy.mockRejectedValue(new Error('Database error'));
 
       await expect(
         service.getAccountXcmCounts(
@@ -515,7 +530,7 @@ describe('MessageService', () => {
         ),
       ).rejects.toThrow('Database error');
 
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
         ecosystem,
         startTime,
         endTime,

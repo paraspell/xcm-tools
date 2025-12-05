@@ -33,3 +33,9 @@ export type XcmTransferData = {
   message_hash: string;
   unique_id: string;
 };
+
+export enum CountOption {
+  ORIGIN = 'origin_para_id',
+  DESTINATION = 'dest_para_id',
+  BOTH = 'both',
+}

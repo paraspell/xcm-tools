@@ -1,4 +1,3 @@
-import type { WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoByLoc,
   getNativeAssetSymbol,
@@ -36,7 +35,6 @@ import {
   type TSendInternalOptions,
   type TXTransferTransferOptions
 } from '../types'
-import type { BaseAssetsPallet } from '../types/TAssets'
 import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
 import Parachain from './Parachain'
 

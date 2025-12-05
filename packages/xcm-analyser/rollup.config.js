@@ -10,7 +10,10 @@ export default [
   {
     input: './src/index.ts',
     external: ['ms'],
-    output: [{ file: './dist/index.mjs', format: 'esm' }],
+    output: [
+      { file: './dist/index.mjs', format: 'es' },
+      { file: './dist/index.cjs', format: 'cjs' },
+    ],
     plugins: [
       typescript(),
       babel({
@@ -30,7 +33,7 @@ export default [
   },
   {
     input: './src/index.ts',
-    output: [{ file: './dist/index.d.ts', format: 'esm' }],
+    output: [{ file: './dist/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
 ];

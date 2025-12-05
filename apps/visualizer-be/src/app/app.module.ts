@@ -5,11 +5,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { Channel } from '../channels/channel.entity';
-import { ChannelModule } from '../channels/channels.module';
-import { LiveDataModule } from '../livedata/livedata.module';
-import { Asset, Message } from '../messages/message.entity';
-import { MessageModule } from '../messages/messages.module';
+import { Channel } from '../channels/channel.entity.js';
+import { ChannelModule } from '../channels/channels.module.js';
+import { LiveDataModule } from '../livedata/livedata.module.js';
+import { Asset, Message } from '../messages/message.entity.js';
+import { MessageModule } from '../messages/messages.module.js';
 
 const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',

@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 
-import type { SubscanResponse, SubscanXcmItem } from './livedata.types';
+import type { SubscanResponse, SubscanXcmItem } from './livedata.types.js';
 
 export class SubscanClient {
   private http: AxiosInstance;
@@ -21,7 +21,7 @@ export class SubscanClient {
     ecosystem: string;
   }): Promise<SubscanXcmItem[]> {
     const row = params?.row ?? 20;
-    const url = `https://${params.ecosystem.toLowerCase()}.api.subscan.io`;
+    const url = `https://${params?.ecosystem.toLowerCase()}.api.subscan.io`;
 
     const res = await this.http.post(url + '/api/scan/xcm/list', {
       page: 0,
