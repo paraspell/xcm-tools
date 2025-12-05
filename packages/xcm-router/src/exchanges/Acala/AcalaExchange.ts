@@ -4,7 +4,7 @@ import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import {
   AmountTooLowError,
   formatUnits,
-  getBalanceNative,
+  getBalance,
   getNativeAssetSymbol,
   padValueBy,
   parseUnits,
@@ -53,7 +53,7 @@ class AcalaExchange extends ExchangeChain {
 
     Logger.log('Total fee native:', totalNativeCurrencyFee);
 
-    const balance = await getBalanceNative({
+    const balance = await getBalance({
       api: papiApi,
       address: senderAddress,
       chain: this.chain,

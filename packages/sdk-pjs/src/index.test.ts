@@ -12,9 +12,7 @@ describe('Index Exports', () => {
           'getDryRun',
           'getParaEthTransferFees',
           'assets',
-          'getBalanceNative',
-          'getBalanceForeign',
-          'getAssetBalance',
+          'getBalance',
           'claimAssets',
           'Builder',
           'GeneralBuilder',
@@ -48,9 +46,7 @@ describe('Index Exports', () => {
   })
 
   it('should export asset related functions', () => {
-    expect(moduleExports.getBalanceNative).toBeDefined()
-    expect(moduleExports.getBalanceForeign).toBeDefined()
-    expect(moduleExports.getAssetBalance).toBeDefined()
+    expect(moduleExports.getBalance).toBeDefined()
     expect(moduleExports.claimAssets).toBeDefined()
   })
 
