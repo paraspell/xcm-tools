@@ -1,7 +1,7 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import { AmountTooLowError, getBalanceNative, getParaId } from '@paraspell/sdk';
+import { AmountTooLowError, getBalance, getParaId } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +15,7 @@ vi.mock('@paraspell/sdk', async () => {
   return {
     ...actualModule,
     getParaId: vi.fn(),
-    getBalanceNative: vi.fn(),
+    getBalance: vi.fn(),
   };
 });
 
@@ -70,7 +70,7 @@ describe('BifrostExchange', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     chain = new BifrostExchange('BifrostPolkadot', 'BifrostPolkadotDex');
-    vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
+    vi.mocked(getBalance).mockResolvedValue(10000000000n);
   });
 
   describe('swapCurrency', () => {

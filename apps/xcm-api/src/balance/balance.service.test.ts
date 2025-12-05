@@ -1,8 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import {
-  getAssetBalance,
-  getBalanceForeign,
-  getBalanceNative,
+  getBalance,
   getExistentialDeposit,
   InvalidAddressError,
   InvalidCurrencyError,
@@ -18,9 +16,7 @@ vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
-    getAssetBalance: vi.fn(),
-    getBalanceForeign: vi.fn(),
-    getBalanceNative: vi.fn(),
+    getBalance: vi.fn(),
     getExistentialDeposit: vi.fn(),
     CHAIN_NAMES_DOT_KSM: ['valid-chain'],
     CHAINS_WITH_RELAY_CHAINS: ['valid-chain'],
@@ -28,9 +24,7 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
-vi.mock('../utils', () => ({
-  validateChain: vi.fn(),
-}));
+vi.mock('../utils');
 
 describe('BalanceService', () => {
   let service: BalanceService;
@@ -39,82 +33,7 @@ describe('BalanceService', () => {
     service = new BalanceService();
   });
 
-  describe('getBalanceNative', () => {
-    it('should return native balance for a valid chain', async () => {
-      const validChain = 'valid-chain';
-      const params: BalanceNativeDto = { address: '0x1234567890' };
-      const mockBalance = 1000n;
-
-      vi.mocked(getBalanceNative).mockResolvedValue(mockBalance);
-
-      const result = await service.getBalanceNative(validChain, params);
-
-      expect(getBalanceNative).toHaveBeenCalledWith({
-        address: params.address,
-        chain: validChain,
-      });
-      expect(result).toEqual(mockBalance);
-    });
-  });
-
-  describe('getBalanceForeign', () => {
-    it('should return foreign balance as a string for a valid chain', async () => {
-      const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const mockBalance = 500n;
-
-      vi.mocked(getBalanceForeign).mockResolvedValue(mockBalance);
-
-      const result = await service.getBalanceForeign(validChain, params);
-
-      expect(getBalanceForeign).toHaveBeenCalledWith({
-        address: params.address,
-        chain: validChain,
-        currency: params.currency,
-      });
-      expect(result).toEqual(mockBalance.toString());
-    });
-
-    it('should return "null" if foreign balance is null', async () => {
-      const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-
-      vi.mocked(getBalanceForeign).mockResolvedValue(0n);
-
-      const result = await service.getBalanceForeign(validChain, params);
-
-      expect(getBalanceForeign).toHaveBeenCalledWith({
-        address: params.address,
-        chain: validChain,
-        currency: params.currency,
-      });
-      expect(result).toEqual('0');
-    });
-
-    it('should throw BadRequestException for error inside SDK', async () => {
-      const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-
-      vi.mocked(getBalanceForeign).mockRejectedValue(
-        new InvalidAddressError('Invalid address'),
-      );
-
-      await expect(
-        service.getBalanceForeign(validChain, params),
-      ).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('getAssetBalance', () => {
+  describe('getBalance', () => {
     it('should return asset balance as a string for a valid chain', async () => {
       const validChain = 'valid-chain';
       const params: BalanceForeignDto = {
@@ -123,11 +42,11 @@ describe('BalanceService', () => {
       };
       const mockBalance = 500n;
 
-      vi.mocked(getAssetBalance).mockResolvedValue(mockBalance);
+      vi.mocked(getBalance).mockResolvedValue(mockBalance);
 
-      const result = await service.getAssetBalance(validChain, params);
+      const result = await service.getBalance(validChain, params);
 
-      expect(getAssetBalance).toHaveBeenCalledWith({
+      expect(getBalance).toHaveBeenCalledWith({
         address: params.address,
         currency: params.currency,
         chain: validChain,
@@ -142,11 +61,11 @@ describe('BalanceService', () => {
         currency: { symbol: 'INVALID_CURRENCY_XYZ' },
       };
 
-      vi.mocked(getAssetBalance).mockRejectedValue(
+      vi.mocked(getBalance).mockRejectedValue(
         new InvalidCurrencyError('Invalid currency'),
       );
 
-      await expect(service.getAssetBalance(validChain, params)).rejects.toThrow(
+      await expect(service.getBalance(validChain, params)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -158,11 +77,11 @@ describe('BalanceService', () => {
         currency: { symbol: 'UNQ' },
       };
 
-      vi.mocked(getAssetBalance).mockRejectedValue(
+      vi.mocked(getBalance).mockRejectedValue(
         new InvalidAddressError('Invalid address'),
       );
 
-      await expect(service.getAssetBalance(validChain, params)).rejects.toThrow(
+      await expect(service.getBalance(validChain, params)).rejects.toThrow(
         BadRequestException,
       );
     });

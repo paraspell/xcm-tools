@@ -6,64 +6,6 @@ import type { WithApi } from './TApi'
 import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
 import type { TTxFactory } from './TXcmFee'
 
-/**
- * Retrieves the native asset balance for a given account on a specified chain.
- */
-export type TGetBalanceNativeOptionsBase = {
-  /**
-   * The address of the account.
-   */
-  address: string
-  /**
-   * The chain on which to query the balance.
-   */
-  chain: TChain
-  /**
-   * The native currency to query.
-   */
-  currency?: {
-    symbol: string
-  }
-}
-
-export type TGetBalanceNativeOptions<TApi, TRes> = WithApi<TGetBalanceNativeOptionsBase, TApi, TRes>
-
-/**
- * Retrieves the balance of a foreign asset for a given account on a specified chain.
- */
-export type TGetBalanceForeignOptionsBase = {
-  /*
-   * The address of the account.
-   */
-  address: string
-  /**
-   * The chain on which to query the balance.
-   */
-  chain: TSubstrateChain
-}
-
-export type TGetBalanceForeignOptions<TApi, TRes> = WithApi<
-  TGetBalanceForeignOptionsBase & {
-    /**
-     * The currency to query.
-     */
-    currency: TCurrencyCore
-  },
-  TApi,
-  TRes
->
-
-export type TGetBalanceForeignByAssetOptions<TApi, TRes> = WithApi<
-  TGetBalanceForeignOptionsBase & {
-    /**
-     * The asset to query balance for.
-     */
-    asset: TAssetInfo
-  },
-  TApi,
-  TRes
->
-
 export type TGetBalanceCommonOptions = {
   /**
    * The address of the account.
@@ -92,7 +34,7 @@ export type TGetBalanceOptionsBase = TGetBalanceCommonOptions & {
   /**
    * The currency to query.
    */
-  currency: TCurrencyCore
+  currency?: TCurrencyCore
 }
 
 export type TGetBalanceOptions<TApi, TRes> = WithApi<TGetBalanceOptionsBase, TApi, TRes>

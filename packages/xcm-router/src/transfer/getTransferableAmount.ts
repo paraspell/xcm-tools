@@ -1,9 +1,5 @@
 import type { TCurrencyCore } from '@paraspell/sdk';
-import {
-  getAssetBalance,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol,
-} from '@paraspell/sdk';
+import { getBalance, getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
@@ -35,7 +31,7 @@ const computeLocalTransferableAmount = async (
 
   const currency = toCurrencyCore(exchange.assetFrom);
 
-  const balance = await getAssetBalance({
+  const balance = await getBalance({
     api: exchange.apiPapi,
     chain: exchange.baseChain,
     address: senderAddress,

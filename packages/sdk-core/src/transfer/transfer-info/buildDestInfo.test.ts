@@ -4,7 +4,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
+import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { UnableToComputeError } from '../../errors'
 import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
 import { buildDestInfo } from './buildDestInfo'
@@ -76,7 +76,7 @@ describe('buildDestInfo', () => {
       return 'NATIVE'
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
-    vi.mocked(getBalanceNative).mockResolvedValue(DEFAULT_BALANCE)
+    vi.mocked(getBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
   })
 
   it('should successfully build dest info', async () => {
@@ -267,7 +267,7 @@ describe('buildDestInfo', () => {
     const result = await buildDestInfo(options)
 
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(options.destination)
-    expect(getBalanceNative).not.toHaveBeenCalled()
+    expect(getBalanceInternal).not.toHaveBeenCalled()
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
@@ -334,7 +334,7 @@ describe('buildDestInfo', () => {
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>
       chain === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
     )
-    vi.mocked(getBalanceNative).mockResolvedValue(nativeBalanceForFee)
+    vi.mocked(getBalanceInternal).mockResolvedValue(nativeBalanceForFee)
 
     const result = await buildDestInfo(options)
     const expectedFeeBalanceAfter = nativeBalanceForFee - (options.destFeeDetail.fee ?? 0n)

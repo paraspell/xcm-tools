@@ -1,5 +1,5 @@
 import {
-  getAssetBalance,
+  getBalance,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
   type TAssetInfo,
@@ -132,7 +132,7 @@ describe('getTransferableAmount', () => {
       amount: 1000n,
       builderOptions: undefined,
     });
-    expect(getAssetBalance).not.toHaveBeenCalled();
+    expect(getBalance).not.toHaveBeenCalled();
     expect(getSwapFee).not.toHaveBeenCalled();
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
   });
@@ -146,7 +146,7 @@ describe('getTransferableAmount', () => {
       }),
     });
 
-    vi.mocked(getAssetBalance).mockResolvedValue(2000n);
+    vi.mocked(getBalance).mockResolvedValue(2000n);
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
     const swapDetail: TXcmFeeDetail = {
@@ -159,7 +159,7 @@ describe('getTransferableAmount', () => {
     const result = await getTransferableAmount(createOptions({ from: undefined }));
 
     expect(result).toBe(1600n);
-    expect(getAssetBalance).toHaveBeenCalledWith({
+    expect(getBalance).toHaveBeenCalledWith({
       api: expect.anything(),
       chain: 'Hydration',
       address: 'sender',
@@ -178,7 +178,7 @@ describe('getTransferableAmount', () => {
       }),
     });
 
-    vi.mocked(getAssetBalance).mockResolvedValue(1000n);
+    vi.mocked(getBalance).mockResolvedValue(1000n);
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
