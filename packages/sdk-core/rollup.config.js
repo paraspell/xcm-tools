@@ -11,10 +11,7 @@ export default [
   {
     input: './src/index.ts',
     external: ['ms'],
-    output: [
-      { file: './dist/index.cjs', format: 'cjs' },
-      { file: './dist/index.mjs', format: 'es' }
-    ],
+    output: [{ file: './dist/index.mjs', format: 'es' }],
     plugins: [
       typescript(),
       json(),

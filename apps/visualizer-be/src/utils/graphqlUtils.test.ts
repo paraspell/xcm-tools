@@ -1,6 +1,7 @@
 import { Int } from '@nestjs/graphql';
+import { describe, expect, it } from 'vitest';
 
-import { returnInt } from './graphql.utils';
+import { returnInt } from './graphqlUtils.js';
 
 describe('returnInt', () => {
   it('should return Int type from GraphQL', () => {

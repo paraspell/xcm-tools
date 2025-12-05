@@ -1,10 +1,11 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { Message } from './message.entity';
-import { MessageResolver } from './messages.resolver';
-import { MessageService } from './messages.service';
+import { Message } from './message.entity.js';
+import { MessageResolver } from './messages.resolver.js';
+import { MessageService } from './messages.service.js';
 
 describe('MessageModule', () => {
   let module: TestingModule;
@@ -13,8 +14,8 @@ describe('MessageModule', () => {
 
   beforeAll(async () => {
     const mockRepository = {
-      find: jest.fn(),
-      save: jest.fn(),
+      find: vi.fn(),
+      save: vi.fn(),
     };
 
     module = await Test.createTestingModule({

@@ -8,8 +8,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BalanceService } from './balance.service.js';
-import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
-import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
+import type { BalanceDto } from './dto/BalanceForeignDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 vi.mock('@paraspell/sdk', async () => {
@@ -36,7 +35,7 @@ describe('BalanceService', () => {
   describe('getBalance', () => {
     it('should return asset balance as a string for a valid chain', async () => {
       const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
+      const params: BalanceDto = {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
       };
@@ -56,7 +55,7 @@ describe('BalanceService', () => {
 
     it('should throw BadRequestException for InvalidCurrencyError', async () => {
       const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
+      const params: BalanceDto = {
         address: '0x1234567890',
         currency: { symbol: 'INVALID_CURRENCY_XYZ' },
       };
@@ -72,7 +71,7 @@ describe('BalanceService', () => {
 
     it('should throw BadRequestException for InvalidAddressError', async () => {
       const validChain = 'valid-chain';
-      const params: BalanceForeignDto = {
+      const params: BalanceDto = {
         address: 'invalid-address',
         currency: { symbol: 'UNQ' },
       };

@@ -1,29 +1,16 @@
 import type { Server, Socket } from 'socket.io';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { LiveDataGateway } from './livedata.gateway';
-import type { LiveXcmData, SubscanXcmItem } from './livedata.types';
+import { LiveDataGateway } from './livedata.gateway.js';
+import type { LiveXcmData, SubscanXcmItem } from './livedata.types.js';
 
-jest.mock('./subscan.client', () => ({
-  __esModule: true,
-  SubscanClient: jest.fn().mockImplementation(() => ({
-    fetchLatestXcmList: jest.fn(),
-  })),
-}));
-
-type SubscanClientMockInstance = {
-  fetchLatestXcmList: jest.Mock<
-    Promise<SubscanXcmItem[]>,
-    [{ ecosystem: string; row?: number }]
-  >;
-};
+vi.mock('./subscan.client');
 
 const instantiateGateway = () => {
   const gateway = new LiveDataGateway();
-  const { client } = gateway as unknown as {
-    client: SubscanClientMockInstance;
-  };
+  const client = gateway['client'];
   const clientInstance = client;
-  const emit = jest.fn();
+  const emit = vi.fn();
 
   gateway.afterInit({ emit } as unknown as Server);
 
@@ -32,11 +19,11 @@ const instantiateGateway = () => {
 
 describe('LiveDataGateway', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('starts polling when clients connect and stops when last disconnects', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as {
       timer?: NodeJS.Timeout;
@@ -55,7 +42,7 @@ describe('LiveDataGateway', () => {
     expect(gatewayAny.clients.size).toBe(2);
     expect(gatewayAny.timer).toBe(timerRef);
 
-    const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+    const clearIntervalSpy = vi.spyOn(global, 'clearInterval');
 
     gateway.handleDisconnect({ id: '1' } as Socket);
     expect(gatewayAny.clients.size).toBe(1);
@@ -68,7 +55,7 @@ describe('LiveDataGateway', () => {
     expect(clearIntervalSpy).toHaveBeenCalledWith(timerRef);
 
     clearIntervalSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('poll emits newly seen items and skips duplicates', async () => {
@@ -98,8 +85,10 @@ describe('LiveDataGateway', () => {
       },
     ];
 
-    clientInstance.fetchLatestXcmList.mockImplementation(({ ecosystem }) => {
-      if (ecosystem === 'Polkadot') {
+    const listSpy = vi.spyOn(clientInstance, 'fetchLatestXcmList');
+
+    listSpy.mockImplementation((params) => {
+      if (params?.ecosystem === 'Polkadot') {
         return Promise.resolve(items);
       }
       return Promise.resolve<SubscanXcmItem[]>([]);
@@ -111,8 +100,8 @@ describe('LiveDataGateway', () => {
 
     const firstBatch = await gatewayWithPoll.poll();
 
-    expect(clientInstance.fetchLatestXcmList).toHaveBeenCalledTimes(4);
-    expect(clientInstance.fetchLatestXcmList).toHaveBeenCalledWith({
+    expect(listSpy).toHaveBeenCalledTimes(4);
+    expect(listSpy).toHaveBeenCalledWith({
       row: 5,
       ecosystem: 'Polkadot',
     });
@@ -171,14 +160,14 @@ describe('LiveDataGateway', () => {
   });
 
   it('onModuleDestroy stops the polling interval', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as { timer?: NodeJS.Timeout };
 
     gateway.handleConnection({ id: '1' } as Socket);
     expect(gatewayAny.timer).toBeDefined();
 
-    const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+    const clearIntervalSpy = vi.spyOn(global, 'clearInterval');
 
     gateway.onModuleDestroy();
 
@@ -186,13 +175,13 @@ describe('LiveDataGateway', () => {
     expect(clearIntervalSpy).toHaveBeenCalled();
 
     clearIntervalSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('calls unref() on the interval timer if available', () => {
-    const unref = jest.fn();
+    const unref = vi.fn();
     const realSetInterval = global.setInterval;
-    global.setInterval = jest.fn(() => ({
+    global.setInterval = vi.fn(() => ({
       unref,
     })) as unknown as typeof setInterval;
 
@@ -208,7 +197,7 @@ describe('LiveDataGateway', () => {
   });
 
   it('does not start polling again if a timer already exists (early return path)', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as {
@@ -220,17 +209,17 @@ describe('LiveDataGateway', () => {
     const firstTimer = gatewayAny.timer;
     expect(firstTimer).toBeDefined();
 
-    const pollSpy = jest.spyOn(gatewayAny, 'poll');
+    const pollSpy = vi.spyOn(gatewayAny, 'poll');
     gateway.handleConnection({ id: 'b' } as unknown as Socket);
 
     expect(pollSpy).not.toHaveBeenCalled();
     expect(gatewayAny.timer).toBe(firstTimer);
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('interval tick detects zero clients and stops polling (internal branch)', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as {
@@ -243,21 +232,20 @@ describe('LiveDataGateway', () => {
     gateway.handleConnection({ id: 'solo' } as unknown as Socket);
     expect(gatewayAny.timer).toBeDefined();
 
-    const stopSpy = jest.spyOn(gatewayAny, 'stopPolling');
+    const stopSpy = vi.spyOn(gatewayAny, 'stopPolling');
     gatewayAny.clients.clear();
 
-    jest.advanceTimersByTime(gatewayAny.INTERVAL);
+    vi.advanceTimersByTime(gatewayAny.INTERVAL);
     await Promise.resolve();
 
     expect(stopSpy).toHaveBeenCalledTimes(1);
     expect(gatewayAny.timer).toBeUndefined();
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('logs and recovers when poll rejects inside the interval loop', async () => {
-    jest.useFakeTimers();
-
+    vi.useFakeTimers();
     const { gateway, emit } = instantiateGateway();
     const gatewayAny = gateway as unknown as {
       poll: () => Promise<LiveXcmData[]>;
@@ -267,12 +255,12 @@ describe('LiveDataGateway', () => {
 
     const error = new Error('poll failed');
 
-    const pollSpy = jest
+    const pollSpy = vi
       .spyOn(gatewayAny, 'poll')
       .mockResolvedValueOnce([])
       .mockRejectedValueOnce(error);
 
-    const printErrorSpy = jest
+    const printErrorSpy = vi
       .spyOn(gatewayAny, 'printError')
       .mockImplementation(() => {});
 
@@ -280,7 +268,7 @@ describe('LiveDataGateway', () => {
 
     await Promise.resolve();
 
-    jest.advanceTimersByTime(gatewayAny.INTERVAL);
+    vi.advanceTimersByTime(gatewayAny.INTERVAL);
     await Promise.resolve();
     await Promise.resolve();
 
@@ -291,14 +279,14 @@ describe('LiveDataGateway', () => {
 
     pollSpy.mockRestore();
     printErrorSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('printError logs the formatted message', () => {
     const { gateway } = instantiateGateway();
     const gatewayAny = gateway as unknown as { printError: (e: Error) => void };
 
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     gatewayAny.printError(new Error('boom'));
     expect(spy).toHaveBeenCalledWith('[WebSocket] Subscan poll error:', 'boom');
     spy.mockRestore();
