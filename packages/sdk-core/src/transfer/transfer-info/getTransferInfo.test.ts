@@ -10,7 +10,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
+import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { InvalidParameterError } from '../../errors'
 import type {
   TGetTransferInfoOptions,
@@ -87,7 +87,7 @@ describe('getTransferInfo', () => {
     vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(dotAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
-    vi.mocked(getBalanceNative).mockResolvedValue(200000000000n)
+    vi.mocked(getBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000000000n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { fee: 100000000n, asset: dotAsset },
@@ -153,7 +153,7 @@ describe('getTransferInfo', () => {
       options.destination
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
-    expect(getBalanceNative).not.toHaveBeenCalled()
+    expect(getBalanceInternal).not.toHaveBeenCalled()
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
@@ -277,7 +277,7 @@ describe('getTransferInfo', () => {
     expect(initSpy).not.toHaveBeenCalled()
   })
 
-  it('should use getBalanceNativeInternal for fee balance if feeAsset is not provided', async () => {
+  it('should use getAssetBalanceInternal for fee balance if feeAsset is not provided', async () => {
     const options = { ...baseOptions, api: mockApi, feeAsset: undefined }
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
 
@@ -290,8 +290,8 @@ describe('getTransferInfo', () => {
       chain: options.origin,
       asset: dotAsset
     })
-    expect(getBalanceNative).toHaveBeenCalledTimes(1)
-    expect(getBalanceNative).toHaveBeenCalledWith({
+    expect(getBalanceInternal).toHaveBeenCalledTimes(1)
+    expect(getBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin

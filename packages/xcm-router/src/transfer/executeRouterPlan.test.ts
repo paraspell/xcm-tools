@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import { getBalanceNative, isChainEvm } from '@paraspell/sdk';
+import { getBalance, isChainEvm } from '@paraspell/sdk';
 import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -46,7 +46,7 @@ describe('executeRouterPlan', () => {
     vi.clearAllMocks();
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Unique');
     vi.mocked(submitTransaction).mockResolvedValue({} as TxFinalizedPayload);
-    vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
+    vi.mocked(getBalance).mockResolvedValue(10000000000n);
   });
 
   test('should execute plan with both EVM and non-EVM transactions', async () => {
