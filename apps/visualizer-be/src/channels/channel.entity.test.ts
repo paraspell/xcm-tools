@@ -1,4 +1,6 @@
-import { Channel } from './channel.entity';
+import { describe, expect, it } from 'vitest';
+
+import { Channel } from './channel.entity.js';
 
 describe('Channel Entity', () => {
   it('should create a Channel entity with the correct fields', () => {

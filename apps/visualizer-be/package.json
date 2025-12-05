@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "type": "module",
   "scripts": {
     "build": "nest build",
     "start": "nest start",
@@ -15,11 +16,10 @@
     "lint": "eslint --fix src",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "format:write": "prettier --write \"src/**/*.ts\"",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
     "@apollo/server": "^5.2.0",
@@ -33,8 +33,8 @@
     "@nestjs/platform-socket.io": "^11.1.9",
     "@nestjs/schedule": "^6.0.1",
     "@nestjs/typeorm": "^11.0.0",
-    "@paraspell/sdk": "workspace:*",
     "@nestjs/websockets": "^11.1.9",
+    "@paraspell/sdk": "workspace:*",
     "axios": "^1.13.2",
     "graphql": "^16.12.0",
     "pg": "^8.16.3",
@@ -50,67 +50,13 @@
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",
     "@types/express": "^5.0.5",
-    "@types/jest": "^30.0.0",
     "@types/supertest": "^6.0.3",
-    "babel-jest": "^30.2.0",
-    "jest": "^30.2.0",
+    "@vitest/coverage-v8": "^4.0.14",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.4.5",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.test\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": [
-        "ts-jest",
-        {
-          "useESM": true,
-          "tsconfig": "<rootDir>/../tsconfig.jest.json"
-        }
-      ],
-      "^.+\\.m?js$": [
-        "babel-jest",
-        {
-          "presets": [
-            [
-              "@babel/preset-env",
-              {
-                "targets": {
-                  "node": "current"
-                }
-              }
-            ]
-          ]
-        }
-      ]
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@scure/base|@noble/hashes)/",
-      "\\.pnp\\.[^\\/]+$"
-    ],
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s",
-      "!**/*.resolver.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      ".module.ts"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "tsconfig-paths": "^4.2.0",
+    "unplugin-swc": "^1.5.9"
   }
 }

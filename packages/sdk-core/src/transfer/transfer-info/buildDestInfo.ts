@@ -2,7 +2,7 @@ import { findAssetOnDestOrThrow, getNativeAssetSymbol, isSymbolMatch } from '@pa
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
-import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
+import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { UnableToComputeError } from '../../errors'
 import type { TBuildDestInfoOptions } from '../../types'
 
@@ -95,7 +95,7 @@ export const buildDestInfo = async <TApi, TRes>({
   const isDestFeeInNativeCurrency = destFeeDetail.asset.symbol === getNativeAssetSymbol(destination)
 
   if (isDestFeeInNativeCurrency) {
-    const destRecipientNativeBalance = await getBalanceNative({
+    const destRecipientNativeBalance = await getBalanceInternal({
       address: address,
       chain: destination,
       api: destApi
@@ -117,15 +117,12 @@ export const buildDestInfo = async <TApi, TRes>({
       receivedAmount,
       balance: destBalance,
       balanceAfter: destbalanceAfterResult,
-      currencySymbol: destAsset.symbol,
-      asset: destAsset,
-      existentialDeposit: edDest
+      asset: destAsset
     },
     xcmFee: {
       fee: destFeeDetail.fee as bigint,
       balance: destXcmFeeBalance,
       balanceAfter: destXcmFeeBalanceAfter,
-      currencySymbol: destFeeDetail.asset.symbol,
       asset: destFeeDetail.asset
     }
   }

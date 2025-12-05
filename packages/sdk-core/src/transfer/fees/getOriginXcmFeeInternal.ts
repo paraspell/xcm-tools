@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
@@ -35,8 +35,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-  const nativeAssetSymbol = getNativeAssetSymbol(origin)
-
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
@@ -56,7 +54,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
     return {
       fee: paddedFee,
-      currency: nativeAssetSymbol,
       asset: resolvedFeeAsset ?? asset,
       feeType: 'paymentInfo',
       sufficient
@@ -82,7 +79,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
       return {
         dryRunError: dryRunResult.failureReason,
         dryRunSubError: dryRunResult.failureSubReason,
-        currency: dryRunResult.currency,
         asset: dryRunResult.asset
       }
     }
@@ -92,7 +88,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
     return {
       fee: paddedFee,
-      currency: dryRunResult.currency,
       asset: dryRunResult.asset,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
@@ -107,7 +102,6 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
     fee,
     feeType: 'dryRun',
     sufficient: true,
-    currency: dryRunResult.currency,
     asset: dryRunResult.asset,
     forwardedXcms,
     destParaId,

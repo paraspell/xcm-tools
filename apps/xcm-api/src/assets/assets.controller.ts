@@ -18,10 +18,6 @@ import {
   AssetLocationDtoSchema,
 } from './dto/AssetLocationDto.js';
 import { FindAssetDto, FindAssetDtoSchema } from './dto/FindAssetDto.js';
-import {
-  OriginFeeDetailsDto,
-  OriginFeeDetailsDtoSchema,
-} from './dto/OriginFeeDetailsDto.js';
 import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
 import {
   SupportedDestinationsDto,
@@ -165,21 +161,6 @@ export class AssetsController {
       currency: JSON.stringify(currency),
     });
     return this.assetsService.getSupportedDestinations(chain, params);
-  }
-
-  @Post('origin-fee-details')
-  getOriginFeeDetails(
-    @Body(new ZodValidationPipe(OriginFeeDetailsDtoSchema))
-    params: OriginFeeDetailsDto,
-    @Req() req: Request,
-  ) {
-    const { origin, destination, currency } = params;
-    this.analyticsService.track(EventName.GET_ORIGIN_FEE_DETAILS, req, {
-      origin,
-      destination,
-      currency: JSON.stringify(currency),
-    });
-    return this.assetsService.getOriginFeeDetails(params);
   }
 
   @Get('assets/:chain/fee-assets')

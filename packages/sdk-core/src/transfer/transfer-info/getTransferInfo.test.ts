@@ -10,33 +10,31 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
+import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { InvalidParameterError } from '../../errors'
 import type {
   TGetTransferInfoOptions,
-  TTransferInfo,
+  TGetXcmFeeResult,
+  THopTransferInfo,
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { abstractDecimals } from '../../utils'
 import { getXcmFee } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { getTransferInfo } from './getTransferInfo'
 
-vi.mock('@paraspell/assets', async importOriginal => {
-  const actual = await importOriginal<typeof import('@paraspell/assets')>()
-  return {
-    ...actual,
-    findAssetInfoOrThrow: vi.fn(),
-    getExistentialDepositOrThrow: vi.fn(),
-    getRelayChainSymbol: vi.fn(),
-    isAssetXcEqual: vi.fn(),
-    isAssetEqual: vi.fn(),
-    isChainEvm: vi.fn()
-  }
-})
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  findAssetInfoOrThrow: vi.fn(),
+  getExistentialDepositOrThrow: vi.fn(),
+  getRelayChainSymbol: vi.fn(),
+  isAssetXcEqual: vi.fn(),
+  isAssetEqual: vi.fn(),
+  isChainEvm: vi.fn()
+}))
 
 vi.mock('../../errors')
 vi.mock('../../utils')
@@ -54,7 +52,7 @@ describe('getTransferInfo', () => {
 
   const buildTx = vi.fn(async () => Promise.resolve(mockTx))
 
-  const asset = {
+  const dotAsset = {
     symbol: 'DOT',
     assetId: '1',
     decimals: 10
@@ -87,32 +85,37 @@ describe('getTransferInfo', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'DOT',
-      assetId: '1',
-      decimals: 10
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(dotAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
-    vi.mocked(getBalanceNative).mockResolvedValue(200000000000n)
+    vi.mocked(getBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000000000n)
     vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
-      assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
-      bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
-      hops: [],
-      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
-    })
+      origin: { fee: 100000000n, asset: dotAsset },
+      hops: [
+        {
+          chain: 'AssetHubPolkadot',
+          result: {
+            fee: 50000000n,
+            asset: dotAsset
+          }
+        },
+        {
+          chain: 'BridgeHubPolkadot',
+          result: {
+            fee: 60000000n,
+            asset: dotAsset
+          }
+        }
+      ],
+      destination: { fee: 70000000n, asset: dotAsset }
+    } as TGetXcmFeeResult)
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(buildHopInfo).mockResolvedValue({
-      currencySymbol: 'DOT',
-      asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo,
-      existentialDeposit: 0n,
+      asset: dotAsset,
       xcmFee: {
         fee: 0n,
-        currencySymbol: 'DOT',
-        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo
+        asset: dotAsset
       }
     })
     vi.mocked(buildDestInfo).mockResolvedValue({
@@ -120,24 +123,21 @@ describe('getTransferInfo', () => {
         sufficient: true,
         receivedAmount: 10000000000n,
         balance: 0n,
-        balanceAfter: BigInt(baseOptions.currency.amount),
-        currencySymbol: 'DOT',
-        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo,
-        existentialDeposit: 100000000n
+        balanceAfter: baseOptions.currency.amount,
+        asset: dotAsset
       },
       xcmFee: {
         fee: 70000000n,
         balanceAfter: 0n,
         balance: 0n,
-        currencySymbol: 'DOT',
-        asset: { symbol: 'DOT', assetId: 'DOT', decimals: 10 } as TAssetInfo
+        asset: dotAsset
       }
     })
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('should successfully get transfer info for a Polkadot parachain transfer with all hops', async () => {
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+    const options = { ...baseOptions, api: mockApi }
 
     const initSpy = vi.spyOn(mockApi, 'init')
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
@@ -153,7 +153,7 @@ describe('getTransferInfo', () => {
       options.destination
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
-    expect(getBalanceNative).not.toHaveBeenCalled()
+    expect(getBalanceInternal).not.toHaveBeenCalled()
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
@@ -166,7 +166,6 @@ describe('getTransferInfo', () => {
       feeAsset: options.feeAsset,
       disableFallback: false
     })
-    expect(buildHopInfo).toHaveBeenCalledTimes(2) // AssetHub and BridgeHub
     expect(buildDestInfo).toHaveBeenCalled()
     expect(disconnectAllowedSpy).toHaveBeenCalledWith(true)
     expect(disconnectSpy).toHaveBeenCalled()
@@ -174,17 +173,15 @@ describe('getTransferInfo', () => {
     expect(result.chain.origin).toBe(options.origin)
     expect(result.chain.destination).toBe(options.destination)
     expect(result.chain.ecosystem).toBe('DOT')
-    expect(result.origin.selectedCurrency.currencySymbol).toBe('DOT')
+    expect(result.origin.selectedCurrency.asset).toEqual(dotAsset)
     expect(result.origin.selectedCurrency.balance).toBe(200000000000n)
     expect(result.origin.selectedCurrency.balanceAfter).toBe(
       200000000000n - BigInt(options.currency.amount)
     )
     expect(result.origin.selectedCurrency.sufficient).toBe(true) // 190 DOT > 0.1 DOT
-    expect(result.origin.xcmFee.currencySymbol).toBe('DOT')
+    expect(result.origin.xcmFee.asset).toEqual(dotAsset)
     expect(result.origin.xcmFee.fee).toBe(100000000n)
     expect(result.origin.xcmFee.sufficient).toBe(true) // 200 DOT > 0.01 DOT
-    expect(result.assetHub).toBeDefined()
-    expect(result.bridgeHub).toBeDefined()
     expect(result.destination).toBeDefined()
   })
 
@@ -192,55 +189,47 @@ describe('getTransferInfo', () => {
     const mockHopsFromFee = [
       {
         chain: 'Hydration',
-        result: { fee: 12345n, currency: 'HDX' }
+        result: { fee: 12345n, asset: { symbol: 'HDX' } }
       },
       {
         chain: 'Interlay',
-        result: { fee: 56789n, currency: 'INTR' }
+        result: { fee: 56789n, asset: { symbol: 'INTR' } }
       }
     ]
 
     const mockHydraHopInfo = {
       balance: 100n,
-      currencySymbol: 'HDX',
       asset: { symbol: 'HDX', assetId: 'HDX', decimals: 12 } as TAssetInfo,
-      existentialDeposit: 1n,
       xcmFee: {
         fee: 12345n,
         balance: 100n,
-        currencySymbol: 'HDX',
         asset: { symbol: 'HDX', assetId: 'HDX', decimals: 12 } as TAssetInfo
       }
     }
 
     const mockInterlayHopInfo = {
       balance: 200n,
-      currencySymbol: 'INTR',
       asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo,
-      existentialDeposit: 2n,
       xcmFee: {
         fee: 56789n,
         balance: 200n,
-        currencySymbol: 'INTR',
         asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo
       }
     }
 
     vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
-      assetHub: undefined,
-      bridgeHub: undefined,
+      origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
       hops: mockHopsFromFee as TXcmFeeHopInfo[],
-      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
+      destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
     })
 
     vi.mocked(buildHopInfo).mockImplementation(({ chain }) => {
       if (chain === 'Hydration') return Promise.resolve(mockHydraHopInfo)
       if (chain === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
-      return Promise.resolve({} as TTransferInfo['assetHub'])
+      return Promise.resolve({} as THopTransferInfo['result'])
     })
 
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+    const options = { ...baseOptions, api: mockApi }
 
     const result = await getTransferInfo(options)
 
@@ -249,18 +238,15 @@ describe('getTransferInfo', () => {
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
         chain: 'Hydration',
-        feeData: mockHopsFromFee[0].result
+        fee: mockHopsFromFee[0].result.fee
       })
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
         chain: 'Interlay',
-        feeData: mockHopsFromFee[1].result
+        fee: mockHopsFromFee[1].result.fee
       })
     )
-
-    expect(result.assetHub).toBeUndefined()
-    expect(result.bridgeHub).toBeUndefined()
 
     expect(result.hops).toBeDefined()
     expect(result.hops).toHaveLength(2)
@@ -278,12 +264,11 @@ describe('getTransferInfo', () => {
 
   it('should throw InvalidParameterError if origin is EVM and ahAddress is not provided', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
-    const options = {
+    const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
-      tx: mockTx,
       ahAddress: undefined,
-      origin: 'Moonbeam' as TSubstrateChain
+      origin: 'Moonbeam'
     }
 
     const initSpy = vi.spyOn(mockApi, 'init')
@@ -292,8 +277,8 @@ describe('getTransferInfo', () => {
     expect(initSpy).not.toHaveBeenCalled()
   })
 
-  it('should use getBalanceNativeInternal for fee balance if feeAsset is not provided', async () => {
-    const options = { ...baseOptions, api: mockApi, tx: mockTx, feeAsset: undefined }
+  it('should use getAssetBalanceInternal for fee balance if feeAsset is not provided', async () => {
+    const options = { ...baseOptions, api: mockApi, feeAsset: undefined }
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
 
     await getTransferInfo(options)
@@ -303,10 +288,10 @@ describe('getTransferInfo', () => {
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin,
-      asset
+      asset: dotAsset
     })
-    expect(getBalanceNative).toHaveBeenCalledTimes(1)
-    expect(getBalanceNative).toHaveBeenCalledWith({
+    expect(getBalanceInternal).toHaveBeenCalledTimes(1)
+    expect(getBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin
@@ -331,14 +316,13 @@ describe('getTransferInfo', () => {
       .mockResolvedValueOnce(100000000n)
       .mockResolvedValueOnce(100000000n)
 
-    const options = {
+    const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
-      tx: mockTx,
       origin: ahOrigin,
       currency: sameCurrency,
       feeAsset: sameCurrency
-    } as TGetTransferInfoOptions<unknown, unknown>
+    }
 
     const result = await getTransferInfo(options)
 
@@ -351,61 +335,28 @@ describe('getTransferInfo', () => {
     const originFeeVal = 100000000n
     const originBalanceFeeVal = 200000000000n
 
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+    const options = { ...baseOptions, api: mockApi }
     const result = await getTransferInfo(options)
 
     expect(result.origin.xcmFee.balanceAfter).toBe(originBalanceFeeVal - originFeeVal)
   })
 
-  it('should not build assetHub info if assetHubFeeResult is undefined', async () => {
-    vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
-      assetHub: undefined,
-      bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
-      hops: [],
-      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
-    })
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
-    const result = await getTransferInfo(options)
-
-    expect(result.assetHub).toBeUndefined()
-    expect(buildHopInfo).toHaveBeenCalledTimes(1) // Only for BridgeHub
-  })
-
-  it('should not build bridgeHub info if bridgeHubFeeResult is undefined', async () => {
-    vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
-      assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
-      bridgeHub: undefined,
-      hops: [],
-      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
-    })
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
-    const result = await getTransferInfo(options)
-
-    expect(result.bridgeHub).toBeUndefined()
-    expect(buildHopInfo).toHaveBeenCalledTimes(1)
-  })
-
-  it('should correctly determine Kusama hop chains if origin is Kusama based', async () => {
-    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
-    vi.mocked(getRelayChainSymbol).mockReturnValue('KSM')
-    const options = {
+  it('should correctly determine hop chains if origin is Polkadot based', async () => {
+    const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
-      tx: mockTx,
-      origin: 'Karura' as TSubstrateChain
+      origin: 'Karura'
     }
     await getTransferInfo(options)
 
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        chain: 'AssetHubKusama'
+        chain: 'AssetHubPolkadot'
       })
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        chain: 'BridgeHubKusama'
+        chain: 'BridgeHubPolkadot'
       })
     )
   })
@@ -415,7 +366,7 @@ describe('getTransferInfo', () => {
       .mockResolvedValueOnce(50000000n)
       .mockResolvedValueOnce(1000000000n)
 
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+    const options = { ...baseOptions, api: mockApi }
     const result = await getTransferInfo(options)
 
     expect(result.origin.xcmFee.sufficient).toBe(false)
@@ -426,7 +377,7 @@ describe('getTransferInfo', () => {
     vi.mocked(findAssetInfoOrThrow).mockImplementation(() => {
       throw new Error('Simulated error in findAssetInfoOrThrow')
     })
-    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+    const options = { ...baseOptions, api: mockApi }
 
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
@@ -443,11 +394,10 @@ describe('getTransferInfo', () => {
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
-    const options = {
+    const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
-      tx: mockTx,
-      origin: 'Moonbeam' as TSubstrateChain,
+      origin: 'Moonbeam',
       ahAddress: 'evmAhAddress'
     }
 

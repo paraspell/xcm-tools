@@ -1,15 +1,15 @@
 import {
   findAssetOnDestOrThrow,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol
+  findNativeAssetInfoOrThrow,
+  getExistentialDepositOrThrow
 } from '@paraspell/assets'
 
-import type { BuildHopInfoOptions, TTransferInfo } from '../../types'
+import type { BuildHopInfoOptions, THopTransferInfo } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes>({
   api,
   chain,
-  feeData,
+  fee,
   originChain,
   asset,
   currency
@@ -20,18 +20,18 @@ export const buildHopInfo = async <TApi, TRes>({
 
   try {
     const xcmFeeDetails = {
-      fee: feeData.fee,
-      currencySymbol: asset.symbol,
+      fee,
       asset
     }
 
     const isBridgeHub = chain.includes('BridgeHub')
 
     if (isBridgeHub) {
+      const nativeAsset = findNativeAssetInfoOrThrow(chain)
       return {
-        currencySymbol: getNativeAssetSymbol(chain),
+        asset: nativeAsset,
         xcmFee: xcmFeeDetails
-      } as TTransferInfo['assetHub']
+      } as THopTransferInfo['result']
     } else {
       const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
 
@@ -42,7 +42,6 @@ export const buildHopInfo = async <TApi, TRes>({
       const ed = getExistentialDepositOrThrow(chain, hopCurrencyPayload)
 
       return {
-        currencySymbol: hopAsset.symbol,
         asset: hopAsset,
         existentialDeposit: ed,
         xcmFee: xcmFeeDetails

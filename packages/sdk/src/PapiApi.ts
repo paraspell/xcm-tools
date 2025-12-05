@@ -490,14 +490,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
-    const usedSymbol = usedAsset.symbol
 
     if (!isSuccess) {
       return Promise.resolve({
         success: false,
         failureReason: failureOutputReason.failureReason,
         failureSubReason: failureOutputReason.failureSubReason,
-        currency: usedSymbol,
         asset: usedAsset
       })
     }
@@ -539,7 +537,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         return Promise.resolve({
           success: true,
           fee: xcmFee,
-          currency: usedSymbol,
           asset: usedAsset,
           weight,
           forwardedXcms,
@@ -554,7 +551,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve({
       success: true,
       fee,
-      currency: usedSymbol,
       asset: usedAsset,
       weight,
       forwardedXcms,
@@ -660,13 +656,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .getUnsafeApi()
       .apis.DryRunApi.dry_run_xcm(transformedOriginLocation, xcm)
 
-    const symbol = asset.symbol
-
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
       const failureReason = extractDryRunXcmFailureReason(result)
 
-      return { success: false, failureReason, currency: symbol, asset }
+      return { success: false, failureReason, asset }
     }
 
     const actualWeight = result.value.execution_result.value.used
@@ -692,7 +686,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         return {
           success: true,
           fee,
-          currency: symbol,
           asset,
           weight,
           forwardedXcms,
@@ -767,7 +760,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return Promise.resolve({
         success: false,
         failureReason: 'Cannot determine destination fee. No fee event found',
-        currency: symbol,
         asset
       })
     }
@@ -789,7 +781,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve({
       success: true,
       fee: processedFee,
-      currency: symbol,
       asset,
       weight,
       forwardedXcms,

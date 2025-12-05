@@ -6,8 +6,8 @@ import {
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
 
-import { LiveXcmData, SubscanXcmItem } from './livedata.types';
-import { SubscanClient } from './subscan.client';
+import { LiveXcmData, SubscanXcmItem } from './livedata.types.js';
+import { SubscanClient } from './subscan.client.js';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class LiveDataGateway
@@ -116,7 +116,9 @@ export class LiveDataGateway
 
     if (this.seenQueue.length > this.MAX_SIZE) {
       const oldest = this.seenQueue.shift();
-      this.seen.delete(oldest);
+      if (oldest) {
+        this.seen.delete(oldest);
+      }
     }
     return true;
   }

@@ -1,24 +1,18 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SubscanClient } from './subscan.client';
+import { SubscanClient } from './subscan.client.js';
 
-jest.mock('axios', () => {
-  const create = jest.fn();
-  return {
-    __esModule: true,
-    default: { create },
-  };
-});
+vi.mock('axios');
 
 describe('SubscanClient', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('fetchLatestXcmList should return normalized items', async () => {
-    const axiosMock = jest.mocked(axios);
-    const postMock = jest.fn().mockResolvedValue({
+    const postMock = vi.fn().mockResolvedValue({
       data: {
         code: 0,
         data: {
@@ -46,7 +40,9 @@ describe('SubscanClient', () => {
       },
     });
 
-    axiosMock.create.mockReturnValue({
+    const createSpy = vi.spyOn(axios, 'create');
+
+    createSpy.mockReturnValue({
       post: postMock,
     } as unknown as AxiosInstance);
 
@@ -57,7 +53,7 @@ describe('SubscanClient', () => {
       row: 3,
     });
 
-    const [[createConfig]] = axiosMock.create.mock.calls;
+    const [[createConfig]] = createSpy.mock.calls;
     expect(createConfig).toEqual({
       timeout: 15000,
       headers: {
@@ -98,8 +94,7 @@ describe('SubscanClient', () => {
   });
 
   it('fetchLatestXcmList should throw when subscan responds with an error', async () => {
-    const axiosMock = jest.mocked(axios);
-    const postMock = jest.fn().mockResolvedValue({
+    const postMock = vi.fn().mockResolvedValue({
       data: {
         code: 1,
         message: 'subscan error',
@@ -109,7 +104,9 @@ describe('SubscanClient', () => {
       },
     });
 
-    axiosMock.create.mockReturnValue({
+    const createSpy = vi.spyOn(axios, 'create');
+
+    createSpy.mockReturnValue({
       post: postMock,
     } as unknown as AxiosInstance);
 
@@ -119,7 +116,7 @@ describe('SubscanClient', () => {
       client.fetchLatestXcmList({ ecosystem: 'Kusama' }),
     ).rejects.toThrow('subscan error');
 
-    const [[defaultConfig]] = axiosMock.create.mock.calls;
+    const [[defaultConfig]] = createSpy.mock.calls;
     expect(defaultConfig).toEqual({
       timeout: 15000,
       headers: {

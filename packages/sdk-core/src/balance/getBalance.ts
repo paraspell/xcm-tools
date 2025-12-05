@@ -1,4 +1,4 @@
-import { findAssetInfoOrThrow } from '@paraspell/assets'
+import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { isRelayChain } from '@paraspell/sdk-common'
 
 import { getPalletInstance } from '../pallets'
@@ -33,7 +33,9 @@ export const getBalanceInternal = async <TApi, TRes>(
   options: TGetBalanceOptions<TApi, TRes>
 ): Promise<bigint> => {
   const { chain, currency } = options
-  const asset = findAssetInfoOrThrow(chain, currency, null)
+  const asset = currency
+    ? findAssetInfoOrThrow(chain, currency, null)
+    : findNativeAssetInfoOrThrow(chain)
   return getAssetBalanceInternal({ ...options, asset })
 }
 

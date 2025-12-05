@@ -75,12 +75,8 @@ describe('getOriginXcmFeeEstimate', () => {
       undefined
     )
 
-    expect(getNativeAssetSymbol).toHaveBeenCalledTimes(1)
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockOriginChain)
-
     expect(result).toEqual({
       fee: MOCK_PADDED_FEE,
-      currency: MOCK_NATIVE_ASSET_SYMBOL,
       asset: mockAsset,
       sufficient: true
     })

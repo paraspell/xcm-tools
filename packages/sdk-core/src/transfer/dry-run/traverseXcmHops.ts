@@ -29,9 +29,6 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
     extractNextHopData
   } = config
 
-  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
-  const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-
   let currentOrigin = origin
   let forwardedXcms = initialForwardedXcms
   let nextParaId = initialDestParaId
@@ -45,7 +42,6 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
   let hasPassedExchange = origin === swapConfig?.exchangeChain
 
   const hops: Array<{ chain: TSubstrateChain; result: THopResult }> = []
-  const intermediateResults: Partial<{ assetHub?: THopResult; bridgeHub?: THopResult }> = {}
   let destinationResult: THopResult | undefined
 
   while (
@@ -75,9 +71,6 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
         nextChain === destination &&
         (!swapConfig || hasPassedExchange || nextChain === swapConfig.exchangeChain)
 
-      const isAssetHub = nextChain === assetHubChain
-      const isBridgeHub = nextChain === bridgeHubChain
-
       const hopResult = await processHop({
         api: hopApi,
         currentChain: nextChain as TSubstrateChain,
@@ -85,9 +78,7 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
         currentAsset,
         forwardedXcms,
         hasPassedExchange,
-        isDestination,
-        isAssetHub,
-        isBridgeHub
+        isDestination
       })
 
       if (!isDestination) {
@@ -99,10 +90,6 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
 
       if (isDestination) {
         destinationResult = hopResult
-      } else if (isAssetHub) {
-        intermediateResults.assetHub = hopResult
-      } else if (isBridgeHub) {
-        intermediateResults.bridgeHub = hopResult
       }
 
       if (!shouldContinue(hopResult)) {
@@ -130,9 +117,6 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
 
   return {
     hops,
-    // assetHub, bridgeHub keys will be removed in the next major version
-    ...(intermediateResults.assetHub && { assetHub: intermediateResults.assetHub }),
-    ...(intermediateResults.bridgeHub && { bridgeHub: intermediateResults.bridgeHub }),
     ...(destinationResult && { destination: destinationResult }),
     lastProcessedChain: currentOrigin
   }

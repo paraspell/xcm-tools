@@ -1,4 +1,4 @@
-import { AmountTooLowError, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk';
+import { AmountTooLowError, getBalance, getNativeAssetSymbol } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -10,7 +10,7 @@ vi.mock('@paraspell/sdk', async () => {
   const original = await vi.importActual('@paraspell/sdk');
   return {
     ...original,
-    getBalanceNative: vi.fn(),
+    getBalance: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
   };
 });
@@ -109,7 +109,7 @@ describe('AcalaExchange', () => {
 
   beforeEach(() => {
     chain = new AcalaExchange('Acala', 'AcalaDex');
-    vi.mocked(getBalanceNative).mockResolvedValue(100n);
+    vi.mocked(getBalance).mockResolvedValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA');
   });
 
@@ -144,7 +144,7 @@ describe('AcalaExchange', () => {
     } as TSwapOptions;
 
     it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
-      vi.mocked(getBalanceNative).mockResolvedValueOnce(1_000_000n);
+      vi.mocked(getBalance).mockResolvedValueOnce(1_000_000n);
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(0n);
 
       await expect(
@@ -172,7 +172,7 @@ describe('AcalaExchange', () => {
         origin: {},
       } as TSwapOptions;
 
-      vi.mocked(getBalanceNative).mockResolvedValueOnce(0n);
+      vi.mocked(getBalance).mockResolvedValueOnce(0n);
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(1n);
 
       await expect(chain.swapCurrency(mockApi, options, 1n)).rejects.toThrow(AmountTooLowError);

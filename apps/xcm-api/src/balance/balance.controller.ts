@@ -9,10 +9,6 @@ import {
   BalanceForeignDtoSchema,
 } from './dto/BalanceForeignDto.js';
 import {
-  BalanceNativeDto,
-  BalanceNativeDtoSchema,
-} from './dto/BalanceNativeDto.js';
-import {
   ExistentialDepositDto,
   ExistentialDepositDtoSchema,
 } from './dto/ExistentialDepositDto.js';
@@ -24,34 +20,8 @@ export class BalanceController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Post(':chain/native')
-  getBalanceNative(
-    @Param('chain') chain: string,
-    @Body(new ZodValidationPipe(BalanceNativeDtoSchema))
-    params: BalanceNativeDto,
-    @Req() req: Request,
-  ) {
-    this.analyticsService.track(EventName.GET_BALANCE_NATIVE, req, {
-      chain,
-    });
-    return this.balanceService.getBalanceNative(chain, params);
-  }
-
-  @Post(':chain/foreign')
-  getBalanceForeign(
-    @Param('chain') chain: string,
-    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
-    params: BalanceForeignDto,
-    @Req() req: Request,
-  ) {
-    this.analyticsService.track(EventName.GET_BALANCE_FOREIGN, req, {
-      chain,
-    });
-    return this.balanceService.getBalanceForeign(chain, params);
-  }
-
-  @Post(':chain/asset')
-  getAssetBalance(
+  @Post(':chain')
+  getBalance(
     @Param('chain') chain: string,
     @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
     params: BalanceForeignDto,
@@ -60,7 +30,7 @@ export class BalanceController {
     this.analyticsService.track(EventName.GET_ASSET_BALANCE, req, {
       chain,
     });
-    return this.balanceService.getAssetBalance(chain, params);
+    return this.balanceService.getBalance(chain, params);
   }
 
   @Post(':chain/existential-deposit')

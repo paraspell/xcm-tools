@@ -28,7 +28,6 @@ const dryRunResult: TDryRunResult = {
   origin: {
     success: true,
     fee: 1n,
-    currency: 'DOT',
     asset: {
       symbol: 'DOT',
     } as TAssetInfo,
@@ -40,7 +39,6 @@ const dryRunResult: TDryRunResult = {
 const feeResult: TGetXcmFeeResult = {
   origin: {
     fee: 1n,
-    currency: 'DOT',
     asset: {
       symbol: 'DOT',
     } as TAssetInfo,
@@ -49,7 +47,6 @@ const feeResult: TGetXcmFeeResult = {
   hops: [],
   destination: {
     fee: 1n,
-    currency: 'DOT',
     asset: {
       symbol: 'DOT',
     } as TAssetInfo,

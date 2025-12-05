@@ -273,7 +273,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       : tx
 
     const usedAsset = feeAsset ?? findNativeAssetInfoOrThrow(chain)
-    const usedSymbol = usedAsset.symbol
 
     const performDryRunCall = async (includeVersion: boolean) => {
       return this.api.call.dryRunApi.dryRunCall(
@@ -331,7 +330,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       if (msg.includes('Expected 3 arguments')) {
         shouldRetryWithVersion = true
       } else {
-        return { success: false, failureReason: msg, currency: usedSymbol, asset: usedAsset }
+        return { success: false, failureReason: msg, asset: usedAsset }
       }
     }
 
@@ -352,7 +351,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           success: false,
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
-          currency: usedSymbol,
           asset: usedAsset
         }
       }
@@ -363,7 +361,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         success: false,
         failureReason: failureErr.failureReason || 'Unknown error',
         failureSubReason: failureErr.failureSubReason,
-        currency: usedSymbol,
         asset: usedAsset
       }
     }
@@ -408,7 +405,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         return Promise.resolve({
           success: true,
           fee: xcmFee,
-          currency: usedSymbol,
           asset: usedAsset,
           weight,
           forwardedXcms,
@@ -423,7 +419,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return {
       success: true,
       fee,
-      currency: usedSymbol,
       asset: usedAsset,
       weight,
       forwardedXcms,
@@ -512,14 +507,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const result = response.toHuman() as any
     const resultJson = response.toJSON() as any
 
-    const symbol = asset.symbol
-
     const isSuccess = result.Ok && result.Ok.executionResult.Complete
 
     if (!isSuccess) {
       const error = result.Ok.executionResult.Incomplete.error
       const failureReason = typeof error === 'string' ? error : error.error
-      return { success: false, failureReason, currency: symbol, asset }
+      return { success: false, failureReason, asset }
     }
 
     const forwardedXcms =
@@ -548,7 +541,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         return {
           success: true,
           fee,
-          currency: symbol,
           asset,
           weight,
           forwardedXcms,
@@ -586,7 +578,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       return Promise.resolve({
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found',
-        currency: symbol,
         asset
       })
     }
@@ -596,7 +587,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const fee = BigInt(feeAmount.replace(/,/g, ''))
 
-    return { success: true, fee, currency: symbol, asset, weight, forwardedXcms, destParaId }
+    return { success: true, fee, asset, weight, forwardedXcms, destParaId }
   }
 
   async getBridgeStatus() {

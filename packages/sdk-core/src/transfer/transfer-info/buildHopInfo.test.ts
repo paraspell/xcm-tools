@@ -1,8 +1,8 @@
 import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
 import {
   findAssetOnDestOrThrow,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol
+  findNativeAssetInfoOrThrow,
+  getExistentialDepositOrThrow
 } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -18,7 +18,7 @@ vi.mock('@paraspell/assets', async () => {
     ...actual,
     findAssetOnDestOrThrow: vi.fn(),
     getExistentialDepositOrThrow: vi.fn(),
-    getNativeAssetSymbol: vi.fn()
+    findNativeAssetInfoOrThrow: vi.fn()
   }
 })
 
@@ -50,10 +50,7 @@ describe('buildHopInfo', () => {
     baseOptions = {
       api: mockApi,
       chain: 'AssetHubPolkadot' as TSubstrateChain,
-      feeData: {
-        fee: DEFAULT_HOP_FEE,
-        currency: 'DOT'
-      },
+      fee: DEFAULT_HOP_FEE,
       originChain: 'Polkadot' as TSubstrateChain,
       currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
       asset: { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo,
@@ -61,10 +58,10 @@ describe('buildHopInfo', () => {
       ahAddress: 'ahBobForEvm'
     }
 
-    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
-      if (chain.includes('Polkadot')) return 'DOT'
-      if (chain.includes('Kusama')) return 'KSM'
-      return 'HOPNATIVE'
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+      if (chain.includes('Polkadot')) return { symbol: 'DOT' } as TAssetInfo
+      if (chain.includes('Kusama')) return { symbol: 'KSM' } as TAssetInfo
+      return { symbol: 'HOPNATIVE' } as TAssetInfo
     })
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'USDT',
@@ -99,7 +96,6 @@ describe('buildHopInfo', () => {
     })
 
     expect(result).toEqual({
-      currencySymbol: 'USDT',
       asset: {
         symbol: 'USDT',
         assetId: '1984',
@@ -109,7 +105,6 @@ describe('buildHopInfo', () => {
       existentialDeposit: BigInt(DEFAULT_ED),
       xcmFee: {
         fee: DEFAULT_HOP_FEE,
-        currencySymbol: 'USDT',
         asset: { symbol: 'USDT', assetId: '1984', decimals: 6 }
       }
     })
@@ -128,15 +123,16 @@ describe('buildHopInfo', () => {
     const result = await buildHopInfo(options)
 
     expect(initSpy).toHaveBeenCalledWith(chain)
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
+    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith(chain)
     expect(findAssetOnDestOrThrow).not.toHaveBeenCalled()
     expect(getExistentialDepositOrThrow).not.toHaveBeenCalled()
 
     expect(result).toEqual({
-      currencySymbol: 'DOT',
+      asset: {
+        symbol: 'DOT'
+      },
       xcmFee: {
         fee: DEFAULT_HOP_FEE,
-        currencySymbol: 'USDT',
         asset: {
           symbol: 'USDT',
           assetId: '1984',

@@ -48,7 +48,7 @@ export const callSdkFunc = (
     PARA_ID: () => Promise.resolve(getParaId(chain)),
     CONVERT_SS58: () => Promise.resolve(chosenSdk.convertSs58(address, chain)),
     ASSET_BALANCE: () =>
-      chosenSdk.getAssetBalance({
+      chosenSdk.getBalance({
         address,
         chain,
         currency: resolvedCurrency,

@@ -8,10 +8,10 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getAssetBalanceInternal, getBalanceNative } from '../../balance'
+import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { InvalidParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { abstractDecimals } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
@@ -51,7 +51,7 @@ export const getTransferInfo = async <TApi, TRes>({
           chain: origin,
           asset: resolvedFeeAsset
         })
-      : await getBalanceNative({
+      : await getBalanceInternal({
           api,
           address: senderAddress,
           chain: origin
@@ -67,9 +67,7 @@ export const getTransferInfo = async <TApi, TRes>({
     const edOrigin = getExistentialDepositOrThrow(origin, currency)
 
     const {
-      origin: { fee: originFee, currency: originFeeCurrency, asset: originFeeAsset },
-      assetHub: assetHubFeeResult,
-      bridgeHub: bridgeHubFeeResult,
+      origin: { fee: originFee, asset: originFeeAsset },
       destination: destFeeDetail,
       hops
     } = await getXcmFeeInternal({
@@ -99,35 +97,6 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const originBalanceSufficient = originBalanceAfter >= edOrigin
 
-    let assetHub
-    if (assetHubFeeResult) {
-      assetHub = await buildHopInfo({
-        api,
-        chain: `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain,
-        feeData: assetHubFeeResult as { fee: bigint; currency: string },
-        originChain: origin,
-        currency,
-        asset: assetHubFeeResult.asset,
-        senderAddress,
-        ahAddress
-      })
-    }
-
-    let bridgeHub
-    if (bridgeHubFeeResult) {
-      const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-      bridgeHub = await buildHopInfo({
-        api,
-        chain: bridgeHubChain,
-        feeData: bridgeHubFeeResult as { fee: bigint; currency: string },
-        originChain: origin,
-        currency,
-        asset: bridgeHubFeeResult.asset,
-        senderAddress,
-        ahAddress
-      })
-    }
-
     let builtHops: TTransferInfo['hops'] = []
 
     if (hops && hops.length > 0) {
@@ -136,7 +105,7 @@ export const getTransferInfo = async <TApi, TRes>({
           const result = await buildHopInfo({
             api,
             chain: hop.chain as TSubstrateChain,
-            feeData: hop.result as { fee: bigint; currency: string },
+            fee: hop.result.fee,
             originChain: origin,
             currency,
             asset: hop.result.asset,
@@ -156,6 +125,8 @@ export const getTransferInfo = async <TApi, TRes>({
       0n
     )
 
+    const bridgeHop = hops.find(hop => hop.chain.startsWith('BridgeHub'))
+
     const destinationInfo = await buildDestInfo({
       api,
       origin,
@@ -169,7 +140,7 @@ export const getTransferInfo = async <TApi, TRes>({
       isFeeAssetAh: !!isFeeAssetAh,
       destFeeDetail,
       totalHopFee,
-      bridgeFee: bridgeHubFeeResult?.fee
+      bridgeFee: bridgeHop?.result.fee
     })
 
     return {
@@ -183,21 +154,16 @@ export const getTransferInfo = async <TApi, TRes>({
           sufficient: originBalanceSufficient,
           balance: originBalance,
           balanceAfter: originBalanceAfter,
-          currencySymbol: originAsset.symbol,
-          asset: originAsset,
-          existentialDeposit: edOrigin
+          asset: originAsset
         },
         xcmFee: {
           sufficient: originBalanceNativeSufficient,
           fee: originFee,
           balance: originBalanceFee,
           balanceAfter: originBalanceFeeAfter,
-          currencySymbol: originFeeCurrency,
           asset: originFeeAsset
         }
       },
-      assetHub,
-      bridgeHub,
       hops: builtHops,
       destination: destinationInfo
     }

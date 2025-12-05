@@ -2,12 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  hasDryRunSupport
-} from '@paraspell/assets'
+import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -109,7 +104,6 @@ export const dryRunInternal = async <TApi, TRes>(
     if (!hasDryRunSupport(currentChain)) {
       return {
         success: false,
-        currency: currentAsset.symbol,
         asset: currentAsset,
         failureReason: `DryRunApi is not available on chain ${currentChain}`
       }
@@ -130,7 +124,7 @@ export const dryRunInternal = async <TApi, TRes>(
       amount
     })
 
-    return { ...hopDryRun, currency: hopAsset.symbol, asset: hopAsset }
+    return { ...hopDryRun, asset: hopAsset }
   }
 
   const traversalResult = await traverseXcmHops({
@@ -150,23 +144,25 @@ export const dryRunInternal = async <TApi, TRes>(
   })
 
   // Process Ethereum bridge fees
-  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
   const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
+  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
+
+  const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 
   // For Mythos → Ethereum, we skip additional Ethereum bridge fees (aligns with getXcmFeeInternal)
   const processedBridgeHub = isMythosToEthereum
-    ? traversalResult.bridgeHub
-    : traversalResult.bridgeHub?.success
-      ? await addEthereumBridgeFees(api, traversalResult.bridgeHub, destination, assetHubChain)
-      : traversalResult.bridgeHub
+    ? bridgeHubHop?.result
+    : bridgeHubHop?.result.success
+      ? await addEthereumBridgeFees(api, bridgeHubHop?.result, destination, assetHubChain)
+      : bridgeHubHop?.result
 
   // Update bridge hub in hops if needed
   if (
     processedBridgeHub &&
     processedBridgeHub.success &&
-    traversalResult.bridgeHub &&
-    traversalResult.bridgeHub.success &&
-    processedBridgeHub.fee !== traversalResult.bridgeHub.fee
+    bridgeHubHop &&
+    bridgeHubHop.result.success &&
+    processedBridgeHub.fee !== bridgeHubHop.result.fee
   ) {
     const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1 && traversalResult.hops[bridgeHubHopIndex].result.success) {
@@ -177,18 +173,8 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
-  const bridgeHubWithCurrency = processedBridgeHub?.success
-    ? {
-        ...processedBridgeHub,
-        currency: getNativeAssetSymbol(bridgeHubChain),
-        asset: findNativeAssetInfoOrThrow(bridgeHubChain)
-      }
-    : processedBridgeHub
-
   const result: TDryRunResult = {
     origin: originDryModified,
-    assetHub: traversalResult.assetHub,
-    bridgeHub: bridgeHubWithCurrency,
     destination: traversalResult.destination,
     hops: traversalResult.hops
   }

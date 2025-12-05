@@ -803,7 +803,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo,
         weight: { refTime: 10n, proofSize: 20n },
         forwardedXcms: [],
@@ -871,7 +870,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 30n, proofSize: 40n },
         forwardedXcms: [{ type: 'V4', value: { interior: { type: 'Here' } } }],
@@ -915,7 +913,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
-        currency: 'DOT',
         asset: expect.objectContaining({ symbol: 'DOT' }),
         weight: { refTime: 10n, proofSize: 20n },
         forwardedXcms: [],
@@ -977,7 +974,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeOtherErrorAfterRetry',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1015,7 +1011,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'NotVersionedConversion',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1046,7 +1041,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'ShortErrorType',
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1095,7 +1089,6 @@ describe('PapiApi', () => {
         success: false,
         failureReason: 'Module',
         failureSubReason: 'Token',
-        currency: 'GLMR',
         asset: nativeAsset
       })
     })
@@ -1149,7 +1142,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'DispatchError',
-        currency: 'GLMR',
         asset: nativeAsset
       })
     })
@@ -1193,7 +1185,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 500n,
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo,
         weight: { refTime: 10n, proofSize: 20n },
         forwardedXcms: [],
@@ -1227,7 +1218,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: JSON.stringify(mockApiResponse.value),
-        currency: 'GLMR',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1437,7 +1427,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 999n,
-        currency: 'USDT',
         asset: { symbol: 'USDT', location: {} } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: expect.any(Object),
@@ -1473,7 +1462,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeXcmError',
-        currency: 'USDT',
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -1506,7 +1494,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'Incomplete',
-        currency: 'USDT',
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -1655,7 +1642,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 999n,
-        currency: 'AUSD',
         asset: { symbol: 'AUSD' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []
@@ -1690,7 +1676,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeXcmError',
-        currency: 'AUSD',
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
     })
@@ -1729,7 +1714,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'NotHoldingFees',
-        currency: 'AUSD',
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
     })
@@ -1806,7 +1790,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 4500n,
-        currency: 'USDT',
         asset: { symbol: 'USDT' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: [],
@@ -1886,7 +1869,6 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: true,
         fee: 1300n,
-        currency: 'DOT',
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: [],
@@ -1936,7 +1918,6 @@ describe('PapiApi', () => {
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No fee event found',
-        currency: 'USDT',
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -1979,7 +1960,6 @@ describe('PapiApi', () => {
       ).resolves.toEqual({
         success: true,
         fee: 100n,
-        currency: 'AUSD',
         asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []

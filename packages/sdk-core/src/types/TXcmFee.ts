@@ -3,7 +3,7 @@ import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@par
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
-import type { TSwapConfig } from './TDryRun'
+import type { TChainEndpoint, TSwapConfig } from './TDryRun'
 import type { TWeight } from './TTransfer'
 
 export type TXcmFeeSwapConfig = TSwapConfig & { amountOut: bigint }
@@ -120,13 +120,9 @@ export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
   destination: TSubstrateChain
 }
 
-export type THubKey = 'assetHub' | 'bridgeHub'
-
 export type TFeeType = 'dryRun' | 'paymentInfo' | 'noFeeRequired'
 
 type TXcmFeeBase = {
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
   weight?: TWeight
   sufficient?: boolean
@@ -158,8 +154,6 @@ export type TXcmFeeHopResult = {
   dryRunSubError?: string
   forwardedXcms?: any
   destParaId?: number
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
 }
 
@@ -177,8 +171,6 @@ export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
   result: TConditionalXcmFeeDetail<TDisableFallback>
 }
 
-export type TXcmFeeChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub' | TChain
-
 export type TXcmFeeHopInfo = {
   chain: TChain
   result: TXcmFeeDetail
@@ -186,18 +178,14 @@ export type TXcmFeeHopInfo = {
 
 export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
   failureReason?: string
-  failureChain?: TXcmFeeChain
+  failureChain?: TChainEndpoint
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
-  assetHub?: TConditionalXcmFeeDetail<TDisableFallback>
-  bridgeHub?: TConditionalXcmFeeDetail<TDisableFallback>
   hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]
 }
 
 export type TGetXcmFeeEstimateDetail = {
   fee: bigint
-  /** @deprecated Use `asset` property instead. */
-  currency: string
   asset: TAssetInfo
   sufficient?: boolean
 }

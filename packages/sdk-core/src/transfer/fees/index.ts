@@ -1,4 +1,3 @@
-export * from './getOriginFeeDetails'
 export * from './getOriginXcmFee'
 export * from './getOriginXcmFeeEstimate'
 export * from './getOriginXcmFeeInternal'

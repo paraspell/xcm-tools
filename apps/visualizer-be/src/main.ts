@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from './app/app.module.js';
 
 export const bootstrap = async () => {
   const options = { cors: true };

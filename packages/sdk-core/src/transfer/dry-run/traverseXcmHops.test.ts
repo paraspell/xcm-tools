@@ -1,6 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -52,8 +51,8 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: destParaId
@@ -90,9 +89,7 @@ describe('traverseXcmHops', () => {
       currentAsset: { assetId: 'asset1' },
       forwardedXcms,
       hasPassedExchange: false,
-      isDestination: true,
-      isAssetHub: true,
-      isBridgeHub: false
+      isDestination: true
     })
   })
 
@@ -104,13 +101,13 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms1,
       initialDestParaId: 1000,
       swapConfig: {
-        exchangeChain: 'Hydration' as TParachain,
+        exchangeChain: 'Hydration',
         currencyTo: { id: 'USDT' }
       }
     }
@@ -142,7 +139,6 @@ describe('traverseXcmHops', () => {
         { chain: 'BridgeHubPolkadot', result: hopResult1 },
         { chain: 'Hydration', result: hopResult2 }
       ],
-      bridgeHub: hopResult1,
       destination: hopResult3,
       lastProcessedChain: 'AssetHubPolkadot'
     })
@@ -160,8 +156,8 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
@@ -178,8 +174,8 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'Acala' as TChain,
+      origin: 'Polkadot',
+      destination: 'Acala',
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
@@ -202,8 +198,8 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       currency: { id: 'DOT' },
       initialForwardedXcms: [[], []],
       initialDestParaId: 1000
@@ -226,8 +222,8 @@ describe('traverseXcmHops', () => {
     const config: HopTraversalConfig<unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       currency: { id: 'DOT' },
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
@@ -271,7 +267,7 @@ describe('addEthereumBridgeFees', () => {
       mockApi,
       bridgeHubResult,
       'Ethereum',
-      'AssetHubPolkadot' as TSubstrateChain
+      'AssetHubPolkadot'
     )
 
     expect(result).toEqual({
@@ -291,7 +287,7 @@ describe('addEthereumBridgeFees', () => {
       mockApi,
       bridgeHubResult,
       'Acala',
-      'AssetHubPolkadot' as TSubstrateChain
+      'AssetHubPolkadot'
     )
 
     expect(result).toBe(bridgeHubResult)
@@ -301,12 +297,7 @@ describe('addEthereumBridgeFees', () => {
   it('should return undefined when bridgeHubResult is undefined', async () => {
     const initSpy = vi.spyOn(mockApi, 'init')
 
-    const result = await addEthereumBridgeFees(
-      mockApi,
-      undefined,
-      'Ethereum',
-      'AssetHubPolkadot' as TSubstrateChain
-    )
+    const result = await addEthereumBridgeFees(mockApi, undefined, 'Ethereum', 'AssetHubPolkadot')
 
     expect(result).toBeUndefined()
     expect(initSpy).not.toHaveBeenCalled()
