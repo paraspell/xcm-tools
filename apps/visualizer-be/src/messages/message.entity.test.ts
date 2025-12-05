@@ -1,6 +1,12 @@
 import { ID } from '@nestjs/graphql';
+import { describe, expect, it } from 'vitest';
 
-import { Asset, Message, returnAssetArray, returnID } from './message.entity';
+import {
+  Asset,
+  Message,
+  returnAssetArray,
+  returnID,
+} from './message.entity.js';
 
 describe('Message Entity', () => {
   it('should create a Message entity with the correct fields', () => {

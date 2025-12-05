@@ -7,20 +7,22 @@ import {
   TRelaychain,
   TSubstrateChain,
 } from '@paraspell/sdk';
+import { Between, Repository } from 'typeorm';
+
 import {
   AccountXcmCountResult,
   AssetCountResult,
+  CountOption,
   ParaIdAssetCountResult,
-} from 'src/types/types';
-import { Between, Repository } from 'typeorm';
-
-import { CountOption } from './count-option';
-import { Message } from './message.entity';
-import { AccountXcmCountType } from './models/account-msg-count.model';
-import { AssetCount } from './models/asset-count.model';
-import { MessageCount } from './models/message-count.model';
-import { MessageCountByDay } from './models/message-count-by-day.model';
-import { MessageCountByStatus } from './models/message-count-by-status.model';
+} from '../types.js';
+import { Message } from './message.entity.js';
+import {
+  AccountXcmCountType,
+  AssetCount,
+  MessageCount,
+  MessageCountByDay,
+  MessageCountByStatus,
+} from './models/index.js';
 
 @Injectable()
 export class MessageService {
@@ -30,7 +32,7 @@ export class MessageService {
   ) {}
 
   async countMessagesByStatus(
-    ecosystem: string = null,
+    ecosystem: string | undefined = undefined,
     parachains: TSubstrateChain[] = [],
     startTime: number,
     endTime: number,
@@ -153,7 +155,7 @@ export class MessageService {
       const eco = getRelayChainOf(name).toLowerCase();
       const id = getParaId(name);
       if (!ecoToParaIds.has(eco)) ecoToParaIds.set(eco, []);
-      ecoToParaIds.get(eco).push(id);
+      ecoToParaIds.get(eco)?.push(id);
       keyToName.set(`${eco}:${id}`, name);
     }
 
@@ -349,7 +351,7 @@ export class MessageService {
           parachain: getTChain(
             paraId,
             (ecosystem[0].toUpperCase() + ecosystem.slice(1)) as TRelaychain,
-          ),
+          ) as string,
           symbol: r.symbol,
           count: parseInt(r.count, 10),
           amount: r.amount,
@@ -403,8 +405,8 @@ export class MessageService {
     startTime: number,
     endTime: number,
   ): Promise<AccountXcmCountType[]> {
-    const whereConditions = [];
-    const parameters = [];
+    const whereConditions: string[] = [];
+    const parameters: unknown[] = [];
 
     whereConditions.push('ecosystem = $1');
     whereConditions.push('origin_block_timestamp BETWEEN $2 AND $3');

@@ -1,14 +1,16 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { TSubstrateChain } from '@paraspell/sdk';
 
-import { CountOption } from './count-option';
-import { Message } from './message.entity';
-import { MessageService } from './messages.service';
-import { AccountXcmCountType } from './models/account-msg-count.model';
-import { AssetCount } from './models/asset-count.model';
-import { MessageCount } from './models/message-count.model';
-import { MessageCountByDay } from './models/message-count-by-day.model';
-import { MessageCountByStatus } from './models/message-count-by-status.model';
+import { CountOption } from '../types.js';
+import { Message } from './message.entity.js';
+import { MessageService } from './messages.service.js';
+import {
+  AccountXcmCountType,
+  AssetCount,
+  MessageCount,
+  MessageCountByDay,
+  MessageCountByStatus,
+} from './models/index.js';
 
 @Resolver(() => Message)
 export class MessageResolver {

@@ -4,10 +4,7 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { BalanceService } from './balance.service.js';
-import {
-  BalanceForeignDto,
-  BalanceForeignDtoSchema,
-} from './dto/BalanceForeignDto.js';
+import { BalanceDto, BalanceDtoSchema } from './dto/BalanceForeignDto.js';
 import {
   ExistentialDepositDto,
   ExistentialDepositDtoSchema,
@@ -23,8 +20,8 @@ export class BalanceController {
   @Post(':chain')
   getBalance(
     @Param('chain') chain: string,
-    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
-    params: BalanceForeignDto,
+    @Body(new ZodValidationPipe(BalanceDtoSchema))
+    params: BalanceDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_ASSET_BALANCE, req, {

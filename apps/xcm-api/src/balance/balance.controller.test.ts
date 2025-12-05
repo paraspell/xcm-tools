@@ -6,8 +6,7 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { BalanceController } from './balance.controller.js';
 import { BalanceService } from './balance.service.js';
-import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
-import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
+import type { BalanceDto } from './dto/BalanceForeignDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 describe('BalanceController', () => {
@@ -43,7 +42,7 @@ describe('BalanceController', () => {
   describe('getBalance', () => {
     it('should track analytics and call BalanceService for asset balance', async () => {
       const chain = 'Acala';
-      const params: BalanceForeignDto = {
+      const params: BalanceDto = {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
       };

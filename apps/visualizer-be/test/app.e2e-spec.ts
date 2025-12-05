@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
 import { AppModule } from '../src/app/app.module';
-import * as request from 'supertest';
+import request from 'supertest';
 
 describe('XCM API (e2e)', () => {
   let app: INestApplication;
@@ -51,7 +53,6 @@ describe('XCM API (e2e)', () => {
       it('findAll channels in a specific ecosystem with no expected data', () => {
         const ecosystem = 'wrong';
 
-
         return request(app.getHttpServer())
           .post('/graphql')
           .send({
@@ -66,7 +67,7 @@ describe('XCM API (e2e)', () => {
             }
           `,
             variables: {
-              ecosystem
+              ecosystem,
             },
           })
           .expect(200)
@@ -239,7 +240,7 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.messageCounts).toBeInstanceOf(Array);
         expect(response.body.data.messageCounts.length).toBeGreaterThan(0);
-        response.body.data.messageCounts.forEach((count) => {
+        response.body.data.messageCounts.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: expect.any(String),
             success: expect.any(Number),
@@ -249,7 +250,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('messageCounts with empty parachain list and valid time range', async () => {
-        let parachains = [];
+        let parachains: string[] = [];
         const startTime = new Date('2018-01-20T00:00:00Z');
         const endTime = new Date('2025-02-10T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -277,7 +278,7 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.messageCounts).toBeInstanceOf(Array);
         expect(response.body.data.messageCounts.length).toBeGreaterThan(0);
-        response.body.data.messageCounts.forEach((count) => {
+        response.body.data.messageCounts.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: null,
             success: expect.any(Number),
@@ -328,7 +329,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('messageCounts with empty parachain list and time range with no expected data', async () => {
-        const parachains = [];
+        const parachains: string[] = [];
         const startTime = new Date('2017-07-01T00:00:00Z');
         const endTime = new Date('2017-07-31T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -359,11 +360,10 @@ describe('XCM API (e2e)', () => {
             parachain: null,
             success: 0,
             failed: 0,
-          }
+          },
         ]);
       });
     });
-
 
     describe('messageCountsByDay', () => {
       it('messageCountsByDay with valid parachains and known time range', async () => {
@@ -397,7 +397,7 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.messageCountsByDay).toBeInstanceOf(Array);
         expect(response.body.data.messageCountsByDay.length).toBeGreaterThan(0);
-        response.body.data.messageCountsByDay.forEach((count) => {
+        response.body.data.messageCountsByDay.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: expect.any(String),
             date: expect.any(String),
@@ -409,7 +409,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('messageCountsByDay with empty parachain list and known time range', async () => {
-        const parachains = [];
+        const parachains: object = [];
         const startTime = new Date('2023-01-01T00:00:00Z');
         const endTime = new Date('2023-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -439,7 +439,7 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.messageCountsByDay).toBeInstanceOf(Array);
         expect(response.body.data.messageCountsByDay.length).toBeGreaterThan(0);
-        response.body.data.messageCountsByDay.forEach((count) => {
+        response.body.data.messageCountsByDay.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: null,
             date: expect.any(String),
@@ -484,7 +484,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('messageCountsByDay with empty parachain list and time range with no expected data', async () => {
-        const parachains = [];
+        const parachains: string[] = [];
         const startTime = new Date('2018-01-01T00:00:00Z');
         const endTime = new Date('2018-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -549,7 +549,7 @@ describe('XCM API (e2e)', () => {
         expect(response.body.data.assetCountsBySymbol.length).toBeGreaterThan(
           0,
         );
-        response.body.data.assetCountsBySymbol.forEach((count) => {
+        response.body.data.assetCountsBySymbol.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: expect.any(String),
             symbol: expect.any(String),
@@ -559,7 +559,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('assetCountsBySymbol with empty parachain list and valid time range with expected data', async () => {
-        const parachains = [];
+        const parachains: string[] = [];
         const startTime = new Date('2023-01-01T00:00:00Z');
         const endTime = new Date('2023-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -589,7 +589,7 @@ describe('XCM API (e2e)', () => {
         expect(response.body.data.assetCountsBySymbol.length).toBeGreaterThan(
           0,
         );
-        response.body.data.assetCountsBySymbol.forEach((count) => {
+        response.body.data.assetCountsBySymbol.forEach((count: object) => {
           expect(count).toMatchObject({
             parachain: null,
             symbol: expect.any(String),
@@ -629,7 +629,7 @@ describe('XCM API (e2e)', () => {
       });
 
       it('assetCountsBySymbol with empty parachain list and time range with no expected data', async () => {
-        const parachains = [];
+        const parachains: string[] = [];
         const startTime = new Date('2018-01-01T00:00:00Z');
         const endTime = new Date('2018-01-07T23:59:59Z');
         const ecosystem = 'polkadot';
@@ -702,18 +702,20 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.accountCounts).toBeInstanceOf(Array);
         expect(response.body.data.accountCounts.length).toBeGreaterThan(0);
-        response.body.data.accountCounts.forEach((account) => {
-          expect(account).toMatchObject({
-            id: expect.any(String),
-            count: expect.any(Number),
-          });
-          expect(account.count).toBeGreaterThan(threshold);
-        });
+        response.body.data.accountCounts.forEach(
+          (account: { count: number }) => {
+            expect(account).toMatchObject({
+              id: expect.any(String),
+              count: expect.any(Number),
+            });
+            expect(account.count).toBeGreaterThan(threshold);
+          },
+        );
       });
 
       it('accountCounts with empty paraIds list and accounts exceeding the specified threshold', async () => {
         const threshold = 10;
-        const paraIds = [];
+        const paraIds: number[] = [];
         const startTime = new Date('2023-01-01T00:00:00Z');
         const endTime = new Date('2023-01-31T23:59:59Z');
         const ecosystem = 'kusama';
@@ -753,13 +755,15 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.accountCounts).toBeInstanceOf(Array);
         expect(response.body.data.accountCounts.length).toBeGreaterThan(0);
-        response.body.data.accountCounts.forEach((account) => {
-          expect(account).toMatchObject({
-            id: expect.any(String),
-            count: expect.any(Number),
-          });
-          expect(account.count).toBeGreaterThan(threshold);
-        });
+        response.body.data.accountCounts.forEach(
+          (account: { count: number }) => {
+            expect(account).toMatchObject({
+              id: expect.any(String),
+              count: expect.any(Number),
+            });
+            expect(account.count).toBeGreaterThan(threshold);
+          },
+        );
       });
 
       it('accountCounts with no accounts exceeding the specified threshold', async () => {
@@ -807,7 +811,7 @@ describe('XCM API (e2e)', () => {
 
       it('accountCounts with empty paraIds list and no accounts exceeding the specified threshold', async () => {
         const threshold = 100;
-        const paraIds = [];
+        const paraIds: number[] = [];
         const startTime = new Date('2022-01-01T00:00:00Z');
         const endTime = new Date('2022-01-02T23:59:59Z');
         const ecosystem = 'kusama';
@@ -878,13 +882,15 @@ describe('XCM API (e2e)', () => {
 
         expect(response.body.data.totalMessageCounts).toBeInstanceOf(Array);
         expect(response.body.data.totalMessageCounts.length).toBeGreaterThan(0);
-        response.body.data.totalMessageCounts.forEach((count) => {
-          expect(count).toMatchObject({
-            paraId: expect.any(Number),
-            totalCount: expect.any(Number),
-          });
-          expect(count.totalCount).toBeGreaterThan(0);
-        });
+        response.body.data.totalMessageCounts.forEach(
+          (count: { paraId: number; totalCount: number }) => {
+            expect(count).toMatchObject({
+              paraId: expect.any(Number),
+              totalCount: expect.any(Number),
+            });
+            expect(count.totalCount).toBeGreaterThan(0);
+          },
+        );
       });
 
       it('totalMessageCounts over a specified period with no expected data', async () => {

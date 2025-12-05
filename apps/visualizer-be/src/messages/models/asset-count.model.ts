@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { returnInt } from '../../utils/graphql.utils';
+import { returnInt } from '../../utils/graphqlUtils.js';
 
 @ObjectType()
 export class AssetCount {

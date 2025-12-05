@@ -8,12 +8,12 @@ import {
 
 import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
-import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
+import { BalanceDto } from './dto/BalanceForeignDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 @Injectable()
 export class BalanceService {
-  async getBalance(chain: string, { address, currency }: BalanceForeignDto) {
+  async getBalance(chain: string, { address, currency }: BalanceDto) {
     validateChain(chain, CHAINS);
 
     try {
