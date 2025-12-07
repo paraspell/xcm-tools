@@ -5,7 +5,9 @@ import { claimAssets, getBalance } from './assets'
 import type { TPapiApi, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
-vi.mock('./utils')
+vi.mock('./utils', () => ({
+  createPapiApiCall: vi.fn(() => vi.fn())
+}))
 
 describe('API Call Wrappers', () => {
   it('should call createPapiApiCall with getBalanceImpl for getBalance', async () => {

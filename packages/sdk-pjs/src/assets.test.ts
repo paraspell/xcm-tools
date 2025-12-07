@@ -5,7 +5,9 @@ import { claimAssets, getBalance } from './assets'
 import type { Extrinsic, TPjsApi } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
-vi.mock('./utils')
+vi.mock('./utils', () => ({
+  createPolkadotJsApiCall: vi.fn(() => vi.fn())
+}))
 
 describe('API Call Wrappers', () => {
   it('should call createPolkadotJsApiCall with getBalanceImpl for getBalance', async () => {

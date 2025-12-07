@@ -6,8 +6,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { blake2b } from '@noble/hashes/blake2'
-import { bytesToHex } from '@noble/hashes/utils'
+import { blake2b } from '@noble/hashes/blake2.js'
+import { bytesToHex } from '@noble/hashes/utils.js'
 import type {
   IPolkadotApi,
   TAssetInfo,

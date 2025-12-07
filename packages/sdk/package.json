@@ -36,7 +36,7 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@noble/hashes": "^1.8.0",
+    "@noble/hashes": "^2.0.1",
     "@polkadot-api/legacy-provider": "^0.3.6",
     "@paraspell/sdk-core": "workspace:*",
     "viem": "^2.40.3"
@@ -48,7 +48,7 @@
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
     "@babel/preset-env": "^7.28.5",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@noble/curves": "^1.9.6",
+    "@noble/curves": "^2.0.1",
     "@polkadot-labs/hdkd": "^0.0.25",
     "@polkadot-labs/hdkd-helpers": "^0.0.26",
     "@rollup/plugin-babel": "^6.1.0",

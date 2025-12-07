@@ -36,7 +36,7 @@
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
-    "@noble/hashes": "^1.8.0",
+    "@noble/hashes": "^2.0.1",
     "@paraspell/assets": "workspace:*",
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",

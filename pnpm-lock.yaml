@@ -825,8 +825,8 @@ importers:
   packages/sdk:
     dependencies:
       '@noble/hashes':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@paraspell/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
@@ -850,8 +850,8 @@ importers:
         specifier: ^1.9.1
         version: 1.9.1(rollup@4.53.3)
       '@noble/curves':
-        specifier: ^1.9.6
-        version: 1.9.6
+        specifier: ^2.0.1
+        version: 2.0.1
       '@polkadot-labs/hdkd':
         specifier: ^0.0.25
         version: 0.0.25
@@ -934,8 +934,8 @@ importers:
   packages/sdk-core:
     dependencies:
       '@noble/hashes':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@paraspell/assets':
         specifier: workspace:*
         version: link:../assets
