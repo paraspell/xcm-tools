@@ -1,4 +1,4 @@
-import { blake2b } from '@noble/hashes/blake2'
+import { blake2b } from '@noble/hashes/blake2.js'
 import { getAssetsObject, isChainEvm } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
