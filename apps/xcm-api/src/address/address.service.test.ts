@@ -10,13 +10,10 @@ import { AddressService } from './address.service.js';
 
 const mockOutputAddress = '5Hrj...';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
-  return {
-    ...actual,
-    convertSs58: vi.fn().mockImplementation(() => mockOutputAddress),
-  };
-});
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  convertSs58: vi.fn().mockImplementation(() => mockOutputAddress),
+}));
 
 describe('AddressService', () => {
   let service: AddressService;

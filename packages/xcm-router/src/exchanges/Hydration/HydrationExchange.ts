@@ -7,7 +7,6 @@ import {
   getNativeAssetSymbol,
   InvalidCurrencyError,
   InvalidParameterError,
-  isForeignAsset,
   padValueBy,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
@@ -176,13 +175,13 @@ class HydrationExchange extends ExchangeChain {
 
     const transformedAssets = assets.map(({ symbol, id, decimals }) => {
       const asset =
-        sdkAssets.find((a) => isForeignAsset(a) && a.assetId === id) ??
+        sdkAssets.find((a) => !a.isNative && a.assetId === id) ??
         sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
 
       return {
         symbol,
         decimals,
-        assetId: asset && isForeignAsset(asset) ? asset.assetId : undefined,
+        assetId: asset && !asset.isNative ? asset.assetId : undefined,
         location: asset?.location,
       };
     });

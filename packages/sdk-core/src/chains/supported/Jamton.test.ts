@@ -1,5 +1,5 @@
 import type { TAsset, TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
+import { findAssetInfoOrThrow, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -43,10 +43,8 @@ describe('Jamton', () => {
     it('should handle DOTON native asset', () => {
       const input = {
         ...baseInput,
-        asset: { symbol: 'DOTON', amount: 100n }
+        asset: { symbol: 'DOTON', isNative: true, amount: 100n }
       } as TXTokensTransferOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       jamton.transferXTokens(input)
 
@@ -56,10 +54,8 @@ describe('Jamton', () => {
     it('should handle stDOT native asset', () => {
       const input = {
         ...baseInput,
-        asset: { symbol: 'stDOT', amount: 100n }
+        asset: { symbol: 'stDOT', isNative: true, amount: 100n }
       } as TXTokensTransferOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       jamton.transferXTokens(input)
 
@@ -69,10 +65,8 @@ describe('Jamton', () => {
     it('should handle jamTON native asset', () => {
       const input = {
         ...baseInput,
-        asset: { symbol: 'jamTON', amount: 100n }
+        asset: { symbol: 'jamTON', isNative: true, amount: 100n }
       } as TXTokensTransferOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       jamton.transferXTokens(input)
 
@@ -84,7 +78,6 @@ describe('Jamton', () => {
         ...baseInput,
         asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
       }
-      vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(isSymbolMatch).mockReturnValue(false)
 
       jamton.transferXTokens(input)
@@ -98,10 +91,8 @@ describe('Jamton', () => {
     it('should NOT call assertHasId for native assets', () => {
       const input = {
         ...baseInput,
-        asset: { symbol: 'DOTON', amount: 100n }
+        asset: { symbol: 'DOTON', isNative: true, amount: 100n }
       } as TXTokensTransferOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       jamton.transferXTokens(input)
 
@@ -117,7 +108,6 @@ describe('Jamton', () => {
           scenario: 'ParaToPara' as const,
           destination: 'Acala' as const
         }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         expect(() => jamton.transferXTokens(input)).toThrow(ScenarioNotSupportedError)
@@ -133,7 +123,6 @@ describe('Jamton', () => {
           scenario: 'ParaToPara' as const,
           destination: 'AssetHubPolkadot' as const
         }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         jamton.transferXTokens(input)
@@ -148,7 +137,6 @@ describe('Jamton', () => {
           scenario: 'ParaToRelay' as const,
           destination: 'Acala' as const
         }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         jamton.transferXTokens(input)
@@ -174,7 +162,6 @@ describe('Jamton', () => {
           }
         } as TXTokensTransferOptions<unknown, unknown>
 
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(true)
         vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockUsdtAsset)
         vi.mocked(createAsset)
@@ -207,7 +194,6 @@ describe('Jamton', () => {
           ...baseInput,
           asset: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
         }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         jamton.transferXTokens(input)
@@ -223,7 +209,6 @@ describe('Jamton', () => {
           ...baseInput,
           asset: { symbol: 'USDT', assetId: '999', decimals: 6, amount: 100n }
         }
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         jamton.transferXTokens(input)
@@ -237,7 +222,6 @@ describe('Jamton', () => {
           asset: { symbol: 'USDT', assetId: '777', amount: 100n }
         } as TXTokensTransferOptions<unknown, unknown>
 
-        vi.mocked(isForeignAsset).mockReturnValue(true)
         vi.mocked(isSymbolMatch).mockReturnValue(false)
 
         jamton.transferXTokens(input)

@@ -6,7 +6,6 @@ import {
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  isForeignAsset,
 } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -16,23 +15,18 @@ import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import HydrationExchange from './HydrationExchange';
 import * as utils from './utils';
 
-vi.mock('@galacticcouncil/sdk', async () => {
-  const actual = await vi.importActual('@galacticcouncil/sdk');
-  return {
-    ...actual,
-    TradeRouter: vi.fn(),
-    createSdkContext: vi.fn(),
-  };
-});
+vi.mock('@galacticcouncil/sdk', async (importActual) => ({
+  ...(await importActual()),
+  TradeRouter: vi.fn(),
+  createSdkContext: vi.fn(),
+}));
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk', async (importActual) => {
   return {
-    ...actual,
+    ...(await importActual()),
     getAssets: vi.fn(),
     getAssetDecimals: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
-    isForeignAsset: vi.fn(),
   };
 });
 
@@ -69,7 +63,6 @@ describe('HydrationExchange', () => {
       api: { router: mockTradeRouter },
       tx: mockTxBuilderFactory,
     } as SdkCtx);
-    vi.mocked(isForeignAsset).mockReturnValue(true);
   });
 
   describe('swapCurrency', () => {

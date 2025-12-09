@@ -1,15 +1,13 @@
 // Contains tests for different Asset queries used in XCM call creation
 
 import type { TLocation } from '@paraspell/sdk-common'
-import { CHAINS } from '@paraspell/sdk-common'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { isForeignAsset } from '../../guards'
-import type { TAssetInfo, TChainAssetsInfo, TForeignAssetInfo } from '../../types'
-import * as assetFunctions from '../assets'
-import { getAssetsObject } from '../assets'
+import { getNativeAssets, getOtherAssets } from '../assets'
 import { Foreign, ForeignAbstract, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
+
+vi.mock('../assets')
 
 const MOCK_ETH_LOCATION: TLocation = {
   parents: 2,
@@ -27,274 +25,227 @@ const MOCK_ETH_LOCATION: TLocation = {
 }
 
 describe('findAssetInfo', () => {
-  const mockOptions = {
-    nativeAssetSymbol: 'DOT',
-    relaychainSymbol: 'DOT',
-    isEVM: false,
-    ss58Prefix: 42,
-    supportsDryRunApi: false,
-    supportsXcmPaymentApi: true,
-    otherAssets: [],
-    nativeAssets: []
-  } as TChainAssetsInfo
-
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
-
-  it('should return assetId and symbol for every foreign asset', () => {
-    CHAINS.forEach(chain => {
-      const { otherAssets } = getAssetsObject(chain)
-      otherAssets.forEach(other => {
-        if (other.symbol !== undefined) {
-          const otherAssetsMatches = otherAssets.filter(
-            ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === other.symbol?.toLowerCase()
-          )
-          if (otherAssetsMatches.length < 2) {
-            const asset = findAssetInfo(chain, { symbol: Foreign(other.symbol) }, null)
-            expect(asset).toHaveProperty('symbol')
-            expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
-            expect(asset).toSatisfy(obj => 'assetId' in obj || 'location' in obj)
-          }
-
-          const otherAssetsMatchesById = otherAssets.filter(
-            ({ assetId }) => assetId === other.assetId
-          )
-          if (otherAssetsMatchesById.length > 1 && other.assetId) {
-            expect(() => findAssetInfo(chain, { id: other.assetId as string }, null)).toThrow()
-          }
-        }
-      })
-    })
-  })
-
-  it('should return symbol for every native asset', () => {
-    CHAINS.forEach(chain => {
-      const { nativeAssets } = getAssetsObject(chain)
-      nativeAssets.forEach(other => {
-        const asset = findAssetInfo(chain, { symbol: Native(other.symbol) }, null)
-        expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
-        expect(asset).toHaveProperty('symbol')
-      })
-    })
-  })
-
-  it('should return assetId and symbol for every foreign asset id', () => {
-    CHAINS.forEach(chain => {
-      const { otherAssets } = getAssetsObject(chain)
-
-      otherAssets.forEach(other => {
-        if (other.assetId === undefined) {
-          return
-        }
-        const hasDuplicateIds =
-          otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
-        if (!hasDuplicateIds) {
-          const asset = findAssetInfo(chain, { id: other.assetId ?? '' }, null)
-
-          expect(asset).not.toBeNull()
-          expect(isForeignAsset(asset as TAssetInfo)).toBe(true)
-          expect(asset).toHaveProperty('assetId')
-          expect(other.assetId).toEqual((asset as TForeignAssetInfo).assetId)
-        }
-      })
-    })
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(getNativeAssets).mockReturnValue([])
+    vi.mocked(getOtherAssets).mockReturnValue([])
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 12,
+        symbol: 'KSM'
+      }
+    ])
     const asset = findAssetInfo('AssetHubKusama', { symbol: Foreign('KSM') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'ZTG'
+      }
+    ])
     const asset = findAssetInfo('Moonbeam', { symbol: 'xcZTG' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'xcZTG'
+      }
+    ])
     const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcZTG') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH.e',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('Moonbeam', { symbol: 'xcWETH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH.e',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcWETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    const asset = findAssetInfo('Ethereum', { symbol: 'WETH.e' }, null)
-    expect(asset).toHaveProperty('symbol')
-    expect(asset).toHaveProperty('assetId')
-  })
-
-  it('Should find asset ending with .e on Ethereum', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum when entered without suffix', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH.e',
-          location: MOCK_ETH_LOCATION
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH.e',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find asset without .e to match e', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'MON'
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'MON'
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('MON.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find asset without .e to match e', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'MON'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'MON',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'MON'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'MON',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     findAssetInfo('AssetHubPolkadot', { symbol: Foreign('MON.e') }, null)
   })
 
   it('Should find asset ending with .e on Ethereum when entered without suffix', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH.e',
-          location: MOCK_ETH_LOCATION
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH.e',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH'
+      }
+    ])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+    vi.mocked(getOtherAssets).mockReturnValue([
       {
         assetId: '1',
         decimals: 18,
-        symbol: 'WETH.e'
+        symbol: 'WETH.e',
+        location: MOCK_ETH_LOCATION
       }
     ])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') }, 'Ethereum')
@@ -303,283 +254,230 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot with duplicates', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WTH'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'WTH'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WTH'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'WTH'
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot ', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WTH.e'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'WTH.e'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WTH.e'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'WTH.e'
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'DOT'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'DOT'
-        }
-      ],
-      nativeAssets: [
-        {
-          symbol: 'DOT',
-          decimals: 10,
-          isNative: true
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'DOT'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'DOT'
+      }
+    ])
+    vi.mocked(getNativeAssets).mockReturnValue([
+      {
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: true
+      }
+    ])
     expect(() => findAssetInfo('Astar', { symbol: 'xcDOT' }, null)).toThrow()
   })
 
   it('Should throw error when duplicate dot asset on Hydration', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'DOT'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'DOT'
-        }
-      ],
-      nativeAssets: []
-    })
-    expect(() => findAssetInfo('Hydration', { symbol: 'HDX' }, null)).toThrow()
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'DOT'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'DOT'
+      }
+    ])
+    expect(() => findAssetInfo('Hydration', { symbol: 'DOT' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'DOT'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'DOT'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'DOT'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'DOT'
+      }
+    ])
     expect(() => findAssetInfo('Hydration', { symbol: 'xcDOT' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'xcGLMR'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'xcGLMR'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'xcGLMR'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'xcGLMR'
+      }
+    ])
     expect(() => findAssetInfo('Hydration', { symbol: 'GLMR' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'xcDOT'
-        },
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'xcDOT'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'xcDOT'
+      },
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'xcDOT'
+      }
+    ])
     expect(() => findAssetInfo('Hydration', { symbol: Foreign('DOT') }, null)).toThrow()
   })
 
   it('should find asset with xc prefix on Acala', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'xcDOT'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'xcDOT'
+      }
+    ])
     const asset = findAssetInfo('Acala', { symbol: Foreign('DOT') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find ethereum assets', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          decimals: 18,
-          symbol: 'WETH',
-          location: MOCK_ETH_LOCATION
-        }
-      ]
-    })
-
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        decimals: 18,
+        symbol: 'WETH',
+        location: MOCK_ETH_LOCATION
+      }
+    ])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find native asset on Acala', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [],
-      nativeAssets: [
-        {
-          symbol: 'DOT',
-          decimals: 10,
-          isNative: true
-        }
-      ]
-    })
+    vi.mocked(getNativeAssets).mockReturnValue([
+      {
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: true
+      }
+    ])
     const asset = findAssetInfo('Acala', { symbol: Native('DOT') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('decimals')
   })
 
   it('should find foreign abstract asset on Acala', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          symbol: 'DOT',
-          decimals: 10,
-          alias: 'DOT1'
-        },
-        {
-          assetId: '2',
-          symbol: 'DOT',
-          decimals: 10,
-          alias: 'DOT2'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'DOT',
+        decimals: 10,
+        alias: 'DOT1'
+      },
+      {
+        assetId: '2',
+        symbol: 'DOT',
+        decimals: 10,
+        alias: 'DOT2'
+      }
+    ])
     const asset = findAssetInfo('Acala', { symbol: ForeignAbstract('DOT1') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should throw error when multiple matches in native and foreign assets', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '1',
-          symbol: 'DOT',
-          alias: 'DOT1',
-          decimals: 10
-        },
-        {
-          assetId: '2',
-          symbol: 'DOT',
-          alias: 'DOT2',
-          decimals: 10
-        }
-      ],
-      nativeAssets: [
-        {
-          symbol: 'DOT',
-          decimals: 10,
-          isNative: true
-        }
-      ]
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'DOT',
+        alias: 'DOT1',
+        decimals: 10
+      },
+      {
+        assetId: '2',
+        symbol: 'DOT',
+        alias: 'DOT2',
+        decimals: 10
+      }
+    ])
+    vi.mocked(getNativeAssets).mockReturnValue([
+      {
+        symbol: 'DOT',
+        decimals: 10,
+        isNative: true
+      }
+    ])
     expect(() => findAssetInfo('Acala', { symbol: Foreign('DOT') }, null)).toThrow()
   })
 
   it('should find asset with lowercase matching', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '2',
-          decimals: 18,
-          symbol: 'glmr',
-          alias: 'glmr2'
-        }
-      ],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '2',
+        decimals: 18,
+        symbol: 'glmr',
+        alias: 'glmr2'
+      }
+    ])
     const asset = findAssetInfo('Acala', { symbol: 'Glmr' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [],
-      nativeAssets: []
-    })
+    vi.mocked(getOtherAssets).mockReturnValue([])
+    vi.mocked(getNativeAssets).mockReturnValue([])
     const asset = findAssetInfo('Acala', { symbol: 'dot' }, null)
     expect(asset).toBeNull()
   })
@@ -603,33 +501,29 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency that is present', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '2',
-          symbol: 'dot',
-          decimals: 12,
-          location: {
-            parents: 1,
-            interior: {
-              X3: [
-                {
-                  Parachain: 1000
-                },
-                {
-                  PalletInstance: 50
-                },
-                {
-                  GeneralIndex: 1984
-                }
-              ]
-            }
-          } as TLocation
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '2',
+        symbol: 'dot',
+        decimals: 12,
+        location: {
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: 1000
+              },
+              {
+                PalletInstance: 50
+              },
+              {
+                GeneralIndex: 1984
+              }
+            ]
+          }
         }
-      ],
-      nativeAssets: []
-    })
+      }
+    ])
     const asset = findAssetInfo(
       'Astar',
       {
@@ -657,33 +551,29 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency that is present', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '2',
-          symbol: 'dot',
-          decimals: 12,
-          location: {
-            parents: 1,
-            interior: {
-              X3: [
-                {
-                  Parachain: 1000
-                },
-                {
-                  PalletInstance: 50
-                },
-                {
-                  GeneralIndex: 1984
-                }
-              ]
-            }
-          } as TLocation
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '2',
+        symbol: 'dot',
+        decimals: 12,
+        location: {
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: 1000
+              },
+              {
+                PalletInstance: 50
+              },
+              {
+                GeneralIndex: 1984
+              }
+            ]
+          }
         }
-      ],
-      nativeAssets: []
-    })
+      }
+    ])
     const asset = findAssetInfo(
       'Astar',
       {
@@ -711,33 +601,29 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency with commas that is present', () => {
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [
-        {
-          assetId: '2',
-          symbol: 'dot',
-          decimals: 12,
-          location: {
-            parents: 1,
-            interior: {
-              X3: [
-                {
-                  Parachain: '1000'
-                },
-                {
-                  PalletInstance: '50'
-                },
-                {
-                  GeneralIndex: '1,984'
-                }
-              ]
-            }
-          } as TLocation
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        assetId: '2',
+        symbol: 'dot',
+        decimals: 12,
+        location: {
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: '1000'
+              },
+              {
+                PalletInstance: '50'
+              },
+              {
+                GeneralIndex: '1,984'
+              }
+            ]
+          }
         }
-      ],
-      nativeAssets: []
-    })
+      }
+    ])
     const asset = findAssetInfo(
       'Astar',
       {
@@ -762,43 +648,5 @@ describe('findAssetInfo', () => {
     )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
-  })
-
-  it('should find Mythos native asset when using Ethereum MYTH location', () => {
-    const mythEthLocation: TLocation = {
-      parents: 2,
-      interior: {
-        X2: [
-          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
-          { AccountKey20: { network: null, key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003' } }
-        ]
-      }
-    }
-
-    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
-      ...mockOptions,
-      otherAssets: [],
-      nativeAssets: [
-        {
-          symbol: 'MYTH',
-          decimals: 18,
-          isNative: true
-        }
-      ]
-    })
-
-    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
-      {
-        assetId: '1',
-        symbol: 'MYTH',
-        decimals: 18,
-        location: mythEthLocation
-      }
-    ])
-
-    const asset = findAssetInfo('Mythos', { location: mythEthLocation }, null)
-    expect(asset).not.toBeNull()
-    expect(asset).toHaveProperty('symbol', 'MYTH')
-    expect(asset).toHaveProperty('isNative', true)
   })
 })

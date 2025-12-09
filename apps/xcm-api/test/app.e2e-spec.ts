@@ -275,7 +275,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Acala/native')
+        .post('/balance/Acala')
         .send(validRequest)
         .expect(201)
         .expect((res) => {
@@ -289,7 +289,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Chain123/native')
+        .post('/balance/Chain123')
         .send(invalidRequest)
         .expect(400);
     });
@@ -303,7 +303,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Acala/foreign')
+        .post('/balance/Acala')
         .send(validRequest)
         .expect(201)
         .expect((res) => {
@@ -320,7 +320,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/balance/Chain123/foreign')
+        .post('/balance/Chain123')
         .send(invalidRequest)
         .expect(400);
     });

@@ -23,8 +23,7 @@ describe('getAssetsObject', () => {
       expect(assets).toEqual(
         expect.objectContaining({
           relaychainSymbol: expect.any(String),
-          nativeAssets: expect.any(Array),
-          otherAssets: expect.any(Array)
+          assets: expect.any(Array)
         })
       )
     })
@@ -104,26 +103,11 @@ describe('getAssetDecimals', () => {
     CHAINS.forEach(chain => {
       const obj = getAssetsObject(chain)
       expect(obj).not.toBeNull()
-      ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
+      obj.assets.forEach(asset => {
         const decimals = getAssetDecimals(chain, asset.symbol)
         expect(decimals).toBeTypeOf('number')
         expect(decimals).toBeGreaterThanOrEqual(0)
       })
-    })
-  })
-})
-
-describe('getSupportedAssets', () => {
-  it('should return supported assets for all chains', () => {
-    CHAINS.forEach(chain => {
-      const assets = getAssetsObject(chain)
-      expect(assets).toEqual(
-        expect.objectContaining({
-          relaychainSymbol: expect.any(String),
-          nativeAssets: expect.any(Array),
-          otherAssets: expect.any(Array)
-        })
-      )
     })
   })
 })

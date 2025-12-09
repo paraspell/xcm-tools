@@ -1,4 +1,4 @@
-import type { TForeignAssetInfo, TChainAssetsInfo } from '../src'
+import type { TAssetInfo, TChainAssetsInfo } from '../src'
 import { assetRegistryFor } from '@snowbridge/registry'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { Parents } from '@paraspell/sdk-common'
@@ -13,7 +13,7 @@ export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
 
   const gcJunction = { GlobalConsensus: { Ethereum: { chainId: 1 } } }
 
-  const assets: TForeignAssetInfo[] = Object.values(snowbridgeAssets).map(asset => ({
+  const assets: TAssetInfo[] = Object.values(snowbridgeAssets).map(asset => ({
     symbol: asset.symbol,
     assetId: asset.token,
     decimals: asset.decimals,
@@ -38,7 +38,6 @@ export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
     supportsXcmPaymentApi: false,
     relaychainSymbol: 'DOT',
     nativeAssetSymbol: 'ETH',
-    nativeAssets: [],
-    otherAssets: assets
+    assets
   }
 }

@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Acala Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -86,7 +86,7 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
 
   getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
-    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: symbol }
+    return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
   getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo): Promise<bigint> {

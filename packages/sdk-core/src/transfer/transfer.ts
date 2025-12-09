@@ -1,6 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
-import { normalizeLocation, type TNativeAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { normalizeLocation } from '@paraspell/assets'
 import { isRelayChain, isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
@@ -141,7 +142,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     asset ??
     ({
       symbol: 'symbol' in currency ? currency.symbol : undefined
-    } as TNativeAssetInfo)
+    } as TAssetInfo)
 
   const finalAsset = Array.isArray(currency)
     ? // TODO: Refactor this

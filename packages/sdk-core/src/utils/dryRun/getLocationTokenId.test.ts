@@ -1,14 +1,11 @@
-import type { TForeignAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn(),
-  getOtherAssets: vi.fn()
-}))
+vi.mock('@paraspell/assets')
 
 describe('getLocationTokenId', () => {
   const mockChain = {} as TSubstrateChain
@@ -39,7 +36,7 @@ describe('getLocationTokenId', () => {
       }
     }
 
-    const foreignAssets: TForeignAssetInfo[] = [
+    const foreignAssets: TAssetInfo[] = [
       { assetId: '123', symbol: 'USDT', decimals: 6 },
       { assetId: '456', symbol: 'ETH', decimals: 18 }
     ]
@@ -63,7 +60,7 @@ describe('getLocationTokenId', () => {
       }
     }
 
-    const foreignAssets: TForeignAssetInfo[] = [
+    const foreignAssets: TAssetInfo[] = [
       { assetId: '123', symbol: 'USDT', decimals: 6 },
       { assetId: '456', symbol: 'ETH', decimals: 18 }
     ]

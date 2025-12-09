@@ -10,11 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { EvmBuilder } from './EvmBuilder'
 
-vi.mock('@paraspell/sdk-core', () => ({
-  transferMoonbeamToEth: vi.fn(),
-  transferMoonbeamEvm: vi.fn(),
-  validateAddress: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core')
 
 const mockApi = {
   init: vi.fn(),

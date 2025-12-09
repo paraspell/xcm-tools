@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AMOUNT_ALL } from '../../constants'
+import type { IPolkadotApi } from '../../api'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
@@ -17,7 +17,7 @@ describe('Ajuna', () => {
 
   const baseXTokensInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'BNC', amount: '100' }
+    asset: { symbol: 'BNC', amount: 100n }
   } as unknown as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -68,18 +68,20 @@ describe('Ajuna', () => {
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
       deserializeExtrinsics: vi.fn()
-    }
+    } as unknown as IPolkadotApi<unknown, unknown>
 
     it('creates local transfer', () => {
       const opts = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       ajuna.transferLocalNonNativeAsset(opts)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
         params: {
@@ -93,14 +95,16 @@ describe('Ajuna', () => {
     it('calls transfer_all when amount is ALL', () => {
       const opts = {
         api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       ajuna.transferLocalNonNativeAsset(opts)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
         params: {

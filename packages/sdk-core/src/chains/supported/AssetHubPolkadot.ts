@@ -38,12 +38,7 @@ import {
   type TPolkadotXCMTransferOptions,
   type TScenario
 } from '../../types'
-import {
-  addXcmVersionHeader,
-  assertHasLocation,
-  assertIsForeign,
-  assertSenderAddress
-} from '../../utils'
+import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation } from '../../utils/location'
@@ -291,8 +286,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
-
-    assertIsForeign(asset)
 
     if (asset.assetId !== undefined) {
       const assetId = Number(asset.assetId)

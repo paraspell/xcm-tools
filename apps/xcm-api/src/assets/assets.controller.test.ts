@@ -1,11 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type {
-  TAssetInfo,
-  TChain,
-  TChainAssetsInfo,
-  TNativeAssetInfo,
-} from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TChainAssetsInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -49,8 +44,10 @@ describe('AssetsController', () => {
       ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
-      nativeAssets: [{ symbol, decimals, isNative: true }],
-      otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
+      assets: [
+        { symbol, decimals, isNative: true },
+        { assetId: '234123123', symbol: 'FKK', decimals },
+      ],
       nativeAssetSymbol: symbol,
     } as TChainAssetsInfo;
     it('should return assets object for a valid chain', () => {
@@ -141,9 +138,7 @@ describe('AssetsController', () => {
 
   describe('getNativeAssets', () => {
     it('should return native assets for a valid chain', () => {
-      const mockResult = [
-        { symbol, decimals, isNative: true },
-      ] as TNativeAssetInfo[];
+      const mockResult = [{ symbol, decimals, isNative: true }] as TAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getNativeAssets')
         .mockReturnValue(mockResult);
@@ -264,9 +259,7 @@ describe('AssetsController', () => {
 
   describe('getFeeAssets', () => {
     it('should return fee assets for a valid chain', () => {
-      const mockResult = [
-        { symbol, decimals, isNative: true },
-      ] as TNativeAssetInfo[];
+      const mockResult = [{ symbol, decimals, isNative: true }] as TAssetInfo[];
       const spy = vi
         .spyOn(assetsService, 'getFeeAssets')
         .mockReturnValue(mockResult);

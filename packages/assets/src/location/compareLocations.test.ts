@@ -1,36 +1,72 @@
+import type { TLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TForeignAssetInfo } from '../types'
+import type { TAssetInfo } from '../types'
 import { compareLocations } from './compareLocations'
 
+const createAsset = (location?: TLocation): TAssetInfo =>
+  ({
+    symbol: 'TEST',
+    decimals: 12,
+    location
+  }) as TAssetInfo
+
 describe('compareLocations', () => {
-  it('should return true when input matches sanitized asset.location (comma removed)', () => {
-    const asset = { location: '1,2' } as unknown as TForeignAssetInfo
-    const input = '"12"'
+  it('returns true when the JSON string matches the asset location exactly', () => {
+    const location: TLocation = {
+      parents: 1,
+      interior: {
+        X1: [
+          {
+            Parachain: 1000
+          }
+        ]
+      }
+    }
+
+    const asset = createAsset(location)
+    const input = JSON.stringify(location)
+
     expect(compareLocations(input, asset)).toBe(true)
   })
 
-  it('should return true when input matches unsanitized asset.location', () => {
-    const asset = { location: '1,2' } as unknown as TForeignAssetInfo
-    const input = '"1,2"'
+  it('matches locations when numeric strings contain commas in the asset data', () => {
+    const assetLocation: TLocation = {
+      parents: 1,
+      interior: {
+        X3: [{ Parachain: '1000' }, { PalletInstance: '50' }, { GeneralIndex: '1,984' }]
+      }
+    }
+
+    const inputLocation: TLocation = {
+      parents: 1,
+      interior: {
+        X3: [{ Parachain: '1000' }, { PalletInstance: '50' }, { GeneralIndex: '1984' }]
+      }
+    }
+
+    const asset = createAsset(assetLocation)
+    const input = JSON.stringify(inputLocation)
+
     expect(compareLocations(input, asset)).toBe(true)
   })
 
-  it('should return false when input is not JSON.stringified even if content appears similar', () => {
-    const asset = { location: '1,2' } as unknown as TForeignAssetInfo
-    const input = '1,2'
+  it('returns false when the input is not a JSON string', () => {
+    const location: TLocation = {
+      parents: 0,
+      interior: 'Here'
+    }
+
+    const asset = createAsset(location)
+
+    expect(compareLocations('not-json', asset)).toBe(false)
+  })
+
+  it('returns false when the asset does not have a location', () => {
+    const input = JSON.stringify({ parents: 0, interior: 'Here' })
+
+    const asset = createAsset()
+
     expect(compareLocations(input, asset)).toBe(false)
-  })
-
-  it('should return false when comparing simple strings that are not in JSON format', () => {
-    const asset = { location: 'abc' } as unknown as TForeignAssetInfo
-    const input = 'abc'
-    expect(compareLocations(input, asset)).toBe(false)
-  })
-
-  it('should return true when input matches a simple string asset value in JSON format', () => {
-    const asset = { location: 'abc' } as unknown as TForeignAssetInfo
-    const input = '"abc"'
-    expect(compareLocations(input, asset)).toBe(true)
   })
 })

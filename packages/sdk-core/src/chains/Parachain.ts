@@ -9,7 +9,6 @@ import {
   getRelayChainSymbol,
   isAssetEqual,
   isChainEvm,
-  isForeignAsset,
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
@@ -366,11 +365,9 @@ abstract class Parachain<TApi, TRes> {
 
     const isNativeAsset =
       !isTLocation(to) &&
-      ((isAHPOrigin &&
-        isForeignAsset(asset) &&
-        isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
+      ((isAHPOrigin && !asset.isNative && isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
         (isAHPDest &&
-          !isForeignAsset(asset) &&
+          asset.isNative &&
           isSymbolMatch(asset.symbol, getNativeAssetSymbol(this.chain))))
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
@@ -378,7 +375,7 @@ abstract class Parachain<TApi, TRes> {
     const isRegisteredOnAh =
       asset.location && findAssetInfo(assetHubChain, { location: asset.location }, null)
 
-    return isNativeAsset && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
+    return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
@@ -462,7 +459,7 @@ abstract class Parachain<TApi, TRes> {
 
     const validatedOptions = { ...options, address }
 
-    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && !isForeignAsset(asset)
+    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && asset.isNative
 
     let balance: bigint
     if (isAmountAll) {

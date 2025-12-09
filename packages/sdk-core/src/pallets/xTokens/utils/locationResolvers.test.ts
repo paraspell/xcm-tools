@@ -1,4 +1,4 @@
-import { getOtherAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { getOtherAssets, InvalidCurrencyError } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -28,8 +28,6 @@ describe('buildLocation', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   it('returns location when asset is foreign and origin is Bifrost', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
     const input = {
       ...baseInput,
       origin: 'BifrostPolkadot',
@@ -46,8 +44,6 @@ describe('buildLocation', () => {
   })
 
   it('returns asset.location when foreign asset has location', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
     const location = { parents: Parents.ONE, interior: 'Here' }
     const input = {
       ...baseInput,
@@ -62,8 +58,6 @@ describe('buildLocation', () => {
   })
 
   it('returns default location when foreign asset has no location and origin is not Bifrost', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
     const input = {
       ...baseInput,
       asset: { assetId: '123' }
@@ -79,13 +73,12 @@ describe('buildLocation', () => {
   })
 
   it('returns DOT_LOCATION when asset is native and destination is relay chain', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(true)
 
     const input = {
       ...baseInput,
       destination: 'Polkadot',
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', isNative: true }
     } as TXTokensTransferOptions<unknown, unknown>
 
     const result = buildLocation(input)
@@ -93,13 +86,11 @@ describe('buildLocation', () => {
   })
 
   it('returns location object when destination is an object', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(false)
-
     const destObj = { parents: 0, interior: 'Here' }
     const input = {
       ...baseInput,
       destination: destObj,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', isNative: true }
     } as TXTokensTransferOptions<unknown, unknown>
 
     const result = buildLocation(input)
@@ -107,7 +98,6 @@ describe('buildLocation', () => {
   })
 
   it('returns location from AssetHub when asset is native and destination is string', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
     const location: TLocation = { parents: 1, interior: 'Here' }
@@ -116,7 +106,7 @@ describe('buildLocation', () => {
     const input = {
       ...baseInput,
       destination: 'Polkadot',
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', isNative: true }
     } as TXTokensTransferOptions<unknown, unknown>
 
     const result = buildLocation(input)
@@ -124,14 +114,13 @@ describe('buildLocation', () => {
   })
 
   it('throws InvalidCurrencyError when asset is native and not found in AssetHub', () => {
-    vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([])
 
     const input = {
       ...baseInput,
       destination: 'Polkadot',
-      asset: { symbol: 'UNKNOWN' }
+      asset: { symbol: 'UNKNOWN', isNative: true }
     } as TXTokensTransferOptions<unknown, unknown>
 
     expect(() => buildLocation(input)).toThrow(InvalidCurrencyError)

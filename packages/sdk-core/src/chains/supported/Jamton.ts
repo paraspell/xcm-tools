@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Jamton Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, isForeignAsset, isSymbolMatch } from '@paraspell/assets'
+import { findAssetInfoOrThrow, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -22,9 +22,9 @@ class Jamton<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
   }
 
   getCustomCurrencyId(asset: TAssetInfo) {
-    return isForeignAsset(asset)
-      ? { ForeignAsset: Number(asset.assetId) }
-      : { Native: Jamton.NATIVE_ASSET_IDS[asset.symbol] }
+    return asset.isNative
+      ? { Native: Jamton.NATIVE_ASSET_IDS[asset.symbol] }
+      : { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
@@ -32,7 +32,7 @@ class Jamton<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
 
     const currencySelection = this.getCustomCurrencyId(asset)
 
-    if (!isForeignAsset(asset) && asset.symbol in Jamton.NATIVE_ASSET_IDS) {
+    if (asset.isNative && asset.symbol in Jamton.NATIVE_ASSET_IDS) {
       return transferXTokens(input, currencySelection)
     }
 

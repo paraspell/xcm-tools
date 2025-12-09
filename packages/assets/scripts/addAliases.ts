@@ -1,5 +1,5 @@
 import { TChain } from '@paraspell/sdk-common'
-import { TAssetJsonMap, isForeignAsset } from '../src'
+import { TAssetJsonMap } from '../src'
 
 const collectDuplicateSymbolsInChains = (
   assetsMap: TAssetJsonMap
@@ -12,11 +12,11 @@ const collectDuplicateSymbolsInChains = (
     const chainData = assetsMap[chain as TChain]
     const symbolToAssetKeys: { [symbol: string]: Set<string> } = {}
 
-    const allAssets = [...(chainData.nativeAssets || []), ...(chainData.otherAssets || [])]
+    const allAssets = chainData.assets || []
     for (const asset of allAssets) {
       const symbol = asset.symbol
       let assetKey = ''
-      if (isForeignAsset(asset)) {
+      if (!asset.isNative) {
         assetKey = asset.assetId ?? JSON.stringify(asset.location)
       }
       if (symbol && assetKey) {
@@ -64,10 +64,10 @@ export const addAliasesToDuplicateSymbols = (assetsMap: TAssetJsonMap): TAssetJs
       const aliasNumbers = assignAliasNumbers(assetIds)
 
       const chainData = assetsMap[chain as TChain]
-      const allAssets = [...(chainData.nativeAssets || []), ...(chainData.otherAssets || [])]
+      const allAssets = chainData.assets || []
 
       for (const asset of allAssets) {
-        if (asset.symbol === symbol && isForeignAsset(asset)) {
+        if (asset.symbol === symbol && !asset.isNative) {
           const assetKey = asset.assetId ?? JSON.stringify(asset.location)
           const aliasNumber = aliasNumbers[assetKey]
           if (aliasNumber !== undefined) {

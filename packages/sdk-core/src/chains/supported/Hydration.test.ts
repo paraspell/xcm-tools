@@ -4,7 +4,6 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { AMOUNT_ALL } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -245,18 +244,18 @@ describe('Hydration', () => {
     })
   })
 
+  const mockApi = {
+    deserializeExtrinsics: vi.fn()
+  } as unknown as IPolkadotApi<unknown, unknown>
+
   describe('transferLocalNativeAsset', () => {
     it('should call api.deserializeExtrinsics with correct parameters', async () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef',
         balance: 2000n
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -273,18 +272,14 @@ describe('Hydration', () => {
     })
 
     it('should call transfer_all when amount is ALL', async () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        assetInfo: { symbol: 'DOT', amount: AMOUNT_ALL },
+        assetInfo: { symbol: 'DOT', amount: 100n },
         address: '0x1234567890abcdef',
         balance: 2000n,
         senderAddress: 'sender',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -303,43 +298,31 @@ describe('Hydration', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     it('should throw InvalidCurrencyError if asset is not a foreign asset', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        asset: { symbol: 'DOT', amount: '1000' },
+        assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw InvalidCurrencyError if assetId is undefined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        asset: { symbol: 'USDC', amount: '1000' },
+        assetInfo: { symbol: 'USDC', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
     })
 
     it('should call api.deserializeExtrinsics with correct parameters', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -357,16 +340,12 @@ describe('Hydration', () => {
     })
 
     it('should call transfer_all when amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        assetInfo: { symbol: 'USDC', assetId: '123', amount: AMOUNT_ALL },
+        assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
         address: '0x1234567890abcdef',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

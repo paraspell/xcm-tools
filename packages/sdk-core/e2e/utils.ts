@@ -2,8 +2,7 @@ import {
   getAssets,
   getNativeAssetSymbol,
   getRelayChainSymbol,
-  hasSupportForAsset,
-  isForeignAsset
+  hasSupportForAsset
 } from '@paraspell/assets'
 import { isRelayChain, SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChain } from '../src'
@@ -49,7 +48,7 @@ export const generateTransferScenarios = (originChain: TSubstrateChain) => {
     // Loop through assets to find the first compatible one
     for (const asset of allAssets) {
       if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
-      if (isAssetIdRequired && !isForeignAsset(asset)) continue
+      if (isAssetIdRequired && asset.isNative) continue
 
       const notCompatible =
         ['DOT', 'KSM'].includes(asset.symbol) &&

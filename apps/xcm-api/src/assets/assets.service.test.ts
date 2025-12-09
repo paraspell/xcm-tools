@@ -1,7 +1,13 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { CHAINS, type TChain } from '@paraspell/sdk';
+import {
+  CHAINS,
+  type TAssetInfo,
+  type TChainAssetsInfo,
+  type TChain,
+} from '@paraspell/sdk';
+
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -9,13 +15,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as utils from '../utils.js';
 import { AssetsService } from './assets.service.js';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
-  return {
-    ...actual,
-    getTChain: vi.fn().mockImplementation(() => 'Acala'),
-  };
-});
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  getTChain: vi.fn().mockImplementation(() => 'Acala'),
+}));
 
 describe('AssetsService', () => {
   let service: AssetsService;
@@ -54,17 +57,17 @@ describe('AssetsService', () => {
     });
 
     it('should return assets object for a valid chain', () => {
-      const assetsObject: paraspellSdk.TChainAssetsInfo = {
+      const assetsObject: TChainAssetsInfo = {
         relaychainSymbol: symbol,
         nativeAssetSymbol: 'DOT',
         isEVM: false,
         ss58Prefix: 42,
         supportsDryRunApi: false,
         supportsXcmPaymentApi: true,
-        nativeAssets: [
+        assets: [
           { symbol, decimals, isNative: true },
-        ] as paraspellSdk.TNativeAssetInfo[],
-        otherAssets: [{ assetId, symbol: 'BSK', decimals }],
+          { assetId, symbol: 'BSK', decimals },
+        ],
       };
 
       const validateChainSpy = vi.spyOn(utils, 'validateChain');
@@ -194,7 +197,7 @@ describe('AssetsService', () => {
         symbol: 'DOT',
         decimals: 10,
         isNative: false,
-      } as paraspellSdk.TAssetInfo;
+      } as TAssetInfo;
       getAssetInfoSpy.mockReturnValue(assetInfo);
 
       const result = service.getAssetInfo(chain, { currency: { symbol } });
@@ -213,7 +216,7 @@ describe('AssetsService', () => {
         symbol: 'DOT',
         decimals: 10,
         isNative: false,
-      } as paraspellSdk.TAssetInfo;
+      } as TAssetInfo;
       getAssetInfoSpy.mockReturnValue(assetInfo);
 
       const destination = 'Karura';

@@ -1,11 +1,11 @@
 import { ApiPromise } from '@polkadot/api'
 import { capitalizeLocation } from './utils'
-import { TNativeAssetInfo } from '../src'
+import { TAssetInfo } from '../src'
 
 export const fetchNativeAssetsCurio = async (
   api: ApiPromise,
   query: string
-): Promise<TNativeAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
   return res

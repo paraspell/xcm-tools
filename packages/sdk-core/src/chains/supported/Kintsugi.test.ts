@@ -1,8 +1,8 @@
-import type { TNativeAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AMOUNT_ALL } from '../../constants'
+import type { IPolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TForeignOrTokenAsset,
@@ -12,9 +12,7 @@ import type {
 import { getChain } from '../../utils'
 import type Kintsugi from './Kintsugi'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Kintsugi', () => {
   let kintsugi: Kintsugi<unknown, unknown>
@@ -51,7 +49,7 @@ describe('Kintsugi', () => {
         symbol: 'KINT',
         amount: 100n,
         isNative: true
-      } as WithAmount<TNativeAssetInfo>
+      } as WithAmount<TAssetInfo>
     }
 
     kintsugi.transferXTokens(inputWithoutCurrencyID)
@@ -61,17 +59,17 @@ describe('Kintsugi', () => {
     } as TForeignOrTokenAsset)
   })
 
+  const mockApi = {
+    deserializeExtrinsics: vi.fn()
+  } as unknown as IPolkadotApi<unknown, unknown>
+
   describe('transferLocalNativeAsset', () => {
     it('should call transferLocalNonNativeAsset', async () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: '100', assetId: '1' },
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(kintsugi, 'transferLocalNonNativeAsset')
       await kintsugi.transferLocalNativeAsset(mockOptions)
@@ -81,19 +79,17 @@ describe('Kintsugi', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       kintsugi.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
         params: {
@@ -105,20 +101,18 @@ describe('Kintsugi', () => {
     })
 
     it('should call transfer_all when amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       kintsugi.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
         params: {

@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo, TForeignAssetInfo, TNativeAssetInfo } from '../src'
+import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { getParaId } from '../../sdk-core/src'
 
@@ -124,11 +124,11 @@ const fetchAssets = async (
         ]) => {
           const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
 
-          const baseAsset = {
+          const baseAsset: TAssetInfo = {
             symbol,
             decimals: +decimals,
             existentialDeposit: minimalBalance ?? existentialDeposit
-          } as TNativeAssetInfo
+          }
 
           if (isNative) {
             return {
@@ -160,7 +160,7 @@ export const fetchAcalaNativeAssets = async (
   chain: 'Acala' | 'Karura',
   api: ApiPromise,
   query: string
-): Promise<TNativeAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   return (await fetchAssets(chain, api, query, true, ['NativeAssetId'])).map(asset => ({
     ...asset,
     isNative: true
@@ -170,8 +170,4 @@ export const fetchAcalaNativeAssets = async (
 export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
-  return fetchAssets('Acala', api, query, false, ['ForeignAssetId', 'Erc20']) as Promise<
-    TForeignAssetInfo[]
-  >
-}
+): Promise<TAssetInfo[]> => fetchAssets('Acala', api, query, false, ['ForeignAssetId', 'Erc20'])

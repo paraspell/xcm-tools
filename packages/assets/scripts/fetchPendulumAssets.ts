@@ -1,11 +1,11 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo } from '../src'
+import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 
 export const fetchPendulumForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 

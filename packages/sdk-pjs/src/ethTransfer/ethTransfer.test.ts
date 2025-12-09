@@ -17,7 +17,6 @@ vi.mock('./createContext')
 vi.mock('@paraspell/sdk-core', () => ({
   getParaId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
-  isForeignAsset: vi.fn().mockReturnValue(true),
   InvalidCurrencyError: class extends Error {},
   InvalidParameterError: class extends Error {},
   isOverrideLocationSpecifier: vi.fn().mockReturnValue(false),

@@ -1,11 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo } from '../src'
+import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 
-export const fetchPhalaAssets = async (
-  api: ApiPromise,
-  query: string
-): Promise<TForeignAssetInfo[]> => {
+export const fetchPhalaAssets = async (api: ApiPromise, query: string): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const assets = await api.query[module][method].entries()
 

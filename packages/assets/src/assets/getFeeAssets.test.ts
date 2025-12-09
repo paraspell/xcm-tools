@@ -2,15 +2,15 @@ import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../errors'
-import type { TAssetInfo, TChainAssetsInfo, TForeignAssetInfo, TNativeAssetInfo } from '../types'
+import type { TAssetInfo, TChainAssetsInfo } from '../types'
 import { getAssetsObject } from './assets'
 import { getFeeAssets } from './getFeeAssets'
+import { findNativeAssetInfoOrThrow } from './search'
 
-vi.mock('./assets', () => ({
-  getAssetsObject: vi.fn()
-}))
+vi.mock('./assets')
+vi.mock('./search')
 
-const createAsset = (symbol: string, opts: Partial<TAssetInfo> = {}): TForeignAssetInfo => ({
+const createAsset = (symbol: string, opts: Partial<TAssetInfo> = {}): TAssetInfo => ({
   symbol,
   decimals: 12,
   existentialDeposit: '0',
@@ -30,12 +30,12 @@ describe('getFeeAssets', () => {
     const mainNative = createAsset('NATIVE', { isNative: true })
 
     const assetsObject = {
-      nativeAssets: [mainNative],
-      otherAssets: [feeAsset],
-      nativeAssetSymbol: 'NATIVE'
+      nativeAssetSymbol: 'NATIVE',
+      assets: [mainNative, feeAsset]
     } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValueOnce(mainNative)
 
     const result = getFeeAssets(mockChain)
 
@@ -45,15 +45,15 @@ describe('getFeeAssets', () => {
   })
 
   it('falls back to the main native asset when no fee assets are present', () => {
-    const mainNative = createAsset('NATIVE', { isNative: true }) as TNativeAssetInfo
+    const mainNative = createAsset('NATIVE', { isNative: true })
 
     const assetsObject = {
-      nativeAssets: [mainNative],
-      otherAssets: [createAsset('FOO')],
-      nativeAssetSymbol: 'NATIVE'
+      nativeAssetSymbol: 'NATIVE',
+      assets: [mainNative, createAsset('FOO')]
     } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValueOnce(mainNative)
 
     const result = getFeeAssets(mockChain)
 
@@ -61,15 +61,17 @@ describe('getFeeAssets', () => {
   })
 
   it('throws InvalidCurrencyError when neither fee assets nor main native asset exist', () => {
-    const otherNative = createAsset('BAR', { isNative: true }) as TNativeAssetInfo
+    const otherNative = createAsset('BAR', { isNative: true })
 
     const assetsObject = {
-      nativeAssets: [otherNative],
-      otherAssets: [] as TForeignAssetInfo[],
-      nativeAssetSymbol: 'NATIVE'
+      nativeAssetSymbol: 'NATIVE',
+      assets: [otherNative]
     } as TChainAssetsInfo
 
     vi.mocked(getAssetsObject).mockReturnValueOnce(assetsObject)
+    vi.mocked(findNativeAssetInfoOrThrow).mockImplementationOnce(() => {
+      throw new InvalidCurrencyError('Native asset not found')
+    })
 
     expect(() => getFeeAssets(mockChain)).toThrow(InvalidCurrencyError)
   })

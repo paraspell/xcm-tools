@@ -3,7 +3,6 @@ import {
   AmountTooLowError,
   getNativeAssetSymbol,
   InvalidParameterError,
-  isForeignAsset,
   Parents,
   type TLocation,
   transform,
@@ -21,7 +20,6 @@ vi.mock('@paraspell/sdk', async () => {
   return {
     ...original,
     getNativeAssetSymbol: vi.fn(),
-    isForeignAsset: vi.fn(),
     transform: vi.fn(),
   };
 });
@@ -115,7 +113,6 @@ describe('AssetHubExchange', () => {
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
-      vi.mocked(isForeignAsset).mockReturnValue(false);
       const toDestTxFee = 50n;
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(swapMock).toHaveBeenCalledWith({
@@ -147,7 +144,6 @@ describe('AssetHubExchange', () => {
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote).mockResolvedValueOnce(feeQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
-      vi.mocked(isForeignAsset).mockReturnValue(false);
       const toDestTxFee = 50n;
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(swapMock).toHaveBeenCalledWith({

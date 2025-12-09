@@ -1,9 +1,4 @@
-import {
-  getOtherAssets,
-  InvalidCurrencyError,
-  isForeignAsset,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { getOtherAssets, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
 
@@ -32,7 +27,7 @@ export const buildLocation = <TApi, TRes>({
   origin,
   destination
 }: TXTokensTransferOptions<TApi, TRes>): TLocation => {
-  if (!isForeignAsset(asset)) {
+  if (asset.isNative) {
     return resolveLocationFromDest(destination, asset)
   }
 

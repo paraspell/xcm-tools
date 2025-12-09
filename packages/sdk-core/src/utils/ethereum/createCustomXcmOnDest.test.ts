@@ -1,4 +1,4 @@
-import { isChainEvm, isForeignAsset } from '@paraspell/assets'
+import { isChainEvm } from '@paraspell/assets'
 import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -90,7 +90,6 @@ describe('createCustomXcmOnDest', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(isChainEvm).mockReturnValue(false)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
   })
 
   it('should throw an error if chain is EVM and ahAddress is missing', () => {

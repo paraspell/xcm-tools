@@ -26,7 +26,7 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
   }
 
   getCustomCurrencyId(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {
-    if (asset.symbol === this.getNativeAssetSymbol()) return 'Ztg'
+    if (asset.isNative) return 'Ztg'
     assertHasId(asset)
     return { ForeignAsset: Number(asset.assetId) }
   }

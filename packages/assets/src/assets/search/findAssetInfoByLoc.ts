@@ -1,13 +1,13 @@
 import { deepEqual, type TLocation } from '@paraspell/sdk-common'
 
 import { compareLocations } from '../../location'
-import type { TForeignAssetInfo } from '../../types'
+import type { TAssetInfo } from '../../types'
 import { normalizeLocation } from '../normalizeLocation'
 
 export const findAssetInfoByLoc = (
-  foreignAssets: TForeignAssetInfo[],
+  foreignAssets: TAssetInfo[],
   location: string | TLocation
-): TForeignAssetInfo | undefined => {
+): TAssetInfo | undefined => {
   if (typeof location === 'string') {
     return foreignAssets.find(asset => compareLocations(location, asset))
   } else {

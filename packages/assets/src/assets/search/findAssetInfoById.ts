@@ -1,7 +1,7 @@
 import { DuplicateAssetIdError } from '../../errors'
-import type { TCurrency, TForeignAssetInfo } from '../../types'
+import type { TAssetInfo, TCurrency } from '../../types'
 
-export const findAssetInfoById = (assets: TForeignAssetInfo[], assetId: TCurrency) => {
+export const findAssetInfoById = (assets: TAssetInfo[], assetId: TCurrency) => {
   const otherAssetsMatches = assets.filter(
     ({ assetId: currentAssetId }) => currentAssetId === assetId.toString()
   )

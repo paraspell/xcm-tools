@@ -55,7 +55,7 @@ describe('NeuroWeb', () => {
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 999n,
         isAmountAll: false
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       await neuroweb.transferLocalNativeAsset(mockOptions)
 
@@ -76,7 +76,7 @@ describe('NeuroWeb', () => {
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 456n,
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       await neuroweb.transferLocalNativeAsset(mockOptions)
 
@@ -109,7 +109,7 @@ describe('NeuroWeb', () => {
         address: '5CLocalDest',
         balance: 999n,
         isAmountAll: false
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       neuroweb.transferLocalNonNativeAsset(mockOptions)
 
@@ -135,7 +135,7 @@ describe('NeuroWeb', () => {
         address: '5CLocalDest',
         balance: 777n,
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const result = neuroweb.transferLocalNonNativeAsset(mockOptions)
 

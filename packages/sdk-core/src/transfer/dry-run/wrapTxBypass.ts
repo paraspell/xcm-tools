@@ -5,7 +5,6 @@ import {
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
   isAssetXcEqual,
-  isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
@@ -23,7 +22,7 @@ import type { TSetBalanceRes } from '../../types/TAssets'
 import { parseUnits } from '../../utils/unit'
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
-  if (isForeignAsset(asset) && (!asset.assetId || asset.assetId.startsWith('0x'))) {
+  if (!asset.isNative && (!asset.assetId || asset.assetId.startsWith('0x'))) {
     // No assetId means it's probably a ForeignAssets pallet asset
     return pallets.find(pallet => pallet.startsWith('Foreign')) ?? pallets[0]
   }
@@ -41,7 +40,7 @@ const createMintTxs = <TApi, TRes>(
   const otherPallets = getOtherAssetsPallets(chain)
   const isMainNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(chain))
   const pallet =
-    (isForeignAsset(asset) && chain !== 'Mythos') || !isMainNativeAsset
+    (!asset.isNative && chain !== 'Mythos') || !isMainNativeAsset
       ? pickOtherPallet(asset, otherPallets)
       : nativePallet
 
@@ -98,7 +97,7 @@ export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint 
 const assetKey = (a: TAssetInfo) =>
   a.location
     ? JSON.stringify(a.location)
-    : isForeignAsset(a) && a.assetId != null
+    : !a.isNative && a.assetId != null
       ? `id:${a.assetId}`
       : `sym:${a.symbol}`
 
