@@ -86,7 +86,7 @@ export const createBaseExecuteXcm = (
     : [
         {
           DepositReserveAsset: {
-            assets: createAssetsFilter(assetLocalizedToReserve),
+            assets: createAssetsFilter(assetLocalizedToReserve, version),
             dest: createDestination(version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
               {
@@ -114,7 +114,7 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(assetLocalized),
+            assets: createAssetsFilter(assetLocalized, version),
             dest: destLocation,
             xcm: [
               {
@@ -135,7 +135,7 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(assetLocalized),
+            assets: createAssetsFilter(assetLocalized, version),
             dest: getChainLocation(chain, reserveChain),
             xcm: [
               {
@@ -160,7 +160,7 @@ export const createBaseExecuteXcm = (
       mainInstructions = [
         {
           InitiateReserveWithdraw: {
-            assets: createAssetsFilter(assetLocalized),
+            assets: createAssetsFilter(assetLocalized, version),
             reserve: getChainLocation(chain, reserveChain),
             xcm: [
               {

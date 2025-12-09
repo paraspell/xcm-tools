@@ -13,32 +13,23 @@ import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isTrustedChain: vi.fn()
 }))
 
-vi.mock('../../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn()
-}))
-
-vi.mock('../../location/getChainLocation', () => ({
-  getChainLocation: vi.fn()
-}))
-
-vi.mock('./createAssetsFilter', () => ({
-  createAssetsFilter: vi.fn()
-}))
-
-vi.mock('./prepareExecuteContext', () => ({
-  prepareExecuteContext: vi.fn()
-}))
+vi.mock('../../../pallets/xcmPallet/utils')
+vi.mock('../../location/getChainLocation')
+vi.mock('./createAssetsFilter')
+vi.mock('./prepareExecuteContext')
 
 describe('createBaseExecuteXcm', () => {
   const mockAsset: TAsset = {
     id: { Concrete: { parents: 0, interior: 'Here' } },
     fun: { Fungible: 1000n }
   }
+
+  const mockVersion = Version.V3
 
   const mockBaseOptions = {
     chain: 'AssetHubPolkadot',
@@ -47,7 +38,7 @@ describe('createBaseExecuteXcm', () => {
       originFee: 100n,
       reserveFee: 50n
     },
-    version: Version.V3,
+    version: mockVersion,
     paraIdTo: 1000
   } as TCreateBaseTransferXcmOptions
 
@@ -341,17 +332,15 @@ describe('createBaseExecuteXcm', () => {
 
     it('should correctly call createAssetsFilter with appropriate assets', () => {
       vi.mocked(isTrustedChain).mockReturnValue(true)
-
       createBaseExecuteXcm(mockBaseOptions)
-
-      expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
+      expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
     })
 
     it('should correctly call createDestination with all parameters', () => {
       createBaseExecuteXcm(mockBaseOptions)
 
       expect(createDestination).toHaveBeenCalledWith(
-        'V3',
+        mockVersion,
         'AssetHubPolkadot',
         'AssetHubKusama',
         1000
