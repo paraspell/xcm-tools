@@ -1,9 +1,4 @@
-import {
-  findAssetInfoOrThrow,
-  isForeignAsset,
-  type TAssetInfo,
-  type WithAmount
-} from '@paraspell/assets'
+import { findAssetInfoOrThrow, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
@@ -12,7 +7,7 @@ import { assertHasId, getChain } from '../../utils'
 
 const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
   if (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo') {
-    const isEthAsset = isForeignAsset(asset) && asset.assetId?.startsWith('0x')
+    const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
 
     const resolvedAsset =
       isEthAsset && asset.location

@@ -1,10 +1,10 @@
 import { DuplicateAssetError } from '../../errors'
-import type { TForeignAssetInfo, TNativeAssetInfo } from '../../types'
+import type { TAssetInfo } from '../../types'
 
 export const throwDuplicateAssetError = (
   symbol: string,
-  nativeMatches: TNativeAssetInfo[],
-  foreignMatches: TForeignAssetInfo[]
+  nativeMatches: TAssetInfo[],
+  foreignMatches: TAssetInfo[]
 ) => {
   if (nativeMatches.length > 0 && foreignMatches.length > 0) {
     throw new DuplicateAssetError(

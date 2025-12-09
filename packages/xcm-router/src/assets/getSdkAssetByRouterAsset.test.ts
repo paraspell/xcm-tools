@@ -1,11 +1,5 @@
-import type { TAssetInfo, TCurrencyInput, TForeignAssetInfo, TLocation } from '@paraspell/sdk';
-import {
-  deepEqual,
-  findAssetInfo,
-  findBestMatches,
-  getAssets,
-  isForeignAsset,
-} from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput, TLocation } from '@paraspell/sdk';
+import { deepEqual, findAssetInfo, findBestMatches, getAssets } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TRouterAsset } from '../types';
@@ -17,7 +11,6 @@ vi.mock('@paraspell/sdk', () => ({
   getAssets: vi.fn(),
   findBestMatches: vi.fn(),
   findAssetInfo: vi.fn(),
-  isForeignAsset: vi.fn(),
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
 }));
 
@@ -55,13 +48,10 @@ describe('getSdkAssetByRouterAsset', () => {
 
   it('should return a candidate when matching by location', () => {
     const location: TLocation = { parents: 0, interior: 'Here' };
-    const candidate1: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1', location };
+    const candidate1: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1', location };
     const candidate2: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
-    vi.mocked(isForeignAsset).mockImplementation((asset: TAssetInfo) =>
-      Boolean((asset as TForeignAssetInfo).assetId),
-    );
     vi.mocked(findAssetInfo).mockImplementation((_chain, currency: TCurrencyInput) => {
       if ('location' in currency && deepEqual(currency.location, candidate1.location)) {
         return candidate1;
@@ -74,13 +64,10 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return a candidate when matching by assetId', () => {
-    const candidate1: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1' };
-    const candidate2: TForeignAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
+    const candidate1: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '1' };
+    const candidate2: TAssetInfo = { symbol: 'ABC', decimals: 12, assetId: '2' };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
-    vi.mocked(isForeignAsset).mockImplementation(
-      (asset: TAssetInfo) => (asset as TForeignAssetInfo).assetId === '2',
-    );
     vi.mocked(findAssetInfo).mockImplementation((_chain, currency: TCurrencyInput) => {
       if ('id' in currency && currency.id === candidate2.assetId) return candidate2;
       return null;
@@ -91,13 +78,13 @@ describe('getSdkAssetByRouterAsset', () => {
   });
 
   it('should return undefined when multiple candidates are found but none match', () => {
-    const candidate1: TForeignAssetInfo = {
+    const candidate1: TAssetInfo = {
       symbol: 'ABC',
       decimals: 12,
       assetId: '1',
       location: { parents: 0, interior: 'Here' },
     };
-    const candidate2: TForeignAssetInfo = {
+    const candidate2: TAssetInfo = {
       symbol: 'ABC',
       decimals: 12,
       assetId: '2',
@@ -105,7 +92,6 @@ describe('getSdkAssetByRouterAsset', () => {
     };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
-    vi.mocked(isForeignAsset).mockReturnValue(true);
     vi.mocked(findAssetInfo).mockReturnValue(null);
     const routerAsset: TRouterAsset = {
       symbol: 'ABC',

@@ -3,8 +3,8 @@
 import type { TChain } from '@paraspell/sdk-common'
 
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
-import type { TAssetInfo, TForeignAssetInfo } from '../types'
-import { type TAssetJsonMap, type TChainAssetsInfo, type TNativeAssetInfo } from '../types'
+import type { TAssetInfo } from '../types'
+import { type TAssetJsonMap, type TChainAssetsInfo } from '../types'
 import { isSymbolMatch } from './isSymbolMatch'
 import { findNativeAssetInfoOrThrow } from './search'
 
@@ -28,7 +28,7 @@ export const isChainEvm = (chain: TChain): boolean => assetsMap[chain].isEVM
  * @returns The asset ID if found; otherwise, null.
  */
 export const getAssetId = (chain: TChain, symbol: string): string | null => {
-  const asset = getAssetsObject(chain).otherAssets.find(o => o.symbol === symbol)
+  const asset = getAssetsObject(chain).assets.find(o => o.symbol === symbol)
   return asset != null && asset.assetId ? asset.assetId : null
 }
 
@@ -47,8 +47,8 @@ export const getRelayChainSymbol = (chain: TChain): string =>
  * @param chain - The chain for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (chain: TChain): TNativeAssetInfo[] =>
-  getAssetsObject(chain).nativeAssets
+export const getNativeAssets = (chain: TChain): TAssetInfo[] =>
+  getAssetsObject(chain).assets.filter(asset => asset.isNative)
 
 /**
  * Retrieves the list of other (non-native) assets for a specified chain.
@@ -56,9 +56,8 @@ export const getNativeAssets = (chain: TChain): TNativeAssetInfo[] =>
  * @param chain - The chain for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (chain: TChain): TForeignAssetInfo[] => {
-  return getAssetsObject(chain).otherAssets
-}
+export const getOtherAssets = (chain: TChain): TAssetInfo[] =>
+  getAssetsObject(chain).assets.filter(asset => !asset.isNative)
 
 /**
  * Retrieves the complete list of assets for a specified chain, including relay chain asset, native, and other assets.
@@ -67,8 +66,8 @@ export const getOtherAssets = (chain: TChain): TForeignAssetInfo[] => {
  * @returns An array of objects of all assets associated with the chain.
  */
 export const getAssets = (chain: TChain): TAssetInfo[] => {
-  const { nativeAssets, otherAssets } = getAssetsObject(chain)
-  return [...nativeAssets, ...otherAssets]
+  const { assets } = getAssetsObject(chain)
+  return assets
 }
 
 /**
@@ -78,10 +77,8 @@ export const getAssets = (chain: TChain): TAssetInfo[] => {
  * @returns An array of asset symbols.
  */
 export const getAllAssetsSymbols = (chain: TChain): string[] => {
-  const { nativeAssets, otherAssets } = getAssetsObject(chain)
-  const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
-  const otherAssetsSymbols = otherAssets.map(({ symbol }) => symbol)
-  return [...nativeAssetsSymbols, ...otherAssetsSymbols]
+  const { assets } = getAssetsObject(chain)
+  return assets.map(({ symbol }) => symbol)
 }
 
 /**
@@ -131,10 +128,10 @@ export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
  * @returns The number of decimals if the asset is found; otherwise, null.
  */
 export const getAssetDecimals = (chain: TChain, symbol: string): number | null => {
-  const { otherAssets, nativeAssets } = getAssetsObject(chain)
+  const { assets } = getAssetsObject(chain)
   const isMainNativeAsset = isSymbolMatch(symbol, getNativeAssetSymbol(chain))
   if (isMainNativeAsset) return findNativeAssetInfoOrThrow(chain).decimals
-  const asset = [...otherAssets, ...nativeAssets].find(o => o.symbol === symbol)
+  const asset = assets.find(o => o.symbol === symbol)
   return asset?.decimals !== undefined ? asset.decimals : null
 }
 

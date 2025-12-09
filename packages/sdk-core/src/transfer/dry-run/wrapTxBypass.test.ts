@@ -356,9 +356,10 @@ describe('wrapTxBypass (new branches)', () => {
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeAsset = { symbol: 'ACA', isNative: true, decimals: 12 } as TAssetInfo
     const mainAssetIsNative = {
       symbol: 'ACA',
+      isNative: true,
       decimals: 12,
       amount: 5n
     } as WithAmount<TAssetInfo>

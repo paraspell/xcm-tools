@@ -1,7 +1,6 @@
 // Contains detailed structure of XCM call construction for Curio Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -15,14 +14,12 @@ class Curio<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   }
 
   getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
-    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: asset.symbol }
+    return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
-    const currencySelection: TForeignOrTokenAsset = isForeignAsset(asset)
-      ? { ForeignAsset: Number(asset.assetId) }
-      : { Token: asset.symbol }
+    const currencySelection: TForeignOrTokenAsset = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 

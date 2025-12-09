@@ -1,4 +1,4 @@
-import type { TCurrencyCore, TNativeAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -24,7 +24,7 @@ describe('getOriginXcmFeeEstimate', () => {
   const mockOriginChain = 'origin' as TSubstrateChain
   const mockDestinationChain = 'destination' as TChain
   const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
-  const mockAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
 
   const MOCK_RAW_FEE = 100000000000n
   const MOCK_PADDED_FEE = 120000000000n

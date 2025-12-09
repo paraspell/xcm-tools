@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import type { TForeignAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -30,7 +29,7 @@ vi.mock('../../utils/ethereum/generateMessageId')
 vi.mock('../../utils/ethereum/createCustomXcmOnDest')
 vi.mock('../../utils/fees/getMythosOriginFee')
 
-const ethAsset: TForeignAssetInfo = {
+const ethAsset: TAssetInfo = {
   symbol: 'MYTH',
   decimals: 12,
   assetId: '0x123',
@@ -152,6 +151,8 @@ describe('Mythos', () => {
         { instruction: 'test' }
       ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
 
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
       const result = await mythos.transferPolkadotXCM(mockEthereumInput)
 
       expect(generateMessageId).toHaveBeenCalledWith(
@@ -162,7 +163,7 @@ describe('Mythos', () => {
         mockEthereumInput.address,
         100n
       )
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalled()
       expect(result).toBe('ethereum_tx_result')
     })
 
@@ -173,9 +174,11 @@ describe('Mythos', () => {
         { instruction: 'test' }
       ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
 
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
       await mythos.transferPolkadotXCM(mockEthereumInput)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith(
+      expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({
           module: 'PolkadotXcm',
           method: 'transfer_assets_using_type_and_then',

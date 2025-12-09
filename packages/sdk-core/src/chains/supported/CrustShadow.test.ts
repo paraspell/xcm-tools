@@ -1,4 +1,5 @@
-import { InvalidCurrencyError, type TNativeAssetInfo, type WithAmount } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { InvalidCurrencyError, type WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -53,7 +54,7 @@ describe('CrustShadow', () => {
         symbol: 'INVALID',
         amount: 100n,
         isNative: true
-      } as WithAmount<TNativeAssetInfo>
+      } as WithAmount<TAssetInfo>
     }
     vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 

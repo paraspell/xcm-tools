@@ -1,11 +1,10 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset,
   normalizeSymbol,
   type TAsset,
-  type TNativeAssetInfo,
   type WithAmount
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
@@ -13,7 +12,7 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { AMOUNT_ALL, DOT_LOCATION } from '../../constants'
+import { DOT_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
@@ -28,7 +27,6 @@ vi.mock('@paraspell/assets', async importActual => ({
   getOtherAssets: vi.fn(),
   getParaId: vi.fn(),
   InvalidCurrencyError: class extends Error {},
-  isForeignAsset: vi.fn(),
   hasSupportForAsset: vi.fn(),
   findAssetInfoByLoc: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
@@ -103,7 +101,6 @@ describe('AssetHubPolkadot', () => {
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
-      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
@@ -113,7 +110,6 @@ describe('AssetHubPolkadot', () => {
     it('should process a valid ETH transfer', async () => {
       const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
-      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const input = {
         ...mockInput,
@@ -149,7 +145,6 @@ describe('AssetHubPolkadot', () => {
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
-      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
@@ -161,7 +156,6 @@ describe('AssetHubPolkadot', () => {
     it('should process a valid AH native asset to ETH transfer', async () => {
       const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
-      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue('success')
 
@@ -284,7 +278,7 @@ describe('AssetHubPolkadot', () => {
           }
         },
         isNative: true
-      } as WithAmount<TNativeAssetInfo>
+      } as WithAmount<TAssetInfo>
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
 
@@ -321,7 +315,7 @@ describe('AssetHubPolkadot', () => {
         symbol: 'DOT',
         amount: 1000n,
         isNative: true
-      } as WithAmount<TNativeAssetInfo>
+      } as WithAmount<TAssetInfo>
 
       vi.mocked(getOtherAssets).mockImplementation(chain =>
         chain === 'Ethereum' ? [] : [{ symbol: 'DOT', decimals: 10, assetId: '' }]
@@ -341,31 +335,12 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw error if asset is not a foreign asset', () => {
-      const input = {
-        ...mockInput,
-        assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true } as WithAmount<TNativeAssetInfo>,
-        scenario: 'RelayToPara',
-        destination: 'Acala',
-        to: 'AssetHubPolkadot'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-      vi.mocked(isForeignAsset).mockReturnValueOnce(false)
-
-      expect(() => assetHub.transferLocalNonNativeAsset(input)).toThrow(InvalidCurrencyError)
-    })
-
     it('should call api.deserializeExtrinsics with correct parameters if assetId is defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -383,18 +358,12 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should call transfer_all when assetId is defined and amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        assetInfo: { symbol: 'USDC', assetId: '123', amount: AMOUNT_ALL },
+        assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
         address: '0x1234567890abcdef',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -412,17 +381,11 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should call api.deserializeExtrinsics with correct parameters if assetId is not defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 1000n, location: {} },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -440,18 +403,12 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should call transfer_all when assetId is undefined and amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
-        assetInfo: { symbol: 'USDC', amount: AMOUNT_ALL, location: {} },
+        assetInfo: { symbol: 'USDC', amount: 100n, location: {} },
         address: '0x1234567890abcdef',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

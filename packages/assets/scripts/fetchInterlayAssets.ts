@@ -1,13 +1,12 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo, TNativeAssetInfo } from '../src'
+import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
-import { Parents, TJunction, TLocation } from '@paraspell/sdk-common'
-import { getParaId } from '../../sdk-core/src'
+import { TLocation } from '@paraspell/sdk-common'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const assets = await api.query[module][method].entries()
 
@@ -39,8 +38,8 @@ export const fetchInterlayAssets = async (
 }
 
 export const fetchInterlayNativeAssets = async (
-  nativeAssets: TNativeAssetInfo[]
-): Promise<TNativeAssetInfo[]> => {
+  nativeAssets: TAssetInfo[]
+): Promise<TAssetInfo[]> => {
   const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
     IBTC: {
       parents: 1,

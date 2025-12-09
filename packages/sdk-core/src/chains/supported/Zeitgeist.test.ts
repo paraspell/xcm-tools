@@ -2,19 +2,18 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Zeitgeist from './Zeitgeist'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Zeitgeist', () => {
   let zeitgeist: Zeitgeist<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'ZTG', assetId: '123', amount: 100n }
+    asset: { symbol: 'ZTG', isNative: true, amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -34,66 +33,60 @@ describe('Zeitgeist', () => {
   })
 
   it('should call transferXTokens with native asset "Ztg" when currency matches native asset', () => {
-    vi.spyOn(zeitgeist, 'getNativeAssetSymbol').mockReturnValue('ZTG')
-
     zeitgeist.transferXTokens(mockInput)
-
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'Ztg')
   })
 
   it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
-    vi.spyOn(zeitgeist, 'getNativeAssetSymbol').mockReturnValue('NOT_ZTG')
+    const input = {
+      ...mockInput,
+      asset: { symbol: 'ACA', amount: 100n, assetId: '123' }
+    } as TXTokensTransferOptions<unknown, unknown>
 
-    zeitgeist.transferXTokens(mockInput)
+    zeitgeist.transferXTokens(input)
 
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
+    expect(transferXTokens).toHaveBeenCalledWith(input, {
       ForeignAsset: 123
     })
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw an error when asset is not a foreign asset', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
+    const mockApi = {
+      deserializeExtrinsics: vi.fn()
+    } as unknown as IPolkadotApi<unknown, unknown>
 
+    it('should throw an error when asset is not a foreign asset', () => {
       const mockOptions = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
+        assetInfo: { symbol: 'ACA', isNative: true, amount: 100n },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       expect(() => zeitgeist.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
-        asset: { symbol: 'ACA', amount: '100' },
+        assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       expect(() => zeitgeist.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       zeitgeist.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'AssetManager',
         method: 'transfer',
         params: {

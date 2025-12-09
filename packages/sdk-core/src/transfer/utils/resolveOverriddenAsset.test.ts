@@ -8,7 +8,6 @@ import {
   findAssetInfo,
   InvalidCurrencyError,
   isAssetEqual,
-  isForeignAsset,
   isOverrideLocationSpecifier,
   isTAsset
 } from '@paraspell/assets'
@@ -30,7 +29,6 @@ vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
   findAssetInfo: vi.fn(),
   isTAsset: vi.fn(),
-  isForeignAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   isOverrideLocationSpecifier: vi.fn(),
   extractAssetLocation: vi.fn().mockResolvedValue({} as TLocation),
@@ -53,7 +51,6 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTAsset).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(createAsset).mockReturnValue({} as TAsset)
     vi.mocked(findAssetInfo).mockReturnValue({
       location: {}

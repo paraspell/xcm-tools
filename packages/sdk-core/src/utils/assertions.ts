@@ -1,5 +1,5 @@
-import type { TAssetWithLocation, TForeignAssetInfo, TForeignAssetWithId } from '@paraspell/assets'
-import { InvalidCurrencyError, isForeignAsset, type TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfoWithId, TAssetWithLocation } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
@@ -43,17 +43,8 @@ export const assertHasLocation: (
   }
 }
 
-export const assertHasId: (asset: TAssetInfo) => asserts asset is TForeignAssetWithId = asset => {
-  assertIsForeign(asset)
+export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWithId = asset => {
   if (asset.assetId === undefined) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
-  }
-}
-
-export const assertIsForeign: (asset: TAssetInfo) => asserts asset is TForeignAssetInfo = asset => {
-  if (!isForeignAsset(asset)) {
-    throw new InvalidCurrencyError(
-      `Asset ${JSON.stringify(asset, replaceBigInt)} is not a foreign asset`
-    )
   }
 }

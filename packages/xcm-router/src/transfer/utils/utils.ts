@@ -1,4 +1,4 @@
-import { Builder, isChainEvm, isForeignAsset } from '@paraspell/sdk';
+import { Builder, isChainEvm } from '@paraspell/sdk';
 import type { TAssetInfo, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
@@ -7,7 +7,7 @@ import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../
 
 export const getCurrencySelection = (chain: TSubstrateChain, asset: TAssetInfo): TCurrencyInput => {
   const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
-  if (isForeignAsset(asset) && !isBifrost) {
+  if (!asset.isNative && !isBifrost) {
     if (asset.assetId) return { id: asset.assetId };
   }
 

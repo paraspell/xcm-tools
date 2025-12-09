@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo, TNativeAssetInfo } from '../src'
+import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 
 const fetchAssets = async (
@@ -7,7 +7,7 @@ const fetchAssets = async (
   query: string,
   isNative: boolean,
   nativeKey = 'NativeAssetId'
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -55,7 +55,7 @@ export const fetchZeitgeistNativeAssets = async (
   api: ApiPromise,
   query: string,
   nativeKey?: string
-): Promise<TNativeAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   return (await fetchAssets(api, query, true, nativeKey)).map(asset => ({
     isNative: true,
     symbol: asset.symbol,
@@ -68,6 +68,6 @@ export const fetchZeitgeistForeignAssets = async (
   api: ApiPromise,
   query: string,
   nativeKey?: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   return fetchAssets(api, query, false, nativeKey)
 }

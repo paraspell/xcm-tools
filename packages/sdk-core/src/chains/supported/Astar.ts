@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
-import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ChainNotSupportedError } from '../../errors'
@@ -32,9 +31,11 @@ class Astar<TApi, TRes>
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
+    if (asset.isNative) {
       return transferXTokens(input, undefined)
     }
+
+    assertHasId(asset)
 
     return transferXTokens(input, BigInt(asset.assetId))
   }

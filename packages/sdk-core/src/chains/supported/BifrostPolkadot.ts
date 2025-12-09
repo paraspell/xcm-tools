@@ -1,11 +1,6 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
-import {
-  findAssetInfoByLoc,
-  getOtherAssets,
-  isForeignAsset,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { findAssetInfoByLoc, getOtherAssets, type TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -43,7 +38,7 @@ class BifrostPolkadot<TApi, TRes>
     const isVToken = asset.symbol && asset.symbol.startsWith('v')
     const isVSToken = asset.symbol && asset.symbol.startsWith('vs')
 
-    if (!isForeignAsset(asset) || (isForeignAsset(asset) && !asset.assetId)) {
+    if (asset.isNative || (!asset.isNative && !asset.assetId)) {
       return isVToken ? { VToken: asset.symbol.substring(1) } : { Token: asset.symbol }
     }
 

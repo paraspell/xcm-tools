@@ -1,7 +1,6 @@
 // Contains detailed structure of XCM call construction for Kintsugi Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
@@ -20,7 +19,7 @@ class Kintsugi<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTran
   }
 
   getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
-    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: asset.symbol }
+    return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

@@ -20,7 +20,7 @@ const createMainInstruction = (
   assertHasId(ethAsset)
   assertHasLocation(asset)
 
-  const interiorSb =
+  const interiorSb: TLocation['interior'] =
     ethAsset.symbol === 'ETH'
       ? { Here: null }
       : { X1: [{ AccountKey20: { network: null, key: ethAsset.assetId } }] }

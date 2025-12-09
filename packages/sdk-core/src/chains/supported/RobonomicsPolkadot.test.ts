@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AMOUNT_ALL } from '../../constants'
+import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TScenario, TTransferLocalOptions } from '../../types'
@@ -59,42 +59,33 @@ describe('RobonomicsPolkadot', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('throws when options are missing assetInfo (undefined)', () => {
-      const mockApi = { deserializeExtrinsics: vi.fn() }
-      const bad: unknown = {
-        api: mockApi,
-        address: 'addr'
-      }
-
-      expect(() =>
-        robonomics.transferLocalNonNativeAsset(bad as TTransferLocalOptions<unknown, unknown>)
-      ).toThrow(InvalidCurrencyError)
-      expect(mockApi.deserializeExtrinsics).not.toHaveBeenCalled()
-    })
+    const mockApi = { deserializeExtrinsics: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>
 
     it('throws when assetId is missing in assetInfo', () => {
-      const mockApi = { deserializeExtrinsics: vi.fn() }
       const bad = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'addr'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       expect(() => robonomics.transferLocalNonNativeAsset(bad)).toThrow(InvalidCurrencyError)
-      expect(mockApi.deserializeExtrinsics).not.toHaveBeenCalled()
+      expect(spy).not.toHaveBeenCalled()
     })
 
     it('calls Assets.transfer with BigInt(assetId) & correct params', () => {
-      const mockApi = { deserializeExtrinsics: vi.fn() }
       const ok = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr123'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       robonomics.transferLocalNonNativeAsset(ok)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer',
         params: {
@@ -106,17 +97,18 @@ describe('RobonomicsPolkadot', () => {
     })
 
     it('calls Assets.transfer_all when amount is ALL', () => {
-      const mockApi = { deserializeExtrinsics: vi.fn() }
       const ok = {
         api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr123',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       robonomics.transferLocalNonNativeAsset(ok)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
         method: 'transfer_all',
         params: {

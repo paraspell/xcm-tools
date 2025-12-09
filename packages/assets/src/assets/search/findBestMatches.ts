@@ -1,10 +1,10 @@
-import type { TBaseAssetInfo } from '../../types'
+import type { TAssetInfo } from '../../types'
 
-export const findBestMatches = <T extends TBaseAssetInfo>(
-  assets: T[],
+export const findBestMatches = (
+  assets: TAssetInfo[],
   value: string,
   property: 'symbol' | 'alias' = 'symbol'
-): T[] => {
+): TAssetInfo[] => {
   // First, exact match
   let matches = assets.filter(asset => asset[property] === value)
   if (matches.length > 0) {

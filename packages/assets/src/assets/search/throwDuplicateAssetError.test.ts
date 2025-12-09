@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { DuplicateAssetError } from '../../errors'
-import type { TForeignAssetInfo, TNativeAssetInfo } from '../../types'
+import type { TAssetInfo } from '../../types'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
 describe('throwDuplicateAssetError', () => {
@@ -9,14 +9,14 @@ describe('throwDuplicateAssetError', () => {
 
   it('does not throw when only one native or one foreign match exists', () => {
     expect(() =>
-      throwDuplicateAssetError(symbol, [{ symbol: 'DOT', isNative: true } as TNativeAssetInfo], [])
+      throwDuplicateAssetError(symbol, [{ symbol: 'DOT', isNative: true } as TAssetInfo], [])
     ).not.toThrow()
 
     expect(() =>
       throwDuplicateAssetError(
         symbol,
         [],
-        [{ symbol: '', alias: 'USDT1', assetId: '100' } as TForeignAssetInfo]
+        [{ symbol: '', alias: 'USDT1', assetId: '100' } as TAssetInfo]
       )
     ).not.toThrow()
   })
@@ -25,8 +25,8 @@ describe('throwDuplicateAssetError', () => {
     expect(() =>
       throwDuplicateAssetError(
         symbol,
-        [{ symbol: 'DOT', isNative: true } as TNativeAssetInfo],
-        [{ symbol: 'USDT', alias: 'USDT1', assetId: '100' } as TForeignAssetInfo]
+        [{ symbol: 'DOT', isNative: true } as TAssetInfo],
+        [{ symbol: 'USDT', alias: 'USDT1', assetId: '100' } as TAssetInfo]
       )
     ).toThrow(
       new DuplicateAssetError(
@@ -41,8 +41,8 @@ describe('throwDuplicateAssetError', () => {
         symbol,
         [],
         [
-          { alias: 'USDT1', assetId: '100' } as TForeignAssetInfo,
-          { alias: 'USDT2', assetId: '200' } as TForeignAssetInfo
+          { alias: 'USDT1', assetId: '100' } as TAssetInfo,
+          { alias: 'USDT2', assetId: '200' } as TAssetInfo
         ]
       )
     ).toThrow(
@@ -62,12 +62,12 @@ describe('throwDuplicateAssetError', () => {
             symbol: 'USDT',
             alias: 'USDT1',
             location: { parents: 1, interior: {} }
-          } as TForeignAssetInfo,
+          } as TAssetInfo,
           {
             symbol: 'USDT',
             alias: 'USDT2',
             assetId: '123'
-          } as TForeignAssetInfo
+          } as TAssetInfo
         ]
       )
     ).toThrow(
@@ -92,12 +92,12 @@ describe('throwDuplicateAssetError', () => {
             symbol: 'USDT',
             alias: 'USDT1',
             location: {}
-          } as TForeignAssetInfo,
+          } as TAssetInfo,
           {
             symbol: 'USDT',
             alias: 'USDT2',
             location: {}
-          } as TForeignAssetInfo
+          } as TAssetInfo
         ]
       )
     ).toThrow(

@@ -20,7 +20,6 @@ import {
   Foreign,
   ForeignAbstract,
   getOtherAssets,
-  isForeignAsset,
   isRelayChain,
   Native,
   Override,
@@ -123,12 +122,12 @@ const XcmUtils = () => {
         ? false
         : getOtherAssets(from).filter(
             (asset) =>
-              isForeignAsset(asset) &&
-              isForeignAsset(currency) &&
+              !asset.isNative &&
+              !currency.isNative &&
               asset.assetId === currency.assetId,
           ).length > 1;
 
-      if (isForeignAsset(currency) && currency.assetId && !hasDuplicateIds) {
+      if (!currency.isNative && currency.assetId && !hasDuplicateIds) {
         return {
           id: currency.assetId,
         };
@@ -140,9 +139,9 @@ const XcmUtils = () => {
         };
       }
 
-      return isForeignAsset(currency)
-        ? { symbol: currency.symbol }
-        : { symbol: Native(currency.symbol) };
+      return currency.isNative
+        ? { symbol: Native(currency.symbol) }
+        : { symbol: currency.symbol };
     } else {
       throw Error('Currency is required');
     }

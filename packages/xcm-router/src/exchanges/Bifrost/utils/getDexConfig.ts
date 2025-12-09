@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
-import { getAssets, getParaId, isForeignAsset, type TParachain } from '@paraspell/sdk';
+import { getAssets, getParaId, type TParachain } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
@@ -30,7 +30,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
     assetsMap.set(symbol, {
       symbol,
-      assetId: isForeignAsset(sdkAsset) ? sdkAsset.assetId : undefined,
+      assetId: sdkAsset.isNative ? undefined : sdkAsset.assetId,
       location: sdkAsset.location,
       decimals: sdkAsset.decimals,
     });

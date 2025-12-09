@@ -1,8 +1,8 @@
-import type { TForeignAssetInfo } from '../types'
+import type { TAssetInfo } from '../types'
 
 const sanitizeLocation = (location: string): string => location.replace(/"(\d+),(\d+)"/g, '"$1$2"')
 
-export const compareLocations = (input: string, asset: TForeignAssetInfo): boolean => {
+export const compareLocations = (input: string, asset: TAssetInfo): boolean => {
   const sanitizedInput = sanitizeLocation(input)
   const assetMLStr = JSON.stringify(asset.location ?? '')
 

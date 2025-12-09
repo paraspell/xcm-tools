@@ -1,5 +1,5 @@
-import type { TAssetInfo, TForeignAssetInfo, TParachain } from '@paraspell/sdk';
-import { findAssetInfo, findBestMatches, getAssets, isForeignAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TParachain } from '@paraspell/sdk';
+import { findAssetInfo, findBestMatches, getAssets } from '@paraspell/sdk';
 
 import type { TRouterAsset } from '../types';
 
@@ -30,23 +30,17 @@ export const getSdkAssetByRouterAsset = (
 
   // Origin asset is a foreign asset, try matching by location.
   return candidates.find((asset) => {
-    if (!isForeignAsset(asset)) return false;
+    if (asset.isNative) return false;
 
     let sdkAsset;
 
     if (asset.location) {
-      sdkAsset = findAssetInfo(
-        exchangeBaseChain,
-        { location: asset.location },
-        null,
-      ) as TForeignAssetInfo;
-
+      sdkAsset = findAssetInfo(exchangeBaseChain, { location: asset.location }, null);
       if (sdkAsset) return true;
     }
 
     if (asset.assetId) {
-      sdkAsset = findAssetInfo(exchangeBaseChain, { id: asset.assetId }, null) as TForeignAssetInfo;
-
+      sdkAsset = findAssetInfo(exchangeBaseChain, { id: asset.assetId }, null);
       if (sdkAsset) return true;
     }
 

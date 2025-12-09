@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import { type TForeignAssetInfo } from '../src'
+import { type TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/utils/asset'
 import { createPublicClient, http } from 'viem'
@@ -40,8 +40,8 @@ export const fetchMoonbeamForeignAssets = async (
   api: ApiPromise,
   query: string,
   chain: 'Moonbeam' | 'Moonriver'
-): Promise<TForeignAssetInfo[]> => {
-  const whAssets: TForeignAssetInfo[] = moonbeamWhAssets.map(({ assetId, symbol, decimals }) => ({
+): Promise<TAssetInfo[]> => {
+  const whAssets: TAssetInfo[] = moonbeamWhAssets.map(({ assetId, symbol, decimals }) => ({
     symbol,
     decimals,
     existentialDeposit: '1',
@@ -70,7 +70,7 @@ export const fetchMoonbeamForeignAssets = async (
         : http('https://rpc.api.moonriver.moonbeam.network/')
   })
 
-  const evmAssets: TForeignAssetInfo[] = await Promise.all(
+  const evmAssets: TAssetInfo[] = await Promise.all(
     evmEntries.map(
       async ([
         {
@@ -109,6 +109,6 @@ export const fetchMoonbeamForeignAssets = async (
 
   return [
     ...(chain === 'Moonbeam' ? whAssets : []),
-    ...evmAssets.filter((a): a is TForeignAssetInfo => a !== null)
+    ...evmAssets.filter((a): a is TAssetInfo => a !== null)
   ]
 }

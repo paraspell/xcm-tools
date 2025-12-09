@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api'
-import { getAllAssetsSymbols, type TForeignAssetInfo } from '../src'
+import { getAllAssetsSymbols, type TAssetInfo } from '../src'
 import { getParaId, CHAINS, Parents, TSubstrateChain } from '../../sdk-core/src'
 import { capitalizeLocation } from './utils'
 
@@ -7,7 +7,7 @@ export const fetchAssetHubAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
 
   const otherChains = CHAINS.filter(chain => !chain.includes('AssetHub'))

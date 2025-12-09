@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TLocation } from '@paraspell/sdk-pjs';
-import { getAssets, isForeignAsset, localizeLocation, type TParachain } from '@paraspell/sdk-pjs';
+import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfig, TRouterAsset } from '../../../types';
@@ -43,7 +43,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
   const transformedAssets: TRouterAsset[] = filteredAssets.map((asset) => ({
     symbol: asset.symbol,
     decimals: asset.decimals,
-    assetId: isForeignAsset(asset) ? asset.assetId : undefined,
+    assetId: asset.isNative ? undefined : asset.assetId,
     location: asset.location,
   }));
 

@@ -1,5 +1,5 @@
-import type { TAssetInfo, TForeignAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, getNativeAssetSymbol, isForeignAsset } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -14,8 +14,7 @@ import { transferMoonbeamEvm } from './transferMoonbeamEvm'
 vi.mock('@paraspell/assets', () => ({
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  getNativeAssetSymbol: vi.fn(),
-  isForeignAsset: vi.fn()
+  getNativeAssetSymbol: vi.fn()
 }))
 vi.mock('viem')
 
@@ -45,14 +44,13 @@ describe('transferMoonbeamEvm', () => {
   const mockForeignAsset = {
     symbol: 'xcPINK2',
     assetId: '10000000000000000000000000000000000001'
-  } as TForeignAssetInfo
+  } as TAssetInfo
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getContract).mockReturnValue(mockViemContract)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockForeignAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
-    vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(formatAssetIdToERC20).mockReturnValue('0xformattedAsset')
     vi.mocked(getDestinationLocation).mockReturnValue(['someDestination'] as unknown as ReturnType<
       typeof getDestinationLocation
@@ -81,7 +79,6 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('throws InvalidCurrencyError if asset is not foreign and missing valid assetId', async () => {
-    vi.mocked(isForeignAsset).mockReturnValueOnce(false)
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
       symbol: 'NOT_NATIVE',
       assetId: undefined
@@ -101,7 +98,6 @@ describe('transferMoonbeamEvm', () => {
 
   it('formats foreign asset ID if the asset is foreign', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockForeignAsset)
-    vi.mocked(isForeignAsset).mockReturnValueOnce(true)
     await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,

@@ -1,9 +1,5 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  isForeignAsset,
-  isOverrideLocationSpecifier
-} from '@paraspell/assets'
+import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
@@ -116,7 +112,6 @@ describe('transferMoonbeamToEth', () => {
       if (chain === 'Ethereum') return ethereumAsset
       return moonbeamAsset
     })
-    vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })

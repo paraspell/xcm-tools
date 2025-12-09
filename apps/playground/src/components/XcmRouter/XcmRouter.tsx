@@ -15,7 +15,6 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { TSubstrateChain } from '@paraspell/sdk';
 import {
   getOtherAssets,
-  isForeignAsset,
   replaceBigInt,
   type TAssetInfo,
   type TCurrencyInput,
@@ -107,7 +106,7 @@ export const XcmRouter = () => {
   ): TCurrencyInput => {
     if (asset.location) return { location: asset.location };
 
-    if (!isForeignAsset(asset)) {
+    if (asset.isNative) {
       return { symbol: asset.symbol };
     }
 

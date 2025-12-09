@@ -11,7 +11,6 @@ import { getDexConfig } from './getDexConfig';
 vi.mock('@paraspell/sdk', () => ({
   getParaId: vi.fn().mockReturnValue(2001),
   getAssets: vi.fn(),
-  isForeignAsset: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('./bifrostUtils', () => {

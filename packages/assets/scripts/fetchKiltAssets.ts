@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAssetInfo } from '../src/types'
+import type { TAssetInfo } from '../src/types'
 import { capitalizeLocation } from './utils'
 import { TLocation } from '@paraspell/sdk-common'
 
 export const fetchKiltForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 

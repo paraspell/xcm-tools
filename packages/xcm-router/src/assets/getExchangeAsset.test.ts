@@ -1,4 +1,4 @@
-import type { TCurrencyInput, TForeignAssetInfo, TNativeAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput } from '@paraspell/sdk';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -11,7 +11,6 @@ import {
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type { TRouterAsset } from '../types';
 import { getExchangeAsset } from './getExchangeAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
@@ -24,18 +23,15 @@ vi.mock('@paraspell/sdk', () => ({
   findBestMatches: vi.fn(),
   isSymbolSpecifier: vi.fn(),
   isOverrideLocationSpecifier: vi.fn(),
-  isForeignAsset: (_asset: TRouterAsset) => true,
   InvalidParameterError: class extends Error {},
 }));
 
-vi.mock('./getExchangeConfig', () => ({
-  getExchangeAssets: vi.fn(),
-}));
+vi.mock('./getExchangeConfig');
 
 describe('getExchangeAsset', () => {
   const mockExchange = 'AcalaDex';
-  const mockNativeAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true };
-  const mockForeignAsset: TForeignAssetInfo = {
+  const mockNativeAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true };
+  const mockForeignAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
     assetId: '123',
@@ -44,7 +40,6 @@ describe('getExchangeAsset', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
     vi.mocked(getExchangeAssets).mockReturnValue([mockNativeAsset, mockForeignAsset]);
     vi.mocked(getOtherAssets).mockReturnValue([mockForeignAsset]);
     vi.mocked(getNativeAssets).mockReturnValue([mockNativeAsset]);
@@ -109,7 +104,7 @@ describe('getExchangeAsset', () => {
 
     vi.mocked(findAssetInfoByLoc)
       .mockReturnValueOnce(undefined)
-      .mockReturnValueOnce(mockNativeAsset as TForeignAssetInfo);
+      .mockReturnValueOnce(mockNativeAsset);
 
     const result = getExchangeAsset(mockExchange, currency);
 
@@ -146,7 +141,7 @@ describe('getExchangeAsset', () => {
     const foreignAssetWithoutLocation = {
       ...mockForeignAsset,
       location: undefined,
-    } as TForeignAssetInfo;
+    };
     const otherAssets = [mockForeignAsset];
 
     vi.mocked(getExchangeAssets).mockReturnValue([foreignAssetWithoutLocation]);

@@ -2,13 +2,7 @@ import { deepEqual, getJunctionValue, type TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
-import type {
-  TAssetInfo,
-  TBaseAssetInfo,
-  TCurrencySymbolValue,
-  TForeignAssetInfo,
-  TNativeAssetInfo
-} from '../../types'
+import type { TAssetInfo, TCurrencySymbolValue } from '../../types'
 import { findBestMatches } from './findBestMatches'
 import { throwDuplicateAssetError } from './throwDuplicateAssetError'
 
@@ -18,8 +12,8 @@ const removeSuffix = (symbol: string) => symbol.slice(0, -2)
 
 const findEthAssetBySymbol = (
   symbol: string,
-  otherAssets: TForeignAssetInfo[]
-): TForeignAssetInfo | undefined => {
+  otherAssets: TAssetInfo[]
+): TAssetInfo | undefined => {
   const ethCompatibleAssets = otherAssets.filter(
     asset =>
       asset.location &&
@@ -32,10 +26,7 @@ const findEthAssetBySymbol = (
   return findBestMatches(ethCompatibleAssets, symbol)[0]
 }
 
-const findEthMatch = (
-  symbol: string,
-  otherAssets: TForeignAssetInfo[]
-): TForeignAssetInfo | undefined => {
+const findEthMatch = (symbol: string, otherAssets: TAssetInfo[]): TAssetInfo | undefined => {
   const match = findEthAssetBySymbol(symbol, otherAssets)
   if (match) return match
 
@@ -44,30 +35,27 @@ const findEthMatch = (
   return findEthAssetBySymbol(altSymbol.toLowerCase(), otherAssets)
 }
 
-const findWithXcVariant = <T extends TBaseAssetInfo>(items: T[], value: string): T[] => {
+const findWithXcVariant = (items: TAssetInfo[], value: string): TAssetInfo[] => {
   const lower = value.toLowerCase()
   const candidate = lower.startsWith('xc') ? removePrefix(value) : `xc${value}`
   return findBestMatches(items, candidate)
 }
 
-const pickOtherOrThrow = (
-  input: string,
-  otherMatches: TForeignAssetInfo[]
-): TForeignAssetInfo | undefined => {
+const pickOtherOrThrow = (input: string, otherMatches: TAssetInfo[]): TAssetInfo | undefined => {
   if (otherMatches.length > 1) {
     throwDuplicateAssetError(input, [], otherMatches)
   }
   return otherMatches[0]
 }
 
-const pickAny = (native: TNativeAssetInfo[], other: TForeignAssetInfo[]) => {
+const pickAny = (native: TAssetInfo[], other: TAssetInfo[]) => {
   return other[0] ?? native[0]
 }
 
 const throwIfDuplicate = (
   input: string,
-  nativeMatches: TNativeAssetInfo[],
-  otherMatches: TForeignAssetInfo[]
+  nativeMatches: TAssetInfo[],
+  otherMatches: TAssetInfo[]
 ) => {
   if (nativeMatches.length + otherMatches.length > 1) {
     throwDuplicateAssetError(input, nativeMatches, otherMatches)
@@ -76,8 +64,8 @@ const throwIfDuplicate = (
 
 export const findAssetInfoBySymbol = (
   destination: TChain | null,
-  otherAssets: TForeignAssetInfo[],
-  nativeAssets: TNativeAssetInfo[],
+  otherAssets: TAssetInfo[],
+  nativeAssets: TAssetInfo[],
   symbol: TCurrencySymbolValue
 ): TAssetInfo | undefined => {
   const isSpecifier = isSymbolSpecifier(symbol)
@@ -91,7 +79,7 @@ export const findAssetInfoBySymbol = (
     } else if (type === 'Foreign') {
       const lowerSymbol = value.toLowerCase()
 
-      let otherAssetsMatches: TForeignAssetInfo[] = []
+      let otherAssetsMatches: TAssetInfo[] = []
 
       if (destination === 'Ethereum') {
         return findEthMatch(value, otherAssets)
@@ -140,8 +128,8 @@ export const findAssetInfoBySymbol = (
   } else {
     const lowerSymbol = symbol.toLowerCase()
 
-    let otherAssetsMatches: TForeignAssetInfo[] = []
-    let nativeAssetsMatches: TNativeAssetInfo[] = []
+    let otherAssetsMatches: TAssetInfo[] = []
+    let nativeAssetsMatches: TAssetInfo[] = []
 
     if (destination === 'Ethereum') {
       return findEthMatch(symbol, otherAssets)

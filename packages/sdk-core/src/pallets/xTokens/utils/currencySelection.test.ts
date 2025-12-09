@@ -1,4 +1,4 @@
-import { getOtherAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { getOtherAssets, InvalidCurrencyError } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,12 +17,10 @@ describe('getModifiedCurrencySelection', () => {
   it('returns default DOT location when asset is non-foreign and destination is relay chain', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'DOT', amount: 500n },
+      asset: { symbol: 'DOT', isNative: true, amount: 500n },
       destination: 'Polkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(false)
 
     const expected = {
       [version]: createAsset(version, xTransferInput.asset.amount, DOT_LOCATION)
@@ -34,12 +32,11 @@ describe('getModifiedCurrencySelection', () => {
   it('returns assetHubAsset.location when non-foreign asset is found in AssetHub', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'DOT', amount: 1000n },
+      asset: { symbol: 'DOT', isNative: true, amount: 1000n },
       destination: 'AssetHubPolkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
 
-    vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([
       {
         symbol: 'DOT',
@@ -66,12 +63,11 @@ describe('getModifiedCurrencySelection', () => {
   it('throws InvalidCurrencyError when non-foreign asset is not found in AssetHub', () => {
     const version = Version.V4
     const xTransferInput = {
-      asset: { symbol: 'UNKNOWN', amount: 500n },
+      asset: { symbol: 'UNKNOWN', isNative: true, amount: 500n },
       destination: 'AssetHubPolkadot',
       version
     } as TXTokensTransferOptions<unknown, unknown>
 
-    vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([])
 
     expect(() => getModifiedCurrencySelection(xTransferInput)).toThrow(InvalidCurrencyError)
@@ -86,8 +82,6 @@ describe('getModifiedCurrencySelection', () => {
       },
       version
     } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
 
     const result = getModifiedCurrencySelection(xTransferInput)
 
@@ -116,8 +110,6 @@ describe('getModifiedCurrencySelection', () => {
       paraIdTo,
       version
     } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
 
     const result = getModifiedCurrencySelection(xTransferInput)
 
@@ -152,8 +144,6 @@ describe('getModifiedCurrencySelection', () => {
       origin,
       version
     } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
 
     const result = getModifiedCurrencySelection(xTransferInput)
 

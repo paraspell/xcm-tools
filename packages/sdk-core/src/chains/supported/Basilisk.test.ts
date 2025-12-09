@@ -36,17 +36,17 @@ describe('Basilisk', () => {
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
+  const mockApi = {
+    deserializeExtrinsics: vi.fn()
+  } as unknown as IPolkadotApi<unknown, unknown>
+
   describe('transferLocalNativeAsset', () => {
     it('should call api.deserializeExtrinsics with correct parameters', async () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -65,15 +65,11 @@ describe('Basilisk', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     it('should call api.deserializeExtrinsics with correct parameters', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

@@ -1,15 +1,13 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AMOUNT_ALL } from '../../constants'
+import type { IPolkadotApi } from '../../../dist'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Centrifuge from './Centrifuge'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/xTokens')
 
 describe('Centrifuge', () => {
   let centrifuge: Centrifuge<unknown, unknown>
@@ -49,20 +47,22 @@ describe('Centrifuge', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
+    const mockApi = {
+      deserializeExtrinsics: vi.fn()
+    } as unknown as IPolkadotApi<unknown, unknown>
 
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       centrifuge.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
         params: {
@@ -74,20 +74,18 @@ describe('Centrifuge', () => {
     })
 
     it('should call transfer_all when amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
         api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       centrifuge.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
         params: {

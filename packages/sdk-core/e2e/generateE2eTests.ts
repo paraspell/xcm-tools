@@ -27,7 +27,6 @@ import {
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
-  isForeignAsset,
   isChainEvm,
   Native,
   TCurrencyCore
@@ -354,7 +353,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 }
 
                 // Bifrost has duplicated asset ids, thus use symbol specifier
-                if (isForeignAsset(asset) && asset.assetId && !chain.startsWith('Bifrost')) {
+                if (!asset.isNative && asset.assetId && !chain.startsWith('Bifrost')) {
                   return { id: asset.assetId }
                 }
 

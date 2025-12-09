@@ -2,7 +2,6 @@ import {
   findAssetInfoByLoc,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  isForeignAsset,
   type TAssetInfo
 } from '@paraspell/assets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
@@ -89,7 +88,6 @@ vi.mock('@paraspell/assets', async () => {
     getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
     findAssetInfoByLoc: vi.fn().mockReturnValue({ symbol: 'DOT' }),
     getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
-    isForeignAsset: vi.fn().mockReturnValue(true),
     isChainEvm: vi.fn().mockReturnValue(false),
     InvalidCurrencyError: class extends Error {}
   }
@@ -612,12 +610,11 @@ describe('Parachain', () => {
     it('should call transferLocalNativeAsset when asset is native', async () => {
       const options = {
         api,
-        assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
+        assetInfo: { symbol: 'DOT', isNative: true, location: {}, amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
 
-      vi.mocked(isForeignAsset).mockReturnValue(false)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
       const transferLocalNativeSpy = vi.spyOn(chain, 'transferLocalNativeAsset')
@@ -630,12 +627,10 @@ describe('Parachain', () => {
     it('should call transferLocalNonNativeAsset when asset is foreign', async () => {
       const options = {
         api,
-        assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
+        assetInfo: { symbol: 'WETH', assetId: '123', amount: 100n },
         senderAddress: '0x456',
         address: '0x123'
       } as TSendInternalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
 
@@ -677,8 +672,6 @@ describe('Parachain', () => {
         senderAddress: '0x456',
         address: '0x123'
       } as TTransferLocalOptions<unknown, unknown>
-
-      vi.mocked(isForeignAsset).mockReturnValueOnce(false)
 
       expect(() => chain.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
     })

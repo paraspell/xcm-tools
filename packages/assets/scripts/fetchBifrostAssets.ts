@@ -5,19 +5,19 @@ import type { ApiPromise } from '@polkadot/api'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { capitalizeLocation } from './utils'
-import { TForeignAssetInfo, TNativeAssetInfo } from '../src'
+import { TAssetInfo } from '../src'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TNativeAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   return fetchBifrostAssets(api, query).then(({ nativeAssets }) => nativeAssets)
 }
 
 export const fetchBifrostForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TForeignAssetInfo[]> => {
+): Promise<TAssetInfo[]> => {
   return fetchBifrostAssets(api, query).then(({ otherAssets }) => otherAssets)
 }
 
@@ -25,8 +25,8 @@ const fetchBifrostAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<{
-  nativeAssets: TNativeAssetInfo[]
-  otherAssets: TForeignAssetInfo[]
+  nativeAssets: TAssetInfo[]
+  otherAssets: TAssetInfo[]
 }> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
@@ -76,12 +76,12 @@ const fetchBifrostAssets = async (
     return mappedAssets.filter(asset => asset !== null)
   }
 
-  const nativeAssets = (await mapAssets(filterAssets(['native']), true)) as TNativeAssetInfo[]
+  const nativeAssets = await mapAssets(filterAssets(['native']), true)
 
-  const otherAssets = (await mapAssets(
+  const otherAssets = await mapAssets(
     filterAssets(['token', 'token2', 'vtoken2', 'vtoken', 'vstoken2']),
     false
-  )) as TForeignAssetInfo[]
+  )
 
   return {
     nativeAssets,

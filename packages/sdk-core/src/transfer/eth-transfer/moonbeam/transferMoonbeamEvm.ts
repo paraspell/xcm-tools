@@ -3,7 +3,6 @@ import {
   findAssetInfoOrThrow,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  isForeignAsset,
   isOverrideLocationSpecifier
 } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
@@ -12,7 +11,7 @@ import { createPublicClient, getContract, http } from 'viem'
 
 import { InvalidParameterError } from '../../../errors'
 import type { TEvmBuilderOptions } from '../../../types'
-import { abstractDecimals, assertIsForeign, formatAssetIdToERC20 } from '../../../utils'
+import { abstractDecimals, assertHasId, formatAssetIdToERC20 } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
@@ -59,7 +58,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     asset = NATIVE_ASSET_ID
   } else {
     // Otherwise, proceed as a foreign asset
-    if (!isForeignAsset(foundAsset) || !foundAsset.assetId) {
+    if (foundAsset.assetId === undefined) {
       throw new InvalidCurrencyError('Currency must be a foreign asset with valid assetId')
     }
     asset = formatAssetIdToERC20(foundAsset.assetId)
@@ -83,7 +82,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     multiCurrencySymbols.includes(foundAsset.symbol)
 
   const usdtAsset = findAssetInfoOrThrow(from, { symbol: 'xcUSDT' }, to)
-  assertIsForeign(usdtAsset)
+  assertHasId(usdtAsset)
 
   const tx = useMultiAssets
     ? await createTx('transferMultiCurrencies', [

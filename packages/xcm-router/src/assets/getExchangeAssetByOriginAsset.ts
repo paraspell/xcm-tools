@@ -1,5 +1,5 @@
-import type { TAssetInfo, TForeignAssetInfo, TParachain } from '@paraspell/sdk';
-import { deepEqual, findAssetInfo, findBestMatches, isForeignAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TParachain } from '@paraspell/sdk';
+import { deepEqual, findAssetInfo, findBestMatches } from '@paraspell/sdk';
 
 import type { TExchangeChain, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
@@ -31,7 +31,7 @@ export const getExchangeAssetByOriginAsset = (
     return originAsset.location ? { ...candidate, location: originAsset.location } : candidate;
   }
 
-  if (!isForeignAsset(originAsset)) {
+  if (originAsset.isNative) {
     // Origin asset is a native asset, but multiple candidates were found.
     return undefined;
   }
@@ -39,13 +39,9 @@ export const getExchangeAssetByOriginAsset = (
   // Origin asset is a foreign asset, try matching by location.
   const candidateByML = candidates.find((asset) => {
     if (asset.assetId === undefined) return false;
-    const sdkAsset = findAssetInfo(
-      exchangeBaseChain,
-      { id: asset.assetId },
-      null,
-    ) as TForeignAssetInfo;
+    const sdkAsset = findAssetInfo(exchangeBaseChain, { id: asset.assetId }, null);
 
-    if (sdkAsset.location === undefined) return false;
+    if (!sdkAsset?.location) return false;
 
     if (sdkAsset.location && originAsset.location) {
       return deepEqual(sdkAsset.location, originAsset.location);

@@ -2,7 +2,6 @@ import { Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { AMOUNT_ALL } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
@@ -131,19 +130,17 @@ describe('BifrostPolkadot', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     it('should call transfer with ForeignAsset when assetId is defined', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
-        api: mockApi,
+        api,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(api, 'deserializeExtrinsics')
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer',
         params: {
@@ -155,20 +152,18 @@ describe('BifrostPolkadot', () => {
     })
 
     it('should call transfer_all when amount is ALL', () => {
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      }
-
       const mockOptions = {
-        api: mockApi,
-        assetInfo: { symbol: 'ACA', amount: AMOUNT_ALL, assetId: '1' },
+        api,
+        assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as unknown as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(api, 'deserializeExtrinsics')
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
-      expect(mockApi.deserializeExtrinsics).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
         method: 'transfer_all',
         params: {

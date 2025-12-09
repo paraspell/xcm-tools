@@ -5,14 +5,13 @@
 
 import type { ApiPromise } from '@polkadot/api'
 import { capitalizeLocation } from './utils'
-import { TAssetInfo, TNativeAssetInfo } from '../src'
-import { TForeignAssetInfo } from '../dist'
+import { TAssetInfo } from '../src'
 
 const fetchCentrifugeAssetsBase = async (
   api: ApiPromise,
   query: string,
   filterFn: (era: any) => boolean,
-  transformFn?: (asset: TForeignAssetInfo) => TAssetInfo
+  transformFn?: (asset: TAssetInfo) => TAssetInfo
 ): Promise<TAssetInfo[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
@@ -59,9 +58,7 @@ const fetchCentrifugeAssetsBase = async (
 }
 
 export const fetchCentrifugeAssets = (api: ApiPromise, query: string) =>
-  fetchCentrifugeAssetsBase(api, query, era => era.toHuman() !== 'Native') as Promise<
-    TForeignAssetInfo[]
-  >
+  fetchCentrifugeAssetsBase(api, query, era => era.toHuman() !== 'Native')
 
 export const fetchCentrifugeNativeAssets = (api: ApiPromise, query: string) =>
   fetchCentrifugeAssetsBase(
@@ -73,6 +70,6 @@ export const fetchCentrifugeNativeAssets = (api: ApiPromise, query: string) =>
       return {
         ...rest,
         isNative: true
-      } as TNativeAssetInfo
+      }
     }
-  ) as Promise<TNativeAssetInfo[]>
+  )

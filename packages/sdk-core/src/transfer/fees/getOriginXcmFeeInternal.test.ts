@@ -1,4 +1,4 @@
-import type { TCurrencyCore, TNativeAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -22,7 +22,7 @@ const createApi = (fee: bigint) =>
 describe('getOriginXcmFeeInternal', () => {
   const mockSymbol = 'TOKEN'
   const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
-  const mockAsset: TNativeAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
   const mockTx = {}
 
   beforeEach(() => {

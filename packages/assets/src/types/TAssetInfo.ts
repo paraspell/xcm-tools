@@ -1,35 +1,19 @@
 import type { TChain, TLocation } from '@paraspell/sdk-common'
 
-type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
-  {
-    [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
-  }[Keys]
-
-export type TBaseAssetInfo = {
-  symbol: string
+export type TAssetInfo = {
   decimals: number
-  manuallyAdded?: boolean
-  alias?: string
+  symbol: string
+  isNative?: boolean
+  assetId?: string
+  location?: TLocation
   existentialDeposit?: string
   isFeeAsset?: boolean
+  alias?: string
 }
 
-export type TNativeAssetInfo = TBaseAssetInfo & {
-  isNative: true
-  location?: TLocation
-}
-
-export type TForeignAssetInfo = TBaseAssetInfo &
-  AtLeastOne<{
-    assetId?: string
-    location?: TLocation
-  }>
-
-export type TForeignAssetWithId = TForeignAssetInfo & {
+export type TAssetInfoWithId = TAssetInfo & {
   assetId: string
 }
-
-export type TAssetInfo = TNativeAssetInfo | TForeignAssetInfo
 
 export type TAssetWithLocation = TAssetInfo & {
   location: TLocation
@@ -42,8 +26,7 @@ export type TChainAssetsInfo = {
   ss58Prefix: number
   supportsDryRunApi: boolean
   supportsXcmPaymentApi: boolean
-  nativeAssets: TNativeAssetInfo[]
-  otherAssets: TForeignAssetInfo[]
+  assets: TAssetInfo[]
 }
 
 export type TAssetJsonMap = Record<TChain, TChainAssetsInfo>
