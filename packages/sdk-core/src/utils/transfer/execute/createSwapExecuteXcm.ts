@@ -37,7 +37,7 @@ export const createExchangeInstructions = async <TApi, TRes>(
     return [
       {
         ExchangeAsset: {
-          give: createAssetsFilter(assetFrom),
+          give: createAssetsFilter(assetFrom, version),
           want: [assetTo],
           maximal: false
         }
@@ -61,14 +61,14 @@ export const createExchangeInstructions = async <TApi, TRes>(
   return [
     {
       ExchangeAsset: {
-        give: createAssetsFilter(assetFrom),
+        give: createAssetsFilter(assetFrom, version),
         want: [assetNative],
         maximal: false
       }
     },
     {
       ExchangeAsset: {
-        give: createAssetsFilter(assetNative),
+        give: createAssetsFilter(assetNative, version),
         want: [assetTo],
         maximal: true
       }

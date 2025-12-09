@@ -1,5 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
-import type { TLocation } from '@paraspell/sdk-common'
+import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
@@ -11,26 +11,16 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-vi.mock('../../location', () => ({
-  createBeneficiaryLocation: vi.fn()
-}))
-
-vi.mock('../../asset', () => ({
-  sortAssets: vi.fn()
-}))
-
-vi.mock('./createAssetsFilter', () => ({
-  createAssetsFilter: vi.fn()
-}))
-
-vi.mock('./prepareExecuteContext', () => ({
-  prepareExecuteContext: vi.fn()
-}))
+vi.mock('../../location')
+vi.mock('../../asset')
+vi.mock('./createAssetsFilter')
+vi.mock('./prepareExecuteContext')
 
 describe('prepareCommonExecuteXcm', () => {
   const mockApi = { api: 'mock' } as unknown as IPolkadotApi<unknown, unknown>
   const mockAsset = { id: {}, fun: { Fungible: 1000n } } as TAsset
   const mockFeeAsset = { id: {}, fun: { Fungible: 100n } } as TAsset
+  const mockVersion = Version.V3
   const mockBeneficiary = {
     parents: 0,
     interior: { X1: { AccountId32: { id: 'address' } } }
@@ -40,7 +30,7 @@ describe('prepareCommonExecuteXcm', () => {
   const baseOptions = {
     api: mockApi,
     recipientAddress: '5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE',
-    version: 'V3',
+    version: mockVersion,
     chain: 'Acala',
     destChain: 'Moonbeam',
     assetInfo: {
@@ -74,9 +64,9 @@ describe('prepareCommonExecuteXcm', () => {
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
       address: baseOptions.recipientAddress,
-      version: 'V3'
+      version: mockVersion
     })
-    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
 
     expect(result.prefix).toEqual([
       { WithdrawAsset: [mockAsset] },
@@ -157,16 +147,13 @@ describe('prepareCommonExecuteXcm', () => {
 
   it('uses custom assetToDeposit when provided', () => {
     const customAsset = { id: {}, fun: { Fungible: 500n } } as TAsset
-
     prepareCommonExecuteXcm(baseOptions, customAsset)
-
-    expect(createAssetsFilter).toHaveBeenCalledWith(customAsset)
+    expect(createAssetsFilter).toHaveBeenCalledWith(customAsset, mockVersion)
   })
 
   it('uses assetLocalizedToDest when no custom deposit asset', () => {
     prepareCommonExecuteXcm(baseOptions)
-
-    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset)
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
   })
 
   it('creates correct weight limit for BuyExecution', () => {

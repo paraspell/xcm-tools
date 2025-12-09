@@ -4,6 +4,14 @@ import { Version } from '@paraspell/sdk-common'
 
 import { addXcmVersionHeader } from '../addXcmVersionHeader'
 
+export const createId = (version: Version, location: TLocation) => {
+  if (version === Version.V3) {
+    return { Concrete: location }
+  }
+
+  return location
+}
+
 export const createAsset = (version: Version, amount: bigint, location: TLocation): TAsset => {
   if (version === Version.V3) {
     return {

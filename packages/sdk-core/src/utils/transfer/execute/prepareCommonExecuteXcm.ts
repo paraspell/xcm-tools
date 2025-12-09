@@ -51,7 +51,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes>(
 
   const depositInstruction = {
     DepositAsset: {
-      assets: createAssetsFilter(assetToDeposit ?? assetLocalizedToDest),
+      assets: createAssetsFilter(assetToDeposit ?? assetLocalizedToDest, version),
       beneficiary
     }
   }
