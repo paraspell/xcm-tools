@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.14.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.8...sdk-core-v11.14.9) (2025-12-09)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix XCM v3 handling in execute call 🔧 ([b711ddb](https://github.com/paraspell/xcm-tools/commit/b711ddb73881f7c7e0a6afea3bfede81fa126944))
+
+
+### Code Refactoring
+
+* **sdk-core:** Validate destination asset support by location ✨ ([d3383ec](https://github.com/paraspell/xcm-tools/commit/d3383ecadc35b07b4e07ea0cfd7745a4e6defce2))
+
 ## [11.14.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.7...sdk-core-v11.14.8) (2025-12-02)
 
 

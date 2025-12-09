@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.9](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.8...sdk-v11.14.9) (2025-12-09)
+
+
+### Code Refactoring
+
+* **sdk-core:** Validate destination asset support by location ✨ ([d3383ec](https://github.com/paraspell/xcm-tools/commit/d3383ecadc35b07b4e07ea0cfd7745a4e6defce2))
+
 ## [11.14.8](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.7...sdk-v11.14.8) (2025-12-02)
 
 
