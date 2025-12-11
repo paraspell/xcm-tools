@@ -17,8 +17,6 @@ class BridgeHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolk
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
         'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
       )
     }

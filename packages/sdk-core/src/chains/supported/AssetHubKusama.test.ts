@@ -25,7 +25,8 @@ describe('transferPolkadotXCM', () => {
     const assetHub = getChain('AssetHubKusama')
     const input = {
       assetInfo: {
-        symbol: 'DOT'
+        symbol: 'DOT',
+        isNative: true
       },
       scenario: 'ParaToPara',
       destination: 'Karura'

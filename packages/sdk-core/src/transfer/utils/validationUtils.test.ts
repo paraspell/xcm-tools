@@ -14,7 +14,7 @@ import {
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { IncompatibleChainsError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
 
@@ -87,11 +87,11 @@ describe('validateDestination', () => {
     vi.clearAllMocks()
   })
 
-  it('should throw IncompatibleChainsError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
+  it('should throw ScenarioNotSupportedError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
     origin = 'Acala'
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
+    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when destination is Ethereum and origin is AssetHubPolkadot', () => {
@@ -122,14 +122,14 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
 
-  it('should throw IncompatibleChainsError when relay chain symbols do not match and not a bridge transfer', () => {
+  it('should throw ScenarioNotSupportedError when relay chain symbols do not match and not a bridge transfer', () => {
     origin = 'Acala'
     destination = 'Astar'
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
+    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when relay chain symbols match and not a bridge transfer', () => {
@@ -163,11 +163,11 @@ describe('validateDestination', () => {
     expect(getRelayChainSymbol).not.toHaveBeenCalled()
   })
 
-  it('should throw IncompatibleChainsError when origin is undefined and destination is Ethereum', () => {
+  it('should throw ScenarioNotSupportedError when origin is undefined and destination is Ethereum', () => {
     origin = undefined as unknown as TParachain
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).toThrow(IncompatibleChainsError)
+    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {

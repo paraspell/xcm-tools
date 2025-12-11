@@ -20,7 +20,7 @@ class Encointer<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
     if (input.scenario === 'ParaToRelay' || (destChain && isTrustedChain(destChain))) {
       return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
     }
-    throw new ScenarioNotSupportedError(this.chain, input.scenario)
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: input.scenario })
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

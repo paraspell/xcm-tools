@@ -9,7 +9,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import { getRelayChainOf, getTChain } from '../..'
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 
 export const getAssetReserveChain = (
   chain: TSubstrateChain,
@@ -21,7 +21,7 @@ export const getAssetReserveChain = (
   if (paraId) {
     const resolvedChain = getTChain(paraId, getRelayChainOf(chain))
     if (!resolvedChain) {
-      throw new InvalidParameterError(`Chain with paraId ${paraId} not found`)
+      throw new RoutingResolutionError(`Chain with paraId ${paraId} not found`)
     }
     return resolvedChain as TSubstrateChain
   }

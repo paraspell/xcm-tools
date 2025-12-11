@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -53,7 +53,7 @@ describe('AjunaPaseo', () => {
     )
   })
 
-  it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

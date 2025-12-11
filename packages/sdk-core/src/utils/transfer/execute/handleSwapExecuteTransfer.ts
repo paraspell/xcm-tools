@@ -4,7 +4,7 @@ import { type TLocation } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer/dry-run/dryRunInternal'
 import type {
   TCreateSwapXcmInternalOptions,
@@ -59,7 +59,7 @@ const findExchangeHopIndex = (
   // If chain is defined but no exchange hop found, it might be because
   // the origin chain is the exchange chain (no hops needed)
   if (chain && index === -1 && chain !== exchangeChain) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Exchange hop for ${exchangeChain} not found in dry run result.`
     )
   }

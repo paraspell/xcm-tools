@@ -2,7 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -21,7 +21,7 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { scenario, asset } = input
     if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     assertHasId(asset)
@@ -30,7 +30,7 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

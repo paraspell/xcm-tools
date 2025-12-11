@@ -6,7 +6,7 @@ import {
   findAssetInfoById,
   getNativeAssets,
   getOtherAssets,
-  InvalidParameterError,
+  RoutingResolutionError,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
@@ -41,7 +41,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
           const sdkAsset = findAssetInfoById(getOtherAssets(chain), formatted);
-          if (!sdkAsset) throw new InvalidParameterError(`Asset not found: ${formatted}`);
+          if (!sdkAsset) throw new RoutingResolutionError(`Asset not found: ${formatted}`);
           routerAsset = {
             symbol,
             decimals: sdkAsset.decimals,

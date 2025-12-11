@@ -1,4 +1,4 @@
-import { isChainEvm } from '@paraspell/sdk';
+import { isChainEvm, MissingParameterError } from '@paraspell/sdk';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -77,9 +77,7 @@ describe('transfer', () => {
       to: 'Astar',
     } as TTransferOptions;
 
-    await expect(transfer(options)).rejects.toThrow(
-      'evmSenderAddress is required when evmSigner is provided',
-    );
+    await expect(transfer(options)).rejects.toThrow(MissingParameterError);
   });
 
   it('should throw an error if evmSenderAddress is provided without evmSigner', async () => {
@@ -89,9 +87,7 @@ describe('transfer', () => {
       to: 'Astar',
     } as TTransferOptions;
 
-    await expect(transfer(options)).rejects.toThrow(
-      'evmSigner is required when evmSenderAddress is provided',
-    );
+    await expect(transfer(options)).rejects.toThrow(MissingParameterError);
   });
 
   it('should call onStatusChange with SELECTING_EXCHANGE if exchange is undefined', async () => {

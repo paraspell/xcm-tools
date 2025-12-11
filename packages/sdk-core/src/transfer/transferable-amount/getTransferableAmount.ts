@@ -7,7 +7,7 @@ import {
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
-import { InvalidParameterError } from '../../errors'
+import { UnableToComputeError } from '../../errors'
 import type { TGetTransferableAmountOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'
@@ -66,7 +66,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     })
 
     if (fee === undefined) {
-      throw new InvalidParameterError(
+      throw new UnableToComputeError(
         `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${chain}.`
       )
     }

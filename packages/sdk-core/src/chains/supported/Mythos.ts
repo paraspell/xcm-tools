@@ -4,7 +4,7 @@ import { findAssetInfoOrThrow } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import {
@@ -87,7 +87,7 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
   private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario, destination } = input
     if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     return transferPolkadotXcm(
@@ -120,7 +120,7 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 }
 

@@ -23,7 +23,8 @@ vi.mock('@paraspell/sdk', () => ({
   findBestMatches: vi.fn(),
   isSymbolSpecifier: vi.fn(),
   isOverrideLocationSpecifier: vi.fn(),
-  InvalidParameterError: class extends Error {},
+  UnsupportedOperationError: class extends Error {},
+  RoutingResolutionError: class extends Error {},
 }));
 
 vi.mock('./getExchangeConfig');

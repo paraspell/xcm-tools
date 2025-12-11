@@ -1,13 +1,13 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../errors'
+import { ProviderUnavailableError } from '../../errors'
 import { getChainConfig } from './getChainConfig'
 
 export const getChainProviders = (chain: TSubstrateChain): string[] => {
   const { providers } = getChainConfig(chain)
 
   if (providers.length === 0) {
-    throw new InvalidParameterError(`No providers found for chain ${chain}`)
+    throw new ProviderUnavailableError(`No providers found for chain ${chain}`)
   }
 
   // Prefer Dwellir provider

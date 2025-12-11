@@ -3,7 +3,7 @@
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
@@ -27,8 +27,6 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
       throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
         'KiltSpiritnet only supports native asset ParaToPara transfers'
       )
     }
@@ -37,7 +35,7 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 }
 

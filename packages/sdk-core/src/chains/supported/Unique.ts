@@ -32,8 +32,6 @@ class Unique<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
     throw new ScenarioNotSupportedError(
-      this.chain,
-      'ParaToPara',
       `${this.chain} does not support foreign assets local transfers`
     )
   }

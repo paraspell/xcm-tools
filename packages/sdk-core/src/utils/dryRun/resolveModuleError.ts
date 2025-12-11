@@ -1,7 +1,7 @@
 import { getSupportedPalletsDetails } from '@paraspell/pallets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError, UnsupportedOperationError } from '../../errors'
 import type { TDryRunError } from '../../types'
 import {
   PolkadotXcmError,
@@ -14,7 +14,7 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
   const palletDetails = getSupportedPalletsDetails(chain).find(p => p.index === Number(error.index))
 
   if (!palletDetails) {
-    throw new InvalidParameterError(`Pallet with index ${error.index} not found`)
+    throw new RoutingResolutionError(`Pallet with index ${error.index} not found`)
   }
 
   // Use only the first byte of the error to get the error index
@@ -24,7 +24,7 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
   const { name } = palletDetails
 
   if (name !== 'XTokens' && name !== 'PolkadotXcm' && name !== 'XcmPallet') {
-    throw new InvalidParameterError(`Pallet ${name} is not supported`)
+    throw new UnsupportedOperationError(`Pallet ${name} is not supported`)
   }
 
   const failureReason =
@@ -33,7 +33,7 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
       : Object.values(PolkadotXcmError)[errorIndex]
 
   if (!failureReason) {
-    throw new InvalidParameterError(`Error index ${errorIndex} not found in ${name} pallet`)
+    throw new RoutingResolutionError(`Error index ${errorIndex} not found in ${name} pallet`)
   }
 
   if (failureReason === PolkadotXcmError.LocalExecutionIncompleteWithError) {
@@ -41,7 +41,7 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
     const failureSubReason = Object.values(PolkadotXcmExecutionError)[subErrorIndex]
 
     if (!failureSubReason) {
-      throw new InvalidParameterError(
+      throw new RoutingResolutionError(
         `Sub-error index ${subErrorIndex} not found in PolkadotXcm pallet`
       )
     }

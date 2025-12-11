@@ -3,7 +3,7 @@ import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { InvalidParameterError } from '../../errors'
+import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { assertHasLocation } from '../assertions'
 import { getMythosOriginFee } from './getMythosOriginFee'
@@ -57,7 +57,7 @@ describe('getMythosOriginFee', () => {
     expect(res).toBe(220n)
   })
 
-  it('throws InvalidParameterError when fee conversion fails', async () => {
+  it('throws UnableToComputeError when fee conversion fails', async () => {
     vi.mocked(getParaEthTransferFees).mockResolvedValue([1n, 2n])
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
       symbol: 'MYTH',
@@ -67,6 +67,6 @@ describe('getMythosOriginFee', () => {
     vi.mocked(assertHasLocation).mockReturnValue(undefined)
     vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(undefined)
 
-    await expect(getMythosOriginFee(mockApi)).rejects.toThrow(InvalidParameterError)
+    await expect(getMythosOriginFee(mockApi)).rejects.toThrow(UnableToComputeError)
   })
 })

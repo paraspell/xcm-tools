@@ -9,7 +9,7 @@ import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
-import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../errors'
+import { DryRunFailedError, ScenarioNotSupportedError, UnableToComputeError } from '../../errors'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
@@ -42,7 +42,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
   const isSubBridge = isSubstrateBridge(origin, destination)
 
   if (isSubBridge) {
-    throw new InvalidParameterError(
+    throw new ScenarioNotSupportedError(
       'Unable to verify the existential deposit for substrate bridge scenarios'
     )
   }

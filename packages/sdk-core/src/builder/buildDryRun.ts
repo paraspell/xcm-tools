@@ -1,7 +1,7 @@
 import { isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
-import { InvalidParameterError } from '../errors'
+import { InvalidAddressError } from '../errors'
 import { dryRun } from '../transfer'
 import type { TBypassOptions, TSendBaseOptionsWithSenderAddress } from '../types'
 
@@ -17,13 +17,11 @@ export const buildDryRun = <TApi, TRes>(
   const { to, address, senderAddress, feeAsset, from, currency } = options
 
   if (isTLocation(to)) {
-    throw new InvalidParameterError(
-      'Location destination is not supported for XCM fee calculation.'
-    )
+    throw new InvalidAddressError('Location destination is not supported for XCM fee calculation.')
   }
 
   if (isTLocation(address)) {
-    throw new InvalidParameterError('Location address is not supported for XCM fee calculation.')
+    throw new InvalidAddressError('Location address is not supported for XCM fee calculation.')
   }
 
   return dryRun({

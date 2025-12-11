@@ -1,11 +1,13 @@
-import type { IPolkadotApi, TChain, TCurrencyInputWithAmount } from '@paraspell/sdk-core'
-import type { TEvmChainFrom } from '@paraspell/sdk-core'
 import {
-  InvalidParameterError,
+  type IPolkadotApi,
+  type TChain,
+  type TCurrencyInputWithAmount,
+  type TEvmChainFrom,
   transferMoonbeamEvm,
-  transferMoonbeamToEth
+  transferMoonbeamToEth,
+  UnsupportedOperationError,
+  validateAddress
 } from '@paraspell/sdk-core'
-import { validateAddress } from '@paraspell/sdk-core'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
@@ -98,7 +100,7 @@ export class EvmBuilderCore<
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
       if (isEthersSigner(signer)) {
-        throw new InvalidParameterError(
+        throw new UnsupportedOperationError(
           'Ethers signer is not supported for Moonbeam to Ethereum transfers.'
         )
       }
@@ -108,7 +110,7 @@ export class EvmBuilderCore<
 
     if (from === 'Moonbeam' || from === 'Moonriver' || from === 'Darwinia') {
       if (isEthersSigner(signer)) {
-        throw new InvalidParameterError(
+        throw new UnsupportedOperationError(
           'Ethers signer is not supported for Moonbeam to Ethereum transfers.'
         )
       }

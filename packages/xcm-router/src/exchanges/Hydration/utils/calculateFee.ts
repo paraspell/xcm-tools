@@ -2,9 +2,9 @@ import type { Asset, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk'
 import {
   getAssetDecimals,
   getNativeAssetSymbol,
-  InvalidParameterError,
   padValueBy,
   type TChain,
+  UnableToComputeError,
 } from '@paraspell/sdk';
 
 import { FEE_BUFFER_PCT } from '../../../consts';
@@ -34,13 +34,13 @@ export const calculateFee = async (
   });
 
   if (nativeCurrencyInfo === undefined) {
-    throw new InvalidParameterError('Native currency not found');
+    throw new UnableToComputeError('Native currency not found');
   }
 
   const nativeCurrencyDecimals = getAssetDecimals(chain, nativeCurrencyInfo.symbol);
 
   if (nativeCurrencyDecimals === null) {
-    throw new InvalidParameterError('Native currency decimals not found');
+    throw new UnableToComputeError('Native currency decimals not found');
   }
 
   const substrateTx = await txBuilderFactory
@@ -67,7 +67,7 @@ export const calculateFee = async (
   );
 
   if (currencyFromPriceInfo === undefined) {
-    throw new InvalidParameterError('Price not found');
+    throw new UnableToComputeError('Price not found');
   }
 
   const currencyFromPrice = BigInt(currencyFromPriceInfo.amount.decimalPlaces(0).toString());

@@ -1,11 +1,7 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  ChainNotSupportedError,
-  ScenarioNotSupportedError,
-  TransferToAhNotSupported
-} from '../../errors'
+import { ScenarioNotSupportedError, TransferToAhNotSupported } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -63,8 +59,8 @@ describe('Laos', () => {
       expect(() => laos.transferPolkadotXCM(input)).toThrow(TransferToAhNotSupported)
     })
 
-    it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-      expect(() => laos.transferRelayToPara()).toThrow(ChainNotSupportedError)
+    it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
+      expect(() => laos.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
     })
   })
 })

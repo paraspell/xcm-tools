@@ -1,7 +1,7 @@
 import { getSupportedPallets } from '@paraspell/pallets'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../../constants'
-import { InvalidParameterError } from '../../errors'
+import { UnsupportedOperationError } from '../../errors'
 import type { TAssetClaimOptions } from '../../types'
 import { getChainVersion, validateAddress } from '../../utils'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
@@ -21,7 +21,7 @@ export const claimAssets = async <TApi, TRes>(
   const supportedPallet = pallets.find(p => p === 'PolkadotXcm' || p === 'XcmPallet')
 
   if (!supportedPallet) {
-    throw new InvalidParameterError('Unsupported pallet for asset claim')
+    throw new UnsupportedOperationError('Unsupported pallet for asset claim')
   }
 
   const version = getChainVersion(chain)

@@ -3,7 +3,7 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { IncompatibleChainsError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation } from '../../utils'
@@ -18,7 +18,7 @@ class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     const { destChain, assetInfo, scenario } = options
 
     if (destChain !== 'AssetHubPolkadot' && scenario === 'ParaToPara') {
-      throw new IncompatibleChainsError(
+      throw new ScenarioNotSupportedError(
         'Xode chain only supports transfers to / from AssetHubPolkadot'
       )
     }

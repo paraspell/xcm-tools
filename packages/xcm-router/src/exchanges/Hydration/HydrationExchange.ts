@@ -6,8 +6,8 @@ import {
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  InvalidParameterError,
   padValueBy,
+  UnableToComputeError,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { parseUnits } from 'ethers-v6';
@@ -92,7 +92,7 @@ class HydrationExchange extends ExchangeChain {
     const nativeCurrencyDecimals = getAssetDecimals(this.chain, nativeCurrencyInfo.symbol);
 
     if (nativeCurrencyDecimals === null) {
-      throw new InvalidParameterError('Native currency decimals not found');
+      throw new UnableToComputeError('Native currency decimals not found');
     }
 
     let priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
@@ -105,7 +105,7 @@ class HydrationExchange extends ExchangeChain {
     }
 
     if (priceInfo === undefined) {
-      throw new InvalidParameterError('Price not found');
+      throw new UnableToComputeError('Price not found');
     }
 
     const currencyToPrice = BigInt(priceInfo.amount.decimalPlaces(0).toString());

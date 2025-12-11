@@ -2,7 +2,7 @@ import { type TAsset } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../../errors'
+import { UnsupportedOperationError } from '../../../errors'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { getChainLocation } from '../../location/getChainLocation'
@@ -72,7 +72,7 @@ export const createBaseExecuteXcm = (
   const destLocation = createDestination(version, chain, destChain, paraIdTo)
 
   if (chain !== 'AssetHubPolkadot' && reserveChain === undefined) {
-    throw new InvalidParameterError(
+    throw new UnsupportedOperationError(
       'Sending local reserve assets with custom fee asset is not yet supported for this chain.'
     )
   }

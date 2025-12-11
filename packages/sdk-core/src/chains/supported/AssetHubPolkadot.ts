@@ -20,7 +20,7 @@ import {
 
 import type { IPolkadotApi } from '../../api'
 import { AH_REQUIRES_FEE_ASSET_LOCS, DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
-import { BridgeHaltedError, InvalidParameterError } from '../../errors'
+import { BridgeHaltedError, InvalidAddressError } from '../../errors'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
@@ -71,7 +71,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     assertSenderAddress(senderAddress)
 
     if (isTLocation(address)) {
-      throw new InvalidParameterError('Location address is not supported for Ethereum transfers')
+      throw new InvalidAddressError('Location address is not supported for Ethereum transfers')
     }
 
     assertHasLocation(asset)

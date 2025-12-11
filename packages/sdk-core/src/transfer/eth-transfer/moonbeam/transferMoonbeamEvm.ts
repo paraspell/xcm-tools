@@ -9,7 +9,7 @@ import { type TSubstrateChain } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
-import { InvalidParameterError } from '../../../errors'
+import { UnsupportedOperationError } from '../../../errors'
 import type { TEvmBuilderOptions } from '../../../types'
 import { abstractDecimals, assertHasId, formatAssetIdToERC20 } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
@@ -30,11 +30,11 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
   currency
 }: TEvmBuilderOptions<TApi, TRes>): Promise<string> => {
   if (Array.isArray(currency)) {
-    throw new InvalidParameterError('Multi-assets are not yet supported for EVM transfers')
+    throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }
 
   if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new InvalidParameterError('Override location is not supported for EVM transfers')
+    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   const contract = getContract({

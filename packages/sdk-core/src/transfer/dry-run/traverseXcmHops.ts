@@ -8,7 +8,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
@@ -56,7 +56,7 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
     const nextChain = getTChain(nextParaId, getRelayChainOf(origin))
 
     if (!nextChain) {
-      throw new InvalidParameterError(`Unable to find TChain for paraId ${nextParaId}`)
+      throw new RoutingResolutionError(`Unable to find TChain for paraId ${nextParaId}`)
     }
 
     const hopApi = api.clone()

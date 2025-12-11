@@ -5,7 +5,7 @@ import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
 import type { TCreateSwapXcmOptions } from '../../../types'
 import { type TDryRunResult } from '../../../types'
@@ -133,7 +133,7 @@ describe('handleSwapExecuteTransfer', () => {
       exchangeChain: 'B' as TParachain
     }
 
-    await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(InvalidParameterError)
+    await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(RoutingResolutionError)
   })
 
   it('returns final tx call on success', async () => {

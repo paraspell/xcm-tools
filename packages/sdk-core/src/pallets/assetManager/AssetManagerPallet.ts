@@ -1,6 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
-import { InvalidParameterError } from '../../errors'
+import { UnsupportedOperationError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
@@ -26,6 +26,6 @@ export class AssetManagerPallet extends BaseAssetsPallet {
   }
 
   getBalance(): Promise<bigint> {
-    throw new InvalidParameterError('No balance support.')
+    throw new UnsupportedOperationError('No balance support.')
   }
 }

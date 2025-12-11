@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
-import { InvalidParameterError } from '../../errors'
+import { MissingParameterError } from '../../errors'
 import type {
   TGetTransferInfoOptions,
   TGetXcmFeeResult,
@@ -262,7 +262,7 @@ describe('getTransferInfo', () => {
     ])
   })
 
-  it('should throw InvalidParameterError if origin is EVM and ahAddress is not provided', async () => {
+  it('should throw MissingParameterError if origin is EVM and ahAddress is not provided', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
     const options: TGetTransferInfoOptions<unknown, unknown> = {
       ...baseOptions,
@@ -273,7 +273,7 @@ describe('getTransferInfo', () => {
 
     const initSpy = vi.spyOn(mockApi, 'init')
 
-    await expect(getTransferInfo(options)).rejects.toThrow(InvalidParameterError)
+    await expect(getTransferInfo(options)).rejects.toThrow(MissingParameterError)
     expect(initSpy).not.toHaveBeenCalled()
   })
 

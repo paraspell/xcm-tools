@@ -1,5 +1,5 @@
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import { InvalidParameterError } from '../errors'
+import { MissingParameterError } from '../errors'
 import { resolveTChainFromLocation } from '../pallets/xcmPallet/utils'
 import type { TRelayToParaOptions } from '../types'
 import { getChain } from '../utils'
@@ -11,7 +11,7 @@ export const transferRelayToPara = async <TApi, TRes>(
   const isLocationDestination = typeof destination === 'object'
 
   if (api.getConfig() === undefined && isLocationDestination) {
-    throw new InvalidParameterError('API is required when using location as destination.')
+    throw new MissingParameterError('api', 'API is required when using location as destination.')
   }
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)

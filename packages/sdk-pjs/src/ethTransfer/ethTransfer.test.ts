@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/require-await */
 import type { IPolkadotApi } from '@paraspell/sdk-core'
-import { findAssetInfoOrThrow, getParaId, isOverrideLocationSpecifier } from '@paraspell/sdk-core'
+import {
+  findAssetInfoOrThrow,
+  getParaId,
+  isOverrideLocationSpecifier,
+  MissingParameterError
+} from '@paraspell/sdk-core'
 import { type Context, toPolkadotV2 } from '@snowbridge/api'
 import type { ValidationResult } from '@snowbridge/api/dist/toPolkadot_v2'
 import type { AbstractProvider, Signer } from 'ethers'
@@ -18,11 +23,13 @@ vi.mock('@paraspell/sdk-core', () => ({
   getParaId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class extends Error {},
-  InvalidParameterError: class extends Error {},
   isOverrideLocationSpecifier: vi.fn().mockReturnValue(false),
   isEthersSigner: vi.fn(),
   abstractDecimals: vi.fn(),
-  assertHasId: vi.fn()
+  assertHasId: vi.fn(),
+  MissingParameterError: class extends Error {},
+  UnsupportedOperationError: class extends Error {},
+  RoutingResolutionError: class extends Error {}
 }))
 
 vi.mock('../utils')
@@ -115,9 +122,7 @@ describe('transferEthToPolkadot', () => {
       } as Signer
     }
 
-    await expect(transferEthToPolkadot(options)).rejects.toThrow(
-      'provider parameter is required for Snowbridge transfers.'
-    )
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(MissingParameterError)
   })
 
   it('throws error if signer is not an ethers signer', async () => {

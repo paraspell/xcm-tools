@@ -1,7 +1,7 @@
 import {
-  InvalidParameterError,
   type IPolkadotApi,
   type TCurrencyInputWithAmount,
+  UnsupportedOperationError,
   validateAddress
 } from '@paraspell/sdk-core'
 import type { Signer } from 'ethers'
@@ -23,7 +23,7 @@ vi.mock('@paraspell/sdk-core', () => ({
   validateAddress: vi.fn().mockReturnValue(true),
   transferMoonbeamToEth: vi.fn(),
   transferMoonbeamEvm: vi.fn(),
-  InvalidParameterError: class InvalidParameterError extends Error {}
+  UnsupportedOperationError: class UnsupportedOperationError extends Error {}
 }))
 
 vi.mock('../utils', () => ({
@@ -56,7 +56,7 @@ describe('EvmBuilderClass', () => {
       .ahAddress(address)
       .signer(signer)
 
-    await expect(builder.build()).rejects.toThrow(InvalidParameterError)
+    await expect(builder.build()).rejects.toThrow(UnsupportedOperationError)
 
     expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Ethereum')
   })
@@ -70,7 +70,7 @@ describe('EvmBuilderClass', () => {
       .ahAddress(address)
       .signer(signer)
 
-    await expect(builder.build()).rejects.toThrow(InvalidParameterError)
+    await expect(builder.build()).rejects.toThrow(UnsupportedOperationError)
 
     expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Polkadot')
   })

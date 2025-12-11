@@ -1,4 +1,8 @@
-import { applyDecimalAbstraction, createChainClient, InvalidParameterError } from '@paraspell/sdk';
+import {
+  applyDecimalAbstraction,
+  createChainClient,
+  UnsupportedOperationError,
+} from '@paraspell/sdk';
 
 import { supportsExchangePair } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -28,7 +32,7 @@ export const prepareTransformedOptions = async (
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
 
   if (!supportsExchangePair(dex.exchangeChain, assetFromExchange, assetTo)) {
-    throw new InvalidParameterError(
+    throw new UnsupportedOperationError(
       `Exchange ${dex.chain} does not support the pair ${assetFromExchange.symbol} -> ${assetTo.symbol}`,
     );
   }

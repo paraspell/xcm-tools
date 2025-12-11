@@ -2,7 +2,7 @@ import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { AmountTooLowError, DryRunFailedError, InvalidParameterError } from '../../../errors'
+import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
 import { assertAddressIsString, assertSenderAddress } from '../..'
@@ -48,7 +48,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   checkAmount(MIN_FEE)
 
   if (destChain === undefined) {
-    throw new InvalidParameterError('Could not determine destination chain for execute transfer')
+    throw new RoutingResolutionError('Could not determine destination chain for execute transfer')
   }
 
   const internalOptions = {

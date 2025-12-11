@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -45,7 +45,7 @@ describe('Crab', () => {
     )
   })
 
-  it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => crab.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
+    expect(() => crab.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

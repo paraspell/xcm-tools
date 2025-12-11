@@ -1,5 +1,5 @@
 import type { TBypassOptions, TChain, TCurrencyCore } from '@paraspell/sdk';
-import { dryRun, getFailureInfo, InvalidParameterError } from '@paraspell/sdk';
+import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
 
 import type {
   TBuildTransactionsOptions,
@@ -134,7 +134,7 @@ const dryRunTransactions = (
     return dryRun2Transactions(options, transactions);
   }
 
-  throw new InvalidParameterError('Router dry run supports up to two transactions per flow.');
+  throw new UnsupportedOperationError('Router dry run supports up to two transactions per flow.');
 };
 
 export const dryRunRouter = async (

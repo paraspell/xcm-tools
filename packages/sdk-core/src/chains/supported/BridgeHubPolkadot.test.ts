@@ -38,8 +38,6 @@ describe('BridgeHubPolkadot', () => {
 
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
       new ScenarioNotSupportedError(
-        chain.chain,
-        'ParaToPara',
         'Unable to use BridgeHubPolkadot for transfers to other Parachains.'
       )
     )

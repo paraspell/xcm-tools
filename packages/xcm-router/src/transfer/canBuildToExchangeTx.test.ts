@@ -127,7 +127,7 @@ describe('canBuildToExchangeTx', () => {
   });
 
   it('should return { success: false, error } if buildToExchangeExtrinsic throws ScenarioNotSupportedError', async () => {
-    const error = new ScenarioNotSupportedError('Acala', 'ParaToPara', 'Test scenario error');
+    const error = new ScenarioNotSupportedError({ chain: 'Acala', scenario: 'ParaToPara' });
     vi.mocked(buildToExchangeExtrinsic).mockRejectedValue(error);
 
     const result = await canBuildToExchangeTx(

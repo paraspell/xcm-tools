@@ -3,7 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TPapiApi, TParachain } from '@paraspell/sdk';
-import { InvalidParameterError, localizeLocation, type TLocation, transform } from '@paraspell/sdk';
+import {
+  localizeLocation,
+  RoutingResolutionError,
+  type TLocation,
+  transform,
+} from '@paraspell/sdk';
 
 export const getQuotedAmount = async (
   api: TPapiApi,
@@ -38,5 +43,5 @@ export const getQuotedAmount = async (
     console.error('Error (localized):', error);
   }
 
-  throw new InvalidParameterError('Swap failed: Pool not found');
+  throw new RoutingResolutionError('Swap failed: Pool not found');
 };

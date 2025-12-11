@@ -32,8 +32,6 @@ class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
 
     if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && asset.isNative) {
       throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
         'Bridged DOT cannot currently be transfered from AssetHubKusama, if you are sending different DOT asset, please specify {id: <DOTID>}.'
       )
     }

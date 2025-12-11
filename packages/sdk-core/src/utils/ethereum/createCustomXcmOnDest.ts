@@ -4,7 +4,7 @@ import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
-import { InvalidParameterError } from '../../errors'
+import { MissingParameterError, UnsupportedOperationError } from '../../errors'
 import type { TAddress } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId, assertHasLocation, assertSenderAddress } from '../assertions'
@@ -77,7 +77,7 @@ const createMainInstruction = (
       asset.symbol.includes(getNativeAssetSymbol(chain))
     )
 
-    if (!assetEcosystem) throw new InvalidParameterError('Unsupported native polkadot asset')
+    if (!assetEcosystem) throw new UnsupportedOperationError('Unsupported native polkadot asset')
 
     return {
       DepositReserveAsset: {
@@ -135,7 +135,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   assertSenderAddress(senderAddress)
 
   if (isChainEvm(origin) && !ahAddress) {
-    throw new InvalidParameterError(`Please provide ahAddress`)
+    throw new MissingParameterError('ahAddress')
   }
 
   return {

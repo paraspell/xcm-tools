@@ -27,7 +27,6 @@ import type {
 import {
   assertHasLocation,
   BatchMode,
-  ChainNotSupportedError,
   computeFeeFromDryRun,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
@@ -43,6 +42,7 @@ import {
   padValueBy,
   Parents,
   replaceBigInt,
+  RuntimeApiUnavailableError,
   Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -379,7 +379,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
+      throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
     const DEFAULT_XCM_VERSION = 3
@@ -647,7 +647,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
+      throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
     const transformedOriginLocation = transform(originLocation)

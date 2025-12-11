@@ -1,3 +1,4 @@
+import { MissingParameterError } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TTransferOptions } from '../../types';
@@ -20,9 +21,7 @@ describe('validateTransferOptions', () => {
       to: 'Astar',
     } as TTransferOptions;
 
-    expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'Cannot use automatic exchange selection without specifying the origin chain',
-    );
+    expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });
 
   it('should throw error if to is defined but recipientAddress is undefined', () => {
@@ -34,9 +33,7 @@ describe('validateTransferOptions', () => {
       to: 'Astar',
     } as TTransferOptions;
 
-    expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'Recipient address is required when destination chain is specified',
-    );
+    expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });
 
   it('should call validateDestinationAddress with recipientAddress and to', () => {
@@ -121,8 +118,6 @@ describe('validateTransferOptions', () => {
       to: undefined,
     } as TTransferOptions;
 
-    expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'EVM sender address must be provided for EVM chains.',
-    );
+    expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });
 });

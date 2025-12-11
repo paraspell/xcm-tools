@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -43,8 +43,8 @@ describe('Peaq', () => {
     expect(() => chain.transferXTokens(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
-  it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 
   const mockApi = {

@@ -3,7 +3,7 @@ import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../errors'
+import { InvalidAddressError, MissingParameterError } from '../errors'
 import type { TAddress, TDestination } from '../types'
 
 export const assertToIsString: (
@@ -11,7 +11,7 @@ export const assertToIsString: (
   overrideMsg?: string
 ) => asserts to is Exclude<TDestination, TLocation> = (to, overrideMsg) => {
   if (isTLocation(to)) {
-    throw new InvalidParameterError(
+    throw new InvalidAddressError(
       overrideMsg ?? 'Location destination is not supported for XCM fee calculation.'
     )
   }
@@ -21,7 +21,7 @@ export const assertAddressIsString: (
   address: TAddress
 ) => asserts address is Exclude<TAddress, TLocation> = address => {
   if (isTLocation(address)) {
-    throw new InvalidParameterError('Location address is not supported for this transfer type.')
+    throw new InvalidAddressError('Location address is not supported for this transfer type.')
   }
 }
 
@@ -29,7 +29,7 @@ export const assertSenderAddress: (
   address: string | undefined
 ) => asserts address is string = address => {
   if (!address) {
-    throw new InvalidParameterError('Sender address parameter is required for this transfer.')
+    throw new MissingParameterError('senderAddress')
   }
 }
 

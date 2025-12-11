@@ -9,7 +9,7 @@ import {
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
-import { InvalidParameterError } from '../../errors'
+import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
@@ -29,7 +29,7 @@ export const getTransferInfo = async <TApi, TRes>({
   feeAsset
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
   if (isChainEvm(origin) && !ahAddress) {
-    throw new InvalidParameterError(`ahAddress is required for EVM origin ${origin}.`)
+    throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
   }
 
   const resolvedFeeAsset = feeAsset

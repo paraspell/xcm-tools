@@ -6,7 +6,7 @@ import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../../chains/config'
-import { BridgeHaltedError } from '../../../errors'
+import { BridgeHaltedError, MissingParameterError } from '../../../errors'
 import type { TEvmBuilderOptions } from '../../../types'
 import { abstractDecimals } from '../../../utils'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -122,7 +122,7 @@ describe('transferMoonbeamToEth', () => {
         ...baseOptions,
         ahAddress: undefined
       })
-    ).rejects.toThrow('AssetHub address is required')
+    ).rejects.toThrow(MissingParameterError)
   })
 
   it('should throw error for multiple currencies', async () => {

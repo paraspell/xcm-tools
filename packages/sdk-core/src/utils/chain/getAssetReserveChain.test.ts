@@ -4,7 +4,7 @@ import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getRelayChainOf, getTChain } from '../..'
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 import { getAssetReserveChain } from './getAssetReserveChain'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
@@ -58,7 +58,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getTChain).mockReturnValue(null)
 
     expect(() => getAssetReserveChain(mockOrigin, mockAssetLocation)).toThrow(
-      new InvalidParameterError('Chain with paraId 9999 not found')
+      new RoutingResolutionError('Chain with paraId 9999 not found')
     )
   })
 

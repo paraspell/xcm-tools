@@ -1,6 +1,6 @@
 // Inspired by Moonbeam XCM-SDK
 
-import { InvalidParameterError } from '../../errors'
+import { NumberFormatError } from '../../errors'
 
 // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/utils/src/format/asset.ts#L1
 export const formatAssetIdToERC20 = (id: string) => {
@@ -9,7 +9,7 @@ export const formatAssetIdToERC20 = (id: string) => {
   }
 
   if (!(/^\d{38,39}$/.test(id) || /^\d{4}$/.test(id))) {
-    throw new InvalidParameterError(
+    throw new NumberFormatError(
       `Asset id: ${id} must be a string and have either 4 digits or 38-39 digits`
     )
   }

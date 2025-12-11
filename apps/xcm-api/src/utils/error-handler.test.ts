@@ -4,11 +4,9 @@ import {
 } from '@nestjs/common';
 import {
   BridgeHaltedError,
-  ChainNotSupportedError,
   DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
-  IncompatibleChainsError,
   InvalidAddressError,
   InvalidCurrencyError,
   MissingChainApiError,
@@ -23,13 +21,11 @@ import { handleXcmApiError } from './error-handler.js';
 describe('handleXcmApiError', () => {
   const sdkErrors = [
     new InvalidCurrencyError('Invalid currency'),
-    new IncompatibleChainsError('Incompatible chains'),
     new InvalidAddressError('Invalid address'),
-    new ChainNotSupportedError('Chain not supported'),
     new NoXCMSupportImplementedError('Acala'),
     new DuplicateAssetError('2'),
     new DuplicateAssetIdError('2'),
-    new ScenarioNotSupportedError('Acala', 'ParaToPara'),
+    new ScenarioNotSupportedError({ chain: 'Acala', scenario: 'ParaToPara' }),
     new BridgeHaltedError(),
     new DryRunFailedError('Failed'),
     new TransferToAhNotSupported(),

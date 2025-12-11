@@ -40,8 +40,6 @@ class Jamton<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransf
 
     if (scenario === 'ParaToPara' && destination !== 'AssetHubPolkadot') {
       throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
         `Transfer from ${this.chain} to ${JSON.stringify(destination)} is not yet supported`
       )
     }

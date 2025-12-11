@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -60,8 +60,8 @@ describe('Ajuna', () => {
   })
 
   describe('transferRelayToPara', () => {
-    it('always throws ChainNotSupportedError', () => {
-      expect(() => ajuna.transferRelayToPara()).toThrow(ChainNotSupportedError)
+    it('always throws ScenarioNotSupportedError for RelayToPara', () => {
+      expect(() => ajuna.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
     })
   })
 

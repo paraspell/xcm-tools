@@ -1,6 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -37,9 +38,9 @@ describe('Xode', () => {
     )
   })
 
-  it('transferPolkadotXCM should throw IncompatibleChainsError for unsupported destChain', () => {
+  it('transferPolkadotXCM should throw ScenarioNotSupportedError for unsupported destChain', () => {
     expect(() => chain.transferPolkadotXCM({ ...options, destChain: 'Moonbeam' })).toThrow(
-      'Xode chain only supports transfers to / from AssetHubPolkadot'
+      ScenarioNotSupportedError
     )
   })
 })

@@ -2,7 +2,7 @@ import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
-import { InvalidParameterError } from '../../errors'
+import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { assertHasLocation } from '../assertions'
 import { padValueBy } from './padFee'
@@ -27,7 +27,7 @@ export const getMythosOriginFee = async <TApi, TRes>(
   await ahApi.disconnect()
 
   if (!feeConverted) {
-    throw new InvalidParameterError(`Pool DOT -> ${nativeAsset.symbol} not found.`)
+    throw new UnableToComputeError(`Pool DOT -> ${nativeAsset.symbol} not found.`)
   }
 
   return padValueBy(feeConverted, 10)

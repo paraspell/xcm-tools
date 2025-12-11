@@ -4,7 +4,7 @@ import type { TAsset } from '@paraspell/assets'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError } from '../../../errors'
+import { UnsupportedOperationError } from '../../../errors'
 import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { getChainLocation } from '../../location/getChainLocation'
@@ -293,7 +293,7 @@ describe('createBaseExecuteXcm', () => {
           ...mockBaseOptions,
           chain: 'Acala'
         })
-      ).toThrow(InvalidParameterError)
+      ).toThrow(UnsupportedOperationError)
 
       expect(() =>
         createBaseExecuteXcm({

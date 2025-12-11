@@ -8,7 +8,7 @@ import {
 } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 import { getRelayChainOf } from '../../utils'
 import { createDestination, resolveTChainFromLocation } from './utils'
 
@@ -46,26 +46,26 @@ describe('XcmPallet utils', () => {
   })
 
   describe('resolveTChainFromLocation', () => {
-    it('should throw InvalidParameterError if Parachain ID is not found in destination location', () => {
+    it('should throw RoutingResolutionError if Parachain ID is not found in destination location', () => {
       const locationWithoutParachain: TLocation = {
         parents: Parents.ONE,
         interior: { X1: { AccountKey20: { key: '0x123', network: undefined } } } // No Parachain junction
       }
       expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrow(
-        InvalidParameterError
+        RoutingResolutionError
       )
       expect(() => resolveTChainFromLocation('Kusama', locationWithoutParachain)).toThrow(
         'Parachain ID not found in destination location.'
       )
     })
 
-    it('should throw InvalidParameterError if chain with specified paraId is not found for the relay chain', () => {
+    it('should throw RoutingResolutionError if chain with specified paraId is not found for the relay chain', () => {
       const locationWithUnknownParaId: TLocation = {
         parents: Parents.ONE,
         interior: { X1: { Parachain: 9999 } }
       }
       expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrow(
-        InvalidParameterError
+        RoutingResolutionError
       )
       expect(() => resolveTChainFromLocation('Kusama', locationWithUnknownParaId)).toThrow(
         'Chain with specified paraId not found in destination location.'
@@ -76,7 +76,7 @@ describe('XcmPallet utils', () => {
         interior: { X1: { Parachain: 2004 } }
       }
       expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrow(
-        InvalidParameterError
+        RoutingResolutionError
       )
       expect(() => resolveTChainFromLocation('Kusama', locationForWrongRelay)).toThrow(
         'Chain with specified paraId not found in destination location.'

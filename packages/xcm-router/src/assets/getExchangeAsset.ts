@@ -4,9 +4,10 @@ import {
   findAssetInfoByLoc,
   findAssetInfoBySymbol,
   findBestMatches,
-  InvalidParameterError,
   isOverrideLocationSpecifier,
   isSymbolSpecifier,
+  RoutingResolutionError,
+  UnsupportedOperationError,
 } from '@paraspell/sdk';
 
 import type { TExchangeChain, TRouterAsset } from '../types';
@@ -21,7 +22,7 @@ export const getExchangeAsset = (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
     Array.isArray(currency)
   ) {
-    throw new InvalidParameterError(
+    throw new UnsupportedOperationError(
       'XCM Router does not support location override or multi-asset currencies yet.',
     );
   }
@@ -35,7 +36,7 @@ export const getExchangeAsset = (
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
     if (isSymbolSpecifier(currency.symbol)) {
-      throw new InvalidParameterError(
+      throw new UnsupportedOperationError(
         'Cannot use currency specifiers when using exchange auto select',
       );
     }
@@ -43,7 +44,7 @@ export const getExchangeAsset = (
     const matches = findBestMatches(assets, currency.symbol);
 
     if (matches.length > 1 && throwOnDuplicateSymbol) {
-      throw new InvalidParameterError(
+      throw new RoutingResolutionError(
         `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by location.`,
       );
     }
@@ -56,7 +57,7 @@ export const getExchangeAsset = (
   } else if ('id' in currency) {
     asset = findAssetInfoById(otherAssets, currency.id);
   } else {
-    throw new InvalidParameterError('Invalid currency input');
+    throw new RoutingResolutionError('Invalid currency input');
   }
 
   if (asset) {

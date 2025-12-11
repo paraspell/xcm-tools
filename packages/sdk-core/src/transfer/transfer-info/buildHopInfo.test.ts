@@ -8,7 +8,7 @@ import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { InvalidParameterError } from '../../errors'
+import { UnableToComputeError } from '../../errors'
 import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
 
@@ -23,7 +23,7 @@ vi.mock('@paraspell/assets', async () => {
 })
 
 vi.mock('../../../errors', () => ({
-  InvalidParameterError: class extends Error {}
+  UnableToComputeError: class extends Error {}
 }))
 
 describe('buildHopInfo', () => {
@@ -144,16 +144,16 @@ describe('buildHopInfo', () => {
     expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw InvalidParameterError if ED is not found for AssetHub-like chain', async () => {
+  it('should throw UnableToComputeError if ED is not found for AssetHub-like chain', async () => {
     vi.mocked(getExistentialDepositOrThrow).mockImplementation(() => {
-      throw new InvalidParameterError('Existential deposit not found')
+      throw new UnableToComputeError('Existential deposit not found')
     })
     const options = { ...baseOptions }
 
     const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
-    await expect(buildHopInfo(options)).rejects.toThrow(InvalidParameterError)
+    await expect(buildHopInfo(options)).rejects.toThrow(UnableToComputeError)
 
     expect(disconnectAllowedSpy).toHaveBeenCalledTimes(2)
     expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
