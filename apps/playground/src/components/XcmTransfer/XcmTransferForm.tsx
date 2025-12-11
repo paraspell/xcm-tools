@@ -46,6 +46,11 @@ import {
   parseAsRecipientAddress,
   parseAsSubstrateChain,
 } from '../../utils/routes/parsers';
+import {
+  type AdvancedOptions,
+  AdvancedOptionsAccordion,
+  validateEndpoint,
+} from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
@@ -74,13 +79,13 @@ export type FormValues = {
   ahAddress: string;
   useApi: boolean;
   useXcmFormatCheck: boolean;
-};
+} & AdvancedOptions;
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
   currency?: TAssetInfo;
 };
 
-export type FormValuesTransformed = FormValues & {
+export type FormValuesTransformed = Omit<FormValues, 'currencies'> & {
   currencies: TCurrencyEntryTransformed[];
   transformedFeeAsset?: TCurrencyEntryTransformed;
 };
@@ -89,8 +94,10 @@ type Props = {
   onSubmit: (values: FormValuesTransformed, submitType: TSubmitType) => void;
   loading: boolean;
   isBatchMode: boolean;
-  initialValues?: FormValues;
+  initialValues?: FormValues | FormValuesTransformed;
   isVisible?: boolean;
+  advancedOptions?: AdvancedOptions;
+  onAdvancedOptionsChange?: (options: AdvancedOptions) => void;
 };
 
 const TCurrencyEntrySchema = z.object({
@@ -118,6 +125,8 @@ const XcmTransferForm: FC<Props> = ({
   isBatchMode,
   initialValues,
   isVisible = true,
+  advancedOptions,
+  onAdvancedOptionsChange,
 }) => {
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsSubstrateChain.withDefault('Astar'),
@@ -150,7 +159,9 @@ const XcmTransferForm: FC<Props> = ({
   });
 
   const form = useForm<FormValues>({
-    initialValues: initialValues ?? queryState,
+    initialValues: initialValues
+      ? { ...initialValues, ...advancedOptions }
+      : { ...queryState, ...advancedOptions },
 
     validate: {
       address: (value, values) => {
@@ -199,13 +210,69 @@ const XcmTransferForm: FC<Props> = ({
           ? null
           : 'Invalid Polkadot address';
       },
+      customEndpoints: {
+        endpoints: {
+          value: (value) => {
+            return validateEndpoint(value) ? null : 'Endpoint is not valid';
+          },
+        },
+      },
     },
   });
 
   useAutoFillWalletAddress(form, 'address');
+
   useEffect(() => {
-    void setQueryState(form.values);
+    if (advancedOptions) {
+      form.setValues((current) => ({ ...current, ...advancedOptions }));
+    }
+  }, [
+    advancedOptions?.xcmVersion,
+    advancedOptions?.isDevelopment,
+    advancedOptions?.abstractDecimals,
+    advancedOptions?.pallet,
+    advancedOptions?.method,
+    advancedOptions?.customEndpoints,
+  ]);
+
+  useEffect(() => {
+    const {
+      xcmVersion,
+      isDevelopment,
+      abstractDecimals,
+      pallet,
+      method,
+      customEndpoints,
+      ...restValues
+    } = form.values;
+    void setQueryState(restValues);
   }, [form.values, setQueryState]);
+
+  useEffect(() => {
+    const {
+      xcmVersion,
+      isDevelopment,
+      abstractDecimals,
+      pallet,
+      method,
+      customEndpoints,
+    } = form.values;
+    void onAdvancedOptionsChange?.({
+      xcmVersion,
+      isDevelopment,
+      abstractDecimals,
+      pallet,
+      method,
+      customEndpoints,
+    });
+  }, [
+    form.values.xcmVersion,
+    form.values.isDevelopment,
+    form.values.abstractDecimals,
+    form.values.pallet,
+    form.values.method,
+    form.values.customEndpoints,
+  ]);
 
   const { from, to, currencies, useApi } = form.getValues();
 
@@ -523,6 +590,8 @@ const XcmTransferForm: FC<Props> = ({
               {...form.getInputProps('useXcmFormatCheck', { type: 'checkbox' })}
             />
           </Stack>
+
+          <AdvancedOptionsAccordion form={form} />
 
           {selectedAccount ? (
             <Button.Group>

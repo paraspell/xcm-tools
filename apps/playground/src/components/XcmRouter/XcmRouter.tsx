@@ -32,13 +32,13 @@ import { ethers } from 'ethers';
 import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
 import { getWsProvider } from 'polkadot-api/ws-provider';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Confetti from 'react-confetti';
 
 import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
-import { useWallet } from '../../hooks';
+import { useAdvancedRouterOptionsQuery, useWallet } from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
 import { fetchFromApi, submitTransactionPapi } from '../../utils';
 import {
@@ -46,14 +46,11 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import type { AdvancedRouterOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import { TransferStepper } from './TransferStepper';
-
-const builderOptions: TRouterBuilderOptions = {
-  abstractDecimals: true,
-};
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -62,6 +59,33 @@ export const XcmRouter = () => {
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
+
+  const [advancedRouterOptionsQuery, setAdvancedRouterOptionsQuery] =
+    useAdvancedRouterOptionsQuery();
+
+  const builderOptions = useMemo<TRouterBuilderOptions>(() => {
+    const apiOverrides =
+      advancedRouterOptionsQuery.customEndpoints &&
+      advancedRouterOptionsQuery.customEndpoints.length > 0
+        ? advancedRouterOptionsQuery.customEndpoints.reduce(
+            (acc, ep) => ({
+              ...acc,
+              [ep.chain]: ep.endpoints?.map((e) => e.value) ?? [],
+            }),
+            {},
+          )
+        : undefined;
+
+    return {
+      abstractDecimals: advancedRouterOptionsQuery.abstractDecimals ?? true,
+      development: advancedRouterOptionsQuery.isDevelopment ?? false,
+      apiOverrides,
+    };
+  }, [
+    advancedRouterOptionsQuery.abstractDecimals,
+    advancedRouterOptionsQuery.isDevelopment,
+    advancedRouterOptionsQuery.customEndpoints,
+  ]);
 
   const [
     outputAlertOpened,
@@ -225,11 +249,18 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
+    const {
+      isDevelopment,
+      abstractDecimals,
+      customEndpoints,
+      ...safeFormValues
+    } = formValues;
+
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
-          ...formValues,
+          ...safeFormValues,
           currencyFrom: currencyFromInput,
           currencyTo: currencyToInput,
           exchange,
@@ -327,12 +358,19 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
+    const {
+      isDevelopment,
+      abstractDecimals,
+      customEndpoints,
+      ...safeFormValues
+    } = formValues;
+
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
-            ...formValues,
+            ...safeFormValues,
             currencyFrom: currencyFromInput,
             currencyTo: currencyToInput,
             exchange,
@@ -401,12 +439,19 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
+    const {
+      isDevelopment,
+      abstractDecimals,
+      customEndpoints,
+      ...safeFormValues
+    } = formValues;
+
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
-            ...formValues,
+            ...safeFormValues,
             currencyFrom: currencyFromInput,
             currencyTo: currencyToInput,
             exchange,
@@ -482,9 +527,15 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
+        const {
+          isDevelopment,
+          abstractDecimals,
+          customEndpoints,
+          ...safeFormValues
+        } = formValues;
         result = await fetchFromApi(
           {
-            ...formValues,
+            ...safeFormValues,
             currencyFrom: currencyFromInput,
             currencyTo: currencyToInput,
             exchange,
@@ -560,9 +611,15 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
+        const {
+          isDevelopment,
+          abstractDecimals,
+          customEndpoints,
+          ...safeFormValues
+        } = formValues;
         result = await fetchFromApi(
           {
-            ...formValues,
+            ...safeFormValues,
             currencyFrom: currencyFromInput,
             currencyTo: currencyToInput,
             exchange,
@@ -624,9 +681,15 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
+        const {
+          isDevelopment,
+          abstractDecimals,
+          customEndpoints,
+          ...safeFormValues
+        } = formValues;
         result = await fetchFromApi(
           {
-            ...formValues,
+            ...safeFormValues,
             currencyFrom: currencyFromInput,
             currencyTo: currencyToInput,
             options: builderOptions,
@@ -822,7 +885,16 @@ export const XcmRouter = () => {
               parachains using XCM.
             </Text>
           </Box>
-          <XcmRouterForm onSubmit={onSubmit} loading={loading} />
+          <XcmRouterForm
+            onSubmit={onSubmit}
+            loading={loading}
+            advancedOptions={
+              advancedRouterOptionsQuery as AdvancedRouterOptions
+            }
+            onAdvancedOptionsChange={(options) =>
+              void setAdvancedRouterOptionsQuery(options)
+            }
+          />
         </Stack>
         <Box ref={targetRef}>
           {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (

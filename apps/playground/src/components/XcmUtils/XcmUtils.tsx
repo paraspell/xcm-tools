@@ -11,6 +11,7 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
   TBuilderOptions,
+  TChain,
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
@@ -31,7 +32,7 @@ import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks';
+import { useAdvancedOptionsQuery, useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { fetchFromApi } from '../../utils';
 import {
@@ -39,6 +40,7 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import type { AdvancedOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
@@ -64,6 +66,9 @@ const XcmUtils = () => {
   const [error, setError] = useState<Error>();
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<string>();
+
+  const [advancedOptionsQuery, setAdvancedOptionsQuery] =
+    useAdvancedOptionsQuery();
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -232,23 +237,52 @@ const XcmUtils = () => {
     }
 
     try {
+      const apiOverrides =
+        advancedOptionsQuery.customEndpoints.length > 0
+          ? advancedOptionsQuery.customEndpoints.reduce(
+              (acc, ep) => ({
+                ...acc,
+                [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
+              }),
+              {} as Partial<Record<TChain, TPjsApiOrUrl>>,
+            )
+          : undefined;
       if (useApi) {
-        const { useApi, currencies, ...safeFormValues } = body;
+        const {
+          useApi,
+          useXcmFormatCheck,
+          currencies,
+          customEndpoints,
+          isDevelopment,
+          pallet,
+          method,
+          xcmVersion,
+          abstractDecimals,
+          ...safeFormValues
+        } = body;
         result = await fetchFromApi(
           {
             ...safeFormValues,
             options: {
-              abstractDecimals: true,
+              abstractDecimals: advancedOptionsQuery.abstractDecimals,
+              development: advancedOptionsQuery.isDevelopment,
+              apiOverrides,
             },
+            pallet: advancedOptionsQuery.pallet,
+            method: advancedOptionsQuery.method,
+            xcmVersion: advancedOptionsQuery.xcmVersion,
           },
           apiEndpoint,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
+        let builder = Builder({
+          abstractDecimals: advancedOptionsQuery.abstractDecimals,
+          development: advancedOptionsQuery.isDevelopment,
+          apiOverrides,
         })
+          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -260,6 +294,13 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
+          builder = builder.customPallet(
+            advancedOptionsQuery.pallet,
+            advancedOptionsQuery.method,
+          );
+        }
 
         switch (submitType) {
           case 'getXcmFee':
@@ -365,23 +406,52 @@ const XcmUtils = () => {
     }
 
     try {
+      const apiOverrides =
+        advancedOptionsQuery.customEndpoints.length > 0
+          ? advancedOptionsQuery.customEndpoints.reduce(
+              (acc, ep) => ({
+                ...acc,
+                [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
+              }),
+              {} as Partial<Record<TChain, TPjsApiOrUrl>>,
+            )
+          : undefined;
       if (useApi) {
-        const { useApi, currencies, ...safeFormValues } = body;
+        const {
+          useApi,
+          useXcmFormatCheck,
+          currencies,
+          customEndpoints,
+          isDevelopment,
+          pallet,
+          method,
+          xcmVersion,
+          abstractDecimals,
+          ...safeFormValues
+        } = body;
         result = await fetchFromApi(
           {
             ...safeFormValues,
             options: {
-              abstractDecimals: true,
+              abstractDecimals: advancedOptionsQuery.abstractDecimals,
+              development: advancedOptionsQuery.isDevelopment,
+              apiOverrides,
             },
+            pallet: advancedOptionsQuery.pallet,
+            method: advancedOptionsQuery.method,
+            xcmVersion: advancedOptionsQuery.xcmVersion,
           },
           apiEndpoint,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
+        let builder = Builder({
+          abstractDecimals: advancedOptionsQuery.abstractDecimals,
+          development: advancedOptionsQuery.isDevelopment,
+          apiOverrides,
         })
+          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -393,6 +463,13 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
+          builder = builder.customPallet(
+            advancedOptionsQuery.pallet,
+            advancedOptionsQuery.method,
+          );
+        }
 
         switch (submitType) {
           case 'getTransferableAmount':
@@ -530,7 +607,14 @@ const XcmUtils = () => {
               Query XCM information and fees.
             </Text>
           </Box>
-          <XcmTransferForm onSubmit={onSubmit} loading={loading} />
+          <XcmTransferForm
+            onSubmit={onSubmit}
+            loading={loading}
+            advancedOptions={advancedOptionsQuery as AdvancedOptions}
+            onAdvancedOptionsChange={(options) =>
+              void setAdvancedOptionsQuery(options)
+            }
+          />
         </Stack>
         <Center ref={targetRef}>
           {errorAlertOpened && error && (
