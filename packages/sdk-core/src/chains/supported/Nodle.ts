@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { type TSerializedExtrinsics } from '../../types'
@@ -24,7 +24,7 @@ class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
     const { assetInfo: asset, scenario } = input
 
     if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     if (asset.symbol !== this.getNativeAssetSymbol()) {
@@ -37,7 +37,7 @@ class Nodle<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 }
 

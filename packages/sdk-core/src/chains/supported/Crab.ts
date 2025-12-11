@@ -2,8 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError } from '../../errors'
-import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -23,11 +22,11 @@ class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     if (input.scenario === 'ParaToPara') {
       return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
     }
-    throw new ScenarioNotSupportedError(this.chain, input.scenario)
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: input.scenario })
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

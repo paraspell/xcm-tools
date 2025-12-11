@@ -3,7 +3,7 @@ import type { TParachain } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT } from '../../constants'
-import { InvalidParameterError } from '../../errors'
+import { InvalidAddressError } from '../../errors'
 import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertSenderAddress, assertToIsString } from '../assertions'
@@ -20,7 +20,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
   assertToIsString(destination, 'Location destination is not supported for AH teleport.')
 
   if (isTLocation(address)) {
-    throw new InvalidParameterError('Location address is not supported for this scenario')
+    throw new InvalidAddressError('Location address is not supported for this scenario')
   }
 
   assertSenderAddress(senderAddress)

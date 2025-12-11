@@ -39,11 +39,7 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   }
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
-    throw new ScenarioNotSupportedError(
-      this.chain,
-      'ParaToPara',
-      `${this.chain} local transfers are temporarily disabled`
-    )
+    throw new ScenarioNotSupportedError(`${this.chain} local transfers are temporarily disabled`)
   }
 
   getBalanceForeign<TApi, TRes>(

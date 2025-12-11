@@ -25,14 +25,14 @@ import {
   addXcmVersionHeader,
   assertHasLocation,
   BatchMode,
-  ChainNotSupportedError,
   findNativeAssetInfoOrThrow,
   getChainProviders,
   hasXcmPaymentApiSupport,
-  InvalidParameterError,
   isAssetXcEqual,
   isConfig,
   localizeLocation,
+  RuntimeApiUnavailableError,
+  UnsupportedOperationError,
   Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -222,7 +222,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getFromRpc(module: string, method: string, key: string) {
     const rpcModule = (this.api.rpc as any)[module]
     if (!rpcModule || !rpcModule[method]) {
-      throw new InvalidParameterError(`RPC method ${module}.${method} not available`)
+      throw new UnsupportedOperationError(`RPC method ${module}.${method} not available`)
     }
     const response = (await rpcModule[method](key)) as Codec
     return response.toHex()
@@ -255,7 +255,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
+      throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
     const DEFAULT_XCM_VERSION = 3
@@ -499,7 +499,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new ChainNotSupportedError(`DryRunApi is not available on chain ${chain}`)
+      throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
     const response = await this.api.call.dryRunApi.dryRunXcm(originLocation, xcm)

@@ -2,7 +2,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import { InvalidParameterError } from '../errors'
+import { BatchValidationError } from '../errors'
 import { send } from '../transfer'
 import type { TBatchedSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
@@ -28,13 +28,13 @@ class BatchTransactionManager<TApi, TRes> {
 
     const { mode } = options
     if (this.transactionOptions.length === 0) {
-      throw new InvalidParameterError('No transactions to batch.')
+      throw new BatchValidationError('No transactions to batch.')
     }
 
     const sameFrom = this.transactionOptions.every(tx => tx.from === from)
 
     if (!sameFrom) {
-      throw new InvalidParameterError('All transactions must have the same origin.')
+      throw new BatchValidationError('All transactions must have the same origin.')
     }
 
     const normalized = await Promise.all(

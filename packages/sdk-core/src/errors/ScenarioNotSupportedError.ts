@@ -2,19 +2,28 @@ import type { TChain } from '@paraspell/sdk-common'
 
 import { type TScenario } from '../types'
 
+type TScenarioNotSupportedContext = {
+  chain: TChain
+  scenario: TScenario
+}
+
 /**
- * Used to inform user, that Parachain they wish to use does not support scenario they wish to use yet
+ * Error thrown when a scenario, route, or chain capability is not supported.
  */
 export class ScenarioNotSupportedError extends Error {
-  /**
-   * Constructs a new ScenarioNotSupportedError.
-   *
-   * @param chain - The chain where the scenario is not supported.
-   * @param scenario - The scenario that is not supported.
-   * @param message - Optional custom error message.
-   */
-  constructor(chain: TChain, scenario: TScenario, message?: string) {
-    super(message ?? `Scenario ${scenario} not supported for chain ${chain}`)
-    this.name = 'ScenarioNotSupported'
+  constructor(message: string)
+  constructor({ chain, scenario }: TScenarioNotSupportedContext)
+  constructor(contextOrMsg: string | TScenarioNotSupportedContext) {
+    if (typeof contextOrMsg === 'string') {
+      super(contextOrMsg)
+      this.name = 'ScenarioNotSupportedError'
+      return
+    }
+
+    const { chain, scenario } = contextOrMsg
+    const parts = [`Scenario ${scenario}`, `for chain ${chain}`, 'is not supported']
+
+    super(parts.join(' '))
+    this.name = 'ScenarioNotSupportedError'
   }
 }

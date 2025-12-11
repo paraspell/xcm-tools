@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -48,13 +48,11 @@ describe('EnergyWebX', () => {
         assetInfo: { symbol: 'DOT', amount: 100n }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      expect(() => chain.transferPolkadotXCM(input)).toThrow(
-        new ScenarioNotSupportedError('EnergyWebX', scenario)
-      )
+      expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
   })
 
-  it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

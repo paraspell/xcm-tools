@@ -1,4 +1,4 @@
-import { findAssetInfo, hasSupportForAsset, InvalidParameterError } from '@paraspell/sdk';
+import { findAssetInfo, hasSupportForAsset, RoutingResolutionError } from '@paraspell/sdk';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -21,7 +21,7 @@ export const resolveAssets = (
     : undefined;
 
   if (originSpecified && !assetFromOrigin) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Currency from ${JSON.stringify(currencyFrom)} not found in ${from}.`,
     );
   }
@@ -32,7 +32,7 @@ export const resolveAssets = (
       : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
   if (!assetFromExchange) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.exchangeChain}.`,
     );
   }
@@ -40,13 +40,13 @@ export const resolveAssets = (
   const assetTo = getExchangeAsset(dex.exchangeChain, currencyTo);
 
   if (!assetTo) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Currency to ${JSON.stringify(currencyTo)} not found in ${dex.exchangeChain}.`,
     );
   }
 
   if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`,
     );
   }

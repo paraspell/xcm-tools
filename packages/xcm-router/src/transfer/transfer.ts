@@ -1,4 +1,4 @@
-import { InvalidParameterError, isChainEvm } from '@paraspell/sdk';
+import { isChainEvm, MissingParameterError } from '@paraspell/sdk';
 
 import type { TRouterBuilderOptions } from '../types';
 import { type TTransferOptions } from '../types';
@@ -51,15 +51,18 @@ export const transfer = async (
   validateTransferOptions(initialOptions);
 
   if (evmSigner !== undefined && evmSenderAddress === undefined) {
-    throw new InvalidParameterError('evmSenderAddress is required when evmSigner is provided');
+    throw new MissingParameterError('evmSenderAddress', 'evmSenderAddress is required');
   }
 
   if (evmSenderAddress !== undefined && evmSigner === undefined) {
-    throw new InvalidParameterError('evmSigner is required when evmSenderAddress is provided');
+    throw new MissingParameterError('evmSigner', 'evmSigner is required');
   }
 
   if (from && isChainEvm(from) && !evmSigner) {
-    throw new InvalidParameterError('EVM signer must be provided for EVM origin chains.');
+    throw new MissingParameterError(
+      'evmSigner',
+      'EVM signer must be provided for EVM origin chains.',
+    );
   }
 
   if (exchangeChain === undefined) {

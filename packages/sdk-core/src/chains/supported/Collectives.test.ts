@@ -34,13 +34,7 @@ describe('Collectives', () => {
       destChain: 'Moonbeam'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
-      new ScenarioNotSupportedError(
-        chain.chain,
-        'ParaToPara',
-        'Unable to use Collectives for transfers to other Parachains.'
-      )
-    )
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
   it('allows ParaToPara to an AssetHub dest and calls transferPolkadotXcm', async () => {

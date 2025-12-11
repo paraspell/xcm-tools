@@ -24,8 +24,6 @@ class Collectives<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadot
 
     if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {
       throw new ScenarioNotSupportedError(
-        this.chain,
-        scenario,
         `Unable to use ${this.chain} for transfers to other Parachains.`
       )
     }

@@ -30,10 +30,12 @@ import { getAssetBalanceInternal } from '../balance'
 import { DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
-  IncompatibleChainsError,
+  FeatureTemporarilyDisabledError,
   InvalidAddressError,
-  InvalidParameterError,
-  TransferToAhNotSupported
+  RoutingResolutionError,
+  ScenarioNotSupportedError,
+  TransferToAhNotSupported,
+  UnsupportedOperationError
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
@@ -173,8 +175,8 @@ abstract class Parachain<TApi, TRes> {
     )
 
     if (isRelayAsset && !supportsTypeThen) {
-      throw new InvalidParameterError(
-        'Relaychain assets can only be transferred using the type-and-then method which is not supported by this chain'
+      throw new UnsupportedOperationError(
+        'Relaychain assets require the type-and-then method which is not supported by this chain.'
       )
     }
 
@@ -274,7 +276,9 @@ abstract class Parachain<TApi, TRes> {
       }
 
       if (this.chain === 'Astar' && isRelayAsset) {
-        throw new InvalidParameterError('Astar system asset transfers are temporarily disabled')
+        throw new FeatureTemporarilyDisabledError(
+          'Astar system asset transfers are temporarily disabled'
+        )
       }
 
       const isAHOrigin = this.chain.includes('AssetHub')
@@ -316,9 +320,7 @@ abstract class Parachain<TApi, TRes> {
     if (destChain && !isRelayChain(destChain) && !isExternalChain(destChain)) {
       const dest = getChain(destChain)
       if (!dest.canReceiveFrom(this.chain)) {
-        throw new IncompatibleChainsError(
-          `Receiving on ${destChain} from ${this.chain} is not yet enabled`
-        )
+        throw new ScenarioNotSupportedError(`Receiving from ${this.chain} is not yet enabled`)
       }
     }
   }
@@ -326,7 +328,9 @@ abstract class Parachain<TApi, TRes> {
   throwIfTempDisabled(options: TSendInternalOptions<TApi, TRes>, destChain?: TChain): void {
     const isSendingDisabled = this.isSendingTempDisabled(options)
     if (isSendingDisabled) {
-      throw new InvalidParameterError(`Sending from ${this.chain} is temporarily disabled`)
+      throw new FeatureTemporarilyDisabledError(
+        `Sending from ${this.chain} is temporarily disabled`
+      )
     }
 
     const scenario = resolveScenario(this.chain, options.to)
@@ -337,7 +341,7 @@ abstract class Parachain<TApi, TRes> {
       !isExternalChain(destChain) &&
       getChain(destChain).isReceivingTempDisabled(scenario)
     if (isReceivingDisabled) {
-      throw new InvalidParameterError(`Receiving on ${destChain} is temporarily disabled`)
+      throw new FeatureTemporarilyDisabledError(`Receiving on ${destChain} is temporarily disabled`)
     }
   }
 
@@ -399,7 +403,9 @@ abstract class Parachain<TApi, TRes> {
     const { transferType } = this.getRelayToParaOverrides()
 
     if (this.isReceivingTempDisabled('RelayToPara')) {
-      throw new InvalidParameterError(`Receiving on ${this.chain} is temporarily disabled`)
+      throw new FeatureTemporarilyDisabledError(
+        `Receiving on ${this.chain} is temporarily disabled`
+      )
     }
 
     if (transferType === 'typeAndThen') {
@@ -408,7 +414,7 @@ abstract class Parachain<TApi, TRes> {
       const scenario: TScenario = 'RelayToPara'
 
       if (!destChain) {
-        throw new InvalidParameterError(
+        throw new UnsupportedOperationError(
           'Cannot override destination when using type and then transfer.'
         )
       }
@@ -454,7 +460,7 @@ abstract class Parachain<TApi, TRes> {
     }
 
     if (feeAsset) {
-      throw new InvalidParameterError('Fee asset is not supported for local transfers')
+      throw new UnsupportedOperationError('Fee asset is not supported for local transfers')
     }
 
     const validatedOptions = { ...options, address }
@@ -671,7 +677,7 @@ abstract class Parachain<TApi, TRes> {
     let lastError: unknown
 
     if (pallets.length === 0)
-      throw new InvalidParameterError(`No foreign asset pallets found for ${this.chain}`)
+      throw new RoutingResolutionError(`No foreign asset pallets found for ${this.chain}`)
 
     const customCurrencyId = this.getCustomCurrencyId(asset)
 

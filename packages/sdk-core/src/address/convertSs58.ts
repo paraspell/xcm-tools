@@ -5,7 +5,7 @@ import { base58 } from '@scure/base'
 import { isAddress } from 'viem'
 
 import type { IPolkadotApi } from '../api'
-import { InvalidParameterError } from '../errors'
+import { InvalidAddressError } from '../errors'
 
 // Inspired by Talisman Society’s SS58 encoder:
 // https://github.com/TalismanSociety/talisman/blob/dev/packages/crypto/src/address/encoding/ss58.ts
@@ -17,7 +17,7 @@ const ALLOWED_PUBKEY_BYTES = new Set([32, 33])
 
 export const deriveAccountId = (raw: Uint8Array): Uint8Array => {
   if (!ALLOWED_PUBKEY_BYTES.has(raw.length)) {
-    throw new InvalidParameterError('public key length is invalid')
+    throw new InvalidAddressError('public key length is invalid')
   }
   return raw.length === 33 ? blake2b256(raw) : raw
 }
@@ -38,7 +38,7 @@ const networkToBytes = (net: number): Uint8Array => {
 
 export const encodeSs58 = (payload: Uint8Array, network: number): string => {
   if (!VALID_ADDR_PAYLOAD.has(payload.length)) {
-    throw new InvalidParameterError('unexpected payload length for SS58 address')
+    throw new InvalidAddressError('unexpected payload length for SS58 address')
   }
 
   const netBytes = networkToBytes(network)
@@ -70,11 +70,11 @@ export const convertSs58 = <TApi, TRes>(
   }
 
   if (isEvmAddress) {
-    throw new InvalidParameterError(`Cannot convert EVM address to SS58.`)
+    throw new InvalidAddressError('Cannot convert EVM address to SS58.')
   }
 
   if (isChainEvm(chain)) {
-    throw new InvalidParameterError(`Cannot convert SS58 address to EVM.`)
+    throw new InvalidAddressError('Cannot convert SS58 address to EVM.')
   }
 
   const { ss58Prefix } = getAssetsObject(chain)

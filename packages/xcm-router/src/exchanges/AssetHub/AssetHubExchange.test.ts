@@ -2,8 +2,8 @@ import type { TPapiApi } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
-  InvalidParameterError,
   Parents,
+  RoutingResolutionError,
   type TLocation,
   transform,
 } from '@paraspell/sdk';
@@ -209,7 +209,7 @@ describe('AssetHubExchange', () => {
           } as TSwapOptions,
           0n,
         ),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toThrow(RoutingResolutionError);
     });
 
     it('throws when swapping native asset to itself', async () => {
@@ -223,7 +223,7 @@ describe('AssetHubExchange', () => {
           } as TSwapOptions,
           0n,
         ),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toThrow(RoutingResolutionError);
     });
 
     it('handles single hop when assetFrom is native', async () => {

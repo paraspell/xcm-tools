@@ -105,7 +105,7 @@ describe('crypto helpers', () => {
       expect(getAssetsObject).not.toHaveBeenCalled()
     })
 
-    it('EVM address on NON-EVM chain - throws InvalidParameterError', () => {
+    it('EVM address on NON-EVM chain - throws InvalidAddressError', () => {
       vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(isChainEvm).mockReturnValue(false)
 
@@ -117,7 +117,7 @@ describe('crypto helpers', () => {
       expect(spy).not.toHaveBeenCalled()
     })
 
-    it('SS58 address on EVM chain - throws InvalidParameterError', () => {
+    it('SS58 address on EVM chain - throws InvalidAddressError', () => {
       vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(isChainEvm).mockReturnValue(true)
 

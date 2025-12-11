@@ -1,6 +1,6 @@
 import type { TChain } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError } from '../../../errors'
+import { ScenarioNotSupportedError } from '../../../errors'
 import type { TDestWeight } from '../../../types'
 
 export const determineDestWeight = (destChain: TChain): TDestWeight | never => {
@@ -12,5 +12,7 @@ export const determineDestWeight = (destChain: TChain): TDestWeight | never => {
     return { ref_time: 5000000000n, proof_size: 0n }
   }
 
-  throw new ChainNotSupportedError(`Pallet XTransfer does not support transfering to ${destChain}.`)
+  throw new ScenarioNotSupportedError(
+    `Pallet XTransfer does not support transfering to ${destChain}.`
+  )
 }

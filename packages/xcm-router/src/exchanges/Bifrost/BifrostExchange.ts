@@ -5,9 +5,9 @@ import {
   AmountTooLowError,
   getNativeAssetSymbol,
   getParaId,
-  InvalidParameterError,
   padValueBy,
   parseUnits,
+  RoutingResolutionError,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -38,13 +38,13 @@ class BifrostExchange extends ExchangeChain {
     const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
-      throw new InvalidParameterError('Currency from not found');
+      throw new RoutingResolutionError('Currency from not found');
     }
 
     const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
-      throw new InvalidParameterError('Currency to not found');
+      throw new RoutingResolutionError('Currency to not found');
     }
 
     const tokenFrom = new Token(tokenWrappedFrom.wrapped);
@@ -82,7 +82,7 @@ class BifrostExchange extends ExchangeChain {
     });
 
     if (extrinsic === null) {
-      throw new InvalidParameterError('Extrinsic is null');
+      throw new RoutingResolutionError('Extrinsic is null');
     }
 
     const amountOut = parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals);
@@ -116,13 +116,13 @@ class BifrostExchange extends ExchangeChain {
     const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
-      throw new InvalidParameterError('Currency from not found');
+      throw new RoutingResolutionError('Currency from not found');
     }
 
     const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
-      throw new InvalidParameterError('Currency to not found');
+      throw new RoutingResolutionError('Currency to not found');
     }
 
     const tokenFrom = new Token(tokenWrappedFrom.wrapped);

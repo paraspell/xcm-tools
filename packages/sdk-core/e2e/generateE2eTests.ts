@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChainProviders,
-  ChainNotSupportedError,
   Parents,
   TApiOrUrl,
   Version,
@@ -16,7 +15,8 @@ import {
   RELAYCHAINS,
   isSystemChain,
   hasJunction,
-  assertHasLocation
+  assertHasLocation,
+  RuntimeApiUnavailableError
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
@@ -209,8 +209,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .address(MOCK_ADDRESS)
               await validateTransfer(builder, signer)
             } catch (error) {
-              if (error instanceof ChainNotSupportedError) {
-                expect(error).toBeInstanceOf(ChainNotSupportedError)
+              if (error instanceof RuntimeApiUnavailableError) {
+                expect(error.name).toBe(RuntimeApiUnavailableError)
               }
             }
           })
@@ -378,28 +378,24 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
               } catch (error) {
                 if (error instanceof Error) {
-                  if (error.name === 'ScenarioNotSupported') {
-                    expect(error.name).toBe('ScenarioNotSupported')
-                  } else if (error.name === 'ChainNotSupported') {
-                    expect(error.name).toBe('ChainNotSupported')
-                  } else if (error.name === 'NoXCMSupportImplemented') {
-                    expect(error.name).toBe('NoXCMSupportImplemented')
-                  } else if (error.name === 'IncompatibleChains') {
-                    expect(error.name).toBe('IncompatibleChains')
-                  } else if (error.name === 'TransferToAhNotSupported') {
-                    expect(error.name).toBe('TransferToAhNotSupported')
+                  const allowedErrorNames = [
+                    'ScenarioNotSupportedError',
+                    'NoXCMSupportImplementedError',
+                    'TransferToAhNotSupported',
+                    'RoutingResolutionError',
+                    'UnsupportedOperationError',
+                    'RuntimeApiUnavailableError'
+                  ]
+
+                  if (allowedErrorNames.includes(error.name)) {
+                    expect(error.name).toBeDefined()
                   } else if (error.message.includes('LocalExecutionIncomplete')) {
-                    // Handle DryRunFailedError: LocalExecutionIncomplete
                     expect(error.message).toContain('LocalExecutionIncomplete')
                   } else if (
-                    error.name === 'InvalidParameterError' &&
-                    (error.message.includes('Relaychain assets can only be transferred') ||
-                      error.message.includes(
-                        'Astar system asset transfers are temporarily disabled'
-                      ) ||
-                      error.message.includes('temporarily disabled'))
+                    error.name === 'FeatureTemporarilyDisabledError' ||
+                    error.message.includes('temporarily disabled')
                   ) {
-                    expect(error.name).toBe('InvalidParameterError')
+                    expect(error.name).toBe('FeatureTemporarilyDisabledError')
                   } else {
                     throw error
                   }
@@ -427,12 +423,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
               if (
-                error.name === 'InvalidParameterError' &&
-                (error.message.includes('Relaychain assets can only be transferred') ||
-                  error.message.includes('Astar system asset transfers are temporarily disabled') ||
-                  error.message.includes('temporarily disabled'))
+                error.name === 'FeatureTemporarilyDisabledError' ||
+                error.message.includes('temporarily disabled')
               ) {
-                expect(error.name).toBe('InvalidParameterError')
+                expect(error.name).toBe('FeatureTemporarilyDisabledError')
               } else {
                 throw error
               }
@@ -455,8 +449,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .address(address)
           await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
         } catch (error) {
-          if (error instanceof ChainNotSupportedError) {
-            expect(error).toBeInstanceOf(ChainNotSupportedError)
+          if (error instanceof RuntimeApiUnavailableError) {
+            expect(error).toBeInstanceOf(RuntimeApiUnavailableError)
           }
         }
       })

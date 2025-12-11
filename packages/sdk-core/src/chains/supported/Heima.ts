@@ -23,7 +23,7 @@ class Heima<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
     const { scenario, assetInfo: asset } = input
 
     if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     if (asset.symbol !== this.getNativeAssetSymbol()) {

@@ -21,7 +21,7 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
     const { scenario, assetInfo: asset } = input
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')

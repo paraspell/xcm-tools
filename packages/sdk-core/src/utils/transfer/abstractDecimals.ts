@@ -1,7 +1,7 @@
 import type { TAmount } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
-import { InvalidParameterError } from '../../errors'
+import { NumberFormatError } from '../../errors'
 import { isConfig } from '..'
 import { parseUnits } from '../unit'
 
@@ -29,7 +29,7 @@ export const applyDecimalAbstraction = (
   if (!shouldAbstract) {
     const strAmount = amount.toString()
     if (strAmount.includes('.')) {
-      throw new InvalidParameterError(`Non-abstracted amount cannot have decimals: ${strAmount}`)
+      throw new NumberFormatError(`Non-abstracted amount cannot have decimals: ${strAmount}`)
     }
     return BigInt(strAmount)
   }

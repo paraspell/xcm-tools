@@ -8,7 +8,6 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   BatchMode,
-  ChainNotSupportedError,
   computeFeeFromDryRun,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
@@ -1222,7 +1221,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should throw ChainNotSupportedError for an unsupported chain', async () => {
+    it('should throw RuntimeApiUnavailable for an unsupported chain', async () => {
       await expect(
         papiApi.getDryRunCall({
           tx: mockTransaction,
@@ -1231,7 +1230,7 @@ describe('PapiApi', () => {
           destination: 'Acala',
           asset: {} as WithAmount<TAssetInfo>
         })
-      ).rejects.toThrow(ChainNotSupportedError)
+      ).rejects.toThrow('Runtime API "DryRunApi" is not available on chain Acala')
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
     })
 
@@ -1507,7 +1506,7 @@ describe('PapiApi', () => {
           chain: 'Acala',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions<TPapiTransaction>)
-      ).rejects.toThrow(ChainNotSupportedError)
+      ).rejects.toThrow('Runtime API "DryRunApi" is not available on chain Acala')
     })
 
     it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
@@ -1885,7 +1884,7 @@ describe('PapiApi', () => {
           chain: 'Acala',
           origin: 'Acala'
         } as TDryRunXcmBaseOptions<TPapiTransaction>)
-      ).rejects.toThrow(ChainNotSupportedError)
+      ).rejects.toThrow('Runtime API "DryRunApi" is not available on chain Acala')
     })
 
     it('should throw error if no issued event found', async () => {

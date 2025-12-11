@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
@@ -25,7 +25,7 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     const { scenario, asset } = input
 
     if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     if (asset.symbol !== this.getNativeAssetSymbol()) {
@@ -38,7 +38,7 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

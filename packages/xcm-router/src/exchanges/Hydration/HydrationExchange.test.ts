@@ -6,6 +6,7 @@ import {
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
+  UnableToComputeError,
 } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -66,7 +67,7 @@ describe('HydrationExchange', () => {
   });
 
   describe('swapCurrency', () => {
-    it('throws InvalidParameterError if native currency decimals are not found', async () => {
+    it('throws UnableToComputeError if native currency decimals are not found', async () => {
       vi.spyOn(utils, 'getAssetInfo')
         .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
@@ -103,13 +104,13 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        'Native currency decimals not found',
+        UnableToComputeError,
       );
 
       expect(getAssetDecimals).toHaveBeenCalledWith(chain.chain, 'HDX');
     });
 
-    it('throws InvalidParameterError if priceInfo is not found (and currencyTo is not native)', async () => {
+    it('throws UnableToComputeError if priceInfo is not found (and currencyTo is not native)', async () => {
       vi.spyOn(utils, 'getAssetInfo')
         .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
@@ -144,7 +145,7 @@ describe('HydrationExchange', () => {
       const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
-        'Price not found',
+        UnableToComputeError,
       );
 
       expect(spotPriceSpy).toHaveBeenCalledWith('2', '999');

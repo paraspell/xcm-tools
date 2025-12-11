@@ -3,8 +3,9 @@ import {
   findAssetInfo,
   getRelayChainOf,
   hasSupportForAsset,
-  InvalidParameterError,
+  RoutingResolutionError,
   type TChain,
+  UnsupportedOperationError,
 } from '@paraspell/sdk';
 import type { PolkadotClient } from 'polkadot-api';
 
@@ -39,13 +40,13 @@ export const selectBestExchangeCommon = async <
   const assetFromOrigin = from ? findAssetInfo(from, currencyFrom, null) : undefined;
 
   if (from && !assetFromOrigin) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
     );
   }
 
   if ('id' in currencyTo) {
-    throw new InvalidParameterError(
+    throw new UnsupportedOperationError(
       'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or location.',
     );
   }
@@ -129,13 +130,13 @@ export const selectBestExchangeCommon = async <
   }
   if (bestExchange === undefined) {
     if (!triedAnyExchange && errors.size === 0) {
-      throw new InvalidParameterError(
+      throw new RoutingResolutionError(
         `No exchange found that supports asset pair: ` +
           `${JSON.stringify(assetFromOrigin?.symbol)} -> ${JSON.stringify('symbol' in currencyTo ? currencyTo.symbol : '')}.`,
       );
     }
 
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Could not select best exchange automatically. Please specify one manually. Errors: \n\n${Array.from(
         errors.entries(),
       )

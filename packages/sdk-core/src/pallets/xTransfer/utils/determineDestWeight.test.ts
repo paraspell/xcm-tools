@@ -1,7 +1,7 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { ChainNotSupportedError } from '../../../errors'
+import { ScenarioNotSupportedError } from '../../../errors'
 import { determineDestWeight } from './determineDestWeight'
 
 describe('determineDestWeight', () => {
@@ -22,7 +22,7 @@ describe('determineDestWeight', () => {
 
   it('throws an error for unsupported chain', () => {
     const dest: TChain = 'Altair'
-    expect(() => determineDestWeight(dest)).toThrow(ChainNotSupportedError)
+    expect(() => determineDestWeight(dest)).toThrow(ScenarioNotSupportedError)
     expect(() => determineDestWeight(dest)).toThrow(
       `Pallet XTransfer does not support transfering to ${dest}.`
     )

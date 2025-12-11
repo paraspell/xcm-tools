@@ -4,7 +4,7 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { InvalidParameterError } from '../../errors'
+import { MissingParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { createCustomXcmOnDest } from './createCustomXcmOnDest'
 
@@ -101,7 +101,7 @@ describe('createCustomXcmOnDest', () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
 
     expect(() => createCustomXcmOnDest(options, mockChain, messageId, ethAsset)).toThrow(
-      InvalidParameterError
+      MissingParameterError
     )
 
     vi.mocked(isChainEvm).mockReturnValue(false)

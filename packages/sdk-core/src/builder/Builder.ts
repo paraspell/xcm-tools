@@ -6,7 +6,12 @@ import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isRelayChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../errors'
+import {
+  BatchValidationError,
+  DryRunFailedError,
+  ScenarioNotSupportedError,
+  UnableToComputeError
+} from '../errors'
 import {
   getMinTransferableAmount,
   getOriginXcmFee,
@@ -77,8 +82,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   to(chain: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
     if (this._options.from && isRelayChain(this._options.from) && chain === 'Ethereum') {
-      throw new InvalidParameterError(
-        'Transfers from Relay chain to Ethereum are not yet supported.'
+      throw new ScenarioNotSupportedError(
+        'Transfers from relay chain to Ethereum are not yet supported.'
       )
     }
     return new GeneralBuilder(this.api, this.batchManager, {
@@ -251,7 +256,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     isCalledInternally = false
   ): Promise<TBuildInternalRes<TApi, TRes, TOptions>> {
     if (!this.batchManager.isEmpty() && !isCalledInternally) {
-      throw new InvalidParameterError(
+      throw new BatchValidationError(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
       )
     }

@@ -15,7 +15,7 @@ import {
 import { isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 import type { TXcmVersioned } from '../../types'
 import { type TDestination } from '../../types'
 import { addXcmVersionHeader, createX1Payload, getRelayChainOf } from '../../utils'
@@ -84,7 +84,7 @@ export const resolveTChainFromLocation = (
 ): TParachain => {
   const parachainId = getJunctionValue(location, 'Parachain')
   if (parachainId === undefined) {
-    throw new InvalidParameterError('Parachain ID not found in destination location.')
+    throw new RoutingResolutionError('Parachain ID not found in destination location.')
   }
 
   const chain =
@@ -93,7 +93,7 @@ export const resolveTChainFromLocation = (
     ) ?? null
 
   if (chain === null) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       'Chain with specified paraId not found in destination location.'
     )
   }

@@ -12,7 +12,7 @@ import {
   type TSubstrateChain
 } from '@paraspell/sdk-common'
 
-import { IncompatibleChainsError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
@@ -40,7 +40,7 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
     isRelayChain(destination) &&
     origin !== destination
   ) {
-    throw new IncompatibleChainsError(
+    throw new ScenarioNotSupportedError(
       'Direct relay chain to relay chain transfers are not supported. Please use Polkadot <-> Kusama bridge through AssetHub.'
     )
   }
@@ -54,7 +54,7 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
   ]
 
   if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
-    throw new IncompatibleChainsError(
+    throw new ScenarioNotSupportedError(
       `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
     )
   }
@@ -67,7 +67,9 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
     if (!isBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
-      throw new IncompatibleChainsError()
+      throw new ScenarioNotSupportedError(
+        'Origin and destination must share the same relay chain unless using a bridge.'
+      )
     }
   }
 }

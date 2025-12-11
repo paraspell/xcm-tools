@@ -3,8 +3,10 @@ import {
   assertHasId,
   findAssetInfoOrThrow,
   getParaId,
-  InvalidParameterError,
-  isOverrideLocationSpecifier
+  isOverrideLocationSpecifier,
+  MissingParameterError,
+  RoutingResolutionError,
+  UnsupportedOperationError
 } from '@paraspell/sdk-core'
 import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
 import type { RegistryOptions } from '@snowbridge/api/dist/assets_v2'
@@ -32,19 +34,22 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   currency
 }: TPjsEvmBuilderOptions<TApi, TRes>) => {
   if (Array.isArray(currency)) {
-    throw new InvalidParameterError('Multi-assets are not yet supported for EVM transfers')
+    throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }
 
   if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new InvalidParameterError('Override location is not supported for EVM transfers')
+    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   if (!provider) {
-    throw new InvalidParameterError('provider parameter is required for Snowbridge transfers.')
+    throw new MissingParameterError(
+      'provider',
+      'provider parameter is required for Snowbridge transfers.'
+    )
   }
 
   if (!isEthersSigner(signer)) {
-    throw new InvalidParameterError('Snowbridge does not support Viem provider yet.')
+    throw new UnsupportedOperationError('Snowbridge does not support Viem provider yet.')
   }
 
   const ethAsset = findAssetInfoOrThrow('Ethereum', currency, to)
@@ -117,7 +122,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   )
 
   if (validation.logs.find(l => l.kind == toPolkadotV2.ValidationKind.Error)) {
-    throw new InvalidParameterError(
+    throw new RoutingResolutionError(
       `Validation failed with following errors: \n\n ${validation.logs
         .filter(l => l.kind == toPolkadotV2.ValidationKind.Error)
         .map(l => l.message)
@@ -130,12 +135,12 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   const response = await signer.sendTransaction(tx)
   const receipt = await response.wait(1)
   if (!receipt) {
-    throw new InvalidParameterError(`Transaction ${response.hash} not included.`)
+    throw new RoutingResolutionError(`Transaction ${response.hash} not included.`)
   }
 
   const messageReceipt = await toPolkadotV2.getMessageReceipt(receipt)
   if (!messageReceipt) {
-    throw new InvalidParameterError(`Transaction ${receipt.hash} did not emit a message.`)
+    throw new RoutingResolutionError(`Transaction ${receipt.hash} did not emit a message.`)
   }
 
   return {

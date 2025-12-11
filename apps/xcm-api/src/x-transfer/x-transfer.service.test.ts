@@ -10,7 +10,10 @@ import type {
   TDryRunResult,
   TGetXcmFeeResult,
 } from '@paraspell/sdk';
-import { IncompatibleChainsError, InvalidCurrencyError } from '@paraspell/sdk';
+import {
+  InvalidCurrencyError,
+  ScenarioNotSupportedError,
+} from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -236,7 +239,7 @@ describe('XTransferService', () => {
       const builderMockWithError = {
         ...builderMock,
         build: vi.fn().mockImplementation(() => {
-          throw new IncompatibleChainsError('Incompatible chains');
+          throw new ScenarioNotSupportedError('Incompatible chains');
         }),
       };
 

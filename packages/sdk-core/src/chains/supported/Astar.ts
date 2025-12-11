@@ -2,7 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import { ChainNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
@@ -45,7 +45,7 @@ class Astar<TApi, TRes>
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

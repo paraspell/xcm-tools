@@ -17,7 +17,7 @@ class CoretimeKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolka
     const { scenario } = input
 
     if (scenario === 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.chain, scenario)
+      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
     return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')

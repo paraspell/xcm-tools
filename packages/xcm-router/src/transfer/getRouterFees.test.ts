@@ -9,7 +9,7 @@ import {
   DryRunFailedError,
   getXcmFee,
   handleSwapExecuteTransfer,
-  InvalidParameterError,
+  RoutingResolutionError,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -392,7 +392,7 @@ describe('getRouterFees', () => {
     );
   });
 
-  it('throws InvalidParameterError when getXcmFee returns NoDeal on HydrationDex', async () => {
+  it('throws RoutingResolutionError when getXcmFee returns NoDeal on HydrationDex', async () => {
     const dex = {
       chain: 'Hydration',
       getAmountOut: vi.fn().mockResolvedValue(1234n),
@@ -432,6 +432,6 @@ describe('getRouterFees', () => {
       },
     } as TRouterXcmFeeResult);
 
-    await expect(getRouterFees(dex, options)).rejects.toBeInstanceOf(InvalidParameterError);
+    await expect(getRouterFees(dex, options)).rejects.toBeInstanceOf(RoutingResolutionError);
   });
 });

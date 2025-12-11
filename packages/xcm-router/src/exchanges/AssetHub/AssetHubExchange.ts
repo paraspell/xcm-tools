@@ -1,9 +1,9 @@
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
-  InvalidParameterError,
   padValueBy,
   Parents,
+  RoutingResolutionError,
   transform,
 } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
@@ -29,11 +29,11 @@ class AssetHubExchange extends ExchangeChain {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
 
     if (!assetFrom.location) {
-      throw new InvalidParameterError('Asset from location not found');
+      throw new RoutingResolutionError('Asset from location not found');
     }
 
     if (!assetTo.location) {
-      throw new InvalidParameterError('Asset to location not found');
+      throw new RoutingResolutionError('Asset to location not found');
     }
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
@@ -98,14 +98,14 @@ class AssetHubExchange extends ExchangeChain {
     });
 
     if (!nativeAsset) {
-      throw new InvalidParameterError('Native asset not found for this exchange chain.');
+      throw new RoutingResolutionError('Native asset not found for this exchange chain.');
     }
 
     const isAssetFromNative = assetFrom.symbol === nativeAsset.symbol;
     const isAssetToNative = assetTo.symbol === nativeAsset.symbol;
 
     if (isAssetFromNative && isAssetToNative) {
-      throw new InvalidParameterError('Cannot swap native asset to itself.');
+      throw new RoutingResolutionError('Cannot swap native asset to itself.');
     }
 
     if (isAssetFromNative || isAssetToNative) {
@@ -159,11 +159,11 @@ class AssetHubExchange extends ExchangeChain {
     const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
     if (!assetFrom.location) {
-      throw new InvalidParameterError('Asset from location not found');
+      throw new RoutingResolutionError('Asset from location not found');
     }
 
     if (!assetTo.location) {
-      throw new InvalidParameterError('Asset to location not found');
+      throw new RoutingResolutionError('Asset to location not found');
     }
 
     const nativeAsset = getExchangeAsset(this.exchangeChain, {
@@ -171,14 +171,14 @@ class AssetHubExchange extends ExchangeChain {
     });
 
     if (!nativeAsset) {
-      throw new InvalidParameterError('Native asset not found for this exchange chain.');
+      throw new RoutingResolutionError('Native asset not found for this exchange chain.');
     }
 
     const isAssetFromNative = assetFrom.symbol === nativeAsset.symbol;
     const isAssetToNative = assetTo.symbol === nativeAsset.symbol;
 
     if (isAssetFromNative && isAssetToNative) {
-      throw new InvalidParameterError('Cannot swap native asset to itself.');
+      throw new RoutingResolutionError('Cannot swap native asset to itself.');
     }
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
@@ -196,7 +196,7 @@ class AssetHubExchange extends ExchangeChain {
       return amountOut;
     } else {
       if (!nativeAsset.location) {
-        throw new InvalidParameterError('Native asset location not found');
+        throw new RoutingResolutionError('Native asset location not found');
       }
 
       const { amountOut: hop1AmountOut } = await getQuotedAmount(

@@ -3,7 +3,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError } from '../../errors'
+import { OverrideConflictError } from '../../errors'
 import { createAsset } from './createAsset'
 import { maybeOverrideAsset, maybeOverrideAssets } from './overrideAsset'
 
@@ -86,19 +86,19 @@ describe('Asset Override Logic', () => {
       expect(result).toEqual(overrideAsset)
     })
 
-    it('should throw InvalidParameterError if override array contains more than one asset', () => {
+    it('should throw OverrideConflictError if override array contains more than one asset', () => {
       const overrideAssets = [mockAsset, mockAsset]
       const action = () => maybeOverrideAsset(mockVersion, mockAmount, mockAsset, overrideAssets)
 
-      expect(action).toThrow(InvalidParameterError)
+      expect(action).toThrow(OverrideConflictError)
       expect(action).toThrow('Expected a single asset in overriddenCurrency array.')
     })
 
-    it('should throw InvalidParameterError if override array is empty', () => {
+    it('should throw OverrideConflictError if override array is empty', () => {
       const overrideAssets: TAsset[] = []
       const action = () => maybeOverrideAsset(mockVersion, mockAmount, mockAsset, overrideAssets)
 
-      expect(action).toThrow(InvalidParameterError)
+      expect(action).toThrow(OverrideConflictError)
       expect(action).toThrow('Expected a single asset in overriddenCurrency array.')
     })
   })

@@ -35,13 +35,7 @@ describe('BridgeHubKusama', () => {
       unknown
     >
 
-    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
-      new ScenarioNotSupportedError(
-        chain.chain,
-        'ParaToPara',
-        'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
-      )
-    )
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {

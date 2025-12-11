@@ -1,3 +1,4 @@
+import type { WithAmount } from '@paraspell/assets'
 import {
   findAssetInfoByLoc,
   getNativeAssetSymbol,
@@ -14,15 +15,18 @@ import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
   BridgeHaltedError,
   InvalidAddressError,
-  InvalidParameterError,
   NoXCMSupportImplementedError,
-  TransferToAhNotSupported
+  RoutingResolutionError,
+  ScenarioNotSupportedError,
+  TransferToAhNotSupported,
+  UnsupportedOperationError
 } from '../errors'
 import { getPalletInstance } from '../pallets'
 import { constructRelayToParaParams } from '../pallets/xcmPallet/utils'
 import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
+  BaseAssetsPallet,
   TRelayToParaOptions,
   TRelayToParaOverrides,
   TSerializedExtrinsics,
@@ -322,9 +326,7 @@ describe('Parachain', () => {
       }
     } as TSendInternalOptions<unknown, unknown>
 
-    await expect(chain.transfer(options)).rejects.toThrow(
-      'Relaychain assets can only be transferred using the type-and-then method which is not supported by this chain'
-    )
+    await expect(chain.transfer(options)).rejects.toThrow(UnsupportedOperationError)
   })
 
   it('should throw error when native asset transfer to AssetHub requires teleport', async () => {
@@ -392,9 +394,7 @@ describe('Parachain', () => {
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
 
-    await expect(chain.transfer(options)).rejects.toThrow(
-      'Receiving on Astar from Acala is not yet enabled'
-    )
+    await expect(chain.transfer(options)).rejects.toThrow(ScenarioNotSupportedError)
   })
 
   it('proceeds when destination chain can receive from origin (canReceiveFrom=true)', async () => {
@@ -604,7 +604,7 @@ describe('Parachain', () => {
         isAmountAll: false
       } as TSendInternalOptions<unknown, unknown>
 
-      await expect(chain.transferLocal(options)).rejects.toThrow(InvalidParameterError)
+      await expect(chain.transferLocal(options)).rejects.toThrow(UnsupportedOperationError)
     })
 
     it('should call transferLocalNativeAsset when asset is native', async () => {
@@ -715,6 +715,81 @@ describe('Parachain', () => {
     it('returns undefined by default', () => {
       const dummyAsset = { symbol: 'USDT' } as TAssetInfo
       expect(chain.getCustomCurrencyId(dummyAsset)).toBeUndefined()
+    })
+  })
+
+  describe('getBalanceNative', () => {
+    it('delegates to the System pallet', async () => {
+      const systemPallet = {
+        getBalance: vi.fn().mockResolvedValue(42n)
+      }
+
+      vi.mocked(getPalletInstance).mockReturnValueOnce(systemPallet as unknown as BaseAssetsPallet)
+
+      const asset = { symbol: 'DOT', amount: 10n } as WithAmount<TAssetInfo>
+
+      const result = await chain.getBalanceNative(api, '5FMock', asset)
+
+      expect(getPalletInstance).toHaveBeenCalledWith('System')
+      expect(systemPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset)
+      expect(result).toBe(42n)
+    })
+  })
+
+  describe('getBalanceForeign', () => {
+    it('throws when no foreign asset pallets are registered', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce([])
+
+      await expect(
+        chain.getBalanceForeign(api, '5FMock', {
+          symbol: 'USDT'
+        } as TAssetInfo)
+      ).rejects.toThrow(RoutingResolutionError)
+    })
+
+    it('tries pallets sequentially until balance resolves', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens', 'ForeignAssets'])
+
+      const tokensPallet = {
+        getBalance: vi.fn().mockRejectedValue(new Error('Tokens failed'))
+      }
+      const foreignAssetsPallet = {
+        getBalance: vi.fn().mockResolvedValue(55n)
+      }
+
+      vi.mocked(getPalletInstance).mockImplementation(pallet => {
+        if (pallet === 'Tokens') return tokensPallet as unknown as BaseAssetsPallet
+        if (pallet === 'ForeignAssets') return foreignAssetsPallet as unknown as BaseAssetsPallet
+        throw new Error('Unexpected pallet')
+      })
+
+      const customId = Symbol('custom')
+      vi.spyOn(chain, 'getCustomCurrencyId').mockReturnValue(customId)
+
+      const asset = { symbol: 'USDT' } as TAssetInfo
+
+      const result = await chain.getBalanceForeign(api, '5FMock', asset)
+
+      expect(tokensPallet.getBalance).toHaveBeenCalled()
+      expect(foreignAssetsPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset, customId)
+      expect(result).toBe(55n)
+    })
+
+    it('throws the last encountered error when every pallet fails', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens'])
+
+      const expectedError = new Error('all failed')
+      const failingPallet = {
+        getBalance: vi.fn().mockRejectedValue(expectedError)
+      }
+
+      vi.mocked(getPalletInstance).mockReturnValueOnce(failingPallet as unknown as BaseAssetsPallet)
+
+      await expect(
+        chain.getBalanceForeign(api, '5FMock', {
+          symbol: 'USDT'
+        } as TAssetInfo)
+      ).rejects.toThrow(expectedError)
     })
   })
 

@@ -24,8 +24,7 @@ export const generateAssetsTests = () => {
         })
 
         it('should have the required asset properties', () => {
-          expect(assetsObj).toHaveProperty('nativeAssets')
-          expect(assetsObj).toHaveProperty('otherAssets')
+          expect(assetsObj).toHaveProperty('assets')
           expect(assetsObj).toHaveProperty('relaychainSymbol')
           expect(assetsObj).toHaveProperty('nativeAssetSymbol')
           expect(assetsObj).toHaveProperty('isEVM')

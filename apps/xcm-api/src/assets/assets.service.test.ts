@@ -4,10 +4,9 @@ import { Test } from '@nestjs/testing';
 import {
   CHAINS,
   type TAssetInfo,
-  type TChainAssetsInfo,
   type TChain,
+  type TChainAssetsInfo,
 } from '@paraspell/sdk';
-
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

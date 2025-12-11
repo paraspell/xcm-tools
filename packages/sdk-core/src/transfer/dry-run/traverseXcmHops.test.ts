@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
-import { InvalidParameterError } from '../../errors'
+import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
@@ -164,7 +164,7 @@ describe('traverseXcmHops', () => {
     }
 
     await expect(traverseXcmHops(config)).rejects.toThrow(
-      new InvalidParameterError('Unable to find TChain for paraId 1000')
+      new RoutingResolutionError('Unable to find TChain for paraId 1000')
     )
   })
 

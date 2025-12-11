@@ -1,7 +1,7 @@
 import type { TAsset } from '@paraspell/assets'
 import { isTLocation, type TLocation, type Version } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../errors'
+import { OverrideConflictError } from '../../errors'
 import { createAsset } from './createAsset'
 
 export const maybeOverrideAssets = (
@@ -31,7 +31,7 @@ export const maybeOverrideAsset = (
 
   if (Array.isArray(overriddenCurrency)) {
     if (overriddenCurrency.length !== 1) {
-      throw new InvalidParameterError('Expected a single asset in overriddenCurrency array.')
+      throw new OverrideConflictError('Expected a single asset in overriddenCurrency array.')
     }
     return overriddenCurrency[0]
   }

@@ -41,9 +41,7 @@ describe('Encointer', () => {
       unknown,
       unknown
     >
-    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
-      new ScenarioNotSupportedError(chain.chain, 'ParaToPara')
-    )
+    expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {

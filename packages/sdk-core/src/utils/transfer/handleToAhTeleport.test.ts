@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError } from '../../errors'
+import { InvalidAddressError } from '../../errors'
 import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
 import type { TDryRunResult, TGetXcmFeeResult, TPolkadotXCMTransferOptions } from '../../types'
 import { padValueBy } from '../fees/padFee'
@@ -70,7 +70,7 @@ describe('handleToAhTeleport', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(() => handleToAhTeleport(mockOrigin, input, defaultTx)).rejects.toThrow(
-      InvalidParameterError
+      InvalidAddressError
     )
   })
 
@@ -81,7 +81,7 @@ describe('handleToAhTeleport', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await expect(() => handleToAhTeleport(mockOrigin, input, defaultTx)).rejects.toThrow(
-      InvalidParameterError
+      InvalidAddressError
     )
   })
 

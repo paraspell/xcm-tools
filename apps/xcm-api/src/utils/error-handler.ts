@@ -4,29 +4,33 @@ import {
 } from '@nestjs/common';
 import {
   AmountTooLowError,
+  BatchValidationError,
   BridgeHaltedError,
-  ChainNotSupportedError,
   DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
-  IncompatibleChainsError,
+  FeatureTemporarilyDisabledError,
+  InvalidAddressError,
   InvalidCurrencyError,
-  InvalidParameterError,
   MissingChainApiError,
+  MissingParameterError,
   NoXCMSupportImplementedError,
+  NumberFormatError,
+  OverrideConflictError,
+  ProviderUnavailableError,
+  RoutingResolutionError,
+  RuntimeApiUnavailableError,
   ScenarioNotSupportedError,
   TransferToAhNotSupported,
   UnableToComputeError,
+  UnsupportedOperationError,
 } from '@paraspell/sdk';
-import { InvalidAddressError } from '@paraspell/sdk';
 
 // For these errors thrown inside SDK, throw a 400 BadRequestException in API
 // Otherwise throw 500 InternalServerErrorException
 const sdkErrors = [
   InvalidCurrencyError,
-  IncompatibleChainsError,
   InvalidAddressError,
-  ChainNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
   DuplicateAssetError,
@@ -34,10 +38,18 @@ const sdkErrors = [
   BridgeHaltedError,
   DryRunFailedError,
   TransferToAhNotSupported,
-  InvalidParameterError,
   UnableToComputeError,
   MissingChainApiError,
   AmountTooLowError,
+  MissingParameterError,
+  UnsupportedOperationError,
+  FeatureTemporarilyDisabledError,
+  BatchValidationError,
+  ProviderUnavailableError,
+  RoutingResolutionError,
+  OverrideConflictError,
+  NumberFormatError,
+  RuntimeApiUnavailableError,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

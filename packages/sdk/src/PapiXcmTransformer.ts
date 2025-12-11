@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { InvalidParameterError } from '@paraspell/sdk-core'
+import { NumberFormatError } from '@paraspell/sdk-core'
 import { Binary, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { isAddress } from 'viem'
 
 export const checkAndConvertToNumberOrBigInt = (input: string) => {
   if (!/^-?\d+$/.test(input)) {
-    throw new InvalidParameterError('Invalid integer string')
+    throw new NumberFormatError('Invalid integer string')
   }
 
   const bigIntValue = BigInt(input)

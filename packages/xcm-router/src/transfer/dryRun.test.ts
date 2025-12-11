@@ -1,4 +1,4 @@
-import { dryRun, getFailureInfo, InvalidParameterError } from '@paraspell/sdk';
+import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -212,7 +212,7 @@ describe('dryRunRouter', () => {
     ]);
 
     await expect(dryRunRouter(createInitialOptions())).rejects.toBeInstanceOf(
-      InvalidParameterError,
+      UnsupportedOperationError,
     );
 
     expect(dryRun).not.toHaveBeenCalled();

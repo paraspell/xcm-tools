@@ -18,7 +18,7 @@ import {
   type TokenList,
   WrappedTokenInfo,
 } from '@crypto-dex-sdk/token-lists';
-import { InvalidParameterError, type TChain } from '@paraspell/sdk';
+import { RoutingResolutionError, type TChain } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import { type QueryableStorageEntry } from '@polkadot/api/types';
 import { type OrmlTokensAccountData } from '@zenlink-types/bifrost/interfaces';
@@ -210,7 +210,7 @@ export const getBestTrade = (
   const trades = Trade.bestTradeExactIn(chainId, pairs, [], amountIn, currencyOut);
 
   if (trades.length < 1) {
-    throw new InvalidParameterError('Trade not found');
+    throw new RoutingResolutionError('Trade not found');
   }
 
   return trades[0];

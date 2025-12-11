@@ -7,7 +7,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { MIN_AMOUNT } from '../../constants'
-import { ChainNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import {
@@ -35,7 +35,7 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ChainNotSupportedError()
+    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
   async transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {

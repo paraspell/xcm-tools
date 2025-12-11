@@ -2,7 +2,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ChainNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -151,7 +151,7 @@ describe('Acala', () => {
     })
   })
 
-  it('should throw ChainNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => acala.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
+    expect(() => acala.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

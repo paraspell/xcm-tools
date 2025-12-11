@@ -6,12 +6,12 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   BatchMode,
-  ChainNotSupportedError,
   computeFeeFromDryRunPjs,
   findNativeAssetInfoOrThrow,
   getChainProviders,
   hasXcmPaymentApiSupport,
   MissingChainApiError,
+  RuntimeApiUnavailableError,
   type TLocation,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -139,6 +139,21 @@ describe('PolkadotJsApi', () => {
     } as unknown as Codec)
   })
 
+  describe('getFromRpc', () => {
+    it('throws UnsupportedOperationError when module or method is missing', async () => {
+      const polkadotApi = new PolkadotJsApi({
+        ...mockApiPromise,
+        rpc: { state: {} }
+      } as unknown as TPjsApi)
+
+      await polkadotApi.init(mockChain)
+
+      await expect(polkadotApi.getFromRpc('state', 'getStorage', '0x01')).rejects.toThrow(
+        'RPC method state.getStorage not available'
+      )
+    })
+  })
+
   it('should set and get the api', async () => {
     const newApi = {
       call: {},
@@ -257,7 +272,7 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('accountToUint8a', () => {
-    it('should return the hex address as Uint8Array', () => {
+    it('should convert address to Uint8Array', () => {
       const address = '0x1234567890abcdef'
       const result = polkadotApi.accountToUint8a(address)
       expect(result).toBeInstanceOf(Uint8Array)
@@ -1364,7 +1379,7 @@ describe('PolkadotJsApi', () => {
           destination: 'Hydration',
           asset: {} as WithAmount<TAssetInfo>
         })
-      ).rejects.toThrow(ChainNotSupportedError)
+      ).rejects.toThrow(RuntimeApiUnavailableError)
     })
   })
 
@@ -1494,7 +1509,7 @@ describe('PolkadotJsApi', () => {
       })
     })
 
-    it('should throw ChainNotSupportedError for unsupported chain', async () => {
+    it('should throw RuntimeApiUnavailableError for unsupported chain', async () => {
       await expect(
         polkadotApi.getDryRunXcm({
           originLocation,
@@ -1502,7 +1517,7 @@ describe('PolkadotJsApi', () => {
           chain: 'Interlay',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions<Extrinsic>)
-      ).rejects.toThrow(ChainNotSupportedError)
+      ).rejects.toThrow(RuntimeApiUnavailableError)
     })
 
     it('should throw error if no issued event found', async () => {

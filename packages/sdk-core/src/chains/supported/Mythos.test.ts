@@ -4,7 +4,7 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getParaEthTransferFees } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
@@ -109,8 +109,8 @@ describe('Mythos', () => {
     expect(result).toBe('handled')
   })
 
-  it('should throw ChainNotSupportedError for transferRelayToPara', () => {
-    expect(() => mythos.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
+    expect(() => mythos.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 
   describe('Ethereum transfers', () => {

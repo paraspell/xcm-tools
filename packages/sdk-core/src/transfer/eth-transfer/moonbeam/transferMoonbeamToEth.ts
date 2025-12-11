@@ -8,7 +8,12 @@ import { createPublicClient, getContract, http } from 'viem'
 
 import { getParaId } from '../../../chains/config'
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
-import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
+import {
+  BridgeHaltedError,
+  MissingParameterError,
+  NumberFormatError,
+  UnsupportedOperationError
+} from '../../../errors'
 import { type TEvmBuilderOptions } from '../../../types'
 import { abstractDecimals, assertHasId, assertSenderAddress } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
@@ -31,7 +36,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   currency
 }: TEvmBuilderOptions<TApi, TRes>) => {
   if (!ahAddress) {
-    throw new InvalidParameterError('AssetHub address is required')
+    throw new MissingParameterError('ahAddress')
   }
 
   const bridgeStatus = await getBridgeStatus(api.clone())
@@ -41,11 +46,11 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   }
 
   if (Array.isArray(currency)) {
-    throw new InvalidParameterError('Multi-assets are not yet supported for EVM transfers')
+    throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }
 
   if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new InvalidParameterError('Override location is not supported for EVM transfers')
+    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   const foundAsset = findAssetInfoOrThrow(from, currency, to)
@@ -119,7 +124,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   const numberToHex32 = (num: number) =>
     typeof num !== 'number' || isNaN(num)
       ? (() => {
-          throw new InvalidParameterError('Input must be a valid number')
+          throw new NumberFormatError('Input must be a valid number')
         })()
       : `0x${(num >>> 0).toString(16).padStart(8, '0')}`
 
