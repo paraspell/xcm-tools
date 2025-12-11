@@ -32,7 +32,7 @@ import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
-import { fetchFromApi } from '../../utils';
+import { createBuilderOptions, fetchFromApi } from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -167,6 +167,8 @@ const XcmUtils = () => {
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
+    const builderOptions = createBuilderOptions(formValues);
+
     const Sdk =
       apiType === 'PAPI'
         ? await import('@paraspell/sdk')
@@ -177,8 +179,17 @@ const XcmUtils = () => {
     ) => GeneralBuilder) &
       ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
-    const { from, to, currencies, transformedFeeAsset, address, useApi } =
-      formValues;
+    const {
+      from,
+      to,
+      currencies,
+      transformedFeeAsset,
+      address,
+      useApi,
+      xcmVersion,
+      pallet,
+      method,
+    } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
@@ -224,22 +235,26 @@ const XcmUtils = () => {
 
     try {
       if (useApi) {
-        const { useApi, currencies, ...safeFormValues } = body;
+        const {
+          useApi,
+          currencies,
+          pallet,
+          method,
+          xcmVersion,
+          abstractDecimals,
+          ...safeFormValues
+        } = body;
         result = await fetchFromApi(
           {
             ...safeFormValues,
-            options: {
-              abstractDecimals: true,
-            },
+            options: builderOptions,
           },
           apiEndpoint,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
-        })
+        let builder = Builder(builderOptions)
           .from(from)
           .to(to)
           .currency(
@@ -251,6 +266,14 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
+        }
+
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
+        }
 
         switch (submitType) {
           case 'getXcmFee':
@@ -282,6 +305,8 @@ const XcmUtils = () => {
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
+    const builderOptions = createBuilderOptions(formValues);
+
     const Sdk =
       apiType === 'PAPI'
         ? await import('@paraspell/sdk')
@@ -292,8 +317,17 @@ const XcmUtils = () => {
     ) => GeneralBuilder) &
       ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
-    const { from, to, currencies, transformedFeeAsset, address, useApi } =
-      formValues;
+    const {
+      from,
+      to,
+      currencies,
+      transformedFeeAsset,
+      address,
+      useApi,
+      xcmVersion,
+      pallet,
+      method,
+    } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
@@ -355,18 +389,14 @@ const XcmUtils = () => {
         result = await fetchFromApi(
           {
             ...safeFormValues,
-            options: {
-              abstractDecimals: true,
-            },
+            options: builderOptions,
           },
           apiEndpoint,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
-        })
+        let builder = Builder(builderOptions)
           .from(from)
           .to(to)
           .currency(
@@ -378,6 +408,14 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
+        }
+
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
+        }
 
         switch (submitType) {
           case 'getTransferableAmount':
@@ -491,7 +529,7 @@ const XcmUtils = () => {
   return (
     <>
       <Stack gap="xl">
-        <Stack w="100%" maw={460} mx="auto" gap="0">
+        <Stack w="100%" maw={480} mx="auto" gap="0">
           <Box px="xl" pb="xl">
             <Center mb="xs">
               <Title order={2}>XCM Utilities 🪄</Title>

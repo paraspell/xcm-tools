@@ -7,34 +7,33 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import type { TBuilderOptions, TLocation } from '@paraspell/sdk';
 import {
   type GeneralBuilder,
   Parents,
   type TPapiApiOrUrl,
   type TPapiTransaction,
 } from '@paraspell/sdk';
-import type {
-  Extrinsic,
-  TBuilderOptions,
-  TPjsApiOrUrl,
-} from '@paraspell/sdk-pjs';
+import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
-import type { Signer } from '@polkadot/api/types';
-import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
-import { getTxFromApi } from '../../utils';
-import { submitTransaction, submitTransactionPapi } from '../../utils';
+import {
+  createBuilderOptions,
+  getTxFromApi,
+  resolveSenderAddress,
+  submitTx,
+} from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { FormValues } from './AssetClaimForm';
+import type { TAssetClaimFormValues } from './AssetClaimForm';
 import AssetClaimForm from './AssetClaimForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -42,10 +41,17 @@ const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 const AssetClaim = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
 
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
+
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
 
   const [error, setError] = useState<Error>();
+
+  const [output, setOutput] = useState<string>();
 
   const [loading, setLoading] = useState(false);
 
@@ -59,13 +65,19 @@ const AssetClaim = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submit = async (formValues: FormValues) => {
-    const { useApi, from, amount, address } = formValues;
+  const submit = async (formValues: TAssetClaimFormValues) => {
+    const {
+      useApi,
+      from,
+      amount,
+      address,
+      xcmVersion,
+      pallet,
+      method,
+      localAccount,
+    } = formValues;
 
-    if (!selectedAccount) {
-      showErrorNotification('No account selected, connect wallet first');
-      throw Error('No account selected!');
-    }
+    const senderAddress = resolveSenderAddress(localAccount, selectedAccount);
 
     setLoading(true);
     let notifId = showLoadingNotification(
@@ -85,77 +97,90 @@ const AssetClaim = () => {
 
     const signer = await getSigner();
 
+    const builderOptions = createBuilderOptions(formValues);
+
+    const location: TLocation = {
+      parents: Parents.ONE,
+      interior: { Here: null },
+    };
+
     let api;
     try {
-      let tx: Extrinsic | TPapiTransaction;
+      let tx: Extrinsic | TPapiTransaction | undefined;
+      let hash: string | undefined;
+
       if (useApi) {
         api = await Sdk.createChainClient(from);
         tx = await getTxFromApi(
           {
             from,
             address: formValues.address,
+            senderAddress,
             currency: {
-              location: { parents: Parents.ONE, interior: { Here: null } },
+              location,
               amount,
             },
+            options: builderOptions,
           },
           api,
           '/asset-claim',
-          selectedAccount.address,
+          senderAddress,
           apiType,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
-        });
-        tx = await builder
+        let builder = Builder(builderOptions);
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
+        }
+
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
+        }
+
+        const assetClaimBuilder = builder
           .claimFrom(from)
           .currency([
             {
-              location: { parents: Parents.ONE, interior: { Here: null } },
+              location,
               amount,
             },
           ])
           .address(address)
-          .build();
-        api = builder.getApi();
+          .senderAddress(senderAddress);
+
+        if (localAccount) hash = await assetClaimBuilder.signAndSubmit();
+        else tx = await assetClaimBuilder.build();
+
+        api = assetClaimBuilder.getApi();
       }
 
-      if (apiType === 'PAPI') {
-        await submitTransactionPapi(
-          tx as TPapiTransaction,
-          signer as PolkadotSigner,
-          () => {
-            notifId = showLoadingNotification(
-              'Processing',
-              'Transaction is being processed',
-              notifId,
-            );
-          },
+      if (tx) {
+        await submitTx(apiType, api, tx, signer, senderAddress, () => {
+          notifId = showLoadingNotification(
+            'Processing',
+            'Transaction is being processed',
+            notifId,
+          );
+        });
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          'Transaction was successful',
+        );
+      } else if (hash) {
+        setOutput(`'Transaction was submitted. Hash: ${hash}'`);
+        openOutputAlert();
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          `Transaction was submitted`,
         );
       } else {
-        await submitTransaction(
-          api as ApiPromise,
-          tx as Extrinsic,
-          signer as Signer,
-          selectedAccount.address,
-          () => {
-            notifId = showLoadingNotification(
-              'Processing',
-              'Transaction is being processed',
-              notifId,
-            );
-          },
-        );
+        throw Error('No transaction or hash to submit');
       }
-
-      showSuccessNotification(
-        notifId ?? '',
-        'Success',
-        'Transaction was successful',
-      );
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
@@ -169,11 +194,14 @@ const AssetClaim = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValues) => void submit(formValues);
+  const onSubmit = (formValues: TAssetClaimFormValues) =>
+    void submit(formValues);
 
   const onAlertCloseClick = () => {
     closeAlert();
   };
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   const theme = useMantineColorScheme();
 
@@ -205,6 +233,11 @@ const AssetClaim = () => {
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
           </ErrorAlert>
+        )}
+      </Center>
+      <Center>
+        {outputAlertOpened && output && (
+          <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
         )}
       </Center>
     </Stack>

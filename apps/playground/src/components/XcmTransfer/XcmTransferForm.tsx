@@ -32,24 +32,31 @@ import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
 import { z } from 'zod';
 
-import { DEFAULT_ADDRESS } from '../../constants';
+import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import {
   useAutoFillWalletAddress,
   useCurrencyOptions,
   useFeeCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import type { TSubmitType } from '../../types';
-import { isValidPolkadotAddress, validateTransferAddress } from '../../utils';
+import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import type { TAdvancedOptions, TSubmitType } from '../../types';
+import {
+  isValidPolkadotAddress,
+  validateCustomEndpoint,
+  validateTransferAddress,
+} from '../../utils';
 import {
   parseAsChain,
   parseAsRecipientAddress,
   parseAsSubstrateChain,
-} from '../../utils/routes/parsers';
+} from '../../utils/parsers';
+import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { AddressTooltip } from '../Tooltip';
 
 export type TCurrencyEntry = {
   currencyOptionId: string;
@@ -73,27 +80,26 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
-  useXcmFormatCheck: boolean;
-};
+} & TAdvancedOptions;
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
   currency?: TAssetInfo;
 };
 
-export type FormValuesTransformed = FormValues & {
+export type TFormValuesTransformed = Omit<FormValues, 'currencies'> & {
   currencies: TCurrencyEntryTransformed[];
   transformedFeeAsset?: TCurrencyEntryTransformed;
 };
 
 type Props = {
-  onSubmit: (values: FormValuesTransformed, submitType: TSubmitType) => void;
+  onSubmit: (values: TFormValuesTransformed, submitType: TSubmitType) => void;
   loading: boolean;
   isBatchMode: boolean;
   initialValues?: FormValues;
   isVisible?: boolean;
 };
 
-const TCurrencyEntrySchema = z.object({
+const CurrencyEntrySchema = z.object({
   currencyOptionId: z.string(),
   customCurrency: z.string(),
   amount: z.string(),
@@ -107,7 +113,7 @@ const TCurrencyEntrySchema = z.object({
     .optional(),
 });
 
-export const FeeAssetSchema = TCurrencyEntrySchema.omit({
+export const FeeAssetSchema = CurrencyEntrySchema.omit({
   amount: true,
   isMax: true,
 });
@@ -123,7 +129,7 @@ const XcmTransferForm: FC<Props> = ({
     from: parseAsSubstrateChain.withDefault('Astar'),
     to: parseAsChain.withDefault('Hydration'),
     currencies: parseAsNativeArrayOf(
-      parseAsJson(TCurrencyEntrySchema),
+      parseAsJson(CurrencyEntrySchema),
     ).withDefault([
       {
         currencyOptionId: '',
@@ -142,16 +148,16 @@ const XcmTransferForm: FC<Props> = ({
       customCurrencyType: 'symbol',
       customCurrencySymbolSpecifier: 'auto',
     }),
-
     address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
     ahAddress: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
-    useXcmFormatCheck: parseAsBoolean.withDefault(false),
+    ...advancedOptionsParsers,
   });
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues, (values: FormValues) => FormValues>({
+    name: MAIN_FORM_NAME,
     initialValues: initialValues ?? queryState,
-
+    transformValues: (values) => values,
     validate: {
       address: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
@@ -191,10 +197,12 @@ const XcmTransferForm: FC<Props> = ({
           ? null
           : 'Invalid Polkadot address';
       },
+      apiOverrides: { endpoints: { url: validateCustomEndpoint } },
     },
   });
 
   useAutoFillWalletAddress(form, 'address');
+
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
@@ -254,7 +262,7 @@ const XcmTransferForm: FC<Props> = ({
           )
         : undefined;
 
-    const transformedValues: FormValuesTransformed = {
+    const transformedValues: TFormValuesTransformed = {
       ...normalizedValues,
       currencies: transformedCurrencies,
       transformedFeeAsset,
@@ -489,6 +497,7 @@ const XcmTransferForm: FC<Props> = ({
             label="Recipient address"
             description="SS58 or Ethereum address"
             placeholder="Enter address"
+            rightSection={<AddressTooltip />}
             required
             data-testid="input-address"
             {...form.getInputProps('address')}
@@ -505,16 +514,11 @@ const XcmTransferForm: FC<Props> = ({
             />
           )}
 
-          <Stack gap="xs">
-            <XcmApiCheckbox
-              {...form.getInputProps('useApi', { type: 'checkbox' })}
-            />
+          <XcmApiCheckbox
+            {...form.getInputProps('useApi', { type: 'checkbox' })}
+          />
 
-            <Checkbox
-              label="Use XCM Format Check ✅"
-              {...form.getInputProps('useXcmFormatCheck', { type: 'checkbox' })}
-            />
-          </Stack>
+          <AdvancedOptions form={form} />
 
           {selectedAccount ? (
             <Button.Group>

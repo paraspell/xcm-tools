@@ -1,22 +1,19 @@
-import type { UseFormReturnType } from '@mantine/form';
+import type { SetFieldValue, UseFormReturnType } from '@mantine/form';
 import { useEffect } from 'react';
 
 import { useWallet } from './useWallet';
 
-export const useAutoFillWalletAddress = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TFormValues extends Record<string, any>,
->(
-  form: UseFormReturnType<TFormValues>,
-  fieldName: keyof TFormValues,
-): void => {
+export const useAutoFillWalletAddress = <T>(
+  form: UseFormReturnType<T>,
+  field: Parameters<SetFieldValue<T>>[0],
+) => {
   const { selectedAccount } = useWallet();
 
   useEffect(() => {
     if (selectedAccount?.address) {
       form.setFieldValue(
-        fieldName as string,
-        selectedAccount.address as TFormValues[typeof fieldName],
+        field,
+        selectedAccount.address as Parameters<SetFieldValue<T>>[1],
       );
     }
   }, [selectedAccount?.address]);

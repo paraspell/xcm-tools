@@ -4,16 +4,19 @@ import type { TSubstrateChain } from '@paraspell/sdk';
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
+import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import { useAutoFillWalletAddress, useWallet } from '../../hooks';
-import { isValidWalletAddress } from '../../utils';
+import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import type { TAdvancedOptions } from '../../types';
+import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
 import {
   parseAsAssetClaimChain,
   parseAsRecipientAddress,
-} from '../../utils/routes/parsers';
+} from '../../utils/parsers';
+import { AdvancedOptions } from '../AdvancedOptions';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
-import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { AddressTooltip, AmountTooltip } from '../Tooltip';
 
 export const ASSET_CLAIM_SUPPORTED_CHAINS: TSubstrateChain[] = [
   'Polkadot',
@@ -22,15 +25,15 @@ export const ASSET_CLAIM_SUPPORTED_CHAINS: TSubstrateChain[] = [
   'AssetHubKusama',
 ];
 
-export type FormValues = {
+export type TAssetClaimFormValues = {
   from: TSubstrateChain;
   address: string;
   amount: string;
   useApi: boolean;
-};
+} & TAdvancedOptions;
 
 type Props = {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: TAssetClaimFormValues) => void;
   loading: boolean;
 };
 
@@ -40,21 +43,24 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     amount: parseAsString.withDefault(''),
     address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
     useApi: parseAsBoolean.withDefault(false),
+    ...advancedOptionsParsers,
   });
 
-  const form = useForm<FormValues>({
+  const form = useForm<TAssetClaimFormValues>({
+    name: MAIN_FORM_NAME,
     initialValues: queryState,
-
     validate: {
       address: (value) =>
         isValidWalletAddress(value) ? null : 'Invalid address',
       amount: (value) => {
         return Number(value) > 0 ? null : 'Amount must be greater than 0';
       },
+      apiOverrides: { endpoints: { url: validateCustomEndpoint } },
     },
   });
 
   useAutoFillWalletAddress(form, 'address');
+
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
@@ -89,7 +95,9 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
 
           <TextInput
             label="Recipient address"
+            description="SS58 or Ethereum address"
             placeholder="Enter address"
+            rightSection={<AddressTooltip />}
             required
             data-testid="input-address"
             {...form.getInputProps('address')}
@@ -97,7 +105,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
 
           <TextInput
             label="Amount"
-            rightSection={<CurrencyInfo />}
+            rightSection={<AmountTooltip />}
             placeholder="0"
             required
             data-testid="input-amount"
@@ -107,6 +115,8 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}
           />
+
+          <AdvancedOptions form={form} hideVersionAndPallet />
 
           {selectedAccount ? (
             <Button type="submit" loading={loading} data-testid="submit">

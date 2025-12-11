@@ -101,7 +101,7 @@ export const XcmAnalyser = () => {
   return (
     <Container px="xl" pb="xl">
       <Stack gap="xs">
-        <Stack w="100%" maw={460} mx="auto" gap="0">
+        <Stack w="100%" maw={480} mx="auto" gap="0">
           <Box px="xl" pb="xl">
             <Center mb="xs">
               <Title order={2}>XCM Analyser 🔎 </Title>

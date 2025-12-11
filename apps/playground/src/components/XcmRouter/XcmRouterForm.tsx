@@ -48,25 +48,31 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
+import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import {
   useAutoFillWalletAddress,
   useRouterCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import type { TRouterSubmitType, TWalletAccount } from '../../types';
-import { isValidWalletAddress } from '../../utils';
+import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import type {
+  TAdvancedOptions,
+  TRouterSubmitType,
+  TWalletAccount,
+} from '../../types';
+import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
 import {
   parseAsChain,
   parseAsExchangeChain,
   parseAsRecipientAddress,
   parseAsSubstrateChain,
-} from '../../utils/routes/parsers';
+} from '../../utils/parsers';
 import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
+import { AdvancedOptions } from '../AdvancedOptions';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
-import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { AmountTooltip } from '../Tooltip';
 import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
 
 export type TRouterFormValues = {
@@ -81,7 +87,7 @@ export type TRouterFormValues = {
   useApi: boolean;
   evmSigner?: PolkadotSigner;
   evmInjectorAddress?: string;
-};
+} & TAdvancedOptions;
 
 export type TRouterFormValuesTransformed = Omit<
   TRouterFormValues,
@@ -144,13 +150,14 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
     recipientAddress: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
-    slippagePct: parseAsString.withDefault(''),
+    slippagePct: parseAsString.withDefault('1'),
     useApi: parseAsBoolean.withDefault(false),
+    ...advancedOptionsParsers,
   });
 
   const form = useForm<TRouterFormValues>({
+    name: MAIN_FORM_NAME,
     initialValues: queryState,
-
     validate: {
       recipientAddress: (value) =>
         isValidWalletAddress(value) ? null : 'Invalid address',
@@ -168,6 +175,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       },
       amount: (value) => {
         return Number(value) > 0 ? null : 'Amount must be greater than 0';
+      },
+      apiOverrides: {
+        endpoints: { url: validateCustomEndpoint },
       },
     },
     validateInputOnChange: ['exchange'],
@@ -526,7 +536,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             placeholder="0"
             flex={1}
             required
-            rightSection={<CurrencyInfo />}
+            rightSection={<AmountTooltip />}
             data-testid="input-amount"
             {...form.getInputProps('amount')}
           />
@@ -558,6 +568,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
               </Button>
             </Button.Group>
           </Group>
+
+          <AdvancedOptions
+            form={form}
+            hideVersionAndPallet
+            hideLocalAccount
+            hideXcmFormatCheck
+          />
 
           {selectedAccountPolkadot ? (
             <Button.Group>

@@ -58,7 +58,10 @@ export const showSuccessNotification = (
   notifToUpdateId: string | undefined,
   title: string,
   message: string,
+  autoClose?: boolean,
 ) => {
+  const autoCloseDuration = autoClose ? 5000 : false;
+
   if (!notifToUpdateId) {
     return notifications.show({
       color: 'teal',
@@ -66,7 +69,8 @@ export const showSuccessNotification = (
       message,
       icon: checkIcon,
       loading: false,
-      autoClose: 2000,
+      withCloseButton: true,
+      autoClose: autoCloseDuration,
     });
   }
 
@@ -77,6 +81,7 @@ export const showSuccessNotification = (
     message: message,
     icon: checkIcon,
     loading: false,
-    autoClose: 2000,
+    withCloseButton: true,
+    autoClose: autoCloseDuration,
   });
 };

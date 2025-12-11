@@ -4,14 +4,14 @@ import type { TExchangeChain } from '@paraspell/xcm-router';
 import { EXCHANGE_CHAINS } from '@paraspell/xcm-router';
 import { createParser } from 'nuqs';
 
-import { ASSET_CLAIM_SUPPORTED_CHAINS } from '../../components/AssetClaim/AssetClaimForm';
+import { ASSET_CLAIM_SUPPORTED_CHAINS } from '../components/AssetClaim/AssetClaimForm';
 import type {
   TCurrencyType,
   TCustomCurrencySymbolSpecifier,
-} from '../../components/AssetsQueries/AssetsQueriesForm';
-import { ASSET_QUERIES, PALLETS_QUERIES } from '../../consts';
-import type { TAssetsQuery, TPalletsQuery } from '../../types';
-import { isValidWalletAddress } from '../validationUtils';
+} from '../components/AssetsQueries/AssetsQueriesForm';
+import { ASSET_QUERIES, PALLETS_QUERIES } from '../consts';
+import type { TAssetsQuery, TPalletsQuery } from '../types';
+import { isValidWalletAddress } from './validationUtils';
 
 function isValidSubstrateChain(value: string | null): value is TSubstrateChain {
   return value !== null && SUBSTRATE_CHAINS.includes(value as TSubstrateChain);

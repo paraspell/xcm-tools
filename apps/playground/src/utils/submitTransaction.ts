@@ -2,9 +2,15 @@ import type { TPapiTransaction } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import type {
+  PolkadotClient,
+  PolkadotSigner,
+  TxFinalizedPayload,
+} from 'polkadot-api';
 
-export const submitTransaction = async (
+import type { TApiType } from '../types';
+
+export const submitTransactionPjs = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
@@ -67,4 +73,29 @@ export const submitTransactionPapi = async (
       },
     });
   });
+};
+
+export const submitTx = async (
+  apiType: TApiType,
+  api: ApiPromise | PolkadotClient,
+  tx: Extrinsic | TPapiTransaction,
+  signer: PolkadotSigner | Signer,
+  address: string,
+  onSign?: () => void,
+) => {
+  if (apiType === 'PAPI') {
+    await submitTransactionPapi(
+      tx as TPapiTransaction,
+      signer as PolkadotSigner,
+      onSign,
+    );
+  } else {
+    await submitTransactionPjs(
+      api as ApiPromise,
+      tx as Extrinsic,
+      signer as Signer,
+      address,
+      onSign,
+    );
+  }
 };
