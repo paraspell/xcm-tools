@@ -1,3 +1,4 @@
+import type { TChain, Version } from '@paraspell/sdk';
 import type { IconProps } from '@tabler/icons-react';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
@@ -66,3 +67,24 @@ export type TRouterSubmitType =
   | 'getMinTransferableAmount'
   | 'getTransferableAmount'
   | 'dryRun';
+
+export type TEndpoint = {
+  url: string;
+};
+
+export type TChainApiOverride = {
+  chain: TChain;
+  endpoints: TEndpoint[];
+};
+
+export type TAdvancedOptions = {
+  from?: TChain;
+  apiOverrides: TChainApiOverride[];
+  development?: boolean;
+  abstractDecimals?: boolean;
+  xcmFormatCheck?: boolean;
+  localAccount?: string;
+  xcmVersion: Version | null;
+  pallet?: string;
+  method?: string;
+};

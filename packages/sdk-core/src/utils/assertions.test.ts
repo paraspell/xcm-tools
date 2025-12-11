@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { MissingParameterError } from '../errors'
-import { assertSenderAddress } from './assertions'
+import { InvalidAddressError, MissingParameterError } from '../errors'
+import { assertDerivationPath, assertSenderAddress } from './assertions'
 
 describe('assertions', () => {
   describe('assertSenderAddress', () => {
@@ -10,6 +10,12 @@ describe('assertions', () => {
     })
     it('should not throw if address is a string', () => {
       expect(() => assertSenderAddress('some-address')).not.toThrow()
+    })
+  })
+
+  describe('assertDerivationPath', () => {
+    it('should throw if path is undefined', () => {
+      expect(() => assertDerivationPath(undefined)).toThrow(InvalidAddressError)
     })
   })
 })

@@ -58,9 +58,6 @@ export const getTxFromApi = async <T>(
     {
       ...params,
       senderAddress,
-      options: {
-        abstractDecimals: true,
-      },
     },
     endpoint,
     method,

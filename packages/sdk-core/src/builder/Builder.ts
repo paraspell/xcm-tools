@@ -9,7 +9,6 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import {
   BatchValidationError,
   DryRunFailedError,
-  InvalidAddressError,
   ScenarioNotSupportedError,
   UnableToComputeError
 } from '../errors'
@@ -39,6 +38,7 @@ import type {
 } from '../types'
 import {
   assertAddressIsString,
+  assertDerivationPath,
   assertSenderAddress,
   assertToIsString,
   createTx,
@@ -593,12 +593,7 @@ export class GeneralBuilder<
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress & TBuilderInternalOptions>
   ) {
     const { path } = this._options
-    if (!path) {
-      throw new InvalidAddressError(
-        'Sender address needs to be a derivation path to sign and submit transaction using this method.'
-      )
-    }
-
+    assertDerivationPath(path)
     const { tx } = await this.buildInternal()
     return this.api.signAndSubmit(tx, path)
   }

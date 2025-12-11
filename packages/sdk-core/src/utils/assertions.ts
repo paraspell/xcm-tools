@@ -48,3 +48,11 @@ export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWith
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
   }
 }
+
+export const assertDerivationPath: (path: string | undefined) => asserts path is string = path => {
+  if (!path) {
+    throw new InvalidAddressError(
+      'Sender address needs to be a derivation path to sign and submit transaction using this method.'
+    )
+  }
+}

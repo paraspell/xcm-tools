@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
-import { DryRunFailedError, InvalidAddressError } from '../errors'
+import { DryRunFailedError } from '../errors'
 import {
   claimAssets,
   getMinTransferableAmount,
@@ -29,7 +29,13 @@ import type {
   TTransferInfo,
   TXcmFeeDetail
 } from '../types'
-import { assertAddressIsString, assertSenderAddress, assertToIsString, isConfig } from '../utils'
+import {
+  assertAddressIsString,
+  assertDerivationPath,
+  assertSenderAddress,
+  assertToIsString,
+  isConfig
+} from '../utils'
 import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
 
@@ -1400,23 +1406,10 @@ describe('Builder', () => {
         .senderAddress(derivationPath)
         .signAndSubmit()
 
+      expect(assertDerivationPath).toHaveBeenCalledWith(derivationPath)
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
       expect(submitSpy).toHaveBeenCalledWith(mockExtrinsic, derivationPath)
       expect(result).toBe(mockTxHash)
-    })
-
-    it('should throw InvalidAddressError when senderAddress is not a derivation path', async () => {
-      const regularAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-
-      await expect(
-        Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress(regularAddress)
-          .signAndSubmit()
-      ).rejects.toThrow(InvalidAddressError)
     })
   })
 })

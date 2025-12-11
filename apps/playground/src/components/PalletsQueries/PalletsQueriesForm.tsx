@@ -11,7 +11,7 @@ import type { TPalletsQuery } from '../../types';
 import {
   parseAsPalletsQuery,
   parseAsSubstrateChain,
-} from '../../utils/routes/parsers';
+} from '../../utils/parsers';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 

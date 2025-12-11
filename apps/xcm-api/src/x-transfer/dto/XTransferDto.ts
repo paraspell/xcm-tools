@@ -44,7 +44,7 @@ export const BuilderOptionsSchema = z
     abstractDecimals: z.boolean().optional(),
     xcmFormatCheck: z.boolean().optional(),
   })
-  .strict();
+  .strip();
 
 const AmountSchema = z.union([
   z.string().refine(validateAmount, {
@@ -126,14 +126,14 @@ export const XTransferDtoSchema = z
     ]),
     currency: CurrencySchema,
     feeAsset: CurrencyCoreSchema.optional(),
-    xcmVersion: z.enum(versionValues).optional(),
+    xcmVersion: z.enum(versionValues).optional().nullable(),
     pallet: z.string().optional(),
     method: z.string().optional(),
     senderAddress: z.string().optional(),
     ahAddress: z.string().optional(),
     options: BuilderOptionsSchema.optional(),
   })
-  .strict();
+  .strip();
 
 export const XTransferDtoWSenderAddressSchema = XTransferDtoSchema.extend({
   senderAddress: z.string().min(1, { message: 'Sender address is required' }),

@@ -16,31 +16,30 @@ import type {
   TPapiApiOrUrl,
   WithComplexAmount,
 } from '@paraspell/sdk';
-import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import {
+  BatchMode,
   Foreign,
   ForeignAbstract,
   getOtherAssets,
   isRelayChain,
   Native,
   Override,
+  replaceBigInt,
   type TLocation,
   type TPapiTransaction,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
-import type { Signer } from '@polkadot/api/types';
-import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import {
+  createBuilderOptions,
   fetchFromApi,
   getTxFromApi,
-  submitTransaction,
-  submitTransactionPapi,
+  resolveSenderAddress,
+  submitTx,
 } from '../../utils';
 import {
   showErrorNotification,
@@ -52,8 +51,8 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type {
-  FormValuesTransformed,
   TCurrencyEntryTransformed,
+  TFormValuesTransformed,
 } from './XcmTransferForm';
 import XcmTransferForm from './XcmTransferForm';
 
@@ -81,8 +80,9 @@ const XcmTransfer = () => {
 
   const [output, setOutput] = useState<string>();
 
-  const [batchItems, setBatchItems] = useState<FormValuesTransformed[]>([]);
-  const [lastFormValues, setLastFormValues] = useState<FormValuesTransformed>();
+  const [batchItems, setBatchItems] = useState<TFormValuesTransformed[]>([]);
+  const [lastFormValues, setLastFormValues] =
+    useState<TFormValuesTransformed>();
   const [currentPage, setCurrentPage] = useState(1);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
@@ -96,7 +96,7 @@ const XcmTransfer = () => {
   }, [error, scrollIntoView]);
 
   const determineCurrency = (
-    { from }: FormValuesTransformed,
+    { from }: TFormValuesTransformed,
     {
       isCustomCurrency,
       customCurrency,
@@ -172,7 +172,7 @@ const XcmTransfer = () => {
   };
 
   const determineFeeAsset = (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     transformedFeeAsset?: TCurrencyEntryTransformed,
   ): TCurrencyInput | undefined => {
     if (!transformedFeeAsset) return undefined;
@@ -186,32 +186,8 @@ const XcmTransfer = () => {
     return undefined;
   };
 
-  const submitTx = async (
-    api: ApiPromise | PolkadotClient,
-    tx: Extrinsic | TPapiTransaction,
-    signer: PolkadotSigner | Signer,
-    address: string,
-    onSign?: () => void,
-  ) => {
-    if (apiType === 'PAPI') {
-      await submitTransactionPapi(
-        tx as TPapiTransaction,
-        signer as PolkadotSigner,
-        onSign,
-      );
-    } else {
-      await submitTransaction(
-        api as ApiPromise,
-        tx as Extrinsic,
-        signer as Signer,
-        address,
-        onSign,
-      );
-    }
-  };
-
   const submitBatch = async (
-    items: FormValuesTransformed[],
+    items: TFormValuesTransformed[],
     batchMode: `${BatchMode}`,
   ) => {
     if (!selectedAccount) {
@@ -244,7 +220,12 @@ const XcmTransfer = () => {
 
     const firstItem = items[0];
 
+    const builderOptions = createBuilderOptions(firstItem);
+
+    const senderAddress = firstItem.localAccount ?? selectedAccount.address;
+
     let api;
+
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (firstItem.useApi) {
@@ -252,19 +233,25 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
+              const { feeAsset, transformedFeeAsset, ...safeValues } = item;
               const currencyInputs = item.currencies.map((c) => ({
                 ...determineCurrency(item, c),
                 amount: c.amount,
               }));
               return {
-                ...item,
+                ...safeValues,
+                feeAsset: determineFeeAsset(item, transformedFeeAsset),
+                senderAddress,
                 currency:
                   currencyInputs.length === 1
                     ? currencyInputs[0]
                     : (currencyInputs as TCurrencyCore[]),
               };
             }),
-            options: { mode: batchMode },
+            options: {
+              mode: batchMode,
+              ...builderOptions,
+            },
           },
           api,
           '/x-transfer-batch',
@@ -280,42 +267,27 @@ const XcmTransfer = () => {
 
         const [firstItem, ...restItems] = items;
 
-        const {
-          from,
-          to,
-          currencies,
-          transformedFeeAsset,
-          address,
-          ahAddress,
-        } = firstItem;
-        const currencyInputs = currencies.map((c) => ({
-          ...determineCurrency(firstItem, c),
-          amount: c.amount,
-        }));
-
-        let builder = Builder({
-          abstractDecimals: true,
-        })
-          .from(from)
-          .to(to)
-          .currency(
-            currencyInputs.length === 1
-              ? currencyInputs[0]
-              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-          )
-          .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
-          .address(address)
-          .senderAddress(selectedAccount.address)
-          .ahAddress(ahAddress)
-          .addToBatch();
-
-        for (const item of restItems) {
-          const { from, to, currencies, address } = item;
+        const addToBatch = (
+          builder: GeneralBuilder,
+          item: TFormValuesTransformed,
+        ) => {
+          const {
+            from,
+            to,
+            currencies,
+            address,
+            ahAddress,
+            transformedFeeAsset,
+            xcmVersion,
+            pallet,
+            method,
+          } = item;
           const currencyInputs = currencies.map((c) => ({
             ...determineCurrency(item, c),
             amount: c.amount,
           }));
-          builder = builder
+
+          let tmpBuilder = builder
             .from(from)
             .to(to)
             .currency(
@@ -325,8 +297,25 @@ const XcmTransfer = () => {
             )
             .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
             .address(address)
-            .senderAddress(selectedAccount.address)
-            .addToBatch();
+            .senderAddress(senderAddress)
+            .ahAddress(ahAddress);
+
+          if (xcmVersion) {
+            tmpBuilder = tmpBuilder.xcmVersion(xcmVersion);
+          }
+
+          if (pallet && method) {
+            tmpBuilder = tmpBuilder.customPallet(pallet, method);
+          }
+
+          return tmpBuilder.addToBatch();
+        };
+
+        const initialBuilder = Builder(builderOptions);
+        let builder = addToBatch(initialBuilder, firstItem);
+
+        for (const item of restItems) {
+          builder = addToBatch(builder, item);
         }
 
         tx = await builder.buildBatch({ mode: BatchMode[batchMode] });
@@ -335,7 +324,7 @@ const XcmTransfer = () => {
 
       const signer = await getSigner();
 
-      await submitTx(api, tx, signer, selectedAccount.address, () => {
+      await submitTx(apiType, api, tx, signer, selectedAccount.address, () => {
         notifId = showLoadingNotification(
           'Processing',
           'Transaction is being processed',
@@ -372,11 +361,13 @@ const XcmTransfer = () => {
   };
 
   const performDryRun = async (
-    formValues: FormValuesTransformed,
-    selectedAccount: { address: string },
+    formValues: TFormValuesTransformed,
+    senderAddress: string,
     submitType: 'dryRun' | 'dryRunPreview',
     notifId: string | undefined,
   ) => {
+    const builderOptions = createBuilderOptions(formValues);
+
     const Sdk =
       apiType === 'PAPI'
         ? await import('@paraspell/sdk')
@@ -394,8 +385,12 @@ const XcmTransfer = () => {
       transformedFeeAsset,
       address,
       ahAddress,
+      xcmVersion,
+      pallet,
+      method,
       useApi,
     } = formValues;
+
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
       amount: c.amount,
@@ -403,18 +398,24 @@ const XcmTransfer = () => {
 
     let result;
     if (useApi) {
-      const { useApi, currencies, useXcmFormatCheck, ...safeFormValues } =
-        formValues;
+      const {
+        useApi,
+        currencies,
+        feeAsset,
+        transformedFeeAsset,
+        abstractDecimals,
+        ...safeFormValues
+      } = formValues;
       result = await fetchFromApi(
         {
           ...safeFormValues,
           options: {
-            abstractDecimals: true,
+            ...builderOptions,
             ...(submitType === 'dryRunPreview'
               ? { mintFeeAssets: true }
               : undefined),
           },
-          senderAddress: selectedAccount.address,
+          senderAddress,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
@@ -424,9 +425,7 @@ const XcmTransfer = () => {
         true,
       );
     } else {
-      const builder = Builder({
-        abstractDecimals: true,
-      })
+      let builder = Builder(builderOptions)
         .from(from)
         .to(to)
         .currency(
@@ -436,8 +435,16 @@ const XcmTransfer = () => {
         )
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address)
-        .senderAddress(selectedAccount.address)
+        .senderAddress(senderAddress)
         .ahAddress(ahAddress);
+
+      if (xcmVersion) {
+        builder = builder.xcmVersion(xcmVersion);
+      }
+
+      if (pallet && method) {
+        builder = builder.customPallet(pallet, method);
+      }
 
       result =
         submitType === 'dryRun'
@@ -452,9 +459,11 @@ const XcmTransfer = () => {
   };
 
   const submit = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => {
+    const builderOptions = createBuilderOptions(formValues);
+
     const {
       from,
       to,
@@ -462,8 +471,11 @@ const XcmTransfer = () => {
       transformedFeeAsset,
       address,
       ahAddress,
+      xcmVersion,
+      localAccount,
+      pallet,
+      method,
       useApi,
-      useXcmFormatCheck,
     } = formValues;
 
     if (submitType === 'delete') {
@@ -522,10 +534,7 @@ const XcmTransfer = () => {
       return;
     }
 
-    if (!selectedAccount) {
-      showErrorNotification('No account selected, connect wallet first');
-      throw Error('No account selected!');
-    }
+    const senderAddress = resolveSenderAddress(localAccount, selectedAccount);
 
     setLoading(true);
     let notifId = showLoadingNotification(
@@ -550,7 +559,7 @@ const XcmTransfer = () => {
     let api;
     try {
       if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
-        await performDryRun(formValues, selectedAccount, submitType, notifId);
+        await performDryRun(formValues, senderAddress, submitType, notifId);
         return;
       }
 
@@ -562,33 +571,38 @@ const XcmTransfer = () => {
       });
 
       let tx: Extrinsic | TPapiTransaction | undefined;
+      let hash: string | undefined;
+
       if (useApi) {
         api = await Sdk.createChainClient(from);
-        const { useApi, useXcmFormatCheck, currencies, ...safeFormValues } =
-          formValues;
+        const {
+          useApi,
+          currencies,
+          apiOverrides,
+          development,
+          feeAsset,
+          transformedFeeAsset,
+          abstractDecimals,
+          ...safeFormValues
+        } = formValues;
+
         tx = await getTxFromApi(
           {
             ...safeFormValues,
-            options: {
-              abstractDecimals: true,
-              xcmFormatCheck: useXcmFormatCheck,
-            },
+            options: builderOptions,
             feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
               currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           },
           api,
           '/x-transfer',
-          selectedAccount.address,
+          senderAddress,
           apiType,
           'POST',
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
-          xcmFormatCheck: useXcmFormatCheck,
-        })
+        let builder = Builder(builderOptions)
           .from(from)
           .to(to)
           .currency(
@@ -598,31 +612,51 @@ const XcmTransfer = () => {
           )
           .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
           .address(address)
-          .senderAddress(selectedAccount.address)
+          .senderAddress(senderAddress)
           .ahAddress(ahAddress);
-        tx = await builder.build();
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
+        }
+
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
+        }
+
+        if (localAccount) hash = await builder.signAndSubmit();
+        else tx = await builder.build();
+
         api = builder.getApi();
       }
 
-      if (!tx) {
-        throw Error('Transaction is undefined');
-      }
       if (!api) {
         throw Error('API is undefined');
       }
 
-      await submitTx(api, tx, signer, selectedAccount.address, () => {
-        notifId = showLoadingNotification(
-          'Processing',
-          'Transaction is being processed',
-          notifId,
+      if (tx) {
+        await submitTx(apiType, api, tx, signer, senderAddress, () => {
+          notifId = showLoadingNotification(
+            'Processing',
+            'Transaction is being processed',
+            notifId,
+          );
+        });
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          'Transaction was successful',
         );
-      });
-      showSuccessNotification(
-        notifId ?? '',
-        'Success',
-        'Transaction was successful',
-      );
+      } else if (hash) {
+        setOutput(`'Transaction was submitted. Hash: ${hash}'`);
+        openOutputAlert();
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          `Transaction was submitted`,
+        );
+      } else {
+        throw Error('No transaction or hash to submit');
+      }
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
@@ -638,7 +672,7 @@ const XcmTransfer = () => {
   };
 
   const onSubmit = (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => void submit(formValues, submitType);
 
@@ -658,7 +692,7 @@ const XcmTransfer = () => {
         onBatchTypeSelect={onBatchTypeSelect}
       />
       <Stack gap="xl">
-        <Stack w="100%" maw={460} mx="auto" gap="0">
+        <Stack w="100%" maw={480} mx="auto" gap="0">
           <Box px="xl" pb="xl">
             <Center mb="xs">
               <Title order={2}>XCM Transfer 🪄</Title>

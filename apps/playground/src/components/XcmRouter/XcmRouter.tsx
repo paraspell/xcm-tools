@@ -12,7 +12,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TSubstrateChain } from '@paraspell/sdk';
+import type { TBuilderConfig, TSubstrateChain, TUrl } from '@paraspell/sdk';
 import {
   getOtherAssets,
   replaceBigInt,
@@ -21,7 +21,6 @@ import {
 } from '@paraspell/sdk';
 import type {
   TExchangeInput,
-  TRouterBuilderOptions,
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
@@ -39,7 +38,11 @@ import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
 import { useWallet } from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
-import { fetchFromApi, submitTransactionPapi } from '../../utils';
+import {
+  createBuilderOptions,
+  fetchFromApi,
+  submitTransactionPapi,
+} from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -49,10 +52,6 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import { TransferStepper } from './TransferStepper';
-
-const builderOptions: TRouterBuilderOptions = {
-  abstractDecimals: true,
-};
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -172,6 +171,7 @@ export const XcmRouter = () => {
     exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const {
       from,
@@ -214,6 +214,7 @@ export const XcmRouter = () => {
     exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const { currencyFrom, currencyTo, from } = formValues;
 
@@ -304,6 +305,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
     senderAddress: string,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const {
       useApi,
@@ -378,6 +380,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
     senderAddress: string,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const {
       useApi,
@@ -456,6 +459,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
     senderAddress: string,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const {
       useApi,
@@ -534,6 +538,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
     senderAddress: string,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const {
       useApi,
@@ -608,6 +613,7 @@ export const XcmRouter = () => {
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
+    builderOptions: TBuilderConfig<TUrl>,
   ) => {
     const { useApi, from, to, currencyFrom, currencyTo } = formValues;
 
@@ -671,6 +677,8 @@ export const XcmRouter = () => {
       throw Error('No account selected!');
     }
 
+    const builderOptions = createBuilderOptions(formValues);
+
     closeOutputAlert();
 
     const exchange = (
@@ -680,7 +688,7 @@ export const XcmRouter = () => {
     ) as TExchangeInput;
 
     if (submitType === 'getBestAmountOut') {
-      await submitGetBestAmountOut(formValues, exchange);
+      await submitGetBestAmountOut(formValues, exchange, builderOptions);
       return;
     }
 
@@ -689,6 +697,7 @@ export const XcmRouter = () => {
         formValues,
         exchange,
         selectedAccount.address,
+        builderOptions,
       );
       return;
     }
@@ -698,17 +707,28 @@ export const XcmRouter = () => {
         formValues,
         exchange,
         selectedAccount.address,
+        builderOptions,
       );
       return;
     }
 
     if (submitType === 'getXcmFee') {
-      await submitGetXcmFee(formValues, exchange, selectedAccount.address);
+      await submitGetXcmFee(
+        formValues,
+        exchange,
+        selectedAccount.address,
+        builderOptions,
+      );
       return;
     }
 
     if (submitType === 'dryRun') {
-      await submitDryRun(formValues, exchange, selectedAccount.address);
+      await submitDryRun(
+        formValues,
+        exchange,
+        selectedAccount.address,
+        builderOptions,
+      );
       return;
     }
 
@@ -748,6 +768,7 @@ export const XcmRouter = () => {
           exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
+          builderOptions,
         );
       } else {
         await submitUsingRouterModule(
@@ -755,6 +776,7 @@ export const XcmRouter = () => {
           exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
+          builderOptions,
         );
       }
       setRunConfetti(true);
@@ -801,7 +823,7 @@ export const XcmRouter = () => {
   return (
     <Container px="xl" pb="128">
       <Stack gap="xl">
-        <Stack w="100%" maw={460} mx="auto" gap="0">
+        <Stack w="100%" maw={480} mx="auto" gap="0">
           <Box px="xl" pb="xl">
             <Center>
               <Image src="/spellrouter.png" fit="contain" w={220} p={8} />

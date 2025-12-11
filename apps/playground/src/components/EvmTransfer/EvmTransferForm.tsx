@@ -27,9 +27,9 @@ import {
   parseAsChain,
   parseAsEvmChain,
   parseAsRecipientAddress,
-} from '../../utils/routes/parsers';
-import { CurrencyInfo } from '../CurrencyInfo';
+} from '../../utils/parsers';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { AmountTooltip } from '../Tooltip';
 
 export type FormValues = {
   from: TEvmChainFrom;
@@ -213,7 +213,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
 
           <TextInput
             label="Amount"
-            rightSection={<CurrencyInfo />}
+            rightSection={<AmountTooltip />}
             placeholder="0"
             required
             data-testid="input-amount"
