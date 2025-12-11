@@ -156,7 +156,7 @@ export const XcmRouterForm: FC<Props> = ({
     currencyToOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
     recipientAddress: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
-    slippagePct: parseAsString.withDefault(''),
+    slippagePct: parseAsString.withDefault('1'),
     useApi: parseAsBoolean.withDefault(false),
   });
 
