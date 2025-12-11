@@ -302,9 +302,9 @@ const XcmTransfer = () => {
               development: advancedOptionsQuery.isDevelopment,
               abstractDecimals: advancedOptionsQuery.abstractDecimals,
             },
-            pallet: advancedOptionsQuery.pallet,
-            method: advancedOptionsQuery.method,
-            xcmVersion: advancedOptionsQuery.xcmVersion,
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           },
           api,
           '/x-transfer-batch',
@@ -338,7 +338,6 @@ const XcmTransfer = () => {
           development: advancedOptionsQuery.isDevelopment,
           apiOverrides,
         })
-          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -370,6 +369,10 @@ const XcmTransfer = () => {
             .address(address)
             .senderAddress(selectedAccount.address)
             .addToBatch();
+        }
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
         }
 
         if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
@@ -489,9 +492,9 @@ const XcmTransfer = () => {
               ? { mintFeeAssets: true }
               : undefined),
           },
-          pallet: advancedOptionsQuery.pallet,
-          method: advancedOptionsQuery.method,
-          xcmVersion: advancedOptionsQuery.xcmVersion,
+          pallet: advancedOptionsQuery.pallet || undefined,
+          method: advancedOptionsQuery.method || undefined,
+          xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           senderAddress: selectedAccount.address,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
@@ -507,7 +510,6 @@ const XcmTransfer = () => {
         development: advancedOptionsQuery.isDevelopment,
         apiOverrides,
       })
-        .xcmVersion(advancedOptionsQuery.xcmVersion)
         .from(from)
         .to(to)
         .currency(
@@ -519,6 +521,10 @@ const XcmTransfer = () => {
         .address(address)
         .senderAddress(selectedAccount.address)
         .ahAddress(ahAddress);
+
+      if (advancedOptionsQuery.xcmVersion) {
+        builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+      }
 
       if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
         builder = builder.customPallet(
@@ -686,9 +692,9 @@ const XcmTransfer = () => {
               development: advancedOptionsQuery.isDevelopment,
               apiOverrides,
             },
-            pallet: advancedOptionsQuery.pallet,
-            method: advancedOptionsQuery.method,
-            xcmVersion: advancedOptionsQuery.xcmVersion,
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
             feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
               currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
@@ -707,7 +713,6 @@ const XcmTransfer = () => {
           xcmFormatCheck: useXcmFormatCheck,
           apiOverrides,
         })
-          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -719,6 +724,10 @@ const XcmTransfer = () => {
           .address(address)
           .senderAddress(selectedAccount.address)
           .ahAddress(ahAddress);
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        }
 
         if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
           builder = builder.customPallet(

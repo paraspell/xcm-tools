@@ -19,9 +19,7 @@ const advancedRouterOptionsQueryConfig = {
 };
 
 const advancedOptionsQueryConfig = {
-  xcmVersion: parseAsStringLiteral(Object.values(Version)).withDefault(
-    Version.V3,
-  ),
+  xcmVersion: parseAsStringLiteral(Object.values(Version)),
   pallet: parseAsString.withDefault(''),
   method: parseAsString.withDefault(''),
   ...advancedRouterOptionsQueryConfig,

@@ -259,9 +259,9 @@ const XcmUtils = () => {
               development: advancedOptionsQuery.isDevelopment,
               apiOverrides,
             },
-            pallet: advancedOptionsQuery.pallet,
-            method: advancedOptionsQuery.method,
-            xcmVersion: advancedOptionsQuery.xcmVersion,
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           },
           apiEndpoint,
           'POST',
@@ -273,7 +273,6 @@ const XcmUtils = () => {
           development: advancedOptionsQuery.isDevelopment,
           apiOverrides,
         })
-          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -285,6 +284,10 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        }
 
         if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
           builder = builder.customPallet(
@@ -422,9 +425,9 @@ const XcmUtils = () => {
               development: advancedOptionsQuery.isDevelopment,
               apiOverrides,
             },
-            pallet: advancedOptionsQuery.pallet,
-            method: advancedOptionsQuery.method,
-            xcmVersion: advancedOptionsQuery.xcmVersion,
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           },
           apiEndpoint,
           'POST',
@@ -436,7 +439,6 @@ const XcmUtils = () => {
           development: advancedOptionsQuery.isDevelopment,
           apiOverrides,
         })
-          .xcmVersion(advancedOptionsQuery.xcmVersion)
           .from(from)
           .to(to)
           .currency(
@@ -448,6 +450,10 @@ const XcmUtils = () => {
           .address(address)
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        }
 
         if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
           builder = builder.customPallet(
