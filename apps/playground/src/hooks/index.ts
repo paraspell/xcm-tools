@@ -1,3 +1,4 @@
+export * from './useAdvancedOptionsQuery';
 export * from './useAutoFillWalletAddress';
 export * from './useCurrencyOptions';
 export * from './useFeeCurrencyOptions';
