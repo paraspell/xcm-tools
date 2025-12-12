@@ -11,19 +11,21 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
   TBuilderOptions,
+  TChain,
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
   WithComplexAmount,
 } from '@paraspell/sdk';
-import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import {
+  BatchMode,
   Foreign,
   ForeignAbstract,
   getOtherAssets,
   isRelayChain,
   Native,
   Override,
+  replaceBigInt,
   type TLocation,
   type TPapiTransaction,
 } from '@paraspell/sdk';
@@ -34,7 +36,7 @@ import type { Signer } from '@polkadot/api/types';
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks';
+import { useAdvancedOptionsQuery, useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import {
   fetchFromApi,
@@ -47,6 +49,7 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import type { AdvancedOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import BatchTypeSelectModal from '../BatchTypeSelectModal/BatchTypeSelectModal';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
@@ -84,6 +87,9 @@ const XcmTransfer = () => {
   const [batchItems, setBatchItems] = useState<FormValuesTransformed[]>([]);
   const [lastFormValues, setLastFormValues] = useState<FormValuesTransformed>();
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [advancedOptionsQuery, setAdvancedOptionsQuery] =
+    useAdvancedOptionsQuery();
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -245,6 +251,18 @@ const XcmTransfer = () => {
     const firstItem = items[0];
 
     let api;
+
+    const apiOverrides =
+      advancedOptionsQuery.customEndpoints.length > 0
+        ? advancedOptionsQuery.customEndpoints.reduce(
+            (acc, ep) => ({
+              ...acc,
+              [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
+            }),
+            {} as Partial<Record<TChain, TPjsApiOrUrl>>,
+          )
+        : undefined;
+
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (firstItem.useApi) {
@@ -252,23 +270,45 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
+              const {
+                customEndpoints,
+                pallet,
+                method,
+                xcmVersion,
+                feeAsset,
+                transformedFeeAsset,
+                isDevelopment,
+                abstractDecimals,
+                ...safeValues
+              } = item;
               const currencyInputs = item.currencies.map((c) => ({
                 ...determineCurrency(item, c),
                 amount: c.amount,
               }));
               return {
-                ...item,
+                ...safeValues,
+                feeAsset: determineFeeAsset(item, transformedFeeAsset),
+                senderAddress: selectedAccount.address,
                 currency:
                   currencyInputs.length === 1
                     ? currencyInputs[0]
                     : (currencyInputs as TCurrencyCore[]),
               };
             }),
-            options: { mode: batchMode },
+
+            options: {
+              mode: batchMode,
+              apiOverrides,
+              development: advancedOptionsQuery.isDevelopment,
+              abstractDecimals: advancedOptionsQuery.abstractDecimals,
+            },
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           },
           api,
           '/x-transfer-batch',
-          selectedAccount.address,
+          selectedAccount.address, // This is probably unnecessary
           apiType,
           'POST',
           true,
@@ -294,7 +334,9 @@ const XcmTransfer = () => {
         }));
 
         let builder = Builder({
-          abstractDecimals: true,
+          abstractDecimals: advancedOptionsQuery.abstractDecimals,
+          development: advancedOptionsQuery.isDevelopment,
+          apiOverrides,
         })
           .from(from)
           .to(to)
@@ -327,6 +369,17 @@ const XcmTransfer = () => {
             .address(address)
             .senderAddress(selectedAccount.address)
             .addToBatch();
+        }
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        }
+
+        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
+          builder = builder.customPallet(
+            advancedOptionsQuery.pallet,
+            advancedOptionsQuery.method,
+          );
         }
 
         tx = await builder.buildBatch({ mode: BatchMode[batchMode] });
@@ -401,19 +454,47 @@ const XcmTransfer = () => {
       amount: c.amount,
     }));
 
+    const apiOverrides =
+      advancedOptionsQuery.customEndpoints.length > 0
+        ? advancedOptionsQuery.customEndpoints.reduce(
+            (acc, ep) => ({
+              ...acc,
+              [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
+            }),
+            {} as Partial<Record<TChain, TPjsApiOrUrl>>,
+          )
+        : undefined;
+
     let result;
     if (useApi) {
-      const { useApi, currencies, useXcmFormatCheck, ...safeFormValues } =
-        formValues;
+      const {
+        useApi,
+        currencies,
+        useXcmFormatCheck,
+        customEndpoints,
+        isDevelopment,
+        feeAsset,
+        transformedFeeAsset,
+        pallet,
+        method,
+        xcmVersion,
+        abstractDecimals,
+        ...safeFormValues
+      } = formValues;
       result = await fetchFromApi(
         {
           ...safeFormValues,
           options: {
-            abstractDecimals: true,
+            abstractDecimals: advancedOptionsQuery.abstractDecimals,
+            apiOverrides,
+            development: advancedOptionsQuery.isDevelopment,
             ...(submitType === 'dryRunPreview'
               ? { mintFeeAssets: true }
               : undefined),
           },
+          pallet: advancedOptionsQuery.pallet || undefined,
+          method: advancedOptionsQuery.method || undefined,
+          xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
           senderAddress: selectedAccount.address,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
@@ -424,8 +505,10 @@ const XcmTransfer = () => {
         true,
       );
     } else {
-      const builder = Builder({
-        abstractDecimals: true,
+      let builder = Builder({
+        abstractDecimals: advancedOptionsQuery.abstractDecimals,
+        development: advancedOptionsQuery.isDevelopment,
+        apiOverrides,
       })
         .from(from)
         .to(to)
@@ -438,6 +521,17 @@ const XcmTransfer = () => {
         .address(address)
         .senderAddress(selectedAccount.address)
         .ahAddress(ahAddress);
+
+      if (advancedOptionsQuery.xcmVersion) {
+        builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+      }
+
+      if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
+        builder = builder.customPallet(
+          advancedOptionsQuery.pallet,
+          advancedOptionsQuery.method,
+        );
+      }
 
       result =
         submitType === 'dryRun'
@@ -562,17 +656,45 @@ const XcmTransfer = () => {
       });
 
       let tx: Extrinsic | TPapiTransaction | undefined;
+      const apiOverrides =
+        advancedOptionsQuery.customEndpoints.length > 0
+          ? advancedOptionsQuery.customEndpoints.reduce(
+              (acc, ep) => ({
+                ...acc,
+                [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
+              }),
+              {} as Partial<Record<TChain, TPjsApiOrUrl>>,
+            )
+          : undefined;
+
       if (useApi) {
         api = await Sdk.createChainClient(from);
-        const { useApi, useXcmFormatCheck, currencies, ...safeFormValues } =
-          formValues;
+        const {
+          useApi,
+          useXcmFormatCheck,
+          currencies,
+          customEndpoints,
+          isDevelopment,
+          feeAsset,
+          transformedFeeAsset,
+          pallet,
+          method,
+          xcmVersion,
+          abstractDecimals,
+          ...safeFormValues
+        } = formValues;
         tx = await getTxFromApi(
           {
             ...safeFormValues,
             options: {
-              abstractDecimals: true,
+              abstractDecimals: advancedOptionsQuery.abstractDecimals,
               xcmFormatCheck: useXcmFormatCheck,
+              development: advancedOptionsQuery.isDevelopment,
+              apiOverrides,
             },
+            pallet: advancedOptionsQuery.pallet || undefined,
+            method: advancedOptionsQuery.method || undefined,
+            xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
             feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
               currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
@@ -585,9 +707,11 @@ const XcmTransfer = () => {
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
+        let builder = Builder({
+          abstractDecimals: advancedOptionsQuery.abstractDecimals,
+          development: advancedOptionsQuery.isDevelopment,
           xcmFormatCheck: useXcmFormatCheck,
+          apiOverrides,
         })
           .from(from)
           .to(to)
@@ -600,6 +724,18 @@ const XcmTransfer = () => {
           .address(address)
           .senderAddress(selectedAccount.address)
           .ahAddress(ahAddress);
+
+        if (advancedOptionsQuery.xcmVersion) {
+          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        }
+
+        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
+          builder = builder.customPallet(
+            advancedOptionsQuery.pallet,
+            advancedOptionsQuery.method,
+          );
+        }
+
         tx = await builder.build();
         api = builder.getApi();
       }
@@ -683,6 +819,10 @@ const XcmTransfer = () => {
             loading={loading}
             isBatchMode={batchItems.length > 0}
             isVisible={currentPage === batchItems.length + 1}
+            advancedOptions={advancedOptionsQuery as AdvancedOptions}
+            onAdvancedOptionsChange={(options) =>
+              void setAdvancedOptionsQuery(options)
+            }
           />
 
           {currentPage !== batchItems.length + 1 && (
@@ -692,6 +832,10 @@ const XcmTransfer = () => {
               loading={loading}
               isBatchMode={batchItems.length > 0}
               initialValues={batchItems[currentPage - 1]}
+              advancedOptions={advancedOptionsQuery as AdvancedOptions}
+              onAdvancedOptionsChange={(options) =>
+                void setAdvancedOptionsQuery(options)
+              }
             />
           )}
 

@@ -56,11 +56,11 @@ export const getTxFromApi = async <T>(
 ): Promise<Extrinsic | TPapiTransaction> => {
   const txHash = await fetchFromApi(
     {
-      ...params,
-      senderAddress,
       options: {
         abstractDecimals: true,
       },
+      ...params,
+      senderAddress,
     },
     endpoint,
     method,
