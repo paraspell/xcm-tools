@@ -52,7 +52,7 @@ Possible parameters:
 
 ```ts
 //Construct XCM call from Relay chain to Parachain (DMP)
-const response = await fetch('http://localhost:3001/v4/x-transfer', {
+const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer', {
 });
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
-const response = await fetch('http://localhost:3001/v4/x-transfer', {
+const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer', {
 });
 
 //Construct XCM call from Parachain to Parachain (HRMP)
-const response = await fetch('http://localhost:3001/v4/x-transfer', {
+const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer', {
 });
 
 //Construct local asset transfer
-const response = await fetch('http://localhost:3001/v4/x-transfer', {
+const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer', {
 
 //Construct custom location XCM call from Parachain to Parachain (HRMP)
 //locations can be customized for Destination, Address and Currency.
-const response = await fetch('http://localhost:3001/v4/x-transfer', {
+const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer', {
 });
 
 //Construct custom batch of XCM Calls
-const response = await fetch('http://localhost:3001/v4/x-transfer-batch', {
+const response = await fetch('http://localhost:3001/v5/x-transfer-batch', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ const response = await fetch('http://localhost:3001/v4/x-transfer-batch', {
 });
 
 //Construct asset claim call
-const response = await fetch('http://localhost:3001/v4/asset-claim', {
+const response = await fetch('http://localhost:3001/v5/asset-claim', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const response = await fetch('http://localhost:3001/v4/asset-claim', {
 });
 
 //DryRun your XCM calls to find whether they will execute
-const response = await fetch('http://localhost:3001/v4/dry-run', {
+const response = await fetch('http://localhost:3001/v5/dry-run', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ const response = await fetch('http://localhost:3001/v4/dry-run', {
 });
 
 //Preview dryrun result of different amount than you currently have
-const response = await fetch('http://localhost:3001/v4/dry-run-preview', {
+const response = await fetch('http://localhost:3001/v5/dry-run-preview', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ Possible parameters:
 - Inherited from concrete endpoint
 
 ```ts
-const response = await fetch("http://localhost:3001/v4/x-transfer", {
+const response = await fetch("http://localhost:3001/v5/x-transfer", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -250,7 +250,7 @@ Possible parameters:
 ```ts
 //Perform comprehensive transfer info query that will retrieve all details regarding fees and balances that will be changed by performing selected XCM call
 const response = await fetch(
-  'http://localhost:3001/v4/transfer-info' , {
+  'http://localhost:3001/v5/transfer-info' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -265,7 +265,7 @@ const response = await fetch(
 
 //Query maximal transferable balance for specific currency on specific account
 const response = await fetch(
-  'http://localhost:3001/v4/transferable-amount' , {
+  'http://localhost:3001/v5/transferable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -280,7 +280,7 @@ const response = await fetch(
 
 //Query minimal transferable balance for specific currency on specific account
 const response = await fetch(
-  'http://localhost:3001/v4/min-transferable-amount' , {
+  'http://localhost:3001/v5/min-transferable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ const response = await fetch(
 
 //Retrieve the amount of the currency that will be received on destination.
 const response = await fetch(
-  'http://localhost:3001/v4/receivable-amount' , {
+  'http://localhost:3001/v5/receivable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ const response = await fetch(
 
 //Verify whether the existential deposit will be met when XCM message will be sent to destination chain
 const response = await fetch(
-  'http://localhost:3001/v4/verify-ed-on-destination' , {
+  'http://localhost:3001/v5/verify-ed-on-destination' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ const response = await fetch(
   }),
 
 //XCM Fee (Origin & Destination) - More accurate (Using DryRun)
-const response = await fetch("http://localhost:3001/v4/xcm-fee", {
+const response = await fetch("http://localhost:3001/v5/xcm-fee", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -341,7 +341,7 @@ const response = await fetch("http://localhost:3001/v4/xcm-fee", {
 });
 
 //XCM Fee (Origin & Destination) - Less accurate (Using payment info)
-const response = await fetch("http://localhost:3001/v4/xcm-fee-estimate", {
+const response = await fetch("http://localhost:3001/v5/xcm-fee-estimate", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -356,7 +356,7 @@ const response = await fetch("http://localhost:3001/v4/xcm-fee-estimate", {
 });
 
 //XCM Fee (Origin) - More accurate (Using DryRun)
-const response = await fetch("http://localhost:3001/v4/origin-xcm-fee", {
+const response = await fetch("http://localhost:3001/v5/origin-xcm-fee", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -373,7 +373,7 @@ const response = await fetch("http://localhost:3001/v4/origin-xcm-fee", {
 });
 
 //XCM Fee (Origin) - Less accurate (Using payment info)
-const response = await fetch("http://localhost:3001/v4/origin-xcm-fee-estimate", {
+const response = await fetch("http://localhost:3001/v5/origin-xcm-fee-estimate", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -388,7 +388,7 @@ const response = await fetch("http://localhost:3001/v4/origin-xcm-fee-estimate",
 });
 
 // Retrieve specific asset balance for specific chain
-const response = await fetch("http://localhost:3001/v4/balance/:chain/asset", {
+const response = await fetch("http://localhost:3001/v5/balance/:chain", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -400,7 +400,7 @@ const response = await fetch("http://localhost:3001/v4/balance/:chain/asset", {
 });
 
 // Retrieve existential deposit for specific assets on selected chain
-const response = await fetch("http://localhost:3001/v4/balance/:chain/existential-deposit", {
+const response = await fetch("http://localhost:3001/v5/balance/:chain/existential-deposit", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -411,7 +411,7 @@ const response = await fetch("http://localhost:3001/v4/balance/:chain/existentia
 });
 
 // Convert SS58 address to Parachain specific format
-const response = await fetch('http://localhost:3001/v4/convert-ss58?address=:address&chain=:chain');
+const response = await fetch('http://localhost:3001/v5/convert-ss58?address=:address&chain=:chain');
 ```
 
 ### Asset queries
@@ -427,57 +427,57 @@ Possible parameters:
 ```ts
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
-const response = await fetch('http://localhost:3001/v4/assets/:chain/fee-assets');
+const response = await fetch('http://localhost:3001/v5/assets/:chain/fee-assets');
 
 // Retrieve assets object for a specific Parachain
-const response = await fetch('http://localhost:3001/v4/assets/:chain');
+const response = await fetch('http://localhost:3001/v5/assets/:chain');
 
 // Retrieve asset ID for particular Parachain and asset
 const response = await fetch(
-  'http://localhost:3001/v4/assets/:chain/id?symbol=:asset',
+  'http://localhost:3001/v5/assets/:chain/id?symbol=:asset',
 );
 
 // Retrieve the Relay chain asset Symbol for a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/v4/assets/:chain/relay-chain-symbol',
+  'http://localhost:3001/v5/assets/:chain/relay-chain-symbol',
 );
 
 // Retrieve native assets for a particular Parachain
-const response = await fetch('http://localhost:3001/v4/assets/:chain/native');
+const response = await fetch('http://localhost:3001/v5/assets/:chain/native');
 
 // Retrieve foreign assets for a particular Parachain
-const response = await fetch('http://localhost:3001/v4/assets/:chain/other');
+const response = await fetch('http://localhost:3001/v5/assets/:chain/other');
 
 // Retrieve all asset symbols for particular Parachain
-const response = await fetch('http://localhost:3001/v4/assets/:chain/all-symbols');
+const response = await fetch('http://localhost:3001/v5/assets/:chain/all-symbols');
 
 // Retrieve support for a particular asset on a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/v4/assets/:chain/has-support?symbol=:asset',
+  'http://localhost:3001/v5/assets/:chain/has-support?symbol=:asset',
 );
 
 // Retrieve decimals for a particular asset for a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/v4/assets/:chain/decimals?symbol=:asset',
+  'http://localhost:3001/v5/assets/:chain/decimals?symbol=:asset',
 );
 
 // Retrieve Parachain ID for a particular Parachain
-const response = await fetch('http://localhost:3001/v4/chains/:chain/para-id');
+const response = await fetch('http://localhost:3001/v5/chains/:chain/para-id');
 
 // Retrieve Parachain name from Parachain ID
-const response = await fetch('http://localhost:3001/v4/chains/:paraID?ecosystem=polkadot');
+const response = await fetch('http://localhost:3001/v5/chains/:paraID?ecosystem=polkadot');
 
 // Retrieve a list of implemented Parachains
-const response = await fetch('http://localhost:3001/v4/chains');
+const response = await fetch('http://localhost:3001/v5/chains');
 
 // Query list of chain WS endpoints
-const response = await fetch('http://localhost:3001/v4/chains/:chain/ws-endpoints');
+const response = await fetch('http://localhost:3001/v5/chains/:chain/ws-endpoints');
 
 // Query supported assets supported between two chains
-const response = await fetch('http://localhost:3001/v4/supported-assets?origin=:chain&destination=:chain');
+const response = await fetch('http://localhost:3001/v5/supported-assets?origin=:chain&destination=:chain');
 
 // Retrieve location for asset id or symbol for specific assets on selected chain
-const response = await fetch("http://localhost:3001/v4/assets/:chain/location", {
+const response = await fetch("http://localhost:3001/v5/assets/:chain/location", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -488,7 +488,7 @@ const response = await fetch("http://localhost:3001/v4/assets/:chain/location", 
 });
 
 // Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
-const response = await fetch("http://localhost:3001/v4/assets/:chain/asset-info", {
+const response = await fetch("http://localhost:3001/v5/assets/:chain/asset-info", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -500,7 +500,7 @@ const response = await fetch("http://localhost:3001/v4/assets/:chain/asset-info"
 });
 
 //Get chains that support the specific asset related to origin
-const response = await fetch("http://localhost:3001/v4/assets/:chain/supported-destinations", {
+const response = await fetch("http://localhost:3001/v5/assets/:chain/supported-destinations", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -521,22 +521,22 @@ Possible parameters:
 
 ```ts
 // Return default pallet for specific Parachain
-const response = await fetch('http://localhost:3001/v4/pallets/:chain/default');
+const response = await fetch('http://localhost:3001/v5/pallets/:chain/default');
 
 // Return an array of supported pallets for a specific Parachain
-const response = await fetch('http://localhost:3001/v4/pallets/:chain');
+const response = await fetch('http://localhost:3001/v5/pallets/:chain');
 
 // Return ID of the specific cross-chain pallet for specific Parachain
-const response = await fetch('http://localhost:3001/v4/pallets/:chain/index?pallet=XTokens');
+const response = await fetch('http://localhost:3001/v5/pallets/:chain/index?pallet=XTokens');
 
 // Return Parachain support for DryRun
-const response = await fetch('http://localhost:3001/v4/chains/:chain/has-dry-run-support');
+const response = await fetch('http://localhost:3001/v5/chains/:chain/has-dry-run-support');
 
 //Returns all pallets for local transfers of native assets for specific chain.
-const response = await fetch('http://localhost:3001/v4/pallets/:chain/native-assets');
+const response = await fetch('http://localhost:3001/v5/pallets/:chain/native-assets');
 
 //Returns all pallets for local transfers of foreign assets for specific chain.
-const response = await fetch('http://localhost:3001/v4/pallets/:chain/other-assets');
+const response = await fetch('http://localhost:3001/v5/pallets/:chain/other-assets');
 ```
 
 ### XCM Router
@@ -563,7 +563,7 @@ Possible parameters:
 - `options`: (optional): Configuration options for the API (Find out more in docs)
 
 ```ts
-const response = await fetch('http://localhost:3001/v4/router', {
+const response = await fetch('http://localhost:3001/v5/router', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -596,7 +596,7 @@ Possible parameters:
 - `xcm` (Optional): Complete XCM call
 
 ```ts
-const response = await fetch('http://localhost:3001/v4/xcm-analyser', {
+const response = await fetch('http://localhost:3001/v5/xcm-analyser', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
