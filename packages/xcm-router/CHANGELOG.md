@@ -1,5 +1,31 @@
 # Changelog
 
+## [12.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.9...xcm-router-v12.0.0) (2025-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk-core:** Merge assets into one array 🧹
+* Migrate packages & visualizer-be to ESM only 🪄
+* **sdk-core:** Remove foreign & native balance methods 🧹
+* **sdk-core:** Remove deprecated assetHub, bridgeHub objects 🧹
+
+### Features
+
+* **sdk-core:** Merge assets into one array 🧹 ([b7ce50b](https://github.com/paraspell/xcm-tools/commit/b7ce50bc3e29f7b6b0c23ab1aec6f3f714117ef6))
+* **sdk-core:** Remove deprecated assetHub, bridgeHub objects 🧹 ([a997907](https://github.com/paraspell/xcm-tools/commit/a997907f4356dc121d633f9bf183ce3d2b392fad))
+* **sdk-core:** Remove foreign & native balance methods 🧹 ([5b34577](https://github.com/paraspell/xcm-tools/commit/5b34577e361504a52dde974b356cd1ef1032c550))
+
+
+### Code Refactoring
+
+* Overhaul error classes ✨ ([eaa27ea](https://github.com/paraspell/xcm-tools/commit/eaa27ea8a16238874830452f80932d185b488dc4))
+
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+
 ## [11.14.9](https://github.com/paraspell/xcm-tools/compare/xcm-router-v11.14.8...xcm-router-v11.14.9) (2025-12-09)
 
 

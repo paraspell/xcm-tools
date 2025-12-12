@@ -1,5 +1,22 @@
 # Changelog
 
+## [12.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v11.14.9...sdk-common-v12.0.0) (2025-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migrate packages & visualizer-be to ESM only 🪄
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹
+
+### Features
+
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹 ([24da004](https://github.com/paraspell/xcm-tools/commit/24da0048c6dc4684d2e2fc8d3dd67b188d8d0aac))
+
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+
 ## [11.14.9](https://github.com/paraspell/xcm-tools/compare/sdk-common-v11.14.8...sdk-common-v11.14.9) (2025-12-09)
 
 
