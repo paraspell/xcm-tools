@@ -55,9 +55,6 @@ Other patterns:
 ```ts
 // ESM
 import * as paraspell from '@paraspell/sdk-pjs'
-
-// CommonJS
-const paraspell = require('@paraspell/sdk-pjs')
 ```
 
 Interaction with further asset symbol abstraction:
@@ -73,12 +70,13 @@ NOTES:
 - Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
 - You can now query Ethereum asset balances on Ethereum via balance query
 - The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
+- V10 > V11 Migration guide https://paraspell.github.io/docs/migration/v10-to-v11.html
+- Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
 ```
 
 ```
 Latest news:
-- V10 > V11 Migration guide https://paraspell.github.io/docs/migration/v10-to-v11.html
-- Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
+- V11 > V12 Migration guide https://paraspell.github.io/docs/migration/v11-to-v12.html
 ```
 
 ### Sending XCM
@@ -382,7 +380,6 @@ const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array -
 
 #### XCM Fee (Origin and Dest.)
 
-##### More accurate query using DryRun
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
@@ -394,20 +391,8 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
           .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
-##### Less accurate query using Payment info
-```ts
-const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)          
-          .getXcmFeeEstimate()
-```
-
 #### XCM Fee (Origin only)
 
-##### More accurate query using DryRun
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
@@ -419,23 +404,12 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
           .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
 ```
 
-##### Less accurate query using Payment info
-```ts
-const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)          
-          .getOriginXcmFeeEstimate()
-```
-
 #### Asset balance
 ```ts
-import { getAssetBalance } from "@paraspell/sdk-pjs";
+import { getBalance } from "@paraspell/sdk-pjs";
 
 //Retrieves the asset balance for a given account on a specified chain (You do not need to specify if it is native or foreign).
-const balance = await getAssetBalance({address, chain, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {location: AssetLocationString | AssetLocationJson}*/, api /* api/ws_url_string optional */});
+const balance = await getBalance({address, chain, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {location: AssetLocationString | AssetLocationJson}*/, api /* api/ws_url_string optional */});
 ```
 
 #### Ethereum bridge fees
