@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - 11.x
 
 name: release-please
 jobs:
@@ -39,20 +40,4 @@ jobs:
       - run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: pnpm publish -r --no-git-checks --access=public
-
-  deploy_xcm_api_and_visualizer_be:
-    needs: release-please
-    if: needs.release-please.outputs.sdk_core_released == 'true'
-    runs-on: self-hosted
-    steps:
-      - run: git pull
-      - run: pnpm install
-      - run: pnpm --filter xcm-api... build
-      - run: pnpm --filter visualizer-be... build
-      - name: Restart PM2 process
-        run: |
-          pm2 restart xcm-api
-          pm2 restart visualizer-be
-        env:
-          PM2_HOME: /${{ secrets.USER }}/.pm2
+      - run: pnpm publish -r --no-git-checks --access=public --tag legacy
