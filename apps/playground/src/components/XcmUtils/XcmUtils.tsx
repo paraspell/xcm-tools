@@ -210,17 +210,9 @@ const XcmUtils = () => {
         apiEndpoint = '/xcm-fee';
         successMessage = 'XCM fee retrieved';
         break;
-      case 'getXcmFeeEstimate':
-        apiEndpoint = '/xcm-fee-estimate';
-        successMessage = 'XCM fee estimate retrieved';
-        break;
       case 'getOriginXcmFee':
         apiEndpoint = '/origin-xcm-fee';
         successMessage = 'Origin XCM fee retrieved';
-        break;
-      case 'getOriginXcmFeeEstimate':
-        apiEndpoint = '/origin-xcm-fee-estimate';
-        successMessage = 'Origin XCM fee estimate retrieved';
         break;
       default:
         showErrorNotification(
@@ -264,14 +256,8 @@ const XcmUtils = () => {
           case 'getXcmFee':
             result = await builder.getXcmFee();
             break;
-          case 'getXcmFeeEstimate':
-            result = await builder.getXcmFeeEstimate();
-            break;
           case 'getOriginXcmFee':
             result = await builder.getOriginXcmFee();
-            break;
-          case 'getOriginXcmFeeEstimate':
-            result = await builder.getOriginXcmFeeEstimate();
             break;
         }
       }
@@ -440,9 +426,7 @@ const XcmUtils = () => {
     setLoading(true);
     const opTextMap: Record<string, string> = {
       getXcmFee: 'Getting XCM fee...',
-      getXcmFeeEstimate: 'Getting XCM fee estimate...',
       getOriginXcmFee: 'Getting Origin XCM fee...',
-      getOriginXcmFeeEstimate: 'Getting Origin XCM fee estimate...',
       getTransferableAmount: 'Getting transferable amount...',
       verifyEdOnDestination: 'Verifying ED on destination...',
       getReceivableAmount: 'Getting receivable amount...',
@@ -452,12 +436,7 @@ const XcmUtils = () => {
     const notifId = showLoadingNotification('Processing', loadingMessage);
 
     try {
-      if (
-        submitType === 'getXcmFee' ||
-        submitType === 'getXcmFeeEstimate' ||
-        submitType === 'getOriginXcmFee' ||
-        submitType === 'getOriginXcmFeeEstimate'
-      ) {
+      if (submitType === 'getXcmFee' || submitType === 'getOriginXcmFee') {
         await performFeeOperation(
           formValues,
           selectedAccount.address,

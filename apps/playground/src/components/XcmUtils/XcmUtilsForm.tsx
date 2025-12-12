@@ -19,7 +19,6 @@ import {
   IconArrowBarUp,
   IconChecks,
   IconChevronDown,
-  IconCoin,
   IconCoinFilled,
   IconFileInfo,
   IconPlus,
@@ -288,24 +287,10 @@ const XcmUtilsForm: FC<Props> = ({
     }
   };
 
-  const onSubmitGetXcmFeeEstimate = () => {
-    form.validate();
-    if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getXcmFeeEstimate');
-    }
-  };
-
   const onSubmitGetOriginXcmFee = () => {
     form.validate();
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), 'getOriginXcmFee');
-    }
-  };
-
-  const onSubmitGetOriginXcmFeeEstimate = () => {
-    form.validate();
-    if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getOriginXcmFeeEstimate');
     }
   };
 
@@ -576,24 +561,10 @@ const XcmUtilsForm: FC<Props> = ({
                 </Menu.Item>
 
                 <Menu.Item
-                  leftSection={<IconCoin size={16} />}
-                  onClick={onSubmitGetXcmFeeEstimate}
-                >
-                  Get XCM Fee Estimate
-                </Menu.Item>
-
-                <Menu.Item
                   leftSection={<IconCoinFilled size={16} />}
                   onClick={onSubmitGetOriginXcmFee}
                 >
                   Get Origin XCM Fee
-                </Menu.Item>
-
-                <Menu.Item
-                  leftSection={<IconCoin size={16} />}
-                  onClick={onSubmitGetOriginXcmFeeEstimate}
-                >
-                  Get Origin XCM Fee Estimate
                 </Menu.Item>
 
                 <Menu.Divider />

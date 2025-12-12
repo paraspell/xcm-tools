@@ -50,8 +50,6 @@ export type TSubmitType =
   | 'dryRunPreview'
   | 'getXcmFee'
   | 'getOriginXcmFee'
-  | 'getXcmFeeEstimate'
-  | 'getOriginXcmFeeEstimate'
   | 'getTransferableAmount'
   | 'getMinTransferableAmount'
   | 'getReceivableAmount'
