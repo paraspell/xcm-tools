@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v2.0.4...xcm-analyser-v3.0.0) (2025-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migrate packages & visualizer-be to ESM only 🪄
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+
 ## [2.0.4](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v2.0.3...xcm-analyser-v2.0.4) (2025-11-29)
 
 
