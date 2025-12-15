@@ -2890,6 +2890,18 @@
             ]
           }
         }
+      },
+      {
+        "assetId": "{\"parents\":1,\"interior\":{\"x3\":[{\"parachain\":1000},{\"palletInstance\":50},{\"generalIndex\":1337}]}}",
+        "symbol": "USDC",
+        "decimals": 6,
+        "existentialDeposit": "10000"
+      },
+      {
+        "assetId": "{\"parents\":0,\"interior\":{\"x2\":[{\"palletInstance\":60},{\"generalIndex\":1}]}}",
+        "symbol": "stEWT",
+        "decimals": 18,
+        "existentialDeposit": "1"
       }
     ]
   },
@@ -2973,7 +2985,7 @@
         "assetId": "222",
         "symbol": "HOLLAR",
         "decimals": 18,
-        "existentialDeposit": "0",
+        "existentialDeposit": "20000000000000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -18042,6 +18054,18 @@
             ]
           }
         }
+      },
+      {
+        "assetId": "{\"parents\":1,\"interior\":{\"x3\":[{\"parachain\":1000},{\"palletInstance\":50},{\"generalIndex\":1337}]}}",
+        "symbol": "USDC",
+        "decimals": 6,
+        "existentialDeposit": "10000"
+      },
+      {
+        "assetId": "{\"parents\":0,\"interior\":{\"x2\":[{\"palletInstance\":60},{\"generalIndex\":1}]}}",
+        "symbol": "stEWT",
+        "decimals": 18,
+        "existentialDeposit": "1"
       }
     ]
   },
