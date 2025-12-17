@@ -2890,6 +2890,27 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "USDC",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        }
       }
     ]
   },
