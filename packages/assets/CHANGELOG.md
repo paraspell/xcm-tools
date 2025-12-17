@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.10](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.9...assets-v11.14.10) (2025-12-17)
+
+
+### Bug Fixes
+
+* Add USDC to EnergyWebX ([77018b6](https://github.com/paraspell/xcm-tools/commit/77018b636ff4a9398742164182e44cd16d2a1e47))
+
 ## [11.14.9](https://github.com/paraspell/xcm-tools/compare/assets-v11.14.8...assets-v11.14.9) (2025-12-09)
 
 
