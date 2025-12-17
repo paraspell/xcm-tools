@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.0...sdk-core-v12.0.1) (2025-12-17)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
 ## [12.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.9...sdk-core-v12.0.0) (2025-12-12)
 
 
