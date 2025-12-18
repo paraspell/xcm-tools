@@ -27,17 +27,23 @@ export const CustomEndpointsFieldset = <
 }: Props<T>) => {
   const addEndpoint = (chainIndex: number) => {
     const path = `customEndpoints.${chainIndex}.endpoints`;
-    form.insertListItem(path, { value: '' });
+    (form as unknown as UseFormReturnType<AdvancedBaseOptions>).insertListItem(
+      path,
+      { value: '' },
+    );
   };
 
   const addChain = () => {
     const path = 'customEndpoints';
     const fromValue = (form.values as { from?: string }).from;
     const defaultChain = fromValue ? (fromValue as TChain) : ('' as TChain);
-    form.insertListItem(path, {
-      chain: defaultChain,
-      endpoints: [{ value: '' }],
-    });
+    (form as unknown as UseFormReturnType<AdvancedBaseOptions>).insertListItem(
+      path,
+      {
+        chain: defaultChain,
+        endpoints: [{ value: '' }],
+      },
+    );
   };
   return (
     <Fieldset legend="Custom endpoints" mt="md">
