@@ -92,16 +92,16 @@ import { transfer,
 
 ## Automatic exchange selection (Based on best price)
 
-If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
+If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome. You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#automatic-exchange-selection).
 
  ```js
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
-        .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-        .amount('1000000')  // Amount to send
-        .slippagePct('1')   // Max slipppage percentage
+        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+        .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .currencyTo(currencyTo)    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .amount(amount)  // Amount to send
+        .slippagePct(pct)   // Max slipppage percentage
         .senderAddress(injectorAddress)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
@@ -120,17 +120,17 @@ await RouterBuilder(/*builder config - optional (More info in docs)*/)
 
 ## Whitelist exchange selection
 
-If you wish to have specific exchanges selection and select the best one among them based on the best price outcome, you can opt for the whitelist automatic exchange selection method. This method can be selected by **using** `.exchange()` parameter in the call and feeding it with **array of exchanges**. The router will then automatically select the best exchange chain for you based on the best price outcome.
+If you wish to have specific exchanges selection and select the best one among them based on the best price outcome, you can opt for the whitelist automatic exchange selection method. This method can be selected by **using** `.exchange()` parameter in the call and feeding it with **array of exchanges**. The router will then automatically select the best exchange chain for you based on the best price outcome. You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#whitelist-exchange-selection).
 
 ```ts
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange(['HydrationDex','AcalaDex','AssetHubPolkadotDex'])    //Exchange Parachains
-        .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount} 
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-        .amount('1000000')  // Amount to send
-        .slippagePct('1')   // Max slipppage percentage
+        .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .currencyTo(currencyTo)    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .amount(amount)  // Amount to send
+        .slippagePct(pct)   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
@@ -149,17 +149,17 @@ await RouterBuilder(/*builder config - optional (More info in docs)*/)
 
 ## Manual exchange selection
 
-If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice.
+If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice. You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#manual-exchange-selection).
 
  ```js
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
-        .exchange('HydraDDex')    //Exchange Parachain
-        .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-        .amount('1000000')  // Amount to send
-        .slippagePct('1')   // Max slipppage percentage
+        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+        .exchange(exchange)    //Exchange Parachain
+        .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .currencyTo(currencyTo)    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
+        .amount(amount)  // Amount to send
+        .slippagePct(pct)   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(signer)    //PAPI Signer
@@ -178,16 +178,16 @@ await RouterBuilder(/*builder config - optional (More info in docs)*/)
 
 ## Get amount out for your currency pair
 
-To retrieve exchange amount, that you receive for your desired asset pair you can use following function. This function returns 2 parameters. Name of best fitting DEX (Automatic selection - can be further used for manual selection) and Amount out
+To retrieve exchange amount, that you receive for your desired asset pair you can use following function. This function returns 2 parameters. Name of best fitting DEX (Automatic selection - can be further used for manual selection) and Amount out. You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-amount-out-for-your-currency-pair).
 
 ```ts
 const result = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from('Astar') //Optional parameter based on scenario
-      .to('Acala') //Optional parameter based on scenario
-      .exchange('Hydration') //Optional parameter based on scenario
-      .currencyFrom({ symbol: 'ASTR' }) 
-      .currencyTo({ symbol: 'DOT' })
-      .amount(10000000000n)
+      .from(TChain) //Optional parameter based on scenario
+      .to(TChain) //Optional parameter based on scenario
+      .exchange(exchange) //Optional parameter based on scenario
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
       .getBestAmountOut();
 
 console.log(result.amountOut)
@@ -196,13 +196,13 @@ console.log(result.exchange)
 
 ## Get Router fees
 
-You can retrieve fees for all operations XCM Router performs. Keep in mind that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dry run in that scenario). Find out the example output of this function in the [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-router-fees).
+You can retrieve fees for all operations XCM Router performs. Find out the example output of this function in the [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-router-fees).
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(from) //Optional parameter based on scenario
+      .from(TChain) //Optional parameter based on scenario
+      .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
-      .to(to) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -214,13 +214,13 @@ const fees = await RouterBuilder(/*builder config - optional (More info in docs)
 
 ## Dryrun router call
 
-You can find out whether router dryrun call will execute correctly (works for 2 signature transfers also).
+You can find out whether router dryrun call will execute correctly (works for 2 signature transfers also). You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#dry-run-your-router-calls).
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(from) //Optional parameter based on scenario
+      .from(TChain) //Optional parameter based on scenario
+      .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
-      .to(to) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -232,13 +232,13 @@ const fees = await RouterBuilder(/*builder config - optional (More info in docs)
 
 ## Get minimal transferable amount
 
-You can find out minimal amount you need to transfer in order to get the currency swapped (Does not guarantee it will be enough after swap).
+You can find out minimal amount you need to transfer in order to get the currency swapped (Does not guarantee it will be enough after swap). You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#minimal-transferable-amount).
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(from) //Optional parameter based on scenario
+      .from(TChain) //Optional parameter based on scenario
+      .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
-      .to(to) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -250,13 +250,13 @@ const fees = await RouterBuilder(/*builder config - optional (More info in docs)
 
 ## Get maximal transferable amount
 
-You can find out maximal amount of specific currency you can transfer while staying above existential deposit and leaving enough to cover execution fees on origin (If needed).
+You can find out maximal amount of specific currency you can transfer while staying above existential deposit and leaving enough to cover execution fees on origin (If needed). You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#maximal-transferable-amount).
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(from) //Optional parameter based on scenario
+      .from(TChain) //Optional parameter based on scenario
+      .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
-      .to(to) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -268,7 +268,7 @@ const fees = await RouterBuilder(/*builder config - optional (More info in docs)
 
 ## Helpful functions
 
-Below, you can find helpful functions that are exported from XCM Router to help you enhance front end usability of XCM Router.
+Below, you can find helpful functions that are exported from XCM Router to help you enhance front end usability of XCM Router. You can find out more in [official documentation](https://paraspell.github.io/docs/router/router-use.html#helpful-functions).
 
 ```ts
 import {getExchangeAssets, getExchangePairs} from @paraspell/xcm-router
@@ -321,10 +321,8 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
 
 ## Supported by
 
-<div align="center">
- <p align="center">
-    <a href="https://github.com/w3f/Grants-Program/pull/2057">
-      <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
-    </a>
- </p>
+<div>
+  <div align="center" style="margin-top: 20px;">
+      <img width="750" alt="version" src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c" />
+  </div>
 </div>

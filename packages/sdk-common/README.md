@@ -54,9 +54,8 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
 
 ## Supported by
 
-<div align="center">
- <p align="center">
-      <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
-      <img width="200" alt="version" src="https://github.com/paraspell/xcm-sdk/assets/55763425/9ed74ebe-9b29-4efd-8e3e-7467ac4caed6" />
- </p>
+<div>
+  <div align="center" style="margin-top: 20px;">
+      <img width="750" alt="version" src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c" />
+  </div>
 </div>
