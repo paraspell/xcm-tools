@@ -65,9 +65,9 @@ import {
 } from '../../utils/routes/parsers';
 import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
 import {
+  type AdvancedBaseOptions,
   AdvancedOptionsAccordion,
-  type AdvancedRouterOptions,
-  validateEndpoint,
+  customEndpointsValidation,
 } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { CurrencyInfo } from '../CurrencyInfo';
@@ -86,7 +86,7 @@ export type TRouterFormValues = {
   useApi: boolean;
   evmSigner?: PolkadotSigner;
   evmInjectorAddress?: string;
-} & AdvancedRouterOptions;
+} & AdvancedBaseOptions;
 
 export type TRouterFormValuesTransformed = Omit<
   TRouterFormValues,
@@ -103,8 +103,8 @@ type Props = {
     submitType: TRouterSubmitType,
   ) => void;
   loading: boolean;
-  advancedOptions?: AdvancedRouterOptions;
-  onAdvancedOptionsChange?: (options: AdvancedRouterOptions) => void;
+  advancedOptions?: AdvancedBaseOptions;
+  onAdvancedOptionsChange?: (options: AdvancedBaseOptions) => void;
 };
 
 export const XcmRouterForm: FC<Props> = ({
@@ -181,13 +181,7 @@ export const XcmRouterForm: FC<Props> = ({
       amount: (value) => {
         return Number(value) > 0 ? null : 'Amount must be greater than 0';
       },
-      customEndpoints: {
-        endpoints: {
-          value: (value) => {
-            return validateEndpoint(value) ? null : 'Endpoint is not valid';
-          },
-        },
-      },
+      customEndpoints: customEndpointsValidation,
     },
     validateInputOnChange: ['exchange'],
   });
@@ -593,7 +587,7 @@ export const XcmRouterForm: FC<Props> = ({
             </Button.Group>
           </Group>
 
-          <AdvancedOptionsAccordion form={form} isRouter />
+          <AdvancedOptionsAccordion form={form} hideXcmVersionFields />
 
           {selectedAccountPolkadot ? (
             <Button.Group>

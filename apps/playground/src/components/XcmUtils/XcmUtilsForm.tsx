@@ -54,7 +54,7 @@ import {
 import {
   type AdvancedOptions,
   AdvancedOptionsAccordion,
-  validateEndpoint,
+  customEndpointsValidation,
 } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
@@ -207,13 +207,7 @@ const XcmUtilsForm: FC<Props> = ({
           ? null
           : 'Invalid Polkadot address';
       },
-      customEndpoints: {
-        endpoints: {
-          value: (value) => {
-            return validateEndpoint(value) ? null : 'Endpoint is not valid';
-          },
-        },
-      },
+      customEndpoints: customEndpointsValidation,
     },
   });
 
@@ -230,17 +224,6 @@ const XcmUtilsForm: FC<Props> = ({
       ...restValues
     } = form.values;
     void setQueryState(restValues);
-  }, [form.values, setQueryState]);
-
-  useEffect(() => {
-    const {
-      xcmVersion,
-      isDevelopment,
-      abstractDecimals,
-      pallet,
-      method,
-      customEndpoints,
-    } = form.values;
     void onAdvancedOptionsChange?.({
       xcmVersion,
       isDevelopment,
@@ -249,14 +232,7 @@ const XcmUtilsForm: FC<Props> = ({
       method,
       customEndpoints,
     });
-  }, [
-    form.values.xcmVersion,
-    form.values.isDevelopment,
-    form.values.abstractDecimals,
-    form.values.pallet,
-    form.values.method,
-    form.values.customEndpoints,
-  ]);
+  }, [form.values]);
 
   const { from, to, currencies, useApi } = form.getValues();
 

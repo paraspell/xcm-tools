@@ -11,6 +11,11 @@ import {
   parseAsAssetClaimChain,
   parseAsRecipientAddress,
 } from '../../utils/routes/parsers';
+import {
+  type AdvancedBaseOptions,
+  AdvancedOptionsAccordion,
+  customEndpointsValidation,
+} from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { CurrencyInfo } from '../CurrencyInfo';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -27,14 +32,21 @@ export type FormValues = {
   address: string;
   amount: string;
   useApi: boolean;
-};
+} & AdvancedBaseOptions;
 
 type Props = {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
+  advancedOptions?: AdvancedBaseOptions;
+  onAdvancedOptionsChange?: (options: AdvancedBaseOptions) => void;
 };
 
-const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
+const AssetClaimForm: FC<Props> = ({
+  onSubmit,
+  loading,
+  advancedOptions,
+  onAdvancedOptionsChange,
+}) => {
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsAssetClaimChain.withDefault('Polkadot'),
     amount: parseAsString.withDefault(''),
@@ -43,7 +55,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   });
 
   const form = useForm<FormValues>({
-    initialValues: queryState,
+    initialValues: { ...queryState, ...advancedOptions },
 
     validate: {
       address: (value) =>
@@ -51,13 +63,21 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
       amount: (value) => {
         return Number(value) > 0 ? null : 'Amount must be greater than 0';
       },
+      customEndpoints: customEndpointsValidation,
     },
   });
 
   useAutoFillWalletAddress(form, 'address');
   useEffect(() => {
-    void setQueryState(form.values);
-  }, [form.values, setQueryState]);
+    const { isDevelopment, abstractDecimals, customEndpoints, ...restValues } =
+      form.values;
+    void setQueryState(restValues);
+    void onAdvancedOptionsChange?.({
+      isDevelopment,
+      abstractDecimals,
+      customEndpoints,
+    });
+  }, [form.values]);
 
   const { useApi } = form.getValues();
 
@@ -107,6 +127,8 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}
           />
+
+          <AdvancedOptionsAccordion form={form} hideXcmVersionFields />
 
           {selectedAccount ? (
             <Button type="submit" loading={loading} data-testid="submit">

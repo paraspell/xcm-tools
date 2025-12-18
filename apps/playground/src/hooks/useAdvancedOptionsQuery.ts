@@ -10,7 +10,7 @@ import {
 
 import { TCustomEndpointSchema } from '../components/AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 
-const advancedRouterOptionsQueryConfig = {
+const advancedBaseOptionsQueryConfig = {
   isDevelopment: parseAsBoolean.withDefault(false),
   abstractDecimals: parseAsBoolean.withDefault(true),
   customEndpoints: parseAsNativeArrayOf(
@@ -22,11 +22,11 @@ const advancedOptionsQueryConfig = {
   xcmVersion: parseAsStringLiteral(Object.values(Version)),
   pallet: parseAsString.withDefault(''),
   method: parseAsString.withDefault(''),
-  ...advancedRouterOptionsQueryConfig,
+  ...advancedBaseOptionsQueryConfig,
 };
 
-export const useAdvancedRouterOptionsQuery = () => {
-  return useQueryStates(advancedRouterOptionsQueryConfig, { shallow: false });
+export const useAdvancedBaseOptionsQuery = () => {
+  return useQueryStates(advancedBaseOptionsQueryConfig, { shallow: false });
 };
 
 export const useAdvancedOptionsQuery = () => {

@@ -12,7 +12,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TSubstrateChain } from '@paraspell/sdk';
+import type { TSubstrateChain, TUrl } from '@paraspell/sdk';
 import {
   getOtherAssets,
   isForeignAsset,
@@ -32,13 +32,17 @@ import { ethers } from 'ethers';
 import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
 import { getWsProvider } from 'polkadot-api/ws-provider';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 
 import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
-import { useAdvancedRouterOptionsQuery, useWallet } from '../../hooks';
+import {
+  useAdvancedBaseOptionsQuery,
+  useBuilderOptions,
+  useWallet,
+} from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
 import { fetchFromApi, submitTransactionPapi } from '../../utils';
 import {
@@ -46,7 +50,7 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
-import type { AdvancedRouterOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
+import type { AdvancedBaseOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
@@ -60,32 +64,12 @@ export const XcmRouter = () => {
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
 
-  const [advancedRouterOptionsQuery, setAdvancedRouterOptionsQuery] =
-    useAdvancedRouterOptionsQuery();
+  const [advancedBaseOptionsQuery, setAdvancedBaseOptionsQuery] =
+    useAdvancedBaseOptionsQuery();
 
-  const builderOptions = useMemo<TRouterBuilderOptions>(() => {
-    const apiOverrides =
-      advancedRouterOptionsQuery.customEndpoints &&
-      advancedRouterOptionsQuery.customEndpoints.length > 0
-        ? advancedRouterOptionsQuery.customEndpoints.reduce(
-            (acc, ep) => ({
-              ...acc,
-              [ep.chain]: ep.endpoints?.map((e) => e.value) ?? [],
-            }),
-            {},
-          )
-        : undefined;
-
-    return {
-      abstractDecimals: advancedRouterOptionsQuery.abstractDecimals ?? true,
-      development: advancedRouterOptionsQuery.isDevelopment ?? false,
-      apiOverrides,
-    };
-  }, [
-    advancedRouterOptionsQuery.abstractDecimals,
-    advancedRouterOptionsQuery.isDevelopment,
-    advancedRouterOptionsQuery.customEndpoints,
-  ]);
+  const builderOptions = useBuilderOptions<TUrl>(
+    advancedBaseOptionsQuery as AdvancedBaseOptions,
+  ) as TRouterBuilderOptions;
 
   const [
     outputAlertOpened,
@@ -192,6 +176,21 @@ export const XcmRouter = () => {
     };
   };
 
+  const stripAdvancedOptions = (
+    formValues: TRouterFormValuesTransformed,
+  ): Omit<
+    TRouterFormValuesTransformed,
+    'isDevelopment' | 'abstractDecimals' | 'customEndpoints'
+  > => {
+    const {
+      isDevelopment,
+      abstractDecimals,
+      customEndpoints,
+      ...safeFormValues
+    } = formValues;
+    return safeFormValues;
+  };
+
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
@@ -249,12 +248,7 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
-    const {
-      isDevelopment,
-      abstractDecimals,
-      customEndpoints,
-      ...safeFormValues
-    } = formValues;
+    const safeFormValues = stripAdvancedOptions(formValues);
 
     try {
       const response = await axios.post(
@@ -358,12 +352,7 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
-    const {
-      isDevelopment,
-      abstractDecimals,
-      customEndpoints,
-      ...safeFormValues
-    } = formValues;
+    const safeFormValues = stripAdvancedOptions(formValues);
 
     try {
       let result;
@@ -439,12 +428,7 @@ export const XcmRouter = () => {
       currencyTo,
     });
 
-    const {
-      isDevelopment,
-      abstractDecimals,
-      customEndpoints,
-      ...safeFormValues
-    } = formValues;
+    const safeFormValues = stripAdvancedOptions(formValues);
 
     try {
       let result;
@@ -527,12 +511,7 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
-        const {
-          isDevelopment,
-          abstractDecimals,
-          customEndpoints,
-          ...safeFormValues
-        } = formValues;
+        const safeFormValues = stripAdvancedOptions(formValues);
         result = await fetchFromApi(
           {
             ...safeFormValues,
@@ -611,12 +590,7 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
-        const {
-          isDevelopment,
-          abstractDecimals,
-          customEndpoints,
-          ...safeFormValues
-        } = formValues;
+        const safeFormValues = stripAdvancedOptions(formValues);
         result = await fetchFromApi(
           {
             ...safeFormValues,
@@ -681,12 +655,7 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
-        const {
-          isDevelopment,
-          abstractDecimals,
-          customEndpoints,
-          ...safeFormValues
-        } = formValues;
+        const safeFormValues = stripAdvancedOptions(formValues);
         result = await fetchFromApi(
           {
             ...safeFormValues,
@@ -888,11 +857,9 @@ export const XcmRouter = () => {
           <XcmRouterForm
             onSubmit={onSubmit}
             loading={loading}
-            advancedOptions={
-              advancedRouterOptionsQuery as AdvancedRouterOptions
-            }
+            advancedOptions={advancedBaseOptionsQuery as AdvancedBaseOptions}
             onAdvancedOptionsChange={(options) =>
-              void setAdvancedRouterOptionsQuery(options)
+              void setAdvancedBaseOptionsQuery(options)
             }
           />
         </Stack>

@@ -49,7 +49,7 @@ import {
 import {
   type AdvancedOptions,
   AdvancedOptionsAccordion,
-  validateEndpoint,
+  customEndpointsValidation,
 } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
@@ -210,13 +210,7 @@ const XcmTransferForm: FC<Props> = ({
           ? null
           : 'Invalid Polkadot address';
       },
-      customEndpoints: {
-        endpoints: {
-          value: (value) => {
-            return validateEndpoint(value) ? null : 'Endpoint is not valid';
-          },
-        },
-      },
+      customEndpoints: customEndpointsValidation,
     },
   });
 
