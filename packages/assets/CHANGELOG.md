@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.2](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.1...assets-v12.0.2) (2025-12-18)
+
+
+### Documentation
+
+* Comprehensively refresh documentation ([a643836](https://github.com/paraspell/xcm-tools/commit/a643836916961d5765ffc240a3e200ddf8832f1b))
+
 ## [12.0.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.0...assets-v12.0.1) (2025-12-17)
 
 
