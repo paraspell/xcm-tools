@@ -12,6 +12,7 @@ import {
   Parents,
   type TPapiApiOrUrl,
   type TPapiTransaction,
+  type TUrl,
 } from '@paraspell/sdk';
 import type {
   Extrinsic,
@@ -24,7 +25,11 @@ import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks';
+import {
+  useAdvancedBaseOptionsQuery,
+  useBuilderOptions,
+  useWallet,
+} from '../../hooks';
 import { getTxFromApi } from '../../utils';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import {
@@ -32,6 +37,7 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import type { AdvancedBaseOptions } from '../AdvancedOptionsAccordion/AdvancedOptionsAccordion';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type { FormValues } from './AssetClaimForm';
@@ -48,6 +54,13 @@ const AssetClaim = () => {
   const [error, setError] = useState<Error>();
 
   const [loading, setLoading] = useState(false);
+
+  const [advancedBaseOptionsQuery, setAdvancedBaseOptionsQuery] =
+    useAdvancedBaseOptionsQuery();
+
+  const builderOptions = useBuilderOptions<TUrl>(
+    advancedBaseOptionsQuery as AdvancedBaseOptions,
+  );
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -98,6 +111,7 @@ const AssetClaim = () => {
               location: { parents: Parents.ONE, interior: { Here: null } },
               amount,
             },
+            options: builderOptions,
           },
           api,
           '/asset-claim',
@@ -107,9 +121,7 @@ const AssetClaim = () => {
           true,
         );
       } else {
-        const builder = Builder({
-          abstractDecimals: true,
-        });
+        const builder = Builder(builderOptions);
         tx = await builder
           .claimFrom(from)
           .currency([
@@ -198,7 +210,14 @@ const AssetClaim = () => {
             Recover assets that have been trapped in the cross-chain transfers.
           </Text>
         </Box>
-        <AssetClaimForm onSubmit={onSubmit} loading={loading} />
+        <AssetClaimForm
+          onSubmit={onSubmit}
+          loading={loading}
+          advancedOptions={advancedBaseOptionsQuery as AdvancedBaseOptions}
+          onAdvancedOptionsChange={(options) =>
+            void setAdvancedBaseOptionsQuery(options)
+          }
+        />
       </Stack>
       <Center ref={targetRef}>
         {alertOpened && (

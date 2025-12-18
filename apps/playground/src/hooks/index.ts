@@ -1,5 +1,6 @@
 export * from './useAdvancedOptionsQuery';
 export * from './useAutoFillWalletAddress';
+export * from './useBuilderOptions';
 export * from './useCurrencyOptions';
 export * from './useFeeCurrencyOptions';
 export * from './useRouterCurrencyOptions';

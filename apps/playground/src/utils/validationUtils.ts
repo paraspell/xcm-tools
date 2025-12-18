@@ -15,3 +15,12 @@ export const isValidEthereumAddress = (address: string) => isAddress(address);
 
 export const isValidWalletAddress = (address: string) =>
   isValidPolkadotAddress(address) || isValidEthereumAddress(address);
+
+export const isValidWsEndpoint = (value: string): boolean => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'wss:' || url.protocol === 'ws:';
+  } catch {
+    return false;
+  }
+};

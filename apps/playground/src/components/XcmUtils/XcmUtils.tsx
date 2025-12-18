@@ -11,10 +11,10 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
   TBuilderOptions,
-  TChain,
   TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
+  TUrl,
   WithComplexAmount,
 } from '@paraspell/sdk';
 import {
@@ -31,7 +31,11 @@ import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
-import { useAdvancedOptionsQuery, useWallet } from '../../hooks';
+import {
+  useAdvancedOptionsQuery,
+  useBuilderOptions,
+  useWallet,
+} from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { fetchFromApi } from '../../utils';
 import {
@@ -68,6 +72,10 @@ const XcmUtils = () => {
 
   const [advancedOptionsQuery, setAdvancedOptionsQuery] =
     useAdvancedOptionsQuery();
+
+  const builderOptions = useBuilderOptions<TUrl>(
+    advancedOptionsQuery as AdvancedOptions,
+  );
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -228,16 +236,6 @@ const XcmUtils = () => {
     }
 
     try {
-      const apiOverrides =
-        advancedOptionsQuery.customEndpoints.length > 0
-          ? advancedOptionsQuery.customEndpoints.reduce(
-              (acc, ep) => ({
-                ...acc,
-                [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
-              }),
-              {} as Partial<Record<TChain, TPjsApiOrUrl>>,
-            )
-          : undefined;
       if (useApi) {
         const {
           useApi,
@@ -254,11 +252,7 @@ const XcmUtils = () => {
         result = await fetchFromApi(
           {
             ...safeFormValues,
-            options: {
-              abstractDecimals: advancedOptionsQuery.abstractDecimals,
-              development: advancedOptionsQuery.isDevelopment,
-              apiOverrides,
-            },
+            options: builderOptions,
             pallet: advancedOptionsQuery.pallet || undefined,
             method: advancedOptionsQuery.method || undefined,
             xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
@@ -268,11 +262,7 @@ const XcmUtils = () => {
           true,
         );
       } else {
-        let builder = Builder({
-          abstractDecimals: advancedOptionsQuery.abstractDecimals,
-          development: advancedOptionsQuery.isDevelopment,
-          apiOverrides,
-        })
+        let builder = Builder(builderOptions)
           .from(from)
           .to(to)
           .currency(
@@ -285,15 +275,14 @@ const XcmUtils = () => {
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
 
-        if (advancedOptionsQuery.xcmVersion) {
-          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        const { xcmVersion, pallet, method } = advancedOptionsQuery;
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
         }
 
-        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
-          builder = builder.customPallet(
-            advancedOptionsQuery.pallet,
-            advancedOptionsQuery.method,
-          );
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
         }
 
         switch (submitType) {
@@ -394,16 +383,6 @@ const XcmUtils = () => {
     }
 
     try {
-      const apiOverrides =
-        advancedOptionsQuery.customEndpoints.length > 0
-          ? advancedOptionsQuery.customEndpoints.reduce(
-              (acc, ep) => ({
-                ...acc,
-                [ep.chain as TChain]: ep.endpoints?.map((e) => e.value) ?? [],
-              }),
-              {} as Partial<Record<TChain, TPjsApiOrUrl>>,
-            )
-          : undefined;
       if (useApi) {
         const {
           useApi,
@@ -420,11 +399,7 @@ const XcmUtils = () => {
         result = await fetchFromApi(
           {
             ...safeFormValues,
-            options: {
-              abstractDecimals: advancedOptionsQuery.abstractDecimals,
-              development: advancedOptionsQuery.isDevelopment,
-              apiOverrides,
-            },
+            options: builderOptions,
             pallet: advancedOptionsQuery.pallet || undefined,
             method: advancedOptionsQuery.method || undefined,
             xcmVersion: advancedOptionsQuery.xcmVersion ?? undefined,
@@ -434,11 +409,7 @@ const XcmUtils = () => {
           true,
         );
       } else {
-        let builder = Builder({
-          abstractDecimals: advancedOptionsQuery.abstractDecimals,
-          development: advancedOptionsQuery.isDevelopment,
-          apiOverrides,
-        })
+        let builder = Builder(builderOptions)
           .from(from)
           .to(to)
           .currency(
@@ -451,15 +422,14 @@ const XcmUtils = () => {
           .senderAddress(selectedAccountAddress)
           .ahAddress(body.ahAddress);
 
-        if (advancedOptionsQuery.xcmVersion) {
-          builder = builder.xcmVersion(advancedOptionsQuery.xcmVersion);
+        const { xcmVersion, pallet, method } = advancedOptionsQuery;
+
+        if (xcmVersion) {
+          builder = builder.xcmVersion(xcmVersion);
         }
 
-        if (advancedOptionsQuery.pallet && advancedOptionsQuery.method) {
-          builder = builder.customPallet(
-            advancedOptionsQuery.pallet,
-            advancedOptionsQuery.method,
-          );
+        if (pallet && method) {
+          builder = builder.customPallet(pallet, method);
         }
 
         switch (submitType) {
