@@ -80,14 +80,14 @@ Latest news:
 ```
 
 ### Sending XCM
-
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
+For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
 
 #### Transfer assets from Parachain to Parachain
+
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(CHAIN)
-      .to(CHAIN /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
+      .from(TChain)
+      .to(TChain /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address | Location object /*If you are sending through xTokens, you need to pass the destination and address Location in one object (x2)*/)
       .senderAddress(address) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
@@ -120,10 +120,11 @@ await builder.disconnect()
 ```
 
 #### Transfer assets from the Relay chain to the Parachain
+
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
-      .to(CHAIN/*,customParaId - optional*/ | Location object)
+      .from(TRelaychain) // Kusama | Polkadot | Westend | Paseo
+      .to(TChain/*,customParaId - optional*/ | Location object)
       .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
       .address(address | Location object)
       /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
@@ -153,10 +154,11 @@ await builder.disconnect()
 ```
 
 #### Transfer assets from Parachain to Relay chain
+
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(CHAIN)
-      .to(RELAY_CHAIN) // Kusama | Polkadot | Westend | Paseo
+      .from(TChain)
+      .to(TRelaychain) // Kusama | Polkadot | Westend | Paseo
       .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
       .address(address | Location object)
       /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
@@ -186,10 +188,11 @@ await builder.disconnect()
 ```
 
 #### Local transfers
+
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(CHAIN)
-      .to(CHAIN) //Has to be the same as the origin (from)
+      .from(TChain)
+      .to(TChain) //Has to be the same as the origin (from)
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address)
 
@@ -217,16 +220,17 @@ await builder.disconnect()
 ```
 
 #### Batch calls
+
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(CHAIN) //Ensure, that origin chain is the same in all batched XCM Calls.
-      .to(CHAIN_2) //Any compatible Parachain
+      .from(TChain) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .to(TChain2) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Location object)
       .addToBatch()
 
-      .from(CHAIN) //Ensure, that origin chain is the same in all batched XCM Calls.
-      .to(CHAIN_3) //Any compatible Parachain
+      .from(TChain) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .to(TChain3) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Location object)
       .addToBatch()
@@ -241,10 +245,11 @@ await builder.disconnect()
 ```
 
 #### Asset claim:
+
 ```ts
 //Claim XCM trapped assets from the selected chain
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .claimFrom(CHAIN)
+      .claimFrom(TChain)
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]
 )
       .address(address | Location object)
@@ -260,8 +265,8 @@ await builder.disconnect()
 ```ts
 //Builder pattern
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(CHAIN)
-        .to(CHAIN_2)
+        .from(TChain)
+        .to(TChain)
         .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(ADDRESS)
@@ -275,13 +280,12 @@ const result = hasDryRunSupport(chain)
 ```
 
 #### Dry run preview:
-More on this feature in [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html#preview-your-call-results)
 
 ```ts
 //Builder pattern
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(CHAIN)
-        .to(CHAIN_2)
+        .from(TChain)
+        .to(TChain)
         .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(ADDRESS)
@@ -290,8 +294,6 @@ const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_arr
 ```
 
 ### Localhost test setup
-
-SDK offers enhanced localhost support. You can pass an object containing overrides for all WS endpoints (Including hops) used in the test transfer. This allows for advanced localhost testing such as localhost dry-run or xcm-fee queries. More information about available options can be found in the [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html#localhost-testing-setup).
 
 ```ts
 const builder = await Builder({
@@ -303,8 +305,8 @@ const builder = await Builder({
     //ChainName: ...
   }
 })
-  .from(CHAIN)
-  .to(CHAIN)
+  .from(TChain)
+  .to(TChain)
   .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}])
   .address(address)
 
@@ -316,14 +318,14 @@ await builder.disconnect()
 
 ### XCM Fee queries
 
-For full documentation with examples on this feature, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
+For full documentation with output examples of XCM Fee queries, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
 
 #### XCM Transfer info
 ```ts
 const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -333,9 +335,9 @@ const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array
 #### Transferable amount
 ```ts
 const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -345,9 +347,9 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
 #### Minimal transferable amount
 ```ts
 const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -357,9 +359,9 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
 #### Receivable amount
 ```ts
 const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -369,9 +371,9 @@ const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url
 #### Verify ED on destination
 ```ts
 const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -382,9 +384,9 @@ const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array -
 
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -395,9 +397,9 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
 
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(ORIGIN_CHAIN)
-          .to(DESTINATION_CHAIN)
-          .currency(CURRENCY)
+          .from(TChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
@@ -409,7 +411,7 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
 import { getBalance } from "@paraspell/sdk-pjs";
 
 //Retrieves the asset balance for a given account on a specified chain (You do not need to specify if it is native or foreign).
-const balance = await getBalance({address, chain, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {location: AssetLocationString | AssetLocationJson}*/, api /* api/ws_url_string optional */});
+const balance = await getBalance({ADDRESS, TChain, CURRENCY_SPEC /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {location: AssetLocationString | AssetLocationJson}*/, api /* api/ws_url_string optional */});
 ```
 
 #### Ethereum bridge fees
@@ -425,64 +427,64 @@ import { getExistentialDeposit } from "@paraspell/sdk-pjs";
 
 //Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
 //Currency can be either {symbol: assetSymbol}, {id: assetId}, {location: assetLocation}.
-const ed = getExistentialDeposit(chain, currency?)
+const ed = getExistentialDeposit(Tchain, CURRENCY_SPEC?)
 ```
 
 #### Convert SS58 address 
 ```ts
 import { convertSs58 } from "@paraspell/sdk-pjs";
 
-let result = convertSs58(address, chain) // returns converted address in string
+let result = convertSs58(ADDRESS, TChain) // returns converted address in string
 ```
 
 ### Asset queries:
 
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
+For full documentation with output examples of asset queries, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
 import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, CHAINS, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/sdk-pjs'
 
 //Get chains that support the specific asset related to origin
-getSupportedDestinations(CHAIN, CURRENCY)
-
-// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
-getFeeAssets(CHAIN)
-
-// Get Location for asset ID or symbol on a  specific chain
-getAssetLocation(CHAIN, { symbol: symbol } | { id: assetId })
+getSupportedDestinations(TChain, CURRENCY)
 
 //Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
-findAssetInfo(CHAIN, CURRENCY, DESTINATION?)
+findAssetInfo(TChain, CURRENCY, DESTINATION?)
 
 //Find out whether asset is registered on chain and return its entire parameters. If not found, returns error.
-findAssetInfoOrThrow(CHAIN, CURRENCY, DESTINATION?)
+findAssetInfoOrThrow(TChain, CURRENCY, DESTINATION?)
+
+// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
+getFeeAssets(TChain)
+
+// Get Location for asset ID or symbol on a  specific chain
+getAssetLocation(TChain, { symbol: symbol } | { id: assetId })
 
 // Retrieve assets object from assets.json for a particular chain, including information about native and foreign assets
-getAssetsObject(CHAIN)
+getAssetsObject(TChain)
 
 // Retrieve foreign assetId for a particular chain and asset symbol
-getAssetId(CHAIN, ASSET_SYMBOL)
+getAssetId(TChain, ASSET_SYMBOL)
 
 // Retrieve the symbol of the relay chain for a particular chain. Either "DOT" or "KSM"
-getRelayChainSymbol(CHAIN)
+getRelayChainSymbol(TChain)
 
 // Retrieve string array of native assets symbols for a  particular chain
-getNativeAssets(CHAIN)
+getNativeAssets(TChain)
 
 // Retrieve object array of foreign assets for a particular chain. Each object has a symbol and an  assetId property
-getOtherAssets(CHAIN)
+getOtherAssets(TChain)
 
 // Retrieve string array of all asset symbols. (native and foreign assets are merged into a single array)
-getAllAssetsSymbols(CHAIN)
+getAllAssetsSymbols(TChain)
 
 // Check if a chain supports a particular asset. (Both native and foreign assets are searched). Returns boolean
-hasSupportForAsset(CHAIN, ASSET_SYMBOL)
+hasSupportForAsset(TChain, ASSET_SYMBOL)
 
 // Get decimals for specific asset
-getAssetDecimals(CHAIN, ASSET_SYMBOL)
+getAssetDecimals(TChain, ASSET_SYMBOL)
 
 // Get specific chain id
-getParaId(CHAIN)
+getParaId(TChain)
 
 // Get specific TChain from chainID
 getTChain(paraID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo' | 'Westend') //When the Ethereum ecosystem is selected, please fill chainID as 1 to select Ethereum.
@@ -493,25 +495,25 @@ CHAINS
 
 ### Parachain XCM Pallet queries
 
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
+For full documentation with output examples of pallet queries, head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
 
 ```ts
 import { getDefaultPallet, getSupportedPallets, getPalletIndex, getNativeAssetsPallet, getOtherAssetsPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk-pjs';
 
 //Retrieve default pallet for specific Parachain 
-getDefaultPallet(CHAIN)
+getDefaultPallet(chain: TChain)
 
 // Returns an array of supported pallets for a specific Parachain
-getSupportedPallets(CHAIN)
+getSupportedPallets(chain: TChain)
 
 //Returns index of XCM Pallet used by Parachain
-getPalletIndex(CHAIN)
+getPalletIndex(chain: TChain)
 
 //Returns all pallets for local transfers of native assets for specific chain.
 getNativeAssetsPallet(chain: TChain)
 
 //Returns all pallets for local transfers of foreign assets for specific chain.
-getOtherAssetsPallets(CHAIN)
+getOtherAssetsPallets(chain: TChain)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)
@@ -548,9 +550,8 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
 
 ## Supported by
 
-<div align="center">
- <p align="center">
-      <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
-      <img width="200" alt="version" src="https://github.com/paraspell/xcm-sdk/assets/55763425/9ed74ebe-9b29-4efd-8e3e-7467ac4caed6" />
- </p>
+<div>
+  <div align="center" style="margin-top: 20px;">
+      <img width="750" alt="version" src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c" />
+  </div>
 </div>

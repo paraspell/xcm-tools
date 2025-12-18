@@ -56,7 +56,7 @@ TypeScript
 
 The production version of the XCM Visualizer is available at [https://xcm-visualizer.paraspell.xyz/](https://xcm-visualizer.paraspell.xyz/).
 
-To run the project locally, you need to have Node.js v.20^ installed, as well as PostgreSQL database.
+To run the project locally, you need to have Node.js v.24^ installed, as well as PostgreSQL database.
 
 In backend folder create .env file following .env.example file. After your database is set up, you can import the database dump from the [xcm_database_dump_2023_2024](https://drive.google.com/file/d/1v7z85kz-ez_0Vy8GffMEuWlWq2_T2dQq/view?usp=sharing) file to try the XCM Visualizer with the example data.
 
