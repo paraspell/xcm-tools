@@ -59,15 +59,21 @@ export class AssetsPallet extends BaseAssetsPallet {
   async getBalance<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
     address: string,
-    asset: TAssetInfo
+    asset: TAssetInfo,
+    chain?: TSubstrateChain
   ): Promise<bigint> {
     assertHasId(asset)
+
+    const isEnergyWebX = chain === 'EnergyWebX'
 
     const fetchBalance = (useBigInt = false) =>
       api.queryState<{ balance: bigint }>({
         module: this.palletName,
         method: 'Account',
-        params: [useBigInt ? BigInt(asset.assetId) : Number(asset.assetId), address]
+        params: [
+          isEnergyWebX ? asset.location : useBigInt ? BigInt(asset.assetId) : Number(asset.assetId),
+          address
+        ]
       })
 
     // Try with number ID first, if it fails, try with bigint ID

@@ -2916,6 +2916,7 @@
       {
         "symbol": "USDC",
         "decimals": 6,
+        "assetId": "1337",
         "existentialDeposit": "10000",
         "location": {
           "parents": 1,
