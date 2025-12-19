@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.2...sdk-core-v12.0.3) (2025-12-19)
+
+
+### Bug Fixes
+
+* Allow for location Asset pallet queries ([0cc1ea0](https://github.com/paraspell/xcm-tools/commit/0cc1ea08c00aee3039fe6e73c17f833d9a3fe4fa))
+
 ## [12.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.1...sdk-core-v12.0.2) (2025-12-18)
 
 
