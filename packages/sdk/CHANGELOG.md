@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.11](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.10...sdk-v11.14.11) (2025-12-19)
+
+
+### Bug Fixes
+
+* Add ability to use location in balance queries ([b724a1a](https://github.com/paraspell/xcm-tools/commit/b724a1af8f44b9bf32647b5e7cd6bb338e2bc75a))
+
 ## [11.14.10](https://github.com/paraspell/xcm-tools/compare/sdk-v11.14.9...sdk-v11.14.10) (2025-12-17)
 
 
