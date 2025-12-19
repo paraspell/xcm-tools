@@ -69,10 +69,16 @@ describe('getXcmFeeOnce', () => {
   afterEach(() => vi.resetAllMocks())
 
   it('returns correct structure when origin dry-run fails', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA', decimals: 12 } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+      symbol: 'ACA',
+      decimals: 12
+    } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
+      if (chain === 'Acala') return 'ACA'
+      return 'GLMR'
+    })
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -98,14 +104,15 @@ describe('getXcmFeeOnce', () => {
         feeType: 'paymentInfo',
         currency: 'ACA',
         asset: { symbol: 'ACA', decimals: 12 },
-        dryRunError: 'Simulation failed'
+        dryRunError: 'Simulation failed',
+        sufficient: undefined
       },
       hops: [],
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
         currency: 'GLMR',
-        asset: { symbol: 'ACA' }
+        asset: { symbol: 'ACA', decimals: 12 }
       }
     })
   })
@@ -157,10 +164,16 @@ describe('getXcmFeeOnce', () => {
   })
 
   it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA', decimals: 12 } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+      symbol: 'ACA',
+      decimals: 12
+    } as TAssetInfo)
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
+    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
+      if (chain === 'Acala') return 'ACA'
+      return 'GLMR'
+    })
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -183,15 +196,18 @@ describe('getXcmFeeOnce', () => {
         fee: 1_000n,
         feeType: 'paymentInfo',
         currency: 'ACA',
-        asset: { symbol: 'ACA', decimals: 12 }
+        asset: { symbol: 'ACA', decimals: 12 },
+        sufficient: undefined
       },
       hops: [],
       destination: {
         fee: 2_000n,
         feeType: 'paymentInfo',
         currency: 'GLMR',
-        asset: { symbol: 'ACA' }
-      }
+        asset: { symbol: 'ACA', decimals: 12 }
+      },
+      failureChain: undefined,
+      failureReason: undefined
     })
   })
 

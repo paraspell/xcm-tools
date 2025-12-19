@@ -2,6 +2,7 @@ import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
 import { AssetsPallet } from './AssetsPallet'
 
@@ -69,5 +70,36 @@ describe('AssetsPallet.setBalance', () => {
     expect(res.balanceTx.params.id).toBe(45)
     expect(res.balanceTx.params.beneficiary).toEqual({ Id: address })
     expect(res.balanceTx.params.amount).toBe(500n)
+  })
+  describe('AssetsPallet.getBalance', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
+    })
+
+    it('uses asset.location for EnergyWebX chain', async () => {
+      const pallet = new AssetsPallet('Assets')
+
+      const queryStateSpy = vi.fn().mockResolvedValue({ balance: 777n })
+      const mockApi = {
+        queryState: queryStateSpy
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const asset = {
+        assetId: '123',
+        location: { parents: 1, interior: 'Here' }
+      } as unknown as TAssetInfo
+
+      vi.mocked(assertHasId).mockImplementation(() => {})
+
+      const balance = await pallet.getBalance(mockApi, '5FAddr', asset, 'EnergyWebX')
+
+      expect(assertHasId).toHaveBeenCalled()
+      expect(queryStateSpy).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'Account',
+        params: [asset.location, '5FAddr']
+      })
+      expect(balance).toBe(777n)
+    })
   })
 })

@@ -1,13 +1,18 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../../dist'
 import { ChainNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { getPalletInstance } from '../../pallets'
+import type { AssetsPallet } from '../../pallets/assets/AssetsPallet'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type EnergyWebX from './EnergyWebX'
 
 vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../pallets')
 
 describe('EnergyWebX', () => {
   let chain: EnergyWebX<unknown, unknown>
@@ -56,5 +61,29 @@ describe('EnergyWebX', () => {
 
   it('should throw ChainNotSupportedError for transferRelayToPara', () => {
     expect(() => chain.transferRelayToPara()).toThrow(ChainNotSupportedError)
+  })
+
+  describe('getBalance', () => {
+    it('should return asset balance using Assets pallet', async () => {
+      const mockBalance = 123n
+      const mockApi = {
+        queryState: vi.fn().mockResolvedValue({ balance: 777n })
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockAddress = '5FTestAddress'
+      const mockAsset = { symbol: 'EWX', assetId: '1' } as unknown as TAssetInfo
+
+      const getBalanceMock = vi.fn().mockResolvedValue(123n)
+
+      vi.mocked(getPalletInstance).mockReturnValue({
+        getBalance: getBalanceMock
+      } as unknown as AssetsPallet)
+
+      const result = await chain.getBalance(mockApi, mockAddress, mockAsset)
+
+      expect(getPalletInstance).toHaveBeenCalledWith('Assets')
+      expect(getBalanceMock).toHaveBeenCalledWith(mockApi, mockAddress, mockAsset, chain.chain)
+      expect(result).toBe(mockBalance)
+    })
   })
 })

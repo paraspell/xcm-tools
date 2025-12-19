@@ -8710,6 +8710,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 14,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to Hydration - (ACA) 1`] = `
 {
   "method": "transfer",
@@ -14357,6 +14402,84 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to EnergyWebX - (usdc) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X2",
+                "value": [
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 12345n,
+                  },
+                ],
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 3345,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Hydration - (DOT) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -15274,6 +15397,136 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
     },
     "remote_fees_id": {
       "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+          "value": null,
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to NeuroWeb - (TRAC) 2`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": FixedSizeBinary {
+                          "asBytes": [Function],
+                          "asHex": [Function],
+                          "asOpaqueBytes": [Function],
+                          "asOpaqueHex": [Function],
+                          "asText": [Function],
+                        },
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2004,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
       "value": {
         "interior": {
           "type": "Here",
@@ -17159,6 +17412,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
             {
               "type": "Parachain",
               "value": 2008,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should create transfer tx from Astar to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": 4294969281n,
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
             },
             {
               "type": "AccountId32",
@@ -23226,6 +23521,51 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "Token2",
+      "value": 5,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to Hydration - (BNC) 1`] = `
 {
   "method": "transfer",
@@ -25267,6 +25607,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > sho
             {
               "type": "Parachain",
               "value": 1000,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Centrifuge > ParaToPara > should create transfer tx from Centrifuge to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 6,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
             },
             {
               "type": "AccountId32",
@@ -28314,6 +28699,498 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Acala - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Ajuna - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2051,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to AssetHubPolkadot - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Astar - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2006,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to BifrostPolkadot - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2030,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Centrifuge - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2031,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Hydration - (EWT) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -28369,6 +29246,334 @@ exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > sho
           "value": {
             "type": "Parachain",
             "value": 2034,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Interlay - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2032,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Moonbeam - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountKey20",
+            "value": {
+              "key": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2004,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Pendulum - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2094,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Zeitgeist - (USDC) 1`] = `
+{
+  "method": "limited_reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2092,
           },
         },
         "parents": 1,
@@ -29121,6 +30326,48 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
   "params": {
     "amount": 1000000000000n,
     "currency_id": 252525,
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": 21,
     "dest": {
       "type": "V3",
       "value": {
@@ -32099,6 +33346,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Interlay > ParaToPara > shoul
             {
               "type": "Parachain",
               "value": 2030,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Interlay > ParaToPara > should create transfer tx from Interlay to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 1,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
             },
             {
               "type": "AccountId32",
@@ -41657,6 +42949,93 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
           "value": {
             "type": "Parachain",
             "value": 2046,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X2",
+                "value": [
+                  {
+                    "type": "PalletInstance",
+                    "value": 110,
+                  },
+                  {
+                    "type": "AccountKey20",
+                    "value": {
+                      "key": FixedSizeBinary {
+                        "asBytes": [Function],
+                        "asHex": [Function],
+                        "asOpaqueBytes": [Function],
+                        "asOpaqueHex": [Function],
+                        "asText": [Function],
+                      },
+                      "network": undefined,
+                    },
+                  },
+                ],
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": FixedSizeBinary {
+                "asBytes": [Function],
+                "asHex": [Function],
+                "asOpaqueBytes": [Function],
+                "asOpaqueHex": [Function],
+                "asText": [Function],
+              },
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 3345,
           },
         },
         "parents": 1,
@@ -55665,6 +57044,51 @@ exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > shou
       },
     },
     "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Zeitgeist > ParaToPara > should create transfer tx from Zeitgeist to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "XTokens",
+  "params": {
+    "amount": 1000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 1,
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 3345,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
       "type": "Unlimited",
     },
   },
