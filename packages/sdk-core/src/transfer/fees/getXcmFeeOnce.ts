@@ -153,8 +153,9 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
           sufficient: sufficientOriginFee,
-          currency: originAsset.symbol,
-          asset: originAsset,
+          currency:
+            originFeeType === 'paymentInfo' ? getNativeAssetSymbol(origin) : originAsset.symbol,
+          asset: originFeeType === 'paymentInfo' ? findNativeAssetInfoOrThrow(origin) : originAsset,
           ...(originDryRunError && { dryRunError: originDryRunError }),
           ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
         } as TXcmFeeDetail,
