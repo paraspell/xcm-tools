@@ -14,7 +14,6 @@ import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
-import { createRefundInstruction } from './utils'
 
 const buildAssets = (
   chain: TSubstrateChain,
@@ -62,20 +61,13 @@ export const constructTypeAndThenCall = <TApi, TRes>(
   const {
     origin,
     assetInfo,
-    isSubBridge,
     isRelayAsset,
-    options: { senderAddress, version }
+    options: { version }
   } = context
 
   const assetCount = isRelayAsset ? 1 : 2
 
-  const refundInstruction = senderAddress
-    ? createRefundInstruction(origin.api, senderAddress, version, assetCount)
-    : null
-
   const finalCustomXcm = []
-
-  if (refundInstruction && !isSubBridge) finalCustomXcm.push(refundInstruction)
 
   const resolvedFees = fees ?? {
     hopFees: 0n,

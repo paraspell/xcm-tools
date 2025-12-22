@@ -13,7 +13,6 @@ import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 import { constructTypeAndThenCall, createTypeAndThenCall } from './createTypeAndThenCall'
-import { createRefundInstruction } from './utils'
 
 vi.mock('@paraspell/assets')
 
@@ -35,7 +34,6 @@ describe('createTypeAndThenCall', () => {
     params: {}
   }
   const mockCustomXcm: ReturnType<typeof createCustomXcm> = []
-  const mockRefundInstruction: ReturnType<typeof createRefundInstruction> = { SetAppendix: [] }
   const mockAsset: TAsset = { id: RELAY_LOCATION, fun: { Fungible: 1000n } }
   const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
@@ -75,7 +73,6 @@ describe('createTypeAndThenCall', () => {
     mockApi.deserializeExtrinsics = vi.fn()
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
-    vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(createAsset).mockReturnValue(mockAsset)
@@ -100,19 +97,12 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
 
-    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 1)
-
     expect(computeAllFees).toHaveBeenCalledWith(dotContext, expect.any(Function))
 
     expect(createAsset).toHaveBeenCalledTimes(1)
     expect(createAsset).toHaveBeenCalledWith(mockVersion, 1000n, RELAY_LOCATION)
 
-    expect(buildTypeAndThenCall).toHaveBeenCalledWith(
-      dotContext,
-      true,
-      [mockRefundInstruction, ...mockCustomXcm],
-      [mockAsset]
-    )
+    expect(buildTypeAndThenCall).toHaveBeenCalledWith(dotContext, true, mockCustomXcm, [mockAsset])
 
     expect(createCustomXcm).toHaveBeenCalledWith(
       dotContext,
@@ -155,57 +145,6 @@ describe('createTypeAndThenCall', () => {
     expect(computeAllFees).toHaveBeenCalledWith(kusamaContext, expect.any(Function))
 
     expect(createAsset).toHaveBeenCalledTimes(1)
-  })
-
-  it('should omit refund instruction when context is sub bridge', async () => {
-    const subBridgeContext = {
-      ...mockContext,
-      isSubBridge: true
-    }
-    vi.mocked(createTypeAndThenCallContext).mockResolvedValue(subBridgeContext)
-
-    const result = await createTypeAndThenCall(mockChain, mockContext.options)
-
-    expect(result).toBe(mockSerializedCall)
-
-    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, mockSenderAddress, mockVersion, 2)
-
-    expect(buildTypeAndThenCall).toHaveBeenCalledWith(subBridgeContext, false, mockCustomXcm, [
-      mockAsset,
-      mockAsset
-    ])
-  })
-
-  it('should handle missing senderAddress (no refund instruction)', async () => {
-    const contextWithoutSender = {
-      ...mockContext,
-      options: {
-        ...mockContext.options,
-        senderAddress: undefined
-      }
-    }
-
-    vi.mocked(createTypeAndThenCallContext).mockResolvedValue(contextWithoutSender)
-
-    const options = {
-      ...mockContext.options,
-      senderAddress: undefined
-    }
-
-    const result = await createTypeAndThenCall(mockChain, options)
-
-    expect(result).toBe(mockSerializedCall)
-
-    expect(createRefundInstruction).not.toHaveBeenCalled()
-
-    expect(computeAllFees).toHaveBeenCalledWith(contextWithoutSender, expect.any(Function))
-
-    expect(buildTypeAndThenCall).toHaveBeenCalledWith(
-      contextWithoutSender,
-      false,
-      mockCustomXcm,
-      expect.any(Array)
-    )
   })
 
   it('should correctly calculate total fee', async () => {
