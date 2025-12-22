@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.12](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.11...sdk-core-v11.14.12) (2025-12-22)
+
+
+### Bug Fixes
+
+* Fix type and then ([6384f4a](https://github.com/paraspell/xcm-tools/commit/6384f4a24b77ba21adabc188ad7537f42af73e2c))
+
 ## [11.14.11](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.10...sdk-core-v11.14.11) (2025-12-19)
 
 
