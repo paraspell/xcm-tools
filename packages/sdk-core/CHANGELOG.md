@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.3...sdk-core-v12.0.4) (2025-12-22)
+
+
+### Bug Fixes
+
+* Fix type and then by removing refund instruction ([7d56d3f](https://github.com/paraspell/xcm-tools/commit/7d56d3fef8429d06f2124039034142722a173117))
+
 ## [12.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.2...sdk-core-v12.0.3) (2025-12-19)
 
 
