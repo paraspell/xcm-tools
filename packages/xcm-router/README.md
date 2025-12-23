@@ -96,7 +96,7 @@ If you wish to have an exchange chain selection based on the best price outcome,
 
  ```js
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .from(TSubstrateChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
         .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
         .currencyTo(currencyTo)    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
@@ -124,7 +124,7 @@ If you wish to have specific exchanges selection and select the best one among t
 
 ```ts
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .from(TSubstrateChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange(['HydrationDex','AcalaDex','AssetHubPolkadotDex'])    //Exchange Parachains
         .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
@@ -153,7 +153,7 @@ If you wish to select your exchange chain manually, you can provide the addition
 
  ```js
 await RouterBuilder(/*builder config - optional (More info in docs)*/)
-        .from(TChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .from(TSubstrateChain)   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .to(TChain)    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange(exchange)    //Exchange Parachain
         .currencyFrom(currencyFrom)    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
@@ -182,7 +182,7 @@ To retrieve exchange amount, that you receive for your desired asset pair you ca
 
 ```ts
 const result = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(TChain) //Optional parameter based on scenario
+      .from(TSubstrateChain) //Optional parameter based on scenario
       .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
@@ -200,7 +200,7 @@ You can retrieve fees for all operations XCM Router performs. Find out the examp
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(TChain) //Optional parameter based on scenario
+      .from(TSubstrateChain) //Optional parameter based on scenario
       .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
@@ -218,7 +218,7 @@ You can find out whether router dryrun call will execute correctly (works for 2 
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(TChain) //Optional parameter based on scenario
+      .from(TSubstrateChain) //Optional parameter based on scenario
       .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
@@ -236,7 +236,7 @@ You can find out minimal amount you need to transfer in order to get the currenc
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(TChain) //Optional parameter based on scenario
+      .from(TSubstrateChain) //Optional parameter based on scenario
       .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
@@ -254,7 +254,7 @@ You can find out maximal amount of specific currency you can transfer while stay
 
 ```ts
 const fees = await RouterBuilder(/*builder config - optional (More info in docs)*/)
-      .from(TChain) //Optional parameter based on scenario
+      .from(TSubstrateChain) //Optional parameter based on scenario
       .to(TChain) //Optional parameter based on scenario
       .exchange(exchange) //Optional parameter based on scenario
       .currencyFrom(currencyFrom)
