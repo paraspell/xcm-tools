@@ -86,7 +86,7 @@ For full documentation on XCM Transfers head over to [official documentation](ht
 
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TChain)
+      .from(TSubstrateChain)
       .to(TChain /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address | Location object /*If you are sending through xTokens, you need to pass the destination and address Location in one object (x2)*/)
@@ -157,7 +157,7 @@ await builder.disconnect()
 
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TChain)
+      .from(TSubstrateChain)
       .to(TRelaychain) // Kusama | Polkadot | Westend | Paseo
       .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
       .address(address | Location object)
@@ -191,7 +191,7 @@ await builder.disconnect()
 
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TChain)
+      .from(TSubstrateChain)
       .to(TChain) //Has to be the same as the origin (from)
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address)
@@ -223,13 +223,13 @@ await builder.disconnect()
 
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TChain) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .from(TSubstrateChain) //Ensure, that origin chain is the same in all batched XCM Calls.
       .to(TChain2) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Location object)
       .addToBatch()
 
-      .from(TChain) //Ensure, that origin chain is the same in all batched XCM Calls.
+      .from(TSubstrateChain) //Ensure, that origin chain is the same in all batched XCM Calls.
       .to(TChain3) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Location object)
@@ -249,7 +249,7 @@ await builder.disconnect()
 ```ts
 //Claim XCM trapped assets from the selected chain
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .claimFrom(TChain)
+      .claimfrom(TSubstrateChain)
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]
 )
       .address(address | Location object)
@@ -265,7 +265,7 @@ await builder.disconnect()
 ```ts
 //Builder pattern
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(TChain)
+        .from(TSubstrateChain)
         .to(TChain)
         .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
@@ -284,7 +284,7 @@ const result = hasDryRunSupport(chain)
 ```ts
 //Builder pattern
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(TChain)
+        .from(TSubstrateChain)
         .to(TChain)
         .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
@@ -305,7 +305,7 @@ const builder = await Builder({
     //ChainName: ...
   }
 })
-  .from(TChain)
+  .from(TSubstrateChain)
   .to(TChain)
   .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}])
   .address(address)
@@ -323,7 +323,7 @@ For full documentation with output examples of XCM Fee queries, head to [officia
 #### XCM Transfer info
 ```ts
 const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -335,7 +335,7 @@ const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array
 #### Transferable amount
 ```ts
 const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -347,7 +347,7 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
 #### Minimal transferable amount
 ```ts
 const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -359,7 +359,7 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
 #### Receivable amount
 ```ts
 const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -371,7 +371,7 @@ const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url
 #### Verify ED on destination
 ```ts
 const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -384,7 +384,7 @@ const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array -
 
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
@@ -397,7 +397,7 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
 
 ```ts
 const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TChain)
+          .from(TSubstrateChain)
           .to(TChain)
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
