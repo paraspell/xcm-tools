@@ -13,6 +13,7 @@ import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 import { constructTypeAndThenCall, createTypeAndThenCall } from './createTypeAndThenCall'
+import { createRefundInstruction } from './utils'
 
 vi.mock('@paraspell/assets')
 
@@ -27,13 +28,13 @@ describe('createTypeAndThenCall', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
   const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = Version.V5
-  const mockSenderAddress = '0x123'
   const mockSerializedCall: TSerializedExtrinsics = {
     module: 'PolkadotXcm',
     method: 'mockMethod',
     params: {}
   }
   const mockCustomXcm: ReturnType<typeof createCustomXcm> = []
+  const mockRefundInstruction = { SetAppendix: [] } as ReturnType<typeof createRefundInstruction>
   const mockAsset: TAsset = { id: RELAY_LOCATION, fun: { Fungible: 1000n } }
   const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
@@ -60,7 +61,6 @@ describe('createTypeAndThenCall', () => {
     systemAsset: mockSystemAsset,
     options: {
       api: mockApi,
-      senderAddress: mockSenderAddress,
       address: 'dest-address',
       version: mockVersion,
       currency: { amount: 1000n },
@@ -73,6 +73,7 @@ describe('createTypeAndThenCall', () => {
     mockApi.deserializeExtrinsics = vi.fn()
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
+    vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(createAsset).mockReturnValue(mockAsset)
@@ -109,6 +110,7 @@ describe('createTypeAndThenCall', () => {
       1,
       false,
       mockFees.destFee + mockFees.hopFees,
+      null,
       mockFees
     )
     expect(createCustomXcm).toHaveBeenCalledTimes(1)
@@ -169,6 +171,7 @@ describe('createTypeAndThenCall', () => {
       2,
       false,
       mockFees.hopFees + mockFees.destFee,
+      null,
       mockFees
     )
   })
@@ -178,7 +181,7 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
     expect(parseUnits).toHaveBeenCalledWith('1', 12)
-    expect(createCustomXcm).toHaveBeenCalledWith(mockContext, 2, true, 1n, {
+    expect(createCustomXcm).toHaveBeenCalledWith(mockContext, 2, true, 1n, null, {
       hopFees: 0n,
       destFee: 0n
     })
@@ -211,5 +214,27 @@ describe('createTypeAndThenCall', () => {
       mockContext.assetInfo.location
     )
     expect(spy).toHaveBeenCalledWith(mockSerializedCall)
+  })
+
+  it('creates refund instruction when senderAddress provided', () => {
+    const contextWithSender = {
+      ...mockContext,
+      options: {
+        ...mockContext.options,
+        senderAddress: 'refund-address'
+      }
+    }
+
+    constructTypeAndThenCall(contextWithSender, mockFees)
+
+    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, 'refund-address', mockVersion, 2)
+    expect(createCustomXcm).toHaveBeenCalledWith(
+      contextWithSender,
+      2,
+      false,
+      mockFees.hopFees + mockFees.destFee,
+      mockRefundInstruction,
+      mockFees
+    )
   })
 })
