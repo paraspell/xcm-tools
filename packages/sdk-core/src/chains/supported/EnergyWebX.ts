@@ -6,10 +6,10 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TSerializedExtrinsics } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
+import { assertHasLocation } from '../../utils'
 import Parachain from '../Parachain'
 
 class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -36,12 +36,20 @@ class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotX
     throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
   }
 
-  getBalanceForeign<TApi, TRes>(
+  async getBalanceForeign<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    return getPalletInstance('Assets').getBalance(api, address, asset, this.chain)
+    assertHasLocation(asset)
+
+    const balance = await api.queryState<{ balance: bigint }>({
+      module: 'Assets',
+      method: 'Account',
+      params: [asset.location, address]
+    })
+
+    return balance?.balance ?? 0n
   }
 }
 

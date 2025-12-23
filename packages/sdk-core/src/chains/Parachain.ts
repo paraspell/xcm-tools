@@ -685,7 +685,7 @@ abstract class Parachain<TApi, TRes> {
       const instance = getPalletInstance(pallet)
 
       try {
-        return await instance.getBalance(api, address, asset, customCurrencyId, this.chain)
+        return await instance.getBalance(api, address, asset, customCurrencyId)
       } catch (e) {
         lastError = e
       }

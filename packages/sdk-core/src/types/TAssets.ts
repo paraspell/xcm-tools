@@ -25,7 +25,6 @@ export abstract class BaseAssetsPallet {
     api: IPolkadotApi<TApi, TRes>,
     address: string,
     asset: TAssetInfo,
-    customCurrencyId?: unknown,
-    chain?: TSubstrateChain
+    customCurrencyId?: unknown
   ): Promise<bigint>
 }

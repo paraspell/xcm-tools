@@ -2,7 +2,7 @@ import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../dist'
+import type { IPolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
 import { AssetsPallet } from './AssetsPallet'
 
@@ -71,35 +71,39 @@ describe('AssetsPallet.setBalance', () => {
     expect(res.balanceTx.params.beneficiary).toEqual({ Id: address })
     expect(res.balanceTx.params.amount).toBe(500n)
   })
-  describe('AssetsPallet.getBalance', () => {
-    beforeEach(() => {
-      vi.clearAllMocks()
+})
+
+describe('AssetsPallet.getBalance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('retries with BigInt asset id when runtime entry is incompatible', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const address = '5FbrsAddr'
+    const asset = { assetId: '77' } as TAssetInfo
+
+    vi.mocked(assertHasId).mockImplementation(() => {})
+
+    const queryState = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
+      .mockResolvedValueOnce({ balance: 123n })
+
+    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown>
+
+    const balance = await pallet.getBalance(api, address, asset)
+
+    expect(queryState).toHaveBeenNthCalledWith(1, {
+      module: 'Assets',
+      method: 'Account',
+      params: [77, address]
     })
-
-    it('uses asset.location for EnergyWebX chain', async () => {
-      const pallet = new AssetsPallet('Assets')
-
-      const queryStateSpy = vi.fn().mockResolvedValue({ balance: 777n })
-      const mockApi = {
-        queryState: queryStateSpy
-      } as unknown as IPolkadotApi<unknown, unknown>
-
-      const asset = {
-        assetId: '123',
-        location: { parents: 1, interior: 'Here' }
-      } as unknown as TAssetInfo
-
-      vi.mocked(assertHasId).mockImplementation(() => {})
-
-      const balance = await pallet.getBalance(mockApi, '5FAddr', asset, 'EnergyWebX')
-
-      expect(assertHasId).toHaveBeenCalled()
-      expect(queryStateSpy).toHaveBeenCalledWith({
-        module: 'Assets',
-        method: 'Account',
-        params: [asset.location, '5FAddr']
-      })
-      expect(balance).toBe(777n)
+    expect(queryState).toHaveBeenNthCalledWith(2, {
+      module: 'Assets',
+      method: 'Account',
+      params: [77n, address]
     })
+    expect(balance).toBe(123n)
   })
 })
