@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.5](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.0.4...xcm-router-v12.0.5) (2025-12-23)
+
+
+### Bug Fixes
+
+* Update documentation ([019c185](https://github.com/paraspell/xcm-tools/commit/019c185c2bc327f76fb73f7af7bfc802447e7fff))
+
 ## [12.0.4](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.0.3...xcm-router-v12.0.4) (2025-12-22)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [12.0.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.4...sdk-core-v12.0.5) (2025-12-23)
+
+
+### Bug Fixes
+
+* **sdk-core:** Handle Hydration custom fee assets ⚙️ ([c7bfc88](https://github.com/paraspell/xcm-tools/commit/c7bfc88a0fcf1498ff843d779698823cc4917555))
+* **sdk-core:** Only use refund instruction if there is a hop 🔧 ([ecb42f2](https://github.com/paraspell/xcm-tools/commit/ecb42f264e8b4c368ab9cee9e67772b4fa9e5573))
+* **sdk-core:** Refactor EnergyWebX fixes 🔧 ([d7ad29e](https://github.com/paraspell/xcm-tools/commit/d7ad29e64ce605aae1001159d141ad780eb8930b))
+
 ## [12.0.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.3...sdk-core-v12.0.4) (2025-12-22)
 
 

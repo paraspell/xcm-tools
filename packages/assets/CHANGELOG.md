@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.5](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.4...assets-v12.0.5) (2025-12-23)
+
+
+### Bug Fixes
+
+* **sdk-core:** Refactor EnergyWebX fixes 🔧 ([d7ad29e](https://github.com/paraspell/xcm-tools/commit/d7ad29e64ce605aae1001159d141ad780eb8930b))
+
 ## [12.0.4](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.3...assets-v12.0.4) (2025-12-22)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.0.5](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.0.4...sdk-pjs-v12.0.5) (2025-12-23)
+
+
+### Bug Fixes
+
+* **sdk-core:** Handle Hydration custom fee assets ⚙️ ([c7bfc88](https://github.com/paraspell/xcm-tools/commit/c7bfc88a0fcf1498ff843d779698823cc4917555))
+* Update documentation ([019c185](https://github.com/paraspell/xcm-tools/commit/019c185c2bc327f76fb73f7af7bfc802447e7fff))
+
 ## [12.0.4](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.0.3...sdk-pjs-v12.0.4) (2025-12-22)
 
 
