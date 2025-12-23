@@ -6,6 +6,7 @@ import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
+import type { createRefundInstruction } from './utils'
 
 const resolveBuyExecutionAmount = <TApi, TRes>(
   { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes>,
@@ -27,6 +28,7 @@ export const createCustomXcm = <TApi, TRes>(
   assetCount: number,
   isForFeeCalc: boolean,
   systemAssetAmount: bigint,
+  refundInstruction: ReturnType<typeof createRefundInstruction> | null,
   fees: TTypeAndThenFees = {
     hopFees: 0n,
     destFee: 0n
@@ -116,6 +118,7 @@ export const createCustomXcm = <TApi, TRes>(
     // If destination is a system chain, use teleport instead of reserve deposit
     if (isSystemChain(dest.chain)) {
       return [
+        ...(refundInstruction ? [refundInstruction] : []),
         {
           InitiateTeleport: {
             assets: filter,
@@ -127,6 +130,7 @@ export const createCustomXcm = <TApi, TRes>(
     }
 
     return [
+      ...(refundInstruction ? [refundInstruction] : []),
       {
         DepositReserveAsset: {
           assets: filter,

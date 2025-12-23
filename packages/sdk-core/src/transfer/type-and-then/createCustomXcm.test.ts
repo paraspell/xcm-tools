@@ -104,6 +104,7 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
+        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -144,6 +145,7 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
+        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -179,6 +181,7 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
+        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -191,7 +194,7 @@ describe('createCustomXcm', () => {
     })
 
     it('excludes DOT from assetsFilter when asset location equals RELAY_LOCATION', () => {
-      const result = createCustomXcm(mockContext, 1, false, mockContext.assetInfo.amount, {
+      const result = createCustomXcm(mockContext, 1, false, mockContext.assetInfo.amount, null, {
         hopFees: 100n,
         destFee: 200n
       })
@@ -213,6 +216,7 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
+        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -238,6 +242,7 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
+        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -264,7 +269,8 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount
+        mockContext.assetInfo.amount,
+        null
       )
 
       const depositReserveInstruction = result.find(isDepositReserveInstruction)
@@ -292,6 +298,7 @@ describe('createCustomXcm', () => {
           1,
           false,
           20n,
+          null,
           {
             hopFees: 100n,
             destFee: 200n
@@ -322,7 +329,8 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount
+        mockContext.assetInfo.amount,
+        null
       )
 
       const depositAssetInstruction = result.find(isDepositAssetInstruction)
@@ -357,7 +365,8 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount
+        mockContext.assetInfo.amount,
+        null
       )
 
       const depositAssetInstruction = result.find(isDepositAssetInstruction)
@@ -388,7 +397,8 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount
+        mockContext.assetInfo.amount,
+        null
       )
 
       expect(result.find(isDepositAssetInstruction)).toBeDefined()
