@@ -43,6 +43,7 @@ import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
 import { fetchOtherAssetsAmplitude } from './fetchAmplitudeAssets'
 import { fetchNativeAssetsCurio, fetchOtherAssetsCurio } from './fetchCurioAssets'
+import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -328,6 +329,10 @@ const fetchOtherAssets = async (
 
   if (chain === 'Basilisk') {
     otherAssets = await fetchBasiliskAssets(api, query)
+  }
+
+  if (chain.startsWith('EnergyWebX')) {
+    otherAssets = await fetchEnergyWebXAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(api, query)

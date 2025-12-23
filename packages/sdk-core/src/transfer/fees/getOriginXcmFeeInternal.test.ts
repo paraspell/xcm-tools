@@ -1,5 +1,10 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { findAssetInfoOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
+  getNativeAssetSymbol,
+  hasDryRunSupport
+} from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -22,7 +27,8 @@ const createApi = (fee: bigint) =>
 describe('getOriginXcmFeeInternal', () => {
   const mockSymbol = 'TOKEN'
   const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
-  const mockAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = { symbol: 'USDT', decimals: 6, isNative: true }
+  const nativeAsset = { symbol: 'DOT', decimals: 10, isNative: true }
   const mockTx = {}
 
   beforeEach(() => {
@@ -30,6 +36,7 @@ describe('getOriginXcmFeeInternal', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue(mockSymbol)
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
   })
 
   it('returns padded paymentInfo fee when dry-run is NOT supported', async () => {
@@ -52,7 +59,7 @@ describe('getOriginXcmFeeInternal', () => {
 
     expect(res).toEqual({
       fee: 150n,
-      asset: mockAsset,
+      asset: nativeAsset,
       feeType: 'paymentInfo',
       sufficient: true
     })
@@ -108,7 +115,7 @@ describe('getOriginXcmFeeInternal', () => {
     expect(isSufficientOrigin).not.toHaveBeenCalled()
   })
 
-  it('returns **error variant** when dry-run fails and fallback is disabled', async () => {
+  it('returns error variant when dry-run fails and fallback is disabled', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
 
     const api = createApi(123n)

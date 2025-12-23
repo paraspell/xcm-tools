@@ -1,13 +1,12 @@
 vi.mock('../../pallets')
 vi.mock('../../pallets/polkadotXcm')
 
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi, TAssetInfo } from '../../../dist'
+import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { getPalletInstance } from '../../pallets'
-import type { AssetsPallet } from '../../pallets/assets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -60,27 +59,20 @@ describe('EnergyWebX', () => {
     expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 
-  describe('getBalance', () => {
-    it('should return asset balance using Assets pallet', async () => {
-      const mockBalance = 123n
-      const mockApi = {
-        queryState: vi.fn().mockResolvedValue({ balance: 777n })
-      } as unknown as IPolkadotApi<unknown, unknown>
+  it('should query balance foreign with asset location and address', async () => {
+    const queryState = vi.fn().mockResolvedValue({ balance: 321n })
 
-      const mockAddress = '5FTestAddress'
-      const mockAsset = { symbol: 'EWX', assetId: '1' } as unknown as TAssetInfo
+    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown>
+    const asset = { location: { parents: 0, interior: 'Here' } } as TAssetInfo
+    const address = '5FbalanceAddr'
 
-      const getBalanceMock = vi.fn().mockResolvedValue(123n)
+    const balance = await chain.getBalanceForeign(api, address, asset)
 
-      vi.mocked(getPalletInstance).mockReturnValue({
-        getBalance: getBalanceMock
-      } as unknown as AssetsPallet)
-
-      const result = await chain.getBalance(mockApi, mockAddress, mockAsset)
-
-      expect(getPalletInstance).toHaveBeenCalledWith('Assets')
-      expect(getBalanceMock).toHaveBeenCalledWith(mockApi, mockAddress, mockAsset, chain.chain)
-      expect(result).toBe(mockBalance)
+    expect(queryState).toHaveBeenCalledWith({
+      module: 'Assets',
+      method: 'Account',
+      params: [asset.location, address]
     })
+    expect(balance).toBe(321n)
   })
 })

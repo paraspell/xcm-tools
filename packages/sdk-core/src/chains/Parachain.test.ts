@@ -771,13 +771,7 @@ describe('Parachain', () => {
       const result = await chain.getBalanceForeign(api, '5FMock', asset)
 
       expect(tokensPallet.getBalance).toHaveBeenCalled()
-      expect(foreignAssetsPallet.getBalance).toHaveBeenCalledWith(
-        api,
-        '5FMock',
-        asset,
-        customId,
-        'Acala'
-      )
+      expect(foreignAssetsPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset, customId)
       expect(result).toBe(55n)
     })
 

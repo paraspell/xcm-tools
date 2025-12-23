@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
+  hasDryRunSupport
+} from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
@@ -54,7 +58,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
 
     return {
       fee: paddedFee,
-      asset: resolvedFeeAsset ?? asset,
+      asset: resolvedFeeAsset ?? findNativeAssetInfoOrThrow(origin),
       feeType: 'paymentInfo',
       sufficient
     }

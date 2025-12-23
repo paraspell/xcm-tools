@@ -2894,7 +2894,6 @@
       {
         "symbol": "USDC",
         "decimals": 6,
-        "assetId": "1337",
         "existentialDeposit": "10000",
         "location": {
           "parents": 1,
@@ -2908,6 +2907,27 @@
               },
               {
                 "GeneralIndex": 1337
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "stEWT",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 3345
+              },
+              {
+                "PalletInstance": 60
+              },
+              {
+                "GeneralIndex": 1
               }
             ]
           }
@@ -2995,7 +3015,7 @@
         "assetId": "222",
         "symbol": "HOLLAR",
         "decimals": 18,
-        "existentialDeposit": "0",
+        "existentialDeposit": "20000000000000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -18060,6 +18080,48 @@
             "X1": [
               {
                 "Parachain": 3345
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "USDC",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "stEWT",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 3345
+              },
+              {
+                "PalletInstance": 60
+              },
+              {
+                "GeneralIndex": 1
               }
             ]
           }

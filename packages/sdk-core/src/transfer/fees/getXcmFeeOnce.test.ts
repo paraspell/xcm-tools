@@ -68,10 +68,9 @@ describe('getXcmFeeOnce', () => {
 
   it('returns correct structure when origin dry-run fails', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
-      if (chain === 'Acala') return { symbol: 'ACA', decimals: 12 } as TAssetInfo
-      return { symbol: 'GLMR' } as TAssetInfo
-    })
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -151,10 +150,9 @@ describe('getXcmFeeOnce', () => {
 
   it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
-      if (chain === 'Acala') return { symbol: 'ACA', decimals: 12 } as TAssetInfo
-      return { symbol: 'GLMR' } as TAssetInfo
-    })
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
+
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
