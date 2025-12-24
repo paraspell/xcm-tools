@@ -22,7 +22,8 @@ vi.mock('@paraspell/assets', () => ({
   findNativeAssetInfoOrThrow: vi.fn(),
   findAssetInfoOnDest: vi.fn(),
   InvalidCurrencyError: class extends Error {},
-  isAssetEqual: vi.fn()
+  isAssetEqual: vi.fn(),
+  isStableCoinAsset: vi.fn()
 }))
 
 vi.mock('../../utils')

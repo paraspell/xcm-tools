@@ -43,6 +43,8 @@ describe('localizeLocation', () => {
         case 'AssetHubPolkadot':
         case 'Moonbeam':
           return 'Polkadot'
+        case 'AssetHubKusama':
+          return 'Kusama'
         case 'BifrostKusama':
           return 'Kusama'
         default:
@@ -135,7 +137,14 @@ describe('localizeLocation', () => {
       }
       const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(1)
-      expect(result.interior).toEqual(input.interior)
+      expect(result.interior).toEqual({
+        X4: [
+          { AccountId32: { id: '0x123', network: null } },
+          { PalletInstance: 50 },
+          { GeneralIndex: 1 },
+          { GeneralKey: { length: 2, data: 'ab' } }
+        ]
+      })
     })
   })
 
@@ -241,7 +250,7 @@ describe('localizeLocation', () => {
   })
 
   describe('cross-ecosystem adjustments', () => {
-    it('should collapse to relay location when location points to target relay from different origin ecosystem', () => {
+    it('should keep multi-junction global-consensus location when origin ecosystem differs', () => {
       const input: TLocation = {
         parents: Parents.TWO,
         interior: {
@@ -251,7 +260,7 @@ describe('localizeLocation', () => {
 
       const result = localizeLocation('Acala', input, 'BifrostKusama')
 
-      expect(result).toEqual(RELAY_LOCATION)
+      expect(result).toEqual({ parents: Parents.ZERO, interior: 'Here' })
     })
 
     it('should expand relay location with global consensus when origin ecosystem differs', () => {
@@ -263,6 +272,83 @@ describe('localizeLocation', () => {
           X2: [{ GlobalConsensus: { kusama: null } }, { Parachain: 2001 }]
         }
       })
+    })
+
+    it('should prepend GlobalConsensus and bump parents when localizing between different ecosystems', () => {
+      const input: TLocation = {
+        parents: Parents.ONE,
+        interior: {
+          X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }]
+        }
+      }
+
+      const result = localizeLocation('AssetHubKusama', input, 'AssetHubPolkadot')
+
+      expect(result).toEqual({
+        parents: Parents.TWO,
+        interior: {
+          X4: [
+            { GlobalConsensus: { polkadot: null } },
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 1984 }
+          ]
+        }
+      })
+    })
+
+    it('should collapse system asset location with only GlobalConsensus when origin ecosystem differs', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X1: [{ GlobalConsensus: { kusama: null } }]
+        }
+      }
+
+      const result = localizeLocation('AssetHubPolkadot', input, 'BifrostKusama')
+
+      expect(result).toEqual(input)
+    })
+
+    it('should drop GC and Parachain when location already targets destination relay', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X4: [
+            { GlobalConsensus: { polkadot: null } },
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 1984 }
+          ]
+        }
+      }
+
+      const result = localizeLocation('AssetHubPolkadot', input, 'AssetHubKusama')
+
+      expect(result).toEqual({
+        parents: Parents.ZERO,
+        interior: {
+          X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }]
+        }
+      })
+    })
+
+    it('should keep location unchanged when it already targets another ecosystem via GlobalConsensus and origin is undefined', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X4: [
+            { GlobalConsensus: { polkadot: null } },
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 1984 }
+          ]
+        }
+      }
+
+      const result = localizeLocation('AssetHubKusama', input)
+
+      expect(result).toEqual(input)
     })
   })
 })

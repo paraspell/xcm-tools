@@ -4,12 +4,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput } from '../../types'
 import { Foreign, Native } from '../assetSelectors'
+import { isStableCoinAsset } from '../isStableCoinAsset'
 import { findAssetInfo } from './findAssetInfo'
 import { findAssetInfoOnDest, findAssetOnDestOrThrow } from './findAssetInfoOnDest'
 import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
+import { findStablecoinAssets } from './findStablecoinAssets'
 
 vi.mock('./findAssetInfo')
 vi.mock('./findAssetInfoOrThrow')
+vi.mock('./findStablecoinAssets')
+vi.mock('../isStableCoinAsset')
 
 const mockOriginChain: TChain = 'Acala'
 const mockDestinationChain: TChain = 'AssetHubPolkadot'
@@ -37,9 +41,23 @@ const mockDestinationAsset: TAssetInfo = {
   location: mockLocation
 }
 
+const mockStablecoinAsset: TAssetInfo = {
+  symbol: 'USDx',
+  assetId: '999',
+  decimals: 12,
+  location: {
+    parents: 1,
+    interior: {
+      X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }]
+    }
+  } as TLocation
+}
+
 describe('findAssetOnDest', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
+    vi.mocked(isStableCoinAsset).mockReturnValue(false)
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
   })
 
   it('should find asset on destination by location if origin asset has location and asset is found', () => {
@@ -134,6 +152,29 @@ describe('findAssetOnDest', () => {
       null
     )
     expect(result).toEqual(mockDestinationAsset)
+    expect(findAssetInfo).toHaveBeenCalledTimes(1)
+  })
+
+  it('should return stablecoin match when native is missing on substrate bridge', () => {
+    const currencyInput: TCurrencyInput = { symbol: mockStablecoinAsset.symbol }
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
+      ...mockStablecoinAsset,
+      assetId: 'origin-stable'
+    })
+
+    vi.mocked(isStableCoinAsset).mockReturnValue(true)
+
+    vi.mocked(findAssetInfo)
+      .mockReturnValueOnce(null) // native lookup
+      .mockReturnValueOnce(null) // foreign lookup
+
+    vi.mocked(findStablecoinAssets).mockReturnValueOnce([mockStablecoinAsset])
+
+    const result = findAssetInfoOnDest('AssetHubPolkadot', 'AssetHubKusama', currencyInput)
+
+    expect(findStablecoinAssets).toHaveBeenCalledWith('AssetHubKusama')
+    expect(result).toEqual(mockStablecoinAsset)
     expect(findAssetInfo).toHaveBeenCalledTimes(1)
   })
 
@@ -237,7 +278,9 @@ describe('findAssetOnDest', () => {
 
 describe('findAssetOnDestOrThrow', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
+    vi.mocked(isStableCoinAsset).mockReturnValue(false)
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
   })
 
   it('should return asset when findAssetOnDest returns an asset', () => {

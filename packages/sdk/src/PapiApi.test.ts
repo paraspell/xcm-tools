@@ -23,8 +23,10 @@ import {
   localizeLocation,
   MissingChainApiError,
   Parents,
+  RELAY_LOCATION,
   type TLocation,
   type TSubstrateChain,
+  Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
@@ -650,6 +652,130 @@ describe('PapiApi', () => {
 
       // exec (100n) + delivery (0n due to error)
       expect(res).toBe(100n)
+    })
+
+    it('uses BridgeHub fallback helper when exec fee asset is missing', async () => {
+      const bridgeChain: TSubstrateChain = 'BridgeHubPolkadot'
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
+        .fn()
+        .mockResolvedValue({ success: false, value: { type: 'AssetNotFound' } })
+
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        value: { ref_time: 100n, proof_size: 200n }
+      })
+
+      const fallbackSpy = vi.spyOn(papiApi, 'getBridgeHubFallbackExecFee').mockResolvedValue(33n)
+
+      const res = await papiApi.getXcmPaymentApiFee(bridgeChain, localXcm, [], baseAsset)
+
+      expect(fallbackSpy).toHaveBeenCalledWith(
+        bridgeChain,
+        { ref_time: 100n, proof_size: 200n },
+        baseAsset
+      )
+      expect(res).toBe(33n)
+    })
+
+    it('returns zero when BridgeHub fallback is unavailable', async () => {
+      const bridgeChain: TSubstrateChain = 'BridgeHubPolkadot'
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
+        .fn()
+        .mockResolvedValue({ success: false, value: { type: 'AssetNotFound' } })
+
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        value: { ref_time: 100n, proof_size: 200n }
+      })
+
+      const fallbackSpy = vi
+        .spyOn(papiApi, 'getBridgeHubFallbackExecFee')
+        .mockResolvedValue(undefined)
+
+      const res = await papiApi.getXcmPaymentApiFee(bridgeChain, localXcm, [], baseAsset)
+
+      expect(fallbackSpy).toHaveBeenCalledWith(
+        bridgeChain,
+        { ref_time: 100n, proof_size: 200n },
+        baseAsset
+      )
+      expect(res).toBe(0n)
+    })
+  })
+
+  describe('getBridgeHubFallbackExecFee', () => {
+    const chain: TSubstrateChain = 'BridgeHubPolkadot'
+    const weightValue = { ref_time: 11n, proof_size: 22n }
+    const asset: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: {
+        parents: 1,
+        interior: { X1: [{ Parachain: 1000 }] }
+      } as TLocation
+    }
+
+    it('converts relay fee via AssetHub and returns bigint', async () => {
+      const fallbackFee = 777n
+      const convertedFee = 999n
+      const localizedLoc = { parents: 0, interior: { Here: null } } as TLocation
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
+      queryFeeMock.mockResolvedValueOnce({ value: fallbackFee })
+
+      vi.mocked(localizeLocation).mockReturnValueOnce(localizedLoc)
+
+      const ahApiMock = {
+        init: vi.fn().mockResolvedValue(undefined),
+        quoteAhPrice: vi.fn().mockResolvedValue(convertedFee)
+      } as unknown as PapiApi
+
+      const cloneSpy = vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
+
+      const ahInitSpy = vi.spyOn(ahApiMock, 'init')
+      const ahQuoteSpy = vi.spyOn(ahApiMock, 'quoteAhPrice')
+
+      const res = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+
+      expect(queryFeeMock).toHaveBeenCalledWith(
+        weightValue,
+        expect.objectContaining({ type: Version.V4 })
+      )
+      expect(transform).toHaveBeenCalledWith(RELAY_LOCATION)
+      expect(cloneSpy).toHaveBeenCalledTimes(1)
+      expect(ahInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
+      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', asset.location)
+      expect(ahQuoteSpy).toHaveBeenCalledWith(RELAY_LOCATION, localizedLoc, fallbackFee, false)
+      expect(res).toBe(convertedFee)
+    })
+
+    it('returns undefined when fallback fee or conversion is unavailable', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
+      queryFeeMock.mockResolvedValueOnce({ value: undefined })
+
+      const resWithoutFee = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      expect(resWithoutFee).toBeUndefined()
+
+      queryFeeMock.mockResolvedValueOnce({ value: 123n })
+
+      const ahApiMock = {
+        init: vi.fn().mockResolvedValue(undefined),
+        quoteAhPrice: vi.fn().mockResolvedValue(undefined)
+      } as unknown as PapiApi
+
+      vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
+
+      const resWithoutConversion = await papiApi.getBridgeHubFallbackExecFee(
+        chain,
+        weightValue,
+        asset
+      )
+
+      expect(resWithoutConversion).toBeUndefined()
     })
   })
 
@@ -2068,7 +2194,7 @@ describe('PapiApi', () => {
         } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).resolves.toEqual({
         success: true,
-        fee: 101n,
+        fee: 100n,
         asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } } as TAssetInfo,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []

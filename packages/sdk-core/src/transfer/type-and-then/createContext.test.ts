@@ -36,13 +36,20 @@ describe('getSubBridgeReserve', () => {
   const originChain: TSubstrateChain = 'BridgeHubPolkadot'
   const destinationChain: TSubstrateChain = 'BridgeHubKusama'
 
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(getRelayChainOf).mockImplementation(chain =>
+      chain.toLowerCase().includes('kusama') ? 'Kusama' : 'Polkadot'
+    )
+  })
+
   it('returns the origin chain when asset location is relay', () => {
     const result = getSubBridgeReserve(originChain, destinationChain, RELAY_LOCATION)
 
     expect(result).toBe(originChain)
   })
 
-  it('returns the destination chain when asset location differs from relay', () => {
+  it('returns the origin chain when asset location differs from relay', () => {
     const parachainLocation: TLocation = {
       parents: 1,
       interior: { X1: { Parachain: 2000 } }
@@ -50,7 +57,7 @@ describe('getSubBridgeReserve', () => {
 
     const result = getSubBridgeReserve(originChain, destinationChain, parachainLocation)
 
-    expect(result).toBe(destinationChain)
+    expect(result).toBe(originChain)
   })
 })
 
