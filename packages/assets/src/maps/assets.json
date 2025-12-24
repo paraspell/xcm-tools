@@ -2948,6 +2948,7 @@
         "isNative": true,
         "decimals": 12,
         "existentialDeposit": "1000000000000",
+        "assetId": "0",
         "location": {
           "parents": 1,
           "interior": {

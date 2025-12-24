@@ -22,6 +22,8 @@ export const findAssetInfo = (
   const otherAssets = getOtherAssets(chain)
   const nativeAssets = getNativeAssets(chain)
 
+  const assets = [...nativeAssets, ...otherAssets]
+
   let asset: TAssetInfo | undefined
   if ('symbol' in currency) {
     asset = findAssetInfoBySymbol(destination, otherAssets, nativeAssets, currency.symbol)
@@ -30,7 +32,7 @@ export const findAssetInfo = (
       findAssetInfoByLoc(otherAssets, currency.location) ??
       findAssetInfoByLoc(nativeAssets, currency.location)
   } else if ('id' in currency) {
-    asset = findAssetInfoById(otherAssets, currency.id)
+    asset = findAssetInfoById(assets, currency.id)
   }
 
   return asset ?? null

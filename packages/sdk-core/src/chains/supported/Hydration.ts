@@ -28,8 +28,6 @@ class Hydration<TApi, TRes>
   extends Parachain<TApi, TRes>
   implements IXTokensTransfer, IPolkadotXCMTransfer
 {
-  private static NATIVE_ASSET_ID = 0
-
   constructor(
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',
@@ -92,10 +90,6 @@ class Hydration<TApi, TRes>
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset, destination } = input
-
-    if (asset.symbol === this.getNativeAssetSymbol()) {
-      return transferXTokens(input, Hydration.NATIVE_ASSET_ID)
-    }
 
     const isMoonbeamWhAsset =
       asset.location &&

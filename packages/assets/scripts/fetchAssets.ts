@@ -78,6 +78,13 @@ const resolveNativeAssets = async (
     return defaultNativeAssets.slice(0, 1)
   }
 
+  if (chain === 'Hydration') {
+    return defaultNativeAssets.map(asset => ({
+      ...asset,
+      assetId: '0'
+    }))
+  }
+
   return defaultNativeAssets
 }
 

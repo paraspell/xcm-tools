@@ -3,6 +3,7 @@
 import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { TAssetInfo } from '../../types'
 import { getNativeAssets, getOtherAssets } from '../assets'
 import { Foreign, ForeignAbstract, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
@@ -29,6 +30,17 @@ describe('findAssetInfo', () => {
     vi.clearAllMocks()
     vi.mocked(getNativeAssets).mockReturnValue([])
     vi.mocked(getOtherAssets).mockReturnValue([])
+  })
+
+  it('finds asset by explicit id', () => {
+    const asset = { assetId: '123', symbol: 'USDC' } as TAssetInfo
+
+    vi.mocked(getNativeAssets).mockReturnValue([asset])
+    vi.mocked(getOtherAssets).mockReturnValue([])
+
+    const result = findAssetInfo('Polkadot', { id: '123' }, null)
+
+    expect(result).toBe(asset)
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
