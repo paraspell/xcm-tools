@@ -4,6 +4,7 @@ import {
   findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
+  isStableCoinAsset,
   type TAssetInfo
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -35,11 +36,13 @@ const validateBridgeAsset = (
   const isNativeAsset = isAssetEqual(asset, nativeAsset)
   const ecosystem = getRelayChainOf(destination).toLowerCase()
 
-  const isBridgedAsset =
+  const isBridgedSystemAsset =
     asset.location?.parents === Parents.TWO &&
     deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), { [ecosystem]: null })
 
-  if (!(isNativeAsset || isBridgedAsset)) {
+  const isBridgedStablecoin = isStableCoinAsset(asset)
+
+  if (!(isNativeAsset || isBridgedSystemAsset || isBridgedStablecoin)) {
     throw new InvalidCurrencyError(
       `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )

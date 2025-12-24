@@ -1,6 +1,7 @@
 import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import {
   deepEqual,
+  getJunctionValue,
   isSubstrateBridge,
   type TLocation,
   type TSubstrateChain
@@ -20,8 +21,12 @@ export const getSubBridgeReserve = (
   destination: TSubstrateChain,
   location: TLocation
 ): TSubstrateChain => {
-  if (deepEqual(location, RELAY_LOCATION)) return chain
-  return destination
+  const destRelay = getRelayChainOf(destination).toLowerCase()
+  const isDestReserve = deepEqual(getJunctionValue(location, 'GlobalConsensus'), {
+    [destRelay]: null
+  })
+  if (isDestReserve) return destination
+  return chain
 }
 
 const resolveReserveChain = (
@@ -77,7 +82,8 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
 
   const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
 
-  const isRelayAsset = RELAY_ASSET_LOCATIONS.some(loc => deepEqual(assetInfo.location, loc))
+  const isRelayAsset =
+    RELAY_ASSET_LOCATIONS.some(loc => deepEqual(assetInfo.location, loc)) || isSubBridge
 
   const destApi = api.clone()
   await destApi.init(destinationChain)

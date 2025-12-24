@@ -10,6 +10,7 @@ export {
   DRY_RUN_CLIENT_TIMEOUT_MS,
   ETH_CHAIN_ID,
   ETHEREUM_JUNCTION,
+  RELAY_LOCATION,
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'

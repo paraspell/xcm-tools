@@ -3,6 +3,7 @@ import { isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
 import type { TAssetInfo } from '../types'
 import { getAssets } from './assets'
 import { isAssetXcEqual } from './isAssetXcEqual'
+import { findStablecoinAssets } from './search/findStablecoinAssets'
 
 /**
  * Retrieves the list of assets that are supported for transfers between two specified chains.
@@ -18,7 +19,9 @@ export const getSupportedAssets = (origin: TChain, destination: TChain): TAssetI
   const isSubBridge = isSubstrateBridge(origin, destination)
 
   if (isSubBridge) {
-    return originAssets.filter(asset => asset.symbol === 'KSM' || asset.symbol === 'DOT')
+    const systemAssets = originAssets.filter(asset => ['DOT', 'KSM'].includes(asset.symbol))
+    const stablecoinAssets = findStablecoinAssets(origin)
+    return [...systemAssets, ...stablecoinAssets]
   }
 
   const supportedAssets = originAssets.filter(asset =>

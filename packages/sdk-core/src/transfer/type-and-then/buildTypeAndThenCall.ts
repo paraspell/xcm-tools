@@ -14,6 +14,7 @@ export const buildTypeAndThenCall = <TApi, TRes>(
     origin,
     reserve,
     dest,
+    isSubBridge,
     assetInfo,
     options: { version, pallet, method }
   }: TTypeAndThenCallContext<TApi, TRes>,
@@ -32,7 +33,9 @@ export const buildTypeAndThenCall = <TApi, TRes>(
   const feeMultiAsset = createAsset(
     version,
     assetInfo.amount,
-    isRelayChain(origin.chain) ? localizeLocation(origin.chain, feeAssetLocation) : feeAssetLocation
+    isRelayChain(origin.chain) || isSubBridge
+      ? localizeLocation(origin.chain, feeAssetLocation)
+      : feeAssetLocation
   )
 
   const module = (pallet as TPallet) ?? (isRelayChain(origin.chain) ? 'XcmPallet' : 'PolkadotXcm')

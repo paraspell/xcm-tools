@@ -32,6 +32,7 @@ import {
   findNativeAssetInfoOrThrow,
   getAssetsObject,
   getChainProviders,
+  getRelayChainOf,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
   isAssetEqual,
@@ -42,6 +43,7 @@ import {
   MissingChainApiError,
   padValueBy,
   Parents,
+  RELAY_LOCATION,
   replaceBigInt,
   RuntimeApiUnavailableError,
   Version,
@@ -616,6 +618,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         value: transformedAssetLoc
       })
 
+    let execFee = typeof execFeeRes?.value === 'bigint' ? execFeeRes.value : 0n
+
+    if (
+      chain.startsWith('BridgeHub') &&
+      execFeeRes?.success === false &&
+      execFeeRes?.value?.type === 'AssetNotFound'
+    ) {
+      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight.value, asset)
+
+      if (typeof bridgeHubExecFee === 'bigint') {
+        execFee = bridgeHubExecFee
+      }
+    }
+
     const deliveryFeeRes =
       forwardedXcm.length > 0
         ? await this.api
@@ -652,7 +668,46 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    return execFeeRes.value + deliveryFee
+    return execFee + deliveryFee
+  }
+
+  async getBridgeHubFallbackExecFee(
+    chain: TSubstrateChain,
+    weightValue: any,
+    asset: TAssetInfo
+  ): Promise<bigint | undefined> {
+    const fallbackExecFeeRes = await this.api
+      .getUnsafeApi()
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weightValue, {
+        type: Version.V4,
+        value: transform(RELAY_LOCATION)
+      })
+
+    if (typeof fallbackExecFeeRes?.value !== 'bigint') {
+      return undefined
+    }
+
+    const ahApi = this.clone()
+
+    const assetHubChain = `AssetHub${getRelayChainOf(chain)}` as TSubstrateChain
+
+    await ahApi.init(assetHubChain)
+
+    assertHasLocation(asset)
+    const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
+
+    const convertedExecFee = await ahApi.quoteAhPrice(
+      RELAY_LOCATION,
+      ahLocalizedLoc,
+      fallbackExecFeeRes.value,
+      false
+    )
+
+    if (typeof convertedExecFee === 'bigint') {
+      return convertedExecFee
+    }
+
+    return undefined
   }
 
   async getDryRunXcm({

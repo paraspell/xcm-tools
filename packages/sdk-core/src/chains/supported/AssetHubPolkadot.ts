@@ -346,7 +346,8 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     const hasRequiredJunctions =
       asset.location &&
       hasJunction(asset.location, 'PalletInstance', ASSETS_PALLET_ID) &&
-      hasJunction(asset.location, 'GeneralIndex')
+      hasJunction(asset.location, 'GeneralIndex') &&
+      !hasJunction(asset.location, 'GlobalConsensus')
 
     if (!asset.location || hasRequiredJunctions) {
       return getPalletInstance('Assets').getBalance(api, address, asset)

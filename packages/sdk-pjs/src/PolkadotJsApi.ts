@@ -28,10 +28,12 @@ import {
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
+  getRelayChainOf,
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   isConfig,
   localizeLocation,
+  RELAY_LOCATION,
   RuntimeApiUnavailableError,
   UnsupportedOperationError,
   Version,
@@ -472,7 +474,20 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     )
 
     const execFeeRes = feeResult.toJSON() as any
-    const execFee = BigInt(execFeeRes.ok)
+    const execFeeOk = execFeeRes?.ok
+
+    let execFee =
+      typeof execFeeOk === 'string' || typeof execFeeOk === 'number' ? BigInt(execFeeOk) : 0n
+
+    const isAssetNotFound = execFeeRes?.err === 'AssetNotFound'
+
+    if (chain.startsWith('BridgeHub') && isAssetNotFound) {
+      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset)
+
+      if (typeof bridgeHubExecFee === 'bigint') {
+        execFee = bridgeHubExecFee
+      }
+    }
 
     const deliveryFeeRes =
       forwardedXcm.length > 0
@@ -509,6 +524,50 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
 
     return execFee + deliveryFee
+  }
+
+  async getBridgeHubFallbackExecFee(
+    chain: TSubstrateChain,
+    weightValue: any,
+    asset: TAssetInfo
+  ): Promise<bigint | undefined> {
+    const fallbackExecFeeRes = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
+      weightValue,
+      addXcmVersionHeader(RELAY_LOCATION, Version.V4)
+    )
+
+    const fallbackJson = fallbackExecFeeRes.toJSON() as any
+    const fallbackOk = fallbackJson?.ok
+
+    const fallbackExecFee =
+      typeof fallbackOk === 'string' || typeof fallbackOk === 'number'
+        ? BigInt(fallbackOk)
+        : undefined
+
+    if (fallbackExecFee === undefined) {
+      return undefined
+    }
+
+    const ahApi = this.clone()
+    const assetHubChain = `AssetHub${getRelayChainOf(chain)}` as TSubstrateChain
+
+    await ahApi.init(assetHubChain)
+
+    assertHasLocation(asset)
+    const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
+
+    const convertedExecFee = await ahApi.quoteAhPrice(
+      RELAY_LOCATION,
+      ahLocalizedLoc,
+      fallbackExecFee,
+      false
+    )
+
+    if (typeof convertedExecFee === 'bigint') {
+      return convertedExecFee
+    }
+
+    return undefined
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {

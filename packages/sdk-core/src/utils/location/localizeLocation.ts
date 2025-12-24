@@ -32,7 +32,29 @@ export const localizeLocation = (
   const originRelay =
     origin && !isExternalChain(origin) ? getRelayChainOf(origin).toLowerCase() : undefined
 
-  const ecosystemDiffers = originRelay !== targetRelay
+  const locationConsensus = getJunctionValue<Record<string, null> | undefined>(
+    location,
+    'GlobalConsensus'
+  )
+  const locationRelay = locationConsensus
+    ? Object.keys(locationConsensus)[0]?.toLowerCase()
+    : undefined
+
+  const ecosystemDiffers = targetRelay && originRelay && originRelay !== targetRelay
+
+  const junctions =
+    location.interior === 'Here'
+      ? []
+      : Object.values(location.interior)
+          .flat()
+          .filter(junction => typeof junction === 'object' && junction !== null)
+  const junctionCount = junctions.length
+
+  const isLocationOnTargetRelay = targetRelay !== undefined && locationRelay === targetRelay
+
+  if (!origin && locationRelay && targetRelay && locationRelay !== targetRelay) {
+    return location
+  }
 
   if (
     origin &&
@@ -40,7 +62,8 @@ export const localizeLocation = (
     location.parents === Parents.TWO &&
     originRelay !== undefined &&
     targetRelay !== undefined &&
-    deepEqual(getJunctionValue(location, 'GlobalConsensus'), { [targetRelay]: null })
+    deepEqual(getJunctionValue(location, 'GlobalConsensus'), { [targetRelay]: null }) &&
+    junctionCount === 1
   ) {
     return RELAY_LOCATION
   }
@@ -51,12 +74,12 @@ export const localizeLocation = (
   if (location.interior !== 'Here') {
     const paraId = getParaId(chain)
 
-    const junctions = Object.values(location.interior)
-      .flat()
-      .filter(junction => typeof junction === 'object' && junction !== null)
-
     const filteredJunctions = junctions.filter(junction => {
-      if ('Parachain' in junction) {
+      if ('GlobalConsensus' in junction && isLocationOnTargetRelay) {
+        return false
+      }
+
+      if ('Parachain' in junction && (!ecosystemDiffers || isLocationOnTargetRelay)) {
         const paraJunctionId = getJunctionValue<number>(location, 'Parachain')
         if (paraJunctionId === paraId) {
           parachainRemoved = true
@@ -91,6 +114,30 @@ export const localizeLocation = (
           { GlobalConsensus: { [originRelay]: null } as Record<string, null> },
           { Parachain: getParaId(origin) }
         ]
+      }
+    } as TLocation
+  }
+
+  if (
+    origin &&
+    ecosystemDiffers &&
+    newInterior !== 'Here' &&
+    !hasGlobalConsensus &&
+    originRelay !== undefined
+  ) {
+    const junctions = Object.values(newInterior)
+      .flat()
+      .filter(junction => typeof junction === 'object' && junction !== null)
+
+    const updatedJunctions = [
+      { GlobalConsensus: { [originRelay]: null } as Record<string, null> },
+      ...junctions
+    ]
+
+    return {
+      parents: Parents.TWO,
+      interior: {
+        [`X${updatedJunctions.length}`]: updatedJunctions
       }
     } as TLocation
   }

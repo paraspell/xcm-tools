@@ -5,15 +5,20 @@ import type {
   WithAmount
 } from '@paraspell/sdk-core'
 import {
+  addXcmVersionHeader,
   BatchMode,
   computeFeeFromDryRunPjs,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
+  getRelayChainOf,
   hasXcmPaymentApiSupport,
+  localizeLocation,
   MissingChainApiError,
+  RELAY_LOCATION,
   RuntimeApiUnavailableError,
   type TLocation,
+  Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { ApiPromise } from '@polkadot/api'
@@ -34,7 +39,10 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
   findNativeAssetInfoOrThrow: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
-  wrapTxBypass: vi.fn()
+  localizeLocation: vi.fn(),
+  getRelayChainOf: vi.fn(),
+  wrapTxBypass: vi.fn(),
+  addXcmVersionHeader: vi.fn()
 }))
 
 vi.mock('@polkadot/api')
@@ -52,6 +60,10 @@ describe('PolkadotJsApi', () => {
 
   beforeEach(async () => {
     vi.mocked(getChainProviders).mockReset()
+    vi.mocked(addXcmVersionHeader).mockImplementation((location: unknown) => ({ V4: location }))
+    vi.mocked(localizeLocation).mockImplementation(
+      (_chain: unknown, location: TLocation, _origin?: unknown) => location
+    )
     mockApiPromise = {
       createType: vi.fn().mockReturnValue({
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
@@ -573,12 +585,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
         weight,
-        expect.objectContaining({
-          V4: expect.objectContaining({
-            parents: 0,
-            interior: 'Here'
-          })
-        })
+        expect.objectContaining({ V4: expect.any(Object) })
       )
       expect(fee).toBe(10000n)
     })
@@ -723,6 +730,164 @@ describe('PolkadotJsApi', () => {
         })
       )
       expect(fee).toBe(12500n)
+    })
+
+    it('uses BridgeHub fallback when AssetNotFound occurs', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
+      const asset: TAssetInfo = {
+        symbol: 'DOT',
+        decimals: 10,
+        location: {
+          parents: 1,
+          interior: {
+            X2: [{ GlobalConsensus: { polkadot: null } }, { Parachain: 1000 }]
+          }
+        }
+      }
+
+      const weight = { refTime: 1234, proofSize: 5678 }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
+      } as unknown as Codec)
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ err: 'AssetNotFound' })
+      } as unknown as Codec)
+
+      const fallbackSpy = vi
+        .spyOn(polkadotApi, 'getBridgeHubFallbackExecFee')
+        .mockResolvedValueOnce(9999n)
+
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'BridgeHubPolkadot',
+        xcm,
+        forwardedXcm,
+        asset
+      )
+
+      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset)
+      expect(fee).toBe(9999n)
+    })
+
+    it('returns zero when BridgeHub fallback is unavailable', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const forwardedXcm: unknown[] = []
+      const asset: TAssetInfo = {
+        symbol: 'DOT',
+        decimals: 10,
+        location: {
+          parents: 1,
+          interior: {
+            X1: [{ Parachain: 1000 }]
+          }
+        }
+      }
+
+      const weight = { refTime: 11, proofSize: 22 }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
+      } as unknown as Codec)
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ err: 'AssetNotFound' })
+      } as unknown as Codec)
+
+      const fallbackSpy = vi
+        .spyOn(polkadotApi, 'getBridgeHubFallbackExecFee')
+        .mockResolvedValueOnce(undefined)
+
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'BridgeHubPolkadot',
+        xcm,
+        forwardedXcm,
+        asset
+      )
+
+      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset)
+      expect(fee).toBe(0n)
+    })
+  })
+
+  describe('getBridgeHubFallbackExecFee', () => {
+    const chain = 'BridgeHubPolkadot'
+    const weightValue = { refTime: 11, proofSize: 22 }
+    const asset: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: {
+        parents: 1,
+        interior: { X1: [{ Parachain: 1000 }] }
+      } as TLocation
+    }
+
+    it('converts relay fee via AssetHub and returns bigint', async () => {
+      const fallbackFee = 777
+      const convertedFee = 999n
+      const localizedLoc = { parents: 0, interior: { Here: null } } as TLocation
+
+      vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+      vi.mocked(localizeLocation).mockReturnValue(localizedLoc)
+      vi.mocked(addXcmVersionHeader).mockReturnValue({ V4: { relay: true } })
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
+        toJSON: vi.fn().mockReturnValue({ ok: fallbackFee })
+      } as unknown as Codec)
+
+      const ahApiMock = new PolkadotJsApi(mockApiPromise)
+      const initSpy = vi.spyOn(ahApiMock, 'init').mockResolvedValue(undefined)
+      const quoteSpy = vi.spyOn(ahApiMock, 'quoteAhPrice').mockResolvedValue(convertedFee)
+
+      const cloneSpy = vi.spyOn(polkadotApi, 'clone').mockReturnValue(ahApiMock)
+
+      const res = await polkadotApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
+        weightValue,
+        { V4: { relay: true } }
+      )
+      expect(addXcmVersionHeader).toHaveBeenCalledWith(RELAY_LOCATION, Version.V4)
+      expect(cloneSpy).toHaveBeenCalledTimes(1)
+      expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
+      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', asset.location)
+      expect(quoteSpy).toHaveBeenCalledWith(
+        RELAY_LOCATION,
+        localizedLoc,
+        BigInt(fallbackFee),
+        false
+      )
+      expect(res).toBe(convertedFee)
+    })
+
+    it('returns undefined when fallback fee or conversion is unavailable', async () => {
+      vi.mocked(addXcmVersionHeader).mockReturnValue({ V4: {} })
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
+        toJSON: vi.fn().mockReturnValue({ ok: undefined })
+      } as unknown as Codec)
+
+      const resWithoutFee = await polkadotApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      expect(resWithoutFee).toBeUndefined()
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
+        toJSON: vi.fn().mockReturnValue({ ok: 123 })
+      } as unknown as Codec)
+
+      const ahApiMock = {
+        init: vi.fn().mockResolvedValue(undefined),
+        quoteAhPrice: vi.fn().mockResolvedValue(undefined)
+      } as unknown as PolkadotJsApi
+
+      vi.spyOn(polkadotApi, 'clone').mockReturnValue(ahApiMock)
+
+      const resWithoutConversion = await polkadotApi.getBridgeHubFallbackExecFee(
+        chain,
+        weightValue,
+        asset
+      )
+
+      expect(resWithoutConversion).toBeUndefined()
     })
   })
 

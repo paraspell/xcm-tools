@@ -20,14 +20,14 @@ const buildAssets = (
   chain: TSubstrateChain,
   asset: WithAmount<TAssetWithLocation>,
   feeAmount: bigint,
-  isDotAsset: boolean,
+  isRelayAsset: boolean,
   version: Version
 ) => {
   const assets = []
 
   const shouldLocalizeAndSort = isRelayChain(chain) || chain.startsWith('AssetHub')
 
-  if (!isDotAsset) {
+  if (!isRelayAsset) {
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
 

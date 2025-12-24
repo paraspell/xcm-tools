@@ -2,8 +2,12 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { getAssets } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
+import { findStablecoinAssets } from './search/findStablecoinAssets'
 
 vi.mock('./assets')
+vi.mock('./search/findStablecoinAssets', () => ({
+  findStablecoinAssets: vi.fn().mockReturnValue([])
+}))
 
 describe('getSupportedAssets', () => {
   it('should return DOT and KSM assets when origin and destination are AssetHubPolkadot and AssetHubKusama', () => {
@@ -12,6 +16,7 @@ describe('getSupportedAssets', () => {
     vi.mocked(getAssets).mockImplementation(_chain => {
       return [mockDOTAsset, mockKSMAsset]
     })
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
 
     const result = getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')
     expect(result).toEqual([mockDOTAsset, mockKSMAsset])
@@ -31,6 +36,7 @@ describe('getSupportedAssets', () => {
       if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
 
     const result = getSupportedAssets('Phala', 'Polkadot')
     expect(result).toEqual([{ symbol: 'PHA', decimals: 18, assetId: '300' }])
@@ -44,6 +50,7 @@ describe('getSupportedAssets', () => {
       if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
 
     const result = getSupportedAssets('Phala', 'Polkadot')
     expect(result).toEqual([])
