@@ -2,13 +2,13 @@ import { DuplicateAssetIdError } from '../../errors'
 import type { TAssetInfo, TCurrency } from '../../types'
 
 export const findAssetInfoById = (assets: TAssetInfo[], assetId: TCurrency) => {
-  const otherAssetsMatches = assets.filter(
-    ({ assetId: currentAssetId }) => currentAssetId === assetId.toString()
-  )
+  const id = assetId.toString()
 
-  if (otherAssetsMatches.length > 1) {
-    throw new DuplicateAssetIdError(assetId.toString())
+  const matches = assets.filter(a => a.assetId === id)
+
+  if (matches.length > 1) {
+    throw new DuplicateAssetIdError(id)
   }
 
-  return assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId.toString())
+  return matches[0]
 }
