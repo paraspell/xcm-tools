@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.5...sdk-core-v12.0.6) (2025-12-24)
+
+
+### Bug Fixes
+
+* **assets:** Add Hydration native asset ID ⚙️ ([0f23534](https://github.com/paraspell/xcm-tools/commit/0f23534a70f3e773022d02ce670708586d16e870))
+
 ## [12.0.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.4...sdk-core-v12.0.5) (2025-12-23)
 
 
