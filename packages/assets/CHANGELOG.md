@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.0](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.6...assets-v12.1.0) (2025-12-25)
+
+
+### Features
+
+* Extend substrate bridge asset support 🪄 ([69ebb18](https://github.com/paraspell/xcm-tools/commit/69ebb182de979e89d2c37cbf6121eb84fe1d3f3e))
+
 ## [12.0.6](https://github.com/paraspell/xcm-tools/compare/assets-v12.0.5...assets-v12.0.6) (2025-12-24)
 
 
