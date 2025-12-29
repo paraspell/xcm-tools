@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Higher Request Limit Form</title>
@@ -7,7 +7,6 @@
       rel="stylesheet"
     />
     <style>
-      /* Your CSS styles here */
       body {
         font-family: 'Open Sans', sans-serif;
         font-size: 16px;
@@ -62,7 +61,7 @@
 
       .api-form textarea {
         width: 100%;
-        max-width: 100%; /* Add this line to ensure the textarea doesn't exceed the container's width */
+        max-width: 100%;
         padding: 10px;
         margin-bottom: 20px;
         border: 1px solid #ccc;
@@ -88,8 +87,8 @@
         cursor: pointer;
       }
       .g-recaptcha {
-        margin-top: 15px; /* Add top padding */
-        margin-bottom: 15px; /* Add bottom padding */
+        margin-top: 15px;
+        margin-bottom: 15px;
       }
       .header-container {
         color: #333;
@@ -107,6 +106,7 @@
       }
     </style>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="../common.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
@@ -186,6 +186,8 @@
           event.preventDefault();
           captchaMessage.style.display = 'block';
         } else {
+          var apiPrefix = getApiPrefixFromPathname(window.location.pathname);
+          event.target.action = apiPrefix + '/auth/higher-request-limit-form';
           captchaMessage.style.display = 'none';
         }
       }

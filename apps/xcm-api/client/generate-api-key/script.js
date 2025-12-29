@@ -1,12 +1,6 @@
 function submitForm(event) {
   event.preventDefault();
 
-  function getApiPrefixFromPathname(pathname) {
-    var firstSegment = pathname.split('/')[1];
-    if (!firstSegment || firstSegment === 'app') return '';
-    return '/' + firstSegment;
-  }
-
   var response = grecaptcha.getResponse();
   var captchaMessage = document.getElementById('captcha-message');
 
