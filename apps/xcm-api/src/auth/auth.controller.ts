@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpCode,
   HttpStatus,
   Post,
@@ -36,9 +37,13 @@ export class AuthController {
   @Post('higher-request-limit-form')
   async submitHigherRequestLimitForm(
     @Body() higherRequestLimitDto: HigherRequestLimitDto,
+    @Headers('x-forwarded-prefix') forwardedPrefix: string | undefined,
     @Res() res: Response,
   ) {
     await this.authService.submitHigherRequestLimitForm(higherRequestLimitDto);
-    return res.redirect('/app/higher-request-limit/submit-success.html');
+    const apiPrefix = forwardedPrefix ?? '';
+    return res.redirect(
+      `${apiPrefix}/app/higher-request-limit/submit-success.html`,
+    );
   }
 }

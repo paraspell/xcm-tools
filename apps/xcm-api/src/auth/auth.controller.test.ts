@@ -58,12 +58,39 @@ describe('AuthController', () => {
 
       const spy = vi.spyOn(authService, 'submitHigherRequestLimitForm');
 
+      const redirectSpy = vi.spyOn(res, 'redirect');
+
       await authController.submitHigherRequestLimitForm(
         higherRequestLimitDto,
-        res as unknown as Response,
+        undefined,
+        res,
       );
 
       expect(spy).toHaveBeenCalledWith(higherRequestLimitDto);
+      expect(redirectSpy).toHaveBeenCalledWith(
+        '/app/higher-request-limit/submit-success.html',
+      );
+    });
+
+    it('should prefix redirect when forwarded prefix is provided', async () => {
+      const higherRequestLimitDto = new HigherRequestLimitDto();
+      const res = {
+        redirect: vi.fn(),
+      } as unknown as Response;
+
+      vi.spyOn(authService, 'submitHigherRequestLimitForm');
+
+      const redirectSpy = vi.spyOn(res, 'redirect');
+
+      await authController.submitHigherRequestLimitForm(
+        higherRequestLimitDto,
+        '/v1',
+        res,
+      );
+
+      expect(redirectSpy).toHaveBeenCalledWith(
+        '/v1/app/higher-request-limit/submit-success.html',
+      );
     });
   });
 });
