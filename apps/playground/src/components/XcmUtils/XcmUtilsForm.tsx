@@ -44,7 +44,7 @@ import {
   useWallet,
 } from '../../hooks';
 import type { TSubmitType } from '../../types';
-import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
+import { isValidPolkadotAddress, validateTransferAddress } from '../../utils';
 import {
   parseAsChain,
   parseAsRecipientAddress,
@@ -158,8 +158,8 @@ const XcmUtilsForm: FC<Props> = ({
     initialValues: initialValues ?? queryState,
 
     validate: {
-      address: (value) =>
-        isValidWalletAddress(value) ? null : 'Invalid address',
+      address: (value, values) =>
+        validateTransferAddress(value, values, selectedAccount?.address),
       currencies: {
         currencyOptionId: (value, values, path) => {
           const index = Number(path.split('.')[1]);
