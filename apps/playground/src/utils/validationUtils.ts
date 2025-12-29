@@ -27,7 +27,6 @@ export const validateTransferAddress = (
     return 'Invalid address';
   }
 
-  // Prevent Transfer to the same address when origin and destination networks are the same
   if (values.from === values.to && address === selectedAddress) {
     return 'Sender and receiver cannot be the same address when origin and destination networks are the same, please enter a different address for the receiver.';
   }

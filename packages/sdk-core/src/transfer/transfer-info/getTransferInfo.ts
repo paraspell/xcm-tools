@@ -8,7 +8,7 @@ import {
 } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
+import { getAssetBalanceInternal } from '../../balance'
 import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals } from '../../utils'
@@ -44,19 +44,6 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
-    const originBalanceFee = resolvedFeeAsset
-      ? await getAssetBalanceInternal({
-          api,
-          address: senderAddress,
-          chain: origin,
-          asset: resolvedFeeAsset
-        })
-      : await getBalanceInternal({
-          api,
-          address: senderAddress,
-          chain: origin
-        })
-
     const originBalance = await getAssetBalanceInternal({
       api,
       address: senderAddress,
@@ -80,6 +67,13 @@ export const getTransferInfo = async <TApi, TRes>({
       currency,
       feeAsset,
       disableFallback: false
+    })
+
+    const originBalanceFee = await getAssetBalanceInternal({
+      api,
+      address: senderAddress,
+      chain: origin,
+      asset: originFeeAsset
     })
 
     const isFeeAssetAh =

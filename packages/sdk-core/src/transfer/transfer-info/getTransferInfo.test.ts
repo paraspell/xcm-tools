@@ -281,20 +281,32 @@ describe('getTransferInfo', () => {
     const options = { ...baseOptions, api: mockApi, feeAsset: undefined }
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
 
+    const feeAssetFromFee = {
+      symbol: 'FEE',
+      assetId: 'FEE',
+      decimals: 12
+    } as TAssetInfo
+
+    vi.mocked(getXcmFee).mockResolvedValueOnce({
+      origin: { fee: 100000000n, feeType: 'paymentInfo', asset: feeAssetFromFee },
+      hops: [],
+      destination: { fee: 70000000n, feeType: 'paymentInfo', asset: dotAsset }
+    } as TGetXcmFeeResult)
+
     await getTransferInfo(options)
 
-    expect(getAssetBalanceInternal).toHaveBeenCalledTimes(1)
-    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
+    expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
+    expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(1, {
       api: mockApi,
       address: options.senderAddress,
       chain: options.origin,
       asset: dotAsset
     })
-    expect(getBalanceInternal).toHaveBeenCalledTimes(1)
-    expect(getBalanceInternal).toHaveBeenCalledWith({
+    expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(2, {
       api: mockApi,
       address: options.senderAddress,
-      chain: options.origin
+      chain: options.origin,
+      asset: feeAssetFromFee
     })
   })
 
@@ -364,7 +376,7 @@ describe('getTransferInfo', () => {
   it('should reflect insufficient balances', async () => {
     vi.mocked(getAssetBalanceInternal)
       .mockResolvedValueOnce(50000000n)
-      .mockResolvedValueOnce(1000000000n)
+      .mockResolvedValueOnce(50000000n)
 
     const options = { ...baseOptions, api: mockApi }
     const result = await getTransferInfo(options)
