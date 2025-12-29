@@ -49,7 +49,7 @@ export function Faq() {
             facilitating the development and scaling of applications. To obtain
             an API key, you can{" "}
             <Anchor
-              href="https://api.lightspell.xyz/app/generate-api-key/"
+              href="https://api.lightspell.xyz/v5/app/generate-api-key/"
               target="_blank"
             >
               generate an API key here
@@ -57,7 +57,7 @@ export function Faq() {
             . Additionally, for applications that require higher request
             volumes, you can{" "}
             <Anchor
-              href="https://api.lightspell.xyz/app/higher-request-limit/"
+              href="https://api.lightspell.xyz/v5/app/higher-request-limit/"
               target="_blank"
             >
               request a higher limit here
