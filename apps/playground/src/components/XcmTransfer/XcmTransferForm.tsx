@@ -40,7 +40,7 @@ import {
   useWallet,
 } from '../../hooks';
 import type { TSubmitType } from '../../types';
-import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
+import { isValidPolkadotAddress, validateTransferAddress } from '../../utils';
 import {
   parseAsChain,
   parseAsRecipientAddress,
@@ -153,16 +153,8 @@ const XcmTransferForm: FC<Props> = ({
     initialValues: initialValues ?? queryState,
 
     validate: {
-      address: (value, values) => {
-        if (!isValidWalletAddress(value)) {
-          return 'Invalid address';
-        }
-        // Prevent Transfer to the same address when origin and destination networks are the same
-        if (values.from === values.to && value === selectedAccount?.address) {
-          return 'Sender and receiver cannot be the same address when origin and destination networks are the same, please enter a different address for the receiver.';
-        }
-        return null;
-      },
+      address: (value, values) =>
+        validateTransferAddress(value, values, selectedAccount?.address),
       currencies: {
         currencyOptionId: (value, values, path) => {
           const index = Number(path.split('.')[1]);
