@@ -1,13 +1,20 @@
 function submitForm(event) {
   event.preventDefault();
 
+  function getApiPrefixFromPathname(pathname) {
+    var firstSegment = pathname.split('/')[1];
+    if (!firstSegment || firstSegment === 'app') return '';
+    return '/' + firstSegment;
+  }
+
   var response = grecaptcha.getResponse();
   var captchaMessage = document.getElementById('captcha-message');
 
   if (response.length === 0) {
     captchaMessage.style.display = 'block';
   } else {
-    fetch('/auth/generate', {
+    var apiPrefix = getApiPrefixFromPathname(window.location.pathname);
+    fetch(apiPrefix + '/auth/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
