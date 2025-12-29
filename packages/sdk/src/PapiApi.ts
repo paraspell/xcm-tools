@@ -547,11 +547,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
+      const getPaymentInfoWeight = async () => {
+        const { weight } = await tx.getPaymentInfo(address)
+        return weight
+      }
+
+      const overriddenWeight = !result.value.local_xcm ? await getPaymentInfoWeight() : undefined
+
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,
         forwardedXcms,
-        resolvedFeeAsset.asset
+        resolvedFeeAsset.asset,
+        false,
+        overriddenWeight
       )
 
       if (typeof xcmFee === 'bigint') {
@@ -599,11 +608,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     localXcm: any,
     forwardedXcm: any,
     asset: TAssetInfo,
-    transformXcm = false
+    transformXcm = false,
+    overridenWeight?: object
   ): Promise<bigint> {
     const transformedXcm = transformXcm ? transform(localXcm) : localXcm
 
-    const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(transformedXcm)
+    const queryWeight = async () => {
+      const weightRes = await this.api
+        .getUnsafeApi()
+        .apis.XcmPaymentApi.query_xcm_weight(transformedXcm)
+      return weightRes.value
+    }
+
+    const weight = overridenWeight ?? (await queryWeight())
 
     assertHasLocation(asset)
 
@@ -613,7 +630,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const execFeeRes = await this.api
       .getUnsafeApi()
-      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, {
         type: Version.V4,
         value: transformedAssetLoc
       })
@@ -625,7 +642,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       execFeeRes?.success === false &&
       execFeeRes?.value?.type === 'AssetNotFound'
     ) {
-      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight.value, asset)
+      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset)
 
       if (typeof bridgeHubExecFee === 'bigint') {
         execFee = bridgeHubExecFee
