@@ -33,7 +33,7 @@ import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws-provider'
 import type { Mock } from 'vitest'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PapiApi from './PapiApi'
 import { transform } from './PapiXcmTransformer'
@@ -946,6 +946,10 @@ describe('PapiApi', () => {
       vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
     })
 
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
     it('should succeed on the first attempt if version is not needed', async () => {
       const successResponse = {
         success: true,
@@ -1517,6 +1521,73 @@ describe('PapiApi', () => {
         ])
         expect(result.destParaId).toBe(2000)
       }
+    })
+
+    it('uses tx.getPaymentInfo weight override when local_xcm is missing and fee asset is custom', async () => {
+      const successResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 1n, proof_size: 2n } }
+          },
+          forwarded_xcms: []
+          // local_xcm intentionally omitted
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(successResponse)
+
+      const overridden = { ref_time: 123n, proof_size: 456n }
+
+      const getPaymentInfoMock = vi.fn().mockResolvedValue({ weight: overridden })
+
+      const txWithPaymentInfo = {
+        ...mockTransaction,
+        getPaymentInfo: getPaymentInfoMock
+      } as unknown as typeof mockTransaction
+
+      const customAsset = {
+        symbol: 'USDC',
+        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
+      } as unknown as TAssetInfo
+
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+
+      vi.spyOn(papiApi, 'resolveFeeAsset').mockResolvedValue({
+        asset: customAsset,
+        isCustomAsset: true
+      })
+
+      const getXcmPaymentApiFeeSpy = vi
+        .spyOn(papiApi, 'getXcmPaymentApiFee')
+        .mockResolvedValue(999n)
+
+      const result = await papiApi.getDryRunCall({
+        tx: txWithPaymentInfo,
+        asset: customAsset as WithAmount<TAssetInfo>,
+        address: testAddress,
+        chain: 'Moonbeam',
+        destination: 'Acala'
+      })
+
+      expect(getPaymentInfoMock).toHaveBeenCalledWith(testAddress)
+      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
+        'Moonbeam',
+        undefined,
+        [],
+        customAsset,
+        false,
+        overridden
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 999n,
+        asset: customAsset,
+        weight: { refTime: 1n, proofSize: 2n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
     })
 
     it('falls back to native asset when MultiTransactionPayment fee lookup fails', async () => {

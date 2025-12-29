@@ -26,7 +26,7 @@ import type { VoidFn } from '@polkadot/api/types'
 import type { Codec } from '@polkadot/types/types'
 import { validateAddress } from '@polkadot/util-crypto'
 import type { Mock } from 'vitest'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi } from './types'
@@ -1081,6 +1081,10 @@ describe('PolkadotJsApi', () => {
       vi.mocked(wrapTxBypass).mockReset()
     })
 
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
     it('simple success (no version), returns weight and forwardedXcms', async () => {
       const resp = makeSuccessResponse({
         weight: { refTime: '1000', proofSize: '2000' },
@@ -1110,6 +1114,69 @@ describe('PolkadotJsApi', () => {
         asset: { symbol: 'DOT' } as TAssetInfo,
         weight: { refTime: 1000n, proofSize: 2000n },
         forwardedXcms: expect.any(Object),
+        destParaId: undefined
+      })
+    })
+
+    it('uses tx.paymentInfo weight override when local_xcm is missing and fee asset is custom', async () => {
+      const resp = makeSuccessResponse({
+        weight: { refTime: '1', proofSize: '2' },
+        forwarded: []
+      })
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+
+      const overriddenWeight = { refTime: 123, proofSize: 456 }
+      const extrinsicWithPaymentInfo = {
+        paymentInfo: vi.fn().mockResolvedValue({
+          partialFee: { toBigInt: () => 1000n },
+          weight: overriddenWeight
+        })
+      }
+      const paymentInfoSpy = vi.spyOn(extrinsicWithPaymentInfo, 'paymentInfo')
+      const tx = extrinsicWithPaymentInfo as unknown as Extrinsic
+
+      const customAsset: TAssetInfo = {
+        symbol: 'USDC',
+        decimals: 6,
+        location: {
+          parents: 0,
+          interior: { Here: null }
+        }
+      }
+
+      vi.spyOn(polkadotApi, 'resolveFeeAsset').mockResolvedValue({
+        asset: customAsset,
+        isCustomAsset: true
+      })
+
+      const getXcmPaymentApiFeeSpy = vi
+        .spyOn(polkadotApi, 'getXcmPaymentApiFee')
+        .mockResolvedValue(999n)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx,
+        address,
+        chain,
+        destination: 'Acala',
+        asset: customAsset as unknown as WithAmount<TAssetInfo>
+      })
+
+      expect(paymentInfoSpy).toHaveBeenCalledWith(address)
+      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
+        chain,
+        undefined,
+        [],
+        customAsset,
+        false,
+        overriddenWeight
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 999n,
+        asset: customAsset,
+        weight: { refTime: 1n, proofSize: 2n },
+        forwardedXcms: [],
         destParaId: undefined
       })
     })
@@ -1327,7 +1394,9 @@ describe('PolkadotJsApi', () => {
         chain,
         { instructions: [] },
         expectedForwarded,
-        feeAsset
+        feeAsset,
+        false,
+        undefined
       )
       expect(paymentInfoSpy).not.toHaveBeenCalled()
       expect(result).toEqual({

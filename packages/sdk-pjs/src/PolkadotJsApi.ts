@@ -47,6 +47,7 @@ import {
   resolveModuleError
 } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import type { Weight } from '@polkadot/types/interfaces'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
@@ -422,11 +423,20 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
+      const getPaymentInfoWeight = async () => {
+        const { weight } = await tx.paymentInfo(address)
+        return weight
+      }
+
+      const overriddenWeight = !resultJson.ok.local_xcm ? await getPaymentInfoWeight() : undefined
+
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         resultJson.ok.local_xcm,
         forwardedXcms,
-        feeAsset ?? nativeAsset
+        resolvedFeeAsset.asset,
+        false,
+        overriddenWeight
       )
 
       if (typeof xcmFee === 'bigint') {
@@ -460,9 +470,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     chain: TSubstrateChain,
     localXcm: any,
     forwardedXcm: any,
-    asset: TAssetInfo
+    asset: TAssetInfo,
+    _transformXcm = false,
+    overridenWeight?: Weight
   ): Promise<bigint> {
-    const weight = await this.getXcmWeight(localXcm)
+    const weight = overridenWeight ?? (await this.getXcmWeight(localXcm))
 
     assertHasLocation(asset)
 
