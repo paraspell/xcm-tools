@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/xcm-analyser",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Tool for converting XCM MultiLocation into human readable written format.",
   "type": "module",
   "exports": {
