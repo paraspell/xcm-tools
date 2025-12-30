@@ -1,5 +1,19 @@
 # Changelog
 
+## [12.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.1.0...xcm-api-v12.1.1) (2025-12-30)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix API key generation 🔧 ([5eb04c2](https://github.com/paraspell/xcm-tools/commit/5eb04c2e45273f24b7faafd021e9a1990b0d3654))
+* **xcm-api:** Fix higher request form redirect ↗️ ([d193591](https://github.com/paraspell/xcm-tools/commit/d1935918ed454f281d9855472f76c34d4c8577b1))
+* **xcm-api:** Fix higher request limit form ⚙️ ([90284c0](https://github.com/paraspell/xcm-tools/commit/90284c0593396b579e781527b22ffabc5f7c91a3))
+
+
+### Build System
+
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+
 ## [12.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.0.6...xcm-api-v12.1.0) (2025-12-25)
 
 
