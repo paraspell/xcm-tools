@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.1.0...sdk-v12.1.1) (2025-12-30)
+
+
+### Bug Fixes
+
+* **sdk,sdk-pjs:** Fix Hydration custom fee asset conversion 🔧 ([0020702](https://github.com/paraspell/xcm-tools/commit/0020702b26e8d3edcd3727b30b45b4fbc18fd411))
+
+
+### Build System
+
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+
 ## [12.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.0.6...sdk-v12.1.0) (2025-12-25)
 
 

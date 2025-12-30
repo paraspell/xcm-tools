@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.1.0...sdk-core-v12.1.1) (2025-12-30)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix origin fee asset handling in transfer info 🛠️ ([c1917f7](https://github.com/paraspell/xcm-tools/commit/c1917f74d35e2d68dbb7984b86a2b118c37608cc))
+
+
+### Build System
+
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+
 ## [12.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.0.6...sdk-core-v12.1.0) (2025-12-25)
 
 

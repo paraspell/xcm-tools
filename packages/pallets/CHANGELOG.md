@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.1](https://github.com/paraspell/xcm-tools/compare/pallets-v12.1.0...pallets-v12.1.1) (2025-12-30)
+
+
+### Build System
+
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+
 ## [12.1.0](https://github.com/paraspell/xcm-tools/compare/pallets-v12.0.6...pallets-v12.1.0) (2025-12-25)
 
 
