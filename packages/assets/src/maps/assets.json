@@ -6923,6 +6923,28 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "22222005",
+        "symbol": "love",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222005
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000"
+      },
+      {
         "assetId": "50000074",
         "symbol": "VDOT",
         "decimals": 12,
@@ -11547,44 +11569,6 @@
       }
     ]
   },
-  "RobonomicsKusama": {
-    "relaychainSymbol": "KSM",
-    "nativeAssetSymbol": "XRT",
-    "isEVM": false,
-    "ss58Prefix": 32,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "XRT",
-        "isNative": true,
-        "decimals": 9,
-        "existentialDeposit": "1000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2048
-              }
-            ]
-          }
-        }
-      },
-      {
-        "assetId": "4294967295",
-        "symbol": "KSM",
-        "decimals": 12,
-        "existentialDeposit": "100"
-      },
-      {
-        "assetId": "4294967291",
-        "symbol": "CSM",
-        "decimals": 12,
-        "existentialDeposit": "1000000000000"
-      }
-    ]
-  },
   "RobonomicsPolkadot": {
     "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "XRT",
@@ -12527,6 +12511,28 @@
           }
         },
         "existentialDeposit": "1000000"
+      },
+      {
+        "assetId": "214",
+        "symbol": "LOVE",
+        "decimals": 20,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 214
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000000000000000"
       },
       {
         "symbol": "sUSDe",
@@ -16359,6 +16365,29 @@
         "alias": "WETH1"
       },
       {
+        "assetId": "381",
+        "symbol": "ALC",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 381
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000000",
+        "isFeeAsset": true
+      },
+      {
         "assetId": "66",
         "symbol": "USDT",
         "decimals": 10,
@@ -17525,6 +17554,28 @@
         "alias": "USDC1"
       },
       {
+        "assetId": "50000064",
+        "symbol": "LKK",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000064
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
         "symbol": "ETH",
         "decimals": 18,
         "location": {
@@ -17738,6 +17789,28 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "10",
+        "symbol": "lkk",
+        "decimals": 1,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 10
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10"
       },
       {
         "assetId": "1984",

@@ -38,14 +38,14 @@
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
     "@babel/preset-env": "^7.28.5",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@polkadot/api": "^16.5.3",
-    "@polkadot/types": "^16.5.3",
+    "@polkadot/api": "^16.5.4",
+    "@polkadot/types": "^16.5.4",
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.0.14",
+    "@vitest/coverage-v8": "^4.0.16",
     "dotenv": "^17.2.3",
-    "rollup": "^4.53.3",
+    "rollup": "^4.54.0",
     "rollup-plugin-dts": "^6.3.0"
   }
 }

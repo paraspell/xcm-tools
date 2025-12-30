@@ -49,7 +49,6 @@ export const PARACHAINS = [
   'Crab',
   'Laos',
   'Quartz',
-  'RobonomicsKusama',
   'PeopleKusama',
   'Shiden',
   'Zeitgeist',

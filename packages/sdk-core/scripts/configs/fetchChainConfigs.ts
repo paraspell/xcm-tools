@@ -5,7 +5,7 @@
 import axios from 'axios'
 import { Project, SyntaxKind, Node } from 'ts-morph'
 import { writeFileSync } from 'fs'
-import { PARACHAINS, SUBSTRATE_CHAINS } from '../../src'
+import { PARACHAINS } from '../../src'
 import { getChain } from '../../src/utils'
 import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../../src'
 

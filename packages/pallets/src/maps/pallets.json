@@ -231,10 +231,6 @@
       {
         "name": "PolkadotXcm",
         "index": 103
-      },
-      {
-        "name": "Assets",
-        "index": 104
       }
     ],
     "nativeAssets": "Balances",
@@ -503,25 +499,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["ForeignAssets"]
-  },
-  "RobonomicsKusama": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 31
-      },
-      {
-        "name": "Assets",
-        "index": 34
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 71
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
   },
   "Shiden": {
     "defaultPallet": "XTokens",

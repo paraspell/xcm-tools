@@ -60,7 +60,6 @@ import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Phala from '../chains/supported/Phala'
 import Quartz from '../chains/supported/Quartz'
-import RobonomicsKusama from '../chains/supported/RobonomicsKusama'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
@@ -117,7 +116,6 @@ export const chains = <TApi, TRes>() => ({
   Moonriver: new Moonriver<TApi, TRes>(),
   Laos: new Laos<TApi, TRes>(),
   Quartz: new Quartz<TApi, TRes>(),
-  RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
   PeopleKusama: new PeopleKusama<TApi, TRes>(),
   Shiden: new Shiden<TApi, TRes>(),
   Zeitgeist: new Zeitgeist<TApi, TRes>(),
