@@ -976,8 +976,8 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
-      const from: TChain = 'AssetHubKusama';
-      const to: TChain = 'Basilisk';
+      const from: TChain = 'AssetHubPolkadot';
+      const to: TChain = 'BifrostPolkadot';
       const createCurrency = (fungible: string): TAsset<string>[] => [
         {
           id: {

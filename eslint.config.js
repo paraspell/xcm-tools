@@ -13,7 +13,7 @@ export default defineConfig(
   {
     settings: {
       react: {
-        version: "19.2.0",
+        version: "19.2.3",
       },
     },
   },

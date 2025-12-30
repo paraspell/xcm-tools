@@ -33,6 +33,10 @@
         "endpoint": "wss://polkadot-asset-hub-rpc.polkadot.io"
       },
       {
+        "name": "Permanence DAO EU",
+        "endpoint": "wss://asset-hub-polkadot.rpc.permanence.io"
+      },
+      {
         "name": "RadiumBlock",
         "endpoint": "wss://statemint.public.curie.radiumblock.co/ws"
       },
@@ -493,10 +497,6 @@
       {
         "name": "IBP2",
         "endpoint": "wss://kilt.dotters.network"
-      },
-      {
-        "name": "KILT Foundation",
-        "endpoint": "wss://spiritnet.kilt.io/"
       }
     ]
   },
@@ -516,18 +516,6 @@
     "info": "mythos",
     "paraId": 3369,
     "providers": [
-      {
-        "name": "Helikon",
-        "endpoint": "wss://rpc.helikon.io/mythos"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://mythos.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://mythos.dotters.network"
-      },
       {
         "name": "parity",
         "endpoint": "wss://polkadot-mythos-rpc.polkadot.io"
@@ -950,17 +938,6 @@
       }
     ]
   },
-  "RobonomicsKusama": {
-    "name": "Robonomics",
-    "info": "robonomics",
-    "paraId": 2048,
-    "providers": [
-      {
-        "name": "Airalab",
-        "endpoint": "wss://kusama.rpc.robonomics.network/"
-      }
-    ]
-  },
   "PeopleKusama": {
     "name": "People",
     "info": "kusamaPeople",
@@ -1370,10 +1347,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://polkadot.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Permanence DAO EU",
-        "endpoint": "wss://polkadot.rpc.permanence.io"
       },
       {
         "name": "RadiumBlock",
