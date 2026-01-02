@@ -53,4 +53,5 @@ export enum EventName {
   GET_TRANSFER_INFO = 'Get Transfer Info',
   GET_RECEIVABLE_AMOUNT = 'Get Receivable Amount',
   XCM_ANALYSER = 'XCM Analyser',
+  SIGN_AND_SUBMIT = 'Sign and Submit',
 }

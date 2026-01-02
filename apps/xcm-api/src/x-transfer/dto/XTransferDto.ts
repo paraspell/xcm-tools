@@ -151,9 +151,16 @@ export const DryRunPreviewSchema = XTransferDtoWSenderAddressSchema.omit({
   }).optional(),
 });
 
+export const SignAndSubmitSchema = XTransferDtoSchema.extend({
+  senderAddress: z.string().startsWith('//', {
+    message: 'Sender address must be a derivation path (e.g., //Alice)',
+  }),
+});
+
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
 export type XTransferDtoWSenderAddress = z.infer<
   typeof XTransferDtoWSenderAddressSchema
 >;
 export type DryRunPreviewDto = z.infer<typeof DryRunPreviewSchema>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;
+export type SignAndSubmitDto = z.infer<typeof SignAndSubmitSchema>;

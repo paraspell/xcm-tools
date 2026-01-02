@@ -1,10 +1,7 @@
-import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
-import { secp256k1 } from '@noble/curves/secp256k1.js'
-import { keccak_256 } from '@noble/hashes/sha3.js'
+import { PolkadotSigner } from 'polkadot-api/signer'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
-import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
-import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
+import { DEV_PHRASE } from '@polkadot-labs/hdkd-helpers'
 import { TPallet, TPapiApi, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
 import {
@@ -12,34 +9,15 @@ import {
   TSendBaseOptionsWithSenderAddress,
   TSerializedExtrinsics
 } from '@paraspell/sdk-core'
+import { createEcdsaSigner } from '../src/utils'
 
-export const createSr25519Signer = () => {
-  const miniSecret = entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE))
-  const derive = sr25519CreateDerive(miniSecret)
-  const aliceKeyPair = derive('//Alice')
-  return getPolkadotSigner(aliceKeyPair.publicKey, 'Sr25519', aliceKeyPair.sign)
-}
-
-export const signEcdsa = (input: Uint8Array, privateKey: Uint8Array) => {
-  const signature = secp256k1.sign(keccak_256(input), privateKey, {
-    prehash: false,
-    format: 'recovered'
-  })
-  return Uint8Array.from([...signature.slice(1), signature[0]])
-}
-
-export const createEcdsaSigner = () => {
+export const getEcdsaSigner = () => {
   const seed = mnemonicToSeedSync(DEV_PHRASE)
   const hdkey = HDKey.fromMasterSeed(seed)
   const keyPair = hdkey.derive(`m/44'/60'/0'/0/0`)
   const privateKey = keyPair.privateKey
-  if (!privateKey) {
-    throw new Error('Failed to derive private key')
-  }
-
-  const publicAddress = keccak_256(secp256k1.getPublicKey(privateKey, false).slice(1)).slice(-20)
-
-  return getPolkadotSigner(publicAddress, 'Ecdsa', input => signEcdsa(input, privateKey))
+  if (!privateKey) throw new Error('Failed to derive private key')
+  return createEcdsaSigner(privateKey)
 }
 
 const serializeTx = (tx: TPapiTransaction): TSerializedExtrinsics => {

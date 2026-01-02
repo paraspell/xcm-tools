@@ -52,6 +52,12 @@ vi.mock('@polkadot/util-crypto', async importOriginal => ({
   validateAddress: vi.fn()
 }))
 
+vi.mock('./utils', () => ({
+  createKeyringPair: vi.fn().mockReturnValue({
+    address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+  })
+}))
+
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
   let mockApiPromise: TPjsApi
@@ -2011,6 +2017,29 @@ describe('PolkadotJsApi', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()
       expect(status).toEqual('Normal')
+    })
+  })
+
+  describe('deriveAddress', () => {
+    it('should derive an address from a path', () => {
+      const address = polkadotApi.deriveAddress('//Alice')
+      expect(address).toBe('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
+    })
+  })
+
+  describe('signAndSubmit', () => {
+    it('should sign and submit a transaction', async () => {
+      const mockTxHash = { toHex: vi.fn().mockReturnValue('0x1234567890abcdef') }
+      const mockTx = {
+        signAndSend: vi.fn().mockResolvedValue(mockTxHash)
+      } as unknown as Extrinsic
+
+      const sendSpy = vi.spyOn(mockTx, 'signAndSend')
+
+      const result = await polkadotApi.signAndSubmit(mockTx, '//Alice')
+
+      expect(sendSpy).toHaveBeenCalled()
+      expect(result).toBe('0x1234567890abcdef')
     })
   })
 })

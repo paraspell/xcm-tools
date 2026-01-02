@@ -4,8 +4,8 @@ import type { Contract, Signer } from 'ethers'
 import type { Abi, GetContractReturnType, WalletClient } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import PolkadotJsApi from './PolkadotJsApi'
-import type { TPjsApi } from './types'
+import PolkadotJsApi from '../PolkadotJsApi'
+import type { TPjsApi } from '../types'
 import {
   createChainClient,
   createPolkadotJsApiCall,
