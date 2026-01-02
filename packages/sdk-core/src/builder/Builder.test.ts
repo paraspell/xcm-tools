@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
-import { DryRunFailedError } from '../errors'
+import { DryRunFailedError, InvalidAddressError } from '../errors'
 import {
   claimAssets,
   getMinTransferableAmount,
@@ -56,6 +56,8 @@ describe('Builder', () => {
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn(),
     getConfig: vi.fn().mockReturnValue({ abstractDecimals: true }),
+    signAndSubmit: vi.fn(),
+    deriveAddress: vi.fn().mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'),
     clone: vi.fn().mockReturnValue({
       init: vi.fn(),
       setApi: vi.fn(),
@@ -71,6 +73,7 @@ describe('Builder', () => {
     vi.clearAllMocks()
     vi.mocked(isConfig).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
+    vi.spyOn(mockApi, 'signAndSubmit').mockResolvedValue('0x1234567890abcdef')
   })
 
   describe('Para to Para / Para to Relay / Relay to Para  transfer', () => {
@@ -87,6 +90,31 @@ describe('Builder', () => {
           from: CHAIN,
           currency: CURRENCY,
           address: ADDRESS,
+          to: CHAIN_2
+        })
+      )
+    })
+
+    it('should resolve derivation path address passed to address()', async () => {
+      const derivationPath = '//Alice'
+      const resolvedAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+
+      const deriveSpy = vi.spyOn(mockApi, 'deriveAddress')
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(derivationPath)
+        .build()
+
+      expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          currency: CURRENCY,
+          address: resolvedAddress,
           to: CHAIN_2
         })
       )
@@ -1349,6 +1377,46 @@ describe('Builder', () => {
         .build()
 
       expect(buildDryRun).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('signAndSubmit', () => {
+    beforeEach(() => {
+      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+    })
+
+    it('should sign and submit transaction when senderAddress is a derivation path', async () => {
+      const derivationPath = '//Alice'
+      const mockTxHash = '0x1234567890abcdef'
+
+      const deriveSpy = vi.spyOn(mockApi, 'deriveAddress')
+      const submitSpy = vi.spyOn(mockApi, 'signAndSubmit')
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(derivationPath)
+        .signAndSubmit()
+
+      expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
+      expect(submitSpy).toHaveBeenCalledWith(mockExtrinsic, derivationPath)
+      expect(result).toBe(mockTxHash)
+    })
+
+    it('should throw InvalidAddressError when senderAddress is not a derivation path', async () => {
+      const regularAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+
+      await expect(
+        Builder(mockApi)
+          .from(CHAIN)
+          .to(CHAIN_2)
+          .currency(CURRENCY)
+          .address(ADDRESS)
+          .senderAddress(regularAddress)
+          .signAndSubmit()
+      ).rejects.toThrow(InvalidAddressError)
     })
   })
 })

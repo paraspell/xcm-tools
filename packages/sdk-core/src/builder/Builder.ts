@@ -9,6 +9,7 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import {
   BatchValidationError,
   DryRunFailedError,
+  InvalidAddressError,
   ScenarioNotSupportedError,
   UnableToComputeError
 } from '../errors'
@@ -26,6 +27,7 @@ import {
 import type {
   TAddress,
   TBatchOptions,
+  TBuilderInternalOptions,
   TBuildInternalRes,
   TDestination,
   TDryRunPreviewOptions,
@@ -50,7 +52,11 @@ import { normalizeAmountAll } from './normalizeAmountAll'
 /**
  * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
  */
-export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = object> {
+export class GeneralBuilder<
+  TApi,
+  TRes,
+  T extends Partial<TSendBaseOptions & TBuilderInternalOptions> = object
+> {
   readonly api: IPolkadotApi<TApi, TRes>
   readonly _options: T
 
@@ -124,9 +130,11 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns An instance of Builder
    */
   address(address: TAddress): GeneralBuilder<TApi, TRes, T & { address: TAddress }> {
+    const isPath = typeof address === 'string' && address.startsWith('//')
+    const resolvedAddress = isPath ? this.api.deriveAddress(address) : address
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      address
+      address: resolvedAddress
     })
   }
 
@@ -136,10 +144,13 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @param address - The sender address.
    * @returns
    */
-  senderAddress(address: string): GeneralBuilder<TApi, TRes, T & { senderAddress: string }> {
+  senderAddress(addressOrPath: string): GeneralBuilder<TApi, TRes, T & { senderAddress: string }> {
+    const isPath = addressOrPath.startsWith('//')
+    const address = isPath ? this.api.deriveAddress(addressOrPath) : addressOrPath
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      senderAddress: address
+      senderAddress: address,
+      path: isPath ? addressOrPath : undefined
     })
   }
 
@@ -328,7 +339,6 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   async getXcmFee<TDisableFallback extends boolean = false>(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
@@ -577,6 +587,20 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     }
 
     return receivedAmount
+  }
+
+  async signAndSubmit(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress & TBuilderInternalOptions>
+  ) {
+    const { path } = this._options
+    if (!path) {
+      throw new InvalidAddressError(
+        'Sender address needs to be a derivation path to sign and submit transaction using this method.'
+      )
+    }
+
+    const { tx } = await this.buildInternal()
+    return this.api.signAndSubmit(tx, path)
   }
 
   /**

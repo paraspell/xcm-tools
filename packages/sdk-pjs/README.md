@@ -298,7 +298,7 @@ const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_arr
 ```ts
 const builder = await Builder({
   development: true, // Optional: Enforces overrides for all chains used
-  decimalAbstraction: true //Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT.
+  decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT.
   apiOverrides: {
     Hydration: // "wsEndpointString" | papiClient
     BridgeHubPolkadot: // "wsEndpointString" | papiClient
@@ -308,9 +308,12 @@ const builder = await Builder({
   .from(TSubstrateChain)
   .to(TChain)
   .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}])
-  .address(address)
+  .address(address) //You can also use prederived accounts - //Alice, //Bob... //Alith, //Balthathar...
+  .senderAddress(address) //You can also use prederived accounts //Alice, //Bob... //Alith, //Balthathar...
 
 const tx = await builder.build()
+//Or if you use prederived account as senderAddress:
+//await builder.signAndSubmit()
 
 //Disconnect API after TX
 await builder.disconnect()

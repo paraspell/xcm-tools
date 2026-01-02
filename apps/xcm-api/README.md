@@ -235,6 +235,42 @@ const response = await fetch("http://localhost:3001/v5/x-transfer", {
 });
 ```
 
+### Localhost testing setup II
+
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#localhost-testing-setup-ii).
+
+Possible parameters:
+- Inherited from concrete endpoint
+
+```ts
+const response = await fetch("http://localhost:3001/v5/sign-and-submit", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        senderAddress: "//Alice", //You can use prederived accounts - //Alice, //Bob... //Alith, //Balthathar...
+        address: "0x1501C1413e4178c38567Ada8945A80351F7B8496", //You can also use prederived accounts here - //Alice, //Bob... //Alith, //Balthathar...
+        from: "Hydration",
+        to: "Moonbeam",
+        currency: {
+          symbol: "HDX",
+          amount: "10"
+        },
+        options: {
+          development: true, // Optional: Enforces overrides for all chains used
+          decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          xcmFormatCheck: true // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
+          apiOverrides: {
+            Hydration: "ws://127.0.0.1:8000", //Only works with locally launched chains (Eg. chopsticks)
+            Moonbeam: "ws://127.0.0.1:8001" //Only works with locally launched chains (Eg. chopsticks)
+          }
+        }
+    })
+});
+```
+
+
 ### XCM Fee queries
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).
