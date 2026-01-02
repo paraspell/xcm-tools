@@ -15,7 +15,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import type { XTransferDtoWSenderAddress } from './dto/XTransferDto.js';
+import type {
+  SignAndSubmitDto,
+  XTransferDtoWSenderAddress,
+} from './dto/XTransferDto.js';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
 
@@ -245,6 +248,25 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('signAndSubmit', () => {
+    it('should call service.signAndSubmit and track analytics', async () => {
+      const params: SignAndSubmitDto = {
+        ...bodyParams,
+        senderAddress: '//Alice',
+      };
+
+      const mockResult = '0x1234567890abcdef';
+      const spy = vi
+        .spyOn(service, 'signAndSubmit')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.signAndSubmit(params, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(params);
     });
   });
 

@@ -21,6 +21,8 @@ import {
   DryRunPreviewSchema,
   GetXcmFeeDto,
   GetXcmFeeSchema,
+  SignAndSubmitDto,
+  SignAndSubmitSchema,
   XTransferDto,
   XTransferDtoSchema,
   XTransferDtoWSenderAddress,
@@ -134,6 +136,13 @@ export class XTransferController {
       bodyParams,
     );
     return this.xTransferService.generateBatchXcmCall(bodyParams);
+  }
+
+  @Post('sign-and-submit')
+  @UsePipes(new ZodValidationPipe(SignAndSubmitSchema))
+  signAndSubmit(@Body() params: SignAndSubmitDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.SIGN_AND_SUBMIT, req, params);
+    return this.xTransferService.signAndSubmit(params);
   }
 
   @Get('x-transfer/eth-bridge-status')

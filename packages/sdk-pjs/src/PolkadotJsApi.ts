@@ -53,6 +53,7 @@ import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import { createKeyringPair } from './utils'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -721,6 +722,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     } catch {
       return false
     }
+  }
+
+  deriveAddress(path: string): string {
+    const { address } = createKeyringPair(path)
+    return address
+  }
+
+  async signAndSubmit(tx: Extrinsic, path: string): Promise<string> {
+    const pair = createKeyringPair(path)
+    const hash = await tx.signAndSend(pair)
+    return hash.toHex()
   }
 }
 

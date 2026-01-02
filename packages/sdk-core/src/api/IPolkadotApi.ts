@@ -64,4 +64,6 @@ export interface IPolkadotApi<TApi, TRes> {
   getDisconnectAllowed(): boolean
   disconnect(force?: boolean): Promise<void>
   validateSubstrateAddress(address: string): boolean
+  deriveAddress(path: string): string
+  signAndSubmit(tx: TRes, path: string): Promise<string>
 }

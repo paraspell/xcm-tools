@@ -17,6 +17,7 @@ import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
   GetXcmFeeDto,
+  SignAndSubmitDto,
   XTransferDto,
   XTransferDtoWSenderAddress,
 } from './dto/XTransferDto.js';
@@ -159,6 +160,12 @@ export class XTransferService {
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
     });
+  }
+
+  signAndSubmit(transfer: SignAndSubmitDto) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.signAndSubmit(),
+    );
   }
 
   getTransferableAmount(transfer: XTransferDtoWSenderAddress) {

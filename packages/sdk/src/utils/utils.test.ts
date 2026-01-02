@@ -2,8 +2,8 @@ import type { TSubstrateChain } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
-import PapiApi from './PapiApi'
-import type { TPapiApi } from './types'
+import PapiApi from '../PapiApi'
+import type { TPapiApi } from '../types'
 import { createChainClient, createPapiApiCall, findFailingEvent } from './utils'
 
 vi.mock('@paraspell/sdk-core')

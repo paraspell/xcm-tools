@@ -20,6 +20,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
   DryRunPreviewDto,
+  SignAndSubmitDto,
   XTransferDto,
   XTransferDtoWSenderAddress,
 } from './dto/XTransferDto.js';
@@ -91,6 +92,7 @@ const builderMock = {
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
   getTransferInfo: vi.fn().mockResolvedValue({}),
   getReceivableAmount: vi.fn().mockResolvedValue(amountResult),
+  signAndSubmit: vi.fn().mockResolvedValue(txHash),
   disconnect: vi.fn(),
 };
 
@@ -341,6 +343,27 @@ describe('XTransferService', () => {
         'Balances',
         'transfer',
       );
+    });
+  });
+
+  describe('signAndSubmit', () => {
+    it('should sign and submit when senderAddress is a derivation path', async () => {
+      const options: SignAndSubmitDto = {
+        ...xTransferDto,
+        senderAddress: '//Alice',
+      };
+
+      const result = await service.signAndSubmit(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.from).toHaveBeenCalledWith(options.from);
+      expect(builderMock.to).toHaveBeenCalledWith(options.to);
+      expect(builderMock.currency).toHaveBeenCalledWith(currency);
+      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.senderAddress).toHaveBeenCalledWith(
+        options.senderAddress,
+      );
+      expect(builderMock.signAndSubmit).toHaveBeenCalled();
     });
   });
 
