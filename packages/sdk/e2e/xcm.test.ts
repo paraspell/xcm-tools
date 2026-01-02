@@ -1,10 +1,10 @@
 import { Builder, SUBSTRATE_CHAINS } from '../src'
-import { createChainClient } from '../src/utils'
-import { createEcdsaSigner, createSr25519Signer, validateTransfer, validateTx } from './utils'
+import { createChainClient, createSr25519Signer } from '../src/utils'
+import { getEcdsaSigner, validateTransfer, validateTx } from './utils'
 import { generateE2eTests } from '../../sdk-core/e2e'
 
-const signer = createSr25519Signer()
-const evmSigner = createEcdsaSigner()
+const signer = createSr25519Signer('//Alice')
+const evmSigner = getEcdsaSigner()
 
 generateE2eTests(
   Builder,

@@ -5,8 +5,8 @@
 import type { IPolkadotApi, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 
-import PapiApi from './PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import PapiApi from '../PapiApi'
+import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from '../types'
 
 export const createChainClient = (chain: TSubstrateChain, api?: TBuilderOptions<TPapiApiOrUrl>) => {
   const papiApi = new PapiApi(api)

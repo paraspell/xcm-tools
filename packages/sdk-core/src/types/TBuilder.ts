@@ -104,3 +104,7 @@ export type TBuildInternalRes<TApi, TRes, TOptions extends TSendBaseOptions = TS
   tx: TRes
   options: TSendOptions<TApi, TRes> & TOptions
 }
+
+export type TBuilderInternalOptions = {
+  path?: string
+}

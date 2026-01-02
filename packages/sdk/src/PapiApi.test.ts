@@ -38,6 +38,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
+import { deriveAddress } from './utils'
 
 vi.mock('polkadot-api/ws-provider', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
@@ -54,6 +55,12 @@ vi.mock('polkadot-api')
 
 vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
+}))
+
+vi.mock('./utils', async importActual => ({
+  ...(await importActual()),
+  deriveAddress: vi.fn(),
+  createDevSigner: vi.fn().mockReturnValue({ publicKey: new Uint8Array(32) })
 }))
 
 vi.mock('../utils/dryRun/computeFeeFromDryRun')
@@ -164,6 +171,7 @@ describe('PapiApi', () => {
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
+    vi.mocked(deriveAddress).mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
 
@@ -2531,6 +2539,27 @@ describe('PapiApi', () => {
       expect(idleClient.destroy).toHaveBeenCalledTimes(1)
 
       vi.useRealTimers()
+    })
+  })
+
+  describe('deriveAddress', () => {
+    it('should call deriveAddress utility and return address', () => {
+      const address = papiApi.deriveAddress('//Alice')
+      expect(typeof address).toBe('string')
+    })
+  })
+
+  describe('signAndSubmit', () => {
+    it('should sign and submit a transaction', async () => {
+      const mockTxHash = '0x1234567890abcdef'
+      const mockTx = {
+        signAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
+      } as unknown as TPapiTransaction
+
+      const result = await papiApi.signAndSubmit(mockTx, '//Alice')
+
+      expect(mockTx.signAndSubmit).toHaveBeenCalled()
+      expect(result).toBe(mockTxHash)
     })
   })
 })

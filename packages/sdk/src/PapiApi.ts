@@ -60,7 +60,7 @@ import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
 import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
-import { findFailingEvent } from './utils'
+import { createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
 const clientPool = createClientCache(
   MAX_CLIENTS,
@@ -350,9 +350,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async getFromRpc(module: string, method: string, key: string): Promise<string> {
-    const toSS58 = AccountId().dec
     const value = await this.api._request(`${module}_${method}`, [
-      module === 'system' && isHex(key) && !isAddress(key) ? toSS58(key) : key
+      module === 'system' && isHex(key) && !isAddress(key) ? AccountId().dec(key) : key
     ])
     return isHex(value) ? value : '0x' + value.toString(16).padStart(8, '0')
   }
@@ -918,6 +917,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     return Promise.resolve()
+  }
+
+  deriveAddress(path: string): string {
+    return deriveAddress(path)
+  }
+
+  async signAndSubmit(tx: TPapiTransaction, path: string): Promise<string> {
+    const signer = createDevSigner(path)
+    const { txHash } = await tx.signAndSubmit(signer)
+    return txHash
   }
 }
 
