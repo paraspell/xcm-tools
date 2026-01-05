@@ -4,8 +4,8 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { easePoly } from 'd3-ease';
 import type { FC, RefCallback } from 'react';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import type { Group, Mesh, MeshStandardMaterial, SphereGeometry, Vector3 } from 'three';
+import { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import type { Group, Mesh, MeshStandardMaterial, SphereGeometry } from 'three';
 import { Color, TextureLoader } from 'three';
 
 import { FONT_URL } from '../../consts/consts';
@@ -43,7 +43,7 @@ const ParachainNode: FC<Props> = ({
 }) => {
   const { activeEditParachain, animationEnabled } = useSelectedParachain();
 
-  const initialPosition: Vector3 = getParachainPosition(index, ecosystem);
+  const initialPosition = useMemo(() => getParachainPosition(index, ecosystem), [index, ecosystem]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [floatingOffset, setFloatingOffset] = useState<number>(0);
 
@@ -62,7 +62,7 @@ const ParachainNode: FC<Props> = ({
       adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
       adjustUVs(sphereRef.current.geometry as SphereGeometry, Math.sqrt(scale) * SCALE_FACTOR);
     }
-  }, []);
+  }, [scale]);
 
   useEffect(() => {
     if (texture) {
@@ -74,7 +74,7 @@ const ParachainNode: FC<Props> = ({
     if (groupRef.current) {
       groupRef.current.position.copy(initialPosition);
     }
-  }, []);
+  }, [initialPosition]);
 
   useEffect(() => {
     const currentlyEditing = activeEditParachain?.includes(`${ecosystem};${name}`) ?? false;
@@ -85,14 +85,14 @@ const ParachainNode: FC<Props> = ({
       }
     }
     setIsEditing(currentlyEditing);
-  }, [activeEditParachain]);
+  }, [activeEditParachain, ecosystem, name, initialPosition]);
 
   useEffect(() => {
     if (!animationEnabled && groupRef.current) {
       const currentY = groupRef.current.position.y;
       setFloatingOffset(currentY - initialPosition.y);
     }
-  }, [animationEnabled]);
+  }, [animationEnabled, initialPosition]);
 
   useFrame(({ camera, clock }) => {
     if (groupRef.current) {
