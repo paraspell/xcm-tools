@@ -69,7 +69,7 @@ const MainScene = () => {
   const { scene } = useThree();
 
   const activeEditParachainMesh = activeEditParachain
-    ? scene.getObjectByName(activeEditParachain)
+    ? scene.getObjectByName(`${selectedEcosystem};${activeEditParachain}`)
     : null;
 
   return (

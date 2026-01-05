@@ -7,7 +7,12 @@ import type { Group, Object3D } from 'three';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
-import { getChainsByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
+import {
+  getChainsByEcosystem,
+  getParachainById,
+  getParachainEcosystem,
+  getParachainId
+} from '../../utils/utils';
 import LineBetween from '../LineBetween/LineBetween';
 import ParachainNode from '../Parachain/Parachain';
 import Relaychain from '../Relaychain/Relaychain';
@@ -39,20 +44,36 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
 
   const groupRef = useRef<Group>(null);
 
-  const sortedParachainNames = useMemo(() => {
-    const nameToCountMap = totalMessageCounts.reduce<Record<number, number>>((acc, item) => {
+  const paraIdToCountMap = useMemo(() => {
+    return totalMessageCounts.reduce<Record<number, number>>((acc, item) => {
       acc[item.paraId] = item.totalCount;
       return acc;
     }, {});
+  }, [totalMessageCounts]);
 
+  const sortedParachainNames = useMemo(() => {
     return getChainsByEcosystem(ecosystem)
       .slice()
       .sort((a, b) => {
-        const countA = nameToCountMap[getParachainId(a)] || 0;
-        const countB = nameToCountMap[getParachainId(b)] || 0;
+        const countA = paraIdToCountMap[getParachainId(a)] || 0;
+        const countB = paraIdToCountMap[getParachainId(b)] || 0;
         return countB - countA;
       });
-  }, [totalMessageCounts, ecosystem]);
+  }, [ecosystem, paraIdToCountMap]);
+
+  const parachainScales = useMemo(() => {
+    const baseLineWidth = 1.5;
+    const scalingFactor = parachainArrangement === CountOption.BOTH ? 0.000004 : 0.000009;
+    const scales: Record<string, number> = {};
+
+    sortedParachainNames.forEach(chain => {
+      const paraId = getParachainId(chain);
+      const count = paraIdToCountMap[paraId] ?? 0;
+      scales[chain] = baseLineWidth + count * scalingFactor;
+    });
+
+    return scales;
+  }, [sortedParachainNames, paraIdToCountMap, parachainArrangement]);
 
   const handleParachainClick = (chain: TSubstrateChain) => {
     toggleParachain(chain);
@@ -69,17 +90,6 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     toggleParachain(ecosystem);
   };
 
-  const calculateParachainScale = (parachain: TSubstrateChain): number => {
-    const baseLineWidth = 1.5;
-    const scalingFactor = parachainArrangement === CountOption.BOTH ? 0.000004 : 0.000009;
-    return (
-      baseLineWidth +
-      (totalMessageCounts.find(item => getParachainId(parachain) === item.paraId)?.totalCount ??
-        0) *
-        scalingFactor
-    );
-  };
-
   const onChannelClick =
     (channel: ChannelsQuery['channels'][number]) => (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
@@ -87,15 +97,56 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       setChannelAlertOpen(true);
       setSelectedChannel(channel);
     };
-
-  const selectedParachainChannels = channels.filter(channel => {
-    return selectedParachains.some(
-      p =>
-        p === getParachainById(channel.sender, ecosystem) ||
-        p === getParachainById(channel.recipient, ecosystem)
-    );
-  });
   const RELAYCHAIN_ID = 0;
+
+  const selectedParachainIds = useMemo(() => {
+    const ids = new Set<number>();
+    selectedParachains.forEach(p => {
+      if (p === ecosystem) {
+        ids.add(RELAYCHAIN_ID);
+      } else {
+        const chainEcosystem = getParachainEcosystem(p);
+        if (chainEcosystem === ecosystem) {
+          ids.add(getParachainId(p));
+        }
+      }
+    });
+    return ids;
+  }, [selectedParachains, ecosystem]);
+
+  const selectedChannelParaIds = useMemo(() => {
+    const paraIds = new Set<number>();
+
+    channels.forEach(channel => {
+      if (selectedParachainIds.has(channel.sender) || selectedParachainIds.has(channel.recipient)) {
+        paraIds.add(channel.sender);
+        paraIds.add(channel.recipient);
+      }
+    });
+
+    return paraIds;
+  }, [channels, selectedParachainIds]);
+
+  const parachainLookupCache = useMemo(() => {
+    const cache = new Map<number, TSubstrateChain | null>();
+    channels.forEach(channel => {
+      if (channel.sender !== RELAYCHAIN_ID && !cache.has(channel.sender)) {
+        cache.set(channel.sender, getParachainById(channel.sender, ecosystem));
+      }
+      if (channel.recipient !== RELAYCHAIN_ID && !cache.has(channel.recipient)) {
+        cache.set(channel.recipient, getParachainById(channel.recipient, ecosystem));
+      }
+    });
+    return cache;
+  }, [channels, ecosystem]);
+
+  const selectedParachainsSet = useMemo(() => {
+    const filtered = selectedParachains.filter(p => {
+      if (p === ecosystem) return true;
+      return getParachainEcosystem(p) === ecosystem;
+    });
+    return new Set(filtered);
+  }, [selectedParachains, ecosystem]);
 
   const parachainRefs = useRef<{ [key: string]: Object3D | null }>({});
 
@@ -116,7 +167,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       <Relaychain
         onClick={onRelaychainClick}
         ecosystem={ecosystem}
-        isSelected={selectedParachains.includes(ecosystem)}
+        isSelected={selectedParachainsSet.has(ecosystem)}
         ref={relaychainRef}
       />
       {sortedParachainNames?.map((chain, index) => {
@@ -127,8 +178,8 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
             index={index}
             onClick={handleParachainClick}
             onRightClick={onRightClick}
-            isSelected={selectedParachains.includes(chain)}
-            scale={calculateParachainScale(chain)}
+            isSelected={selectedParachainsSet.has(chain)}
+            scale={parachainScales[chain]}
             ecosystem={ecosystem}
             ref={el => {
               parachainRefs.current[`${ecosystem};${chain}`] = el;
@@ -141,14 +192,21 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       {ecosystem &&
         refsInitialized &&
         channels.map(channel => {
-          const senderKey =
+          const senderChainName =
             channel.sender === RELAYCHAIN_ID
-              ? `${ecosystem};Relaychain`
-              : `${ecosystem};${getParachainById(channel.sender, ecosystem)}`;
-          const recipientKey =
+              ? 'Relaychain'
+              : parachainLookupCache.has(channel.sender)
+                ? parachainLookupCache.get(channel.sender)
+                : getParachainById(channel.sender, ecosystem);
+          const senderKey = `${ecosystem};${senderChainName}`;
+
+          const recipientChainName =
             channel.recipient === RELAYCHAIN_ID
-              ? `${ecosystem};Relaychain`
-              : `${ecosystem};${getParachainById(channel.recipient, ecosystem)}`;
+              ? 'Relaychain'
+              : parachainLookupCache.has(channel.recipient)
+                ? parachainLookupCache.get(channel.recipient)
+                : getParachainById(channel.recipient, ecosystem);
+          const recipientKey = `${ecosystem};${recipientChainName}`;
 
           const senderObject =
             channel.sender === RELAYCHAIN_ID
@@ -165,15 +223,12 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
           }
 
           const lineWidth = calculateLineWidth(channel.message_count);
-          const isHighlighted = selectedParachains.some(
-            p =>
-              p === getParachainById(channel.sender, ecosystem) ||
-              p === getParachainById(channel.recipient, ecosystem)
-          );
+          const isHighlighted =
+            selectedParachainIds.has(channel.sender) || selectedParachainIds.has(channel.recipient);
 
-          const isSecondary = selectedParachainChannels.some(
-            ch => ch.sender === channel.sender || ch.recipient === channel.recipient
-          );
+          const isSecondary =
+            selectedChannelParaIds.has(channel.sender) ||
+            selectedChannelParaIds.has(channel.recipient);
 
           const isSelected = selectedChannel?.id === channel.id;
 
