@@ -13,6 +13,9 @@ import {
   testRelayWestend
 } from '@polkadot/apps-config/endpoints';
 
+import { BASE_CHAIN_SCALE, RELAYCHAIN_ID } from '../consts/consts';
+import { CountOption } from '../gql/graphql';
+
 export const getParachainId = (parachain: TSubstrateChain): number => {
   return getParaId(parachain);
 };
@@ -66,4 +69,29 @@ const getEndpointOptions = (ecosystem: TRelaychain) => {
     case 'Paseo':
       return testRelayPaseo.linked;
   }
+};
+
+export const calculateChainScale = (count: number, arrangement: CountOption | undefined) => {
+  const scalingFactor = arrangement === CountOption.BOTH ? 0.000004 : 0.000009;
+  return BASE_CHAIN_SCALE + count * scalingFactor;
+};
+
+export const calculateChannelWidth = (messageCount: number): number => {
+  const baseLineWidth = 0.035;
+  const scalingFactor = 0.0000015;
+  return baseLineWidth + messageCount * scalingFactor;
+};
+
+export const getChainKey = (
+  paraId: number,
+  ecosystem: TRelaychain,
+  parachainLookupCache: Map<number, TSubstrateChain | null>
+): string => {
+  const chainName =
+    paraId === RELAYCHAIN_ID
+      ? 'Relaychain'
+      : parachainLookupCache.has(paraId)
+        ? parachainLookupCache.get(paraId)
+        : getParachainById(paraId, ecosystem);
+  return `${ecosystem};${chainName}`;
 };
