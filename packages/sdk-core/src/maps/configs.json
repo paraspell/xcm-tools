@@ -232,10 +232,6 @@
     "paraId": 2034,
     "providers": [
       {
-        "name": "Dwellir",
-        "endpoint": "wss://hydration-rpc.n.dwellir.com"
-      },
-      {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/hydradx"
       },
