@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.2](https://github.com/paraspell/xcm-tools/compare/assets-v12.1.1...assets-v12.1.2) (2026-01-06)
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([6e05c8e](https://github.com/paraspell/xcm-tools/commit/6e05c8e24bb9cd752cc0d197a6b643e8b3d67242))
+
 ## [12.1.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.1.0...assets-v12.1.1) (2025-12-30)
 
 

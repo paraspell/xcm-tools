@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.1.1...sdk-core-v12.1.2) (2026-01-06)
+
+
+### Bug Fixes
+
+* **sdk-core:** Remove dwellir endpint from Hydration chain 🔧 ([6222417](https://github.com/paraspell/xcm-tools/commit/62224173eb9b3c55b4cc969a1632798972bf15c2))
+
 ## [12.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.1.0...sdk-core-v12.1.1) (2025-12-30)
 
 
