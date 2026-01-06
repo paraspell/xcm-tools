@@ -23,6 +23,22 @@ const calculateLineWidth = (messageCount: number): number => {
   return baseLineWidth + messageCount * scalingFactor;
 };
 
+const RELAYCHAIN_ID = 0;
+
+const getChainKey = (
+  paraId: number,
+  ecosystem: TRelaychain,
+  parachainLookupCache: Map<number, TSubstrateChain | null>
+): string => {
+  const chainName =
+    paraId === RELAYCHAIN_ID
+      ? 'Relaychain'
+      : parachainLookupCache.has(paraId)
+        ? parachainLookupCache.get(paraId)
+        : getParachainById(paraId, ecosystem);
+  return `${ecosystem};${chainName}`;
+};
+
 type Props = {
   channels: ChannelsQuery['channels'];
   totalMessageCounts: TotalMessageCountsQuery['totalMessageCounts'];
@@ -55,21 +71,25 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     return getChainsByEcosystem(ecosystem)
       .slice()
       .sort((a, b) => {
-        const countA = paraIdToCountMap[getParachainId(a)] || 0;
-        const countB = paraIdToCountMap[getParachainId(b)] || 0;
+        const countA = paraIdToCountMap[getParachainId(a)] || RELAYCHAIN_ID;
+        const countB = paraIdToCountMap[getParachainId(b)] || RELAYCHAIN_ID;
         return countB - countA;
       });
   }, [ecosystem, paraIdToCountMap]);
 
-  const parachainScales = useMemo(() => {
+  const calculateParachainScale = (parachain: TSubstrateChain): number => {
     const baseLineWidth = 1.5;
     const scalingFactor = parachainArrangement === CountOption.BOTH ? 0.000004 : 0.000009;
-    const scales: Record<string, number> = {};
+    const paraId = getParachainId(parachain);
+    const count = paraIdToCountMap[paraId] ?? 0;
+    return baseLineWidth + count * scalingFactor;
+  };
+
+  const parachainScales = useMemo(() => {
+    const scales: Record<TSubstrateChain, number> = {} as Record<TSubstrateChain, number>;
 
     sortedParachainNames.forEach(chain => {
-      const paraId = getParachainId(chain);
-      const count = paraIdToCountMap[paraId] ?? 0;
-      scales[chain] = baseLineWidth + count * scalingFactor;
+      scales[chain] = calculateParachainScale(chain);
     });
 
     return scales;
@@ -97,7 +117,6 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       setChannelAlertOpen(true);
       setSelectedChannel(channel);
     };
-  const RELAYCHAIN_ID = 0;
 
   const selectedParachainIds = useMemo(() => {
     const ids = new Set<number>();
@@ -192,21 +211,8 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       {ecosystem &&
         refsInitialized &&
         channels.map(channel => {
-          const senderChainName =
-            channel.sender === RELAYCHAIN_ID
-              ? 'Relaychain'
-              : parachainLookupCache.has(channel.sender)
-                ? parachainLookupCache.get(channel.sender)
-                : getParachainById(channel.sender, ecosystem);
-          const senderKey = `${ecosystem};${senderChainName}`;
-
-          const recipientChainName =
-            channel.recipient === RELAYCHAIN_ID
-              ? 'Relaychain'
-              : parachainLookupCache.has(channel.recipient)
-                ? parachainLookupCache.get(channel.recipient)
-                : getParachainById(channel.recipient, ecosystem);
-          const recipientKey = `${ecosystem};${recipientChainName}`;
+          const senderKey = getChainKey(channel.sender, ecosystem, parachainLookupCache);
+          const recipientKey = getChainKey(channel.recipient, ecosystem, parachainLookupCache);
 
           const senderObject =
             channel.sender === RELAYCHAIN_ID
