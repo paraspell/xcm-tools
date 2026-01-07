@@ -1,4 +1,4 @@
-import { isSystemChain } from '@paraspell/sdk-common'
+import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
@@ -115,8 +115,8 @@ export const createCustomXcm = <TApi, TRes>(
 
     const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
 
-    // If destination is a system chain, use teleport instead of reserve deposit
-    if (isSystemChain(dest.chain)) {
+    // If destination is a trusted chain, use teleport instead of reserve deposit
+    if (isTrustedChain(dest.chain)) {
       return [
         ...(refundInstruction ? [refundInstruction] : []),
         {

@@ -68,7 +68,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     overrideReserve
   )
 
-  const RELAY_ASSET_LOCATIONS = [
+  const NO_FEE_ASSET_LOCS = [
     RELAY_LOCATION,
     {
       parents: 2,
@@ -77,13 +77,23 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     {
       parents: 2,
       interior: { X1: [{ GlobalConsensus: { Polkadot: null } }] }
+    },
+    {
+      parents: 1,
+      interior: {
+        X1: [
+          {
+            Parachain: 3369
+          }
+        ]
+      }
     }
   ]
 
   const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
 
   const isRelayAsset =
-    RELAY_ASSET_LOCATIONS.some(loc => deepEqual(assetInfo.location, loc)) || isSubBridge
+    NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) || isSubBridge
 
   const destApi = api.clone()
   await destApi.init(destinationChain)

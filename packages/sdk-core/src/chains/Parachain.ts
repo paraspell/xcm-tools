@@ -8,6 +8,7 @@ import {
   getNativeAssetSymbol,
   getRelayChainSymbol,
   isAssetEqual,
+  isAssetXcEqual,
   isChainEvm,
   isSymbolMatch,
   type TAsset
@@ -169,12 +170,18 @@ abstract class Parachain<TApi, TRes> {
     const isRelayAsset =
       deepEqual(asset.location, RELAY_LOCATION) &&
       isSymbolMatch(getRelayChainSymbol(this.chain), asset.symbol)
+
+    const mythAsset = findNativeAssetInfoOrThrow('Mythos')
+    const isMythAsset = isAssetXcEqual(mythAsset, asset)
+
+    const assetNeedsTypeThen = isRelayAsset || isMythAsset
+
     const supportsTypeThen = await api.hasMethod(
       'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 
-    if (isRelayAsset && !supportsTypeThen) {
+    if (assetNeedsTypeThen && !supportsTypeThen) {
       throw new UnsupportedOperationError(
         'Relaychain assets require the type-and-then method which is not supported by this chain.'
       )
@@ -183,7 +190,7 @@ abstract class Parachain<TApi, TRes> {
     const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
 
     const useTypeAndThen =
-      (isRelayAsset &&
+      (assetNeedsTypeThen &&
         supportsTypeThen &&
         destChain &&
         !isExternalChain(destChain) &&
@@ -275,7 +282,7 @@ abstract class Parachain<TApi, TRes> {
         )
       }
 
-      if (this.chain === 'Astar' && isRelayAsset) {
+      if (this.chain === 'Astar' && assetNeedsTypeThen) {
         throw new FeatureTemporarilyDisabledError(
           'Astar system asset transfers are temporarily disabled'
         )
