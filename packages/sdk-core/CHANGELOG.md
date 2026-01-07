@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.1.2...sdk-core-v12.2.0) (2026-01-07)
+
+
+### Features
+
+* Add support for local accounts 🪄 ([d92fc44](https://github.com/paraspell/xcm-tools/commit/d92fc440441bed3bcf913bbfcbed07c18a541b6c))
+* **playground:** Add localhost section ✨ ([ba90e98](https://github.com/paraspell/xcm-tools/commit/ba90e98eb0bfb81f66a7a50b40d67e3ae05e7a15))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix MYTH transfer scenarios 🔧 ([2441ca4](https://github.com/paraspell/xcm-tools/commit/2441ca4f093731a5b138c4c504f92665f804de99))
+
 ## [12.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.1.1...sdk-core-v12.1.2) (2026-01-06)
 
 
