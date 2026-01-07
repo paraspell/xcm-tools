@@ -816,7 +816,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const feeEvent =
       feeAssetFeeEvent ??
-      //
+      (chain === 'Mythos'
+        ? reversedEvents.find(event => event.type === 'Balances' && event.value.type === 'Issued')
+        : undefined) ??
       (processedAssetsAmount !== undefined
         ? {
             type: 'Assets',
@@ -826,11 +828,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
             }
           }
         : undefined) ??
-      //
-      (chain === 'Mythos'
-        ? reversedEvents.find(event => event.type === 'Balances' && event.value.type === 'Issued')
-        : undefined) ??
-      //
       (origin === 'Mythos' || (chain === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'

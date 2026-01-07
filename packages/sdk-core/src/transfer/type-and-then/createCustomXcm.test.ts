@@ -1,5 +1,5 @@
 import type { TLocation } from '@paraspell/sdk-common'
-import { isSystemChain, Version } from '@paraspell/sdk-common'
+import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -79,7 +79,7 @@ describe('createCustomXcm', () => {
     vi.mocked(createDestination).mockReturnValue(mockDestination)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
-    vi.mocked(isSystemChain).mockReturnValue(false)
+    vi.mocked(isTrustedChain).mockReturnValue(false)
   })
 
   describe('DepositReserveAsset (different chains)', () => {
@@ -123,7 +123,7 @@ describe('createCustomXcm', () => {
     })
 
     it('returns InitiateTeleport when destination is a system chain', () => {
-      vi.mocked(isSystemChain).mockImplementation(chain => chain === 'Kusama')
+      vi.mocked(isTrustedChain).mockImplementation(chain => chain === 'Kusama')
 
       const result = createCustomXcm(
         {

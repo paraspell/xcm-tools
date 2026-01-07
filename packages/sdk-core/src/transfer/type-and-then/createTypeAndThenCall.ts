@@ -25,7 +25,8 @@ const buildAssets = (
 ) => {
   const assets = []
 
-  const shouldLocalizeAndSort = isRelayChain(chain) || chain.startsWith('AssetHub')
+  const shouldLocalizeAndSort =
+    isRelayChain(chain) || chain.startsWith('AssetHub') || chain === 'Mythos'
 
   if (!isRelayAsset) {
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
