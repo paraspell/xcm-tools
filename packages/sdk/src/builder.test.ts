@@ -5,7 +5,10 @@ import { Builder } from './builder'
 import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
 
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  Builder: vi.fn()
+}))
 
 vi.mock('./PapiApi')
 

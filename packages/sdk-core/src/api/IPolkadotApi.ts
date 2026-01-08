@@ -4,6 +4,7 @@ import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type {
   BatchMode,
+  TApiOrUrl,
   TBridgeStatus,
   TBuilderOptions,
   TDryRunCallBaseOptions,
@@ -12,15 +13,15 @@ import type {
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
+  TUrl,
   TWeight
 } from '../types'
-import type { TApiOrUrl } from '../types/TApi'
 
 export interface IPolkadotApi<TApi, TRes> {
   getConfig(): TBuilderOptions<TApiOrUrl<TApi>> | undefined
   getApi(): TApi
   init(chain: TChain, clientTtlMs?: number): Promise<void>
-  createApiInstance: (wsUrl: string | string[], chain: TSubstrateChain) => Promise<TApi>
+  createApiInstance: (wsUrl: TUrl, chain: TSubstrateChain) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   accountToUint8a(address: string): Uint8Array
   deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes

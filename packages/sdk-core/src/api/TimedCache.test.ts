@@ -1,13 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createClientCache, type TClientEntry } from './TimedCache'
+import type { TClientEntry } from '../types'
+import { createClientCache } from './TimedCache'
+
+type TFakeClient = {
+  getChainSpecData: () => Promise<void>
+}
 
 const fakeApi = () =>
   ({
     getChainSpecData: vi.fn().mockResolvedValue(undefined)
-  }) as unknown as TClientEntry['client']
+  }) as TFakeClient
 
-const entry = (refs = 0): TClientEntry => ({
+const entry = (refs = 0): TClientEntry<TFakeClient> => ({
   client: fakeApi(),
   refs,
   destroyWanted: false
@@ -23,7 +28,8 @@ describe('createClientCache', () => {
   })
 
   it('set / get / has / peek refresh a normal TTL', () => {
-    const cache = createClientCache(10)
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
     cache.set('a', entry(), 1_000)
 
     expect(cache.has('a')).toBe(true)
@@ -41,8 +47,9 @@ describe('createClientCache', () => {
   })
 
   it('evicts when the simple TTL elapses (refs = 0)', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
     const onEviction = vi.fn()
-    const cache = createClientCache(10, onEviction)
+    const cache = createClientCache<TFakeClient>(10, pingClient, onEviction)
     cache.set('victim', entry(0), 1_000)
 
     vi.advanceTimersByTime(1_001)
@@ -52,8 +59,9 @@ describe('createClientCache', () => {
 
   it('extends once when refs > 0, then evicts after extensionMs', () => {
     const EXT_MS = 3_000
+    const pingClient = vi.fn().mockResolvedValue(undefined)
     const onEviction = vi.fn()
-    const cache = createClientCache(10, onEviction, EXT_MS)
+    const cache = createClientCache<TFakeClient>(10, pingClient, onEviction, EXT_MS)
 
     const e = entry(2)
     cache.set('live', e, 1_000)
@@ -68,7 +76,8 @@ describe('createClientCache', () => {
   })
 
   it('delete() removes immediately and clear() wipes all', () => {
-    const cache = createClientCache(10)
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
     cache.set('x', entry(), 1_000)
     cache.set('y', entry(), 1_000)
 
@@ -80,7 +89,8 @@ describe('createClientCache', () => {
   })
 
   it('revive() shortens the timer only when ttl < remaining', () => {
-    const cache = createClientCache(10)
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
     cache.set('r', entry(), 1_000)
 
     vi.advanceTimersByTime(200)
@@ -94,8 +104,9 @@ describe('createClientCache', () => {
   })
 
   it('evictIfNeeded respects maxSize and calls onEviction', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
     const onEviction = vi.fn()
-    const cache = createClientCache(2, onEviction)
+    const cache = createClientCache<TFakeClient>(2, pingClient, onEviction)
 
     cache.set('a', entry(), 10_000)
     cache.set('b', entry(), 10_000)

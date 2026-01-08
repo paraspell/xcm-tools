@@ -19,7 +19,8 @@ import { transferEthToPolkadot } from './ethTransfer'
 
 vi.mock('./createContext')
 
-vi.mock('@paraspell/sdk-core', () => ({
+vi.mock('@paraspell/sdk-core', async importOriginal => ({
+  ...(await importOriginal()),
   getParaId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class extends Error {},

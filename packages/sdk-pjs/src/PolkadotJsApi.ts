@@ -19,12 +19,15 @@ import type {
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
+  TUrl,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
   assertHasLocation,
   BatchMode,
+  createClientCache,
+  createClientPoolHelpers,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
@@ -52,19 +55,32 @@ import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
+import { DEFAULT_TTL_MS, EXTENSION_MS, MAX_CLIENTS } from './consts'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
-import { createKeyringPair } from './utils'
+import { createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
 
-const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
+const clientPool = createClientCache<TPjsApi>(
+  MAX_CLIENTS,
+  async client => {
+    await client.rpc.system.properties()
+  },
+  (_key, entry) => {
+    void entry.client.disconnect()
+  },
+  EXTENSION_MS
+)
 
-const snakeToCamel = (str: string) =>
-  str
-    .toLowerCase()
-    .replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''))
+const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
+  const wsProvider = new WsProvider(ws)
+  return ApiPromise.create({ provider: wsProvider })
+}
+
+const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
 class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   private _config?: TBuilderOptions<TPjsApiOrUrl>
   private api: TPjsApi
+  private _ttlMs = DEFAULT_TTL_MS
   private initialized = false
   private disconnectAllowed = true
   private _chain: TSubstrateChain
@@ -81,11 +97,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api
   }
 
-  async init(chain: TChain, _clientTtlMs?: number) {
+  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
     if (this.initialized || chain === 'Ethereum') {
       return
     }
 
+    this._ttlMs = clientTtlMs
     this._chain = chain
 
     const apiConfig = this.getApiConfigForChain(chain)
@@ -105,7 +122,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this._config
   }
 
-  private async resolveApi(
+  private resolveApi(
     apiConfig: TPjsApiOrUrl | undefined,
     chain: TSubstrateChain
   ): Promise<TPjsApi> {
@@ -118,12 +135,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       return this.createApiInstance(apiConfig, chain)
     }
 
-    return apiConfig
+    return Promise.resolve(apiConfig)
   }
 
-  async createApiInstance(wsUrl: string | string[], _chain: TSubstrateChain) {
-    const wsProvider = new WsProvider(wsUrl)
-    return ApiPromise.create({ provider: wsProvider })
+  createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
+    return leaseClient(wsUrl, this._ttlMs, false)
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -703,16 +719,28 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.disconnectAllowed
   }
 
-  async disconnect(force = false) {
+  disconnect(force = false) {
     if (!this.initialized) return Promise.resolve()
-    if (!force && !this.disconnectAllowed) return
+    if (!force && !this.disconnectAllowed) return Promise.resolve()
 
     const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
 
-    // Disconnect api only if it was created automatically
-    if (force || typeof api === 'string' || api === undefined) {
-      await this.api.disconnect()
+    // Own client provided, destroy only if force true
+    if (force && typeof api === 'object') {
+      void this.api.disconnect()
     }
+
+    // Client created automatically
+    if (typeof api === 'string' || Array.isArray(api) || api === undefined) {
+      if (force) {
+        void this.api.disconnect()
+      } else {
+        const key = api === undefined ? getChainProviders(this._chain) : api
+        releaseClient(key)
+      }
+    }
+
+    return Promise.resolve()
   }
 
   validateSubstrateAddress(address: string): boolean {

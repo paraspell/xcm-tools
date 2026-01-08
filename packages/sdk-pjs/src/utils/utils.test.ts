@@ -14,7 +14,10 @@ import {
 } from './utils'
 
 vi.mock('./PolkadotJsApi')
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  createChainClient: vi.fn()
+}))
 
 describe('API Instance and Call Utility Functions', () => {
   const mockChain = {} as TSubstrateChain
