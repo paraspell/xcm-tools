@@ -23,19 +23,19 @@ import {
 } from './dto/RouterDto.js';
 
 const validateChainsAndExchange = (
-  from: string,
+  from: RouterDto['from'],
   exchange: RouterDto['exchange'],
-  to: string,
+  to: RouterDto['to'],
 ): {
-  fromChain: TSubstrateChain;
-  exchangeChain?: TExchangeChain | TExchangeChain[];
-  toChain: TChain;
+  fromChain?: TSubstrateChain;
+  exchangeChain?: TExchangeInput;
+  toChain?: TChain;
 } => {
   const fromChain = from as TSubstrateChain;
-  const exchangeChain = exchange as TExchangeChain | TExchangeChain[];
+  const exchangeChain = exchange as TExchangeInput;
   const toChain = to as TChain;
 
-  if (!SUBSTRATE_CHAINS.includes(fromChain)) {
+  if (fromChain && !SUBSTRATE_CHAINS.includes(fromChain)) {
     throw new BadRequestException(
       `Chain ${from} is not valid. Check docs for valid chains.`,
     );
@@ -51,7 +51,7 @@ const validateChainsAndExchange = (
     );
   }
 
-  if (!CHAINS.includes(toChain)) {
+  if (toChain && !CHAINS.includes(toChain)) {
     throw new BadRequestException(
       `Chain ${to} is not valid. Check docs for valid chains.`,
     );
@@ -81,11 +81,11 @@ export class RouterService {
       options,
     } = input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -101,9 +101,9 @@ export class RouterService {
 
     try {
       const transactions = await RouterBuilder(options)
-        .from(fromChain)
+        .from(fromChain ?? undefined)
         .exchange(exchangeChain)
-        .to(toChain)
+        .to(toChain ?? undefined)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount.toString())

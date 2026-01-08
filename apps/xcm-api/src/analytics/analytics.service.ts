@@ -27,7 +27,7 @@ export class AnalyticsService {
   track(
     eventName: EventName,
     req: RequestWithUser,
-    properties?: Record<string, string | number>,
+    properties?: Record<string, string | number | null | undefined>,
   ) {
     if (!this.client) return;
     const user = req.user;

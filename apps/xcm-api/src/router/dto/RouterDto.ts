@@ -7,7 +7,7 @@ import {
 } from '../../x-transfer/dto/XTransferDto.js';
 
 export const RouterDtoSchema = z.object({
-  from: z.string(),
+  from: z.string().nullable().optional(),
   exchange: z
     .union([
       z.string(),
@@ -16,7 +16,7 @@ export const RouterDtoSchema = z.object({
         .min(2, { message: 'Exchange array must contain at least 2 strings' }),
     ])
     .optional(),
-  to: z.string(),
+  to: z.string().nullable().optional(),
   currencyFrom: CurrencyCoreSchema,
   currencyTo: CurrencyCoreSchema,
   recipientAddress: z
