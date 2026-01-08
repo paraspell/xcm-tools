@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.2.0...sdk-pjs-v12.2.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Add client pool ✨ ([332c13b](https://github.com/paraspell/xcm-tools/commit/332c13baaf481e4dddeb604b980e0afca2fc79d2))
+
 ## [12.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.1.2...sdk-pjs-v12.2.0) (2026-01-07)
 
 
