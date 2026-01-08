@@ -4,7 +4,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { convertSs58 } from './address'
 import PapiApi from './PapiApi'
 
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  convertSs58: vi.fn()
+}))
 
 vi.mock('./PapiApi')
 

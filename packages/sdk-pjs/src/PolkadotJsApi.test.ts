@@ -52,7 +52,8 @@ vi.mock('@polkadot/util-crypto', async importOriginal => ({
   validateAddress: vi.fn()
 }))
 
-vi.mock('./utils', () => ({
+vi.mock('./utils', async importOriginal => ({
+  ...(await importOriginal()),
   createKeyringPair: vi.fn().mockReturnValue({
     address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
   })
@@ -916,19 +917,18 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('disconnect', () => {
-    it('should disconnect the api when _api is a string', async () => {
+    it('should release client from pool when _api is a string (non-force disconnect)', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
       polkadotApi = new PolkadotJsApi('api')
       await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
-      expect(mockDisconnect).toHaveBeenCalled()
-
+      expect(mockDisconnect).not.toHaveBeenCalled()
       mockDisconnect.mockRestore()
     })
 
-    it('should disconnect the api when _api is not provided', async () => {
+    it('should release client from pool when _api is not provided (non-force disconnect)', async () => {
       const wsUrl = ['wss://disconnect.acala']
       vi.mocked(getChainProviders).mockReturnValue(wsUrl)
       const createApiInstanceSpy = vi
@@ -941,7 +941,7 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
-      expect(mockDisconnect).toHaveBeenCalled()
+      expect(mockDisconnect).not.toHaveBeenCalled()
 
       createApiInstanceSpy.mockRestore()
       mockDisconnect.mockRestore()
@@ -959,14 +959,20 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should disconnect the api when force is true', async () => {
+      const wsUrl = ['wss://disconnect.acala']
+      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
+      const createApiInstanceSpy = vi
+        .spyOn(PolkadotJsApi.prototype, 'createApiInstance')
+        .mockResolvedValue(mockApiPromise)
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
-      polkadotApi = new PolkadotJsApi('api')
+      polkadotApi = new PolkadotJsApi()
       await polkadotApi.init(mockChain)
       await polkadotApi.disconnect(true)
 
       expect(mockDisconnect).toHaveBeenCalled()
 
+      createApiInstanceSpy.mockRestore()
       mockDisconnect.mockRestore()
     })
 

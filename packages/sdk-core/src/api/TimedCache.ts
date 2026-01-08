@@ -1,41 +1,16 @@
-import type { TPapiApi } from './types'
+import type { ClientCache, TCacheItem, TClientEntry, TClientKey } from '../types'
 
-export type TClientKey = string
-
-export interface TClientEntry {
-  client: TPapiApi
-  refs: number
-  destroyWanted: boolean
-}
-
-export interface ClientCache {
-  set: (k: TClientKey, v: TClientEntry, ttl: number) => void
-  get: (k: TClientKey) => TClientEntry | undefined
-  delete: (k: TClientKey) => boolean
-  has: (k: TClientKey) => boolean
-  clear: () => void
-  peek: (k: TClientKey) => TClientEntry | undefined
-  remainingTtl: (k: TClientKey) => number | undefined
-  revive: (k: TClientKey, ttl: number) => void
-}
-
-export function createClientCache(
+export const createClientCache = <T>(
   maxSize: number,
-  onEviction?: (key: TClientKey, value: TClientEntry) => void,
+  pingClient: (client: T) => Promise<void>,
+  onEviction?: (key: TClientKey, value: TClientEntry<T>) => void,
   extensionMs = 5 * 60_000
-): ClientCache {
-  type Wrapped = {
-    value: TClientEntry
-    ttl: number
-    expireAt: number
-    extended: boolean // Flag to indicate if the entry has been extended
-  }
-
-  const data = new Map<TClientKey, Wrapped>()
+): ClientCache<T> => {
+  const data = new Map<TClientKey, TCacheItem<T>>()
   const timers = new Map<TClientKey, NodeJS.Timeout>()
 
   const now = () => Date.now()
-  const timeLeft = (w: Wrapped) => Math.max(w.expireAt - now(), 0)
+  const timeLeft = (w: TCacheItem<T>) => Math.max(w.expireAt - now(), 0)
 
   const schedule = (k: TClientKey, delay: number) => {
     if (timers.has(k)) clearTimeout(timers.get(k))
@@ -54,7 +29,7 @@ export function createClientCache(
       // Call rpc.properties to keep the connection alive
       void (async () => {
         try {
-          await w.value.client.getChainSpecData()
+          await pingClient(w.value.client)
         } catch {
           /* ignore */
         }
@@ -81,7 +56,7 @@ export function createClientCache(
     if (data.size <= maxSize) return
 
     let victimKey: TClientKey | undefined
-    let victim: Wrapped | undefined
+    let victim: TCacheItem<T> | undefined
 
     for (const [k, w] of data) {
       if (!victim) {
@@ -109,7 +84,7 @@ export function createClientCache(
     if (victimKey !== undefined) evict(victimKey)
   }
 
-  const set = (k: TClientKey, v: TClientEntry, ttl: number) => {
+  const set = (k: TClientKey, v: TClientEntry<T>, ttl: number) => {
     const existing = data.get(k)
 
     if (existing) {

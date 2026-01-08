@@ -5,7 +5,10 @@ import { convertSs58 } from './address'
 import PolkadotJsApi from './PolkadotJsApi'
 
 vi.mock('./PolkadotJsApi')
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  convertSs58: vi.fn()
+}))
 
 describe('Address functions', () => {
   it('should initialize PolkadotJsApi and call setApi with the provided api', () => {

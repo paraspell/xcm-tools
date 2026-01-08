@@ -22,12 +22,15 @@ import type {
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
+  TUrl,
   TWeight
 } from '@paraspell/sdk-core'
 import {
   assertHasLocation,
   BatchMode,
   computeFeeFromDryRun,
+  createClientCache,
+  createClientPoolHelpers,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
@@ -53,68 +56,32 @@ import { withLegacy } from '@polkadot-api/legacy-provider'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { getWsProvider } from 'polkadot-api/ws-provider'
-import { isAddress } from 'viem'
+import { isAddress, isHex } from 'viem'
 
 import { DEFAULT_TTL_MS, EXTENSION_MS, LEGACY_CHAINS, MAX_CLIENTS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
-import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import { createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
-const clientPool = createClientCache(
+const clientPool = createClientCache<TPapiApi>(
   MAX_CLIENTS,
+  async client => {
+    await client.getChainSpecData()
+  },
   (_key, entry) => {
     entry.client.destroy()
   },
   EXTENSION_MS
 )
 
-const keyFromWs = (ws: string | string[]): TClientKey => {
-  return Array.isArray(ws) ? JSON.stringify(ws) : ws
-}
-
-const createPolkadotClient = (ws: string | string[], useLegacy: boolean): TPapiApi => {
+const createPolkadotClient = (ws: TUrl, useLegacy: boolean): TPapiApi => {
   const options = useLegacy ? { innerEnhancer: withLegacy() } : {}
   const provider = getWsProvider(ws, options)
   return createClient(useLegacy ? provider : withPolkadotSdkCompat(provider))
 }
 
-const leasePolkadotClient = (ws: string | string[], ttlMs: number, useLegacy: boolean) => {
-  const key = keyFromWs(ws)
-  let entry = clientPool.peek(key)
-
-  if (!entry) {
-    entry = { client: createPolkadotClient(ws, useLegacy), refs: 0, destroyWanted: false }
-    clientPool.set(key, entry, ttlMs)
-  }
-
-  entry.refs += 1
-
-  clientPool.revive(key, ttlMs)
-  entry.destroyWanted = false
-
-  return entry.client
-}
-
-const releasePolkadotClient = (ws: string | string[]) => {
-  const key = keyFromWs(ws)
-  const entry = clientPool.peek(key)
-
-  if (!entry) {
-    return
-  }
-
-  entry.refs -= 1
-
-  if (entry.refs === 0 && entry.destroyWanted) {
-    clientPool.delete(key)
-  }
-}
-
-const isHex = (str: string) => {
-  return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
-}
+const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotClient)
 
 const extractDryRunXcmFailureReason = (result: any): string => {
   const executionResult = result?.value?.execution_result
@@ -186,7 +153,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this._config
   }
 
-  private async resolveApi(
+  private resolveApi(
     apiConfig: TPapiApiOrUrl | undefined,
     chain: TSubstrateChain
   ): Promise<TPapiApi> {
@@ -199,12 +166,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return this.createApiInstance(apiConfig, chain)
     }
 
-    return apiConfig
+    return Promise.resolve(apiConfig)
   }
 
-  createApiInstance(wsUrl: string | string[], chain: TSubstrateChain) {
+  createApiInstance(wsUrl: TUrl, chain: TSubstrateChain) {
     const useLegacy = LEGACY_CHAINS.includes(chain)
-    return Promise.resolve(leasePolkadotClient(wsUrl, this._ttlMs, useLegacy))
+    return Promise.resolve(leaseClient(wsUrl, this._ttlMs, useLegacy))
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -909,7 +876,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         this.api.destroy()
       } else {
         const key = api === undefined ? getChainProviders(this._chain) : api
-        releasePolkadotClient(key)
+        releaseClient(key)
       }
     }
 

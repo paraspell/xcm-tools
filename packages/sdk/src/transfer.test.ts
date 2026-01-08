@@ -17,7 +17,14 @@ import {
 } from './transfer'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  send: vi.fn(),
+  getXcmFee: vi.fn(),
+  handleSwapExecuteTransfer: vi.fn(),
+  getBridgeStatus: vi.fn(),
+  getParaEthTransferFees: vi.fn()
+}))
 
 vi.mock('./PapiApi')
 

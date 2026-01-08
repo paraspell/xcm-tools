@@ -6,7 +6,10 @@ import PapiApi from '../PapiApi'
 import type { TPapiApi } from '../types'
 import { createChainClient, createPapiApiCall, findFailingEvent } from './utils'
 
-vi.mock('@paraspell/sdk-core')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  createChainClient: vi.fn()
+}))
 
 vi.mock('./PapiApi')
 
