@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.2.0...xcm-api-v12.2.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix router chain validation 🔧 ([d6ac1c4](https://github.com/paraspell/xcm-tools/commit/d6ac1c418696a0cfb6cc92f5d139999b98deaebc))
+
 ## [12.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.1.2...xcm-api-v12.2.0) (2026-01-07)
 
 
