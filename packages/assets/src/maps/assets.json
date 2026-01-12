@@ -2712,8 +2712,8 @@
     "nativeAssetSymbol": "XON",
     "isEVM": false,
     "ss58Prefix": 280,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "XON",
@@ -2757,7 +2757,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "100000000",
@@ -2769,7 +2770,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ]
   },
@@ -3831,7 +3833,7 @@
       },
       {
         "assetId": "1039",
-        "symbol": "aPAGX",
+        "symbol": "aPAXG",
         "decimals": 18,
         "existentialDeposit": "4675946889957",
         "location": {
@@ -17700,28 +17702,6 @@
           }
         },
         "isFeeAsset": true
-      },
-      {
-        "assetId": "10",
-        "symbol": "lkk",
-        "decimals": 1,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 10
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10"
       },
       {
         "assetId": "1984",
