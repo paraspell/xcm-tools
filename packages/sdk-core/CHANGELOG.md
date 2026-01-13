@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.14.13](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.12...sdk-core-v11.14.13) (2026-01-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix EnergyWebX XCM ✨ ([549cbb6](https://github.com/paraspell/xcm-tools/commit/549cbb63a32f079f3b7495aeb5bd5a24fe1bd5ec))
+
 ## [11.14.12](https://github.com/paraspell/xcm-tools/compare/sdk-core-v11.14.11...sdk-core-v11.14.12) (2025-12-22)
 
 
