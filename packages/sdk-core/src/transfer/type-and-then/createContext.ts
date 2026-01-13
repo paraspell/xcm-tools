@@ -8,7 +8,11 @@ import {
 } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
-import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TTypeAndThenCallContext,
+  TTypeAndThenOverrides
+} from '../../types'
 import {
   assertHasLocation,
   assertToIsString,
@@ -48,11 +52,10 @@ const resolveReserveChain = (
 }
 
 export const createTypeAndThenCallContext = async <TApi, TRes>(
-  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
-  overrideReserve?: TSubstrateChain
+  overrides: TTypeAndThenOverrides
 ): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
-  const { api, destination, assetInfo } = options
+  const { api, chain, destination, assetInfo } = options
 
   assertHasLocation(assetInfo)
   assertToIsString(destination)
@@ -65,7 +68,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
     destinationChain,
     assetInfo.location,
     isSubBridge,
-    overrideReserve
+    overrides.reserveChain
   )
 
   const NO_FEE_ASSET_LOCS = [
@@ -93,7 +96,9 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
   const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
 
   const isRelayAsset =
-    NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) || isSubBridge
+    NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) ||
+    isSubBridge ||
+    (overrides.noFeeAsset ?? false)
 
   const destApi = api.clone()
   await destApi.init(destinationChain)

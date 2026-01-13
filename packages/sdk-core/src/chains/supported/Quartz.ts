@@ -2,28 +2,25 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import { transferXTokens } from '../../pallets/xTokens'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId } from '../../utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TSendInternalOptions
+} from '../../types'
 import Parachain from '../Parachain'
 
-class Quartz<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
-  private static NATIVE_ASSET_ID = 0
-
+class Quartz<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Quartz', 'quartz', 'Kusama', Version.V5)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
+  }
 
-    if (asset.symbol === this.getNativeAssetSymbol()) {
-      return transferXTokens(input, Quartz.NATIVE_ASSET_ID)
-    }
-
-    assertHasId(asset)
-
-    return transferXTokens(input, Number(asset.assetId))
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+    return true
   }
 }
 

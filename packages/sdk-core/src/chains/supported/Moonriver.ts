@@ -17,7 +17,7 @@ class Moonriver<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXC
   }
 
   transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return transferPolkadotXcm(options, 'transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(options)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

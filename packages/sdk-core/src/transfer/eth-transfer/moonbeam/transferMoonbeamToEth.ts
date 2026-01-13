@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { TAsset } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
@@ -90,6 +91,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   const customXcm = createCustomXcmOnDest(
     {
       api,
+      chain: from as TSubstrateChain,
       destination: to,
       address,
       scenario: 'ParaToPara',

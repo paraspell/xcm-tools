@@ -58,6 +58,7 @@ export const fetchZeitgeistNativeAssets = async (
 ): Promise<TAssetInfo[]> => {
   return (await fetchAssets(api, query, true, nativeKey)).map(asset => ({
     isNative: true,
+    assetId: asset.assetId,
     symbol: asset.symbol,
     decimals: asset.decimals,
     existentialDeposit: asset.existentialDeposit

@@ -5,7 +5,6 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import Parachain from '../Parachain'
 
@@ -26,15 +25,11 @@ class CoretimePolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
+    return transferPolkadotXcm(input)
   }
 
   canReceiveFrom(origin: TChain): boolean {
     return origin !== 'Hydration' && origin !== 'Moonbeam'
-  }
-
-  getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { transferType: 'teleport' }
   }
 }
 

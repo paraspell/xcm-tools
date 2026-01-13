@@ -20,7 +20,7 @@ class NeuroWeb<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(input)
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {

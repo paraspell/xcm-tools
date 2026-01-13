@@ -763,9 +763,15 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
               {
                 "Parachain": 2051
+              },
+              {
+                "GeneralKey": {
+                  "length": 4,
+                  "data": "0x414a554e00000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
@@ -11436,6 +11442,7 @@
     "assets": [
       {
         "isNative": true,
+        "assetId": "0",
         "symbol": "DOTON",
         "decimals": 18,
         "existentialDeposit": "1000000000000000",
@@ -11452,12 +11459,14 @@
       },
       {
         "isNative": true,
+        "assetId": "2",
         "symbol": "jamTON",
         "decimals": 9,
         "existentialDeposit": "1000000"
       },
       {
         "isNative": true,
+        "assetId": "1",
         "symbol": "stDOT",
         "decimals": 10,
         "existentialDeposit": "10000000"

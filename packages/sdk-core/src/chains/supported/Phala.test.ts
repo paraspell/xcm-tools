@@ -8,9 +8,7 @@ import type { TTransferLocalOptions, TXTransferTransferOptions } from '../../typ
 import { getChain } from '../../utils'
 import type Phala from './Phala'
 
-vi.mock('../../pallets/xTransfer', () => ({
-  transferXTransfer: vi.fn()
-}))
+vi.mock('../../pallets/xTransfer')
 
 describe('Phala', () => {
   let phala: Phala<unknown, unknown>

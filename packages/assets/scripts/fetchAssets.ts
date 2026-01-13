@@ -155,6 +155,12 @@ const fetchNativeAssets = async (
         data: '0x000c000000000000000000000000000000000000000000000000000000000000'
       }
     },
+    Ajuna: {
+      GeneralKey: {
+        length: 4,
+        data: '0x414a554e00000000000000000000000000000000000000000000000000000000'
+      }
+    },
     Pendulum: { PalletInstance: 10 },
     NeuroWeb: { PalletInstance: 10 },
     Moonriver: { PalletInstance: 10 },

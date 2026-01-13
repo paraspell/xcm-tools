@@ -45,7 +45,7 @@ describe('Moonbeam', () => {
 
   it('should call transferPolkadotXCM with transfer_assets', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'transfer_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should call transferToEthereum when destination is Ethereum', async () => {

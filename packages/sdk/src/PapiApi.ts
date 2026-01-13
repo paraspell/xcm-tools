@@ -26,6 +26,7 @@ import type {
   TWeight
 } from '@paraspell/sdk-core'
 import {
+  addXcmVersionHeader,
   assertHasLocation,
   BatchMode,
   computeFeeFromDryRun,
@@ -418,6 +419,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         return executionResultValue.error.value
       }
 
+      if (executionResultValue?.error?.type) {
+        return executionResultValue.error
+      }
+
       if (result?.value?.type) {
         return result.value
       }
@@ -569,6 +574,66 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
   }
 
+  async getDeliveryFee(
+    chain: TSubstrateChain,
+    forwardedXcm: any[],
+    asset: TAssetInfo,
+    assetLocalizedLoc: TLocation
+  ): Promise<bigint> {
+    const xcmPaymentApi = this.api.getUnsafeApi().apis.XcmPaymentApi
+
+    let usedThirdParam = false
+    let deliveryFeeRes: any
+
+    if (forwardedXcm.length > 0) {
+      const baseArgs = [forwardedXcm[0], forwardedXcm[1][0]] as const
+
+      try {
+        deliveryFeeRes = await xcmPaymentApi.query_delivery_fees(...baseArgs)
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e)
+
+        // Some runtimes require the 3rd arg; without it the runtime-api call can throw
+        // with a generic "Cannot read properties of undefined".
+        if (message.includes('Cannot read properties of undefined')) {
+          usedThirdParam = true
+          const transformedAssetLoc = transform(addXcmVersionHeader(assetLocalizedLoc, Version.V4))
+          deliveryFeeRes = await xcmPaymentApi.query_delivery_fees(...baseArgs, transformedAssetLoc)
+        } else {
+          throw e
+        }
+      }
+    }
+
+    const deliveryFeeResolved =
+      deliveryFeeRes?.value?.value.length > 0 ? deliveryFeeRes?.value?.value[0].fun.value : 0n
+
+    const nativeAsset = findNativeAssetInfoOrThrow(chain)
+
+    if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
+      return deliveryFeeResolved
+    } else {
+      try {
+        assertHasLocation(nativeAsset)
+
+        const res = await this.quoteAhPrice(
+          localizeLocation(chain, nativeAsset.location),
+          assetLocalizedLoc,
+          deliveryFeeResolved,
+          false
+        )
+
+        return res ?? 0n
+      } catch (e) {
+        if (e instanceof Error && /Runtime entry RuntimeCall\(.+\) not found/.test(e.message)) {
+          return 0n
+        } else {
+          return 0n
+        }
+      }
+    }
+  }
+
   async getXcmPaymentApiFee(
     chain: TSubstrateChain,
     localXcm: any,
@@ -615,41 +680,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const deliveryFeeRes =
-      forwardedXcm.length > 0
-        ? await this.api
-            .getUnsafeApi()
-            .apis.XcmPaymentApi.query_delivery_fees(forwardedXcm[0], forwardedXcm[1][0])
-        : undefined
-
-    const deliveryFeeResolved =
-      deliveryFeeRes?.value?.value.length > 0 ? deliveryFeeRes?.value?.value[0].fun.value : 0n
-
-    const nativeAsset = findNativeAssetInfoOrThrow(chain)
-
-    let deliveryFee: bigint
-    if (isAssetXcEqual(asset, nativeAsset)) {
-      deliveryFee = deliveryFeeResolved
-    } else {
-      try {
-        assertHasLocation(nativeAsset)
-
-        const res = await this.quoteAhPrice(
-          localizeLocation(chain, nativeAsset.location),
-          assetLocalizedLoc,
-          deliveryFeeResolved,
-          false
-        )
-
-        deliveryFee = res ?? 0n
-      } catch (e) {
-        if (e instanceof Error && /Runtime entry RuntimeCall\(.+\) not found/.test(e.message)) {
-          deliveryFee = 0n
-        } else {
-          deliveryFee = 0n
-        }
-      }
-    }
+    const deliveryFee = await this.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
 
     return execFee + deliveryFee
   }

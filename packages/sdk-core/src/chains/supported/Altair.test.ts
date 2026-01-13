@@ -10,35 +10,36 @@ import type Altair from './Altair'
 vi.mock('../../pallets/xTokens')
 
 describe('Altair', () => {
-  let altair: Altair<unknown, unknown>
+  let chain: Altair<unknown, unknown>
+
   const mockInput = {
     asset: { symbol: 'AIR', assetId: '1', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    altair = getChain<unknown, unknown, 'Altair'>('Altair')
+    chain = getChain<unknown, unknown, 'Altair'>('Altair')
   })
 
   it('should initialize with correct values', () => {
-    expect(altair.chain).toBe('Altair')
-    expect(altair.info).toBe('altair')
-    expect(altair.ecosystem).toBe('Kusama')
-    expect(altair.version).toBe(Version.V4)
+    expect(chain.chain).toBe('Altair')
+    expect(chain.info).toBe('altair')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Native when currency matches the native asset', () => {
-    vi.spyOn(altair, 'getNativeAssetSymbol').mockReturnValue('AIR')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('AIR')
 
-    altair.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'Native')
   })
 
   it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
     const inputWithCurrencyID = { ...mockInput, asset: { ...mockInput.asset, assetId: '1' } }
-    vi.spyOn(altair, 'getNativeAssetSymbol').mockReturnValue('NOT_AIR')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('NOT_AIR')
 
-    altair.transferXTokens(inputWithCurrencyID)
+    chain.transferXTokens(inputWithCurrencyID)
 
     expect(transferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
@@ -59,7 +60,7 @@ describe('Altair', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      altair.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
@@ -82,7 +83,7 @@ describe('Altair', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      altair.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',

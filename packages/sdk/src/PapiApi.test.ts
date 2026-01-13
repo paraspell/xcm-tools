@@ -8,6 +8,7 @@ import type {
   WithAmount
 } from '@paraspell/sdk-core'
 import {
+  addXcmVersionHeader,
   BatchMode,
   computeFeeFromDryRun,
   findAssetInfoOrThrow,
@@ -67,6 +68,7 @@ vi.mock('../utils/dryRun/computeFeeFromDryRun')
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
+  addXcmVersionHeader: vi.fn(),
   computeFeeFromDryRun: vi.fn(),
   createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient),
   getAssetsObject: vi.fn(),
@@ -568,9 +570,8 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('getXcmPaymentApiFee', () => {
+  describe('getDeliveryFee', () => {
     const chain: TSubstrateChain = 'Moonbeam'
-    const localXcm = { type: 'V4', value: [] }
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
       location: { parents: 0, interior: { Here: null } } as TLocation
@@ -578,15 +579,13 @@ describe('PapiApi', () => {
 
     beforeEach(() => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
-        .fn()
-        .mockResolvedValue({ value: 100n })
-      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
-        value: { ref_time: 100n, proof_size: 200n }
-      })
       unsafeApi.apis.XcmPaymentApi.query_delivery_fees = vi.fn().mockResolvedValue({
         value: { value: [{ fun: { value: 7n } }] }
       })
+
+      vi.mocked(addXcmVersionHeader).mockImplementation((location: unknown) => ({
+        V4: location
+      }))
 
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR',
@@ -611,12 +610,12 @@ describe('PapiApi', () => {
         ]
       ]
 
-      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
+      const assetLocalizedLoc = baseAsset.location as TLocation
 
-      expect(unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee).toHaveBeenCalled()
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalled()
-      // 100 (exec) + 7 (delivery) = 107
-      expect(res).toBe(107n)
+      expect(res).toBe(7n)
     })
 
     it('converts delivery fee via quoteAhPrice when asset is NOT native', async () => {
@@ -625,22 +624,25 @@ describe('PapiApi', () => {
 
       const quoteSpy = vi.spyOn(papiApi, 'quoteAhPrice').mockResolvedValue(5n)
 
-      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, {
+      const asset: TAssetInfo = {
         symbol: 'USDC',
         location: { parents: 1, interior: { X1: { Parachain: 1000 } } } as TLocation
-      } as TAssetInfo)
+      } as TAssetInfo
+
+      const assetLocalizedLoc = asset.location as TLocation
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
 
       expect(quoteSpy).toHaveBeenCalled()
-      // 100 (exec) + 5 (converted delivery)
-      expect(res).toBe(105n)
+      expect(res).toBe(5n)
     })
 
-    it('returns only exec fee when forwardedXcm is empty (no delivery fee)', async () => {
+    it('returns zero when forwardedXcm is empty (no delivery fee)', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const forwardedXcm: any = []
-      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
-      // deliveryFeeResolved = 0n, asset is native => total 100n
-      expect(res).toBe(100n)
+      const assetLocalizedLoc = baseAsset.location as TLocation
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+      expect(res).toBe(0n)
     })
 
     it('falls back to 0 delivery fee when quoteAhPrice throws the runtime-entry error', async () => {
@@ -653,13 +655,124 @@ describe('PapiApi', () => {
         )
       )
 
-      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, {
+      const asset: TAssetInfo = {
         symbol: 'USDT',
         location: { parents: 1, interior: { X1: { Parachain: 1001 } } } as TLocation
-      } as TAssetInfo)
+      } as TAssetInfo
 
-      // exec (100n) + delivery (0n due to error)
-      expect(res).toBe(100n)
+      const assetLocalizedLoc = asset.location as TLocation
+
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+
+      expect(res).toBe(0n)
+    })
+
+    it('falls back to 0 delivery fee when quoteAhPrice throws an unexpected error', async () => {
+      const forwardedXcm = [{}, [{}]]
+      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+
+      vi.spyOn(papiApi, 'quoteAhPrice').mockRejectedValue(new Error('network flake'))
+
+      const asset: TAssetInfo = {
+        symbol: 'USDT',
+        location: { parents: 1, interior: { X1: { Parachain: 1001 } } } as TLocation
+      } as TAssetInfo
+
+      const assetLocalizedLoc = asset.location as TLocation
+
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+
+      expect(res).toBe(0n)
+    })
+
+    it('retries query_delivery_fees with a 3rd param when runtime-api throws undefined access error', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      const forwardedXcm0 = { some: 'xcm0' }
+      const forwardedXcm1 = { some: 'xcm1' }
+      const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
+
+      const assetLocalizedLoc = baseAsset.location as TLocation
+
+      const transformedThird = { transformedThird: true }
+      vi.mocked(transform).mockReturnValueOnce(transformedThird)
+
+      vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees)
+        .mockRejectedValueOnce(new Error('Cannot read properties of undefined (reading "foo")'))
+        .mockResolvedValueOnce({ value: { value: [{ fun: { value: 9n } }] } })
+
+      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalledTimes(2)
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenNthCalledWith(
+        1,
+        forwardedXcm0,
+        forwardedXcm1
+      )
+      expect(addXcmVersionHeader).toHaveBeenCalledWith(assetLocalizedLoc, Version.V4)
+      expect(transform).toHaveBeenCalledTimes(1)
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenNthCalledWith(
+        2,
+        forwardedXcm0,
+        forwardedXcm1,
+        transformedThird
+      )
+      expect(res).toBe(9n)
+    })
+
+    it('re-throws when query_delivery_fees fails with an unexpected error', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+
+      const forwardedXcm0 = { some: 'xcm0' }
+      const forwardedXcm1 = { some: 'xcm1' }
+      const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
+
+      const assetLocalizedLoc = baseAsset.location as TLocation
+
+      vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).mockRejectedValueOnce(
+        new Error('some other runtime error')
+      )
+
+      await expect(
+        papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+      ).rejects.toThrow('some other runtime error')
+
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalledTimes(1)
+      expect(addXcmVersionHeader).not.toHaveBeenCalled()
+      expect(transform).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getXcmPaymentApiFee', () => {
+    const chain: TSubstrateChain = 'Moonbeam'
+    const localXcm = { type: 'V4', value: [] }
+    const baseAsset: TAssetInfo = {
+      symbol: 'GLMR',
+      location: { parents: 0, interior: { Here: null } } as TLocation
+    } as TAssetInfo
+
+    beforeEach(() => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
+        .fn()
+        .mockResolvedValue({ value: 100n })
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        value: { ref_time: 100n, proof_size: 200n }
+      })
+
+      vi.mocked(localizeLocation).mockImplementation((_, loc: TLocation) => loc)
+
+      vi.spyOn(papiApi, 'getDeliveryFee').mockResolvedValue(0n)
+    })
+
+    it('adds delivery fee to exec fee', async () => {
+      const forwardedXcm = [{}, [{}]]
+      const deliverySpy = vi.spyOn(papiApi, 'getDeliveryFee').mockResolvedValueOnce(7n)
+
+      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
+
+      expect(deliverySpy).toHaveBeenCalled()
+      expect(res).toBe(107n)
     })
 
     it('uses BridgeHub fallback helper when exec fee asset is missing', async () => {
@@ -1200,6 +1313,40 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'NotVersionedConversion',
+        asset: { symbol: 'GLMR' } as TAssetInfo
+      })
+    })
+
+    it('should extract failure reason when error has a direct type (execution_result.value.error.type)', async () => {
+      const directTypeErrorResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: { error: { type: 'DirectTypeError' } }
+          }
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(directTypeErrorResponse)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Moonbeam',
+        destination: 'Acala',
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'DirectTypeError',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -2261,6 +2408,11 @@ describe('PapiApi', () => {
         success: true,
         value: weight
       })
+      unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi.fn().mockResolvedValue({
+        value: 100n
+      })
+
+      vi.spyOn(papiApi, 'getDeliveryFee').mockResolvedValue(0n)
 
       return expect(
         papiApi.getDryRunXcm({

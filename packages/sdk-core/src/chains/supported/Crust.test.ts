@@ -12,7 +12,8 @@ import type Crust from './Crust'
 vi.mock('../../pallets/xTokens')
 
 describe('Crust', () => {
-  let crust: Crust<unknown, unknown>
+  let chain: Crust<unknown, unknown>
+
   const mockInput = {
     asset: {
       symbol: 'CRU',
@@ -22,18 +23,18 @@ describe('Crust', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    crust = getChain<unknown, unknown, 'Crust'>('Crust')
+    chain = getChain<unknown, unknown, 'Crust'>('Crust')
   })
 
   it('should initialize with correct values', () => {
-    expect(crust.chain).toBe('Crust')
-    expect(crust.info).toBe('crustParachain')
-    expect(crust.ecosystem).toBe('Polkadot')
-    expect(crust.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Crust')
+    expect(chain.info).toBe('crustParachain')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with SelfReserve when currency matches native asset', () => {
-    crust.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
   })
 
@@ -47,7 +48,7 @@ describe('Crust', () => {
       }
     } as TXTokensTransferOptions<unknown, unknown>
 
-    crust.transferXTokens(input)
+    chain.transferXTokens(input)
     expect(transferXTokens).toHaveBeenCalledWith(input, { OtherReserve: 123n } as TReserveAsset)
   })
 
@@ -60,7 +61,7 @@ describe('Crust', () => {
       } as WithAmount<TAssetInfo>
     }
 
-    expect(() => crust.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
+    expect(() => chain.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
   })
 
   describe('transferLocalNonNativeAsset', () => {
@@ -75,7 +76,7 @@ describe('Crust', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => crust.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
@@ -85,7 +86,7 @@ describe('Crust', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => crust.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
@@ -97,7 +98,7 @@ describe('Crust', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      crust.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
@@ -120,7 +121,7 @@ describe('Crust', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      crust.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',

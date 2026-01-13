@@ -40,7 +40,7 @@ class Laos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
       throw new TransferToAhNotSupported('Transfer from Laos to AssetHubPolkadot is not supported.')
     }
 
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(input)
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {

@@ -1,13 +1,13 @@
 import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
-import type { Version } from '@paraspell/sdk-common'
-import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import type {
   TPolkadotXCMTransferOptions,
   TSerializedExtrinsics,
   TTypeAndThenCallContext,
-  TTypeAndThenFees
+  TTypeAndThenFees,
+  TTypeAndThenOverrides
 } from '../../types'
 import { createAsset, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
@@ -16,31 +16,27 @@ import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 import { createRefundInstruction } from './utils'
 
-const buildAssets = (
+const buildAssets = <TApi, TRes>(
   chain: TSubstrateChain,
   asset: WithAmount<TAssetWithLocation>,
   feeAmount: bigint,
   isRelayAsset: boolean,
-  version: Version
+  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes>
 ) => {
-  const assets = []
+  if (overriddenAsset) {
+    if (Array.isArray(overriddenAsset)) return overriddenAsset
+    return [createAsset(version, asset.amount, overriddenAsset)]
+  }
 
-  const shouldLocalizeAndSort =
-    isRelayChain(chain) || chain.startsWith('AssetHub') || chain === 'Mythos'
+  const assets = []
 
   if (!isRelayAsset) {
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
 
-  assets.push(
-    createAsset(
-      version,
-      asset.amount,
-      shouldLocalizeAndSort ? localizeLocation(chain, asset.location) : asset.location
-    )
-  )
+  assets.push(createAsset(version, asset.amount, localizeLocation(chain, asset.location)))
 
-  return shouldLocalizeAndSort ? sortAssets(assets) : assets
+  return sortAssets(assets)
 }
 
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
@@ -60,13 +56,9 @@ export const constructTypeAndThenCall = <TApi, TRes>(
   context: TTypeAndThenCallContext<TApi, TRes>,
   fees: TTypeAndThenFees | null = null
 ): TSerializedExtrinsics => {
-  const {
-    origin,
-    assetInfo,
-    isSubBridge,
-    isRelayAsset,
-    options: { senderAddress, version }
-  } = context
+  const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
+
+  const { senderAddress, version } = options
 
   const assetCount = isRelayAsset ? 1 : 2
 
@@ -93,7 +85,7 @@ export const constructTypeAndThenCall = <TApi, TRes>(
     resolvedFees
   )
 
-  const assets = buildAssets(origin.chain, assetInfo, systemAssetAmount, isRelayAsset, version)
+  const assets = buildAssets(origin.chain, assetInfo, systemAssetAmount, isRelayAsset, options)
 
   return buildTypeAndThenCall(context, isRelayAsset, customXcm, assets)
 }
@@ -102,11 +94,13 @@ export const constructTypeAndThenCall = <TApi, TRes>(
  * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
  */
 export const createTypeAndThenCall = async <TApi, TRes>(
-  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
-  overrideReserve?: TSubstrateChain
+  overrides: TTypeAndThenOverrides = {
+    reserveChain: undefined,
+    noFeeAsset: false
+  }
 ): Promise<TSerializedExtrinsics> => {
-  const context = await createTypeAndThenCallContext(chain, options, overrideReserve)
+  const context = await createTypeAndThenCallContext(options, overrides)
 
   const { origin, assetInfo } = context
 

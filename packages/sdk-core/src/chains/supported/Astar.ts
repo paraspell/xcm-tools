@@ -1,47 +1,27 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
+import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { transferXTokens } from '../../pallets/xTokens'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
-import {
-  type IPolkadotXCMTransfer,
-  type IXTokensTransfer,
-  type TPolkadotXCMTransferOptions,
-  type TSendInternalOptions,
-  type TXTokensTransferOptions
-} from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
-class Astar<TApi, TRes>
-  extends Parachain<TApi, TRes>
-  implements IPolkadotXCMTransfer, IXTokensTransfer
-{
-  constructor() {
-    super('Astar', 'astar', 'Polkadot', Version.V5)
+class Astar<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+  constructor(
+    chain: TParachain = 'Astar',
+    info: string = 'astar',
+    ecosystem: TRelaychain = 'Polkadot',
+    version: Version = Version.V5
+  ) {
+    super(chain, info, ecosystem, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
-  }
-
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-
-    if (asset.isNative) {
-      return transferXTokens(input, undefined)
-    }
-
-    assertHasId(asset)
-
-    return transferXTokens(input, BigInt(asset.assetId))
-  }
-
-  canUseXTokens({ assetInfo }: TSendInternalOptions<TApi, TRes>): boolean {
-    return assetInfo.symbol !== this.getNativeAssetSymbol()
+    return transferPolkadotXcm(input, 'transfer_assets_using_type_and_then')
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {

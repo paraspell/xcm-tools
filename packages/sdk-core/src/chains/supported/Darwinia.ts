@@ -24,7 +24,7 @@ class Darwinia<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(input)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

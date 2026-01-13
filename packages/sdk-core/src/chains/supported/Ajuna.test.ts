@@ -1,68 +1,43 @@
-import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Ajuna from './Ajuna'
 
-vi.mock('../../pallets/xTokens')
+vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../transfer')
 
 describe('Ajuna', () => {
-  let ajuna: Ajuna<unknown, unknown>
+  let chain: Ajuna<unknown, unknown>
 
-  const baseXTokensInput = {
+  const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'BNC', amount: 100n }
-  } as unknown as TXTokensTransferOptions<unknown, unknown>
+    assetInfo: { symbol: 'BNC', amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    ajuna = getChain<unknown, unknown, 'Ajuna'>('Ajuna')
+    chain = getChain<unknown, unknown, 'Ajuna'>('Ajuna')
     vi.clearAllMocks()
   })
 
   it('exposes the correct static metadata', () => {
-    expect(ajuna.chain).toBe('Ajuna')
-    expect(ajuna.info).toBe('ajuna')
-    expect(ajuna.ecosystem).toBe('Polkadot')
-    expect(ajuna.version).toBe(Version.V5)
+    expect(chain.chain).toBe('Ajuna')
+    expect(chain.info).toBe('ajuna')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V5)
   })
 
-  describe('transferXTokens', () => {
-    it('delegates to XTokens implementation when called with native asset', () => {
-      vi.spyOn(ajuna, 'getNativeAssetSymbol').mockReturnValue('BNC')
-
-      ajuna.transferXTokens(baseXTokensInput)
-
-      expect(transferXTokens).toHaveBeenCalledWith(baseXTokensInput, 'BNC')
-    })
-
-    it('throws ScenarioNotSupportedError for scenarios other than ParaToPara', () => {
-      const badInput = {
-        ...baseXTokensInput,
-        scenario: 'ParaToRelay'
-      } as TXTokensTransferOptions<unknown, unknown>
-      expect(() => ajuna.transferXTokens(badInput)).toThrow(ScenarioNotSupportedError)
-    })
-
-    it('throws InvalidCurrencyError if asset is not native', () => {
-      vi.spyOn(ajuna, 'getNativeAssetSymbol').mockReturnValue('BNC')
-      const badInput = {
-        ...baseXTokensInput,
-        asset: { symbol: 'DOT', amount: 100n }
-      } as TXTokensTransferOptions<unknown, unknown>
-      expect(() => ajuna.transferXTokens(badInput)).toThrow(InvalidCurrencyError)
-    })
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  describe('transferRelayToPara', () => {
-    it('always throws ScenarioNotSupportedError for RelayToPara', () => {
-      expect(() => ajuna.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
-    })
+  it('always throws ScenarioNotSupportedError for RelayToPara', () => {
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 
   describe('transferLocalNonNativeAsset', () => {
@@ -79,7 +54,7 @@ describe('Ajuna', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      ajuna.transferLocalNonNativeAsset(opts)
+      chain.transferLocalNonNativeAsset(opts)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
@@ -102,7 +77,7 @@ describe('Ajuna', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      ajuna.transferLocalNonNativeAsset(opts)
+      chain.transferLocalNonNativeAsset(opts)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',

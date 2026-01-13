@@ -11,10 +11,17 @@ import { localizeLocation } from '../../utils/location'
 
 export const resolveTransferType = <TApi, TRes>({
   origin,
-  reserve
+  reserve,
+  dest,
+  isSubBridge
 }: TTypeAndThenCallContext<TApi, TRes>) => {
+  // Direct A → C: when origin is reserve OR dest is reserve, check origin <-> dest trust
+  // Hop A → B → C: when reserve differs from both, check origin <-> reserve trust
+  const isDirect = origin.chain === reserve.chain || dest.chain === reserve.chain
+  const chainToCheck = isDirect ? dest.chain : reserve.chain
+  if (isTrustedChain(origin.chain) && isTrustedChain(chainToCheck) && !isSubBridge)
+    return 'Teleport'
   if (origin.chain === reserve.chain) return 'LocalReserve'
-  if (isTrustedChain(origin.chain) && isTrustedChain(reserve.chain)) return 'Teleport'
   return 'DestinationReserve'
 }
 
@@ -28,9 +35,8 @@ export const buildTypeAndThenCall = <TApi, TRes>(
     origin,
     reserve,
     dest,
-    isSubBridge,
     assetInfo,
-    options: { version, pallet, method }
+    options: { version, pallet, method, overriddenAsset }
   } = context
 
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
@@ -41,13 +47,11 @@ export const buildTypeAndThenCall = <TApi, TRes>(
 
   const transferType = resolveTransferType(context)
 
-  const feeMultiAsset = createAsset(
-    version,
-    assetInfo.amount,
-    isRelayChain(origin.chain) || isSubBridge || origin.chain === 'Mythos'
-      ? localizeLocation(origin.chain, feeAssetLocation)
-      : feeAssetLocation
-  )
+  const feeAsset = Array.isArray(overriddenAsset) ? overriddenAsset.find(a => a.isFeeAsset) : null
+
+  const feeMultiAsset =
+    feeAsset ??
+    createAsset(version, assetInfo.amount, localizeLocation(origin.chain, feeAssetLocation))
 
   const module = (pallet as TPallet) ?? (isRelayChain(origin.chain) ? 'XcmPallet' : 'PolkadotXcm')
   const methodName = method ?? 'transfer_assets_using_type_and_then'

@@ -13,6 +13,7 @@ vi.mock('../../pallets/xTokens')
 
 describe('Peaq', () => {
   let chain: Peaq<unknown, unknown>
+
   const mockInput = {
     asset: { assetId: '123', amount: 100n },
     scenario: 'ParaToPara'

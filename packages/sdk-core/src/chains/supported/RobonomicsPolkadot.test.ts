@@ -12,31 +12,31 @@ import RobonomicsPolkadot from './RobonomicsPolkadot'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('RobonomicsPolkadot', () => {
-  let robonomics: RobonomicsPolkadot<unknown, unknown>
+  let chain: RobonomicsPolkadot<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    robonomics = getChain<unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
+    chain = getChain<unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
   })
 
   it('constructs with correct metadata', () => {
-    expect(robonomics).toBeInstanceOf(RobonomicsPolkadot)
-    expect(robonomics.chain).toBe('RobonomicsPolkadot')
-    expect(robonomics.info).toBe('robonomics')
-    expect(robonomics.ecosystem).toBe('Polkadot')
-    expect(robonomics.version).toBe(Version.V3)
+    expect(chain).toBeInstanceOf(RobonomicsPolkadot)
+    expect(chain.chain).toBe('RobonomicsPolkadot')
+    expect(chain.info).toBe('robonomics')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V3)
   })
 
   describe('transferPolkadotXCM', () => {
     it('throws ScenarioNotSupportedError for ParaToPara', () => {
       const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => robonomics.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+      expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
       expect(transferPolkadotXcm).not.toHaveBeenCalled()
     })
 
     it('uses limited_reserve_transfer_assets otherwise', async () => {
       const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-      await robonomics.transferPolkadotXCM(input)
+      await chain.transferPolkadotXCM(input)
       expect(transferPolkadotXcm).toHaveBeenCalledWith(
         input,
         'limited_reserve_transfer_assets',
@@ -48,7 +48,7 @@ describe('RobonomicsPolkadot', () => {
   describe('isReceivingTempDisabled', () => {
     it('returns false only for RelayToPara; true for other scenarios', () => {
       const all: TScenario[] = ['RelayToPara', 'ParaToRelay', 'ParaToPara']
-      const results = all.map(s => [s, robonomics.isReceivingTempDisabled(s)] as const)
+      const results = all.map(s => [s, chain.isReceivingTempDisabled(s)] as const)
 
       expect(results).toEqual([
         ['RelayToPara', false],
@@ -70,7 +70,7 @@ describe('RobonomicsPolkadot', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      expect(() => robonomics.transferLocalNonNativeAsset(bad)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(bad)).toThrow(InvalidCurrencyError)
       expect(spy).not.toHaveBeenCalled()
     })
 
@@ -83,7 +83,7 @@ describe('RobonomicsPolkadot', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      robonomics.transferLocalNonNativeAsset(ok)
+      chain.transferLocalNonNativeAsset(ok)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
@@ -106,7 +106,7 @@ describe('RobonomicsPolkadot', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      robonomics.transferLocalNonNativeAsset(ok)
+      chain.transferLocalNonNativeAsset(ok)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',

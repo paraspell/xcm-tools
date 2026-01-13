@@ -1,20 +1,13 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { findAssetInfoByLoc, findAssetInfoOrThrow, InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction, Version } from '@paraspell/sdk-common'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import { getParaId } from '../config'
-import Parachain from '../Parachain'
 import type Hydration from './Hydration'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
@@ -32,7 +25,6 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
-vi.mock('../../pallets/xTokens')
 vi.mock('../../pallets/polkadotXcm')
 
 type WithTransferToEthereum = Hydration<unknown, unknown> & {
@@ -55,16 +47,6 @@ describe('Hydration', () => {
     expect(hydration.info).toBe('hydradx')
     expect(hydration.ecosystem).toBe('Polkadot')
     expect(hydration.version).toBe(Version.V4)
-  })
-
-  it('should call transferXTokens with currencyID', () => {
-    const mockInput = {
-      asset: { assetId: '123', amount: 100n }
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    hydration.transferXTokens(mockInput)
-
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
   describe('transferPolkadotXCM', () => {
@@ -140,9 +122,9 @@ describe('Hydration', () => {
       expect(spy).toHaveBeenCalled()
     })
 
-    it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', () => {
+    it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', async () => {
       const mockInput = {
-        asset: {
+        assetInfo: {
           symbol: 'WORM',
           amount: 500n,
           location: {
@@ -155,21 +137,21 @@ describe('Hydration', () => {
         },
         destination: 'Moonbeam',
         version: hydration.version
-      } as TXTokensTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       vi.mocked(hasJunction).mockReturnValueOnce(true).mockReturnValueOnce(true)
 
       const transferMoonbeamWhAssetSpy = vi
         .spyOn(hydration, 'transferMoonbeamWhAsset')
-        .mockReturnValue('moonbeam-wh-result')
+        .mockResolvedValue('moonbeam-wh-result')
 
-      const result = hydration.transferXTokens(mockInput)
+      const result = await hydration.transferPolkadotXCM(mockInput)
 
       expect(transferMoonbeamWhAssetSpy).toHaveBeenCalledWith(mockInput)
       expect(result).toBe('moonbeam-wh-result')
     })
 
-    it('transferMoonbeamWhAsset should call transferXTokens with overridden fee + asset', () => {
+    it('transferMoonbeamWhAsset should call transferPolkadotXcm with overridden fee + asset', async () => {
       const mockAsset = {
         symbol: 'WORM',
         amount: 500n,
@@ -185,62 +167,16 @@ describe('Hydration', () => {
       vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockGlmrAsset)
 
       const mockInput = {
-        asset: mockAsset
-      } as TXTokensTransferOptions<unknown, unknown>
+        assetInfo: mockAsset
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      hydration.transferMoonbeamWhAsset(mockInput)
+      await hydration.transferMoonbeamWhAsset(mockInput)
 
-      expect(transferXTokens).toHaveBeenCalledWith(
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
         expect.objectContaining({
           overriddenAsset: expect.arrayContaining([expect.anything(), expect.anything()])
-        }),
-        Number(mockAsset.assetId)
+        })
       )
-    })
-  })
-
-  describe('canUseXTokens', () => {
-    beforeEach(() => {
-      vi.spyOn(Parachain.prototype, 'canUseXTokens').mockReturnValue(true)
-    })
-
-    afterEach(() => {
-      vi.restoreAllMocks()
-    })
-
-    it('should return false when destination is Ethereum', () => {
-      const result = hydration['canUseXTokens']({
-        to: 'Ethereum',
-        assetInfo: { location: {} }
-      } as TSendInternalOptions<unknown, unknown>)
-      expect(result).toBe(false)
-    })
-
-    it('should return true when destination is not Ethereum', () => {
-      const result = hydration['canUseXTokens']({
-        to: 'Acala',
-        assetInfo: { location: {} }
-      } as TSendInternalOptions<unknown, unknown>)
-      expect(result).toBe(true)
-    })
-
-    it('should return false when destination AssetHubPolkadot and currency is DOT', () => {
-      const result = hydration['canUseXTokens']({
-        to: 'AssetHubPolkadot',
-        assetInfo: { symbol: 'DOT', location: {} }
-      } as TSendInternalOptions<unknown, unknown>)
-      expect(result).toBe(false)
-    })
-
-    it('should return false when super.canUseXTokens returns false', () => {
-      vi.spyOn(Parachain.prototype, 'canUseXTokens').mockReturnValue(false)
-
-      const result = hydration['canUseXTokens']({
-        to: 'Acala',
-        assetInfo: { symbol: 'USDC', location: {} }
-      } as TSendInternalOptions<unknown, unknown>)
-
-      expect(result).toBe(false)
     })
   })
 

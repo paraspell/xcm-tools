@@ -9,7 +9,8 @@ import type Pendulum from './Pendulum'
 vi.mock('../../pallets/xTokens')
 
 describe('Pendulum', () => {
-  let pendulum: Pendulum<unknown, unknown>
+  let chain: Pendulum<unknown, unknown>
+
   const mockInput = {
     asset: { symbol: 'PEN', assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
@@ -21,19 +22,19 @@ describe('Pendulum', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    pendulum = getChain<unknown, unknown, 'Pendulum'>('Pendulum')
-    vi.spyOn(pendulum, 'getNativeAssetSymbol').mockReturnValue('PEN')
+    chain = getChain<unknown, unknown, 'Pendulum'>('Pendulum')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('PEN')
   })
 
   it('should initialize with correct values', () => {
-    expect(pendulum.chain).toBe('Pendulum')
-    expect(pendulum.info).toBe('pendulum')
-    expect(pendulum.ecosystem).toBe('Polkadot')
-    expect(pendulum.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Pendulum')
+    expect(chain.info).toBe('pendulum')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with native asset', () => {
-    pendulum.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: false }, {
       Native: null
     } as TXcmAsset)
@@ -45,7 +46,7 @@ describe('Pendulum', () => {
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
-    pendulum.transferXTokens(foreignAssetInput)
+    chain.transferXTokens(foreignAssetInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(
       { ...foreignAssetInput, useMultiAssetTransfer: false },
@@ -54,7 +55,7 @@ describe('Pendulum', () => {
   })
 
   it('Should call transferXTokens with useMultiAssetTransfer for DOT asset', () => {
-    pendulum.transferXTokens(mockDOTInput)
+    chain.transferXTokens(mockDOTInput)
     expect(transferXTokens).toHaveBeenCalledWith(
       { ...mockDOTInput, useMultiAssetTransfer: true },
       { XCM: 123 }

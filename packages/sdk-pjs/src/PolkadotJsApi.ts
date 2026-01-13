@@ -340,6 +340,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       if (otherErrHuman) {
         return { failureReason: String(otherErrHuman) }
       }
+
+      const secondErrHuman = resultHuman?.Ok?.executionResult?.Err?.error
+      if (secondErrHuman) {
+        return { failureReason: String(secondErrHuman) }
+      }
+
       const execErrJson = resultJson?.ok?.executionResult?.err?.error
       if (execErrJson?.module) {
         return resolveModuleError(chain, execErrJson.module as TModuleError)
@@ -518,12 +524,42 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       }
     }
 
-    const deliveryFeeRes =
-      forwardedXcm.length > 0
-        ? await this.api.call.xcmPaymentApi.queryDeliveryFees(forwardedXcm[0], forwardedXcm[1][0])
-        : undefined
+    const deliveryFee = await this.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
 
-    const deliveryFeeResJson = deliveryFeeRes?.toJSON() as any
+    return execFee + deliveryFee
+  }
+
+  async getDeliveryFee(
+    chain: TSubstrateChain,
+    forwardedXcm: any[],
+    asset: TAssetInfo,
+    assetLocalizedLoc: TLocation
+  ): Promise<bigint> {
+    let usedThirdParam = false
+    let deliveryFeeRes: any
+
+    if (forwardedXcm.length > 0) {
+      const baseArgs = [forwardedXcm[0], forwardedXcm[1][0]] as const
+
+      try {
+        deliveryFeeRes = await this.api.call.xcmPaymentApi.queryDeliveryFees(...baseArgs)
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e)
+
+        if (message.includes('Expected 3 arguments')) {
+          usedThirdParam = true
+          const versionedAssetLoc = addXcmVersionHeader(assetLocalizedLoc, Version.V4)
+          deliveryFeeRes = await this.api.call.xcmPaymentApi.queryDeliveryFees(
+            ...baseArgs,
+            versionedAssetLoc
+          )
+        } else {
+          throw e
+        }
+      }
+    }
+
+    const deliveryFeeResJson = deliveryFeeRes?.toJSON()
 
     const deliveryFeeResolved =
       deliveryFeeRes && (deliveryFeeResJson.ok?.v4 ?? deliveryFeeResJson.ok?.v3)?.length > 0
@@ -532,27 +568,24 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const nativeAsset = findNativeAssetInfoOrThrow(chain)
 
-    let deliveryFee: bigint
-    if (isAssetXcEqual(asset, nativeAsset)) {
-      deliveryFee = deliveryFeeResolved
-    } else {
-      try {
-        assertHasLocation(nativeAsset)
-
-        const res = await this.quoteAhPrice(
-          localizeLocation(chain, nativeAsset.location),
-          assetLocalizedLoc,
-          deliveryFeeResolved,
-          false
-        )
-
-        deliveryFee = res ?? 0n
-      } catch (_e) {
-        deliveryFee = 0n
-      }
+    if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
+      return deliveryFeeResolved
     }
 
-    return execFee + deliveryFee
+    try {
+      assertHasLocation(nativeAsset)
+
+      const res = await this.quoteAhPrice(
+        localizeLocation(chain, nativeAsset.location),
+        assetLocalizedLoc,
+        deliveryFeeResolved,
+        false
+      )
+
+      return res ?? 0n
+    } catch (_e) {
+      return 0n
+    }
   }
 
   async getBridgeHubFallbackExecFee(

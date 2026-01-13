@@ -21,6 +21,7 @@ import type { WithApi } from './TApi'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
+  chain: TSubstrateChain
   destLocation: TLocation
   beneficiaryLocation: TLocation
   address: TAddress
@@ -205,10 +206,6 @@ type TRelayToParaBaseOptions = {
   method?: string
 }
 
-export type TRelayToParaOverrides = {
-  transferType: 'typeAndThen' | 'teleport'
-}
-
 /**
  * Options for transferring from a relay chain to a parachain
  */
@@ -247,6 +244,7 @@ export type TPolkadotXcmMethod =
   | 'reserve_transfer_assets'
   | 'reserve_withdraw_assets'
   | 'transfer_assets'
+  | 'transfer_assets_using_type_and_then'
 
 export type TXcmPalletMethod =
   | 'limited_teleport_assets'

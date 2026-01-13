@@ -11,24 +11,25 @@ import type Manta from './Manta'
 vi.mock('../../pallets/xTokens')
 
 describe('Manta', () => {
-  let manta: Manta<unknown, unknown>
+  let chain: Manta<unknown, unknown>
+
   const mockInput = {
     asset: { assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    manta = getChain<unknown, unknown, 'Manta'>('Manta')
+    chain = getChain<unknown, unknown, 'Manta'>('Manta')
   })
 
   it('should initialize with correct values', () => {
-    expect(manta.chain).toBe('Manta')
-    expect(manta.info).toBe('manta')
-    expect(manta.ecosystem).toBe('Polkadot')
-    expect(manta.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Manta')
+    expect(chain.info).toBe('manta')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with MantaCurrency selection', () => {
-    manta.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, { MantaCurrency: 123n })
   })
 
@@ -37,7 +38,7 @@ describe('Manta', () => {
       asset: { symbol: 'unsupported' }
     } as TXTokensTransferOptions<unknown, unknown>
 
-    expect(() => manta.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
+    expect(() => chain.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
   })
 
   it('should throw error for asset without assetId', () => {
@@ -45,11 +46,11 @@ describe('Manta', () => {
       asset: { symbol: 'unsupported', assetId: undefined }
     } as TXTokensTransferOptions<unknown, unknown>
 
-    expect(() => manta.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
+    expect(() => chain.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
   })
 
   it('should call transferXTokens with native asset', () => {
-    manta.transferXTokens({
+    chain.transferXTokens({
       asset: { symbol: 'MANTA' }
     } as TXTokensTransferOptions<unknown, unknown>)
 
@@ -73,7 +74,7 @@ describe('Manta', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => manta.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
@@ -83,7 +84,7 @@ describe('Manta', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => manta.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
@@ -95,7 +96,7 @@ describe('Manta', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      manta.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
@@ -119,7 +120,7 @@ describe('Manta', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      manta.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',

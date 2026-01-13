@@ -9,24 +9,25 @@ import type Amplitude from './Amplitude'
 vi.mock('../../pallets/xTokens')
 
 describe('Amplitude', () => {
-  let amplitude: Amplitude<unknown, unknown>
+  let chain: Amplitude<unknown, unknown>
+
   const mockInput = {
     asset: { symbol: 'AMPE', assetId: '123', amount: 100n }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    amplitude = getChain<unknown, unknown, 'Amplitude'>('Amplitude')
+    chain = getChain<unknown, unknown, 'Amplitude'>('Amplitude')
   })
 
   it('should initialize with correct values', () => {
-    expect(amplitude.chain).toBe('Amplitude')
-    expect(amplitude.info).toBe('amplitude')
-    expect(amplitude.ecosystem).toBe('Kusama')
-    expect(amplitude.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Amplitude')
+    expect(chain.info).toBe('amplitude')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with XCM asset selection', () => {
-    amplitude.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, { XCM: 123 })
   })
 })

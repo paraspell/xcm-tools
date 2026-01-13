@@ -1,17 +1,20 @@
 // Contains detailed structure of XCM call construction for Ajuna Parachain on Polkadot
 
-import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics,
+  TTransferLocalOptions
+} from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
-class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
@@ -21,20 +24,8 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { scenario, asset } = input
-
-    if (scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
-    }
-
-    if (asset.symbol !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(
-        `Asset ${asset.symbol} is not supported by chain ${this.chain}.`
-      )
-    }
-
-    return transferXTokens(input, this.getNativeAssetSymbol())
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {

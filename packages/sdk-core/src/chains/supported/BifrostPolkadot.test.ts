@@ -3,17 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
 import type BifrostPolkadot from './BifrostPolkadot'
 
-vi.mock('../../pallets/xTokens')
 vi.mock('../../pallets/polkadotXcm')
 
 type WithTransferToEthereum = BifrostPolkadot<unknown, unknown> & {
@@ -22,15 +15,12 @@ type WithTransferToEthereum = BifrostPolkadot<unknown, unknown> & {
 
 describe('BifrostPolkadot', () => {
   let chain: BifrostPolkadot<unknown, unknown>
-  const mockXTokensInput = {
-    asset: { symbol: 'BNC', amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
 
   const api = {
     deserializeExtrinsics: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
-  const mockPolkadotXCMInput = {
+  const mockInput = {
     api,
     assetInfo: { symbol: 'WETH', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -50,21 +40,9 @@ describe('BifrostPolkadot', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferPolkadotXCM with transfer_assets', async () => {
-    await chain.transferPolkadotXCM(mockPolkadotXCMInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockPolkadotXCMInput,
-      'transfer_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should call transferXTokens with Native when currency matches native asset', () => {
-    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('BNC')
-
-    chain.transferXTokens(mockXTokensInput)
-
-    expect(transferXTokens).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should call transferToEthereum when destination is Ethereum', async () => {
@@ -73,7 +51,7 @@ describe('BifrostPolkadot', () => {
       .mockResolvedValue({})
 
     const inputEth = {
-      ...mockPolkadotXCMInput,
+      ...mockInput,
       destination: 'Ethereum',
       scenario: 'ParaToPara'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -84,48 +62,6 @@ describe('BifrostPolkadot', () => {
     expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
 
     expect(transferPolkadotXcm).not.toHaveBeenCalled()
-  })
-
-  describe('canUseXTokens', () => {
-    it('should return false when currency symbol is WETH and destination is AssetHubPolkadot', () => {
-      const options = {
-        assetInfo: { symbol: 'WETH' },
-        to: 'AssetHubPolkadot'
-      } as TSendInternalOptions<unknown, unknown>
-      expect(chain['canUseXTokens'](options)).toBe(false)
-    })
-
-    it('should return false when currency symbol is DOT and destination is AssetHubPolkadot', () => {
-      const options: TSendInternalOptions<unknown, unknown> = {
-        assetInfo: { symbol: 'DOT' },
-        to: 'AssetHubPolkadot'
-      } as TSendInternalOptions<unknown, unknown>
-      expect(chain['canUseXTokens'](options)).toBe(false)
-    })
-
-    it('should return true when currency symbol is not WETH or DOT and destination is AssetHubPolkadot', () => {
-      const options: TSendInternalOptions<unknown, unknown> = {
-        assetInfo: { symbol: 'BNC' },
-        to: 'AssetHubPolkadot'
-      } as TSendInternalOptions<unknown, unknown>
-      expect(chain['canUseXTokens'](options)).toBe(true)
-    })
-
-    it('should return true when currency symbol is WETH but destination is not AssetHubPolkadot', () => {
-      const options: TSendInternalOptions<unknown, unknown> = {
-        assetInfo: { symbol: 'WETH' },
-        to: 'Acala'
-      } as TSendInternalOptions<unknown, unknown>
-      expect(chain['canUseXTokens'](options)).toBe(true)
-    })
-
-    it('should return true when currency ymbol is DOT but destination is not AssetHubPolkadot', () => {
-      const options: TSendInternalOptions<unknown, unknown> = {
-        assetInfo: { symbol: 'DOT' },
-        to: 'Acala'
-      } as TSendInternalOptions<unknown, unknown>
-      expect(chain['canUseXTokens'](options)).toBe(true)
-    })
   })
 
   describe('transferLocalNonNativeAsset', () => {

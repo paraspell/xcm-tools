@@ -18,7 +18,7 @@ const createCallForReserve = async <TApi, TRes>(
 ): Promise<{ call: TSerializedExtrinsics; success: boolean }> => {
   const { api, destination, address, senderAddress, currency, feeCurrency } = options
 
-  const serialized = await createTypeAndThenCall(chain, options, reserveChain)
+  const serialized = await createTypeAndThenCall(options, { reserveChain })
 
   assertAddressIsString(address)
   assertToIsString(destination, 'Location destination is not supported for reserve auto-selection.')
@@ -55,7 +55,7 @@ export const createTypeThenAutoReserve = async <TApi, TRes>(
   const destSupports = options.destChain ? hasDryRunSupport(options.destChain) : false
   if (!(originSupports && destSupports)) {
     // Fallback: no dry-run support, default call
-    return await createTypeAndThenCall(chain, options)
+    return await createTypeAndThenCall(options)
   }
 
   const relay = getRelayChainOf(chain)

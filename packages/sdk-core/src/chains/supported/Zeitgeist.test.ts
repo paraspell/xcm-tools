@@ -3,51 +3,39 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Zeitgeist from './Zeitgeist'
 
-vi.mock('../../pallets/xTokens')
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Zeitgeist', () => {
-  let zeitgeist: Zeitgeist<unknown, unknown>
+  let chain: Zeitgeist<unknown, unknown>
+
   const mockInput = {
-    asset: { symbol: 'ZTG', isNative: true, amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
+    assetInfo: { symbol: 'ZTG', isNative: true, amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    zeitgeist = getChain<unknown, unknown, 'Zeitgeist'>('Zeitgeist')
+    chain = getChain<unknown, unknown, 'Zeitgeist'>('Zeitgeist')
   })
 
   it('should initialize with correct values', () => {
-    expect(zeitgeist.chain).toBe('Zeitgeist')
-    expect(zeitgeist.info).toBe('zeitgeist')
-    expect(zeitgeist.ecosystem).toBe('Polkadot')
-    expect(zeitgeist.version).toBe(Version.V4)
+    expect(chain.chain).toBe('Zeitgeist')
+    expect(chain.info).toBe('zeitgeist')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V4)
   })
 
   it('canReceiveFrom returns false for Astar and true for other chains', () => {
-    expect(zeitgeist.canReceiveFrom('Astar')).toBe(false)
-    expect(zeitgeist.canReceiveFrom('Acala')).toBe(true)
+    expect(chain.canReceiveFrom('Astar')).toBe(false)
+    expect(chain.canReceiveFrom('Acala')).toBe(true)
   })
 
-  it('should call transferXTokens with native asset "Ztg" when currency matches native asset', () => {
-    zeitgeist.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'Ztg')
-  })
-
-  it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
-    const input = {
-      ...mockInput,
-      asset: { symbol: 'ACA', amount: 100n, assetId: '123' }
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    zeitgeist.transferXTokens(input)
-
-    expect(transferXTokens).toHaveBeenCalledWith(input, {
-      ForeignAsset: 123
-    })
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   describe('transferLocalNonNativeAsset', () => {
@@ -62,7 +50,7 @@ describe('Zeitgeist', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => zeitgeist.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
@@ -72,7 +60,7 @@ describe('Zeitgeist', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => zeitgeist.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
@@ -84,7 +72,7 @@ describe('Zeitgeist', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      zeitgeist.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'AssetManager',

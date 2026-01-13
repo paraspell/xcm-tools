@@ -11,6 +11,7 @@ vi.mock('../../pallets/polkadotXcm')
 
 describe('Encointer', () => {
   let chain: Encointer<unknown, unknown>
+
   const mockInput = {
     scenario: 'ParaToRelay',
     assetInfo: { symbol: 'KSM', amount: 100n }
@@ -27,13 +28,9 @@ describe('Encointer', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', async () => {
+  it('should call transferPolkadotXCM for ParaToRelay scenario', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
@@ -42,12 +39,5 @@ describe('Encointer', () => {
       unknown
     >
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
-  })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      transferType: 'teleport'
-    })
   })
 })

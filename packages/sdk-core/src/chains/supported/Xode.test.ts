@@ -12,7 +12,7 @@ vi.mock('../../pallets/polkadotXcm')
 describe('Xode', () => {
   let chain: Xode<unknown, unknown>
 
-  const options = {
+  const mockInput = {
     scenario: 'ParaToPara',
     destChain: 'AssetHubPolkadot',
     assetInfo: { symbol: 'XYZ', location: {} }
@@ -29,17 +29,13 @@ describe('Xode', () => {
     expect(chain.version).toBe(Version.V4)
   })
 
-  it('should call transferPolkadotXCM with limited_reserve_transfer_assets', async () => {
-    await chain.transferPolkadotXCM(options)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      options,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('transferPolkadotXCM should throw ScenarioNotSupportedError for unsupported destChain', () => {
-    expect(() => chain.transferPolkadotXCM({ ...options, destChain: 'Moonbeam' })).toThrow(
+    expect(() => chain.transferPolkadotXCM({ ...mockInput, destChain: 'Moonbeam' })).toThrow(
       ScenarioNotSupportedError
     )
   })

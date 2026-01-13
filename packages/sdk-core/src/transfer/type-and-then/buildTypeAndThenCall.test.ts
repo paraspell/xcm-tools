@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAsset, TAssetWithFee } from '@paraspell/assets'
 import { isTrustedChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -178,5 +178,35 @@ describe('buildTypeAndThenCall', () => {
   it('should always set weight_limit to Unlimited', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
     expect(result.params.weight_limit).toBe('Unlimited')
+  })
+
+  it('should use fee asset from overriddenAsset array when provided', () => {
+    const overriddenFeeAssetId: TLocation = {
+      parents: 1,
+      interior: { X1: { Parachain: 9999 } }
+    }
+
+    const overriddenAssets: TAssetWithFee[] = [
+      {
+        id: overriddenFeeAssetId,
+        fun: { Fungible: 1n },
+        isFeeAsset: true
+      }
+    ]
+
+    const result = buildTypeAndThenCall(
+      {
+        ...mockContext,
+        options: {
+          ...mockContext.options,
+          overriddenAsset: overriddenAssets
+        }
+      } as TTypeAndThenCallContext<unknown, unknown>,
+      false,
+      mockCustomXcm,
+      mockAssets
+    )
+
+    expect(result.params.remote_fees_id).toEqual({ [mockVersion]: overriddenFeeAssetId })
   })
 })

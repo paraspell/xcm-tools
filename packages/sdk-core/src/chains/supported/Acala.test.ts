@@ -3,52 +3,34 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Acala from './Acala'
 
-vi.mock('../../pallets/xTokens')
+vi.mock('../../pallets/polkadotXcm')
 vi.mock('../config')
 
 describe('Acala', () => {
-  let acala: Acala<unknown, unknown>
+  let chain: Acala<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'ACA', isNative: true, amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
+    assetInfo: { symbol: 'ACA', isNative: true, amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    acala = getChain<unknown, unknown, 'Acala'>('Acala')
+    chain = getChain<unknown, unknown, 'Acala'>('Acala')
   })
 
   it('should initialize with correct values', () => {
-    expect(acala.chain).toBe('Acala')
-    expect(acala.info).toBe('acala')
-    expect(acala.ecosystem).toBe('Polkadot')
-    expect(acala.version).toBe(Version.V5)
+    expect(chain.chain).toBe('Acala')
+    expect(chain.info).toBe('acala')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferXTokens with Token when currencyID is undefined', () => {
-    acala.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { Token: 'ACA' })
-  })
-
-  it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    const inputWithCurrencyID = {
-      ...mockInput,
-      asset: {
-        symbol: 'ACA',
-        decimals: 12,
-        assetId: '1',
-        amount: 100n
-      }
-    }
-
-    acala.transferXTokens(inputWithCurrencyID)
-
-    expect(transferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
-      ForeignAsset: 1
-    })
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   const mockApi = {
@@ -66,7 +48,7 @@ describe('Acala', () => {
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-    await acala.transferLocalNativeAsset(mockOptions)
+    await chain.transferLocalNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
       module: 'Currencies',
@@ -92,7 +74,7 @@ describe('Acala', () => {
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-    await acala.transferLocalNativeAsset(mockOptions)
+    await chain.transferLocalNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
       module: 'Currencies',
@@ -114,7 +96,7 @@ describe('Acala', () => {
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-    acala.transferLocalNonNativeAsset(mockOptions)
+    chain.transferLocalNonNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
       module: 'Currencies',
@@ -138,7 +120,7 @@ describe('Acala', () => {
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-    acala.transferLocalNonNativeAsset(mockOptions)
+    chain.transferLocalNonNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
       module: 'Currencies',
@@ -152,6 +134,6 @@ describe('Acala', () => {
   })
 
   it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => acala.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

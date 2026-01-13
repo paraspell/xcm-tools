@@ -1,54 +1,33 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Quartz from './Quartz'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Quartz', () => {
-  let quartz: Quartz<unknown, unknown>
+  let chain: Quartz<unknown, unknown>
+
   const mockInput = {
-    asset: { symbol: 'USDt', assetId: '123', amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
+    assetInfo: { symbol: 'USDt', assetId: '123', amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    quartz = getChain<unknown, unknown, 'Quartz'>('Quartz')
+    chain = getChain<unknown, unknown, 'Quartz'>('Quartz')
   })
 
   it('should initialize with correct values', () => {
-    expect(quartz.chain).toBe('Quartz')
-    expect(quartz.info).toBe('quartz')
-    expect(quartz.ecosystem).toBe('Kusama')
-    expect(quartz.version).toBe(Version.V5)
+    expect(chain.chain).toBe('Quartz')
+    expect(chain.info).toBe('quartz')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferXTokens with asset id', () => {
-    quartz.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123)
-  })
-
-  it('should call transferXTokens with NativeAssetId', () => {
-    const input = {
-      asset: {
-        ...mockInput.asset,
-        symbol: 'QTZ'
-      }
-    } as TXTokensTransferOptions<unknown, unknown>
-    quartz.transferXTokens(input)
-    expect(transferXTokens).toHaveBeenCalledWith(input, 0)
-  })
-
-  it('should throw InvalidCurrencyError if asset has no assetId', () => {
-    const input = {
-      asset: {
-        symbol: 'DOT'
-      }
-    } as TXTokensTransferOptions<unknown, unknown>
-    expect(() => quartz.transferXTokens(input)).toThrow()
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 })

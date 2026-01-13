@@ -4,18 +4,17 @@ import { type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
-import {
-  type IXTokensTransfer,
-  type TXcmForeignAsset,
-  type TXTokensTransferOptions,
-  type TZeitgeistAsset
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TTransferLocalOptions
 } from '../../types'
+import { type TXcmForeignAsset, type TZeitgeistAsset } from '../../types'
 import { assertHasId } from '../../utils'
 import Parachain from '../Parachain'
 
-class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Zeitgeist',
     info: string = 'zeitgeist',
@@ -31,10 +30,8 @@ class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTra
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-    const currencySelection = this.getCustomCurrencyId(asset)
-    return transferXTokens(input, currencySelection)
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
   }
 
   canReceiveFrom(origin: TChain): boolean {

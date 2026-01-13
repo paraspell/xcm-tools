@@ -8,17 +8,18 @@ import { Version } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../../api'
 import { MIN_AMOUNT } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
-import {
-  type IXTokensTransfer,
-  type TForeignOrTokenAsset,
-  type TXTokensTransferOptions
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics,
+  TTransferLocalOptions
 } from '../../types'
+import { type TForeignOrTokenAsset } from '../../types'
 import { assertSenderAddress } from '../../utils'
 import Parachain from '../Parachain'
 
-class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Acala',
     info: string = 'acala',
@@ -28,10 +29,8 @@ class Acala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-    const currencySelection = this.getCustomCurrencyId(asset)
-    return transferXTokens(input, currencySelection)
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {

@@ -7,34 +7,29 @@ import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../t
 import { getChain } from '../../utils'
 import type NeuroWeb from './NeuroWeb'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('NeuroWeb', () => {
-  let neuroweb: NeuroWeb<unknown, unknown>
+  let chain: NeuroWeb<unknown, unknown>
+
   const mockInput = {
     assetInfo: { symbol: 'DOT', amount: 100n }
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    neuroweb = getChain<unknown, unknown, 'NeuroWeb'>('NeuroWeb')
+    chain = getChain<unknown, unknown, 'NeuroWeb'>('NeuroWeb')
   })
 
   it('should initialize with correct values', () => {
-    expect(neuroweb.chain).toBe('NeuroWeb')
-    expect(neuroweb.info).toBe('neuroweb')
-    expect(neuroweb.ecosystem).toBe('Polkadot')
-    expect(neuroweb.version).toBe(Version.V4)
+    expect(chain.chain).toBe('NeuroWeb')
+    expect(chain.info).toBe('neuroweb')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with the correct arguments', async () => {
-    await neuroweb.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   describe('transferLocalNativeAsset', () => {
@@ -57,7 +52,7 @@ describe('NeuroWeb', () => {
         isAmountAll: false
       } as TTransferLocalOptions<unknown, unknown>
 
-      await neuroweb.transferLocalNativeAsset(mockOptions)
+      await chain.transferLocalNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Balances',
@@ -78,7 +73,7 @@ describe('NeuroWeb', () => {
         isAmountAll: true
       } as TTransferLocalOptions<unknown, unknown>
 
-      await neuroweb.transferLocalNativeAsset(mockOptions)
+      await chain.transferLocalNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Balances',
@@ -111,7 +106,7 @@ describe('NeuroWeb', () => {
         isAmountAll: false
       } as TTransferLocalOptions<unknown, unknown>
 
-      neuroweb.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
@@ -137,7 +132,7 @@ describe('NeuroWeb', () => {
         isAmountAll: true
       } as TTransferLocalOptions<unknown, unknown>
 
-      const result = neuroweb.transferLocalNonNativeAsset(mockOptions)
+      const result = chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',

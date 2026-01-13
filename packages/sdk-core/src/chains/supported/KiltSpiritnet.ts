@@ -31,7 +31,7 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
       )
     }
 
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(input)
   }
 
   transferRelayToPara(): Promise<TSerializedExtrinsics> {

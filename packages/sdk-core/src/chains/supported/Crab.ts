@@ -19,9 +19,7 @@ class Crab<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    if (input.scenario === 'ParaToPara') {
-      return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
-    }
+    if (input.scenario === 'ParaToPara') return transferPolkadotXcm(input)
     throw new ScenarioNotSupportedError({ chain: this.chain, scenario: input.scenario })
   }
 

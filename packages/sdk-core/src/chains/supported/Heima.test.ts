@@ -11,50 +11,44 @@ import Heima from './Heima'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Heima', () => {
-  describe('transferPolkadotXCM', () => {
-    let heima: Heima<unknown, unknown>
+  let chain: Heima<unknown, unknown>
 
-    beforeEach(() => {
-      heima = getChain<unknown, unknown, 'Heima'>('Heima')
-    })
+  beforeEach(() => {
+    chain = getChain<unknown, unknown, 'Heima'>('Heima')
+  })
 
-    it('should be instantiated correctly', () => {
-      expect(heima).toBeInstanceOf(Heima)
-    })
+  it('should be instantiated correctly', () => {
+    expect(chain).toBeInstanceOf(Heima)
+  })
 
-    it('should initialize with correct values', () => {
-      expect(heima.chain).toBe('Heima')
-      expect(heima.info).toBe('heima')
-      expect(heima.ecosystem).toBe('Polkadot')
-      expect(heima.version).toBe(Version.V5)
-    })
+  it('should initialize with correct values', () => {
+    expect(chain.chain).toBe('Heima')
+    expect(chain.info).toBe('heima')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V5)
+  })
 
-    it('should not suppoert ParaToRelay scenario', () => {
-      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => heima.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
-    })
+  it('should not suppoert ParaToRelay scenario', () => {
+    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+  })
 
-    it('should only support native currency', () => {
-      const input = {
-        scenario: 'ParaToPara',
-        assetInfo: { symbol: 'XYZ' }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => heima.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
-    })
+  it('should only support native currency', () => {
+    const input = {
+      scenario: 'ParaToPara',
+      assetInfo: { symbol: 'XYZ' }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
+  })
 
-    it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
-      const input = {
-        scenario: 'ParaToPara',
-        assetInfo: { symbol: 'HEI' }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+  it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
+    const input = {
+      scenario: 'ParaToPara',
+      assetInfo: { symbol: 'HEI' }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      await heima.transferPolkadotXCM(input)
+    await chain.transferPolkadotXCM(input)
 
-      expect(transferPolkadotXcm).toHaveBeenCalledWith(
-        input,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
-    })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 })

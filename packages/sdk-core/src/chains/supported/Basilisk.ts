@@ -2,29 +2,17 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { assertHasId, getChain } from '../../utils'
-import Parachain from '../Parachain'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import Hydration from './Hydration'
 
-class Basilisk<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Basilisk<TApi, TRes> extends Hydration<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Basilisk', 'basilisk', 'Kusama', Version.V4)
+    super('Basilisk', 'basilisk', 'Kusama', Version.V5)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-    assertHasId(asset)
-    return transferXTokens(input, Number(asset.assetId))
-  }
-
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
-    return getChain<TApi, TRes, 'Hydration'>('Hydration').transferLocalNativeAsset(options)
-  }
-
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return getChain<TApi, TRes, 'Hydration'>('Hydration').transferLocalNonNativeAsset(options)
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
   }
 }
 
