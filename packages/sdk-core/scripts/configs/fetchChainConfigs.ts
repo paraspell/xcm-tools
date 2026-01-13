@@ -9,6 +9,21 @@ import { PARACHAINS, SUBSTRATE_CHAINS } from '../../src'
 import { getChain } from '../../src/utils'
 import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../../src'
 
+const overrides: Partial<Record<TSubstrateChain, TProviderEntry[]>> = {
+  Peaq: [
+    {
+      name: 'OnFinality',
+      endpoint: 'wss://peaq.api.onfinality.io/public-ws'
+    }
+  ],
+  EnergyWebX: [
+    {
+      name: 'Energy Web',
+      endpoint: 'wss://wnp-rpc.mainnet.energywebx.com/'
+    }
+  ]
+}
+
 type TModifiedChainConfig = TChainConfig & {
   relayChain: string | undefined
 }
@@ -79,18 +94,9 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
         ? Number(paraIdProp.getFirstDescendantByKindOrThrow(SyntaxKind.NumericLiteral).getText())
         : undefined
 
-      const PEAQ_PARA_ID = 3338
       const HYDRATION_PARA_ID = 2034
 
-      const providers =
-        paraId === PEAQ_PARA_ID
-          ? [
-              {
-                name: 'OnFinality',
-                endpoint: 'wss://peaq.api.onfinality.io/public-ws'
-              }
-            ]
-          : parseProviders(providersValue)
+      const providers = parseProviders(providersValue)
 
       // Filter out the non RPC compliant Hydration endpoint
       const filteredProviders =
@@ -159,9 +165,11 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
   chains.forEach(chain => {
     const config = chainConfig.find(c => c.info === chain.info && c.relayChain === chain.ecosystem)
     if (config) {
+      const chainOverride = overrides[chain.chain]
       obj[chain.chain] = {
         ...config,
-        relayChain: undefined
+        relayChain: undefined,
+        providers: chainOverride ?? config.providers
       }
     }
   })

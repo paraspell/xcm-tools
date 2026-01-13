@@ -37,11 +37,7 @@ describe('EnergyWebX', () => {
 
     await chain.transferPolkadotXCM(input)
 
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      input,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input, 'reserve_transfer_assets')
   })
 
   it('should throw ScenarioNotSupportedError for non-ParaToPara scenarios', () => {
