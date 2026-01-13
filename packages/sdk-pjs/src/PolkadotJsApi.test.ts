@@ -6,6 +6,7 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
+  assertHasLocation,
   BatchMode,
   computeFeeFromDryRunPjs,
   findAssetInfoOrThrow,
@@ -76,6 +77,15 @@ describe('PolkadotJsApi', () => {
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
       }),
       registry: {},
+      consts: {
+        system: {
+          version: {
+            specVersion: {
+              toNumber: () => 0
+            }
+          }
+        }
+      },
       call: {
         dryRunApi: {
           dryRunCall: vi.fn(),
@@ -504,6 +514,99 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('getXcmPaymentApiFee', () => {
+    it('retries queryDeliveryFees with a 3rd argument when required', async () => {
+      const xcm = { some: 'xcm_payload' }
+      const forwardedXcm0 = { some: 'xcm0' }
+      const forwardedXcm1 = { some: 'xcm1' }
+      const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
+
+      const asset: TAssetInfo = {
+        symbol: 'USDT',
+        decimals: 6,
+        location: {
+          parents: 0,
+          interior: {
+            X1: {
+              Parachain: 2000
+            }
+          }
+        }
+      }
+
+      const weight = {
+        refTime: '2000',
+        proofSize: '3000'
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ ok: weight })
+      } as unknown as Codec)
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue({ ok: 0 })
+      } as unknown as Codec)
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees)
+        .mockRejectedValueOnce(new Error('Expected 3 arguments, found 2'))
+        .mockResolvedValueOnce({
+          toJSON: vi.fn().mockReturnValue({
+            ok: {
+              v4: [{ fun: { fungible: '123' } }]
+            }
+          })
+        } as unknown as Codec)
+
+      const quoteAhPriceSpy = vi.spyOn(polkadotApi, 'quoteAhPrice')
+
+      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, forwardedXcm, asset)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).toHaveBeenCalledTimes(2)
+      expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).toHaveBeenNthCalledWith(
+        1,
+        forwardedXcm0,
+        forwardedXcm1
+      )
+      expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).toHaveBeenNthCalledWith(
+        2,
+        forwardedXcm0,
+        forwardedXcm1,
+        expect.objectContaining({ V4: asset.location })
+      )
+      expect(quoteAhPriceSpy).not.toHaveBeenCalled()
+      expect(fee).toBe(123n)
+
+      quoteAhPriceSpy.mockRestore()
+    })
+
+    it('rethrows errors from queryDeliveryFees when not an arity mismatch', async () => {
+      const forwardedXcm0 = { some: 'xcm0' }
+      const forwardedXcm1 = { some: 'xcm1' }
+      const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
+
+      const asset: TAssetInfo = {
+        symbol: 'USDT',
+        decimals: 6,
+        location: {
+          parents: 0,
+          interior: {
+            X1: {
+              Parachain: 2000
+            }
+          }
+        }
+      }
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockRejectedValueOnce(
+        new Error('boom')
+      )
+
+      assertHasLocation(asset)
+
+      await expect(
+        polkadotApi.getDeliveryFee('Acala', forwardedXcm, asset, asset.location)
+      ).rejects.toThrow('boom')
+    })
+
     it('should return the XCM payment fee for AssetHub chains', async () => {
       const xcm = { some: 'xcm_payload' }
       const forwardedXcm: unknown[] = []
@@ -1044,6 +1147,19 @@ describe('PolkadotJsApi', () => {
         })
       }) as unknown as Codec
 
+    const makeErrDirectHumanResponse = (reason = 'SomeDirectHumanErr'): Codec =>
+      ({
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Err: { error: reason } } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { err: { error: {} } },
+            forwardedXcms: []
+          }
+        })
+      }) as unknown as Codec
+
     const makeErrModuleResponse = (): Codec =>
       ({
         toHuman: vi.fn().mockReturnValue({
@@ -1238,6 +1354,29 @@ describe('PolkadotJsApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'SomeOtherReason',
+        asset: { symbol: 'GLMR' } as TAssetInfo
+      })
+    })
+
+    it('returns failure reason from direct human error (Err.error) when not Module/Other', async () => {
+      const resp = makeErrDirectHumanResponse('DirectHumanError')
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: 'GLMR'
+      } as TAssetInfo)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'DirectHumanError',
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })

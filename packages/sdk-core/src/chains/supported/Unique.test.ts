@@ -3,55 +3,34 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type Unique from './Unique'
 
-vi.mock('../../pallets/xTokens', () => ({
-  transferXTokens: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Unique', () => {
-  let unique: Unique<unknown, unknown>
+  let chain: Unique<unknown, unknown>
+
   const mockInput = {
-    asset: { symbol: 'GLMR', assetId: '123', amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
+    assetInfo: { symbol: 'GLMR', assetId: '123', amount: 100n }
+  } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    unique = getChain<unknown, unknown, 'Unique'>('Unique')
+    chain = getChain<unknown, unknown, 'Unique'>('Unique')
   })
 
   it('should initialize with correct values', () => {
-    expect(unique.chain).toBe('Unique')
-    expect(unique.info).toBe('unique')
-    expect(unique.ecosystem).toBe('Polkadot')
-    expect(unique.version).toBe(Version.V5)
+    expect(chain.chain).toBe('Unique')
+    expect(chain.info).toBe('unique')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferXTokens with asset id', () => {
-    unique.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123)
-  })
-
-  it('should call transferXTokens with NativeAssetId', () => {
-    const input = {
-      asset: {
-        ...mockInput.asset,
-        symbol: 'UNQ'
-      }
-    } as TXTokensTransferOptions<unknown, unknown>
-    unique.transferXTokens(input)
-    expect(transferXTokens).toHaveBeenCalledWith(input, 0)
-  })
-
-  it('should throw InvalidCurrencyError if asset has no assetId', () => {
-    const input = {
-      asset: {
-        symbol: 'DOT'
-      }
-    } as TXTokensTransferOptions<unknown, unknown>
-    expect(() => unique.transferXTokens(input)).toThrow()
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should throw an error when trying to create a local foreign asset transfer', () => {
@@ -64,6 +43,6 @@ describe('Unique', () => {
       to: 'Unique'
     } as TTransferLocalOptions<unknown, unknown>
 
-    expect(() => unique.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
+    expect(() => chain.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
   })
 })

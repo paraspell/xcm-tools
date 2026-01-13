@@ -54,7 +54,9 @@ describe('createTypeThenAutoReserve', () => {
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(ahCall)
-    expect(createTypeAndThenCall).toHaveBeenCalledWith(origin, options, 'AssetHubPolkadot')
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(options, {
+      reserveChain: 'AssetHubPolkadot'
+    })
     expect(dryRunInternal).toHaveBeenCalledTimes(1)
   })
 
@@ -67,8 +69,10 @@ describe('createTypeThenAutoReserve', () => {
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(relayCall)
-    expect(createTypeAndThenCall).toHaveBeenNthCalledWith(1, origin, options, 'AssetHubPolkadot')
-    expect(createTypeAndThenCall).toHaveBeenNthCalledWith(2, origin, options, 'Polkadot')
+    expect(createTypeAndThenCall).toHaveBeenNthCalledWith(1, options, {
+      reserveChain: 'AssetHubPolkadot'
+    })
+    expect(createTypeAndThenCall).toHaveBeenNthCalledWith(2, options, { reserveChain: 'Polkadot' })
   })
 
   it('returns AH call when both AH and relay fail dry-run', async () => {
@@ -88,7 +92,7 @@ describe('createTypeThenAutoReserve', () => {
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(relayCall)
-    expect(createTypeAndThenCall).toHaveBeenCalledWith(origin, options)
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(options)
   })
 
   it('when dry-run unsupported and no reserve, uses default createTypeAndThenCall', async () => {
@@ -102,6 +106,6 @@ describe('createTypeThenAutoReserve', () => {
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(defaultCall)
-    expect(createTypeAndThenCall).toHaveBeenCalledWith(origin, options)
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(options)
   })
 })

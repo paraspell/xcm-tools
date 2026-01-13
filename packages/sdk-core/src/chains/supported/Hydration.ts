@@ -7,27 +7,20 @@ import {
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { deepEqual, hasJunction, Version } from '@paraspell/sdk-common'
+import { hasJunction, Version } from '@paraspell/sdk-common'
 
-import { AH_REQUIRES_FEE_ASSET_LOCS } from '../../constants'
-import { transferXTokens } from '../../pallets/xTokens'
-import { createTypeAndThenCall } from '../../transfer'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
   TTransferLocalOptions
 } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
 
-class Hydration<TApi, TRes>
-  extends Parachain<TApi, TRes>
-  implements IXTokensTransfer, IPolkadotXCMTransfer
-{
+class Hydration<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',
@@ -46,6 +39,15 @@ class Hydration<TApi, TRes>
       return this.transferToEthereum(input)
     }
 
+    const isMoonbeamWhAsset =
+      asset.location &&
+      hasJunction(asset.location, 'Parachain', getParaId('Moonbeam')) &&
+      hasJunction(asset.location, 'PalletInstance', 110)
+
+    if (isMoonbeamWhAsset && destination === 'Moonbeam') {
+      return this.transferMoonbeamWhAsset(input)
+    }
+
     if (feeAsset) {
       if (overriddenAsset) {
         throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')
@@ -59,13 +61,15 @@ class Hydration<TApi, TRes>
       }
     }
 
-    return api.deserializeExtrinsics(await createTypeAndThenCall(this.chain, input))
+    return transferPolkadotXcm(input)
   }
 
-  transferMoonbeamWhAsset<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
-    const { asset, version } = input
+  transferMoonbeamWhAsset<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { assetInfo, version } = input
 
-    assertHasLocation(asset)
+    assertHasLocation(assetInfo)
 
     const glmr = findAssetInfoOrThrow(
       this.chain,
@@ -76,51 +80,13 @@ class Hydration<TApi, TRes>
 
     assertHasLocation(glmr)
 
-    return transferXTokens(
-      {
-        ...input,
-        overriddenAsset: [
-          { ...createAsset(version, FEE_AMOUNT, glmr.location), isFeeAsset: true },
-          createAsset(version, asset.amount, asset.location)
-        ]
-      },
-      Number(asset.assetId)
-    )
-  }
-
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset, destination } = input
-
-    const isMoonbeamWhAsset =
-      asset.location &&
-      hasJunction(asset.location, 'Parachain', getParaId('Moonbeam')) &&
-      hasJunction(asset.location, 'PalletInstance', 110)
-
-    if (isMoonbeamWhAsset && destination === 'Moonbeam') {
-      return this.transferMoonbeamWhAsset(input)
-    }
-
-    assertHasId(asset)
-
-    return transferXTokens(input, Number(asset.assetId))
-  }
-
-  canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
-    const { to: destination, assetInfo, feeAsset } = options
-
-    const baseCanUseXTokens = super.canUseXTokens(options)
-
-    const requiresTypeThen = AH_REQUIRES_FEE_ASSET_LOCS.some(loc =>
-      deepEqual(loc, assetInfo.location)
-    )
-
-    return (
-      destination !== 'Ethereum' &&
-      !(destination === 'AssetHubPolkadot' && assetInfo.symbol === 'DOT') &&
-      baseCanUseXTokens &&
-      !feeAsset &&
-      !requiresTypeThen
-    )
+    return transferPolkadotXcm({
+      ...input,
+      overriddenAsset: [
+        { ...createAsset(version, FEE_AMOUNT, glmr.location), isFeeAsset: true },
+        createAsset(version, assetInfo.amount, assetInfo.location)
+      ]
+    })
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {

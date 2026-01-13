@@ -36,8 +36,8 @@ describe('Moonriver', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
-  it('should call transferPolkadotXCM with transfer_assets', async () => {
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'transfer_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 })

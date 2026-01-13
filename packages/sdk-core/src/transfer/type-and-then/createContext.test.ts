@@ -90,6 +90,7 @@ describe('createTypeAndThenCallContext', () => {
 
   const mockOptions = {
     api: mockApi,
+    chain: mockChain,
     destination: mockDestChain,
     assetInfo: mockAsset
   } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -114,7 +115,7 @@ describe('createTypeAndThenCallContext', () => {
       destination: relayDestChain
     }
 
-    const result = await createTypeAndThenCallContext(mockChain, options)
+    const result = await createTypeAndThenCallContext(options, {})
 
     expect(getAssetReserveChain).toHaveBeenCalled()
     expect(mockClonedApi.init).toHaveBeenCalledTimes(2)
@@ -132,7 +133,7 @@ describe('createTypeAndThenCallContext', () => {
   })
 
   it('should create context with non-relay chain as destination', async () => {
-    const result = await createTypeAndThenCallContext(mockChain, mockOptions)
+    const result = await createTypeAndThenCallContext(mockOptions, {})
 
     expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockAsset.location)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(1, mockDestChain)
@@ -162,7 +163,7 @@ describe('createTypeAndThenCallContext', () => {
     const destInitSpy = vi.spyOn(destApiClone, 'init')
     const reserveInitSpy = vi.spyOn(mockApi, 'init')
 
-    const result = await createTypeAndThenCallContext(mockChain, mockOptions)
+    const result = await createTypeAndThenCallContext(mockOptions, {})
 
     expect(destInitSpy).toHaveBeenCalledWith(mockDestChain)
     expect(reserveInitSpy).toHaveBeenCalledWith(mockChain)
@@ -183,7 +184,7 @@ describe('createTypeAndThenCallContext', () => {
       assetInfo: relayAsset
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const result = await createTypeAndThenCallContext(mockChain, options)
+    const result = await createTypeAndThenCallContext(options, {})
 
     expect(result.isRelayAsset).toBe(true)
   })

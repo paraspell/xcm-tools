@@ -7,12 +7,11 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type BridgeHubKusama from './BridgeHubKusama'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('BridgeHubKusama', () => {
   let chain: BridgeHubKusama<unknown, unknown>
+
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'KSM', amount: 100n }
@@ -38,19 +37,8 @@ describe('BridgeHubKusama', () => {
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM for non-ParaToPara scenario', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      transferType: 'teleport'
-    })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 })

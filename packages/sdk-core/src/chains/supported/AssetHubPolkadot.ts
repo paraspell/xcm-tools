@@ -1,48 +1,23 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  getNativeAssetSymbol,
-  getRelayChainSymbol,
-  InvalidCurrencyError,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import {
-  deepEqual,
-  hasJunction,
-  isTLocation,
-  isTrustedChain,
-  Parents,
-  type TLocation,
-  Version
-} from '@paraspell/sdk-common'
+import { hasJunction, isTLocation, Parents, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { AH_REQUIRES_FEE_ASSET_LOCS, DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidAddressError } from '../../errors'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
-import { createTypeAndThenCall } from '../../transfer'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type {
-  TDestination,
-  TPolkadotXcmMethod,
-  TRelayToParaOverrides,
-  TSerializedExtrinsics,
-  TTransferLocalOptions
-} from '../../types'
-import {
-  type IPolkadotXCMTransfer,
-  type TPolkadotXCMTransferOptions,
-  type TScenario
-} from '../../types'
+import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation } from '../../utils/location'
-import { resolveParaId } from '../../utils/resolveParaId'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
@@ -166,67 +141,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
   }
 
-  handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, address, assetInfo: asset, destination, paraIdTo, version } = input
-    const paraId = resolveParaId(paraIdTo, destination)
-    const customLocation: TLocation = {
-      parents: Parents.ONE,
-      interior: {
-        X1: {
-          Parachain: paraId
-        }
-      }
-    }
-    const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
-      ...input,
-      destLocation: createDestination(version, this.chain, destination, paraId),
-      beneficiaryLocation: createBeneficiaryLocation({
-        api,
-        address: address,
-        version
-      }),
-      asset: createAsset(version, asset.amount, customLocation)
-    }
-    return transferPolkadotXcm(modifiedInput, 'limited_teleport_assets', 'Unlimited')
-  }
-
-  patchInput<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { assetInfo, destination, version } = input
-
-    // TODO: Refactor this
-    if (
-      (destination === 'Hydration' ||
-        destination === 'Moonbeam' ||
-        destination === 'BifrostPolkadot') &&
-      assetInfo.symbol === this.getNativeAssetSymbol()
-    ) {
-      return {
-        ...input,
-        asset: createAsset(version, assetInfo.amount, DOT_LOCATION)
-      }
-    }
-
-    return input
-  }
-
-  private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
-    const isTrusted = !isTLocation(destination) && isTrustedChain(destination)
-    if (
-      destination === 'Moonbeam' ||
-      (typeof destination === 'string' && destination.startsWith('Integritee'))
-    )
-      return 'transfer_assets'
-    return scenario === 'ParaToPara' && !isTrusted
-      ? 'limited_reserve_transfer_assets'
-      : 'limited_teleport_assets'
-  }
-
   async transferPolkadotXCM<TApi, TRes>(
     options: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, scenario, assetInfo, destination, feeAssetInfo, overriddenAsset } = options
+    const { api, assetInfo, destination, feeAssetInfo, overriddenAsset } = options
 
     if (feeAssetInfo) {
       if (overriddenAsset) {
@@ -234,8 +152,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       }
 
       if (isSymbolMatch(assetInfo.symbol, 'KSM')) {
-        const call = await createTypeAndThenCall(this.chain, options)
-        return api.deserializeExtrinsics(call)
+        return transferPolkadotXcm(options)
       }
 
       const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol())
@@ -250,38 +167,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       return this.handleEthBridgeTransfer(options)
     }
 
-    if (destination === 'Mythos') {
-      return this.handleMythosTransfer(options)
-    }
-
-    const isExternalAsset = assetInfo.location && assetInfo.location.parents === Parents.TWO
-
-    const requiresTypeThen = AH_REQUIRES_FEE_ASSET_LOCS.some(loc =>
-      deepEqual(loc, assetInfo.location)
-    )
-
-    if (isExternalAsset || requiresTypeThen) {
-      const call = await createTypeAndThenCall(this.chain, options)
-      return api.deserializeExtrinsics(call)
-    }
-
-    const method = this.getMethod(scenario, destination)
-
-    // Patch transfer_assets to use type_and_then transfer
-    if (
-      method === 'transfer_assets' &&
-      isSymbolMatch(assetInfo.symbol, getRelayChainSymbol(this.chain))
-    ) {
-      return api.deserializeExtrinsics(await createTypeAndThenCall(this.chain, options))
-    }
-
-    const modifiedInput = this.patchInput(options)
-
-    return transferPolkadotXcm(modifiedInput, method, 'Unlimited')
-  }
-
-  getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { transferType: 'teleport' }
+    return transferPolkadotXcm(options)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

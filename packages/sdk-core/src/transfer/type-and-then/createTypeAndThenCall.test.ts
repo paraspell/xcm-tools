@@ -1,11 +1,11 @@
-import type { TAsset, TAssetInfo } from '@paraspell/assets'
+import type { TAsset, TAssetInfo, TAssetWithFee } from '@paraspell/assets'
 import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { RELAY_LOCATION } from '../../constants'
+import { DOT_LOCATION, RELAY_LOCATION } from '../../constants'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
@@ -61,6 +61,7 @@ describe('createTypeAndThenCall', () => {
     systemAsset: mockSystemAsset,
     options: {
       api: mockApi,
+      chain: mockChain,
       address: 'dest-address',
       version: mockVersion,
       currency: { amount: 1000n },
@@ -94,7 +95,7 @@ describe('createTypeAndThenCall', () => {
     }
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(dotContext)
 
-    const result = await createTypeAndThenCall(mockChain, mockContext.options)
+    const result = await createTypeAndThenCall(mockContext.options)
 
     expect(result).toBe(mockSerializedCall)
 
@@ -140,7 +141,7 @@ describe('createTypeAndThenCall', () => {
     }
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(kusamaContext)
 
-    const result = await createTypeAndThenCall(mockChain, mockContext.options)
+    const result = await createTypeAndThenCall(mockContext.options)
 
     expect(result).toBe(mockSerializedCall)
 
@@ -157,13 +158,13 @@ describe('createTypeAndThenCall', () => {
 
     vi.mocked(computeAllFees).mockResolvedValue(customFees)
 
-    await createTypeAndThenCall(mockChain, mockContext.options)
+    await createTypeAndThenCall(mockContext.options)
 
     expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 3000n, RELAY_LOCATION)
   })
 
   it('should build custom XCM with computed fees', async () => {
-    await createTypeAndThenCall(mockChain, mockContext.options)
+    await createTypeAndThenCall(mockContext.options)
 
     expect(createCustomXcm).toHaveBeenCalledTimes(1)
     expect(createCustomXcm).toHaveBeenCalledWith(
@@ -193,7 +194,7 @@ describe('createTypeAndThenCall', () => {
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-    await createTypeAndThenCall(mockChain, mockContext.options)
+    await createTypeAndThenCall(mockContext.options)
 
     const feeCallback = vi.mocked(computeAllFees).mock.calls[0][1]
 
@@ -236,5 +237,76 @@ describe('createTypeAndThenCall', () => {
       mockRefundInstruction,
       mockFees
     )
+  })
+
+  it('should pass through overriddenAsset when it is an array', () => {
+    const overriddenAssets: TAssetWithFee[] = [
+      {
+        id: DOT_LOCATION,
+        fun: { Fungible: 123n },
+        isFeeAsset: true
+      },
+      { id: { parents: 0, interior: 'Here' }, fun: { Fungible: 456n } }
+    ]
+
+    const contextWithOverriddenArray = {
+      ...mockContext,
+      options: {
+        ...mockContext.options,
+        overriddenAsset: overriddenAssets
+      }
+    } as TTypeAndThenCallContext<unknown, unknown>
+
+    vi.mocked(createAsset).mockClear()
+    vi.mocked(localizeLocation).mockClear()
+    vi.mocked(sortAssets).mockClear()
+    vi.mocked(buildTypeAndThenCall).mockClear()
+
+    const result = constructTypeAndThenCall(contextWithOverriddenArray, mockFees)
+
+    expect(result).toBe(mockSerializedCall)
+    expect(buildTypeAndThenCall).toHaveBeenCalledWith(
+      contextWithOverriddenArray,
+      false,
+      mockCustomXcm,
+      overriddenAssets
+    )
+    expect(createAsset).not.toHaveBeenCalled()
+    expect(localizeLocation).not.toHaveBeenCalled()
+    expect(sortAssets).not.toHaveBeenCalled()
+  })
+
+  it('should wrap overriddenAsset when it is a location', () => {
+    const overriddenLocation = {
+      parents: 1,
+      interior: { X1: { Parachain: 2000 } }
+    }
+
+    const contextWithOverriddenLocation = {
+      ...mockContext,
+      options: {
+        ...mockContext.options,
+        overriddenAsset: overriddenLocation
+      }
+    } as TTypeAndThenCallContext<unknown, unknown>
+
+    vi.mocked(createAsset).mockClear()
+    vi.mocked(localizeLocation).mockClear()
+    vi.mocked(sortAssets).mockClear()
+    vi.mocked(buildTypeAndThenCall).mockClear()
+
+    const result = constructTypeAndThenCall(contextWithOverriddenLocation, mockFees)
+
+    expect(result).toBe(mockSerializedCall)
+    expect(createAsset).toHaveBeenCalledTimes(1)
+    expect(createAsset).toHaveBeenCalledWith(mockVersion, 1000n, overriddenLocation)
+    expect(buildTypeAndThenCall).toHaveBeenCalledWith(
+      contextWithOverriddenLocation,
+      false,
+      mockCustomXcm,
+      [mockAsset]
+    )
+    expect(localizeLocation).not.toHaveBeenCalled()
+    expect(sortAssets).not.toHaveBeenCalled()
   })
 })

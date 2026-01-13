@@ -35,7 +35,7 @@ class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCM
       return this.transferToEthereum(options)
     }
 
-    return transferPolkadotXcm(options, 'transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(options)
   }
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {

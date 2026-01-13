@@ -15,6 +15,7 @@ vi.mock('../../pallets/xTokens')
 
 describe('Curio', () => {
   let chain: Curio<unknown, unknown>
+
   const mockInput = {
     asset: {
       symbol: 'CUR',

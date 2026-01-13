@@ -19,12 +19,8 @@ class Crust<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfe
   }
 
   private getCurrencySelection(asset: TAssetInfo): TReserveAsset {
-    if (asset.isNative) {
-      return 'SelfReserve'
-    }
-
+    if (asset.isNative) return 'SelfReserve'
     assertHasId(asset)
-
     return { OtherReserve: BigInt(asset.assetId) }
   }
 

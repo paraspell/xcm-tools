@@ -12,7 +12,7 @@ import type Darwinia from './Darwinia'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Darwinia', () => {
-  let darwinia: Darwinia<unknown, unknown>
+  let chain: Darwinia<unknown, unknown>
 
   const mockPolkadotXCMInput = {
     scenario: 'ParaToRelay',
@@ -20,24 +20,19 @@ describe('Darwinia', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    darwinia = getChain<unknown, unknown, 'Darwinia'>('Darwinia')
+    chain = getChain<unknown, unknown, 'Darwinia'>('Darwinia')
   })
 
   it('should initialize with correct values', () => {
-    expect(darwinia.chain).toBe('Darwinia')
-    expect(darwinia.info).toBe('darwinia')
-    expect(darwinia.ecosystem).toBe('Polkadot')
-    expect(darwinia.version).toBe(Version.V4)
+    expect(chain.chain).toBe('Darwinia')
+    expect(chain.info).toBe('darwinia')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToRelay scenario', async () => {
-    await darwinia.transferPolkadotXCM(mockPolkadotXCMInput)
-
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockPolkadotXCMInput,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+    await chain.transferPolkadotXCM(mockPolkadotXCMInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockPolkadotXCMInput)
   })
 
   it('should throw error for ParaToPara scenario', () => {
@@ -46,7 +41,7 @@ describe('Darwinia', () => {
       scenario: 'ParaToPara'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    expect(() => darwinia.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
   describe('transferLocalNonNativeAsset', () => {
@@ -61,7 +56,7 @@ describe('Darwinia', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => darwinia.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should throw an error when assetId is undefined', () => {
@@ -71,7 +66,7 @@ describe('Darwinia', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      expect(() => darwinia.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+      expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
@@ -83,7 +78,7 @@ describe('Darwinia', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      darwinia.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
@@ -106,7 +101,7 @@ describe('Darwinia', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      darwinia.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',

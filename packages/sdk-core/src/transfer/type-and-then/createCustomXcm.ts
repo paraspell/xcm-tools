@@ -115,8 +115,9 @@ export const createCustomXcm = <TApi, TRes>(
 
     const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
 
-    // If destination is a trusted chain, use teleport instead of reserve deposit
-    if (isTrustedChain(dest.chain)) {
+    // If both reserve (B) and destination (C) are trusted chains,
+    // use teleport instead of DepositReserveAsset
+    if (isTrustedChain(reserve.chain) && isTrustedChain(dest.chain)) {
       return [
         ...(refundInstruction ? [refundInstruction] : []),
         {

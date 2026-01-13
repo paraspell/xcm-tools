@@ -13,7 +13,7 @@ import {
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
-import { getOtherAssetsPallets, type TPallet } from '@paraspell/pallets'
+import { getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TChain, TRelaychain, Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
@@ -22,6 +22,7 @@ import {
   isSubstrateBridge,
   isTLocation,
   isTrustedChain,
+  PARACHAINS,
   Parents,
   type TParachain
 } from '@paraspell/sdk-common'
@@ -36,15 +37,12 @@ import {
   RoutingResolutionError,
   ScenarioNotSupportedError,
   TransferToAhNotSupported,
+  TypeAndThenUnavailableError,
   UnsupportedOperationError
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
-import {
-  constructRelayToParaParams,
-  createDestination,
-  createVersionedDestination
-} from '../pallets/xcmPallet/utils'
+import { createDestination, createVersionedDestination } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
 import {
   createTypeAndThenCall,
@@ -58,7 +56,6 @@ import type {
   IXTransferTransfer,
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
-  TRelayToParaOverrides,
   TScenario,
   TSendInternalOptions,
   TSerializedExtrinsics,
@@ -135,7 +132,8 @@ abstract class Parachain<TApi, TRes> {
   canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
     const { assetInfo: asset } = options
     const isExternalAsset = asset.location?.parents === Parents.TWO
-    return !isExternalAsset && !this.shouldUseNativeAssetTeleport(options)
+    if (isExternalAsset) return false
+    return !this.shouldUseNativeAssetTeleport(options) || !supportsPolkadotXCM(this)
   }
 
   async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
@@ -182,7 +180,7 @@ abstract class Parachain<TApi, TRes> {
     )
 
     if (assetNeedsTypeThen && !supportsTypeThen) {
-      throw new UnsupportedOperationError(
+      throw new TypeAndThenUnavailableError(
         'Relaychain assets require the type-and-then method which is not supported by this chain.'
       )
     }
@@ -238,6 +236,7 @@ abstract class Parachain<TApi, TRes> {
     } else if (supportsPolkadotXCM(this) || useTypeAndThen) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
+        chain: this.chain,
         destLocation: createDestination(version, this.chain, destination, paraId),
         beneficiaryLocation: createBeneficiaryLocation({
           api,
@@ -310,7 +309,7 @@ abstract class Parachain<TApi, TRes> {
           await this.transferPolkadotXCM(options) // ignore result
         }
 
-        const call = await createTypeAndThenCall(this.chain, options)
+        const call = await createTypeAndThenCall(options)
 
         return api.deserializeExtrinsics(call)
       }
@@ -374,12 +373,16 @@ abstract class Parachain<TApi, TRes> {
     const isAHPOrigin = this.chain.includes('AssetHub')
     const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
 
+    const nativeSymbols = PARACHAINS.filter(
+      chain => getRelayChainOf(chain) === getRelayChainOf(this.chain) && !isTrustedChain(chain)
+    ).map(chain => getNativeAssetSymbol(chain))
+
+    const isSomeChainNativeAsset = nativeSymbols.some(symbol => isSymbolMatch(asset.symbol, symbol))
+
     const isNativeAsset =
       !isTLocation(to) &&
       ((isAHPOrigin && !asset.isNative && isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
-        (isAHPDest &&
-          asset.isNative &&
-          isSymbolMatch(asset.symbol, getNativeAssetSymbol(this.chain))))
+        (isAHPDest && isSomeChainNativeAsset))
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
@@ -389,25 +392,11 @@ abstract class Parachain<TApi, TRes> {
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
-  getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { transferType: 'typeAndThen' }
-  }
-
   async transferRelayToPara(
     options: TRelayToParaOptions<TApi, TRes>
   ): Promise<TSerializedExtrinsics> {
-    const {
-      api,
-      version,
-      pallet,
-      assetInfo,
-      address,
-      senderAddress,
-      destination,
-      paraIdTo,
-      method
-    } = options
-    const { transferType } = this.getRelayToParaOverrides()
+    const { api, origin, version, assetInfo, address, senderAddress, destination, paraIdTo } =
+      options
 
     if (this.isReceivingTempDisabled('RelayToPara')) {
       throw new FeatureTemporarilyDisabledError(
@@ -415,38 +404,31 @@ abstract class Parachain<TApi, TRes> {
       )
     }
 
-    if (transferType === 'typeAndThen') {
-      const paraId = resolveParaId(paraIdTo, destination)
-      const destChain = resolveDestChain(this.chain, paraId)
-      const scenario: TScenario = 'RelayToPara'
+    const paraId = resolveParaId(paraIdTo, destination)
+    const destChain = resolveDestChain(this.chain, paraId)
+    const scenario: TScenario = 'RelayToPara'
 
-      if (!destChain) {
-        throw new UnsupportedOperationError(
-          'Cannot override destination when using type and then transfer.'
-        )
-      }
-
-      return createTypeThenAutoReserve(getRelayChainOf(destChain), {
-        ...options,
-        beneficiaryLocation: createBeneficiaryLocation({
-          api,
-          address,
-          version
-        }),
-        senderAddress,
-        asset: this.createAsset(assetInfo, version),
-        destLocation: createDestination(version, this.chain, destination, paraId),
-        scenario,
-        destChain,
-        paraIdTo: paraId
-      })
+    if (!destChain) {
+      throw new UnsupportedOperationError(
+        'Cannot override destination when using type and then transfer.'
+      )
     }
 
-    return {
-      module: (pallet as TPallet) ?? 'XcmPallet',
-      method: method ?? 'limited_teleport_assets',
-      params: constructRelayToParaParams(options, version)
-    }
+    return createTypeThenAutoReserve(getRelayChainOf(destChain), {
+      ...options,
+      chain: origin,
+      beneficiaryLocation: createBeneficiaryLocation({
+        api,
+        address,
+        version
+      }),
+      senderAddress,
+      asset: this.createAsset(assetInfo, version),
+      destLocation: createDestination(version, this.chain, destination, paraId),
+      scenario,
+      destChain,
+      paraIdTo: paraId
+    })
   }
 
   createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {

@@ -6,7 +6,6 @@ import { Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation } from '../../utils'
 import Parachain from '../Parachain'
 
 class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -15,7 +14,7 @@ class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
   }
 
   transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { destChain, assetInfo, scenario } = options
+    const { destChain, scenario } = options
 
     if (destChain !== 'AssetHubPolkadot' && scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(
@@ -23,9 +22,7 @@ class Xode<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
       )
     }
 
-    assertHasLocation(assetInfo)
-
-    return transferPolkadotXcm(options, 'limited_reserve_transfer_assets', 'Unlimited')
+    return transferPolkadotXcm(options)
   }
 
   canReceiveFrom(origin: TChain): boolean {

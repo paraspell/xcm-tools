@@ -11,7 +11,8 @@ import type CrustShadow from './CrustShadow'
 vi.mock('../../pallets/xTokens')
 
 describe('CrustShadow', () => {
-  let crustShadow: CrustShadow<unknown, unknown>
+  let chain: CrustShadow<unknown, unknown>
+
   const mockInput = {
     asset: {
       symbol: 'CRU',
@@ -21,28 +22,28 @@ describe('CrustShadow', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    crustShadow = getChain<unknown, unknown, 'CrustShadow'>('CrustShadow')
+    chain = getChain<unknown, unknown, 'CrustShadow'>('CrustShadow')
   })
 
   it('should initialize with correct values', () => {
-    expect(crustShadow.chain).toBe('CrustShadow')
-    expect(crustShadow.info).toBe('shadow')
-    expect(crustShadow.ecosystem).toBe('Kusama')
-    expect(crustShadow.version).toBe(Version.V3)
+    expect(chain.chain).toBe('CrustShadow')
+    expect(chain.info).toBe('shadow')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with SelfReserve when currency matches native asset', () => {
-    vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('CRU')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('CRU')
 
-    crustShadow.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
   })
 
   it('should call transferXTokens with OtherReserve when currencyID is defined and currency does not match native asset', () => {
-    vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
-    crustShadow.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
 
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, { OtherReserve: 123n } as TReserveAsset)
   })
@@ -56,8 +57,8 @@ describe('CrustShadow', () => {
         isNative: true
       } as WithAmount<TAssetInfo>
     }
-    vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
+    vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
-    expect(() => crustShadow.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
+    expect(() => chain.transferXTokens(invalidInput)).toThrow(InvalidCurrencyError)
   })
 })

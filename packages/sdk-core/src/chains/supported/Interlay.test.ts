@@ -15,7 +15,8 @@ import type Interlay from './Interlay'
 vi.mock('../../pallets/xTokens')
 
 describe('Interlay', () => {
-  let interlay: Interlay<unknown, unknown>
+  let chain: Interlay<unknown, unknown>
+
   const mockInput = {
     asset: {
       symbol: 'INTR',
@@ -25,18 +26,18 @@ describe('Interlay', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    interlay = getChain<unknown, unknown, 'Interlay'>('Interlay')
+    chain = getChain<unknown, unknown, 'Interlay'>('Interlay')
   })
 
   it('should initialize with correct values', () => {
-    expect(interlay.chain).toBe('Interlay')
-    expect(interlay.info).toBe('interlay')
-    expect(interlay.ecosystem).toBe('Polkadot')
-    expect(interlay.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Interlay')
+    expect(chain.info).toBe('interlay')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    interlay.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
       ForeignAsset: 456
     } as TForeignOrTokenAsset)
@@ -52,7 +53,7 @@ describe('Interlay', () => {
       } as WithAmount<TAssetInfo>
     }
 
-    interlay.transferXTokens(inputWithoutCurrencyID)
+    chain.transferXTokens(inputWithoutCurrencyID)
 
     expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'INTR'
@@ -71,8 +72,8 @@ describe('Interlay', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(interlay, 'transferLocalNonNativeAsset')
-      await interlay.transferLocalNativeAsset(mockOptions)
+      const spy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
+      await chain.transferLocalNativeAsset(mockOptions)
       expect(spy).toHaveBeenCalledWith(mockOptions)
     })
   })
@@ -87,7 +88,7 @@ describe('Interlay', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      interlay.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
@@ -110,7 +111,7 @@ describe('Interlay', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      interlay.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',

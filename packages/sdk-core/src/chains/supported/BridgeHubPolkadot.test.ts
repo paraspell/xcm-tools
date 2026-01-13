@@ -7,12 +7,11 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type BridgeHubPolkadot from './BridgeHubPolkadot'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('BridgeHubPolkadot', () => {
   let chain: BridgeHubPolkadot<unknown, unknown>
+
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'DOT', amount: 100n }
@@ -51,26 +50,11 @@ describe('BridgeHubPolkadot', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await chain.transferPolkadotXCM(validInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      validInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(validInput)
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM for non-ParaToPara scenario', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      transferType: 'teleport'
-    })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 })

@@ -12,6 +12,7 @@ vi.mock('../../pallets/polkadotXcm')
 
 describe('Nodle', () => {
   let chain: Nodle<unknown, unknown>
+
   const mockInput = {
     assetInfo: { symbol: 'NODL', amount: 100n },
     scenario: 'ParaToPara'
@@ -30,11 +31,7 @@ describe('Nodle', () => {
 
   it('should call transferPolkadotXCM with the correct arguments', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should throw ScenarioNotSupportedError for non-ParaToPara scenarios', () => {

@@ -4,13 +4,18 @@ import type { TPallet } from '@paraspell/pallets'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
+import { createTypeAndThenCall } from '../../transfer'
 import type { TPolkadotXcmMethod, TSerializedExtrinsics } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { maybeOverrideAssets } from '../../utils/asset'
 
-export const transferPolkadotXcm = <TApi, TRes>(
-  {
+export const transferPolkadotXcm = async <TApi, TRes>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+  method: TPolkadotXcmMethod = 'transfer_assets_using_type_and_then',
+  fees: 'Unlimited' | { Limited: string } | undefined = undefined
+): Promise<TRes> => {
+  const {
     api,
     destLocation,
     assetInfo: asset,
@@ -20,10 +25,12 @@ export const transferPolkadotXcm = <TApi, TRes>(
     pallet,
     version,
     method: methodOverride
-  }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  method: TPolkadotXcmMethod,
-  fees: 'Unlimited' | { Limited: string } | undefined = undefined
-): Promise<TRes> => {
+  } = options
+
+  if (method === 'transfer_assets_using_type_and_then') {
+    return api.deserializeExtrinsics(await createTypeAndThenCall(options, { noFeeAsset: true }))
+  }
+
   const resolvedMultiAssets = maybeOverrideAssets(
     version,
     asset.amount,

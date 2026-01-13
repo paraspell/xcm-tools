@@ -84,27 +84,16 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
     super('Mythos', 'mythos', 'Polkadot', Version.V5)
   }
 
-  private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, destination } = input
+  async transferPolkadotXCM<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { api, destination, scenario } = input
+
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(
-      input,
-      destination === 'AssetHubPolkadot'
-        ? 'limited_teleport_assets'
-        : 'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
-  }
-
-  async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TRes> {
-    const { api, destination } = input
-
-    const defaultTx = await this.createTx(input)
+    const defaultTx = await transferPolkadotXcm(input)
 
     if (destination === 'AssetHubPolkadot') {
       return handleToAhTeleport('Mythos', input, defaultTx)

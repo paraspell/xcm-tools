@@ -122,8 +122,10 @@ describe('createCustomXcm', () => {
       expect(definiteAssets?.[1].fun).toEqual({ Fungible: 1000000n })
     })
 
-    it('returns InitiateTeleport when destination is a system chain', () => {
-      vi.mocked(isTrustedChain).mockImplementation(chain => chain === 'Kusama')
+    it('returns InitiateTeleport when reserve and destination are system chains', () => {
+      vi.mocked(isTrustedChain).mockImplementation(
+        chain => chain === 'Kusama' || chain === 'Hydration'
+      )
 
       const result = createCustomXcm(
         {

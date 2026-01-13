@@ -10,7 +10,8 @@ import type KiltSpiritnet from './KiltSpiritnet'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('KiltSpiritnet', () => {
-  let kiltSpiritnet: KiltSpiritnet<unknown, unknown>
+  let chain: KiltSpiritnet<unknown, unknown>
+
   const mockInput = {
     scenario: 'ParaToPara',
     assetInfo: {
@@ -20,28 +21,24 @@ describe('KiltSpiritnet', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    kiltSpiritnet = getChain<unknown, unknown, 'KiltSpiritnet'>('KiltSpiritnet')
+    chain = getChain<unknown, unknown, 'KiltSpiritnet'>('KiltSpiritnet')
   })
 
   it('should initialize with correct values', () => {
-    expect(kiltSpiritnet.chain).toBe('KiltSpiritnet')
-    expect(kiltSpiritnet.info).toBe('kilt')
-    expect(kiltSpiritnet.ecosystem).toBe('Polkadot')
-    expect(kiltSpiritnet.version).toBe(Version.V4)
+    expect(chain.chain).toBe('KiltSpiritnet')
+    expect(chain.info).toBe('kilt')
+    expect(chain.ecosystem).toBe('Polkadot')
+    expect(chain.version).toBe(Version.V4)
   })
 
-  it('should call transferPolkadotXCM with limitedReserveTransferAssets', async () => {
-    await kiltSpiritnet.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_reserve_transfer_assets',
-      'Unlimited'
-    )
+  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
+    await chain.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
   it('should throw an error if trying to transfer ParaToPara with non-native asset', () => {
     expect(() =>
-      kiltSpiritnet.transferPolkadotXCM({
+      chain.transferPolkadotXCM({
         ...mockInput,
         assetInfo: {
           ...mockInput.assetInfo,
@@ -52,6 +49,6 @@ describe('KiltSpiritnet', () => {
   })
 
   it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-    expect(() => kiltSpiritnet.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

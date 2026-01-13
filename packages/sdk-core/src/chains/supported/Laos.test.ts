@@ -7,60 +7,52 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import Laos from './Laos'
 
-vi.mock('../../pallets/polkadotXcm', () => ({
-  transferPolkadotXcm: vi.fn()
-}))
+vi.mock('../../pallets/polkadotXcm')
 
 describe('Laos', () => {
-  describe('transferPolkadotXCM', () => {
-    let laos: Laos<unknown, unknown>
+  let chain: Laos<unknown, unknown>
 
-    beforeEach(() => {
-      laos = getChain<unknown, unknown, 'Laos'>('Laos')
-    })
+  beforeEach(() => {
+    chain = getChain<unknown, unknown, 'Laos'>('Laos')
+  })
 
-    it('should be instantiated correctly', () => {
-      expect(laos).toBeInstanceOf(Laos)
-    })
+  it('should be instantiated correctly', () => {
+    expect(chain).toBeInstanceOf(Laos)
+  })
 
-    it('should not suppoert ParaToRelay scenario', () => {
-      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => laos.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
-    })
+  it('should not suppoert ParaToRelay scenario', () => {
+    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+  })
 
-    it('should only support native currency', () => {
-      const input = {
-        scenario: 'ParaToPara',
-        assetInfo: { symbol: 'XYZ' }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => laos.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
-    })
+  it('should only support native currency', () => {
+    const input = {
+      scenario: 'ParaToPara',
+      assetInfo: { symbol: 'XYZ' }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
+  })
 
-    it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
-      const input = {
-        scenario: 'ParaToPara',
-        assetInfo: { symbol: 'LAOS' }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+  it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
+    const input = {
+      scenario: 'ParaToPara',
+      assetInfo: { symbol: 'LAOS' }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      await laos.transferPolkadotXCM(input)
-      expect(transferPolkadotXcm).toHaveBeenCalledWith(
-        input,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
-    })
+    await chain.transferPolkadotXCM(input)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
+  })
 
-    it('should not support transfer to AssetHubPolkadot', () => {
-      const input = {
-        scenario: 'ParaToPara',
-        assetInfo: { symbol: 'LAOS' },
-        destination: 'AssetHubPolkadot'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => laos.transferPolkadotXCM(input)).toThrow(TransferToAhNotSupported)
-    })
+  it('should not support transfer to AssetHubPolkadot', () => {
+    const input = {
+      scenario: 'ParaToPara',
+      assetInfo: { symbol: 'LAOS' },
+      destination: 'AssetHubPolkadot'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    expect(() => chain.transferPolkadotXCM(input)).toThrow(TransferToAhNotSupported)
+  })
 
-    it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-      expect(() => laos.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
-    })
+  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
+    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
   })
 })

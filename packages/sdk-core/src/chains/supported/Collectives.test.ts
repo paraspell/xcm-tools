@@ -11,6 +11,7 @@ vi.mock('../../pallets/polkadotXcm')
 
 describe('Collectives', () => {
   let chain: Collectives<unknown, unknown>
+
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'DOT', amount: 100n }
@@ -45,24 +46,11 @@ describe('Collectives', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await chain.transferPolkadotXCM(validInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      validInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(validInput)
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM  for non-ParaToPara scenario', async () => {
     await chain.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should return correct parameters for getRelayToParaOverrides', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({ transferType: 'teleport' })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 })

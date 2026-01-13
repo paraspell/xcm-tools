@@ -34,19 +34,11 @@ describe('CoretimePolkadot', () => {
     expect(chain.canReceiveFrom('Moonbeam')).toBe(false)
   })
 
-  it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
+  it('should use typeAndThen when scenario is not ParaToPara', async () => {
     const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     await chain.transferPolkadotXCM(input)
 
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(input, 'limited_teleport_assets', 'Unlimited')
-  })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-
-    expect(result).toEqual({
-      transferType: 'teleport'
-    })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 })

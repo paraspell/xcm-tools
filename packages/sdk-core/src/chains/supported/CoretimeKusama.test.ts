@@ -11,6 +11,7 @@ vi.mock('../../pallets/polkadotXcm')
 
 describe('CoretimeKusama', () => {
   let chain: CoretimeKusama<unknown, unknown>
+
   const mockInput = {
     scenario: 'ParaToPara',
     assetInfo: { symbol: 'KSM', amount: 100n }
@@ -32,7 +33,7 @@ describe('CoretimeKusama', () => {
     expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM for non-ParaToPara scenario', async () => {
     const inputWithDifferentScenario = {
       ...mockInput,
       scenario: 'RelayToPara'
@@ -40,17 +41,6 @@ describe('CoretimeKusama', () => {
 
     await chain.transferPolkadotXCM(inputWithDifferentScenario)
 
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      inputWithDifferentScenario,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
-  })
-
-  it('should call getRelayToParaOverrides with the correct parameters', () => {
-    const result = chain.getRelayToParaOverrides()
-    expect(result).toEqual({
-      transferType: 'teleport'
-    })
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(inputWithDifferentScenario)
   })
 })

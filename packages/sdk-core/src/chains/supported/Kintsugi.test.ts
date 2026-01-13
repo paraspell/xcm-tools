@@ -15,7 +15,8 @@ import type Kintsugi from './Kintsugi'
 vi.mock('../../pallets/xTokens')
 
 describe('Kintsugi', () => {
-  let kintsugi: Kintsugi<unknown, unknown>
+  let chain: Kintsugi<unknown, unknown>
+
   const mockInput = {
     asset: {
       symbol: 'KINT',
@@ -25,18 +26,18 @@ describe('Kintsugi', () => {
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    kintsugi = getChain<unknown, unknown, 'Kintsugi'>('Kintsugi')
+    chain = getChain<unknown, unknown, 'Kintsugi'>('Kintsugi')
   })
 
   it('should initialize with correct values', () => {
-    expect(kintsugi.chain).toBe('Kintsugi')
-    expect(kintsugi.info).toBe('kintsugi')
-    expect(kintsugi.ecosystem).toBe('Kusama')
-    expect(kintsugi.version).toBe(Version.V3)
+    expect(chain.chain).toBe('Kintsugi')
+    expect(chain.info).toBe('kintsugi')
+    expect(chain.ecosystem).toBe('Kusama')
+    expect(chain.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    kintsugi.transferXTokens(mockInput)
+    chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
       ForeignAsset: 123
     } as TForeignOrTokenAsset)
@@ -52,7 +53,7 @@ describe('Kintsugi', () => {
       } as WithAmount<TAssetInfo>
     }
 
-    kintsugi.transferXTokens(inputWithoutCurrencyID)
+    chain.transferXTokens(inputWithoutCurrencyID)
 
     expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'KINT'
@@ -71,8 +72,8 @@ describe('Kintsugi', () => {
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown>
 
-      const spy = vi.spyOn(kintsugi, 'transferLocalNonNativeAsset')
-      await kintsugi.transferLocalNativeAsset(mockOptions)
+      const spy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
+      await chain.transferLocalNativeAsset(mockOptions)
       expect(spy).toHaveBeenCalledWith(mockOptions)
     })
   })
@@ -87,7 +88,7 @@ describe('Kintsugi', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      kintsugi.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
@@ -110,7 +111,7 @@ describe('Kintsugi', () => {
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
-      kintsugi.transferLocalNonNativeAsset(mockOptions)
+      chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',

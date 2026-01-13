@@ -1,24 +1,18 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
-import { findAssetInfoByLoc, getOtherAssets, type TAssetInfo } from '@paraspell/assets'
+import { type TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TSendInternalOptions,
   TTransferLocalOptions
 } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import Parachain from '../Parachain'
 
-class BifrostPolkadot<TApi, TRes>
-  extends Parachain<TApi, TRes>
-  implements IXTokensTransfer, IPolkadotXCMTransfer
-{
+class BifrostPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'BifrostPolkadot',
     info: string = 'bifrost',
@@ -50,31 +44,14 @@ class BifrostPolkadot<TApi, TRes>
     return isVToken ? { VToken2: id } : { Token2: id }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-
-    const currencySelection = this.getCustomCurrencyId(asset)
-    return transferXTokens(input, currencySelection)
-  }
-
   transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { destination } = options
+
     if (destination === 'Ethereum') {
       return this.transferToEthereum(options)
     }
 
-    return transferPolkadotXcm(options, 'transfer_assets', 'Unlimited')
-  }
-
-  canUseXTokens({ assetInfo, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
-    const isEthAsset =
-      assetInfo.location && findAssetInfoByLoc(getOtherAssets('Ethereum'), assetInfo.location)
-    if (isEthAsset) return false
-    if (destination === 'Ethereum') return false
-    return (
-      (assetInfo.symbol !== 'WETH' && assetInfo.symbol !== 'DOT') ||
-      destination !== 'AssetHubPolkadot'
-    )
+    return transferPolkadotXcm(options)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

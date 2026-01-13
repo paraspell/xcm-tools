@@ -1,6 +1,3 @@
-vi.mock('../../pallets')
-vi.mock('../../pallets/polkadotXcm')
-
 import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -11,6 +8,9 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
 import type EnergyWebX from './EnergyWebX'
+
+vi.mock('../../pallets')
+vi.mock('../../pallets/polkadotXcm')
 
 describe('EnergyWebX', () => {
   let chain: EnergyWebX<unknown, unknown>

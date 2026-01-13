@@ -5,29 +5,22 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TTransferLocalOptions
+} from '../../types'
 import { assertHasId, assertHasLocation } from '../../utils'
 import Parachain from '../Parachain'
 
-class Unique<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
-  private static NATIVE_ASSET_ID = 0
-
+class Unique<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Unique', 'unique', 'Polkadot', Version.V5)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { asset } = input
-
-    if (asset.symbol === this.getNativeAssetSymbol()) {
-      return transferXTokens(input, Unique.NATIVE_ASSET_ID)
-    }
-
-    assertHasId(asset)
-
-    return transferXTokens(input, Number(asset.assetId))
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    return transferPolkadotXcm(input)
   }
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {

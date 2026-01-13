@@ -230,10 +230,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         expect(builder).toBeDefined()
       })
 
-      it('should create transfer tx from BifrostPolkadot to AssetHubPolkadot - overridden asset', async () => {
-        const api = await createOrGetApiInstanceForChain('BifrostPolkadot')
+      it('should create transfer tx from Hydration to AssetHubPolkadot - overridden asset', async () => {
+        const api = await createOrGetApiInstanceForChain('Hydration')
         const tx = await Builder(api)
-          .from('BifrostPolkadot')
+          .from('Hydration')
           .to('AssetHubPolkadot')
           .currency([
             {
@@ -383,8 +383,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     'NoXCMSupportImplementedError',
                     'TransferToAhNotSupported',
                     'RoutingResolutionError',
-                    'UnsupportedOperationError',
-                    'RuntimeApiUnavailableError'
+                    'RuntimeApiUnavailableError',
+                    'TypeAndThenUnavailableError'
                   ]
 
                   if (allowedErrorNames.includes(error.name)) {
@@ -422,7 +422,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .address(MOCK_ADDRESS)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
-              if (
+              const allowedErrorNames = ['TypeAndThenUnavailableError']
+              if (allowedErrorNames.includes(error.name)) {
+                expect(error.name).toBeDefined()
+              } else if (
                 error.name === 'FeatureTemporarilyDisabledError' ||
                 error.message.includes('temporarily disabled')
               ) {

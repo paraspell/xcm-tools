@@ -19,6 +19,7 @@ import {
   RoutingResolutionError,
   ScenarioNotSupportedError,
   TransferToAhNotSupported,
+  TypeAndThenUnavailableError,
   UnsupportedOperationError
 } from '../errors'
 import { getPalletInstance } from '../pallets'
@@ -28,7 +29,6 @@ import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   BaseAssetsPallet,
   TRelayToParaOptions,
-  TRelayToParaOverrides,
   TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../types'
@@ -144,12 +144,6 @@ class TestParachain extends TestParachainBase {
     useOnlyDepositAsset = false
   ) {
     return this.transferToEthereum(options, useOnlyDepositAsset)
-  }
-}
-
-class RelayToParaTeleportParachain extends TestParachainBase {
-  getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { transferType: 'teleport' }
   }
 }
 
@@ -326,7 +320,7 @@ describe('Parachain', () => {
       }
     } as TSendInternalOptions<unknown, unknown>
 
-    await expect(chain.transfer(options)).rejects.toThrow(UnsupportedOperationError)
+    await expect(chain.transfer(options)).rejects.toThrow(TypeAndThenUnavailableError)
   })
 
   it('should throw error when native asset transfer to AssetHub requires teleport', async () => {
@@ -484,8 +478,8 @@ describe('Parachain', () => {
 
     expect(hasMethodSpy).toHaveBeenCalled()
     expect(createTypeAndThenCall).toHaveBeenCalledWith(
-      'Acala',
       expect.objectContaining({
+        chain: 'Acala',
         assetInfo: options.assetInfo,
         destination: options.to
       })
@@ -864,7 +858,7 @@ describe('Parachain', () => {
       )
     })
 
-    it('should call createTypeAndThenCall when override method is type-and-then', async () => {
+    it('should call createTypeAndThenCall', async () => {
       vi.mocked(createBeneficiaryLocation).mockReturnValue(RELAY_LOCATION)
 
       const result = await chain.transferRelayToPara({
@@ -885,36 +879,6 @@ describe('Parachain', () => {
           method: 'transfer_assets_using_type_and_then'
         })
       ).rejects.toThrow('Cannot override destination when using type and then transfer.')
-    })
-
-    it('should return serialized call when not using type-and-then', async () => {
-      const version = Version.V5
-      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', version)
-      const options = {
-        ...baseOptions,
-        version,
-        method: 'limited_transfer_assets'
-      }
-
-      const result = await chain.transferRelayToPara(options)
-
-      expect(result).toEqual({
-        module: 'XcmPallet',
-        method: 'limited_transfer_assets',
-        params: 'params'
-      })
-
-      expect(constructRelayToParaParams).toHaveBeenCalledWith(options, version)
-    })
-
-    it('should respect methodOverride when provided', async () => {
-      const chain = new RelayToParaTeleportParachain('Acala', 'TestChain', 'Polkadot', Version.V5)
-      const result = await chain.transferRelayToPara({
-        ...baseOptions,
-        method: 'customMethod'
-      })
-
-      expect(result.method).toBe('customMethod')
     })
 
     it('should default pallet to XcmPallet when not provided', async () => {
