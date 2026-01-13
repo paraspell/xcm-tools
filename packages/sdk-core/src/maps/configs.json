@@ -222,7 +222,7 @@
     "providers": [
       {
         "name": "Energy Web",
-        "endpoint": "wss://public-rpc.mainnet.energywebx.com/"
+        "endpoint": "wss://wnp-rpc.mainnet.energywebx.com/"
       }
     ]
   },
