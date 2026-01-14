@@ -16,7 +16,8 @@ import {
   isSystemChain,
   hasJunction,
   assertHasLocation,
-  RuntimeApiUnavailableError
+  RuntimeApiUnavailableError,
+  TBuilderConfig
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
@@ -24,11 +25,13 @@ import { generateAssetsTests } from '../../assets/e2e'
 import {
   findAssetInfo,
   ForeignAbstract,
+  getAssets,
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
   isChainEvm,
   Native,
+  TAssetInfo,
   TCurrencyCore
 } from '@paraspell/assets'
 
@@ -56,7 +59,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
   isPjs: boolean,
-  createRequiredChopsticksChains?: (chains: TSubstrateChain[]) => Promise<Record<TSubstrateChain, string>>,
+  chopsticksBuildOptions?: TBuilderConfig<TApiOrUrl<TApi>>,
   useChopsticks: boolean = false
 ) => {
   describe.sequential('XCM - e2e', () => {
@@ -74,14 +77,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       return apiPool[chain]
     }
 
-    const createBuilder = async (chain: TSubstrateChain, chains: TSubstrateChain[]) => {
+    const createBuilder = async (chain: TSubstrateChain) => {
       if (useChopsticks) {
-        if (!createRequiredChopsticksChains) {
-          throw new Error('createRequiredChopsticksChains is required when using Chopsticks')
+        if (!chopsticksBuildOptions) {
+          throw new Error('chopsticksBuildOptions is required when using Chopsticks')
         }
 
-        const chainMap = await createRequiredChopsticksChains(chains)
-        return Builder({ apiOverrides: Object.fromEntries(Object.entries(chainMap).map(([chain, url]) => [chain, [url]])) })
+        return Builder(chopsticksBuildOptions)
       }
       const api = await createOrGetApiInstanceForChain(chain)
       return Builder(api)
@@ -91,7 +93,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       const chains = ['AssetHubPolkadot', 'AssetHubKusama', 'Polkadot', 'Kusama'] as TSubstrateChain[]
 
       it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (KSM)', async () => {
-        const builder = (await createBuilder('AssetHubPolkadot', chains))
+        const builder = (await createBuilder('AssetHubPolkadot'))
           .from('AssetHubPolkadot')
           .to('AssetHubKusama')
           .currency({
@@ -107,7 +109,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT)', async () => {
-        const builder = (await createBuilder('AssetHubKusama', chains))
+        const builder = (await createBuilder('AssetHubKusama'))
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
           .currency({
@@ -123,7 +125,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (KSM)', async () => {
-        const builder = (await createBuilder('AssetHubKusama', chains))
+        const builder = (await createBuilder('AssetHubKusama'))
           .from('AssetHubKusama')
           .to('AssetHubPolkadot')
           .currency({
@@ -148,7 +150,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       ]
       ASSET_CLAIM_CHAINS.forEach(chain => {
         it(`should create asset claim tx for ${chain}`, async () => {
-          const tx = await (await createBuilder(chain, [chain]))
+          const tx = await (await createBuilder(chain))
             .claimFrom(chain)
             .currency([
               {
@@ -166,7 +168,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create asset claim tx V3', async () => {
-        const tx = await (await createBuilder('AssetHubPolkadot', ['AssetHubPolkadot']))
+        const tx = await (await createBuilder('AssetHubPolkadot'))
           .claimFrom('AssetHubPolkadot')
           .currency([
             {
@@ -193,7 +195,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         if (!asset.location) return
         it(`should create transfer tx - ${asset.symbol} from AssetHubPolkadot to Ethereum`, async () => {
           assertHasLocation(asset)
-          const builder = (await createBuilder('AssetHubPolkadot', ['AssetHubPolkadot']))
+          const builder = (await createBuilder('AssetHubPolkadot'))
             .from('AssetHubPolkadot')
             .to('Ethereum')
             .currency({ location: asset.location, amount: MOCK_AMOUNT })
@@ -211,7 +213,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           if (!hasSupportForAsset(chain, symbol)) return
           it(`should create transfer tx - ${symbol} from ${relayChain} to ${chain}`, async () => {
             try {
-              const builder = (await createBuilder(relayChain, [relayChain, chain]))
+              const builder = (await createBuilder(relayChain))
                 .from(relayChain)
                 .to(chain)
                 .currency({ symbol, amount: MOCK_AMOUNT })
@@ -230,7 +232,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
     describe.sequential('Hydration to AssetHub transfer - miscellaneous scenarios', () => {
       it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
-        const builder = (await createBuilder('Hydration', ['Hydration', 'AssetHubPolkadot']))
+        const builder = (await createBuilder('Hydration'))
           .from('Hydration')
           .to('AssetHubPolkadot')
           .currency({ symbol: ForeignAbstract('USDT1'), amount: MOCK_AMOUNT })
@@ -240,7 +242,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from BifrostPolkadot to AssetHubPolkadot - overridden asset', async () => {
-        const tx = await (await createBuilder('BifrostPolkadot', ['BifrostPolkadot', 'AssetHubPolkadot']))
+        const tx = await (await createBuilder('BifrostPolkadot'))
           .from('BifrostPolkadot')
           .to('AssetHubPolkadot')
           .currency([
@@ -261,7 +263,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset currency selection', async () => {
-        const tx = await (await createBuilder('Hydration', ['Hydration', 'AssetHubPolkadot']))
+        const tx = await (await createBuilder('Hydration'))
           .from('Hydration')
           .to('AssetHubPolkadot')
           .currency([
@@ -295,7 +297,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
     describe.sequential('Auto API create', () => {
       it('should create transfer tx from Acala to Astar - auto API', async () => {
-        const builder = (await createBuilder('Acala', ['Acala', 'Astar']))
+        const builder = (await createBuilder('Acala'))
           .from('Acala')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
@@ -332,6 +334,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
       const relayChainSymbol = getRelayChainSymbol(chain)
 
+      const allAssets = getAssets(chain)
+
       const relayChainAsset = findAssetInfo(
         chain,
         // Use native selector for system chains
@@ -350,28 +354,28 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       )
       if (isSendingDisabled) return
 
+      const getCurrency = (asset: TAssetInfo): TCurrencyCore => {
+        if (asset.location) {
+          return { location: asset.location }
+        }
+
+        // Bifrost has duplicated asset ids, thus use symbol specifier
+        if (!asset.isNative && asset.assetId && !chain.startsWith('Bifrost')) {
+          return { id: asset.assetId }
+        }
+
+        return { symbol: asset.symbol }
+      }
+
       describe.sequential(`Transfer scenarios for origin ${chain}`, () => {
         describe.sequential('ParaToPara', () => {
           scenarios.forEach(({ destChain, asset }) => {
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
-              const getCurrency = (): TCurrencyCore => {
-                if (asset.location) {
-                  return { location: asset.location }
-                }
-
-                // Bifrost has duplicated asset ids, thus use symbol specifier
-                if (!asset.isNative && asset.assetId && !chain.startsWith('Bifrost')) {
-                  return { id: asset.assetId }
-                }
-
-                return { symbol: asset.symbol }
-              }
-
-              const currency = getCurrency()
+              const currency = getCurrency(asset)
               const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               const address = isChainEvm(destChain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               try {
-                const builder = (await createBuilder(chain, [chain, destChain]))
+                const builder = (await createBuilder(chain))
                   .from(chain)
                   .to(destChain)
                   .currency({
@@ -420,7 +424,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             const relayChain = getRelayChainOf(chain)
             const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
             try {
-              const builder = (await createBuilder(chain, [chain, relayChain]))
+              const builder = (await createBuilder(chain))
                 .from(chain)
                 .to(relayChain)
                 .currency({ symbol, amount: MOCK_AMOUNT })
@@ -441,23 +445,27 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         }
       })
 
-      it(`should create local transfer tx on ${chain}`, async () => {
-        const symbol = getRelayChainSymbol(chain)
-        const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+      describe.sequential('Local transfer', () => {
+        allAssets.forEach(asset => {
+          it(`should create local transfer tx on ${chain} - (${asset.symbol})`, async () => {
+            const currency = getCurrency(asset)
+            const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
 
-        try {
-          const builder = (await createBuilder(chain, [chain]))
-            .from(chain)
-            .to(chain)
-            .currency({ symbol, amount: MOCK_AMOUNT })
-            .senderAddress(address)
-            .address(address)
-          await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
-        } catch (error) {
-          if (error instanceof RuntimeApiUnavailableError) {
-            expect(error).toBeInstanceOf(RuntimeApiUnavailableError)
-          }
-        }
+            try {
+              const builder = (await createBuilder(chain))
+                .from(chain)
+                .to(chain)
+                .currency({ ...currency, amount: MOCK_AMOUNT })
+                .senderAddress(address)
+                .address(address)
+              await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
+            } catch (error) {
+              if (error instanceof RuntimeApiUnavailableError) {
+                expect(error).toBeInstanceOf(RuntimeApiUnavailableError)
+              }
+            }
+          })
+        })
       })
     })
   })

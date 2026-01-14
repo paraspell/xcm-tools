@@ -18,11 +18,12 @@ type ChopsticksServer = {
 }
 
 type ChopsticksInstance = {
-  chain: TSubstrateChain
   server: ChopsticksServer
 }
 
 const chopsticksInstances: ChopsticksInstance[] = []
+const chainsWithInvalidRpc = ["LaosPaseo", "ZeitgeistPaseo", "KiltPaseo"]
+const filteredChains = SUBSTRATE_CHAINS.filter(chain => !chainsWithInvalidRpc.includes(chain))
 
 const formatChopsticksAddress = (addr: string) => {
   return `ws://${addr}`
@@ -34,23 +35,31 @@ export const createChopsticksWorker = async (chain: TSubstrateChain) => {
     port: 0,
     'build-block-mode': BuildBlockMode.Instant,
   })
-  chopsticksInstances.push({ chain, server })
+  chopsticksInstances.push({ server })
   return formatChopsticksAddress(server.addr)
 }
 
-export const createRequiredChopsticksChains = async (chains: TSubstrateChain[]) => {
-  return Object.fromEntries(
+export const createChopsticksBuildOptions = async () => {
+  const chainMap = Object.fromEntries(
     await Promise.all(
-      chains.map(async (chain) => {
-        const instance = chopsticksInstances.find(instance => instance.chain === chain)
-        if (instance) {
-          return [chain, formatChopsticksAddress(instance.server.addr)]
+      filteredChains.map(async (chain) => {
+        try {
+          const address = await createChopsticksWorker(chain)
+          return [chain, address]
+        } catch (error) {
+          console.error(`Failed to create chopsticks worker for ${chain}:`, error)
+          return [chain, null]
         }
-        const address = await createChopsticksWorker(chain)
-        return [chain, address]
       })
     )
   ) as Record<TSubstrateChain, string>
+
+  return {
+    development: true,
+    apiOverrides: Object.fromEntries(
+      Object.entries(chainMap).map(([chain, url]) => [chain, [url]])
+    ) as Record<TSubstrateChain, string[]>
+  }
 }
 
 
@@ -64,6 +73,8 @@ afterAll(async () => {
 const signer = createSr25519Signer('//Alice')
 const evmSigner = getEcdsaSigner()
 
+const chopsticksBuildOptions = await createChopsticksBuildOptions()
+
 generateE2eTests(
   Builder,
   createChainClient,
@@ -71,8 +82,8 @@ generateE2eTests(
   evmSigner,
   validateTx,
   validateTransfer,
-  [...SUBSTRATE_CHAINS],
+  [...filteredChains],
   false,
-  createRequiredChopsticksChains,
+  chopsticksBuildOptions,
   true
 )
