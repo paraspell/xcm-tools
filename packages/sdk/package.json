@@ -33,7 +33,8 @@
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
+    "test:e2e:chopsticks": "vitest run --config ./vitest.config.chopsticks.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
@@ -47,6 +48,7 @@
     "polkadot-api": ">= 1.23.1 < 2"
   },
   "devDependencies": {
+    "@acala-network/chopsticks": "^1.2.5",
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
     "@babel/preset-env": "^7.28.5",
     "@codecov/rollup-plugin": "^1.9.1",

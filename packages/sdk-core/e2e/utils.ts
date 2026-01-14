@@ -31,7 +31,7 @@ export const doesNotSupportParaToRelay: TChain[] = [
   'EnergyWebXPaseo'
 ]
 
-export const generateTransferScenarios = (originChain: TSubstrateChain) => {
+export const generateTransferScenarios = (originChain: TSubstrateChain, includeAllCompatibleAssets: boolean = false) => {
   const scenarios = []
   const allAssets = getAssets(originChain)
 
@@ -57,7 +57,7 @@ export const generateTransferScenarios = (originChain: TSubstrateChain) => {
       if (hasSupportForAsset(destChain, asset.symbol) && !notCompatible) {
         scenarios.push({ originChain, destChain, asset })
 
-        break
+        if (!includeAllCompatibleAssets) break
       }
     }
   }
