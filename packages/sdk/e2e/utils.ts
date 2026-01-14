@@ -9,7 +9,7 @@ import {
   TSendBaseOptionsWithSenderAddress,
   TSerializedExtrinsics
 } from '@paraspell/sdk-core'
-import { createEcdsaSigner } from '../src/utils'
+import { createEcdsaSigner, createSr25519Signer } from '../src/utils'
 
 export const getEcdsaSigner = () => {
   const seed = mnemonicToSeedSync(DEV_PHRASE)
@@ -46,3 +46,8 @@ export const validateTransfer = async (
   const feeRes = await builder.getXcmFee()
   expect(feeRes.failureReason).toBeUndefined()
 }
+
+export const createSigners = (): [PolkadotSigner, PolkadotSigner] => [
+  createSr25519Signer('//Alice'),
+  getEcdsaSigner()
+]
