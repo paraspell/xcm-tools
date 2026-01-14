@@ -6,32 +6,20 @@ import {
 } from '@paraspell/assets'
 import { isRelayChain, SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChain } from '../src'
-import { resolveScenario } from '../src/utils/transfer/resolveScenario'
 
-const supportsOnlyNativeAsset: TChain[] = ['Nodle', 'Pendulum', 'Phala', 'Ajuna', 'AjunaPaseo']
+const supportsOnlyNativeAsset: TChain[] = ['Nodle', 'Phala']
 
-const assetIdRequired: TChain[] = [
-  'Manta',
-  'Unique',
-  'Quartz',
-  'Peaq',
-  'Basilisk',
-  'Amplitude',
-  'Pendulum',
-  'KiltPaseo'
-]
+const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Amplitude', 'Pendulum']
 
 export const doesNotSupportParaToRelay: TChain[] = [
-  'Phala',
   'Peaq',
-  'Pendulum',
   'Ajuna',
   'AjunaPaseo',
   'EnergyWebX',
   'EnergyWebXPaseo'
 ]
 
-export const generateTransferScenarios = (originChain: TSubstrateChain) => {
+export const generateTransferScenarios = (originChain: TSubstrateChain, includeAll = false) => {
   const scenarios = []
   const allAssets = getAssets(originChain)
 
@@ -41,7 +29,6 @@ export const generateTransferScenarios = (originChain: TSubstrateChain) => {
   for (const destChain of SUBSTRATE_CHAINS) {
     if (destChain === originChain) continue
     const chainInstance = !isRelayChain(destChain) ? getChain(destChain) : null
-    const scenario = resolveScenario(originChain, destChain)
     if (chainInstance?.isReceivingTempDisabled('RelayToPara')) continue
     if (getRelayChainSymbol(originChain) !== getRelayChainSymbol(destChain)) continue
 
@@ -57,7 +44,7 @@ export const generateTransferScenarios = (originChain: TSubstrateChain) => {
       if (hasSupportForAsset(destChain, asset.symbol) && !notCompatible) {
         scenarios.push({ originChain, destChain, asset })
 
-        break
+        if (!includeAll) break
       }
     }
   }
