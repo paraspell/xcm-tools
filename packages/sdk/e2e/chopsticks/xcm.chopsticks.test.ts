@@ -2,7 +2,10 @@
 import { afterAll } from 'vitest'
 import {
   getChainProviders,
-  TSubstrateChain
+  TSubstrateChain,
+  TBuilderConfig,
+  TApiOrUrl,
+  TUrl
 } from '@paraspell/sdk-core'
 
 import { Builder, SUBSTRATE_CHAINS } from '../../src'
@@ -39,8 +42,8 @@ export const createChopsticksWorker = async (chain: TSubstrateChain) => {
   return formatChopsticksAddress(server.addr)
 }
 
-export const createChopsticksBuildOptions = async () => {
-  const chainMap = Object.fromEntries(
+export const createChopsticksBuildOptions = async (): Promise<TBuilderConfig<TApiOrUrl<TUrl>>> => {
+  const chainMap: Record<TSubstrateChain, string> = Object.fromEntries(
     await Promise.all(
       filteredChains.map(async (chain) => {
         try {
@@ -52,13 +55,13 @@ export const createChopsticksBuildOptions = async () => {
         }
       })
     )
-  ) as Record<TSubstrateChain, string>
+  )
 
   return {
     development: true,
     apiOverrides: Object.fromEntries(
       Object.entries(chainMap).map(([chain, url]) => [chain, [url]])
-    ) as Record<TSubstrateChain, string[]>
+    )
   }
 }
 
@@ -85,5 +88,4 @@ generateE2eTests(
   [...filteredChains],
   false,
   chopsticksBuildOptions,
-  true
 )
