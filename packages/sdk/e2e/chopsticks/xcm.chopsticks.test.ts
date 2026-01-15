@@ -25,8 +25,6 @@ type ChopsticksInstance = {
 }
 
 const chopsticksInstances: ChopsticksInstance[] = []
-const chainsWithInvalidRpc = ["LaosPaseo", "ZeitgeistPaseo", "KiltPaseo"]
-const filteredChains = SUBSTRATE_CHAINS.filter(chain => !chainsWithInvalidRpc.includes(chain))
 
 const formatChopsticksAddress = (addr: string) => {
   return `ws://${addr}`
@@ -43,18 +41,23 @@ export const createChopsticksWorker = async (chain: TSubstrateChain) => {
 }
 
 export const createChopsticksBuildOptions = async (): Promise<TBuilderConfig<TApiOrUrl<TUrl>>> => {
+  const timeoutPromise = (ms: number) =>
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), ms))
+
   const chainMap: Record<TSubstrateChain, string> = Object.fromEntries(
-    await Promise.all(
-      filteredChains.map(async (chain) => {
-        try {
-          const address = await createChopsticksWorker(chain)
-          return [chain, address]
-        } catch (error) {
-          console.error(`Failed to create chopsticks worker for ${chain}:`, error)
+    (await Promise.all(
+      SUBSTRATE_CHAINS.map(async (chain) => {
+        const address = await Promise.race([
+          createChopsticksWorker(chain),
+          timeoutPromise(30000)
+        ])
+        if (address === null) {
+          console.error(`Chopsticks worker creation for ${chain} timed out after 30s`)
           return [chain, null]
         }
+        return [chain, address]
       })
-    )
+    )).filter(([, address]) => address !== null)
   )
 
   return {
@@ -85,7 +88,7 @@ generateE2eTests(
   evmSigner,
   validateTx,
   validateTransfer,
-  [...filteredChains],
+  [...SUBSTRATE_CHAINS],
   false,
   chopsticksBuildOptions,
 )
