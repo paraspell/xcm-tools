@@ -13,3 +13,11 @@ export const isSubstrateBridge = (origin: TChain, destination: TChain): boolean 
     ([a, b]) => (a === origin && b === destination) || (b === origin && a === destination)
   )
 }
+
+export const isSnowbridge = (_origin: TChain, destination: TChain): boolean => {
+  return isExternalChain(destination)
+}
+
+export const isBridge = (origin: TChain, destination: TChain): boolean => {
+  return isSubstrateBridge(origin, destination) || isSnowbridge(origin, destination)
+}

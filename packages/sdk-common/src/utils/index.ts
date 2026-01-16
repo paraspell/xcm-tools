@@ -1,5 +1,5 @@
+export * from './bridge'
 export * from './chain'
 export * from './deepEqual'
-export * from './isSubstrateBridge'
 export * from './location'
 export * from './replaceBigInt'

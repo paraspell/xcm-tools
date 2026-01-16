@@ -9,6 +9,7 @@ import type {
 import {
   getJunctionValue,
   isExternalChain,
+  isSnowbridge,
   isSubstrateBridge,
   PARACHAINS
 } from '@paraspell/sdk-common'
@@ -19,6 +20,7 @@ import { RoutingResolutionError } from '../../errors'
 import type { TXcmVersioned } from '../../types'
 import { type TDestination } from '../../types'
 import { addXcmVersionHeader, createX1Payload, getRelayChainOf } from '../../utils'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { resolveScenario } from '../../utils/transfer/resolveScenario'
 
 export const createDestination = (
@@ -44,6 +46,17 @@ export const createDestination = (
             Parachain: chainId
           }
         ]
+      }
+    }
+  }
+
+  const isSb = !isLocDestination && isSnowbridge(origin, destination)
+
+  if (isSb) {
+    return {
+      parents: Parents.TWO,
+      interior: {
+        X1: [getEthereumJunction(origin)]
       }
     }
   }

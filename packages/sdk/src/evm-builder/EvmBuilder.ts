@@ -89,7 +89,7 @@ export class EvmBuilderCore<
     validateAddress(api, address, to)
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
-      return transferMoonbeamToEth(this._options)
+      return transferMoonbeamToEth(from, this._options)
     }
 
     return transferMoonbeamEvm(this._options)

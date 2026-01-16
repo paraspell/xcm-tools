@@ -1,4 +1,4 @@
-import { ETH_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
+import { ETH_MAINNET_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
 import { Context } from '@snowbridge/api'
 import type { SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
 import type { AbstractProvider } from 'ethers'
@@ -14,7 +14,7 @@ export const createContext = (
     ethereum: {
       ethChainId: env.ethChainId,
       ethChains: {
-        [ETH_CHAIN_ID.toString()]: executionUrl,
+        [ETH_MAINNET_CHAIN_ID.toString()]: executionUrl,
         [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
       },
       beacon_url: config.BEACON_HTTP_API

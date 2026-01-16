@@ -31,7 +31,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   chain: TSubstrateChain,
   version: Version
 ): Promise<TSerializedExtrinsics> => {
-  const { api, assetInfo: asset, senderAddress, address, destination } = options
+  const { api, assetInfo: asset, senderAddress, address } = options
 
   const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
 
@@ -51,11 +51,13 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
 
   const nativeMythAmount = await getMythosOriginFee(api)
 
+  const hopDestination: TSubstrateChain = 'AssetHubPolkadot'
+
   return {
     module: 'PolkadotXcm',
     method: 'transfer_assets_using_type_and_then',
     params: {
-      dest: createVersionedDestination(version, chain, destination, getParaId('AssetHubPolkadot')),
+      dest: createVersionedDestination(version, chain, hopDestination, getParaId(hopDestination)),
       assets: {
         [version]: [
           createAsset(version, nativeMythAmount, {

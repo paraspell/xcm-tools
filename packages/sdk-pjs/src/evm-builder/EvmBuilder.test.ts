@@ -1,6 +1,7 @@
 import {
   type IPolkadotApi,
   type TCurrencyInputWithAmount,
+  transferMoonbeamToEth,
   UnsupportedOperationError,
   validateAddress
 } from '@paraspell/sdk-core'
@@ -59,6 +60,31 @@ describe('EvmBuilderClass', () => {
     await expect(builder.build()).rejects.toThrow(UnsupportedOperationError)
 
     expect(validateAddress).toHaveBeenCalledWith(mockApi, address, 'Ethereum')
+  })
+
+  it('should return transferMoonbeamToEth result when signer is not ethers', async () => {
+    vi.mocked(isEthersSigner).mockReturnValue(false)
+    vi.mocked(transferMoonbeamToEth).mockResolvedValue('0xmoonbeamtx')
+
+    const builder = EvmBuilder(mockApi)
+      .from('Moonbeam')
+      .to('Ethereum')
+      .currency(currency)
+      .address(address)
+      .ahAddress(address)
+      .signer(signer)
+
+    await expect(builder.build()).resolves.toBe('0xmoonbeamtx')
+
+    expect(transferMoonbeamToEth).toHaveBeenCalledWith('Moonbeam', {
+      api: mockApi,
+      from: 'Moonbeam',
+      to: 'Ethereum',
+      currency,
+      address,
+      ahAddress: address,
+      signer
+    })
   })
 
   it('should call transferMoonbeamEvm if from is Moonbeam, Moonriver, or Darwinia', async () => {

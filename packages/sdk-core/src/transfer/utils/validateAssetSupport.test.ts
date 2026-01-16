@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TDestination, TSendOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
-import { validateAssetSupport, validateEthereumAsset } from './validateAssetSupport'
+import {
+  validateAssetSupport,
+  validateEcosystems,
+  validateEthereumAsset
+} from './validateAssetSupport'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
@@ -364,5 +368,61 @@ describe('validateEthereumAsset', () => {
     expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       'is not transferable to Ethereum'
     )
+  })
+})
+
+describe('validateEcosystems', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+  })
+
+  it('returns early for location destination', () => {
+    vi.mocked(isTLocation).mockReturnValue(true)
+
+    expect(() =>
+      validateEcosystems('AssetHubPolkadot', { parents: 1, interior: { Here: null } })
+    ).not.toThrow()
+  })
+
+  it('allows Ethereum from Polkadot relay chain', () => {
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    expect(() => validateEcosystems('AssetHubPolkadot', 'Ethereum')).not.toThrow()
+  })
+
+  it('rejects Ethereum from non-Polkadot relay chains', () => {
+    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
+
+    expect(() => validateEcosystems('AssetHubPolkadot', 'Ethereum')).toThrow(InvalidCurrencyError)
+    expect(() => validateEcosystems('AssetHubPolkadot', 'Ethereum')).toThrow(
+      'Destination Ethereum is only supported from following ecosystems: Polkadot.'
+    )
+  })
+
+  it('allows EthereumTestnet from Westend or Paseo relay chains', () => {
+    vi.mocked(getRelayChainOf).mockReturnValue('Westend')
+    expect(() => validateEcosystems('AssetHubPolkadot', 'EthereumTestnet')).not.toThrow()
+
+    vi.mocked(getRelayChainOf).mockReturnValue('Paseo')
+    expect(() => validateEcosystems('AssetHubPolkadot', 'EthereumTestnet')).not.toThrow()
+  })
+
+  it('rejects EthereumTestnet from other relay chains', () => {
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    expect(() => validateEcosystems('AssetHubPolkadot', 'EthereumTestnet')).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEcosystems('AssetHubPolkadot', 'EthereumTestnet')).toThrow(
+      'Destination EthereumTestnet is only supported from following ecosystems: Westend, Paseo.'
+    )
+  })
+
+  it('does nothing for non-mapped destinations', () => {
+    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
+
+    expect(() => validateEcosystems('AssetHubKusama', 'Acala')).not.toThrow()
   })
 })

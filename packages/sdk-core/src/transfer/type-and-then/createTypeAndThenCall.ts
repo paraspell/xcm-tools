@@ -2,6 +2,7 @@ import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
+import { BridgeHaltedError } from '../../errors'
 import type {
   TPolkadotXCMTransferOptions,
   TSerializedExtrinsics,
@@ -10,6 +11,7 @@ import type {
   TTypeAndThenOverrides
 } from '../../types'
 import { createAsset, localizeLocation, parseUnits, sortAssets } from '../../utils'
+import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -52,10 +54,10 @@ const resolveSystemAssetAmount = <TApi, TRes>(
   return fees.destFee + fees.hopFees
 }
 
-export const constructTypeAndThenCall = <TApi, TRes>(
+export const constructTypeAndThenCall = async <TApi, TRes>(
   context: TTypeAndThenCallContext<TApi, TRes>,
   fees: TTypeAndThenFees | null = null
-): TSerializedExtrinsics => {
+): Promise<TSerializedExtrinsics> => {
   const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
 
   const { senderAddress, version } = options
@@ -76,7 +78,7 @@ export const constructTypeAndThenCall = <TApi, TRes>(
 
   const systemAssetAmount = resolveSystemAssetAmount(context, isForFeeCalc, resolvedFees)
 
-  const customXcm = createCustomXcm(
+  const customXcm = await createCustomXcm(
     context,
     assetCount,
     isForFeeCalc,
@@ -102,9 +104,17 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 ): Promise<TSerializedExtrinsics> => {
   const context = await createTypeAndThenCallContext(options, overrides)
 
-  const { origin, assetInfo } = context
+  const { origin, assetInfo, isSnowbridge } = context
 
-  const fees = await computeAllFees(context, (amount, relative) => {
+  if (isSnowbridge) {
+    const bridgeStatus = await getBridgeStatus(origin.api.clone())
+
+    if (bridgeStatus !== 'Normal') {
+      throw new BridgeHaltedError()
+    }
+  }
+
+  const fees = await computeAllFees(context, async (amount, relative) => {
     const overridenAmount = amount
       ? relative
         ? assetInfo.amount + parseUnits(amount, assetInfo.decimals)
@@ -113,7 +123,7 @@ export const createTypeAndThenCall = async <TApi, TRes>(
 
     return Promise.resolve(
       origin.api.deserializeExtrinsics(
-        constructTypeAndThenCall({
+        await constructTypeAndThenCall({
           ...context,
           assetInfo: {
             ...assetInfo,

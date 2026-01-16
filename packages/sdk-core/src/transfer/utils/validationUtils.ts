@@ -6,8 +6,9 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
+  isBridge,
+  isExternalChain,
   isRelayChain,
-  isSubstrateBridge,
   isTLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
@@ -47,26 +48,32 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
 
   const allowedChainsToEthereum = [
     'AssetHubPolkadot',
+    'AssetHubPaseo',
+    'AssetHubWestend',
     'Hydration',
     'BifrostPolkadot',
     'Moonbeam',
     'Mythos'
   ]
 
-  if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
+  if (
+    typeof destination === 'string' &&
+    isExternalChain(destination) &&
+    !allowedChainsToEthereum.includes(origin)
+  ) {
     throw new ScenarioNotSupportedError(
       `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
     )
   }
 
   const isLocationDestination = typeof destination === 'object'
-  const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
+  const isBridgeTransfer = !isTLocation(destination) && isBridge(origin, destination)
   const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
 
   if (!isRelayDestination && !isLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
-    if (!isBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
+    if (!isBridgeTransfer && originRelayChainSymbol !== destinationRelayChainSymbol) {
       throw new ScenarioNotSupportedError(
         'Origin and destination must share the same relay chain unless using a bridge.'
       )

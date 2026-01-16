@@ -42,6 +42,7 @@ import {
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
+  isExternalChain,
   isRelayChain,
   localizeLocation,
   MissingChainApiError,
@@ -128,7 +129,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || chain === 'Ethereum') {
+    if (this.initialized || isExternalChain(chain)) {
       return
     }
 

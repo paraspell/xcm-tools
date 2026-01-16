@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { TChain } from '@paraspell/sdk';
-import { EvmBuilder } from '@paraspell/sdk';
+import { EvmBuilder, isExternalChain } from '@paraspell/sdk';
 import {
   approveToken,
   depositToken,
@@ -193,7 +193,7 @@ const EvmTransfer = () => {
     const currencyInput = { symbol: currency?.symbol ?? '', amount };
 
     if (apiType === 'PAPI') {
-      if (from === 'Ethereum') {
+      if (isExternalChain(from)) {
         throw new Error('Snowbridge does not support PAPI yet');
       }
 

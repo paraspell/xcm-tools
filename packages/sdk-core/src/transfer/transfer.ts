@@ -2,7 +2,13 @@
 
 import type { TAssetInfo } from '@paraspell/assets'
 import { normalizeLocation } from '@paraspell/assets'
-import { isRelayChain, isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
+import {
+  isExternalChain,
+  isRelayChain,
+  isSubstrateBridge,
+  isTLocation,
+  Parents
+} from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, MissingParameterError, ScenarioNotSupportedError } from '../errors'
@@ -73,7 +79,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const resolvedVersion = selectXcmVersion(version, originVersion, destVersion)
 
   if (isRelayChain(origin)) {
-    if (destination === 'Ethereum') {
+    if (typeof destination === 'string' && isExternalChain(destination)) {
       throw new ScenarioNotSupportedError(
         'Transfers from relay chain to Ethereum are not supported.'
       )

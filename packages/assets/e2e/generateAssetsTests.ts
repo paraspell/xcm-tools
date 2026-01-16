@@ -10,7 +10,7 @@ import {
   hasSupportForAsset,
   isChainEvm
 } from '../src'
-import { CHAINS, TChain } from '@paraspell/sdk-common'
+import { CHAINS, isExternalChain, TChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 export const generateAssetsTests = () => {
@@ -31,7 +31,7 @@ export const generateAssetsTests = () => {
           expect(assetsObj).toHaveProperty('supportsDryRunApi')
         })
 
-        if (chain !== 'Ethereum') {
+        if (!isExternalChain(chain)) {
           it('should have a valid native asset symbol in nativeAssets', () => {
             const nativeSymbol = getNativeAssetSymbol(chain)
             const nativeSymbols = getNativeAssets(chain).map(a => a.symbol)
@@ -44,24 +44,16 @@ export const generateAssetsTests = () => {
         it('Every native asset should have required properties', () => {
           getNativeAssets(chain).forEach(asset => {
             expect(asset).toHaveProperty('symbol')
-            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('decimals')
             expect(asset).toHaveProperty('isNative')
-            if (
-              chain !== 'AssetHubPolkadot' &&
-              asset.symbol !== 'KSM' &&
-              chain !== 'AssetHubKusama' &&
-              asset.symbol !== 'DOT' &&
-              chain !== 'Ethereum'
-            ) {
-              expect(asset).toHaveProperty('existentialDeposit')
-            }
+            expect(asset).toHaveProperty('existentialDeposit')
           })
         })
 
         it('Every foreign asset should have required properties', () => {
           getOtherAssets(chain).forEach(asset => {
             expect(asset).toHaveProperty('symbol')
-            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('decimals')
             expect(asset).toHaveProperty('existentialDeposit')
 
             // Check that asset has either 'assetId' or 'location'
@@ -97,7 +89,7 @@ export const generateAssetsTests = () => {
       describe('getRelayChainSymbol', () => {
         it('should return string value', () => {
           const value = getRelayChainSymbol(chain)
-          expect(['KSM', 'DOT', 'WND', 'PAS']).toContain(value)
+          expect(['KSM', 'DOT', 'WND', 'PAS', 'ETH']).toContain(value)
           expect(value).toBeTypeOf('string')
         })
       })
@@ -110,7 +102,7 @@ export const generateAssetsTests = () => {
             expect(asset).toBeTypeOf('object')
             expect(asset).toHaveProperty('symbol')
             expect(asset.symbol).toBeTypeOf('string')
-            if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('decimals')
           })
         })
       })
@@ -119,20 +111,11 @@ export const generateAssetsTests = () => {
         it('should return array of other assets', () => {
           const assets = getOtherAssets(chain)
           expect(assets).toBeInstanceOf(Array)
-          const ethAssets = getOtherAssets('Ethereum')
           assets.forEach(asset => {
             expect(asset).toBeTypeOf('object')
             expect(asset).toHaveProperty('symbol')
             expect(asset.symbol).toBeTypeOf('string')
-
-            if (chain === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)) {
-            }
-
-            const isEthAssetInAhAssets =
-              chain === 'AssetHubPolkadot' && ethAssets.find(a => a.symbol === asset.symbol)
-
-            if (chain !== 'Ethereum' && !isEthAssetInAhAssets)
-              expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('decimals')
 
             // Check that asset has either 'assetId' or 'location'
             expect('assetId' in asset || 'location' in asset).toBe(true)
@@ -147,7 +130,7 @@ export const generateAssetsTests = () => {
               expect(asset).toBeTypeOf('object')
               expect(asset).toHaveProperty('symbol')
               expect(asset.symbol).toBeTypeOf('string')
-              if (chain !== 'Ethereum') expect(asset).toHaveProperty('decimals')
+              expect(asset).toHaveProperty('decimals')
             })
           })
         })
@@ -168,7 +151,7 @@ export const generateAssetsTests = () => {
             expect(symbol).toBeTypeOf('string')
           })
 
-          if (chain !== 'Ethereum') {
+          if (!isExternalChain(chain)) {
             it('should return native asset symbol from native assets', () => {
               const nativeAssets = getNativeAssets(chain)
               const symbol = getNativeAssetSymbol(chain)
