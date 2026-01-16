@@ -351,4 +351,72 @@ describe('localizeLocation', () => {
       expect(result).toEqual(input)
     })
   })
+
+  describe('external chain handling', () => {
+    it('should remove GlobalConsensus and set parents to 0 when localizing for external chain Ethereum', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
+              }
+            },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+              }
+            }
+          ]
+        }
+      }
+
+      const result = localizeLocation('Ethereum', input, 'AssetHubPolkadot')
+
+      expect(result).toEqual({
+        parents: Parents.ZERO,
+        interior: {
+          X1: [
+            {
+              AccountKey20: {
+                network: null,
+                key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+              }
+            }
+          ]
+        }
+      })
+    })
+
+    it('should keep Ethereum location unchanged when localizing for a Polkadot chain', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
+              }
+            },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+              }
+            }
+          ]
+        }
+      }
+
+      const result = localizeLocation('AssetHubPolkadot', input, 'Ethereum')
+
+      expect(result).toEqual(input)
+    })
+  })
 })

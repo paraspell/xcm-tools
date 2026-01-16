@@ -1,4 +1,4 @@
-import type { TChain } from '@paraspell/sdk-common'
+import { isExternalChain, type TChain } from '@paraspell/sdk-common'
 
 import type { TCurrencyInput } from '../../types'
 import { getNativeAssetSymbol } from '../assets'
@@ -9,7 +9,7 @@ import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
 const createSelection = (chain: TChain): TCurrencyInput => {
   const nativeSymbol = getNativeAssetSymbol(chain)
   return {
-    symbol: chain === 'Ethereum' ? nativeSymbol : Native(nativeSymbol)
+    symbol: isExternalChain(chain) ? nativeSymbol : Native(nativeSymbol)
   }
 }
 

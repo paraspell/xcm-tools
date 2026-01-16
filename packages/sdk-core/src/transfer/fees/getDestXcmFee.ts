@@ -4,7 +4,7 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
-import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { DOT_LOCATION } from '../../constants'
@@ -54,7 +54,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     : undefined
 
   const calcPaymentInfoFee = async (): Promise<bigint> => {
-    if (destination === 'Ethereum') {
+    if (isExternalChain(destination)) {
       return 0n
     }
 
@@ -95,7 +95,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     }
   }
 
-  if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {
+  if (!hasDryRunSupport(destination) || !forwardedXcms || isExternalChain(destination)) {
     const fee = await calcPaymentInfoFee()
 
     const sufficient = await isSufficientDestination(

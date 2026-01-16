@@ -12,7 +12,12 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
-import { CHAINS, isChainEvm, SUBSTRATE_CHAINS } from '@paraspell/sdk';
+import {
+  CHAINS,
+  isChainEvm,
+  isExternalChain,
+  SUBSTRATE_CHAINS,
+} from '@paraspell/sdk';
 import {
   IconChevronDown,
   IconLocationCheck,
@@ -328,7 +333,7 @@ const XcmTransferForm: FC<Props> = ({
 
   const onSwap = () => {
     const { from, to } = form.getValues();
-    if (to !== 'Ethereum') {
+    if (!isExternalChain(to)) {
       form.setFieldValue('from', to);
       form.setFieldValue('to', from);
     }

@@ -27,28 +27,28 @@ export type TJunctionParachain = {
   Parachain: TStringOrNumberOrBigInt | undefined
 }
 
-type TJunctionAccountId32 = {
+export type TJunctionAccountId32 = {
   AccountId32: {
     network?: TNetworkId
     id: THexString
   }
 }
 
-type TJunctionAccountIndex64 = {
+export type TJunctionAccountIndex64 = {
   AccountIndex64: {
     network: TNetworkId
     index: TStringOrNumberOrBigInt
   }
 }
 
-type TJunctionAccountKey20 = {
+export type TJunctionAccountKey20 = {
   AccountKey20: {
     network?: TNetworkId
     key: THexString
   }
 }
 
-type TJunctionPalletInstance = {
+export type TJunctionPalletInstance = {
   PalletInstance: TStringOrNumberOrBigInt
 }
 
@@ -56,25 +56,25 @@ export type TJunctionGeneralIndex = {
   GeneralIndex: TStringOrNumberOrBigInt
 }
 
-type TJunctionGeneralKey = {
+export type TJunctionGeneralKey = {
   GeneralKey: {
     length: TStringOrNumberOrBigInt
     data: THexString
   }
 }
 
-type TJunctionOnlyChild = {
+export type TJunctionOnlyChild = {
   OnlyChild: string
 }
 
-type TJunctionPlurality = {
+export type TJunctionPlurality = {
   Plurality: {
     id: TBodyId
     part: TBodyPart
   }
 }
 
-type TJunctionGlobalConsensus = {
+export type TJunctionGlobalConsensus = {
   GlobalConsensus: TNetworkId | object
 }
 

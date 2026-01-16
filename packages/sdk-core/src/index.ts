@@ -8,8 +8,8 @@ export * from './chains/config'
 export * from './chains/getTChain'
 export {
   DRY_RUN_CLIENT_TIMEOUT_MS,
-  ETH_CHAIN_ID,
-  ETHEREUM_JUNCTION,
+  ETH_MAINNET_CHAIN_ID,
+  ETH_TESTNET_CHAIN_ID,
   RELAY_LOCATION,
   TX_CLIENT_TIMEOUT_MS
 } from './constants'

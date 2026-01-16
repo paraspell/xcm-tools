@@ -14,7 +14,7 @@ import {
   type TAsset
 } from '@paraspell/assets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
-import type { TChain, TRelaychain, Version } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
   isExternalChain,
@@ -293,7 +293,7 @@ abstract class Parachain<TApi, TRes> {
       // Handle common cases
       const isExternalAsset = asset.location?.parents === Parents.TWO
 
-      const isEthDest = destination === 'Ethereum'
+      const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
 
       // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
       const isExternalAssetViaAh =
@@ -368,7 +368,7 @@ abstract class Parachain<TApi, TRes> {
     assetInfo: asset,
     to
   }: TSendInternalOptions<TApi, TRes>): boolean {
-    if (isTLocation(to) || isSubstrateBridge(this.chain, to) || to === 'Ethereum') return false
+    if (isTLocation(to) || isSubstrateBridge(this.chain, to) || isExternalChain(to)) return false
 
     const isAHPOrigin = this.chain.includes('AssetHub')
     const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
@@ -546,15 +546,7 @@ abstract class Parachain<TApi, TRes> {
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
-    const {
-      api,
-      assetInfo: asset,
-      version,
-      destination,
-      address,
-      senderAddress,
-      feeAssetInfo: feeAsset
-    } = input
+    const { api, assetInfo: asset, version, address, senderAddress, feeAssetInfo: feeAsset } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -615,6 +607,8 @@ abstract class Parachain<TApi, TRes> {
       customXcmOnDest = createCustomXcmOnDest(input, this.chain, messageId, ethAssetInfo)
     }
 
+    const hopDestination: TSubstrateChain = 'AssetHubPolkadot'
+
     const call: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
@@ -622,8 +616,8 @@ abstract class Parachain<TApi, TRes> {
         dest: createVersionedDestination(
           version,
           this.chain,
-          destination,
-          getParaId('AssetHubPolkadot')
+          hopDestination,
+          getParaId(hopDestination)
         ),
         assets: addXcmVersionHeader(
           [...(shouldIncludeFeeAsset ? [createAsset(version, fee, DOT_LOCATION)] : []), ethAsset],

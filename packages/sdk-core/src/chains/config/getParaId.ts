@@ -1,6 +1,6 @@
 import type { TChain } from '@paraspell/sdk-common'
 
-import { ETH_PARA_ID } from '../../constants'
+import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
 import { getChainConfig } from './getChainConfig'
 
 /**
@@ -11,7 +11,9 @@ import { getChainConfig } from './getChainConfig'
  */
 export const getParaId = (chain: TChain): number => {
   if (chain === 'Ethereum') {
-    return ETH_PARA_ID
+    return ETH_MAINNET_PARA_ID
+  } else if (chain === 'EthereumTestnet') {
+    return ETH_TESTNET_PARA_ID
   }
 
   return getChainConfig(chain).paraId

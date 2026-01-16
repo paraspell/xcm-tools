@@ -1,5 +1,5 @@
 import type { TChain } from '@paraspell/sdk';
-import { getParaId, getRelayChainOf } from '@paraspell/sdk';
+import { getParaId, getRelayChainOf, isExternalChain } from '@paraspell/sdk';
 import {
   prodRelayKusama,
   prodRelayPolkadot,
@@ -28,7 +28,7 @@ export const getParachainIcon = (chain?: TChain) => {
     return testRelayPaseo.ui.logo;
   }
 
-  if (chain === 'Ethereum') {
+  if (isExternalChain(chain)) {
     return '/ethereum.svg';
   }
 

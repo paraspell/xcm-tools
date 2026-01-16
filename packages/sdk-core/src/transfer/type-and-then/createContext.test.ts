@@ -1,5 +1,6 @@
 import { findNativeAssetInfoOrThrow, type TAssetWithLocation } from '@paraspell/assets'
 import {
+  isExternalChain,
   isRelayChain,
   isSubstrateBridge,
   isTLocation,
@@ -13,10 +14,12 @@ import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
-import { createTypeAndThenCallContext, getSubBridgeReserve } from './createContext'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { createTypeAndThenCallContext, getBridgeReserve } from './createContext'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
+  isExternalChain: vi.fn(),
   isRelayChain: vi.fn(),
   isSubstrateBridge: vi.fn(),
   isTLocation: vi.fn()
@@ -25,6 +28,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 vi.mock('@paraspell/assets')
 
 vi.mock('../../utils')
+vi.mock('../../utils/location/getEthereumJunction')
 vi.mock('../../constants', () => ({
   RELAY_LOCATION: {
     parents: 1,
@@ -32,7 +36,7 @@ vi.mock('../../constants', () => ({
   }
 }))
 
-describe('getSubBridgeReserve', () => {
+describe('getBridgeReserve', () => {
   const originChain: TSubstrateChain = 'BridgeHubPolkadot'
   const destinationChain: TSubstrateChain = 'BridgeHubKusama'
 
@@ -41,10 +45,14 @@ describe('getSubBridgeReserve', () => {
     vi.mocked(getRelayChainOf).mockImplementation(chain =>
       chain.toLowerCase().includes('kusama') ? 'Kusama' : 'Polkadot'
     )
+    vi.mocked(isExternalChain).mockReturnValue(false)
+    vi.mocked(getEthereumJunction).mockReturnValue({
+      GlobalConsensus: { Ethereum: { chainId: 1 } }
+    })
   })
 
   it('returns the origin chain when asset location is relay', () => {
-    const result = getSubBridgeReserve(originChain, destinationChain, RELAY_LOCATION)
+    const result = getBridgeReserve(originChain, destinationChain, RELAY_LOCATION)
 
     expect(result).toBe(originChain)
   })
@@ -55,9 +63,50 @@ describe('getSubBridgeReserve', () => {
       interior: { X1: { Parachain: 2000 } }
     }
 
-    const result = getSubBridgeReserve(originChain, destinationChain, parachainLocation)
+    const result = getBridgeReserve(originChain, destinationChain, parachainLocation)
 
     expect(result).toBe(originChain)
+  })
+
+  it('returns destination when external chain consensus matches location', () => {
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    const ethLocation: TLocation = {
+      parents: 2,
+      interior: {
+        X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }]
+      }
+    }
+
+    const result = getBridgeReserve(originChain, 'Ethereum', ethLocation)
+
+    expect(result).toBe('Ethereum')
+  })
+
+  it('returns origin when external chain consensus does not match location', () => {
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    const mismatchLocation: TLocation = {
+      parents: 2,
+      interior: {
+        X1: [{ GlobalConsensus: { Ethereum: { chainId: 11155111 } } }]
+      }
+    }
+
+    const result = getBridgeReserve(originChain, 'Ethereum', mismatchLocation)
+
+    expect(result).toBe(originChain)
+  })
+
+  it('returns destination when relay consensus matches location', () => {
+    const relayLocation: TLocation = {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
+    }
+
+    const result = getBridgeReserve(originChain, destinationChain, relayLocation)
+
+    expect(result).toBe(destinationChain)
   })
 })
 
@@ -125,6 +174,7 @@ describe('createTypeAndThenCallContext', () => {
       dest: { api: mockClonedApi, chain: relayDestChain },
       reserve: { api: mockClonedApi, chain: relayDestChain },
       isSubBridge: false,
+      isSnowbridge: false,
       isRelayAsset: false,
       assetInfo: mockAsset,
       systemAsset: mockSystemAsset,
@@ -145,6 +195,7 @@ describe('createTypeAndThenCallContext', () => {
       reserve: { api: mockClonedApi, chain: mockReserveChain },
       isSubBridge: false,
       isRelayAsset: false,
+      isSnowbridge: false,
       assetInfo: mockAsset,
       systemAsset: mockSystemAsset,
       options: mockOptions
