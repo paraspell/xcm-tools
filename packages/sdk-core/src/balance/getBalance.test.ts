@@ -1,5 +1,5 @@
 import { findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/assets'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -37,6 +37,8 @@ describe('getAssetBalanceInternal', () => {
 
     const initSpy = vi.spyOn(api, 'init')
 
+    vi.mocked(isExternalChain).mockReturnValueOnce(true)
+
     const result = await getBalanceModule.getAssetBalanceInternal({
       api,
       address: '0x123',
@@ -46,7 +48,7 @@ describe('getAssetBalanceInternal', () => {
 
     expect(validateAddress).toHaveBeenCalledWith(api, '0x123', 'Ethereum', false)
     expect(initSpy).toHaveBeenCalledWith('Ethereum')
-    expect(getEthErc20Balance).toHaveBeenCalledWith(asset, '0x123')
+    expect(getEthErc20Balance).toHaveBeenCalledWith('Ethereum', asset, '0x123')
     expect(isRelayChain).not.toHaveBeenCalled()
     expect(getPalletInstance).not.toHaveBeenCalled()
     expect(getChain).not.toHaveBeenCalled()

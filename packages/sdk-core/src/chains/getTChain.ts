@@ -1,6 +1,7 @@
 import type { TChain, TExternalChain, TRelaychain } from '@paraspell/sdk-common'
 import { PARACHAINS } from '@paraspell/sdk-common'
 
+import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID, RELAYCHAIN_PARA_ID } from '../constants'
 import { getChain } from '../utils'
 import { getParaId } from './config'
 
@@ -14,13 +15,10 @@ export const getTChain = (
   paraId: number,
   ecosystem: TRelaychain | TExternalChain
 ): TChain | null => {
-  if (paraId === 0) {
-    return ecosystem
-  }
+  if (paraId === RELAYCHAIN_PARA_ID) return ecosystem
 
-  if (paraId === 1) {
-    return 'Ethereum'
-  }
+  if (paraId === ETH_MAINNET_PARA_ID) return 'Ethereum'
+  if (paraId === ETH_TESTNET_PARA_ID) return 'EthereumTestnet'
 
   return (
     PARACHAINS.find(

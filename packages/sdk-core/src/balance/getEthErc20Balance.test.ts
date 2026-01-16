@@ -47,7 +47,7 @@ describe('getEthErc20Balance', () => {
     const expectedBalance = 1234567890n
     mockReadContract.mockResolvedValue(expectedBalance)
 
-    const result = await getEthErc20Balance(asset, MOCK_WALLET_ADDRESS)
+    const result = await getEthErc20Balance('Ethereum', asset, MOCK_WALLET_ADDRESS)
 
     expect(result).toBe(expectedBalance)
     expect(mockReadContract).toHaveBeenCalledWith({
@@ -68,7 +68,7 @@ describe('getEthErc20Balance', () => {
 
     mockGetBalance.mockResolvedValue(expectedBalance)
 
-    const result = await getEthErc20Balance(asset, MOCK_WALLET_ADDRESS)
+    const result = await getEthErc20Balance('Ethereum', asset, MOCK_WALLET_ADDRESS)
 
     expect(result).toBe(expectedBalance)
     expect(mockGetBalance).toHaveBeenCalledWith({ address: MOCK_WALLET_ADDRESS })
@@ -78,7 +78,7 @@ describe('getEthErc20Balance', () => {
   it('should throw if foreign asset is missing assetId', async () => {
     const asset = { symbol: 'MISSING' } as TAssetInfo
 
-    await expect(() => getEthErc20Balance(asset, MOCK_WALLET_ADDRESS)).rejects.toThrow(
+    await expect(() => getEthErc20Balance('Ethereum', asset, MOCK_WALLET_ADDRESS)).rejects.toThrow(
       InvalidCurrencyError
     )
   })

@@ -6,8 +6,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION, RELAY_LOCATION } from '../../constants'
+import { BridgeHaltedError } from '../../errors'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
+import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
@@ -23,6 +25,7 @@ vi.mock('./utils')
 vi.mock('./computeFees')
 vi.mock('./buildTypeAndThenCall')
 vi.mock('../../utils')
+vi.mock('../getBridgeStatus')
 
 describe('createTypeAndThenCall', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown>
@@ -33,7 +36,7 @@ describe('createTypeAndThenCall', () => {
     method: 'mockMethod',
     params: {}
   }
-  const mockCustomXcm: ReturnType<typeof createCustomXcm> = []
+  const mockCustomXcm: Awaited<ReturnType<typeof createCustomXcm>> = []
   const mockRefundInstruction = { SetAppendix: [] } as ReturnType<typeof createRefundInstruction>
   const mockAsset: TAsset = { id: RELAY_LOCATION, fun: { Fungible: 1000n } }
   const mockSystemAsset: TAssetInfo = {
@@ -72,11 +75,13 @@ describe('createTypeAndThenCall', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockApi.deserializeExtrinsics = vi.fn()
+    mockApi.clone = vi.fn().mockReturnValue(mockApi)
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
-    vi.mocked(createCustomXcm).mockReturnValue(mockCustomXcm)
+    vi.mocked(createCustomXcm).mockResolvedValue(mockCustomXcm)
     vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
+    vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
@@ -177,8 +182,23 @@ describe('createTypeAndThenCall', () => {
     )
   })
 
-  it('should resolve system asset amount when calculating fees', () => {
-    const result = constructTypeAndThenCall(mockContext)
+  it('throws BridgeHaltedError when snowbridge is halted', async () => {
+    const snowbridgeContext = {
+      ...mockContext,
+      isSnowbridge: true
+    }
+
+    vi.mocked(createTypeAndThenCallContext).mockResolvedValue(snowbridgeContext)
+    vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
+
+    await expect(createTypeAndThenCall(mockContext.options)).rejects.toBeInstanceOf(
+      BridgeHaltedError
+    )
+    expect(getBridgeStatus).toHaveBeenCalledWith(mockApi.clone())
+  })
+
+  it('should resolve system asset amount when calculating fees', async () => {
+    const result = await constructTypeAndThenCall(mockContext)
 
     expect(result).toBe(mockSerializedCall)
     expect(parseUnits).toHaveBeenCalledWith('1', 12)
@@ -217,7 +237,7 @@ describe('createTypeAndThenCall', () => {
     expect(spy).toHaveBeenCalledWith(mockSerializedCall)
   })
 
-  it('creates refund instruction when senderAddress provided', () => {
+  it('creates refund instruction when senderAddress provided', async () => {
     const contextWithSender = {
       ...mockContext,
       options: {
@@ -226,7 +246,7 @@ describe('createTypeAndThenCall', () => {
       }
     }
 
-    constructTypeAndThenCall(contextWithSender, mockFees)
+    await constructTypeAndThenCall(contextWithSender, mockFees)
 
     expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, 'refund-address', mockVersion, 2)
     expect(createCustomXcm).toHaveBeenCalledWith(
@@ -239,7 +259,7 @@ describe('createTypeAndThenCall', () => {
     )
   })
 
-  it('should pass through overriddenAsset when it is an array', () => {
+  it('should pass through overriddenAsset when it is an array', async () => {
     const overriddenAssets: TAssetWithFee[] = [
       {
         id: DOT_LOCATION,
@@ -262,7 +282,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
-    const result = constructTypeAndThenCall(contextWithOverriddenArray, mockFees)
+    const result = await constructTypeAndThenCall(contextWithOverriddenArray, mockFees)
 
     expect(result).toBe(mockSerializedCall)
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
@@ -276,7 +296,7 @@ describe('createTypeAndThenCall', () => {
     expect(sortAssets).not.toHaveBeenCalled()
   })
 
-  it('should wrap overriddenAsset when it is a location', () => {
+  it('should wrap overriddenAsset when it is a location', async () => {
     const overriddenLocation = {
       parents: 1,
       interior: { X1: { Parachain: 2000 } }
@@ -295,7 +315,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
-    const result = constructTypeAndThenCall(contextWithOverriddenLocation, mockFees)
+    const result = await constructTypeAndThenCall(contextWithOverriddenLocation, mockFees)
 
     expect(result).toBe(mockSerializedCall)
     expect(createAsset).toHaveBeenCalledTimes(1)

@@ -1,4 +1,5 @@
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
+import { isExternalChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetXcmFeeEstimateOptions, TGetXcmFeeEstimateResult } from '../../types/TXcmFee'
@@ -89,10 +90,9 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
     ? { location: originAsset.location, amount }
     : { symbol: originAsset.symbol, amount }
 
-  const destinationFee =
-    destination === 'Ethereum'
-      ? 0n
-      : await getReverseTxFee({ ...options, api: destApi, destination }, currencyInput)
+  const destinationFee = isExternalChain(destination)
+    ? 0n
+    : await getReverseTxFee({ ...options, api: destApi, destination }, currencyInput)
 
   const destinationSufficient = await isSufficientDestination(
     destApi,

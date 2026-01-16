@@ -4,6 +4,7 @@ import {
   findNativeAssetInfoOrThrow,
   type TAssetInfo
 } from '@paraspell/assets'
+import { isExternalChain } from '@paraspell/sdk-common'
 
 import type { TResolveHopParams } from '../../types'
 import { getRelayChainOf } from '../../utils'
@@ -20,7 +21,8 @@ export const resolveHopAsset = <TApi, TRes>({
   currency
 }: TResolveHopParams<TApi, TRes>): TAssetInfo => {
   const isRelayAssetIncluded = api.getTypeThenAssetCount(tx) === 2
-  const useRelayAssetAsFee = destination === 'Ethereum' || isRelayAssetIncluded
+  const useRelayAssetAsFee =
+    (typeof destination === 'string' && isExternalChain(destination)) || isRelayAssetIncluded
 
   if (useRelayAssetAsFee) {
     return findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))

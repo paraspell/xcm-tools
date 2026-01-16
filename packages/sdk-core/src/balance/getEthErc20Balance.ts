@@ -1,6 +1,8 @@
 import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
+import type { TExternalChain } from '@paraspell/sdk-common'
+import type { Chain } from 'viem'
 import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { mainnet, sepolia } from 'viem/chains'
 
 import { assertHasId } from '../utils'
 
@@ -15,11 +17,22 @@ const ERC20_ABI = [
 ] as const
 
 const ETHEREUM_RPC_URL = 'https://ethereum.publicnode.com/'
+const ETHEREUM_TESTNET_RPC_URL = 'https://ethereum-sepolia-rpc.publicnode.com/'
 
-export const getEthErc20Balance = async (asset: TAssetInfo, address: string): Promise<bigint> => {
+const resolveClientValues = (chain: TExternalChain): [Chain, string] => {
+  if (chain === 'Ethereum') return [mainnet, ETHEREUM_RPC_URL]
+  return [sepolia, ETHEREUM_TESTNET_RPC_URL]
+}
+
+export const getEthErc20Balance = async (
+  chain: TExternalChain,
+  asset: TAssetInfo,
+  address: string
+): Promise<bigint> => {
+  const [config, url] = resolveClientValues(chain)
   const client = createPublicClient({
-    chain: mainnet,
-    transport: http(ETHEREUM_RPC_URL)
+    chain: config,
+    transport: http(url)
   })
 
   assertHasId(asset)

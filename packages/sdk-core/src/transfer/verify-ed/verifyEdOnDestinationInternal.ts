@@ -6,7 +6,7 @@ import {
   normalizeSymbol
 } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
-import { isSubstrateBridge } from '@paraspell/sdk-common'
+import { isExternalChain, isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { DryRunFailedError, ScenarioNotSupportedError, UnableToComputeError } from '../../errors'
@@ -35,7 +35,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
 ) => {
   const { api, buildTx, origin, destination, currency, address, senderAddress, feeAsset } = options
 
-  if (destination === 'Ethereum') return true
+  if (isExternalChain(destination)) return true
 
   validateAddress(api, address, destination, true)
 

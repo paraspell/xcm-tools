@@ -3,17 +3,24 @@ import { assetRegistryFor } from '@snowbridge/registry'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { Parents } from '@paraspell/sdk-common'
 
+type SnowbridgeNetwork = Parameters<typeof assetRegistryFor>[0]
+
+const GC_JUNCTION = (chainId: number) => ({
+  GlobalConsensus: { Ethereum: { chainId } }
+})
+
 const ED_ETH = '15000000000000'
 const DEFAULT_ED = '1'
 
-export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
-  const registry = assetRegistryFor('polkadot_mainnet')
+export const fetchEthereumAssetsForNetwork = async (
+  network: SnowbridgeNetwork
+): Promise<TAssetInfo[]> => {
+  const registry = assetRegistryFor(network)
+
   const ethereumChainId = registry.ethChainId
   const snowbridgeAssets = registry.ethereumChains[ethereumChainId].assets
 
-  const gcJunction = { GlobalConsensus: { Ethereum: { chainId: 1 } } }
-
-  const assets: TAssetInfo[] = Object.values(snowbridgeAssets).map(asset => ({
+  return Object.values(snowbridgeAssets).map(asset => ({
     symbol: asset.symbol,
     assetId: asset.token,
     decimals: asset.decimals,
@@ -23,21 +30,40 @@ export const fetchEthereumAssets = async (): Promise<TChainAssetsInfo> => {
       interior:
         asset.symbol === 'ETH'
           ? {
-              X1: [gcJunction]
+              X1: [GC_JUNCTION(ethereumChainId)]
             }
           : {
-              X2: [gcJunction, { AccountKey20: { network: null, key: asset.token } }]
+              X2: [
+                GC_JUNCTION(ethereumChainId),
+                { AccountKey20: { network: null, key: asset.token } }
+              ]
             }
     }
   }))
+}
+
+export const fetchEthereumAssets = async (
+  networks: SnowbridgeNetwork[]
+): Promise<TChainAssetsInfo> => {
+  const assets = (
+    await Promise.all(networks.map(network => fetchEthereumAssetsForNetwork(network)))
+  ).flat()
+
+  const seenAssetIds = new Set<string>()
+  const dedupedAssets = assets.filter(asset => {
+    if (!asset.assetId) return true
+    if (seenAssetIds.has(asset.assetId)) return false
+    seenAssetIds.add(asset.assetId)
+    return true
+  })
 
   return {
     isEVM: true,
     ss58Prefix: DEFAULT_SS58_PREFIX,
     supportsDryRunApi: false,
     supportsXcmPaymentApi: false,
-    relaychainSymbol: 'DOT',
+    relaychainSymbol: 'ETH',
     nativeAssetSymbol: 'ETH',
-    assets
+    assets: dedupedAssets
   }
 }

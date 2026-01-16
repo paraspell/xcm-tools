@@ -1,5 +1,5 @@
 import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 
 import { getPalletInstance } from '../pallets'
 import type { TGetAssetBalanceOptions, TGetBalanceOptions } from '../types'
@@ -17,7 +17,7 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
   await api.init(chain)
 
   // TODO: Refactor this by creating an Ethereum chain class
-  if (chain === 'Ethereum') return getEthErc20Balance(asset, address)
+  if (isExternalChain(chain)) return getEthErc20Balance(chain, asset, address)
 
   // TODO: Refactor this by creating a Relaychain class
   if (isRelayChain(chain)) {

@@ -1,23 +1,22 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { getNativeAssetSymbol, InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
+import { InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { hasJunction, isTLocation, Parents, Version } from '@paraspell/sdk-common'
+import { hasJunction, Parents, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION, ETHEREUM_JUNCTION } from '../../constants'
-import { BridgeHaltedError, InvalidAddressError } from '../../errors'
+import { DOT_LOCATION } from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createDestination, createVersionedDestination } from '../../pallets/xcmPallet/utils'
-import { getBridgeStatus } from '../../transfer/getBridgeStatus'
+import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation } from '../../utils/location'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import Parachain from '../Parachain'
@@ -37,17 +36,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
   ): Promise<TRes> {
     const { api, version, destination, senderAddress, address, paraIdTo, assetInfo: asset } = input
 
-    const bridgeStatus = await getBridgeStatus(api.clone())
-
-    if (bridgeStatus !== 'Normal') {
-      throw new BridgeHaltedError()
-    }
-
     assertSenderAddress(senderAddress)
-
-    if (isTLocation(address)) {
-      throw new InvalidAddressError('Location address is not supported for Ethereum transfers')
-    }
 
     assertHasLocation(asset)
 
@@ -56,7 +45,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       senderAddress,
       getParaId(this.chain),
       JSON.stringify(asset.location),
-      address,
+      JSON.stringify(address),
       asset.amount
     )
 
@@ -71,7 +60,7 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
           this.chain,
           destination,
           paraIdTo,
-          ETHEREUM_JUNCTION,
+          getEthereumJunction(this.chain),
           Parents.TWO
         ),
         assets: addXcmVersionHeader([createAsset(version, asset.amount, location)], version),
@@ -103,48 +92,10 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
     return api.deserializeExtrinsics(call)
   }
 
-  public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, destination, paraIdTo, address, assetInfo: asset, version } = input
-
-    const bridgeStatus = await getBridgeStatus(api.clone())
-
-    if (bridgeStatus !== 'Normal') {
-      throw new BridgeHaltedError()
-    }
-
-    assertHasLocation(asset)
-
-    if (
-      asset.symbol === this.getNativeAssetSymbol() ||
-      asset.symbol === getNativeAssetSymbol('Kusama')
-    ) {
-      return this.handleEthBridgeNativeTransfer(input)
-    }
-
-    const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
-      ...input,
-      destLocation: createDestination(
-        this.version,
-        this.chain,
-        destination,
-        paraIdTo,
-        ETHEREUM_JUNCTION,
-        Parents.TWO
-      ),
-      beneficiaryLocation: createBeneficiaryLocation({
-        api,
-        address: address,
-        version: this.version
-      }),
-      asset: createAsset(version, asset.amount, asset.location)
-    }
-    return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
-  }
-
   async transferPolkadotXCM<TApi, TRes>(
     options: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, assetInfo, destination, feeAssetInfo, overriddenAsset } = options
+    const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
 
     if (feeAssetInfo) {
       if (overriddenAsset) {
@@ -161,10 +112,6 @@ class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPol
       if (!isNativeAsset || !isNativeFeeAsset) {
         return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, options))
       }
-    }
-
-    if (destination === 'Ethereum') {
-      return this.handleEthBridgeTransfer(options)
     }
 
     return transferPolkadotXcm(options)

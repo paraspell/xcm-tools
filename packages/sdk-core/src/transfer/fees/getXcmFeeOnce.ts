@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
+import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
@@ -235,8 +235,9 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   // Handle case where we failed before reaching destination
   let destFee: bigint | undefined = 0n
   let destAsset: TAssetInfo | undefined
-  let destFeeType: TFeeType | undefined =
-    destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
+  let destFeeType: TFeeType | undefined = isExternalChain(destination)
+    ? 'noFeeRequired'
+    : 'paymentInfo'
   let destDryRunError: string | undefined
   let destDryRunSubError: string | undefined
   let destSufficient: boolean | undefined = undefined

@@ -791,7 +791,7 @@ exports[`XCM - e2e > Auto API create > should create transfer tx from Acala to A
 
 exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from AssetHubPolkadot to Ethereum 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "params": {
     "assets": {
@@ -835,27 +835,54 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -875,7 +902,42 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
         "parents": 2,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -885,7 +947,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - AAVE from 
 
 exports[`XCM - e2e > Ethereum transfers > should create transfer tx - CGT2.0 from AssetHubPolkadot to Ethereum 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "params": {
     "assets": {
@@ -929,27 +991,54 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - CGT2.0 fro
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -969,7 +1058,42 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - CGT2.0 fro
         "parents": 2,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -979,7 +1103,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - CGT2.0 fro
 
 exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from AssetHubPolkadot to Ethereum 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "params": {
     "assets": {
@@ -1023,27 +1147,54 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from A
         },
       ],
     },
-    "beneficiary": {
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
       "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
+      "value": [
+        {
+          "type": "DepositAsset",
           "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
               },
-              "network": undefined,
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
             },
           },
         },
-        "parents": 0,
-      },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
     },
     "dest": {
       "type": "V5",
@@ -1063,7 +1214,42 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from A
         "parents": 2,
       },
     },
-    "fee_asset_item": 0,
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
     "weight_limit": {
       "type": "Unlimited",
     },
@@ -1073,7 +1259,7 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - DAI from A
 
 exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from AssetHubPolkadot to Ethereum 1`] = `
 {
-  "method": "transfer_assets",
+  "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
   "params": {
     "assets": {
@@ -1102,2083 +1288,12 @@ exports[`XCM - e2e > Ethereum transfers > should create transfer tx - ETH from A
         },
       ],
     },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - EURC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KILT from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LBTC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LDO from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PEPE from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SHIB from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SKY from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TBTC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TONCOIN from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TRAC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDT from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WBTC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WETH from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - XRT from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - sUSDS from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - sUSDe from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - tBTC from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Ethereum transfers > should create transfer tx - wstETH from AssetHubPolkadot to Ethereum 1`] = `
-{
-  "method": "transfer_assets",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X2",
-              "value": [
-                {
-                  "type": "GlobalConsensus",
-                  "value": {
-                    "type": "Ethereum",
-                    "value": {
-                      "chain_id": 1n,
-                    },
-                  },
-                },
-                {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              ],
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
-    "beneficiary": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "AccountKey20",
-            "value": {
-              "key": FixedSizeBinary {
-                "asBytes": [Function],
-                "asHex": [Function],
-                "asOpaqueBytes": [Function],
-                "asOpaqueHex": [Function],
-                "asText": [Function],
-              },
-              "network": undefined,
-            },
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "GlobalConsensus",
-            "value": {
-              "type": "Ethereum",
-              "value": {
-                "chain_id": 1n,
-              },
-            },
-          },
-        },
-        "parents": 2,
-      },
-    },
-    "fee_asset_item": 0,
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X1",
-              "value": {
-                "type": "GlobalConsensus",
-                "value": {
-                  "type": "Kusama",
-                },
-              },
-            },
-            "parents": 2,
-          },
-        },
-      ],
-    },
     "assets_transfer_type": {
       "type": "DestinationReserve",
     },
     "custom_xcm_on_dest": {
       "type": "V5",
       "value": [
-        {
-          "type": "BuyExecution",
-          "value": {
-            "fees": {
-              "fun": {
-                "type": "Fungible",
-                "value": 996786729248n,
-              },
-              "id": {
-                "interior": {
-                  "type": "Here",
-                  "value": null,
-                },
-                "parents": 1,
-              },
-            },
-            "weight_limit": {
-              "type": "Unlimited",
-            },
-          },
-        },
         {
           "type": "DepositAsset",
           "value": {
@@ -3193,9 +1308,9 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
               "interior": {
                 "type": "X1",
                 "value": {
-                  "type": "AccountId32",
+                  "type": "AccountKey20",
                   "value": {
-                    "id": FixedSizeBinary {
+                    "key": FixedSizeBinary {
                       "asBytes": [Function],
                       "asHex": [Function],
                       "asOpaqueBytes": [Function],
@@ -3210,25 +1325,32 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
             },
           },
         },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
       ],
     },
     "dest": {
       "type": "V5",
       "value": {
         "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "GlobalConsensus",
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
               "value": {
-                "type": "Kusama",
+                "chain_id": 1n,
               },
             },
-            {
-              "type": "Parachain",
-              "value": 1000,
-            },
-          ],
+          },
         },
         "parents": 2,
       },
@@ -3244,7 +1366,10 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
           "value": {
             "type": "GlobalConsensus",
             "value": {
-              "type": "Kusama",
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
             },
           },
         },
@@ -3258,7 +1383,3283 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
 }
 `;
 
-exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT) 2`] = `
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - EURC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - KILT from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LBTC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LDO from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - LINK from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - MYTH from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - PEPE from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SHIB from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - SKY from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TBTC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TONCOIN from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - TRAC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - USDT from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WBTC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - WETH from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - XRT from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - sUSDS from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - sUSDe from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - tBTC from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Ethereum transfers > should create transfer tx - wstETH from AssetHubPolkadot to Ethereum 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "GlobalConsensus",
+                  "value": {
+                    "type": "Ethereum",
+                    "value": {
+                      "chain_id": 1n,
+                    },
+                  },
+                },
+                {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              ],
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+        {
+          "type": "SetTopic",
+          "value": FixedSizeBinary {
+            "asBytes": [Function],
+            "asHex": [Function],
+            "asOpaqueBytes": [Function],
+            "asOpaqueHex": [Function],
+            "asText": [Function],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Ethereum",
+              "value": {
+                "chain_id": 1n,
+              },
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Ethereum",
+                "value": {
+                  "chain_id": 1n,
+                },
+              },
+            },
+            {
+              "type": "AccountKey20",
+              "value": {
+                "key": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
@@ -3298,7 +4699,7 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
             "fees": {
               "fun": {
                 "type": "Fungible",
-                "value": 999976138738n,
+                "value": 999976107482n,
               },
               "id": {
                 "interior": {
@@ -3516,6 +4917,140 @@ exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx A
           "type": "Here",
         },
         "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Polkadot Kusama bridge > should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (KSM) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X1",
+              "value": {
+                "type": "GlobalConsensus",
+                "value": {
+                  "type": "Kusama",
+                },
+              },
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "BuyExecution",
+          "value": {
+            "fees": {
+              "fun": {
+                "type": "Fungible",
+                "value": 997049699313n,
+              },
+              "id": {
+                "interior": {
+                  "type": "Here",
+                  "value": null,
+                },
+                "parents": 1,
+              },
+            },
+            "weight_limit": {
+              "type": "Unlimited",
+            },
+          },
+        },
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "GlobalConsensus",
+              "value": {
+                "type": "Kusama",
+              },
+            },
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+          ],
+        },
+        "parents": 2,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Kusama",
+            },
+          },
+        },
+        "parents": 2,
       },
     },
     "weight_limit": {
@@ -8763,7 +10298,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999890699n,
+                      "value": 999999893846n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -11611,348 +13146,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Altair > ParaToPara > should 
               "type": "AccountId32",
               "value": {
                 "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to Altair - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 1,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2088,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to AssetHubKusama - (USDT) 1`] = `
-{
-  "method": "transfer_multiasset",
-  "module": "XTokens",
-  "params": {
-    "asset": {
-      "type": "V3",
-      "value": {
-        "fun": {
-          "type": "Fungible",
-          "value": 1000000000000n,
-        },
-        "id": {
-          "type": "Concrete",
-          "value": {
-            "interior": {
-              "type": "X3",
-              "value": [
-                {
-                  "type": "Parachain",
-                  "value": 1000,
-                },
-                {
-                  "type": "PalletInstance",
-                  "value": 50,
-                },
-                {
-                  "type": "GeneralIndex",
-                  "value": 1984n,
-                },
-              ],
-            },
-            "parents": 1,
-          },
-        },
-      },
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 1000,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to Basilisk - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 1,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2090,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to BifrostKusama - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 1,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2001,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to Karura - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 1,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2000,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to Kintsugi - (USDT) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 1,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2092,
-            },
-            {
-              "type": "AccountId32",
-              "value": {
-                "id": FixedSizeBinary {
-                  "asBytes": [Function],
-                  "asHex": [Function],
-                  "asOpaqueBytes": [Function],
-                  "asOpaqueHex": [Function],
-                  "asText": [Function],
-                },
-                "network": undefined,
-              },
-            },
-          ],
-        },
-        "parents": 1,
-      },
-    },
-    "dest_weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Amplitude > ParaToPara > should create transfer tx from Amplitude to Moonriver - (PICA) 1`] = `
-{
-  "method": "transfer",
-  "module": "XTokens",
-  "params": {
-    "amount": 1000000000000n,
-    "currency_id": {
-      "type": "XCM",
-      "value": 2,
-    },
-    "dest": {
-      "type": "V3",
-      "value": {
-        "interior": {
-          "type": "X2",
-          "value": [
-            {
-              "type": "Parachain",
-              "value": 2023,
-            },
-            {
-              "type": "AccountKey20",
-              "value": {
-                "key": FixedSizeBinary {
                   "asBytes": [Function],
                   "asHex": [Function],
                   "asOpaqueBytes": [Function],
@@ -17155,193 +18348,7 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > should cre
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to BridgeHubWestend - (WND) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "Teleport",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V5",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountId32",
-                  "value": {
-                    "id": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1002,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "Teleport",
-    },
-    "remote_fees_id": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 1,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to CollectivesWestend - (WND) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "Teleport",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V5",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountId32",
-                  "value": {
-                    "id": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 1001,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "Teleport",
-    },
-    "remote_fees_id": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 1,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to CoretimeWestend - (WND) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (USDT) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
@@ -17434,7 +18441,100 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (USDT) 1`] = `
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (USDT) 2`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "Teleport",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1002,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "Teleport",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (USDT) 3`] = `
 {
   "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",
@@ -17538,6 +18638,99 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
           ],
         },
         "parents": 0,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (USDT) 4`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "Teleport",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1001,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "Teleport",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
       },
     },
     "weight_limit": {
@@ -18036,7 +19229,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999890678n,
+                      "value": 999999893846n,
                     },
                     "id": {
                       "interior": {
@@ -18617,7 +19810,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999890678n,
+                      "value": 999999893846n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -24828,7 +26021,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884523n,
+                      "value": 999999889563n,
                     },
                     "id": {
                       "interior": {
@@ -25365,7 +26558,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884523n,
+                      "value": 999999889563n,
                     },
                     "id": {
                       "interior": {
@@ -26402,7 +27595,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999890678n,
+                      "value": 999999893846n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -26887,7 +28080,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884523n,
+                      "value": 999999889563n,
                     },
                     "id": {
                       "interior": {
@@ -28344,7 +29537,7 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884523n,
+                      "value": 999999889563n,
                     },
                     "id": {
                       "interior": {
@@ -37145,7 +38338,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884518n,
+                      "value": 999999889560n,
                     },
                     "id": {
                       "interior": {
@@ -37481,7 +38674,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884458n,
+                      "value": 999999889503n,
                     },
                     "id": {
                       "interior": {
@@ -37899,7 +39092,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884458n,
+                      "value": 999999889503n,
                     },
                     "id": {
                       "interior": {
@@ -38927,7 +40120,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884458n,
+                      "value": 999999889503n,
                     },
                     "id": {
                       "interior": {
@@ -39370,7 +40563,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884458n,
+                      "value": 999999889503n,
                     },
                     "id": {
                       "type": "Concrete",
@@ -40792,7 +41985,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   "fees": {
                     "fun": {
                       "type": "Fungible",
-                      "value": 999999884458n,
+                      "value": 999999889503n,
                     },
                     "id": {
                       "interior": {
@@ -42991,6 +44184,74 @@ exports[`XCM - e2e > Transfer scenarios for origin Interlay > ParaToPara > shoul
             {
               "type": "Parachain",
               "value": 2000,
+            },
+            {
+              "type": "AccountId32",
+              "value": {
+                "id": FixedSizeBinary {
+                  "asBytes": [Function],
+                  "asHex": [Function],
+                  "asOpaqueBytes": [Function],
+                  "asOpaqueHex": [Function],
+                  "asText": [Function],
+                },
+                "network": undefined,
+              },
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "dest_weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Interlay > ParaToPara > should create transfer tx from Interlay to AssetHubPolkadot - (HDX) 1`] = `
+{
+  "method": "transfer_multiasset",
+  "module": "XTokens",
+  "params": {
+    "asset": {
+      "type": "V3",
+      "value": {
+        "fun": {
+          "type": "Fungible",
+          "value": 1000000000000n,
+        },
+        "id": {
+          "type": "Concrete",
+          "value": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 2034,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 0n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
             },
             {
               "type": "AccountId32",
@@ -47087,99 +48348,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Kusama > ParaToPara > should 
   "module": "XcmPallet",
   "params": {
     "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 0,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V5",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2023,
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "remote_fees_id": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 0,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Kusama > ParaToPara > should create transfer tx from Kusama to Amplitude - (KSM) 2`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "XcmPallet",
-  "params": {
-    "assets": {
       "type": "V3",
       "value": [
         {
@@ -47342,6 +48510,99 @@ exports[`XCM - e2e > Transfer scenarios for origin Kusama > ParaToPara > should 
           "value": {
             "type": "Parachain",
             "value": 2090,
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 0,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Kusama > ParaToPara > should create transfer tx from Kusama to Basilisk - (KSM) 2`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "XcmPallet",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2023,
           },
         },
         "parents": 0,
@@ -57915,99 +59176,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
       ],
     },
     "assets_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V5",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2004,
-          },
-        },
-        "parents": 0,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "remote_fees_id": {
-      "type": "V5",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 0,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > should create transfer tx from Polkadot to Collectives - (DOT) 2`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "XcmPallet",
-  "params": {
-    "assets": {
-      "type": "V5",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 0,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
       "type": "Teleport",
     },
     "custom_xcm_on_dest": {
@@ -58639,6 +59807,99 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
           },
           "parents": 0,
         },
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > should create transfer tx from Polkadot to Manta - (DOT) 2`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "XcmPallet",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2004,
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 0,
       },
     },
     "weight_limit": {
@@ -60221,6 +61482,99 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
   "module": "PolkadotXcm",
   "params": {
     "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 1000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": FixedSizeBinary {
+                      "asBytes": [Function],
+                      "asHex": [Function],
+                      "asOpaqueBytes": [Function],
+                      "asOpaqueHex": [Function],
+                      "asText": [Function],
+                    },
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2004,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 0,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to BridgeHubKusama - (KSM) 2`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
       "type": "V5",
       "value": [
         {
@@ -61514,99 +62868,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should 
 `;
 
 exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Moonriver - (SDN) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 1000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 0,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V4",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": FixedSizeBinary {
-                      "asBytes": [Function],
-                      "asHex": [Function],
-                      "asOpaqueBytes": [Function],
-                      "asOpaqueHex": [Function],
-                      "asText": [Function],
-                    },
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2004,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "remote_fees_id": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 0,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Shiden > ParaToPara > should create transfer tx from Shiden to Moonriver - (SDN) 2`] = `
 {
   "method": "transfer_assets_using_type_and_then",
   "module": "PolkadotXcm",

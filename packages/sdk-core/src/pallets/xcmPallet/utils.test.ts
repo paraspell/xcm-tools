@@ -1,3 +1,4 @@
+import type { TChain } from '@paraspell/sdk-common'
 import {
   isExternalChain,
   isSubstrateBridge,
@@ -40,6 +41,29 @@ describe('XcmPallet utils', () => {
         parents: Parents.TWO,
         interior: {
           X2: [{ GlobalConsensus: 'Kusama' }, { Parachain: chainId }]
+        }
+      })
+    })
+
+    it('creates snowbridge destination location with ethereum junction', () => {
+      const origin: TSubstrateChain = 'BridgeHubPolkadot'
+      const destination: TChain = 'Ethereum'
+      const chainId = 1
+
+      vi.mocked(isSubstrateBridge).mockReturnValue(false)
+      vi.mocked(isExternalChain).mockReturnValue(false)
+      vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+      const location = createDestination(Version.V5, origin, destination, chainId)
+
+      expect(location).toEqual({
+        parents: Parents.TWO,
+        interior: {
+          X1: [
+            {
+              GlobalConsensus: { Ethereum: { chainId: BigInt(chainId) } }
+            }
+          ]
         }
       })
     })

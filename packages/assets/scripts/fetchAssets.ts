@@ -425,8 +425,8 @@ export const fetchAllChainsAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
 
   console.log(`Fetching assets for Ethereum...`)
-  const ethereumData = await fetchEthereumAssets()
-  output['Ethereum'] = ethereumData
+  output['Ethereum'] = await fetchEthereumAssets(['polkadot_mainnet'])
+  output['EthereumTestnet'] = await fetchEthereumAssets(['paseo_sepolia', 'westend_sepolia'])
 
   for (const [chain, query] of typedEntries(chainToQuery)) {
     console.log(`Fetching assets for ${chain}...`)

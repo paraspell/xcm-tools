@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import { isExternalChain, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
@@ -128,7 +128,7 @@ export const addEthereumBridgeFees = async <TApi, TRes, TResult extends { fee?: 
   destination: TChain,
   assetHubChain: TSubstrateChain
 ): Promise<TResult | undefined> => {
-  if (!bridgeHubResult || !('fee' in bridgeHubResult) || destination !== 'Ethereum') {
+  if (!bridgeHubResult || !('fee' in bridgeHubResult) || !isExternalChain(destination)) {
     return bridgeHubResult
   }
 
