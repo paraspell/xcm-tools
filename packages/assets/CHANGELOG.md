@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.3](https://github.com/paraspell/xcm-tools/compare/assets-v12.2.2...assets-v12.2.3) (2026-01-17)
+
+
+### Code Refactoring
+
+* **sdk-core:** Migrate all transfers to tautat where available 🪄 ([23bc7f5](https://github.com/paraspell/xcm-tools/commit/23bc7f5d189f8e84deba11b6f2d0d78bff3f27c5))
+
 ## [12.2.2](https://github.com/paraspell/xcm-tools/compare/assets-v12.2.1...assets-v12.2.2) (2026-01-13)
 
 
