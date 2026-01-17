@@ -105,7 +105,7 @@ export class EvmBuilderCore<
         )
       }
 
-      return transferMoonbeamToEth({ ...this._options, signer: signer })
+      return transferMoonbeamToEth(from, { ...this._options, signer: signer })
     }
 
     if (from === 'Moonbeam' || from === 'Moonriver' || from === 'Darwinia') {

@@ -35,6 +35,7 @@ import {
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   isConfig,
+  isExternalChain,
   localizeLocation,
   RELAY_LOCATION,
   RuntimeApiUnavailableError,
@@ -98,7 +99,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || chain === 'Ethereum') {
+    if (this.initialized || isExternalChain(chain)) {
       return
     }
 

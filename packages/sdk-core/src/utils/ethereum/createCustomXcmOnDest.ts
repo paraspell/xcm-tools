@@ -1,17 +1,17 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { getNativeAssetSymbol, isChainEvm } from '@paraspell/assets'
-import type { TChain, TLocation } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sdk-common'
 
-import { ETHEREUM_JUNCTION } from '../../constants'
 import { MissingParameterError, UnsupportedOperationError } from '../../errors'
 import type { TAddress } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId, assertHasLocation, assertSenderAddress } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
+import { getEthereumJunction } from '../location/getEthereumJunction'
 
 const createMainInstruction = (
-  origin: TChain,
+  origin: TSubstrateChain,
   asset: TAssetInfo,
   ethAsset: TAssetInfo,
   address: TAddress,
@@ -72,6 +72,8 @@ const createMainInstruction = (
     }
   ]
 
+  const ethJunction = getEthereumJunction(origin)
+
   if (isAssetNativeToPolkadot) {
     const assetEcosystem = RELAYCHAINS.find(chain =>
       asset.symbol.includes(getNativeAssetSymbol(chain))
@@ -88,7 +90,7 @@ const createMainInstruction = (
         },
         dest: {
           parents: Parents.TWO,
-          interior: { X1: [ETHEREUM_JUNCTION] }
+          interior: { X1: [ethJunction] }
         },
         xcm: commonXcm({
           parents: Parents.ONE,
@@ -109,7 +111,7 @@ const createMainInstruction = (
       },
       reserve: {
         parents: Parents.TWO,
-        interior: { X1: [ETHEREUM_JUNCTION] }
+        interior: { X1: [ethJunction] }
       },
       xcm: commonXcm({
         parents: Parents.ZERO,
@@ -128,7 +130,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     ahAddress,
     version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  origin: TChain,
+  origin: TSubstrateChain,
   messageId: string,
   ethAsset: TAssetInfo
 ) => {

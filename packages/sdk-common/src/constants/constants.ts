@@ -89,7 +89,7 @@ export const SUBSTRATE_CHAINS = [...PARACHAINS, ...RELAYCHAINS] as const
 /**
  * External chains (non-Substrate/Polkadot ecosystem chains).
  */
-export const EXTERNAL_CHAINS = ['Ethereum'] as const
+export const EXTERNAL_CHAINS = ['Ethereum', 'EthereumTestnet'] as const
 
 /**
  * All supported chains.

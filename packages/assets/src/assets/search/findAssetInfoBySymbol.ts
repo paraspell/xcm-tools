@@ -1,4 +1,4 @@
-import { deepEqual, getJunctionValue, type TChain } from '@paraspell/sdk-common'
+import { deepEqual, getJunctionValue, isExternalChain, type TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
@@ -81,7 +81,7 @@ export const findAssetInfoBySymbol = (
 
       let otherAssetsMatches: TAssetInfo[] = []
 
-      if (destination === 'Ethereum') {
+      if (destination && isExternalChain(destination)) {
         return findEthMatch(value, otherAssets)
       }
 
@@ -131,7 +131,7 @@ export const findAssetInfoBySymbol = (
     let otherAssetsMatches: TAssetInfo[] = []
     let nativeAssetsMatches: TAssetInfo[] = []
 
-    if (destination === 'Ethereum') {
+    if (destination && isExternalChain(destination)) {
       return findEthMatch(symbol, otherAssets)
     }
 

@@ -1,6 +1,6 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
-import type { TLocation } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -97,9 +97,11 @@ describe('transferMoonbeamToEth', () => {
     assetId: '0xethAssetId'
   }
 
+  const from: TSubstrateChain = 'Moonbeam'
+
   const baseOptions = {
     api: mockApi,
-    from: 'Moonbeam',
+    from,
     to: 'Ethereum',
     address: '0xmockedAddress',
     ahAddress: '0xmockedAhAddress',
@@ -118,7 +120,7 @@ describe('transferMoonbeamToEth', () => {
 
   it('should throw error for missing AssetHub address', async () => {
     await expect(
-      transferMoonbeamToEth({
+      transferMoonbeamToEth(from, {
         ...baseOptions,
         ahAddress: undefined
       })
@@ -127,7 +129,7 @@ describe('transferMoonbeamToEth', () => {
 
   it('should throw error for multiple currencies', async () => {
     await expect(
-      transferMoonbeamToEth({
+      transferMoonbeamToEth(from, {
         ...baseOptions,
         currency: [] as unknown as TCurrencyInputWithAmount
       })
@@ -137,7 +139,7 @@ describe('transferMoonbeamToEth', () => {
   it('should throw error for override location', async () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     await expect(
-      transferMoonbeamToEth({
+      transferMoonbeamToEth(from, {
         ...baseOptions,
         currency: { location: { type: 'override' } } as unknown as TCurrencyInputWithAmount
       })
@@ -151,14 +153,14 @@ describe('transferMoonbeamToEth', () => {
         throw new Error('Asset {"symbol":"WETH"} not found on Ethereum')
       })
 
-    await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(
+    await expect(transferMoonbeamToEth(from, baseOptions)).rejects.toThrow(
       'Asset {"symbol":"WETH"} not found on Ethereum'
     )
   })
 
   describe('successful transfers', () => {
     it('should work with viem signer', async () => {
-      const result = await transferMoonbeamToEth({
+      const result = await transferMoonbeamToEth(from, {
         ...baseOptions,
         signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
       })
@@ -171,14 +173,14 @@ describe('transferMoonbeamToEth', () => {
   })
 
   it('should handle messageId generation correctly', async () => {
-    await transferMoonbeamToEth({
+    await transferMoonbeamToEth(from, {
       ...baseOptions,
       signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
     })
   })
 
   it('should construct XCM parameters correctly', async () => {
-    await transferMoonbeamToEth({
+    await transferMoonbeamToEth(from, {
       ...baseOptions,
       signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
     })
@@ -187,7 +189,7 @@ describe('transferMoonbeamToEth', () => {
   it('should throw BridgeHaltedError when bridge status is not normal', async () => {
     vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
     await expect(
-      transferMoonbeamToEth({
+      transferMoonbeamToEth(from, {
         ...baseOptions,
         signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
       })

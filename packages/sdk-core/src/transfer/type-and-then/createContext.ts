@@ -1,7 +1,10 @@
 import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
+import type { TChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
+  isExternalChain,
+  isSnowbridge,
   isSubstrateBridge,
   type TLocation,
   type TSubstrateChain
@@ -19,29 +22,36 @@ import {
   getAssetReserveChain,
   getRelayChainOf
 } from '../../utils'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
-export const getSubBridgeReserve = (
+export const getBridgeReserve = (
   chain: TSubstrateChain,
-  destination: TSubstrateChain,
+  destination: TChain,
   location: TLocation
-): TSubstrateChain => {
-  const destRelay = getRelayChainOf(destination).toLowerCase()
-  const isDestReserve = deepEqual(getJunctionValue(location, 'GlobalConsensus'), {
-    [destRelay]: null
-  })
-  if (isDestReserve) return destination
-  return chain
+): TChain => {
+  const isExternal = isExternalChain(destination)
+
+  const destRelay = isExternal ? destination : getRelayChainOf(destination).toLowerCase()
+
+  const expectedConsensus = isExternal
+    ? getEthereumJunction(chain, false).GlobalConsensus
+    : { [destRelay]: null }
+
+  const isDestReserve = deepEqual(getJunctionValue(location, 'GlobalConsensus'), expectedConsensus)
+
+  return isDestReserve ? destination : chain
 }
 
 const resolveReserveChain = (
   chain: TSubstrateChain,
-  destination: TSubstrateChain,
+  destination: TChain,
   assetLocation: TLocation,
   isSubBridge: boolean,
+  isSnowbridge: boolean,
   overrideReserve?: TSubstrateChain
-): TSubstrateChain => {
-  if (isSubBridge) {
-    return getSubBridgeReserve(chain, destination, assetLocation)
+): TChain => {
+  if (isSubBridge || isSnowbridge) {
+    return getBridgeReserve(chain, destination, assetLocation)
   }
 
   if (overrideReserve !== undefined) {
@@ -62,12 +72,14 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
 
   const destinationChain = destination as TSubstrateChain
   const isSubBridge = isSubstrateBridge(chain, destinationChain)
+  const isSb = isSnowbridge(chain, destinationChain)
 
   const reserveChain = resolveReserveChain(
     chain,
     destinationChain,
     assetInfo.location,
     isSubBridge,
+    isSb,
     overrides.reserveChain
   )
 
@@ -122,6 +134,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes>(
       chain: reserveChain
     },
     isSubBridge,
+    isSnowbridge: isSb,
     isRelayAsset,
     assetInfo,
     options,

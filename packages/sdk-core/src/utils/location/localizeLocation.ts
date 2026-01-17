@@ -32,7 +32,7 @@ export const localizeLocation = (
   const originRelay =
     origin && !isExternalChain(origin) ? getRelayChainOf(origin).toLowerCase() : undefined
 
-  const locationConsensus = getJunctionValue<Record<string, null> | undefined>(
+  const locationConsensus = getJunctionValue<Record<string, unknown> | undefined>(
     location,
     'GlobalConsensus'
   )
@@ -51,6 +51,9 @@ export const localizeLocation = (
   const junctionCount = junctions.length
 
   const isLocationOnTargetRelay = targetRelay !== undefined && locationRelay === targetRelay
+
+  // Check if target is an external chain and location's GlobalConsensus matches it
+  const isLocationOnTargetExternal = isExternalChain(chain) && locationRelay === chain.toLowerCase()
 
   if (!origin && locationRelay && targetRelay && locationRelay !== targetRelay) {
     return location
@@ -75,7 +78,10 @@ export const localizeLocation = (
     const paraId = getParaId(chain)
 
     const filteredJunctions = junctions.filter(junction => {
-      if ('GlobalConsensus' in junction && isLocationOnTargetRelay) {
+      if (
+        'GlobalConsensus' in junction &&
+        (isLocationOnTargetRelay || isLocationOnTargetExternal)
+      ) {
         return false
       }
 
@@ -142,7 +148,10 @@ export const localizeLocation = (
     } as TLocation
   }
 
-  const shouldSetParentsToZero = parachainRemoved || (newInterior === 'Here' && isRelayChain(chain))
+  const shouldSetParentsToZero =
+    parachainRemoved ||
+    (newInterior === 'Here' && isRelayChain(chain)) ||
+    isLocationOnTargetExternal
 
   return {
     parents: shouldSetParentsToZero ? Parents.ZERO : location.parents,

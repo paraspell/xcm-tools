@@ -5,6 +5,7 @@ import {
   GeneralBuilder,
   getBridgeStatus,
   getParaEthTransferFees,
+  isExternalChain,
   SUBSTRATE_CHAINS,
   TChain,
   TSendBaseOptions,
@@ -70,7 +71,11 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    if (fromChain === 'Hydration' && toChain === 'Ethereum' && !senderAddress) {
+    if (
+      fromChain === 'Hydration' &&
+      isExternalChain(toChain) &&
+      !senderAddress
+    ) {
       throw new BadRequestException(
         'Sender address is required when transferring to Ethereum.',
       );

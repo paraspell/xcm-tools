@@ -1,5 +1,5 @@
 import { findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/assets'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -36,6 +36,8 @@ describe('getAssetBalanceInternal', () => {
     vi.mocked(getEthErc20Balance).mockResolvedValueOnce(123n)
 
     const initSpy = vi.spyOn(api, 'init')
+
+    vi.mocked(isExternalChain).mockReturnValueOnce(true)
 
     const result = await getBalanceModule.getAssetBalanceInternal({
       api,

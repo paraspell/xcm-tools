@@ -3,7 +3,7 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
-import { isRelayChain } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import {
@@ -87,7 +87,8 @@ export class GeneralBuilder<
    * @returns An instance of Builder
    */
   to(chain: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
-    if (this._options.from && isRelayChain(this._options.from) && chain === 'Ethereum') {
+    const from = this._options.from
+    if (from && isRelayChain(from) && typeof chain !== 'object' && isExternalChain(chain)) {
       throw new ScenarioNotSupportedError(
         'Transfers from relay chain to Ethereum are not yet supported.'
       )

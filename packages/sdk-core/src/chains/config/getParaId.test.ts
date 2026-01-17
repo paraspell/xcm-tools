@@ -1,13 +1,12 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
+import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
 import type { TChainConfig } from '../../types'
 import { getChainConfig } from './getChainConfig'
 import { getParaId } from './getParaId'
 
-vi.mock('./getChainConfig', () => ({
-  getChainConfig: vi.fn()
-}))
+vi.mock('./getChainConfig')
 
 describe('getParaId', () => {
   it('should return the correct paraId for a valid chain', () => {
@@ -40,8 +39,13 @@ describe('getParaId', () => {
     expect(getChainConfig).toHaveBeenCalledWith(mockChains)
   })
 
-  it('should handle Ethereum with a paraId of 1', () => {
+  it('should return Ethereum paraId', () => {
     const result = getParaId('Ethereum')
-    expect(result).toBe(1)
+    expect(result).toBe(ETH_MAINNET_PARA_ID)
+  })
+
+  it('should return Ethereum testnet paraId', () => {
+    const result = getParaId('EthereumTestnet')
+    expect(result).toBe(ETH_TESTNET_PARA_ID)
   })
 })

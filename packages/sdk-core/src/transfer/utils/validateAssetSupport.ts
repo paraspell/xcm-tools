@@ -7,11 +7,12 @@ import {
   isStableCoinAsset,
   type TAssetInfo
 } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
   isExternalChain,
+  isSnowbridge,
   isTLocation,
   Parents,
   replaceBigInt
@@ -20,6 +21,7 @@ import {
 import { RELAY_LOCATION } from '../../constants'
 import type { TDestination, TSendOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
 const validateBridgeAsset = (
   origin: TSubstrateChain,
@@ -49,12 +51,40 @@ const validateBridgeAsset = (
   }
 }
 
+export const validateEcosystems = (origin: TSubstrateChain, destination: TDestination) => {
+  if (isTLocation(destination)) return
+
+  const relayChain = getRelayChainOf(origin)
+
+  const destinationToRelayChains: Partial<Record<TChain, TRelaychain[]>> = {
+    Ethereum: ['Polkadot'],
+    EthereumTestnet: ['Westend', 'Paseo']
+  }
+
+  const allowedRelayChains = destinationToRelayChains[destination]
+  if (!allowedRelayChains) return
+
+  if (!allowedRelayChains.includes(relayChain)) {
+    throw new InvalidCurrencyError(
+      `Destination ${destination} is only supported from following ecosystems: ${allowedRelayChains.join(', ')}.`
+    )
+  }
+}
+
 export const validateEthereumAsset = (
   origin: TSubstrateChain,
   destination: TDestination,
   asset: TAssetInfo | null
 ) => {
-  if (!asset || destination !== 'Ethereum' || origin === 'Mythos') return
+  if (
+    !asset ||
+    (!isTLocation(destination) && !isSnowbridge(origin, destination)) ||
+    origin === 'Mythos'
+  ) {
+    return
+  }
+
+  validateEcosystems(origin, destination)
 
   const ADDITIONAL_ALLOWED_LOCATIONS = [
     RELAY_LOCATION,
@@ -66,11 +96,10 @@ export const validateEthereumAsset = (
 
   const isEthCompatibleAsset =
     (asset.location?.parents === Parents.TWO &&
-      deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
-        Ethereum: {
-          chainId: 1
-        }
-      })) ||
+      deepEqual(
+        getJunctionValue(asset.location, 'GlobalConsensus'),
+        getEthereumJunction(origin, false).GlobalConsensus
+      )) ||
     ADDITIONAL_ALLOWED_LOCATIONS.some(loc => deepEqual(asset.location, loc))
 
   if (!isEthCompatibleAsset) {

@@ -1,4 +1,4 @@
-import { ETH_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
+import { ETH_MAINNET_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
 import { Context } from '@snowbridge/api'
 import type { Config, SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
 import { describe, expect, it, vi } from 'vitest'
@@ -50,7 +50,7 @@ describe('createContext', () => {
       ethereum: {
         ethChainId: mockEnv.ethChainId,
         ethChains: {
-          [ETH_CHAIN_ID.toString()]: executionUrl,
+          [ETH_MAINNET_CHAIN_ID.toString()]: executionUrl,
           [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
         },
         beacon_url: mockConfig.BEACON_HTTP_API

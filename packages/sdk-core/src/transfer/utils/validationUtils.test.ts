@@ -5,6 +5,8 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
+  isBridge,
+  isExternalChain,
   isRelayChain,
   isSubstrateBridge,
   isTLocation,
@@ -85,11 +87,14 @@ describe('validateDestination', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(isExternalChain).mockReturnValue(false)
   })
 
   it('should throw ScenarioNotSupportedError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
     origin = 'Acala'
     destination = 'Ethereum'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
 
     expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
   })
@@ -146,7 +151,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isSubstrateBridge).mockReturnValue(true)
+    vi.mocked(isBridge).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -166,6 +171,8 @@ describe('validateDestination', () => {
   it('should throw ScenarioNotSupportedError when origin is undefined and destination is Ethereum', () => {
     origin = undefined as unknown as TParachain
     destination = 'Ethereum'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
 
     expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
   })

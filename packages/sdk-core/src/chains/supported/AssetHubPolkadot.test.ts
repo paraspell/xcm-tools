@@ -1,7 +1,6 @@
 import {
   getNativeAssetSymbol,
   getOtherAssets,
-  InvalidCurrencyError,
   normalizeSymbol,
   type TAsset
 } from '@paraspell/assets'
@@ -10,10 +9,7 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
-import { BridgeHaltedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -37,9 +33,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
   hasJunction: vi.fn()
 }))
 
-vi.mock('../../transfer/getBridgeStatus')
 vi.mock('../../utils/location')
-vi.mock('../../utils/ethereum/generateMessageId')
 vi.mock('../../pallets/xcmPallet/utils')
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../transfer')
@@ -76,7 +70,6 @@ describe('AssetHubPolkadot', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     chain = getChain<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
-    vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(normalizeSymbol).mockImplementation(sym => (sym ?? '').toUpperCase())
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
@@ -86,86 +79,6 @@ describe('AssetHubPolkadot', () => {
     expect(chain.info).toBe('PolkadotAssetHub')
     expect(chain.ecosystem).toBe('Polkadot')
     expect(chain.version).toBe(Version.V5)
-  })
-
-  describe('handleEthBridgeTransfer', () => {
-    it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([])
-
-      await expect(chain.handleEthBridgeTransfer(mockInput)).rejects.toThrow(InvalidCurrencyError)
-    })
-
-    it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
-
-      vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
-
-      await expect(chain.handleEthBridgeTransfer(mockInput)).rejects.toThrow(BridgeHaltedError)
-    })
-
-    it('should process a valid ETH transfer', async () => {
-      const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
-      vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
-
-      const input = {
-        ...mockInput,
-        assetInfo: { symbol: 'ETH', assetId: '0x123', location: {} },
-        destination: 'Ethereum'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      const result = await chain.handleEthBridgeTransfer(input)
-
-      expect(result).toStrictEqual(mockExtrinsic)
-      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
-    })
-  })
-
-  describe('handleEthBridgeNativeTransfer', () => {
-    it('should throw if the address is location', async () => {
-      const input = {
-        ...mockInput,
-        address: DOT_LOCATION
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      await expect(chain.handleEthBridgeNativeTransfer(input)).rejects.toThrow(
-        'Location address is not supported for Ethereum transfers'
-      )
-    })
-
-    it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([])
-
-      await expect(chain.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrow(
-        InvalidCurrencyError
-      )
-    })
-
-    it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', decimals: 18, assetId: '0x123' }])
-
-      vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
-
-      await expect(chain.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrow(
-        BridgeHaltedError
-      )
-    })
-
-    it('should process a valid AH native asset to ETH transfer', async () => {
-      const mockEthAsset = { symbol: 'ETH', decimals: 18, assetId: '0x123' }
-      vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
-
-      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue('success')
-
-      const input = {
-        ...mockInput,
-        assetInfo: { symbol: 'ETH', assetId: '0x123', location: {} },
-        destination: 'Ethereum'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const result = await chain.handleEthBridgeNativeTransfer(input)
-
-      expect(result).toEqual('success')
-      expect(spy).toHaveBeenCalledTimes(1)
-    })
   })
 
   describe('transferPolkadotXcm', () => {
@@ -220,16 +133,6 @@ describe('AssetHubPolkadot', () => {
         expect(handleExecuteTransfer).not.toHaveBeenCalled()
         expect(transferPolkadotXcm).toHaveBeenCalled()
       })
-    })
-
-    it('should call handleEthBridgeTransfer when destination is Ethereum', async () => {
-      mockInput.destination = 'Ethereum'
-
-      const spy = vi.spyOn(chain, 'handleEthBridgeTransfer').mockResolvedValue({} as unknown)
-
-      await chain.transferPolkadotXCM(mockInput)
-
-      expect(spy).toHaveBeenCalledWith(mockInput)
     })
   })
 

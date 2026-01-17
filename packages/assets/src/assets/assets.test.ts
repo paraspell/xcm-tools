@@ -1,6 +1,6 @@
 // Contains tests for different Asset operation functions
 
-import { CHAINS } from '@paraspell/sdk-common'
+import { CHAINS, isExternalChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -63,7 +63,7 @@ describe('getNativeAssets', () => {
   it('should return native assets for all chains', () => {
     CHAINS.forEach(chain => {
       const assets = getNativeAssets(chain)
-      if (chain !== 'Ethereum') expect(assets.length).toBeGreaterThan(0)
+      if (!isExternalChain(chain)) expect(assets.length).toBeGreaterThan(0)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
         expect(asset).toHaveProperty('symbol')
