@@ -1,5 +1,22 @@
 # Changelog
 
+## [12.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.2.2...sdk-core-v12.3.0) (2026-01-19)
+
+
+### Features
+
+* Add support for Westend, Paseo snowbridge ↔ ([d3954d5](https://github.com/paraspell/xcm-tools/commit/d3954d539a1f5348c140e5e31d955d5e66dad055))
+
+
+### Code Refactoring
+
+* **sdk-core:** Migrate all transfers to tautat where available 🪄 ([23bc7f5](https://github.com/paraspell/xcm-tools/commit/23bc7f5d189f8e84deba11b6f2d0d78bff3f27c5))
+
+
+### Tests
+
+* **sdk:** Add e2e tests with Chopsticks 🧪 ([675f795](https://github.com/paraspell/xcm-tools/commit/675f795a69b94adcdd111dab720237867162d0d2))
+
 ## [12.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.2.1...sdk-core-v12.2.2) (2026-01-13)
 
 

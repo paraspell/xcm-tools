@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.2.2...xcm-api-v12.3.0) (2026-01-19)
+
+
+### Features
+
+* Add support for Westend, Paseo snowbridge ↔ ([d3954d5](https://github.com/paraspell/xcm-tools/commit/d3954d539a1f5348c140e5e31d955d5e66dad055))
+
 ## [12.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.2.1...xcm-api-v12.2.2) (2026-01-13)
 
 
