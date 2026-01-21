@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 
 import type { TNavItem } from '../../types';
 import classes from './FloatingTabs.module.css';

@@ -1,7 +1,7 @@
 import type { TRelaychain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { createContext, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import { decodeEcosystem } from '../../routes/urlFilters';
 

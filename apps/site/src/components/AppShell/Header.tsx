@@ -10,7 +10,7 @@ import {
 import { GithubIcon } from "@mantinex/dev-icons";
 import { IconChevronDown } from "@tabler/icons-react";
 import type { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import classes from "./Header.module.css";
 import { links } from "./links";

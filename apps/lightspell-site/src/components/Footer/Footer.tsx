@@ -9,7 +9,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { links } from "../AppShell/links";
 import classes from "./Footer.module.css";

@@ -47,7 +47,7 @@
     "react": "^19.2.3",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.2.3",
-    "react-router-dom": "^7.11.0",
+    "react-router": "^7.11.0",
     "viem": "2.40.3",
     "web3": "^4.16.0",
     "web3-validator": "^2.0.6",

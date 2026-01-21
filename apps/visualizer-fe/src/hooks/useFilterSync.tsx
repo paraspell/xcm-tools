@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import { useSelectedEcosystem } from '../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
