@@ -64,7 +64,7 @@ export const Footer = () => {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="sm">
-          © 2025 lightspell.xyz · Powered by{" "}
+          © 2026 lightspell.xyz · Powered by{" "}
           <Anchor
             href="https://www.netlify.com"
             target="_blank"

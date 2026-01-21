@@ -551,8 +551,16 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
 
 ## Supported by
 
-<div>
-  <div align="center" style="margin-top: 20px;">
-      <img width="750" alt="version" src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c" />
-  </div>
-</div>
+<p align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://github.com/user-attachments/assets/88d41183-6e04-47a7-9931-a7d9de043a3e"
+    >
+    <img
+      width="750"
+      alt="version"
+      src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c"
+    />
+  </picture>
+</p>

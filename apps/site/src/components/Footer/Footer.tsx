@@ -107,7 +107,7 @@ export const Footer = () => {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="sm">
-          © 2025 paraspell.xyz · Powered by{" "}
+          © 2026 paraspell.xyz · Powered by{" "}
           <Anchor
             href="https://www.netlify.com"
             target="_blank"
