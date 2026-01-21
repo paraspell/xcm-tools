@@ -19,11 +19,13 @@ import type {
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
+  TPaymentInfo,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
   TUrl,
-  TWeight
+  TWeight,
+  Version
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
@@ -51,7 +53,6 @@ import {
   RELAY_LOCATION,
   replaceBigInt,
   RuntimeApiUnavailableError,
-  Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { withLegacy } from '@polkadot-api/legacy-provider'
@@ -203,6 +204,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api.getUnsafeApi().tx[module][method](transformedParams)
   }
 
+  async txFromHex(hex: string): Promise<TPapiTransaction> {
+    const callData = Binary.fromHex(hex)
+    return this.api.getUnsafeApi().txFromCallData(callData)
+  }
+
   queryState<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
     return this.api.getUnsafeApi().query[module][method].getValue(...params.map(transform))
   }
@@ -231,12 +237,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .tx.Utility.dispatch_as({ as_origin: origin, call: call.decodedCall })
   }
 
-  async objectToHex(obj: unknown) {
+  async objectToHex(obj: unknown, _typeName: string, version: Version) {
     const transformedObj = transform(obj)
 
     const tx = this.api.getUnsafeApi().tx.PolkadotXcm.send({
       dest: {
-        type: Version.V4,
+        type: version,
         value: {
           parents: Parents.ZERO,
           interior: {
@@ -289,8 +295,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return tx.decodedCall.value.value.assets.value.length
   }
 
-  async calculateTransactionFee(tx: TPapiTransaction, address: string) {
-    return tx.getEstimatedFees(address)
+  async getPaymentInfo(tx: TPapiTransaction, address: string): Promise<TPaymentInfo> {
+    const {
+      partial_fee,
+      weight: { proof_size, ref_time }
+    } = await tx.getPaymentInfo(address)
+
+    return {
+      partialFee: partial_fee,
+      weight: {
+        proofSize: proof_size,
+        refTime: ref_time
+      }
+    }
   }
 
   async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
@@ -364,6 +381,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       address,
       feeAsset,
       bypassOptions,
+      version,
       useRootOrigin = false
     } = options
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
@@ -371,8 +389,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
-
-    const DEFAULT_XCM_VERSION = 3
 
     const basePayload = {
       type: 'system',
@@ -399,7 +415,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const performDryRunCall = async (includeVersion: boolean): Promise<any> => {
       const callArgs: any[] = [basePayload, resolvedTx.decodedCall]
       if (includeVersion) {
-        callArgs.push(DEFAULT_XCM_VERSION)
+        const versionNum = Number(version.charAt(1))
+        callArgs.push(versionNum)
       }
       return this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(...callArgs)
     }
@@ -523,18 +540,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
-      const getPaymentInfoWeight = async () => {
-        const { weight } = await tx.getPaymentInfo(address)
-        return weight
-      }
-
-      const overriddenWeight = !result.value.local_xcm ? await getPaymentInfoWeight() : undefined
+      const overriddenWeight = !result.value.local_xcm
+        ? (await this.getPaymentInfo(tx, address)).weight
+        : undefined
 
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         result.value.local_xcm,
         forwardedXcms,
         resolvedFeeAsset.asset,
+        version,
         false,
         overriddenWeight
       )
@@ -553,7 +568,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       }
     }
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
+    const { partialFee: executionFee } = await this.getPaymentInfo(tx, address)
     const fee = computeFeeFromDryRun(result, chain, executionFee, !!feeAsset)
 
     return Promise.resolve({
@@ -583,7 +598,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     chain: TSubstrateChain,
     forwardedXcm: any[],
     asset: TAssetInfo,
-    assetLocalizedLoc: TLocation
+    assetLocalizedLoc: TLocation,
+    version: Version
   ): Promise<bigint> {
     const xcmPaymentApi = this.api.getUnsafeApi().apis.XcmPaymentApi
 
@@ -602,7 +618,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         // with a generic "Cannot read properties of undefined".
         if (message.includes('Cannot read properties of undefined')) {
           usedThirdParam = true
-          const transformedAssetLoc = transform(addXcmVersionHeader(assetLocalizedLoc, Version.V4))
+          const transformedAssetLoc = transform(addXcmVersionHeader(assetLocalizedLoc, version))
           deliveryFeeRes = await xcmPaymentApi.query_delivery_fees(...baseArgs, transformedAssetLoc)
         } else {
           throw e
@@ -644,8 +660,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     localXcm: any,
     forwardedXcm: any,
     asset: TAssetInfo,
+    version: Version,
     transformXcm = false,
-    overridenWeight?: object
+    overridenWeight?: TWeight
   ): Promise<bigint> {
     const transformedXcm = transformXcm ? transform(localXcm) : localXcm
 
@@ -656,7 +673,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return weightRes.value
     }
 
-    const weight = overridenWeight ?? (await queryWeight())
+    const weight = overridenWeight
+      ? { proof_size: overridenWeight?.proofSize, ref_time: overridenWeight?.refTime }
+      : await queryWeight()
 
     assertHasLocation(asset)
 
@@ -667,7 +686,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const execFeeRes = await this.api
       .getUnsafeApi()
       .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, {
-        type: Version.V4,
+        type: version,
         value: transformedAssetLoc
       })
 
@@ -678,14 +697,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       execFeeRes?.success === false &&
       execFeeRes?.value?.type === 'AssetNotFound'
     ) {
-      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset)
+      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset, version)
 
       if (typeof bridgeHubExecFee === 'bigint') {
         execFee = bridgeHubExecFee
       }
     }
 
-    const deliveryFee = await this.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+    const deliveryFee = await this.getDeliveryFee(
+      chain,
+      forwardedXcm,
+      asset,
+      assetLocalizedLoc,
+      version
+    )
 
     return execFee + deliveryFee
   }
@@ -693,12 +718,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getBridgeHubFallbackExecFee(
     chain: TSubstrateChain,
     weightValue: any,
-    asset: TAssetInfo
+    asset: TAssetInfo,
+    version: Version
   ): Promise<bigint | undefined> {
     const fallbackExecFeeRes = await this.api
       .getUnsafeApi()
       .apis.XcmPaymentApi.query_weight_to_asset_fee(weightValue, {
-        type: Version.V4,
+        type: version,
         value: transform(RELAY_LOCATION)
       })
 
@@ -737,7 +763,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     asset,
     feeAsset,
     originFee,
-    amount
+    amount,
+    version
   }: TDryRunXcmBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
 
@@ -775,7 +802,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           : forwardedXcms[0].value.interior.value.value
 
     if (hasXcmPaymentApiSupport(chain) && asset) {
-      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset)
+      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
         return {

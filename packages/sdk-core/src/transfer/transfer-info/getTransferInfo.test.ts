@@ -6,7 +6,7 @@ import {
   isAssetEqual,
   isChainEvm
 } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import { type TChain, type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -75,6 +75,7 @@ describe('getTransferInfo', () => {
       senderAddress: 'senderAlice',
       ahAddress: 'ahBob',
       address: 'receiverCharlie',
+      version: Version.V5,
       currency: {
         symbol: 'DOT',
         amount: 10000000000n,
@@ -164,6 +165,7 @@ describe('getTransferInfo', () => {
       address: options.address,
       currency: options.currency,
       feeAsset: options.feeAsset,
+      version: options.version,
       disableFallback: false
     })
     expect(buildDestInfo).toHaveBeenCalled()

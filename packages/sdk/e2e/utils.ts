@@ -38,7 +38,11 @@ export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) =
 }
 
 export const validateTransfer = async (
-  builder: GeneralBuilder<TPapiApi, TPapiTransaction, TSendBaseOptionsWithSenderAddress>,
+  builder: GeneralBuilder<
+    TPapiApi,
+    TPapiTransaction,
+    TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+  >,
   signer: PolkadotSigner
 ) => {
   const tx = await builder.build()

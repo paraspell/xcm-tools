@@ -15,7 +15,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
   defaultTx: TRes
 ): Promise<TRes> => {
-  const { api, destination, address, senderAddress, assetInfo: asset, currency } = input
+  const { api, destination, address, senderAddress, assetInfo: asset, currency, version } = input
 
   assertToIsString(destination, 'Location destination is not supported for AH teleport.')
 
@@ -32,7 +32,8 @@ export const handleToAhTeleport = async <TApi, TRes>(
     destination,
     senderAddress: senderAddress,
     address,
-    currency
+    currency,
+    version
   })
 
   // Default transaction is good to go, no need to use execute
@@ -57,6 +58,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
     destination,
     senderAddress: senderAddress,
     address,
+    version,
     currency: currency as WithAmount<TCurrencyCore>,
     disableFallback: false,
     useRootOrigin: true

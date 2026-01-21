@@ -17,7 +17,7 @@ const mockApi = {
 const createBuilder = () =>
   ({
     createTxFactory: vi.fn(() => vi.fn())
-  }) as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions>
+  }) as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
 
 const createSendOptions = (
   overrides: Partial<TBatchedSendOptions<unknown, unknown>> = {}

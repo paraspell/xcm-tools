@@ -8,6 +8,7 @@ import {
   isExternalChain,
   SUBSTRATE_CHAINS,
   TChain,
+  TPapiTransaction,
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress,
   TSubstrateChain,
@@ -29,7 +30,9 @@ export class XTransferService {
   private async executeWithBuilder<T>(
     transfer: XTransferDtoWSenderAddress,
     executor: (
-      finalBuilder: GeneralBuilder<TSendBaseOptionsWithSenderAddress>,
+      finalBuilder: GeneralBuilder<
+        TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+      >,
     ) => Promise<T>,
   ): Promise<T> {
     const { senderAddress } = transfer;
@@ -114,6 +117,7 @@ export class XTransferService {
       method,
       senderAddress,
       ahAddress,
+      transactOptions,
     } = transfer;
 
     let finalBuilder = builder
@@ -134,6 +138,11 @@ export class XTransferService {
 
     if (pallet && method) {
       finalBuilder = finalBuilder.customPallet(pallet, method);
+    }
+
+    if (transactOptions) {
+      const { call, originKind, maxWeight } = transactOptions;
+      finalBuilder = finalBuilder.transact(call, originKind, maxWeight);
     }
 
     return finalBuilder;
@@ -254,7 +263,7 @@ export class XTransferService {
 
     let builder = Builder(
       hasOptions ? optionsWithoutMode : undefined,
-    ) as GeneralBuilder<TSendBaseOptions>;
+    ) as GeneralBuilder<TSendBaseOptions<TPapiTransaction>>;
 
     for (const transfer of transfers) {
       this.validateTransfer(transfer);

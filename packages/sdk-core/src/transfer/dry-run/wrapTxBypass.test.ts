@@ -2,6 +2,7 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { findAssetInfo, findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -57,7 +58,9 @@ const mkApi = () => {
   } as unknown as IPolkadotApi<unknown, unknown>
 }
 
-describe('wrapTxBypass (existing cases)', () => {
+const version = Version.V5
+
+describe('wrapTxBypass', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
@@ -91,6 +94,7 @@ describe('wrapTxBypass (existing cases)', () => {
       address,
       asset: mainAsset,
       feeAsset,
+      version,
       tx: originalTx
     })
     expect(result).toBeDefined()
@@ -139,6 +143,7 @@ describe('wrapTxBypass (existing cases)', () => {
       chain,
       address,
       asset: mainAsset,
+      version,
       tx: originalTx
     })
     expect(result).toBeDefined()
@@ -177,6 +182,7 @@ describe('wrapTxBypass (existing cases)', () => {
       api,
       chain,
       address,
+      version,
       asset: mainAsset,
       tx: originalTx
     })
@@ -212,7 +218,7 @@ describe('wrapTxBypass (existing cases)', () => {
     vi.mocked(findAssetInfo).mockReturnValue(null)
 
     const result = await wrapTxBypass(
-      { api, chain, address, asset: mainAsset, tx: originalTx },
+      { api, chain, address, version, asset: mainAsset, tx: originalTx },
       { mintFeeAssets: true, sentAssetMintMode: 'bypass' }
     )
     expect(result).toBeDefined()
@@ -260,7 +266,7 @@ describe('wrapTxBypass (new branches)', () => {
     vi.mocked(findAssetInfo).mockReturnValue(null)
 
     const res = await wrapTxBypass(
-      { api, chain, address, asset: mainAsset, tx: originalTx },
+      { api, chain, address, version, asset: mainAsset, tx: originalTx },
       { mintFeeAssets: true, sentAssetMintMode: 'preview' }
     )
     expect(res).toBeDefined()
@@ -295,6 +301,7 @@ describe('wrapTxBypass (new branches)', () => {
         api,
         chain,
         address,
+        version,
         asset: mainAsset,
         feeAsset: { symbol: 'USDC', decimals: 6 } as TAssetInfo,
         tx: originalTx
@@ -336,6 +343,7 @@ describe('wrapTxBypass (new branches)', () => {
       api,
       chain,
       address,
+      version,
       asset: mainAsset,
       tx: originalTx
     })
@@ -370,7 +378,7 @@ describe('wrapTxBypass (new branches)', () => {
     vi.mocked(findAssetInfo).mockImplementation(() => nativeAsset)
 
     const res = await wrapTxBypass(
-      { api, chain, address, asset: mainAssetIsNative, tx: originalTx },
+      { api, chain, address, version, asset: mainAssetIsNative, tx: originalTx },
       { mintFeeAssets: true, sentAssetMintMode: 'preview' }
     )
     expect(res).toBeDefined()

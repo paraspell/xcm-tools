@@ -4,16 +4,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
 import type { TAddress, TDestination } from '../../types'
-import { validateAddress } from '../../utils/validateAddress'
+import { validateAddress } from './validateAddress'
 import { validateDestinationAddress } from './validateDestinationAddress'
 
-vi.mock('../../utils/validateAddress', () => ({
-  validateAddress: vi.fn()
-}))
+vi.mock('./validateAddress')
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common')
 
 describe('validateDestinationAddress', () => {
   const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>

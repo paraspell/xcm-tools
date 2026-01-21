@@ -26,7 +26,7 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
 
   const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
-  const rawOriginFee = await api.calculateTransactionFee(tx, senderAddress)
+  const { partialFee: rawOriginFee } = await api.getPaymentInfo(tx, senderAddress)
 
   const originFee = padFee(rawOriginFee, origin, destination, 'origin')
 

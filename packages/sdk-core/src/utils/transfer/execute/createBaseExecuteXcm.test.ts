@@ -38,7 +38,7 @@ describe('createBaseExecuteXcm', () => {
     },
     version: mockVersion,
     paraIdTo: 1000
-  } as TCreateBaseTransferXcmOptions
+  } as TCreateBaseTransferXcmOptions<unknown>
 
   const mockPrepareExecuteContext = {
     amount: 10000n,
@@ -315,34 +315,61 @@ describe('createBaseExecuteXcm', () => {
     })
   })
 
-  describe('Edge cases', () => {
-    it('should handle empty suffix XCM', () => {
-      vi.mocked(isTrustedChain).mockReturnValue(true)
+  it('should handle empty suffix XCM', () => {
+    vi.mocked(isTrustedChain).mockReturnValue(true)
 
-      const result = createBaseExecuteXcm({
-        ...mockBaseOptions,
-        suffixXcm: []
-      })
-
-      const teleportInstruction = result[0] as any
-      expect(teleportInstruction.InitiateTeleport.xcm).toHaveLength(1)
+    const result = createBaseExecuteXcm({
+      ...mockBaseOptions,
+      suffixXcm: []
     })
 
-    it('should correctly call createAssetsFilter with appropriate assets', () => {
-      vi.mocked(isTrustedChain).mockReturnValue(true)
-      createBaseExecuteXcm(mockBaseOptions)
-      expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
+    const teleportInstruction = result[0] as any
+    expect(teleportInstruction.InitiateTeleport.xcm).toHaveLength(1)
+  })
+
+  it('should correctly call createAssetsFilter with appropriate assets', () => {
+    vi.mocked(isTrustedChain).mockReturnValue(true)
+    createBaseExecuteXcm(mockBaseOptions)
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
+  })
+
+  it('should correctly call createDestination with all parameters', () => {
+    createBaseExecuteXcm(mockBaseOptions)
+
+    expect(createDestination).toHaveBeenCalledWith(
+      mockVersion,
+      'AssetHubPolkadot',
+      'AssetHubKusama',
+      1000
+    )
+  })
+
+  it('should create InitiateTransfer when version is V5 or higher', () => {
+    vi.mocked(isTrustedChain).mockReturnValue(true)
+
+    const result = createBaseExecuteXcm({
+      ...mockBaseOptions,
+      version: Version.V5
     })
 
-    it('should correctly call createDestination with all parameters', () => {
-      createBaseExecuteXcm(mockBaseOptions)
-
-      expect(createDestination).toHaveBeenCalledWith(
-        mockVersion,
-        'AssetHubPolkadot',
-        'AssetHubKusama',
-        1000
-      )
+    expect(result[0]).toEqual({
+      InitiateTransfer: {
+        destination: mockDestLocation,
+        remote_fees: {
+          Teleport: mockAssetsFilter
+        },
+        preserve_origin: true,
+        assets: [
+          {
+            Teleport: mockAssetsFilter
+          }
+        ],
+        remote_xcm: [
+          {
+            RefundSurplus: undefined
+          }
+        ]
+      }
     })
   })
 })

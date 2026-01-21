@@ -83,6 +83,8 @@ export const transferMoonbeamToEth = async <TApi, TRes>(
     amount
   )
 
+  const version = Version.V4
+
   const customXcm = createCustomXcmOnDest(
     {
       api,
@@ -94,17 +96,16 @@ export const transferMoonbeamToEth = async <TApi, TRes>(
       ahAddress,
       assetInfo: { ...foundAsset, amount },
       currency,
-      destLocation: {} as TLocation,
       asset: {} as TAsset,
       beneficiaryLocation: {} as TLocation,
-      version: Version.V4
+      version
     },
     from,
     messageId,
     ethAsset
   )
 
-  const customXcmOnDest = await api.objectToHex(customXcm, 'XcmVersionedXcm')
+  const customXcmOnDest = await api.objectToHex(customXcm, 'XcmVersionedXcm', version)
 
   const assetHubApi = await api.createApiForChain('AssetHubPolkadot')
 

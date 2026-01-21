@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
@@ -57,9 +57,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
    * The currency to query.
    */
   currency: WithAmount<TCurrencyCore>
-  /**
-   * The transactions
-   */
+  version: Version | undefined
   buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput
 }
@@ -73,7 +71,7 @@ export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
 export type TGetMinTransferableAmountOptions<TApi, TRes> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
     address: string
-    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress<TRes>>
   },
   TApi,
   TRes
@@ -100,9 +98,7 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
    * The currency to query.
    */
   currency: WithAmount<TCurrencyCore>
-  /**
-   * The transactions
-   */
+  version: Version | undefined
   buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput
 }

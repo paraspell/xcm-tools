@@ -5,7 +5,7 @@ import type {
   TCurrencyInputWithAmount,
   WithAmount
 } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
 import type { WithApi } from './TApi'
@@ -23,6 +23,7 @@ export type TDryRunBaseOptions<TRes> = {
   senderAddress: string
   address: string
   currency: TCurrencyInputWithAmount
+  version?: Version
   feeAsset?: TCurrencyInput
   // Used when there is an asset swap on some hop
   swapConfig?: TSwapConfig
@@ -53,6 +54,10 @@ export type TDryRunCallBaseOptions<TRes> = {
    * Whether to use the root origin
    */
   useRootOrigin?: boolean
+  /**
+   * XCM version to use for the dry-run parameters
+   */
+  version: Version
   asset: WithAmount<TAssetInfo>
   bypassOptions?: TBypassOptions
   feeAsset?: TAssetInfo
@@ -85,6 +90,7 @@ export type TDryRunXcmBaseOptions<TRes> = {
    */
   origin: TSubstrateChain
   asset: TAssetInfo
+  version: Version
   feeAsset?: TAssetInfo
   amount: bigint
   originFee: bigint

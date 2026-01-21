@@ -1,4 +1,3 @@
-// getTransferableAmount.test.ts
 import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
@@ -6,6 +5,7 @@ import {
   getEdFromAssetOrThrow,
   isAssetEqual
 } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -35,6 +35,7 @@ describe('getTransferableAmount', () => {
     origin: 'Astar',
     destination: 'BifrostPolkadot',
     currency: { symbol: 'DOT', amount: 1000n },
+    version: Version.V5,
     buildTx
   } as TGetTransferableAmountOptions<unknown, unknown>
 
@@ -66,6 +67,7 @@ describe('getTransferableAmount', () => {
       destination: 'Astar',
       senderAddress: 'validAddress',
       feeAsset: undefined,
+      version: baseOptions.version,
       currency: { symbol: 'DOT', amount: 1000n },
       disableFallback: false
     })
@@ -81,12 +83,8 @@ describe('getTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
 
     const result = await getTransferableAmount({
-      api: mockApi,
-      senderAddress: 'validAddress',
-      origin: 'Astar',
-      destination: 'BifrostPolkadot',
-      currency: { symbol: 'USDT', amount: 1000n },
-      buildTx
+      ...baseOptions,
+      currency: { symbol: 'USDT', amount: 1000n }
     })
 
     expect(result).toBe(balance - ed)
@@ -105,15 +103,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
-    const result = await getTransferableAmount({
-      api: mockApi,
-      senderAddress: 'validAddress',
-      origin: 'Astar',
-      destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT', amount: 1000n },
-      buildTx
-    })
-
+    const result = await getTransferableAmount(baseOptions)
     expect(result).toBe(0n)
   })
 
@@ -125,16 +115,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 
-    await expect(
-      getTransferableAmount({
-        api: mockApi,
-        senderAddress: 'validAddress',
-        origin: 'Astar',
-        destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT', amount: 1000n },
-        buildTx
-      })
-    ).rejects.toThrow(
+    await expect(getTransferableAmount(baseOptions)).rejects.toThrow(
       'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on chain Astar.'
     )
   })
@@ -149,14 +130,7 @@ describe('getTransferableAmount', () => {
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
-    await getTransferableAmount({
-      api: mockApi,
-      senderAddress: 'validAddress',
-      origin: 'Astar',
-      destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT', amount: 1000n },
-      buildTx
-    })
+    await getTransferableAmount(baseOptions)
 
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(2, true)
@@ -174,16 +148,7 @@ describe('getTransferableAmount', () => {
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
-    await expect(
-      getTransferableAmount({
-        api: mockApi,
-        senderAddress: 'validAddress',
-        origin: 'Astar',
-        destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT', amount: 1000n },
-        buildTx
-      })
-    ).rejects.toThrow()
+    await expect(getTransferableAmount(baseOptions)).rejects.toThrow()
 
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(2, true)

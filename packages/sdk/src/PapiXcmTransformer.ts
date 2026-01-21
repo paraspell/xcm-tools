@@ -117,6 +117,13 @@ export const transform = (obj: any): any => {
             jit_withdraw: value.jit_withdraw ?? false
           }
         }
+      } else if (key === 'PayFees') {
+        return {
+          type: key,
+          value: {
+            asset: transform(value.asset)
+          }
+        }
       } else if (key === 'X1' && Array.isArray(value)) {
         return {
           type: key,

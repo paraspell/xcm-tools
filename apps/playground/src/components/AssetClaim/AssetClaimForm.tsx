@@ -6,7 +6,7 @@ import { type FC, useEffect } from 'react';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import { useWallet } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import { advancedOptionsParsers } from '../../parsers';
 import type { TAdvancedOptions } from '../../types';
 import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
 import {

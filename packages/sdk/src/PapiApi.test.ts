@@ -95,7 +95,13 @@ describe('PapiApi', () => {
     vi.clearAllMocks()
 
     mockTransaction = {
-      getEstimatedFees: vi.fn().mockResolvedValue(1000n),
+      getPaymentInfo: vi.fn().mockResolvedValue({
+        partial_fee: 1000n,
+        weight: {
+          ref_time: 0n,
+          proof_size: 0n
+        }
+      }),
       decodedCall: {
         value: {
           type: 'transfer_assets'
@@ -168,7 +174,8 @@ describe('PapiApi', () => {
               getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
             }
           }
-        }
+        },
+        txFromCallData: vi.fn().mockReturnValue(mockTransaction)
       })
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
@@ -187,6 +194,7 @@ describe('PapiApi', () => {
       tx: mockTransaction,
       address: 'addr',
       chain: 'Hydration' as TSubstrateChain,
+      version: Version.V5,
       destination: 'Moonbeam' as TDestination,
       asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
     })
@@ -457,11 +465,17 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('calculateTransactionFee', () => {
-    it('should return the estimated fee as bigint', async () => {
-      const fee = await papiApi.calculateTransactionFee(mockTransaction, 'some_address')
-      expect(mockTransaction.getEstimatedFees).toHaveBeenCalledWith('some_address')
-      expect(fee).toBe(1000n)
+  describe('getPaymentInfo', () => {
+    it('should return the estimated fee and weight', async () => {
+      const fee = await papiApi.getPaymentInfo(mockTransaction, 'some_address')
+      expect(mockTransaction.getPaymentInfo).toHaveBeenCalledWith('some_address')
+      expect(fee).toEqual({
+        partialFee: 1000n,
+        weight: {
+          refTime: 0n,
+          proofSize: 0n
+        }
+      })
     })
   })
 
@@ -612,7 +626,13 @@ describe('PapiApi', () => {
 
       const assetLocalizedLoc = baseAsset.location as TLocation
 
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        assetLocalizedLoc,
+        Version.V5
+      )
 
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalled()
       expect(res).toBe(7n)
@@ -630,7 +650,13 @@ describe('PapiApi', () => {
       } as TAssetInfo
 
       const assetLocalizedLoc = asset.location as TLocation
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        asset,
+        assetLocalizedLoc,
+        Version.V5
+      )
 
       expect(quoteSpy).toHaveBeenCalled()
       expect(res).toBe(5n)
@@ -640,8 +666,14 @@ describe('PapiApi', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const forwardedXcm: any = []
       const assetLocalizedLoc = baseAsset.location as TLocation
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        forwardedXcm,
+        baseAsset,
+        assetLocalizedLoc,
+        Version.V5
+      )
       expect(res).toBe(0n)
     })
 
@@ -662,7 +694,13 @@ describe('PapiApi', () => {
 
       const assetLocalizedLoc = asset.location as TLocation
 
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        asset,
+        assetLocalizedLoc,
+        Version.V5
+      )
 
       expect(res).toBe(0n)
     })
@@ -680,7 +718,13 @@ describe('PapiApi', () => {
 
       const assetLocalizedLoc = asset.location as TLocation
 
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        asset,
+        assetLocalizedLoc,
+        Version.V5
+      )
 
       expect(res).toBe(0n)
     })
@@ -701,7 +745,13 @@ describe('PapiApi', () => {
         .mockRejectedValueOnce(new Error('Cannot read properties of undefined (reading "foo")'))
         .mockResolvedValueOnce({ value: { value: [{ fun: { value: 9n } }] } })
 
-      const res = await papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        assetLocalizedLoc,
+        Version.V5
+      )
 
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalledTimes(2)
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenNthCalledWith(
@@ -709,7 +759,7 @@ describe('PapiApi', () => {
         forwardedXcm0,
         forwardedXcm1
       )
-      expect(addXcmVersionHeader).toHaveBeenCalledWith(assetLocalizedLoc, Version.V4)
+      expect(addXcmVersionHeader).toHaveBeenCalledWith(assetLocalizedLoc, Version.V5)
       expect(transform).toHaveBeenCalledTimes(1)
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenNthCalledWith(
         2,
@@ -734,7 +784,7 @@ describe('PapiApi', () => {
       )
 
       await expect(
-        papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc)
+        papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc, Version.V5)
       ).rejects.toThrow('some other runtime error')
 
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalledTimes(1)
@@ -769,7 +819,13 @@ describe('PapiApi', () => {
       const forwardedXcm = [{}, [{}]]
       const deliverySpy = vi.spyOn(papiApi, 'getDeliveryFee').mockResolvedValueOnce(7n)
 
-      const res = await papiApi.getXcmPaymentApiFee(chain, localXcm, forwardedXcm, baseAsset)
+      const res = await papiApi.getXcmPaymentApiFee(
+        chain,
+        localXcm,
+        forwardedXcm,
+        baseAsset,
+        Version.V5
+      )
 
       expect(deliverySpy).toHaveBeenCalled()
       expect(res).toBe(107n)
@@ -789,12 +845,19 @@ describe('PapiApi', () => {
 
       const fallbackSpy = vi.spyOn(papiApi, 'getBridgeHubFallbackExecFee').mockResolvedValue(33n)
 
-      const res = await papiApi.getXcmPaymentApiFee(bridgeChain, localXcm, [], baseAsset)
+      const res = await papiApi.getXcmPaymentApiFee(
+        bridgeChain,
+        localXcm,
+        [],
+        baseAsset,
+        Version.V5
+      )
 
       expect(fallbackSpy).toHaveBeenCalledWith(
         bridgeChain,
         { ref_time: 100n, proof_size: 200n },
-        baseAsset
+        baseAsset,
+        Version.V5
       )
       expect(res).toBe(33n)
     })
@@ -815,12 +878,19 @@ describe('PapiApi', () => {
         .spyOn(papiApi, 'getBridgeHubFallbackExecFee')
         .mockResolvedValue(undefined)
 
-      const res = await papiApi.getXcmPaymentApiFee(bridgeChain, localXcm, [], baseAsset)
+      const res = await papiApi.getXcmPaymentApiFee(
+        bridgeChain,
+        localXcm,
+        [],
+        baseAsset,
+        Version.V5
+      )
 
       expect(fallbackSpy).toHaveBeenCalledWith(
         bridgeChain,
         { ref_time: 100n, proof_size: 200n },
-        baseAsset
+        baseAsset,
+        Version.V5
       )
       expect(res).toBe(0n)
     })
@@ -859,7 +929,7 @@ describe('PapiApi', () => {
       const ahInitSpy = vi.spyOn(ahApiMock, 'init')
       const ahQuoteSpy = vi.spyOn(ahApiMock, 'quoteAhPrice')
 
-      const res = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      const res = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset, Version.V4)
 
       expect(queryFeeMock).toHaveBeenCalledWith(
         weightValue,
@@ -878,7 +948,12 @@ describe('PapiApi', () => {
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
       queryFeeMock.mockResolvedValueOnce({ value: undefined })
 
-      const resWithoutFee = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      const resWithoutFee = await papiApi.getBridgeHubFallbackExecFee(
+        chain,
+        weightValue,
+        asset,
+        Version.V5
+      )
       expect(resWithoutFee).toBeUndefined()
 
       queryFeeMock.mockResolvedValueOnce({ value: 123n })
@@ -893,7 +968,8 @@ describe('PapiApi', () => {
       const resWithoutConversion = await papiApi.getBridgeHubFallbackExecFee(
         chain,
         weightValue,
-        asset
+        asset,
+        Version.V5
       )
 
       expect(resWithoutConversion).toBeUndefined()
@@ -1045,9 +1121,22 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('txFromHex', () => {
+    it('should return a transaction object from the hex string', async () => {
+      const hexString = '0xdeadbeef'
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const spy = vi.spyOn(unsafeApi, 'txFromCallData')
+
+      const result = await papiApi.txFromHex(hexString)
+
+      expect(result).toBe(mockTransaction)
+      expect(spy).toHaveBeenCalledWith(hexString)
+    })
+  })
+
   describe('getDryRunCall', () => {
     let dryRunApiCallMock: Mock
-    const DEFAULT_XCM_VERSION = 3
     const testAddress = 'some_address'
 
     const basePayloadMatcher = {
@@ -1092,6 +1181,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'GLMR'
         } as WithAmount<TAssetInfo>
@@ -1152,6 +1242,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'AssetHubPolkadot',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'DOT'
         } as WithAmount<TAssetInfo>
@@ -1167,7 +1258,7 @@ describe('PapiApi', () => {
         2,
         basePayloadMatcher,
         mockTransaction.decodedCall,
-        DEFAULT_XCM_VERSION
+        5
       )
       expect(result).toEqual({
         success: true,
@@ -1209,6 +1300,7 @@ describe('PapiApi', () => {
         address: 'some_address',
         chain: 'Polkadot',
         destination: 'Acala',
+        version: Version.V5,
         asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
       })
 
@@ -1256,6 +1348,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Kusama',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'KSM'
         } as WithAmount<TAssetInfo>
@@ -1271,7 +1364,7 @@ describe('PapiApi', () => {
         2,
         basePayloadMatcher,
         mockTransaction.decodedCall,
-        DEFAULT_XCM_VERSION
+        5
       )
       expect(result).toEqual({
         success: false,
@@ -1300,6 +1393,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1338,6 +1432,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1369,6 +1464,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1416,6 +1512,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1469,6 +1566,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1505,6 +1603,7 @@ describe('PapiApi', () => {
         chain: 'Moonbeam',
         destination: 'Acala',
         useRootOrigin: true,
+        version: Version.V5,
         asset: {
           symbol: 'GLMR'
         } as WithAmount<TAssetInfo>
@@ -1546,6 +1645,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {
           symbol: 'USDT'
         } as WithAmount<TAssetInfo>
@@ -1565,6 +1665,7 @@ describe('PapiApi', () => {
           address: testAddress,
           chain: 'Acala',
           destination: 'Acala',
+          version: Version.V5,
           asset: {} as WithAmount<TAssetInfo>
         })
       ).rejects.toThrow('Runtime API "DryRunApi" is not available on chain Acala')
@@ -1604,6 +1705,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Moonbeam',
         destination: 'Acala',
+        version: Version.V5,
         asset: {} as WithAmount<TAssetInfo>
       })
 
@@ -1659,6 +1761,7 @@ describe('PapiApi', () => {
         asset: {} as WithAmount<TAssetInfo>,
         address: testAddress,
         chain: 'Moonbeam',
+        version: Version.V5,
         destination: 'Acala'
       })
 
@@ -1693,14 +1796,10 @@ describe('PapiApi', () => {
 
       dryRunApiCallMock.mockResolvedValue(successResponse)
 
-      const overridden = { ref_time: 123n, proof_size: 456n }
-
-      const getPaymentInfoMock = vi.fn().mockResolvedValue({ weight: overridden })
-
-      const txWithPaymentInfo = {
-        ...mockTransaction,
-        getPaymentInfo: getPaymentInfoMock
-      } as unknown as typeof mockTransaction
+      vi.spyOn(mockTransaction, 'getPaymentInfo').mockResolvedValueOnce({
+        weight: { ref_time: 123n, proof_size: 456n },
+        partial_fee: 0n
+      } as Awaited<ReturnType<TPapiTransaction['getPaymentInfo']>>)
 
       const customAsset = {
         symbol: 'USDC',
@@ -1718,22 +1817,26 @@ describe('PapiApi', () => {
         .spyOn(papiApi, 'getXcmPaymentApiFee')
         .mockResolvedValue(999n)
 
+      const paymentInfoSpy = vi.spyOn(mockTransaction, 'getPaymentInfo')
+
       const result = await papiApi.getDryRunCall({
-        tx: txWithPaymentInfo,
+        tx: mockTransaction,
         asset: customAsset as WithAmount<TAssetInfo>,
         address: testAddress,
         chain: 'Moonbeam',
+        version: Version.V5,
         destination: 'Acala'
       })
 
-      expect(getPaymentInfoMock).toHaveBeenCalledWith(testAddress)
+      expect(paymentInfoSpy).toHaveBeenCalledWith(testAddress)
       expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
         'Moonbeam',
         undefined,
         [],
         customAsset,
+        Version.V5,
         false,
-        overridden
+        { refTime: 123n, proofSize: 456n }
       )
       expect(result).toEqual({
         success: true,
@@ -1786,6 +1889,7 @@ describe('PapiApi', () => {
         address: testAddress,
         chain: 'Hydration',
         destination: 'Moonbeam',
+        version: Version.V5,
         asset: multiAsset as WithAmount<TAssetInfo>
       })
 
@@ -1986,6 +2090,7 @@ describe('PapiApi', () => {
         asset: mockAssetDetails,
         feeAsset: mockAssetDetails,
         amount: testAmount,
+        version: Version.V5,
         originFee: testOriginFee
       }
 
@@ -2468,9 +2573,7 @@ describe('PapiApi', () => {
   describe('objectToHex', () => {
     it('should return the hex representation of the object', async () => {
       const object = { key1: 'value1', key2: 'value2' }
-
-      const result = await papiApi.objectToHex(object)
-
+      const result = await papiApi.objectToHex(object, 'XcmVersionedXcm', Version.V5)
       expect(result).toBe('0xabcdef')
     })
   })

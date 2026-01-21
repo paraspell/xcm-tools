@@ -6,22 +6,26 @@ import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSendOptions } from '../types'
-import { abstractDecimals, getChain, validateAddress } from '../utils'
-import { getChainVersion } from '../utils/chain'
+import {
+  abstractDecimals,
+  getChain,
+  pickCompatibleXcmVersion,
+  validateAddress,
+  validateDestinationAddress
+} from '../utils'
 import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
-  selectXcmVersion,
   shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
   validateCurrency,
   validateDestination,
-  validateDestinationAddress
+  validateTransact
 } from './utils'
 
-export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
+export const resolveSendParams = <TApi, TRes>(options: TSendOptions<TApi, TRes>) => {
   const {
     api,
     from: origin,
@@ -29,17 +33,13 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     feeAsset,
     address,
     to: destination,
-    paraIdTo,
     version,
-    senderAddress,
-    ahAddress,
-    pallet,
-    method,
-    isAmountAll
+    senderAddress
   } = options
 
   validateCurrency(currency, feeAsset)
   validateDestination(origin, destination)
+  validateTransact(options)
 
   validateDestinationAddress(address, destination, api)
   if (senderAddress) validateAddress(api, senderAddress, origin, false)
@@ -64,9 +64,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   // Ensure amount is at least 2 to avoid Rust panic (only for non-array currencies)
   const finalAmount = !Array.isArray(currency) && amount < MIN_AMOUNT ? MIN_AMOUNT : amount
 
-  const originVersion = getChainVersion(origin)
-
-  const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
+  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
 
   const overriddenAsset = resolveOverriddenAsset(
     options,
@@ -74,8 +72,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     assetCheckEnabled,
     resolvedFeeAsset
   )
-
-  await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
   // In case asset check is disabled, we create asset object from currency symbol
   const resolvedAsset =
@@ -101,14 +97,42 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       }
     : { ...resolvedAsset, amount: finalAmount }
 
-  const finalVersion = selectXcmVersion(version, originVersion, destVersion)
-
   const normalizedAsset = finalAsset.location
     ? {
         ...finalAsset,
-        location: normalizeLocation(finalAsset.location, finalVersion)
+        location: normalizeLocation(finalAsset.location, resolvedVersion)
       }
     : finalAsset
+
+  return {
+    resolvedFeeAsset,
+    resolvedVersion,
+    overriddenAsset,
+    normalizedAsset
+  }
+}
+
+export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
+  const {
+    api,
+    from: origin,
+    currency,
+    feeAsset,
+    address,
+    to: destination,
+    paraIdTo,
+    senderAddress,
+    ahAddress,
+    pallet,
+    method,
+    transactOptions,
+    isAmountAll
+  } = options
+
+  const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
+    resolveSendParams(options)
+
+  await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
   return getChain<TApi, TRes, typeof origin>(origin).transfer({
     api,
@@ -120,11 +144,12 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     to: destination,
     paraIdTo,
     overriddenAsset,
-    version: finalVersion,
+    version: resolvedVersion,
     senderAddress,
     ahAddress,
     pallet,
     method,
+    transactOptions,
     isAmountAll
   })
 }

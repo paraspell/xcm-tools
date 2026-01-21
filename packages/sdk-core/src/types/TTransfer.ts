@@ -10,12 +10,12 @@ import type { TAssetsPallet, TPallet } from '@paraspell/pallets'
 import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   chain: TSubstrateChain
-  destLocation: TLocation
   beneficiaryLocation: TLocation
   address: TAddress
   asset: TAsset
@@ -33,6 +33,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   ahAddress?: string
   pallet?: string
   method?: string
+  transactOptions?: TTransactOptions<TRes>
 }
 
 export type TXTokensTransferOptions<TApi, TRes> = {
@@ -79,7 +80,7 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
-export type TSendBaseOptions = {
+export type TSendBaseOptions<TRes> = {
   /**
    * The origin chain
    */
@@ -124,12 +125,16 @@ export type TSendBaseOptions = {
    * The optional pallet method override
    */
   method?: string
+  /**
+   * Hex of the encoded transaction call to apply on the destination chain
+   */
+  transactOptions?: TTransactOptions<TRes>
 }
 
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes> & {
+export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TRes>, TApi, TRes> & {
   isAmountAll: boolean
 }
 
@@ -140,10 +145,12 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   senderAddress: string
 }
 
-export type TSendBaseOptionsWithSenderAddress = WithRequiredSenderAddress<TSendBaseOptions>
+export type TSendBaseOptionsWithSenderAddress<TRes> = WithRequiredSenderAddress<
+  TSendBaseOptions<TRes>
+>
 
 export type TSendInternalOptions<TApi, TRes> = Omit<
-  TSendBaseOptions,
+  TSendBaseOptions<TRes>,
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes>
@@ -153,6 +160,14 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   overriddenAsset?: TLocation | TAssetWithFee[]
   version: Version
   isAmountAll: boolean
+}
+
+export type TTransactOrigin = (typeof TRANSACT_ORIGINS)[number]
+
+export type TTransactOptions<TRes, TWeightType = bigint> = {
+  call: string | TRes
+  originKind?: TTransactOrigin
+  maxWeight?: TWeight<TWeightType>
 }
 
 export type TSerializedExtrinsics = {
@@ -195,9 +210,9 @@ export type TXcmPalletMethod =
   | 'limited_reserve_transfer_assets'
   | 'transfer_assets_using_type_and_then'
 
-export type TWeight = {
-  refTime: bigint
-  proofSize: bigint
+export type TWeight<TWeightType = bigint> = {
+  refTime: TWeightType
+  proofSize: TWeightType
 }
 
 export type TCreateBeneficiaryOptions<TApi, TRes> = {
@@ -230,7 +245,7 @@ export type TTransferFeeEstimates = {
   reserveFee: bigint
 }
 
-export type TCreateBaseTransferXcmOptions = {
+export type TCreateBaseTransferXcmOptions<TRes> = {
   chain: TSubstrateChain
   destChain: TChain
   assetInfo: WithAmount<TAssetInfo>
@@ -240,10 +255,11 @@ export type TCreateBaseTransferXcmOptions = {
   version: Version
   // refactor this
   paraIdTo?: number
+  transactOptions?: TTransactOptions<TRes>
 }
 
 export type TCreateTransferXcmOptions<TApi, TRes> = WithApi<
-  TCreateBaseTransferXcmOptions,
+  TCreateBaseTransferXcmOptions<TRes>,
   TApi,
   TRes
 >

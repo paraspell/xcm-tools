@@ -109,7 +109,7 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
       const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, options))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(options))
       }
     }
 

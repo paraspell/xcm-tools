@@ -14,7 +14,7 @@ import type {
   TXcmFeeHopInfo,
   TXcmFeeHopResult
 } from '../../types'
-import { abstractDecimals, getRelayChainOf } from '../../utils'
+import { abstractDecimals, getRelayChainOf, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { resolveHopAsset } from '../utils/resolveHopAsset'
@@ -66,6 +66,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   address,
   currency,
   feeAsset,
+  version,
   disableFallback,
   swapConfig,
   useRootOrigin,
@@ -76,6 +77,8 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
+
+  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
 
   const {
     fee: originFeeRaw,
@@ -95,6 +98,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
     senderAddress,
     feeAsset,
     currency,
+    version: resolvedVersion,
     disableFallback,
     useRootOrigin
   })
@@ -124,6 +128,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
         },
         address,
         asset,
+        version: resolvedVersion,
         tx,
         originFee: originFee ?? 0n,
         senderAddress,
@@ -204,6 +209,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
       address,
       senderAddress,
       asset: hopAsset,
+      version: resolvedVersion,
       feeAsset,
       tx,
       originFee: originFee ?? 0n,
@@ -271,6 +277,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
       },
       address,
       asset,
+      version: resolvedVersion,
       tx,
       originFee: originFee ?? 0n,
       senderAddress,

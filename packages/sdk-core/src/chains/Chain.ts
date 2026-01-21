@@ -14,7 +14,8 @@ import {
   type TAsset
 } from '@paraspell/assets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
-import type { TChain, TRelaychain, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import {
   deepEqual,
   isExternalChain,
@@ -42,6 +43,7 @@ import {
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
+import { handleTransactUsingSend } from '../pallets/polkadotXcm'
 import { transferXTokens } from '../pallets/xTokens'
 import { createTypeAndThenCall, getParaEthTransferFees } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
@@ -65,12 +67,13 @@ import {
   createBeneficiaryLocation,
   getChain,
   getRelayChainOf,
+  handleExecuteTransfer,
   resolveDestChain
 } from '../utils'
 import { createAsset } from '../utils/asset'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
-import { createDestination, createVersionedDestination, localizeLocation } from '../utils/location'
+import { createVersionedDestination, localizeLocation } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
@@ -123,17 +126,6 @@ abstract class Chain<TApi, TRes> {
     return this._version
   }
 
-  canUseXTokens(options: TSendInternalOptions<TApi, TRes>): boolean {
-    const { assetInfo: asset } = options
-    const isExternalAsset = asset.location?.parents === Parents.TWO
-    if (isExternalAsset) return false
-    return !this.shouldUseNativeAssetTeleport(options) || !supportsPolkadotXCM(this)
-  }
-
-  isRelayToParaEnabled(): boolean {
-    return true
-  }
-
   async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
     const {
       api,
@@ -149,7 +141,8 @@ abstract class Chain<TApi, TRes> {
       senderAddress,
       ahAddress,
       pallet,
-      method
+      method,
+      transactOptions
     } = sendOptions
     const scenario = resolveScenario(this.chain, destination)
     const paraId = resolveParaId(paraIdTo, destination)
@@ -194,48 +187,10 @@ abstract class Chain<TApi, TRes> {
         (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
       isSubBridge
 
-    if (supportsXTokens(this) && this.canUseXTokens(sendOptions) && !useTypeAndThen) {
-      const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
-      const isJamtonOrigin = this.chain === 'Jamton'
-      const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-      const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
-
-      const input: TXTokensTransferOptions<TApi, TRes> = {
-        api,
-        asset,
-        address,
-        origin: this.chain,
-        scenario,
-        paraIdTo: paraId,
-        version,
-        destination,
-        overriddenAsset,
-        pallet,
-        method
-      }
-
-      if (useMultiAssets) {
-        return transferXTokens(input, undefined)
-      }
-
-      return this.transferXTokens(input)
-    } else if (supportsXTransfer(this)) {
-      return this.transferXTransfer({
-        api,
-        asset,
-        recipientAddress: address,
-        paraIdTo: paraId,
-        origin: this.chain,
-        destination,
-        overriddenAsset,
-        pallet,
-        method
-      })
-    } else if (supportsPolkadotXCM(this) || useTypeAndThen) {
+    if (supportsPolkadotXCM(this) || useTypeAndThen) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
         chain: this.chain,
-        destLocation: createDestination(version, this.chain, destination, paraId),
         beneficiaryLocation: createBeneficiaryLocation({
           api,
           address,
@@ -256,7 +211,23 @@ abstract class Chain<TApi, TRes> {
         senderAddress,
         ahAddress,
         pallet,
-        method
+        method,
+        transactOptions
+      }
+
+      // Transact instruction required separate handling
+      // It is only supported in execute or using send extrinsics for < V5
+      if (transactOptions?.call) {
+        if (!isTrustedChain(this.chain) && !isTrustedChain(destChain!)) {
+          throw new UnsupportedOperationError(
+            'Transact instruction is only supported for transfers involving trusted chains.'
+          )
+        }
+
+        const promise =
+          version < Version.V5 ? handleTransactUsingSend(options) : handleExecuteTransfer(options)
+
+        return api.deserializeExtrinsics(await promise)
       }
 
       const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
@@ -309,9 +280,50 @@ abstract class Chain<TApi, TRes> {
       if (supportsPolkadotXCM(this)) {
         return this.transferPolkadotXCM(options)
       }
+    } else if (supportsXTokens(this)) {
+      const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
+      const isJamtonOrigin = this.chain === 'Jamton'
+      const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+      const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
+
+      const input: TXTokensTransferOptions<TApi, TRes> = {
+        api,
+        asset,
+        address,
+        origin: this.chain,
+        scenario,
+        paraIdTo: paraId,
+        version,
+        destination,
+        overriddenAsset,
+        pallet,
+        method
+      }
+
+      if (useMultiAssets) {
+        return transferXTokens(input, undefined)
+      }
+
+      return this.transferXTokens(input)
+    } else if (supportsXTransfer(this)) {
+      return this.transferXTransfer({
+        api,
+        asset,
+        recipientAddress: address,
+        paraIdTo: paraId,
+        origin: this.chain,
+        destination,
+        overriddenAsset,
+        pallet,
+        method
+      })
     }
 
     throw new NoXCMSupportImplementedError(this._chain)
+  }
+
+  isRelayToParaEnabled(): boolean {
+    return true
   }
 
   throwIfCantReceive(destChain: TChain | undefined): void {

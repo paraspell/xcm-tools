@@ -11,20 +11,23 @@ import type { IPolkadotApi } from '../api'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSendOptions } from '../types'
-import { abstractDecimals, getChain, validateAddress } from '../utils'
-import { getChainVersion } from '../utils/chain'
+import {
+  abstractDecimals,
+  getChain,
+  pickCompatibleXcmVersion,
+  validateAddress,
+  validateDestinationAddress
+} from '../utils'
 import { send } from './transfer'
 import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
-  selectXcmVersion,
   shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
   validateCurrency,
-  validateDestination,
-  validateDestinationAddress
+  validateDestination
 } from './utils'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
@@ -59,12 +62,11 @@ describe('send', () => {
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getChain).mockReturnValue(originChainMock)
-    vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
-    vi.mocked(selectXcmVersion).mockReturnValue(Version.V4)
+    vi.mocked(pickCompatibleXcmVersion).mockReturnValue(Version.V4)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
@@ -273,41 +275,6 @@ describe('send', () => {
         paraIdTo: undefined,
         version: Version.V4,
         senderAddress: undefined
-      })
-    )
-
-    expect(result).toBe('transferResult')
-  })
-
-  it('should downgrade from V4 to V3 when destination only supports V3', async () => {
-    // Mock origin chain to support V4
-    vi.mocked(getChainVersion).mockImplementation(chain => {
-      if (chain === 'Acala') return Version.V4
-      if (chain === 'Astar') return Version.V3
-      return Version.V4
-    })
-
-    vi.mocked(selectXcmVersion).mockReturnValue(Version.V3)
-
-    const options = {
-      api: apiMock,
-      from: 'Acala',
-      currency: { symbol: 'TEST', amount: '50' },
-      address: 'dest-address',
-      to: 'Astar'
-    } as TSendOptions<unknown, unknown>
-
-    const transferSpy = vi.spyOn(originChainMock, 'transfer')
-
-    const result = await send(options)
-
-    expect(getChainVersion).toHaveBeenCalledWith('Acala')
-    expect(getChainVersion).toHaveBeenCalledWith('Astar')
-    expect(selectXcmVersion).toHaveBeenCalledWith(undefined, Version.V4, Version.V3)
-
-    expect(transferSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        version: Version.V3
       })
     )
 

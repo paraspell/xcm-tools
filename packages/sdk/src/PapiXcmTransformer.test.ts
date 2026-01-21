@@ -633,4 +633,38 @@ describe('transform', () => {
     }
     expect(transform(input)).toEqual(expected)
   })
+
+  it('should handle PayFees instruction', () => {
+    const input = {
+      PayFees: {
+        asset: {
+          id: {
+            parents: 1,
+            interior: 'Here'
+          },
+          fun: {
+            Fungible: '1000'
+          }
+        }
+      }
+    }
+
+    const expected = {
+      type: 'PayFees',
+      value: {
+        asset: {
+          id: {
+            parents: 1,
+            interior: { type: 'Here' }
+          },
+          fun: {
+            type: 'Fungible',
+            value: '1000'
+          }
+        }
+      }
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
 })

@@ -1,4 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -41,6 +42,7 @@ describe('getDryRunOrigin', () => {
       chain,
       destination: 'Kusama',
       address,
+      version: Version.V5,
       asset: {} as WithAmount<TAssetInfo>,
       tx: {}
     })

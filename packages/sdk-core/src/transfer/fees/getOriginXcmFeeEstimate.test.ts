@@ -17,7 +17,7 @@ vi.mock('./isSufficient')
 
 describe('getOriginXcmFeeEstimate', () => {
   const mockApi = {
-    calculateTransactionFee: vi.fn()
+    getPaymentInfo: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
   const mockTx = {} as unknown
   const mockSenderAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
@@ -39,7 +39,9 @@ describe('getOriginXcmFeeEstimate', () => {
     vi.mocked(padFee).mockReturnValue(MOCK_PADDED_FEE)
     vi.mocked(getNativeAssetSymbol).mockReturnValue(MOCK_NATIVE_ASSET_SYMBOL)
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
-    const spy = vi.spyOn(mockApi, 'calculateTransactionFee').mockResolvedValue(MOCK_RAW_FEE)
+    const spy = vi
+      .spyOn(mockApi, 'getPaymentInfo')
+      .mockResolvedValue({ partialFee: MOCK_RAW_FEE, weight: { refTime: 0n, proofSize: 0n } })
 
     const options: TGetOriginXcmFeeEstimateOptions<unknown, unknown> = {
       api: mockApi,

@@ -7,7 +7,7 @@ import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
 import { assertSenderAddress, assertToIsString } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
-export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseOptions>(
+export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseOptions<TRes>>(
   api: IPolkadotApi<TApi, TRes>,
   builder: GeneralBuilder<TApi, TRes, TOptions>,
   options: TOptions
@@ -35,6 +35,7 @@ export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseO
     destination: options.to,
     senderAddress: options.senderAddress,
     feeAsset: options.feeAsset,
+    version: options.version,
     currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
   })
 

@@ -1,165 +1,103 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { type TLocation, Version } from '@paraspell/sdk-common'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { Version } from '@paraspell/sdk-common'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DOT_LOCATION } from '../../../constants'
-import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
-import { assertHasLocation } from '../../assertions'
-import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
-import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
+import { createTransactInstructions } from '../../../pallets/polkadotXcm'
+import type { TCreateTransferXcmOptions } from '../../../types'
+import { addXcmVersionHeader } from '../../xcm-version'
+import { createBaseExecuteXcm } from './createBaseExecuteXcm'
+import { createDirectExecuteXcm } from './createExecuteXcm'
+import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
-vi.mock('../../../constants', () => ({
-  DOT_LOCATION: { parents: 0, interior: { X1: { PalletInstance: 50 } } }
-}))
-vi.mock('../../location')
-vi.mock('../../assertions')
+vi.mock('../../../pallets/polkadotXcm')
+vi.mock('../../xcm-version')
+vi.mock('./createBaseExecuteXcm')
+vi.mock('./prepareCommonExecuteXcm')
 
-describe('createExecuteExchangeXcm', () => {
-  const mockOrigin = 'Hydration'
-  const dummyDest = 'destValue' as unknown as TLocation
-  const dummyBeneficiary = 'beneficiaryValue' as unknown as TLocation
+describe('createDirectExecuteXcm', () => {
+  const prefix = ['prefix'] as unknown as ReturnType<typeof prepareCommonExecuteXcm>['prefix']
+  const depositInstruction = 'deposit' as unknown as ReturnType<
+    typeof prepareCommonExecuteXcm
+  >['depositInstruction']
+
+  const baseOptions = {
+    version: Version.V5,
+    destChain: 'Polkadot',
+    recipientAddress: '5FRecipient'
+  } as TCreateTransferXcmOptions<unknown, unknown>
 
   beforeEach(() => {
-    vi.mocked(createDestination).mockReturnValue(dummyDest)
-    vi.mocked(createBeneficiaryLocation).mockReturnValue(dummyBeneficiary)
-    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TLocation)
-  })
-
-  afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should construct the correct call and return the api.deserializeExtrinsics result when version is provided', () => {
-    const fakeApi = {
-      deserializeExtrinsics: vi.fn().mockReturnValue('result')
-    }
-    const input = {
-      api: fakeApi,
-      version: Version.V4,
-      assetInfo: {
-        location: { foo: 'bar' },
-        amount: 1000n
-      },
-      destination: 'dest',
-      paraIdTo: 200,
-      address: 'address'
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 123n,
-      proofSize: 456n
-    }
-    const originFee = 50n
-    const destFee = 75n
+  it('creates XCM without transact instructions when call is missing', async () => {
+    const baseXcm = ['base-xcm']
+    const versionedXcm = ['versioned-xcm']
 
-    const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
-
-    expect(assertHasLocation).toHaveBeenCalledOnce()
-    expect(assertHasLocation).toHaveBeenCalledWith(input.assetInfo)
-
-    expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.assetInfo.location)
-
-    expect(result).toBe('result')
-    expect(fakeApi.deserializeExtrinsics).toHaveBeenCalledTimes(1)
-
-    const callArg = fakeApi.deserializeExtrinsics.mock.calls[0][0] as TSerializedExtrinsics
-    expect(callArg.module).toBe('PolkadotXcm')
-    expect(callArg.method).toBe('execute')
-    expect(callArg.params.max_weight).toEqual({
-      ref_time: weight.refTime,
-      proof_size: weight.proofSize
+    vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
+      prefix,
+      depositInstruction
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const message = (callArg.params.message as Record<string, any>)[Version.V4]
-    expect(message).toHaveLength(3)
+    vi.mocked(createBaseExecuteXcm).mockReturnValue(baseXcm)
 
-    // 1. WithdrawAsset
-    expect(message[0].WithdrawAsset[0]).toEqual({
-      id: 'transformedLocation',
-      fun: { Fungible: 1000n }
+    vi.mocked(addXcmVersionHeader).mockReturnValue(versionedXcm)
+
+    const result = await createDirectExecuteXcm(baseOptions)
+
+    expect(createTransactInstructions).not.toHaveBeenCalled()
+
+    expect(createBaseExecuteXcm).toHaveBeenCalledWith({
+      ...baseOptions,
+      suffixXcm: [depositInstruction]
     })
 
-    // 2. BuyExecution (origin)
-    expect(message[1].BuyExecution).toEqual({
-      fees: {
-        id: 'transformedLocation',
-        fun: { Fungible: originFee }
-      },
-      weight_limit: 'Unlimited'
-    })
+    expect(addXcmVersionHeader).toHaveBeenCalledWith([...prefix, ...baseXcm], baseOptions.version)
 
-    // 3. InitiateTeleport
-    const teleport = message[2].InitiateTeleport
-    expect(teleport.assets).toEqual({ Wild: { AllCounted: 1 } })
-    expect(teleport.dest).toBe(dummyDest)
-    expect(teleport.xcm).toHaveLength(3)
-
-    // teleport xcm[0]: BuyExecution (dest)
-    expect(teleport.xcm[0].BuyExecution).toEqual({
-      fees: {
-        id: input.assetInfo.location,
-        fun: { Fungible: destFee }
-      },
-      weight_limit: 'Unlimited'
-    })
-
-    // teleport xcm[1]: ExchangeAsset
-    expect(teleport.xcm[1].ExchangeAsset).toEqual({
-      give: { Wild: { AllCounted: 1 } },
-      want: [
-        {
-          id: DOT_LOCATION,
-          fun: { Fungible: 100000000n }
-        }
-      ],
-      maximal: false
-    })
-
-    // teleport xcm[2]: DepositAsset
-    expect(teleport.xcm[2].DepositAsset).toEqual({
-      assets: { Wild: { AllCounted: 2 } },
-      beneficiary: dummyBeneficiary
-    })
+    expect(result).toEqual(versionedXcm)
   })
 
-  it('should default to Version.V4 when version is not provided', () => {
-    const fakeApi = {
-      deserializeExtrinsics: vi.fn().mockReturnValue('defaultResult')
-    }
-    const input = {
-      api: fakeApi,
-      assetInfo: {
-        location: { foo: 'bar' },
-        amount: 2000
-      },
-      scenario: 'scenario-default',
-      destination: 'destination-default',
-      paraIdTo: 300,
-      address: 'address-default',
-      version: Version.V4
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 500n,
-      proofSize: 600n
-    }
-    const originFee = 100n
-    const destFee = 200n
+  it('creates XCM with transact instructions when call exists', async () => {
+    const transactInstructions = ['transact-1', 'transact-2'] as unknown as Awaited<
+      ReturnType<typeof createTransactInstructions>
+    >
+    const baseXcm = ['base-xcm']
+    const versionedXcm = ['versioned-xcm']
 
-    const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
-    expect(result).toBe('defaultResult')
+    const options = {
+      ...baseOptions,
+      transactOptions: {
+        call: '0x1234'
+      }
+    } as TCreateTransferXcmOptions<unknown, unknown>
 
-    expect(assertHasLocation).toHaveBeenCalledOnce()
-    expect(assertHasLocation).toHaveBeenCalledWith(input.assetInfo)
+    vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
+      prefix,
+      depositInstruction
+    })
 
-    expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.assetInfo.location)
+    vi.mocked(createTransactInstructions).mockResolvedValue(transactInstructions)
 
-    expect(createDestination).toHaveBeenCalledWith(
-      Version.V4,
-      mockOrigin,
-      input.destination,
-      input.paraIdTo
+    vi.mocked(createBaseExecuteXcm).mockReturnValue(baseXcm)
+
+    vi.mocked(addXcmVersionHeader).mockReturnValue(versionedXcm)
+
+    const result = await createDirectExecuteXcm(options)
+
+    expect(createTransactInstructions).toHaveBeenCalledWith(
+      undefined,
+      options.transactOptions,
+      options.version,
+      options.destChain,
+      options.recipientAddress
     )
+
+    expect(createBaseExecuteXcm).toHaveBeenCalledWith({
+      ...options,
+      suffixXcm: [...transactInstructions, depositInstruction]
+    })
+
+    expect(addXcmVersionHeader).toHaveBeenCalledWith([...prefix, ...baseXcm], options.version)
+
+    expect(result).toEqual(versionedXcm)
   })
 })

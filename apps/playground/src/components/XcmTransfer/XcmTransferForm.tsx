@@ -43,8 +43,12 @@ import {
   useFeeCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers/advancedOptions';
-import type { TAdvancedOptions, TSubmitType } from '../../types';
+import { advancedOptionsParsers, transactOptionsParsers } from '../../parsers';
+import type {
+  TAdvancedOptions,
+  TSubmitType,
+  TTransactFields,
+} from '../../types';
 import {
   isValidPolkadotAddress,
   validateCustomEndpoint,
@@ -61,6 +65,7 @@ import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AddressTooltip } from '../Tooltip';
+import { Transact } from '../Transact/Transact';
 
 export type TCurrencyEntry = {
   currencyOptionId: string;
@@ -84,7 +89,8 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
-} & TAdvancedOptions;
+} & TAdvancedOptions &
+  TTransactFields;
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
   currency?: TAssetInfo;
@@ -165,6 +171,7 @@ const XcmTransferForm: FC<Props> = ({
     ),
     ahAddress: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
+    ...transactOptionsParsers,
     ...advancedOptionsParsers,
   });
 
@@ -517,6 +524,8 @@ const XcmTransferForm: FC<Props> = ({
               {...form.getInputProps('ahAddress')}
             />
           )}
+
+          <Transact form={form} />
 
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}

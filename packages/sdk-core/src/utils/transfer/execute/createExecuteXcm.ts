@@ -1,18 +1,23 @@
+import { createTransactInstructions } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
-import { addXcmVersionHeader } from '../../addXcmVersionHeader'
+import { addXcmVersionHeader } from '../../xcm-version'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
-export const createDirectExecuteXcm = <TApi, TRes>(
+export const createDirectExecuteXcm = async <TApi, TRes>(
   options: TCreateTransferXcmOptions<TApi, TRes>
 ) => {
-  const { version } = options
+  const { api, version, transactOptions, destChain, recipientAddress } = options
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(options)
 
+  const transact = transactOptions?.call
+    ? await createTransactInstructions(api, transactOptions, version, destChain, recipientAddress)
+    : []
+
   const baseXcm = createBaseExecuteXcm({
     ...options,
-    suffixXcm: [depositInstruction]
+    suffixXcm: transact ? [...transact, depositInstruction] : [depositInstruction]
   })
 
   const fullXcm = [...prefix, ...baseXcm]

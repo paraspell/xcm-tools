@@ -1,8 +1,10 @@
 import { type TAsset } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { UnsupportedOperationError } from '../../../errors'
+import { createPayFees } from '../../../pallets/polkadotXcm'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
@@ -17,38 +19,55 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => {
   }
 }
 
-type TTransferType = 'teleport' | 'reserve_transfer' | 'direct_deposit' | 'teleport_to_reserve'
-
-const getTransferType = (
+const getInstructionType = (
+  version: Version,
   origin: TSubstrateChain,
   destination: TChain,
   reserveChain?: TSubstrateChain
-): TTransferType => {
+) => {
+  if (version >= Version.V5) {
+    return 'InitiateTransfer'
+  }
+
   if (
     reserveChain !== undefined &&
     origin !== reserveChain &&
     isTrustedChain(origin) &&
     isTrustedChain(reserveChain)
   ) {
-    return 'teleport_to_reserve'
+    return 'InitiateTeleportToReserve'
   }
 
   // Trusted chains can teleport
   if (isTrustedChain(origin) && isTrustedChain(destination)) {
-    return 'teleport'
+    return 'InitiateTeleport'
   }
 
   // If we need intermediary reserve (not on reserve chain)
   if (reserveChain !== undefined && origin !== reserveChain) {
-    return 'reserve_transfer'
+    return 'InitiateReserveWithdraw'
   }
 
   // Direct deposit (either no reserve or we're on reserve)
-  return 'direct_deposit'
+  return 'DepositAsset'
 }
 
-export const createBaseExecuteXcm = (
-  options: TCreateBaseTransferXcmOptions & { suffixXcm?: unknown[] }
+const getInitiateTransferType = (
+  origin: TSubstrateChain,
+  destination: TChain,
+  reserveChain?: TSubstrateChain
+) => {
+  if (isTrustedChain(origin) && isTrustedChain(destination)) {
+    return 'Teleport'
+  }
+
+  if (origin === reserveChain) return 'ReserveDeposit'
+
+  return 'ReserveWithdraw'
+}
+
+export const createBaseExecuteXcm = <TRes>(
+  options: TCreateBaseTransferXcmOptions<TRes> & { suffixXcm?: unknown[] }
 ) => {
   const {
     chain,
@@ -76,7 +95,7 @@ export const createBaseExecuteXcm = (
     )
   }
 
-  const transferType = getTransferType(chain, destChain, reserveChain)
+  const transferType = getInstructionType(version, chain, destChain, reserveChain)
 
   const isReserveDest = reserveChain === destChain
 
@@ -88,17 +107,15 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalizedToReserve, version),
             dest: createDestination(version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
-              {
-                BuyExecution: {
-                  fees: updateAsset(
-                    assetLocalizedToDest,
-                    reserveFee === 1000n
-                      ? amount / 2n
-                      : amount - (feeAsset ? reserveFee : originFee + reserveFee)
-                  ),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                updateAsset(
+                  assetLocalizedToDest,
+                  reserveFee === 1000n
+                    ? amount / 2n
+                    : amount - (feeAsset ? reserveFee : originFee + reserveFee)
+                )
+              ),
               ...suffixXcm
             ]
           }
@@ -108,19 +125,24 @@ export const createBaseExecuteXcm = (
   let mainInstructions
 
   switch (transferType) {
-    case 'teleport':
-      // Use teleport for trusted chains
+    case 'InitiateTransfer': {
+      const transferFilter = getInitiateTransferType(chain, destChain, reserveChain)
       mainInstructions = [
         {
-          InitiateTeleport: {
-            assets: createAssetsFilter(assetLocalized, version),
-            dest: destLocation,
-            xcm: [
+          InitiateTransfer: {
+            destination: destLocation,
+            remote_fees: {
+              [transferFilter]: createAssetsFilter(assetLocalized, version)
+            },
+            preserve_origin: true,
+            assets: [
               {
-                BuyExecution: {
-                  fees: updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee),
-                  weight_limit: 'Unlimited'
-                }
+                [transferFilter]: createAssetsFilter(assetLocalized, version)
+              }
+            ],
+            remote_xcm: [
+              {
+                RefundSurplus: undefined
               },
               ...suffixXcm
             ]
@@ -128,8 +150,28 @@ export const createBaseExecuteXcm = (
         }
       ]
       break
+    }
 
-    case 'teleport_to_reserve':
+    case 'InitiateTeleport':
+      // Use teleport for trusted chains
+      mainInstructions = [
+        {
+          InitiateTeleport: {
+            assets: createAssetsFilter(assetLocalized, version),
+            dest: destLocation,
+            xcm: [
+              ...createPayFees(
+                version,
+                updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee)
+              ),
+              ...suffixXcm
+            ]
+          }
+        }
+      ]
+      break
+
+    case 'InitiateTeleportToReserve':
       // Teleport to reserve chain first
       mainInstructions = [
         {
@@ -137,15 +179,10 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalized, version),
             dest: getChainLocation(chain, reserveChain),
             xcm: [
-              {
-                BuyExecution: {
-                  fees: updateAsset(
-                    assetLocalizedToReserve,
-                    feeAsset ? amount : amount - originFee
-                  ),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                updateAsset(assetLocalizedToReserve, feeAsset ? amount : amount - originFee)
+              ),
               // Then deposit to final destination
               ...resolvedDepositInstruction
             ]
@@ -154,23 +191,20 @@ export const createBaseExecuteXcm = (
       ]
       break
 
-    case 'reserve_transfer':
-      // Use InitiateReserve for non-trusted chains
+    case 'InitiateReserveWithdraw':
+      // For non-trusted chains
       mainInstructions = [
         {
           InitiateReserveWithdraw: {
             assets: createAssetsFilter(assetLocalized, version),
             reserve: getChainLocation(chain, reserveChain),
             xcm: [
-              {
-                BuyExecution: {
-                  fees:
-                    // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
-                    // than requested, so we need to account for that
-                    updateAsset(assetLocalizedToReserve, amount - 2n),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
+                // than requested, so we need to account for that
+                updateAsset(assetLocalizedToReserve, amount - 2n)
+              ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
               ...resolvedDepositInstruction
@@ -180,7 +214,7 @@ export const createBaseExecuteXcm = (
       ]
       break
 
-    case 'direct_deposit':
+    case 'DepositAsset':
       mainInstructions = resolvedDepositInstruction
   }
 

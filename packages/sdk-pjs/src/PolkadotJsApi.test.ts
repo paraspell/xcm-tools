@@ -409,6 +409,22 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('txFromHex', () => {
+    it('should return the hex representation of the extrinsic', async () => {
+      const hex = '0xdeadbeef'
+      const mockTransaction = {} as unknown as Extrinsic
+      const mockPromise = {
+        tx: vi.fn().mockReturnValue(mockTransaction),
+        query: {},
+        call: {}
+      } as unknown as TPjsApi
+      const pjsApi = new PolkadotJsApi(mockPromise)
+      await pjsApi.init(mockChain)
+      const result = await pjsApi.txFromHex(hex)
+      expect(result).toBe(mockTransaction)
+    })
+  })
+
   describe('callDispatchAsMethod', () => {
     it('should create a dispatchAs extrinsic with the provided inner and address', () => {
       const tx = '' as unknown as Extrinsic
@@ -453,16 +469,22 @@ describe('PolkadotJsApi', () => {
   describe('calculateTransactionFee', () => {
     it('should return the partial fee as bigint', async () => {
       const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
+        paymentInfo: vi.fn().mockResolvedValue({
+          partialFee: { toBigInt: () => 1000n },
+          weight: {
+            proofSize: { toBigInt: () => 5000n },
+            refTime: { toBigInt: () => 8000n }
+          }
+        })
       } as unknown as Extrinsic
       const address = 'some_address'
 
       const spy = vi.spyOn(mockExtrinsic, 'paymentInfo')
 
-      const fee = await polkadotApi.calculateTransactionFee(mockExtrinsic, address)
+      const { partialFee } = await polkadotApi.getPaymentInfo(mockExtrinsic, address)
 
       expect(spy).toHaveBeenCalledWith(address)
-      expect(fee).toBe(1000n)
+      expect(partialFee).toBe(1000n)
     })
   })
 
@@ -558,7 +580,13 @@ describe('PolkadotJsApi', () => {
 
       const quoteAhPriceSpy = vi.spyOn(polkadotApi, 'quoteAhPrice')
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, forwardedXcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'Acala',
+        xcm,
+        forwardedXcm,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).toHaveBeenCalledTimes(2)
       expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).toHaveBeenNthCalledWith(
@@ -603,7 +631,7 @@ describe('PolkadotJsApi', () => {
       assertHasLocation(asset)
 
       await expect(
-        polkadotApi.getDeliveryFee('Acala', forwardedXcm, asset, asset.location)
+        polkadotApi.getDeliveryFee('Acala', forwardedXcm, asset, asset.location, Version.V5)
       ).rejects.toThrow('boom')
     })
 
@@ -645,7 +673,8 @@ describe('PolkadotJsApi', () => {
         'AssetHubPolkadot',
         xcm,
         forwardedXcm,
-        asset
+        asset,
+        Version.V5
       )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
@@ -690,7 +719,13 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Acala', xcm, forwardedXcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'Acala',
+        xcm,
+        forwardedXcm,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -708,7 +743,7 @@ describe('PolkadotJsApi', () => {
       } as TAssetInfo
 
       await expect(
-        polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, [], asset)
+        polkadotApi.getXcmPaymentApiFee('AssetHubPolkadot', xcm, [], asset, Version.V5)
       ).rejects.toThrow()
     })
 
@@ -746,7 +781,13 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Polkadot', xcm, forwardedXcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'Polkadot',
+        xcm,
+        forwardedXcm,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -789,7 +830,13 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('AssetHubKusama', xcm, forwardedXcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'AssetHubKusama',
+        xcm,
+        forwardedXcm,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -830,7 +877,13 @@ describe('PolkadotJsApi', () => {
         mockFeeResult
       )
 
-      const fee = await polkadotApi.getXcmPaymentApiFee('Kusama', xcm, forwardedXcm, asset)
+      const fee = await polkadotApi.getXcmPaymentApiFee(
+        'Kusama',
+        xcm,
+        forwardedXcm,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
@@ -874,10 +927,11 @@ describe('PolkadotJsApi', () => {
         'BridgeHubPolkadot',
         xcm,
         forwardedXcm,
-        asset
+        asset,
+        Version.V5
       )
 
-      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset)
+      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset, Version.V5)
       expect(fee).toBe(9999n)
     })
 
@@ -913,10 +967,11 @@ describe('PolkadotJsApi', () => {
         'BridgeHubPolkadot',
         xcm,
         forwardedXcm,
-        asset
+        asset,
+        Version.V5
       )
 
-      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset)
+      expect(fallbackSpy).toHaveBeenCalledWith('BridgeHubPolkadot', weight, asset, Version.V5)
       expect(fee).toBe(0n)
     })
   })
@@ -952,13 +1007,18 @@ describe('PolkadotJsApi', () => {
 
       const cloneSpy = vi.spyOn(polkadotApi, 'clone').mockReturnValue(ahApiMock)
 
-      const res = await polkadotApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      const res = await polkadotApi.getBridgeHubFallbackExecFee(
+        chain,
+        weightValue,
+        asset,
+        Version.V5
+      )
 
       expect(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).toHaveBeenCalledWith(
         weightValue,
         { V4: { relay: true } }
       )
-      expect(addXcmVersionHeader).toHaveBeenCalledWith(RELAY_LOCATION, Version.V4)
+      expect(addXcmVersionHeader).toHaveBeenCalledWith(RELAY_LOCATION, Version.V5)
       expect(cloneSpy).toHaveBeenCalledTimes(1)
       expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', asset.location)
@@ -977,7 +1037,12 @@ describe('PolkadotJsApi', () => {
         toJSON: vi.fn().mockReturnValue({ ok: undefined })
       } as unknown as Codec)
 
-      const resWithoutFee = await polkadotApi.getBridgeHubFallbackExecFee(chain, weightValue, asset)
+      const resWithoutFee = await polkadotApi.getBridgeHubFallbackExecFee(
+        chain,
+        weightValue,
+        asset,
+        Version.V5
+      )
       expect(resWithoutFee).toBeUndefined()
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
@@ -994,7 +1059,8 @@ describe('PolkadotJsApi', () => {
       const resWithoutConversion = await polkadotApi.getBridgeHubFallbackExecFee(
         chain,
         weightValue,
-        asset
+        asset,
+        Version.V5
       )
 
       expect(resWithoutConversion).toBeUndefined()
@@ -1203,7 +1269,13 @@ describe('PolkadotJsApi', () => {
 
     beforeEach(() => {
       mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
+        paymentInfo: vi.fn().mockResolvedValue({
+          partialFee: { toBigInt: () => 1000n },
+          weight: {
+            proofSize: { toBigInt: () => 5000n },
+            refTime: { toBigInt: () => 8000n }
+          }
+        })
       } as unknown as Extrinsic
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockReset()
       vi.mocked(wrapTxBypass).mockReset()
@@ -1228,7 +1300,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
@@ -1254,15 +1327,15 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
 
-      const overriddenWeight = { refTime: 123, proofSize: 456 }
-      const extrinsicWithPaymentInfo = {
-        paymentInfo: vi.fn().mockResolvedValue({
-          partialFee: { toBigInt: () => 1000n },
-          weight: overriddenWeight
-        })
-      }
-      const paymentInfoSpy = vi.spyOn(extrinsicWithPaymentInfo, 'paymentInfo')
-      const tx = extrinsicWithPaymentInfo as unknown as Extrinsic
+      const paymentInfoSpy = vi.spyOn(mockExtrinsic, 'paymentInfo')
+
+      paymentInfoSpy.mockResolvedValueOnce({
+        partialFee: { toBigInt: () => 1000n },
+        weight: {
+          refTime: { toBigInt: () => 8000n },
+          proofSize: { toBigInt: () => 5000n }
+        }
+      } as Awaited<ReturnType<Extrinsic['paymentInfo']>>)
 
       const customAsset: TAssetInfo = {
         symbol: 'USDC',
@@ -1283,11 +1356,12 @@ describe('PolkadotJsApi', () => {
         .mockResolvedValue(999n)
 
       const result = await polkadotApi.getDryRunCall({
-        tx,
+        tx: mockExtrinsic,
         address,
         chain,
         destination: 'Acala',
-        asset: customAsset as unknown as WithAmount<TAssetInfo>
+        asset: customAsset as unknown as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(paymentInfoSpy).toHaveBeenCalledWith(address)
@@ -1296,8 +1370,9 @@ describe('PolkadotJsApi', () => {
         undefined,
         [],
         customAsset,
+        Version.V5,
         false,
-        overriddenWeight
+        { proofSize: 5000n, refTime: 8000n }
       )
       expect(result).toEqual({
         success: true,
@@ -1321,7 +1396,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
@@ -1347,7 +1423,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
@@ -1370,7 +1447,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
@@ -1393,7 +1471,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(result).toEqual({
@@ -1415,7 +1494,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(result).toEqual({
@@ -1437,7 +1517,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(result).toEqual({
@@ -1466,11 +1547,12 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mock.calls[0].length).toBe(2)
-      expect(vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mock.calls[1][2]).toBe(3)
+      expect(vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mock.calls[1][2]).toBe(5)
 
       expect(result).toEqual({
         success: true,
@@ -1538,7 +1620,8 @@ describe('PolkadotJsApi', () => {
         chain,
         destination: 'Hydration',
         feeAsset,
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(xcmFeeSpy).toHaveBeenCalledWith(
@@ -1546,6 +1629,7 @@ describe('PolkadotJsApi', () => {
         { instructions: [] },
         expectedForwarded,
         feeAsset,
+        Version.V5,
         false,
         undefined
       )
@@ -1585,7 +1669,8 @@ describe('PolkadotJsApi', () => {
         destination: 'Hydration',
         useRootOrigin: true,
         bypassOptions,
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(wrapTxBypass).toHaveBeenCalledWith(
@@ -1618,7 +1703,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(2)
@@ -1646,7 +1732,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(2)
@@ -1654,7 +1741,7 @@ describe('PolkadotJsApi', () => {
         2,
         { system: { Signed: address } },
         mockExtrinsic,
-        3
+        5
       )
       expect(result).toEqual({
         success: false,
@@ -1684,7 +1771,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenNthCalledWith(
@@ -1696,7 +1784,7 @@ describe('PolkadotJsApi', () => {
         2,
         { system: { Signed: address } },
         mockExtrinsic,
-        3
+        5
       )
       expect(result.success).toBe(true)
     })
@@ -1714,7 +1802,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
@@ -1740,7 +1829,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain,
         destination: 'Hydration',
-        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+        asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       if (result.success) expect(result.destParaId).toBe(2001)
@@ -1759,7 +1849,8 @@ describe('PolkadotJsApi', () => {
         chain,
         destination: 'Hydration',
         asset: asset as WithAmount<TAssetInfo>,
-        feeAsset
+        feeAsset,
+        version: Version.V5
       })
 
       expect(result.asset).toEqual(feeAsset)
@@ -1809,7 +1900,8 @@ describe('PolkadotJsApi', () => {
         address,
         chain: 'Hydration',
         destination: 'Moonbeam',
-        asset: multiAsset as WithAmount<TAssetInfo>
+        asset: multiAsset as WithAmount<TAssetInfo>,
+        version: Version.V5
       })
 
       expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledTimes(1)
@@ -1835,7 +1927,8 @@ describe('PolkadotJsApi', () => {
           address,
           chain: 'Interlay',
           destination: 'Hydration',
-          asset: {} as WithAmount<TAssetInfo>
+          asset: {} as WithAmount<TAssetInfo>,
+          version: Version.V5
         })
       ).rejects.toThrow(RuntimeApiUnavailableError)
     })
@@ -1847,7 +1940,8 @@ describe('PolkadotJsApi', () => {
       address: 'addr',
       chain: 'Hydration' as const,
       destination: 'Moonbeam' as const,
-      asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
+      asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>,
+      version: Version.V5
     }
 
     it('returns native asset when accountCurrencyMap yields null', async () => {
