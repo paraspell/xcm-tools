@@ -1,6 +1,7 @@
 import {
   getRelayChainSymbol,
   InvalidCurrencyError,
+  isChainEvm,
   isSymbolSpecifier,
   isTAsset,
   type TCurrencyInput
@@ -12,10 +13,11 @@ import {
   isTLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
+import { isHex } from 'viem'
 
-import { ScenarioNotSupportedError } from '../../errors'
-import type { TDestination } from '../../types'
-import { getChain } from '../../utils'
+import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
+import type { TDestination, TSendOptions } from '../../types'
+import { compareAddresses, getChain } from '../../utils'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if (Array.isArray(currency)) {
@@ -99,6 +101,43 @@ export const validateAssetSpecifiers = (assetCheckEnabled: boolean, currency: TC
   if (!assetCheckEnabled && 'id' in currency) {
     throw new InvalidCurrencyError(
       'Asset ID is not supported when asset check is disabled. Please use normal symbol instead'
+    )
+  }
+}
+
+export const validateTransact = <TApi, TRes>({
+  api,
+  from,
+  to,
+  senderAddress,
+  address,
+  transactOptions
+}: TSendOptions<TApi, TRes>) => {
+  const call = transactOptions?.call
+
+  if (!call) return
+
+  if (from === to) {
+    throw new UnsupportedOperationError('Cannot use transact options with local transfers.')
+  }
+
+  if (typeof call === 'string' && !isHex(call)) {
+    throw new ValidationError('Transact call hex must be a valid hex string.')
+  }
+
+  if (isChainEvm(from) || (typeof to === 'string' && isChainEvm(to))) {
+    throw new UnsupportedOperationError(
+      'Transact option is only supported for Substrate to Substrate scenarios.'
+    )
+  }
+
+  if (
+    typeof address === 'string' &&
+    senderAddress &&
+    !compareAddresses(api, address, senderAddress)
+  ) {
+    return new ValidationError(
+      'Sender address must match the destination address for transact to work.'
     )
   }
 }

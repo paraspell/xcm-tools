@@ -4,11 +4,15 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { Version } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
-import { abstractDecimals, addXcmVersionHeader, getRelayChainOf } from '../../utils'
+import {
+  abstractDecimals,
+  addXcmVersionHeader,
+  getRelayChainOf,
+  pickCompatibleXcmVersion
+} from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveHopAsset } from '../utils'
@@ -28,6 +32,7 @@ export const dryRunInternal = async <TApi, TRes>(
     senderAddress,
     feeAsset,
     swapConfig,
+    version,
     bypassOptions,
     useRootOrigin = false
   } = options
@@ -44,6 +49,8 @@ export const dryRunInternal = async <TApi, TRes>(
     api
   )
 
+  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+
   const originDryRun = await api.getDryRunCall({
     tx,
     chain: origin,
@@ -54,6 +61,7 @@ export const dryRunInternal = async <TApi, TRes>(
       amount
     },
     feeAsset: resolvedFeeAsset,
+    version: resolvedVersion,
     bypassOptions,
     useRootOrigin: useRootOrigin || !!bypassOptions
   })
@@ -112,13 +120,14 @@ export const dryRunInternal = async <TApi, TRes>(
     const hopDryRun = await hopApi.getDryRunXcm({
       originLocation: addXcmVersionHeader(
         createOriginLocation(currentOrigin, currentChain),
-        Version.V4
+        resolvedVersion
       ),
       tx,
       xcm: forwardedXcms[1][0],
       chain: currentChain,
       origin: currentOrigin,
       asset: hopAsset,
+      version: resolvedVersion,
       feeAsset: resolvedFeeAsset,
       originFee: originDryModified.fee,
       amount

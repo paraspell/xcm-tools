@@ -1,5 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
 
+import { createPayFees } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
 import { createBeneficiaryLocation } from '../../location'
@@ -27,14 +28,12 @@ export const prepareCommonExecuteXcm = <TApi, TRes>(
   })
 
   if (feeAsset) {
-    prefix.push({
-      BuyExecution: {
-        fees: feeAssetLocalized ?? assetLocalized,
-        weight_limit: {
-          Limited: { ref_time: 450n, proof_size: 0n }
-        }
-      }
-    })
+    prefix.push(
+      ...createPayFees(version, feeAssetLocalized ?? assetLocalized, {
+        refTime: 450n,
+        proofSize: 0n
+      })
+    )
   } else {
     prefix.push({
       SetFeesMode: {

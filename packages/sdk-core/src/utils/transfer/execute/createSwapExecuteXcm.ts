@@ -2,10 +2,10 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from 
 
 import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
-import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
+import { addXcmVersionHeader } from '../../xcm-version'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'

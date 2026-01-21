@@ -60,3 +60,5 @@ export const BYPASS_MINT_AMOUNT = '1000'
 
 export const MIN_AMOUNT = 2n
 export const AMOUNT_ALL = 'ALL'
+
+export const TRANSACT_ORIGINS = ['Native', 'SovereignAccount', 'Superuser', 'Xcm'] as const

@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 
 import { PageRoute } from '../components/PageRoute';
-import type { TNavItem } from '../types';
+import type { TNavItem, TTransactFields } from '../types';
 
 export const NAVIGATION_ITEMS: TNavItem[] = [
   {
@@ -58,3 +58,8 @@ export const LOCAL_ACCOUNTS = [
   'Eve',
   'Ferdie',
 ];
+
+export const DEFAULT_TRANSACT_OPTIONS: TTransactFields['transactOptions'] = {
+  call: '',
+  originKind: 'SovereignAccount',
+};

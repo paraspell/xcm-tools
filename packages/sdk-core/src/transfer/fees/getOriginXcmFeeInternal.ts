@@ -8,7 +8,7 @@ import {
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
-import { abstractDecimals } from '../../utils'
+import { abstractDecimals, pickCompatibleXcmVersion } from '../../utils'
 import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { isSufficientOrigin } from './isSufficient'
@@ -22,6 +22,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
   disableFallback,
   feeAsset,
   currency,
+  version,
   useRootOrigin = false
 }: TGetOriginXcmFeeInternalOptions<TApi, TRes>): Promise<
   TXcmFeeDetail & {
@@ -40,7 +41,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
   if (!hasDryRunSupport(origin)) {
-    const rawFee = await api.calculateTransactionFee(tx, senderAddress)
+    const { partialFee: rawFee } = await api.getPaymentInfo(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
     const sufficient = await isSufficientOrigin(
       api,
@@ -64,6 +65,8 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
     }
   }
 
+  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+
   const dryRunResult = await api.getDryRunCall({
     tx,
     chain: origin,
@@ -73,6 +76,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
       ...asset,
       amount
     },
+    version: resolvedVersion,
     feeAsset: resolvedFeeAsset,
     // Force dryRun pass
     useRootOrigin
@@ -87,7 +91,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
       }
     }
 
-    const rawFee = await api.calculateTransactionFee(tx, senderAddress)
+    const { partialFee: rawFee } = await api.getPaymentInfo(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
 
     return {

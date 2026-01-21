@@ -11,7 +11,12 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TChain,
+  TSubstrateChain,
+  TTransactOptions,
+} from '@paraspell/sdk';
 import {
   CHAINS,
   isChainEvm,
@@ -47,7 +52,7 @@ import {
   useFeeCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import { advancedOptionsParsers, transactOptionsParsers } from '../../parsers';
 import type { TAdvancedOptions, TSubmitType } from '../../types';
 import {
   isValidPolkadotAddress,
@@ -88,6 +93,7 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
+  transactOptions: TTransactOptions<string, string | number>;
 } & TAdvancedOptions;
 
 export type TCurrencyEntryTransformed = TCurrencyEntry & {
@@ -169,6 +175,7 @@ const XcmUtilsForm: FC<Props> = ({
       ),
       ahAddress: parseAsString.withDefault(''),
       useApi: parseAsBoolean.withDefault(false),
+      ...transactOptionsParsers,
       ...advancedOptionsParsers,
     },
     { clearOnDefault: false },

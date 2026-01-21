@@ -11,10 +11,10 @@ import type { TBypassOptions, TSendBaseOptionsWithSenderAddress } from '../types
 export const buildDryRun = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   tx: TRes,
-  options: TSendBaseOptionsWithSenderAddress,
+  options: TSendBaseOptionsWithSenderAddress<TRes>,
   bypassOptions?: TBypassOptions
 ) => {
-  const { to, address, senderAddress, feeAsset, from, currency } = options
+  const { to, address, senderAddress, feeAsset, from, currency, version } = options
 
   if (isTLocation(to)) {
     throw new InvalidAddressError('Location destination is not supported for XCM fee calculation.')
@@ -33,6 +33,7 @@ export const buildDryRun = <TApi, TRes>(
     currency,
     senderAddress,
     feeAsset,
+    version,
     bypassOptions
   })
 }

@@ -71,6 +71,7 @@ const builderMock = {
   xcmVersion: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),
   customPallet: vi.fn().mockReturnThis(),
+  transact: vi.fn().mockReturnThis(),
   buildBatch: vi.fn().mockReturnValue({
     getEncodedData: vi.fn().mockResolvedValue({
       asHex: vi.fn().mockReturnValue(txHashBatch),
@@ -338,6 +339,23 @@ describe('XTransferService', () => {
       expect(builderMock.customPallet).toHaveBeenCalledWith(
         'Balances',
         'transfer',
+      );
+    });
+
+    it('should succeed when transact options are provided', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        transactOptions: {
+          call: '0xdeadbeef',
+          originKind: 'SovereignAccount',
+        },
+      };
+      const result = await service.generateXcmCall(options);
+      expect(result).toBe(txHash);
+      expect(builderMock.transact).toHaveBeenCalledWith(
+        '0xdeadbeef',
+        'SovereignAccount',
+        undefined,
       );
     });
   });

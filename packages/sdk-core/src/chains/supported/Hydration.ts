@@ -57,7 +57,7 @@ class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
       const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.deserializeExtrinsics(await handleExecuteTransfer(this.chain, input))
+        return api.deserializeExtrinsics(await handleExecuteTransfer(input))
       }
     }
 

@@ -7,10 +7,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
-import { addXcmVersionHeader } from '../../addXcmVersionHeader'
 import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
+import { addXcmVersionHeader } from '../../xcm-version'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
@@ -18,7 +18,7 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../../chains/config')
-vi.mock('../../addXcmVersionHeader')
+vi.mock('../../xcm-version')
 vi.mock('../../assertions')
 vi.mock('../../location')
 vi.mock('../../asset')

@@ -20,7 +20,7 @@ describe('buildDryRun', () => {
     senderAddress: 'SENDER',
     currency: { symbol: 'DOT' },
     feeAsset: { symbol: 'USDT' }
-  } as TSendBaseOptionsWithSenderAddress
+  } as TSendBaseOptionsWithSenderAddress<unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

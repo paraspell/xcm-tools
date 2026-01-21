@@ -209,6 +209,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     destination: destChain ?? exchangeChain,
     senderAddress,
     address: recipientAddress,
+    version,
     currency: {
       location: assetFrom.location as TLocation,
       amount: assetFrom.amount

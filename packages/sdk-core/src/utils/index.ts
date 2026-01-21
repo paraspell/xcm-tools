@@ -1,6 +1,6 @@
 // Contains important call creation utils (Selection of fees, formating of header and more.. )
 
-export * from './addXcmVersionHeader'
+export * from './address'
 export * from './assertions'
 export * from './asset'
 export * from './builder'
@@ -17,4 +17,4 @@ export * from './resolveDestChain'
 export * from './resolveParaId'
 export * from './transfer'
 export * from './unit'
-export * from './validateAddress'
+export * from './xcm-version'

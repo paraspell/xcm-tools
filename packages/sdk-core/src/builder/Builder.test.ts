@@ -1401,4 +1401,38 @@ describe('Builder', () => {
       expect(result).toBe(mockTxHash)
     })
   })
+
+  describe('Transact', () => {
+    beforeEach(() => {
+      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+    })
+
+    it('should initiate a transact call', async () => {
+      const currency = getRelayChainSymbol(CHAIN)
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to('Polkadot')
+        .currency({ symbol: 'DOT', amount: AMOUNT })
+        .address(ADDRESS)
+        .transact('0x123')
+        .build()
+
+      expect(send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: 'Polkadot',
+          currency: {
+            symbol: currency,
+            amount: AMOUNT
+          },
+          address: ADDRESS,
+          transactOptions: {
+            call: '0x123'
+          }
+        })
+      )
+    })
+  })
 })

@@ -53,7 +53,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   validateTransfer: (
-    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress<TRes>>,
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],

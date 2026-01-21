@@ -26,7 +26,8 @@ export const getTransferInfo = async <TApi, TRes>({
   ahAddress,
   address,
   currency,
-  feeAsset
+  feeAsset,
+  version
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
   if (isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
@@ -66,6 +67,7 @@ export const getTransferInfo = async <TApi, TRes>({
       address,
       currency,
       feeAsset,
+      version,
       disableFallback: false
     })
 

@@ -51,7 +51,6 @@ export type TBifrostToken =
 
 export type TXTokensCurrencySelection =
   | TXcmVersioned<TLocation | TAsset | TAsset[]>
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   | TXcmForeignAsset
   | TForeignAssetId
   | TForeignOrTokenAsset

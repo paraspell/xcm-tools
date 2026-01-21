@@ -97,10 +97,14 @@ export type TCreateTxsOptions<TApi, TRes> = Pick<
 >
 
 export type TBatchedSendOptions<TApi, TRes> = Omit<TSendOptions<TApi, TRes>, 'isAmountAll'> & {
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>
 }
 
-export type TBuildInternalRes<TApi, TRes, TOptions extends TSendBaseOptions = TSendBaseOptions> = {
+export type TBuildInternalRes<
+  TApi,
+  TRes,
+  TOptions extends TSendBaseOptions<TRes> = TSendBaseOptions<TRes>
+> = {
   tx: TRes
   options: TSendOptions<TApi, TRes> & TOptions
 }

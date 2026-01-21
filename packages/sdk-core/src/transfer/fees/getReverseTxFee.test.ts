@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { Builder } from '../../builder'
-import type { TGetReverseTxFeeOptions } from '../../types'
+import type { TGetReverseTxFeeOptions, TPaymentInfo } from '../../types'
 import { padFee } from '../../utils/fees'
 import { getReverseTxFee } from './getReverseTxFee'
 
@@ -37,14 +37,16 @@ vi.mock('../../builder', () => ({
 
 vi.mock('./padFee')
 
-const mockCalculateTransactionFee = vi.fn()
 const mockApi = {
-  calculateTransactionFee: mockCalculateTransactionFee
+  getPaymentInfo: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('getReverseTxFee', () => {
   const mockTxObject = { type: 'mockTransaction' }
-  const rawFee = 100000n
+  const mockPaymentInfo: TPaymentInfo = {
+    partialFee: 100000n,
+    weight: { refTime: 0n, proofSize: 0n }
+  }
   const paddedFee = 120000n
   const mockAmount = 10000000000n
 
@@ -64,7 +66,7 @@ describe('getReverseTxFee', () => {
     vi.mocked(isAddress).mockImplementation((addr: string) => addr.startsWith('0x'))
 
     mockBuild.mockResolvedValue({ tx: mockTxObject, options: {} })
-    mockCalculateTransactionFee.mockResolvedValue(rawFee)
+    vi.spyOn(mockApi, 'getPaymentInfo').mockResolvedValue(mockPaymentInfo)
     vi.mocked(padFee).mockReturnValue(paddedFee)
   })
 
@@ -109,12 +111,12 @@ describe('getReverseTxFee', () => {
 
   it('should call api.calculateTransactionFee with the built transaction and correct sender address', async () => {
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
+
+    const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
+
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(mockCalculateTransactionFee).toHaveBeenCalledWith(
-      mockTxObject,
-      defaultOptions.senderAddress
-    )
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.senderAddress)
   })
 
   it('should call padFee with the raw fee and correct parameters', async () => {
@@ -122,7 +124,7 @@ describe('getReverseTxFee', () => {
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(padFee).toHaveBeenCalledWith(
-      rawFee,
+      mockPaymentInfo.partialFee,
       defaultOptions.origin,
       defaultOptions.destination,
       'destination'
@@ -158,36 +160,39 @@ describe('getReverseTxFee', () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.origin)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
+    const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
+
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(mockAddress).toHaveBeenCalledWith(defaultOptions.address)
     expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(mockCalculateTransactionFee).toHaveBeenCalledWith(
-      mockTxObject,
-      defaultOptions.senderAddress
-    )
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.senderAddress)
   })
 
   it('should use EVM address when destination chain is EVM', async () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
+    const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
+
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
     expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(mockCalculateTransactionFee).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
   })
 
   it('should use correct addresses when both chains are EVM', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
+    const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
+
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(mockAddress).toHaveBeenCalledWith(defaultOptions.address)
     expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(mockCalculateTransactionFee).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
   })
 
   it('should handle edge case where address is not EVM format', async () => {
@@ -207,10 +212,12 @@ describe('getReverseTxFee', () => {
     vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
+    const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
+
     await getReverseTxFee(defaultOptions, currencyInput)
 
     expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
     expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(mockCalculateTransactionFee).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
   })
 })

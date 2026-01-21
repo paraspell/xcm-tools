@@ -50,7 +50,7 @@ import { useEffect, useState } from 'react';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import { useRouterCurrencyOptions, useWallet } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import { advancedOptionsParsers } from '../../parsers';
 import type {
   TAdvancedOptions,
   TRouterSubmitType,
