@@ -16,7 +16,7 @@ const createCallForReserve = async <TApi, TRes>(
   reserveChain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<{ call: TSerializedExtrinsics; success: boolean }> => {
-  const { api, destination, address, senderAddress, currency, feeCurrency } = options
+  const { api, destination, address, senderAddress, currency, feeCurrency, version } = options
 
   const serialized = await createTypeAndThenCall(options, { reserveChain })
 
@@ -33,6 +33,7 @@ const createCallForReserve = async <TApi, TRes>(
     address,
     senderAddress,
     currency,
+    version,
     feeAsset: feeCurrency,
     useRootOrigin: true
   })

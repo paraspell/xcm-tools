@@ -38,7 +38,7 @@ describe('createBaseExecuteXcm', () => {
     },
     version: mockVersion,
     paraIdTo: 1000
-  } as TCreateBaseTransferXcmOptions
+  } as TCreateBaseTransferXcmOptions<unknown>
 
   const mockPrepareExecuteContext = {
     amount: 10000n,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo } from '@paraspell/assets'
 import {
   findAssetInfoOrThrow,
@@ -9,12 +8,14 @@ import {
 } from '@paraspell/assets'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { Version } from '../..'
 import type { IPolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import type { GeneralBuilder } from '../../builder'
 import { AmountTooLowError } from '../../errors'
 import type {
   TDryRunResult,
+  TGetMinTransferableAmountOptions,
   TGetXcmFeeResult,
   TSendBaseOptionsWithSenderAddress
 } from '../../types'
@@ -32,37 +33,41 @@ vi.mock('../fees')
 vi.mock('../dry-run')
 vi.mock('../../balance')
 
-const makeApis = () => {
+describe('getMinTransferableAmountInternal', () => {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const buildTx = vi.fn(async () => ({}) as unknown)
+
   const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
-  return { api, destApi }
-}
 
-describe('getMinTransferableAmountInternal', () => {
-  let mockBuilder: GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
+  const mockBuilder = {
+    currency: vi.fn().mockReturnThis(),
+    buildInternal: vi.fn().mockReturnValue({} as unknown)
+  } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  const buildTx = vi.fn(async () => ({}) as unknown)
+  const baseOptions = {
+    api,
+    origin: 'Acala',
+    senderAddress: 'SENDER',
+    address: 'DEST_ADDR',
+    destination: 'Astar',
+    currency: { symbol: 'ASSET', amount: 1n },
+    builder: mockBuilder,
+    version: Version.V5,
+    buildTx
+  } as TGetMinTransferableAmountOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(abstractDecimals).mockReturnValue(100n)
-    vi.mocked(isAssetEqual).mockImplementation(
-      (a: TAssetInfo, b: TAssetInfo) => a?.symbol === b?.symbol
-    )
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
     vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
-    vi.mocked(isAssetEqual).mockImplementation(
-      (a: TAssetInfo, b: TAssetInfo) => a?.symbol === b?.symbol
-    )
-    mockBuilder = {
-      currency: vi.fn().mockReturnThis(),
-      buildInternal: vi.fn().mockReturnValue({} as unknown)
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
   })
 
   afterEach(() => {
@@ -70,8 +75,6 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('adds origin/hops/destination (matching asset), ED (when dest balance is 0), plus 1', async () => {
-    const { api, destApi } = makeApis()
-
     const asset = { symbol: 'ASSET', decimals: 12 } as TAssetInfo
     const destAsset = { symbol: 'ASSET', location: {} } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
@@ -96,23 +99,17 @@ describe('getMinTransferableAmountInternal', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buildSpy = vi.spyOn(mockBuilder as any, 'buildInternal').mockResolvedValue({} as unknown)
 
-    const res = await mod.getMinTransferableAmountInternal({
-      api,
-      origin: 'Acala',
-      senderAddress: 'SENDER',
-      address: 'DEST_ADDR',
-      destination: 'Astar',
-      currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder,
-      buildTx
-    })
+    const cloneSpy = vi.spyOn(api, 'clone')
+    const destInitSpy = vi.spyOn(destApi, 'init')
+
+    const res = await mod.getMinTransferableAmountInternal(baseOptions)
 
     // 2 + 3 + 7 + 10 + 1 = 23
     expect(res).toBe(23n)
 
     expect(validateAddress).toHaveBeenCalledWith(api, 'SENDER', 'Acala', false)
-    expect(api.clone).toHaveBeenCalled()
-    expect(destApi.init).toHaveBeenCalledWith('Astar')
+    expect(cloneSpy).toHaveBeenCalled()
+    expect(destInitSpy).toHaveBeenCalledWith('Astar')
     expect(getAssetBalanceInternal).toHaveBeenCalledWith(
       expect.objectContaining({
         api: destApi,
@@ -141,8 +138,6 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('no ED when dest balance > 0; origin fee counts when feeAsset resolves to sending asset', async () => {
-    const { api } = makeApis()
-
     const asset = { symbol: 'A' } as TAssetInfo
     const destAssetNoLoc = { symbol: 'A' } as TAssetInfo
     const nativeAsset = { symbol: 'B' } as TAssetInfo
@@ -161,15 +156,9 @@ describe('getMinTransferableAmountInternal', () => {
     } as unknown as TGetXcmFeeResult)
 
     const out = await mod.getMinTransferableAmountInternal({
-      api,
-      origin: 'Acala',
-      senderAddress: 'S1',
-      address: 'D1',
+      ...baseOptions,
       destination: 'Hydration',
-      currency: { symbol: 'ASSET', amount: 123n },
-      feeAsset: { symbol: 'FEE' } as TAssetInfo,
-      builder: mockBuilder,
-      buildTx
+      feeAsset: { symbol: 'FEE' } as TAssetInfo
     })
 
     // origin(5) + 0 + 0 + ED(0) + 1 = 6
@@ -185,8 +174,6 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns 0n when dryRun reports failureReason', async () => {
-    const { api } = makeApis()
-
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
       symbol: 'A',
@@ -205,22 +192,14 @@ describe('getMinTransferableAmountInternal', () => {
     } as unknown as TDryRunResult)
 
     const res = await mod.getMinTransferableAmountInternal({
-      api,
-      origin: 'Acala',
-      senderAddress: 'S1',
-      address: 'D1',
-      destination: 'Hydration',
-      currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder,
-      buildTx
+      ...baseOptions,
+      destination: 'Hydration'
     })
 
     expect(res).toBe(0n)
   })
 
   it('skips unrelated fees when assets differ; only ED + 1 when dest balance is 0', async () => {
-    const { api } = makeApis()
-
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'B' } as TAssetInfo)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
@@ -236,14 +215,8 @@ describe('getMinTransferableAmountInternal', () => {
     } as TGetXcmFeeResult)
 
     const out = await mod.getMinTransferableAmountInternal({
-      api,
-      origin: 'Acala',
-      senderAddress: 'S',
-      address: 'D',
-      destination: 'Hydration',
-      currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder,
-      buildTx
+      ...baseOptions,
+      destination: 'Hydration'
     })
 
     // Only ED(4) + 1
@@ -251,8 +224,6 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns 0n when createTx keeps failing with AmountTooLowError (even after padding)', async () => {
-    const { api } = makeApis()
-
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'ASSET',
       decimals: 12
@@ -276,16 +247,7 @@ describe('getMinTransferableAmountInternal', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.spyOn(mockBuilder as any, 'buildInternal').mockRejectedValue(error)
 
-    const result = await mod.getMinTransferableAmountInternal({
-      api,
-      origin: 'Acala',
-      senderAddress: 'SENDER',
-      address: 'DEST',
-      destination: 'Astar',
-      currency: { symbol: 'ASSET', amount: 1n },
-      builder: mockBuilder,
-      buildTx
-    })
+    const result = await mod.getMinTransferableAmountInternal(baseOptions)
 
     expect(result).toBe(0n)
     expect(dryRunInternal).not.toHaveBeenCalled()

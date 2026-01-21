@@ -45,6 +45,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     feeAsset,
     originFee,
     tx,
+    version,
     disableFallback,
     swapConfig
   } = options
@@ -122,6 +123,7 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     chain: destination,
     origin,
     asset,
+    version,
     originFee,
     feeAsset: resolvedFeeAsset,
     amount: normalizeAmount(currency.amount)

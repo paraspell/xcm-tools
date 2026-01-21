@@ -2,7 +2,7 @@ import type { TAsset } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { addXcmVersionHeader } from '../addXcmVersionHeader'
+import { addXcmVersionHeader } from '../xcm-version'
 
 export const createId = (version: Version, location: TLocation) => {
   if (version === Version.V3) {

@@ -18,11 +18,8 @@ export const Builder = (api?: TBuilderOptions<TPapiApiOrUrl>) => {
   return BuilderImpl<PolkadotClient, TPapiTransaction>(papiApi)
 }
 
-export type GeneralBuilder<T extends Partial<TSendBaseOptions> = object> = GeneralBuilderCore<
-  PolkadotClient,
-  TPapiTransaction,
-  T
->
+export type GeneralBuilder<T extends Partial<TSendBaseOptions<TPapiTransaction>> = object> =
+  GeneralBuilderCore<PolkadotClient, TPapiTransaction, T>
 
 export const EvmBuilder = (api?: TBuilderOptions<TPapiApiOrUrl>) => {
   const papiApi = new PapiApi(api)

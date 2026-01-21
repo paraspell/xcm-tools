@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
 import type { UnableToComputeError } from '../errors'
@@ -86,6 +86,7 @@ export type TGetTransferInfoOptionsBase<TRes> = {
   ahAddress?: string
   address: string
   currency: WithAmount<TCurrencyCore>
+  version: Version | undefined
   feeAsset?: TCurrencyCore
 }
 

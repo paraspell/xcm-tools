@@ -11,28 +11,22 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
   TBuilderOptions,
-  TCurrencyCore,
-  TCurrencyInput,
   TPapiApiOrUrl,
-  WithComplexAmount,
 } from '@paraspell/sdk';
-import {
-  Foreign,
-  ForeignAbstract,
-  getOtherAssets,
-  isRelayChain,
-  Native,
-  Override,
-  replaceBigInt,
-  type TLocation,
-} from '@paraspell/sdk';
+import { replaceBigInt } from '@paraspell/sdk';
 import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
-import { createBuilderOptions, fetchFromApi } from '../../utils';
+import {
+  createBuilderOptions,
+  determineCurrency,
+  determineFeeAsset,
+  fetchFromApi,
+  setupBaseBuilder,
+} from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -41,10 +35,7 @@ import {
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type {
-  FormValuesTransformed,
-  TCurrencyEntryTransformed,
-} from './XcmUtilsForm';
+import type { FormValuesTransformed } from './XcmUtilsForm';
 import XcmTransferForm from './XcmUtilsForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -74,93 +65,6 @@ const XcmUtils = () => {
     }
   }, [error, scrollIntoView]);
 
-  const determineCurrency = (
-    { from }: FormValuesTransformed,
-    {
-      isCustomCurrency,
-      customCurrency,
-      customCurrencyType,
-      customCurrencySymbolSpecifier,
-      currency,
-    }: TCurrencyEntryTransformed,
-  ): TCurrencyInput => {
-    if (isCustomCurrency) {
-      if (customCurrencyType === 'id') {
-        return {
-          id: customCurrency,
-        };
-      } else if (customCurrencyType === 'symbol') {
-        if (customCurrencySymbolSpecifier === 'native') {
-          return {
-            symbol: Native(customCurrency),
-          };
-        }
-        if (customCurrencySymbolSpecifier === 'foreign') {
-          return {
-            symbol: Foreign(customCurrency),
-          };
-        }
-        if (customCurrencySymbolSpecifier === 'foreignAbstract') {
-          return {
-            symbol: ForeignAbstract(customCurrency),
-          };
-        }
-        return {
-          symbol: customCurrency,
-        };
-      } else if (customCurrencyType === 'overridenLocation') {
-        return {
-          location: Override(JSON.parse(customCurrency) as TLocation),
-        };
-      } else {
-        return {
-          location: JSON.parse(customCurrency) as TLocation,
-        };
-      }
-    } else if (currency) {
-      const hasDuplicateIds = isRelayChain(from)
-        ? false
-        : getOtherAssets(from).filter(
-            (asset) =>
-              !asset.isNative &&
-              !currency.isNative &&
-              asset.assetId === currency.assetId,
-          ).length > 1;
-
-      if (!currency.isNative && currency.assetId && !hasDuplicateIds) {
-        return {
-          id: currency.assetId,
-        };
-      }
-
-      if (currency.location) {
-        return {
-          location: currency.location,
-        };
-      }
-
-      return currency.isNative
-        ? { symbol: Native(currency.symbol) }
-        : { symbol: currency.symbol };
-    } else {
-      throw Error('Currency is required');
-    }
-  };
-
-  const determineFeeAsset = (
-    formValues: FormValuesTransformed,
-    transformedFeeAsset?: TCurrencyEntryTransformed,
-  ): TCurrencyInput | undefined => {
-    if (!transformedFeeAsset) return undefined;
-    if (
-      transformedFeeAsset.currencyOptionId ||
-      transformedFeeAsset.isCustomCurrency
-    ) {
-      return determineCurrency(formValues, transformedFeeAsset);
-    }
-    return undefined;
-  };
-
   const performFeeOperation = async (
     formValues: FormValuesTransformed,
     selectedAccountAddress: string,
@@ -179,17 +83,7 @@ const XcmUtils = () => {
     ) => GeneralBuilder) &
       ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
-    const {
-      from,
-      to,
-      currencies,
-      transformedFeeAsset,
-      address,
-      useApi,
-      xcmVersion,
-      pallet,
-      method,
-    } = formValues;
+    const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
@@ -254,33 +148,20 @@ const XcmUtils = () => {
           true,
         );
       } else {
-        let builder = Builder(builderOptions)
-          .from(from)
-          .to(to)
-          .currency(
-            currencyInputs.length === 1
-              ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
-              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-          )
-          .feeAsset(body.feeAsset as TCurrencyInput)
-          .address(address)
-          .senderAddress(selectedAccountAddress)
-          .ahAddress(body.ahAddress);
+        const builder = Builder(builderOptions);
 
-        if (xcmVersion) {
-          builder = builder.xcmVersion(xcmVersion);
-        }
-
-        if (pallet && method) {
-          builder = builder.customPallet(pallet, method);
-        }
+        const finalBuilder = setupBaseBuilder(
+          builder,
+          formValues,
+          selectedAccountAddress,
+        );
 
         switch (submitType) {
           case 'getXcmFee':
-            result = await builder.getXcmFee();
+            result = await finalBuilder.getXcmFee();
             break;
           case 'getOriginXcmFee':
-            result = await builder.getOriginXcmFee();
+            result = await finalBuilder.getOriginXcmFee();
             break;
         }
       }
@@ -317,17 +198,7 @@ const XcmUtils = () => {
     ) => GeneralBuilder) &
       ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
-    const {
-      from,
-      to,
-      currencies,
-      transformedFeeAsset,
-      address,
-      useApi,
-      xcmVersion,
-      pallet,
-      method,
-    } = formValues;
+    const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
@@ -396,42 +267,28 @@ const XcmUtils = () => {
           true,
         );
       } else {
-        let builder = Builder(builderOptions)
-          .from(from)
-          .to(to)
-          .currency(
-            currencyInputs.length === 1
-              ? (currencyInputs[0] as WithComplexAmount<TCurrencyInput>)
-              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-          )
-          .feeAsset(body.feeAsset as TCurrencyInput)
-          .address(address)
-          .senderAddress(selectedAccountAddress)
-          .ahAddress(body.ahAddress);
-
-        if (xcmVersion) {
-          builder = builder.xcmVersion(xcmVersion);
-        }
-
-        if (pallet && method) {
-          builder = builder.customPallet(pallet, method);
-        }
+        const builder = Builder(builderOptions);
+        const finalBuilder = setupBaseBuilder(
+          builder,
+          formValues,
+          selectedAccountAddress,
+        );
 
         switch (submitType) {
           case 'getTransferableAmount':
-            result = await builder.getTransferableAmount();
+            result = await finalBuilder.getTransferableAmount();
             break;
           case 'getMinTransferableAmount':
-            result = await builder.getMinTransferableAmount();
+            result = await finalBuilder.getMinTransferableAmount();
             break;
           case 'getReceivableAmount':
-            result = await builder.getReceivableAmount();
+            result = await finalBuilder.getReceivableAmount();
             break;
           case 'verifyEdOnDestination':
-            result = await builder.verifyEdOnDestination();
+            result = await finalBuilder.verifyEdOnDestination();
             break;
           case 'getTransferInfo':
-            result = await builder.getTransferInfo();
+            result = await finalBuilder.getTransferInfo();
             break;
         }
       }

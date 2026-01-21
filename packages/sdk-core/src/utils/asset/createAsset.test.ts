@@ -3,10 +3,10 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { addXcmVersionHeader } from '../addXcmVersionHeader'
+import { addXcmVersionHeader } from '../xcm-version'
 import { createAsset, createId, createVersionedAssets } from './createAsset'
 
-vi.mock('../addXcmVersionHeader')
+vi.mock('../xcm-version')
 
 const mockAmount: TAmount = 1000000000000n
 const mockLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }

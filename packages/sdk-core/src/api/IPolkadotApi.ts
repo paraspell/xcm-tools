@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type {
   BatchMode,
@@ -25,17 +25,18 @@ export interface IPolkadotApi<TApi, TRes> {
   accountToHex(address: string, isPrefixed?: boolean): string
   accountToUint8a(address: string): Uint8Array
   deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes
+  txFromHex(hex: string): Promise<TRes>
   queryState<T>(serialized: TSerializedStateQuery): Promise<T>
   queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes
   callDispatchAsMethod(call: TRes, address: string): TRes
-  objectToHex(obj: unknown, typeName: string): Promise<string>
+  objectToHex(obj: unknown, typeName: string, version: Version): Promise<string>
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
   getMethod(tx: TRes): string
   getTypeThenAssetCount(tx: TRes): number | undefined
   hasMethod(pallet: TPallet, method: string): Promise<boolean>
-  calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
+  getPaymentInfo(tx: TRes, address: string): Promise<{ partialFee: bigint; weight: TWeight }>
   quoteAhPrice(
     fromMl: TLocation,
     toMl: TLocation,
@@ -51,6 +52,7 @@ export interface IPolkadotApi<TApi, TRes> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     forwardedXcm: any,
     asset: TAssetInfo,
+    version: Version,
     transformXcm: boolean
   ): Promise<bigint>
   getEvmStorage(contract: string, slot: string): Promise<string>

@@ -41,7 +41,6 @@ describe('createCustomXcmOnDest', () => {
       ]
     }
   }
-  const mockHeader = mockLocation
   const mockBeneficiary = mockLocation
   const mockAsset = { id: mockLocation, fun: { Fungible: 1n } }
   const defaultDestination = { parents: Parents.ONE, interior: { Here: null } }
@@ -50,7 +49,6 @@ describe('createCustomXcmOnDest', () => {
     address: '0xRecipient',
     scenario: 'ParaToPara',
     senderAddress: '0xSender',
-    destLocation: mockHeader,
     beneficiaryLocation: mockBeneficiary,
     asset: mockAsset,
     assetInfo: { location: mockLocation },

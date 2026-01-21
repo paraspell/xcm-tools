@@ -3,6 +3,7 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { UnsupportedOperationError } from '../../../errors'
+import { createPayFees } from '../../../pallets/polkadotXcm/createPayFees'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
@@ -47,8 +48,8 @@ const getTransferType = (
   return 'direct_deposit'
 }
 
-export const createBaseExecuteXcm = (
-  options: TCreateBaseTransferXcmOptions & { suffixXcm?: unknown[] }
+export const createBaseExecuteXcm = <TRes>(
+  options: TCreateBaseTransferXcmOptions<TRes> & { suffixXcm?: unknown[] }
 ) => {
   const {
     chain,
@@ -88,17 +89,15 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalizedToReserve, version),
             dest: createDestination(version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
-              {
-                BuyExecution: {
-                  fees: updateAsset(
-                    assetLocalizedToDest,
-                    reserveFee === 1000n
-                      ? amount / 2n
-                      : amount - (feeAsset ? reserveFee : originFee + reserveFee)
-                  ),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                updateAsset(
+                  assetLocalizedToDest,
+                  reserveFee === 1000n
+                    ? amount / 2n
+                    : amount - (feeAsset ? reserveFee : originFee + reserveFee)
+                )
+              ),
               ...suffixXcm
             ]
           }
@@ -116,12 +115,10 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalized, version),
             dest: destLocation,
             xcm: [
-              {
-                BuyExecution: {
-                  fees: updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee)
+              ),
               ...suffixXcm
             ]
           }
@@ -137,15 +134,10 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalized, version),
             dest: getChainLocation(chain, reserveChain),
             xcm: [
-              {
-                BuyExecution: {
-                  fees: updateAsset(
-                    assetLocalizedToReserve,
-                    feeAsset ? amount : amount - originFee
-                  ),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                updateAsset(assetLocalizedToReserve, feeAsset ? amount : amount - originFee)
+              ),
               // Then deposit to final destination
               ...resolvedDepositInstruction
             ]
@@ -162,15 +154,12 @@ export const createBaseExecuteXcm = (
             assets: createAssetsFilter(assetLocalized, version),
             reserve: getChainLocation(chain, reserveChain),
             xcm: [
-              {
-                BuyExecution: {
-                  fees:
-                    // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
-                    // than requested, so we need to account for that
-                    updateAsset(assetLocalizedToReserve, amount - 2n),
-                  weight_limit: 'Unlimited'
-                }
-              },
+              ...createPayFees(
+                version,
+                // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
+                // than requested, so we need to account for that
+                updateAsset(assetLocalizedToReserve, amount - 2n)
+              ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
               ...resolvedDepositInstruction

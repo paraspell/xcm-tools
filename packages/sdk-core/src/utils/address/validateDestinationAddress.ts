@@ -2,7 +2,7 @@ import { isTLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import type { TAddress, TDestination } from '../../types'
-import { validateAddress } from '../../utils/validateAddress'
+import { validateAddress } from './validateAddress'
 
 export const validateDestinationAddress = <TApi, TRes>(
   address: TAddress,

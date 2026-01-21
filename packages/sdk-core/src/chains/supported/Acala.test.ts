@@ -34,7 +34,7 @@ describe('Acala', () => {
 
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
-    calculateTransactionFee: vi.fn()
+    getPaymentInfo: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   it('should call transferLocalNativeAsset', async () => {
@@ -60,7 +60,10 @@ describe('Acala', () => {
   })
 
   it('should transfer balance minus fee when amount is ALL', async () => {
-    vi.spyOn(mockApi, 'calculateTransactionFee').mockResolvedValue(10n)
+    vi.spyOn(mockApi, 'getPaymentInfo').mockResolvedValue({
+      partialFee: 10n,
+      weight: { refTime: 0n, proofSize: 0n }
+    })
 
     const mockOptions = {
       api: mockApi,

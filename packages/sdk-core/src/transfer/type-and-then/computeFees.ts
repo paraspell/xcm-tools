@@ -35,7 +35,7 @@ export const computeAllFees = async <TApi, TRes>(
   const {
     origin,
     dest,
-    options: { senderAddress, address, currency, feeCurrency }
+    options: { senderAddress, address, currency, feeCurrency, version }
   } = context
 
   assertSenderAddress(senderAddress)
@@ -52,6 +52,7 @@ export const computeAllFees = async <TApi, TRes>(
     destination: dest.chain,
     senderAddress,
     address,
+    version,
     currency: currency as WithAmount<TCurrencyCore>,
     feeAsset: feeCurrency,
     disableFallback: false,

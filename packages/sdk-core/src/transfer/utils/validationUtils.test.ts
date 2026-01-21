@@ -1,6 +1,7 @@
 import {
   getRelayChainSymbol,
   InvalidCurrencyError,
+  isChainEvm,
   isSymbolSpecifier,
   type TCurrencyInput
 } from '@paraspell/assets'
@@ -13,14 +14,22 @@ import {
   type TParachain,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
+import { isHex } from 'viem'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ScenarioNotSupportedError } from '../../errors'
-import type { TDestination } from '../../types'
-import { getChain } from '../../utils'
-import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
+import type { IPolkadotApi } from '../../api'
+import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
+import type { TDestination, TSendOptions } from '../../types'
+import { compareAddresses, getChain } from '../../utils'
+import {
+  validateAssetSpecifiers,
+  validateCurrency,
+  validateDestination,
+  validateTransact
+} from './validationUtils'
 
+vi.mock('viem')
 vi.mock('@paraspell/pallets')
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
@@ -29,7 +38,8 @@ vi.mock('@paraspell/assets', () => ({
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isSymbolSpecifier: vi.fn(),
-  isTAsset: vi.fn()
+  isTAsset: vi.fn(),
+  isChainEvm: vi.fn()
 }))
 
 vi.mock('../../utils')
@@ -267,5 +277,96 @@ describe('validateAssetSpecifiers', () => {
     const currency = {} as TCurrencyInput
 
     expect(() => validateAssetSpecifiers(assetCheckEnabled, currency)).not.toThrow()
+  })
+})
+
+describe('validateTransact', () => {
+  const mockApi = {} as IPolkadotApi<unknown, unknown>
+
+  const baseOptions = {
+    api: mockApi,
+    from: 'Polkadot',
+    to: 'Kusama',
+    senderAddress: 'addr1',
+    address: 'addr2',
+    transactOptions: { call: '0x123' }
+  } as TSendOptions<unknown, unknown>
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns undefined when no transact call provided', () => {
+    const result = validateTransact({
+      ...baseOptions,
+      transactOptions: undefined
+    })
+    expect(result).toBeUndefined()
+  })
+
+  it('throws UnsupportedOperationError for local transfer', () => {
+    expect(() =>
+      validateTransact({
+        ...baseOptions,
+        from: 'Polkadot',
+        to: 'Polkadot',
+        transactOptions: { call: '0x123' }
+      })
+    ).toThrowError(UnsupportedOperationError)
+  })
+
+  it('throws ValidationError for non-hex call string', () => {
+    vi.mocked(isHex).mockReturnValue(false)
+
+    expect(() =>
+      validateTransact({
+        ...baseOptions,
+        transactOptions: { call: 'nothex' }
+      })
+    ).toThrowError(ValidationError)
+  })
+
+  it('throws UnsupportedOperationError if from or to is an EVM chain', () => {
+    vi.mocked(isHex).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(true)
+
+    expect(() =>
+      validateTransact({
+        ...baseOptions,
+        from: 'Moonbeam'
+      })
+    ).toThrowError(UnsupportedOperationError)
+
+    expect(() =>
+      validateTransact({
+        ...baseOptions,
+        to: 'Moonbeam'
+      })
+    ).toThrowError(UnsupportedOperationError)
+  })
+
+  it('returns ValidationError if senderAddress does not match destination', () => {
+    vi.mocked(isHex).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(compareAddresses).mockReturnValue(false)
+
+    const result = validateTransact({
+      ...baseOptions
+    })
+
+    expect(result).toBeInstanceOf(ValidationError)
+  })
+
+  it('returns undefined for valid substrate to substrate call', () => {
+    vi.mocked(isHex).mockReturnValue(true)
+    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(compareAddresses).mockReturnValue(true)
+
+    const result = validateTransact({
+      ...baseOptions,
+      address: 'addr1'
+    })
+
+    expect(result).toBeUndefined()
   })
 })

@@ -16,11 +16,13 @@ import type {
   TLocation,
   TModuleError,
   TPallet,
+  TPaymentInfo,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
   TUrl,
-  TWeight
+  TWeight,
+  Version
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
@@ -40,7 +42,6 @@ import {
   RELAY_LOCATION,
   RuntimeApiUnavailableError,
   UnsupportedOperationError,
-  Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import {
@@ -51,7 +52,6 @@ import {
   resolveModuleError
 } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import type { Weight } from '@polkadot/types/interfaces'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
@@ -170,6 +170,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.tx[module][method](...values)
   }
 
+  txFromHex(hex: string): Promise<Extrinsic> {
+    return Promise.resolve(this.api.tx(hex))
+  }
+
   async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized
     const { module, method } = this.convertToPjsCall(serialized)
@@ -205,9 +209,18 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return stringToU8a(str)
   }
 
-  async calculateTransactionFee(tx: Extrinsic, address: string) {
-    const { partialFee } = await tx.paymentInfo(address)
-    return partialFee.toBigInt()
+  async getPaymentInfo(tx: Extrinsic, address: string): Promise<TPaymentInfo> {
+    const {
+      weight: { proofSize, refTime },
+      partialFee
+    } = await tx.paymentInfo(address)
+    return {
+      weight: {
+        proofSize: proofSize.toBigInt(),
+        refTime: refTime.toBigInt()
+      },
+      partialFee: partialFee.toBigInt()
+    }
   }
 
   async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
@@ -295,6 +308,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       feeAsset,
       chain,
       destination,
+      version,
       useRootOrigin = false,
       bypassOptions
     } = options
@@ -303,8 +317,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
-
-    const DEFAULT_XCM_VERSION = 3
 
     const basePayload = useRootOrigin ? { system: { Root: null } } : { system: { Signed: address } }
 
@@ -321,10 +333,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     let resolvedFeeAsset = await this.resolveFeeAsset(options)
 
     const performDryRunCall = async (includeVersion: boolean) => {
+      const versionNum = Number(version.charAt(1))
       return this.api.call.dryRunApi.dryRunCall(
         basePayload,
         resolvedTx,
-        ...(includeVersion ? [DEFAULT_XCM_VERSION] : [])
+        ...(includeVersion ? [versionNum] : [])
       )
     }
 
@@ -447,18 +460,16 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
-      const getPaymentInfoWeight = async () => {
-        const { weight } = await tx.paymentInfo(address)
-        return weight
-      }
-
-      const overriddenWeight = !resultJson.ok.local_xcm ? await getPaymentInfoWeight() : undefined
+      const overriddenWeight = !resultJson.ok.local_xcm
+        ? (await this.getPaymentInfo(tx, address)).weight
+        : undefined
 
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
         resultJson.ok.local_xcm,
         forwardedXcms,
         resolvedFeeAsset.asset,
+        version,
         false,
         overriddenWeight
       )
@@ -477,7 +488,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       }
     }
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
+    const { partialFee: executionFee } = await this.getPaymentInfo(tx, address)
     const fee = computeFeeFromDryRunPjs(resultHuman, chain, executionFee)
 
     return {
@@ -495,8 +506,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     localXcm: any,
     forwardedXcm: any,
     asset: TAssetInfo,
+    version: Version,
     _transformXcm = false,
-    overridenWeight?: Weight
+    overridenWeight?: TWeight
   ): Promise<bigint> {
     const weight = overridenWeight ?? (await this.getXcmWeight(localXcm))
 
@@ -506,7 +518,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const feeResult = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weight,
-      addXcmVersionHeader(assetLocalizedLoc, Version.V4)
+      addXcmVersionHeader(assetLocalizedLoc, version)
     )
 
     const execFeeRes = feeResult.toJSON() as any
@@ -518,14 +530,20 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const isAssetNotFound = execFeeRes?.err === 'AssetNotFound'
 
     if (chain.startsWith('BridgeHub') && isAssetNotFound) {
-      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset)
+      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset, version)
 
       if (typeof bridgeHubExecFee === 'bigint') {
         execFee = bridgeHubExecFee
       }
     }
 
-    const deliveryFee = await this.getDeliveryFee(chain, forwardedXcm, asset, assetLocalizedLoc)
+    const deliveryFee = await this.getDeliveryFee(
+      chain,
+      forwardedXcm,
+      asset,
+      assetLocalizedLoc,
+      version
+    )
 
     return execFee + deliveryFee
   }
@@ -534,7 +552,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     chain: TSubstrateChain,
     forwardedXcm: any[],
     asset: TAssetInfo,
-    assetLocalizedLoc: TLocation
+    assetLocalizedLoc: TLocation,
+    version: Version
   ): Promise<bigint> {
     let usedThirdParam = false
     let deliveryFeeRes: any
@@ -549,7 +568,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
         if (message.includes('Expected 3 arguments')) {
           usedThirdParam = true
-          const versionedAssetLoc = addXcmVersionHeader(assetLocalizedLoc, Version.V4)
+          const versionedAssetLoc = addXcmVersionHeader(assetLocalizedLoc, version)
           deliveryFeeRes = await this.api.call.xcmPaymentApi.queryDeliveryFees(
             ...baseArgs,
             versionedAssetLoc
@@ -592,11 +611,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getBridgeHubFallbackExecFee(
     chain: TSubstrateChain,
     weightValue: any,
-    asset: TAssetInfo
+    asset: TAssetInfo,
+    version: Version
   ): Promise<bigint | undefined> {
     const fallbackExecFeeRes = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weightValue,
-      addXcmVersionHeader(RELAY_LOCATION, Version.V4)
+      addXcmVersionHeader(RELAY_LOCATION, version)
     )
 
     const fallbackJson = fallbackExecFeeRes.toJSON() as any
@@ -644,6 +664,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     xcm,
     asset,
     chain,
+    version,
     origin
   }: TDryRunXcmBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
@@ -685,7 +706,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
           )
 
     if (hasXcmPaymentApiSupport(chain) && asset) {
-      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset)
+      const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
         return {

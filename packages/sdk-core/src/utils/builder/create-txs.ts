@@ -30,7 +30,7 @@ export const computeOverridenAmount = <TApi, TRes>(
 
 export const overrideTxAmount = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>,
   amount: string,
   relative?: boolean
 ) => {
@@ -45,7 +45,7 @@ export const overrideTxAmount = async <TApi, TRes>(
 
 export const createTx = async <TApi, TRes>(
   options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>,
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>,
   amount?: string,
   relative?: boolean
 ): Promise<TRes> => {

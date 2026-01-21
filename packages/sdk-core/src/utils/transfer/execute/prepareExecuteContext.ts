@@ -18,14 +18,14 @@ export type TExecuteContext = {
   reserveChain: TSubstrateChain
 }
 
-export const prepareExecuteContext = ({
+export const prepareExecuteContext = <TRes>({
   chain,
   destChain,
   assetInfo,
   feeAssetInfo,
   fees: { originFee },
   version
-}: TCreateBaseTransferXcmOptions): TExecuteContext => {
+}: TCreateBaseTransferXcmOptions<TRes>): TExecuteContext => {
   assertHasLocation(assetInfo)
   if (feeAssetInfo) assertHasLocation(feeAssetInfo)
 

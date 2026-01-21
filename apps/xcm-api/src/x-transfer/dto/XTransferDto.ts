@@ -1,4 +1,4 @@
-import { Version } from '@paraspell/sdk';
+import { TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
 import { LocationSchema } from '@paraspell/xcm-analyser';
 import { z } from 'zod';
 
@@ -45,6 +45,17 @@ export const BuilderOptionsSchema = z
     xcmFormatCheck: z.boolean().optional(),
   })
   .strip();
+
+const WeightSchema = z.object({
+  refTime: StringOrNumber,
+  proofSize: StringOrNumber,
+});
+
+export const TransactOptionsSchema = z.object({
+  call: z.string(),
+  originKind: z.enum(TRANSACT_ORIGINS).optional(),
+  maxWeight: WeightSchema.optional(),
+});
 
 const AmountSchema = z.union([
   z.string().refine(validateAmount, {
@@ -131,6 +142,7 @@ export const XTransferDtoSchema = z
     method: z.string().optional(),
     senderAddress: z.string().optional(),
     ahAddress: z.string().optional(),
+    transactOptions: TransactOptionsSchema.optional(),
     options: BuilderOptionsSchema.optional(),
   })
   .strip();

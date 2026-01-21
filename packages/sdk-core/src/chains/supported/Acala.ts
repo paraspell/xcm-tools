@@ -52,7 +52,7 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
 
     if (isAmountAll) {
       assertSenderAddress(senderAddress)
-      const fee = await api.calculateTransactionFee(createTx(MIN_AMOUNT), senderAddress)
+      const { partialFee: fee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), senderAddress)
       amount = balance - fee
     } else {
       amount = asset.amount

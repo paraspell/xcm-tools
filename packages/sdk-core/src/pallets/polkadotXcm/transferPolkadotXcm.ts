@@ -9,6 +9,7 @@ import type { TPolkadotXcmMethod, TSerializedExtrinsics } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { maybeOverrideAssets } from '../../utils/asset'
+import { createDestination } from '../../utils/location'
 
 export const transferPolkadotXcm = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -17,14 +18,16 @@ export const transferPolkadotXcm = async <TApi, TRes>(
 ): Promise<TRes> => {
   const {
     api,
-    destLocation,
+    chain,
+    destination,
     assetInfo: asset,
     beneficiaryLocation,
     asset: multiAsset,
     overriddenAsset,
     pallet,
     version,
-    method: methodOverride
+    method: methodOverride,
+    paraIdTo
   } = options
 
   if (method === 'transfer_assets_using_type_and_then') {
@@ -37,6 +40,8 @@ export const transferPolkadotXcm = async <TApi, TRes>(
     [multiAsset],
     overriddenAsset
   )
+
+  const destLocation = createDestination(version, chain, destination, paraIdTo)
 
   const feeAssetIndex =
     overriddenAsset === undefined || isTLocation(overriddenAsset)
