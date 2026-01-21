@@ -114,15 +114,9 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 **Tools supported by:**
 <p align="center">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://github.com/user-attachments/assets/88d41183-6e04-47a7-9931-a7d9de043a3e"
-    >
-    <img
-      width="750"
-      alt="version"
-      src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c"
-    />
-  </picture>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_transparent.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_w3f_standard.png">
+      <img width="750" alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_w3f_standard.png">
+    </picture>
 </p>
