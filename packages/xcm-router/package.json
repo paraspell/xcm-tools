@@ -32,7 +32,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@acala-network/api": "^6.3.0",
     "@acala-network/app-util": "^4.1.8-14",
