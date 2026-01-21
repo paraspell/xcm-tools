@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import {
   getParaId,
   getRelayChainOf,
@@ -7,15 +6,14 @@ import {
   TRelaychain,
   TSubstrateChain,
 } from '@paraspell/sdk';
-import { Between, Repository } from 'typeorm';
 
+import { PrismaService } from '../prisma/prisma.service.js';
 import {
   AccountXcmCountResult,
   AssetCountResult,
   CountOption,
   ParaIdAssetCountResult,
 } from '../types.js';
-import { Message } from './message.entity.js';
 import {
   AccountXcmCountType,
   AssetCount,
@@ -26,10 +24,7 @@ import {
 
 @Injectable()
 export class MessageService {
-  constructor(
-    @InjectRepository(Message)
-    private messagesRepository: Repository<Message>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async countMessagesByStatus(
     ecosystem: string | undefined = undefined,
@@ -43,26 +38,25 @@ export class MessageService {
           const paraId = getParaId(parachain);
           const ecosystem = getRelayChainOf(parachain).toLowerCase();
 
-          const successCount = await this.messagesRepository.count({
+          const successCount = await this.prisma.messages.count({
             where: {
               ecosystem: ecosystem,
               origin_para_id: paraId,
               status: 'success',
-              origin_block_timestamp: Between(startTime, endTime),
+              origin_block_timestamp: { gte: startTime, lte: endTime },
             },
           });
-
-          const failedCount = await this.messagesRepository.count({
+          const failedCount = await this.prisma.messages.count({
             where: {
               ecosystem: ecosystem,
               origin_para_id: paraId,
               status: 'failed',
-              origin_block_timestamp: Between(startTime, endTime),
+              origin_block_timestamp: { gte: startTime, lte: endTime },
             },
           });
 
           return {
-            ecosystem,
+            ecosystem: ecosystem,
             parachain,
             success: successCount,
             failed: failedCount,
@@ -71,25 +65,24 @@ export class MessageService {
       );
 
       return results;
-    } else {
-      const successCount = await this.messagesRepository.count({
-        where: {
-          ecosystem: ecosystem,
-          status: 'success',
-          origin_block_timestamp: Between(startTime, endTime),
-        },
-      });
-
-      const failedCount = await this.messagesRepository.count({
-        where: {
-          ecosystem: ecosystem,
-          status: 'failed',
-          origin_block_timestamp: Between(startTime, endTime),
-        },
-      });
-
-      return [{ ecosystem, success: successCount, failed: failedCount }];
     }
+
+    const successCount = await this.prisma.messages.count({
+      where: {
+        ecosystem: ecosystem,
+        status: 'success',
+        origin_block_timestamp: { gte: startTime, lte: endTime },
+      },
+    });
+    const failedCount = await this.prisma.messages.count({
+      where: {
+        ecosystem: ecosystem,
+        status: 'failed',
+        origin_block_timestamp: { gte: startTime, lte: endTime },
+      },
+    });
+
+    return [{ ecosystem, success: successCount, failed: failedCount }];
   }
 
   async countMessagesByDay(
@@ -98,45 +91,33 @@ export class MessageService {
     startTime: number,
     endTime: number,
   ): Promise<MessageCountByDay[]> {
-    const base = () =>
-      this.messagesRepository
-        .createQueryBuilder('message')
-        .select(
-          "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-          'date',
-        )
-        .addSelect('COUNT(*)', 'message_count')
-        .addSelect(
-          "SUM(CASE WHEN message.status = 'success' THEN 1 ELSE 0 END)",
-          'message_count_success',
-        )
-        .addSelect(
-          "SUM(CASE WHEN message.status = 'failed' THEN 1 ELSE 0 END)",
-          'message_count_failed',
-        )
-        .where(
-          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-          { startTime, endTime },
-        );
+    if (!ecosystem) return [];
 
     if (!parachains?.length) {
-      if (!ecosystem) return [];
-
-      const qb = base()
-        .andWhere('message.ecosystem = :ecosystem', {
-          ecosystem: ecosystem.toLowerCase(),
-        })
-        .groupBy(
-          "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-        )
-        .orderBy('date', 'ASC');
+      const query = `
+      SELECT
+        TO_CHAR(TO_TIMESTAMP(origin_block_timestamp), 'YYYY-MM-DD') AS date,
+        COUNT(*) AS message_count,
+        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) AS message_count_success,
+        SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS message_count_failed
+      FROM messages
+      WHERE ecosystem = $1
+        AND origin_block_timestamp BETWEEN $2 AND $3
+      GROUP BY date
+      ORDER BY date ASC;
+    `;
 
       const rows: {
         date: string;
         message_count: string;
         message_count_success: string;
         message_count_failed: string;
-      }[] = await qb.getRawMany();
+      }[] = await this.prisma.$queryRawUnsafe(
+        query,
+        ecosystem.toLowerCase(),
+        startTime,
+        endTime,
+      );
 
       return rows.map((r) => ({
         ecosystem: ecosystem.toLowerCase(),
@@ -164,15 +145,20 @@ export class MessageService {
     for (const [eco, idsRaw] of ecoToParaIds.entries()) {
       const paraIds = Array.from(new Set(idsRaw));
 
-      const qb = base()
-        .andWhere('message.ecosystem = :ecosystem', { ecosystem: eco })
-        .andWhere('message.origin_para_id IN (:...paraIds)', { paraIds })
-        .addSelect('message.origin_para_id', 'paraId')
-        .groupBy(
-          "message.origin_para_id, TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
-        )
-        .orderBy('message.origin_para_id', 'ASC')
-        .addOrderBy('date', 'ASC');
+      const query = `
+      SELECT
+        origin_para_id AS "paraId",
+        TO_CHAR(TO_TIMESTAMP(origin_block_timestamp), 'YYYY-MM-DD') AS date,
+        COUNT(*) AS message_count,
+        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) AS message_count_success,
+        SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS message_count_failed
+      FROM messages
+      WHERE ecosystem = $1
+        AND origin_para_id = ANY($2::int[])
+        AND origin_block_timestamp BETWEEN $3 AND $4
+      GROUP BY origin_para_id, date
+      ORDER BY origin_para_id ASC, date ASC;
+    `;
 
       const rows: {
         paraId: string;
@@ -180,7 +166,13 @@ export class MessageService {
         message_count: string;
         message_count_success: string;
         message_count_failed: string;
-      }[] = await qb.getRawMany();
+      }[] = await this.prisma.$queryRawUnsafe(
+        query,
+        eco,
+        paraIds,
+        startTime,
+        endTime,
+      );
 
       for (const r of rows) {
         const id = parseInt(r.paraId, 10);
@@ -205,84 +197,62 @@ export class MessageService {
     countBy: CountOption,
   ): Promise<MessageCount[]> {
     if (countBy === CountOption.BOTH) {
-      const originQuery = this.messagesRepository
-        .createQueryBuilder('message')
-        .select('message.origin_para_id', 'paraId')
-        .addSelect('COUNT(*)', 'totalCount')
-        .where('message.ecosystem = :ecosystem', { ecosystem })
-        .where(
-          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-          { startTime, endTime },
-        )
-        .groupBy('message.origin_para_id');
+      const query = `
+      SELECT para_id, SUM(total_count) AS total_count FROM (
+        SELECT origin_para_id AS para_id, COUNT(*) AS total_count
+        FROM messages
+        WHERE ecosystem = $1
+          AND origin_block_timestamp BETWEEN $2 AND $3
+        GROUP BY origin_para_id
 
-      const destinationQuery = this.messagesRepository
-        .createQueryBuilder('message')
-        .select('message.dest_para_id', 'paraId')
-        .addSelect('COUNT(*)', 'totalCount')
-        .where('message.ecosystem = :ecosystem', { ecosystem })
-        .where(
-          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-          { startTime, endTime },
-        )
-        .groupBy('message.dest_para_id');
+        UNION ALL
 
-      const originResults: {
-        paraId: string;
-        totalCount: string;
-      }[] = await originQuery.getRawMany();
-      const destinationResults: {
-        paraId: string;
-        totalCount: string;
-      }[] = await destinationQuery.getRawMany();
+        SELECT dest_para_id AS para_id, COUNT(*) AS total_count
+        FROM messages
+        WHERE ecosystem = $1
+          AND origin_block_timestamp BETWEEN $2 AND $3
+        GROUP BY dest_para_id
+      ) AS combined
+      GROUP BY para_id;
+    `;
 
-      const totalCounts = new Map<string, number>();
-      [...originResults, ...destinationResults].forEach((result) => {
-        const count = totalCounts.get(result.paraId) || 0;
-        totalCounts.set(result.paraId, count + parseInt(result.totalCount, 10));
-      });
+      const results: { para_id: string; total_count: string }[] =
+        await this.prisma.$queryRawUnsafe(query, ecosystem, startTime, endTime);
 
-      return Array.from(totalCounts.entries()).map(([paraId, totalCount]) => ({
+      return results.map((r) => ({
         ecosystem,
-        paraId: parseInt(paraId, 10),
-        totalCount: totalCount,
-      }));
-    } else {
-      const queryBuilder =
-        this.messagesRepository.createQueryBuilder('message');
-
-      queryBuilder
-        .where('message.ecosystem = :ecosystem', { ecosystem })
-        .where(
-          'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
-          {
-            startTime,
-            endTime,
-          },
-        );
-
-      if (countBy === CountOption.ORIGIN) {
-        queryBuilder
-          .select('message.origin_para_id', 'paraId')
-          .addGroupBy('message.origin_para_id');
-      } else if (countBy === CountOption.DESTINATION) {
-        queryBuilder
-          .select('message.dest_para_id', 'paraId')
-          .addGroupBy('message.dest_para_id');
-      }
-
-      queryBuilder.addSelect('COUNT(*)', 'totalCount');
-
-      const results: {
-        paraId: number;
-        totalCount: string;
-      }[] = await queryBuilder.getRawMany();
-      return results.map((result) => ({
-        ecosystem,
-        paraId: result.paraId,
-        totalCount: parseInt(result.totalCount, 10),
+        paraId: parseInt(r.para_id, 10),
+        totalCount: parseInt(r.total_count, 10),
       }));
     }
+
+    const column =
+      countBy === CountOption.ORIGIN ? 'origin_para_id' : 'dest_para_id';
+
+    const countObj =
+      countBy === CountOption.ORIGIN
+        ? { origin_para_id: true as const }
+        : { dest_para_id: true as const };
+
+    const results = await this.prisma.messages.groupBy({
+      by: [column],
+      where: {
+        ecosystem,
+        origin_block_timestamp: { gte: startTime, lte: endTime },
+      },
+      _count: countObj,
+    });
+
+    return results
+      .filter((r) => r[column] !== null)
+      .map((r) => ({
+        ecosystem,
+        paraId: r[column] as number,
+        totalCount:
+          countBy === CountOption.ORIGIN
+            ? Number(r._count.origin_para_id)
+            : Number(r._count.dest_para_id),
+      }));
   }
 
   async countAssetsBySymbol(
@@ -291,12 +261,6 @@ export class MessageService {
     startTime: number,
     endTime: number,
   ): Promise<AssetCount[]> {
-    const baseParams: (string | number | number[])[] = [
-      ecosystem,
-      startTime,
-      endTime,
-    ];
-
     if (parachains.length > 0) {
       const paraIds = parachains.map((p) => getParaId(p));
       const ecosystems = parachains.map((p) =>
@@ -339,18 +303,23 @@ export class MessageService {
       ORDER BY count DESC, origin_para_id;
     `;
 
-      const results = await this.messagesRepository.query<
-        ParaIdAssetCountResult[]
-      >(query, [paraIds, ecosystems, startTime, endTime]);
+      const results: ParaIdAssetCountResult[] =
+        await this.prisma.$queryRawUnsafe(
+          query,
+          paraIds,
+          ecosystems,
+          startTime,
+          endTime,
+        );
 
       return results.map((r) => {
         const paraId = r.origin_para_id;
-        const ecosystem = r.ecosystem;
+        const eco = r.ecosystem;
         return {
-          ecosystem: ecosystem,
+          ecosystem: eco,
           parachain: getTChain(
             paraId,
-            (ecosystem[0].toUpperCase() + ecosystem.slice(1)) as TRelaychain,
+            (eco[0].toUpperCase() + eco.slice(1)) as TRelaychain,
           ) as string,
           symbol: r.symbol,
           count: parseInt(r.count, 10),
@@ -386,9 +355,12 @@ export class MessageService {
     ORDER BY count DESC;
   `;
 
-    const results = await this.messagesRepository.query<
-      (ParaIdAssetCountResult | AssetCountResult)[]
-    >(query, baseParams);
+    const results: AssetCountResult[] = await this.prisma.$queryRawUnsafe(
+      query,
+      ecosystem,
+      startTime,
+      endTime,
+    );
 
     return results.map((r) => ({
       ecosystem,
@@ -405,40 +377,40 @@ export class MessageService {
     startTime: number,
     endTime: number,
   ): Promise<AccountXcmCountType[]> {
-    const whereConditions: string[] = [];
-    const parameters: unknown[] = [];
+    const whereConditions: string[] = [
+      'ecosystem = $1',
+      'origin_block_timestamp BETWEEN $2 AND $3',
+      "from_account_id <> ''",
+    ];
 
-    whereConditions.push('ecosystem = $1');
-    whereConditions.push('origin_block_timestamp BETWEEN $2 AND $3');
-    whereConditions.push("from_account_id <> ''");
-    parameters.push(ecosystem, startTime, endTime);
+    const parameters: (string | number)[] = [ecosystem, startTime, endTime];
 
     if (paraIds.length > 0) {
-      whereConditions.push(
-        `origin_para_id IN (${paraIds.map((_, index) => `$${index + 1 + 3}`).join(', ')})`,
-      );
+      const inClause = paraIds
+        .map((_, idx) => `$${idx + 4}`) // $4, $5, ...
+        .join(', ');
+      whereConditions.push(`origin_para_id IN (${inClause})`);
       parameters.push(...paraIds);
     }
-
-    const query = `
-      SELECT from_account_id, COUNT(*) as message_count
-      FROM messages
-      WHERE ${whereConditions.join(' AND ')}
-      GROUP BY from_account_id
-      HAVING COUNT(*) > $${parameters.length + 1}
-      ORDER BY message_count DESC;
-    `;
-
     parameters.push(threshold);
 
-    const results = await this.messagesRepository.query<
-      AccountXcmCountResult[]
-    >(query, parameters);
+    const query = `
+    SELECT from_account_id, COUNT(*) as message_count
+    FROM messages
+    WHERE ${whereConditions.join(' AND ')}
+    GROUP BY from_account_id
+    HAVING COUNT(*) > $${parameters.length}
+    ORDER BY message_count DESC;
+  `;
+    const results: AccountXcmCountResult[] = await this.prisma.$queryRawUnsafe(
+      query,
+      ...parameters,
+    );
 
-    return results.map((a) => ({
+    return results.map((r) => ({
       ecosystem,
-      id: a.from_account_id,
-      count: parseInt(a.message_count, 10),
+      id: r.from_account_id,
+      count: parseInt(r.message_count, 10),
     }));
   }
 }

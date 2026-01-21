@@ -1,6 +1,6 @@
-import type { user } from '@prisma/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { user } from '../generated/prisma/client.js';
 import type { PrismaService } from '../prisma/prisma.service.js';
 import { UsersService } from './users.service.js';
 

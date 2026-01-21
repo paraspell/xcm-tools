@@ -37,3 +37,6 @@ lerna-debug.log*
 .env
 # Sentry Config File
 .sentryclirc
+
+# Prisma
+generated/

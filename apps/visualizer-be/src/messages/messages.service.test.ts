@@ -1,32 +1,33 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { getParaId, getRelayChainOf, getTChain } from '@paraspell/sdk';
-import type { FindOptionsWhere, Repository, SelectQueryBuilder } from 'typeorm';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { PrismaPromise } from '../generated/prisma/internal/prismaNamespace.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { CountOption } from '../types.js';
-import { Message } from './message.entity.js';
 import { MessageService } from './messages.service.js';
 
 describe('MessageService', () => {
   let service: MessageService;
-  let mockRepository: Repository<Message>;
+  let prisma: PrismaService;
 
   beforeEach(async () => {
-    mockRepository = {
-      count: vi.fn(),
-      createQueryBuilder: vi.fn(),
-      query: vi.fn(),
-    } as unknown as Repository<Message>;
+    prisma = {
+      messages: {
+        count: vi.fn(),
+        groupBy: vi.fn(),
+      },
+      $queryRawUnsafe: vi.fn(),
+    } as unknown as PrismaService;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessageService,
         {
-          provide: getRepositoryToken(Message),
-          useValue: mockRepository,
+          provide: PrismaService,
+          useValue: prisma,
         },
       ],
     }).compile();
@@ -41,11 +42,13 @@ describe('MessageService', () => {
     const parachains: TSubstrateChain[] = ['AssetHubPolkadot', 'Acala'];
 
     it('should return status counts for each paraId when paraIds are provided', async () => {
-      const countSpy = vi.spyOn(mockRepository, 'count');
+      const countSpy = vi.spyOn(prisma.messages, 'count');
+      countSpy.mockImplementation((args) => {
+        const status = args?.where?.status;
 
-      countSpy.mockImplementation((options) => {
-        const status = (options?.where as FindOptionsWhere<Message>).status;
-        return Promise.resolve(status === 'success' ? 3 : 1);
+        return Promise.resolve(
+          status === 'success' ? 3 : 1,
+        ) as PrismaPromise<number>;
       });
 
       const expectedEcosystems = parachains.map((chain) =>
@@ -77,7 +80,7 @@ describe('MessageService', () => {
       expect(countSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            ecosystem,
+            ecosystem: expectedEcosystems[0],
             origin_para_id: getParaId(parachains[0]),
             status: 'success',
           }),
@@ -86,7 +89,7 @@ describe('MessageService', () => {
       expect(countSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            ecosystem,
+            ecosystem: expectedEcosystems[1],
             origin_para_id: getParaId(parachains[1]),
             status: 'failed',
           }),
@@ -95,12 +98,8 @@ describe('MessageService', () => {
     });
 
     it('should return aggregated status counts when no paraIds are provided', async () => {
-      const countSpy = vi.spyOn(mockRepository, 'count');
-
-      countSpy.mockImplementation((options) => {
-        const status = (options?.where as FindOptionsWhere<Message>).status;
-        return Promise.resolve(status === 'success' ? 10 : 5);
-      });
+      const countSpy = vi.spyOn(prisma.messages, 'count');
+      countSpy.mockResolvedValueOnce(10).mockResolvedValueOnce(5);
 
       const results = await service.countMessagesByStatus(
         ecosystem,
@@ -127,47 +126,30 @@ describe('MessageService', () => {
 
     it('should return message counts by day for each paraId', async () => {
       const [assetHubParaId, acalaParaId] = parachains.map((p) => getParaId(p));
-
-      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
-
-      createSpy.mockReturnValueOnce({
-        select: vi.fn().mockReturnThis(),
-        addSelect: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        andWhere: vi.fn().mockReturnThis(),
-        groupBy: vi.fn().mockReturnThis(),
-        orderBy: vi.fn().mockReturnThis(),
-        addOrderBy: vi.fn().mockReturnThis(),
-        getRawMany: vi.fn().mockResolvedValue([
-          {
-            ecosystem,
-            paraId: assetHubParaId.toString(),
-            parachain: 'AssetHubPolkadot',
-            date: '2023-09-01',
-            message_count: '4',
-            message_count_success: '3',
-            message_count_failed: '1',
-          },
-          {
-            ecosystem,
-            paraId: assetHubParaId.toString(),
-            parachain: 'AssetHubPolkadot',
-            date: '2023-09-02',
-            message_count: '2',
-            message_count_success: '2',
-            message_count_failed: '0',
-          },
-          {
-            ecosystem,
-            paraId: acalaParaId.toString(),
-            parachain: 'Acala',
-            date: '2023-09-01',
-            message_count: '7',
-            message_count_success: '5',
-            message_count_failed: '2',
-          },
-        ]),
-      } as unknown as SelectQueryBuilder<Message>);
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
+      querySpy.mockResolvedValue([
+        {
+          paraId: assetHubParaId.toString(),
+          date: '2023-09-01',
+          message_count: '4',
+          message_count_success: '3',
+          message_count_failed: '1',
+        },
+        {
+          paraId: assetHubParaId.toString(),
+          date: '2023-09-02',
+          message_count: '2',
+          message_count_success: '2',
+          message_count_failed: '0',
+        },
+        {
+          paraId: acalaParaId.toString(),
+          date: '2023-09-01',
+          message_count: '7',
+          message_count_success: '5',
+          message_count_failed: '2',
+        },
+      ]);
 
       const results = await service.countMessagesByDay(
         ecosystem,
@@ -178,7 +160,7 @@ describe('MessageService', () => {
 
       expect(results).toEqual([
         {
-          ecosystem,
+          ecosystem: 'polkadot',
           parachain: 'AssetHubPolkadot',
           date: '2023-09-01',
           messageCount: 4,
@@ -194,7 +176,7 @@ describe('MessageService', () => {
           messageCountFailed: 0,
         },
         {
-          ecosystem,
+          ecosystem: 'polkadot',
           parachain: 'Acala',
           date: '2023-09-01',
           messageCount: 7,
@@ -202,37 +184,25 @@ describe('MessageService', () => {
           messageCountFailed: 2,
         },
       ]);
-
-      expect(createSpy).toHaveBeenCalledTimes(1);
+      expect(querySpy).toHaveBeenCalledTimes(1);
     });
 
     it('should return message counts by day when no paraIds are provided', async () => {
-      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
-
-      createSpy.mockReturnValueOnce({
-        select: vi.fn().mockReturnThis(),
-        addSelect: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        andWhere: vi.fn().mockReturnThis(),
-        groupBy: vi.fn().mockReturnThis(),
-        orderBy: vi.fn().mockReturnThis(),
-        getRawMany: vi.fn().mockResolvedValue([
-          {
-            ecosystem,
-            date: '2023-09-01',
-            message_count: '11',
-            message_count_success: '8',
-            message_count_failed: '3',
-          },
-          {
-            ecosystem,
-            date: '2023-09-02',
-            message_count: '7',
-            message_count_success: '6',
-            message_count_failed: '1',
-          },
-        ]),
-      } as unknown as SelectQueryBuilder<Message>);
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
+      querySpy.mockResolvedValue([
+        {
+          date: '2023-09-01',
+          message_count: '11',
+          message_count_success: '8',
+          message_count_failed: '3',
+        },
+        {
+          date: '2023-09-02',
+          message_count: '7',
+          message_count_success: '6',
+          message_count_failed: '1',
+        },
+      ]);
 
       const results = await service.countMessagesByDay(
         ecosystem,
@@ -259,8 +229,7 @@ describe('MessageService', () => {
           messageCountFailed: 1,
         },
       ]);
-
-      expect(createSpy).toHaveBeenCalledTimes(1);
+      expect(querySpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -268,29 +237,24 @@ describe('MessageService', () => {
     const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
-    const mockCounts = [
-      { ecosystem, paraId: 101, totalCount: '10' },
-      { ecosystem, paraId: 102, totalCount: '5' },
-    ];
 
     it.each([
-      [CountOption.ORIGIN, 'message.origin_para_id', 'paraId'],
-      [CountOption.DESTINATION, 'message.dest_para_id', 'paraId'],
+      [CountOption.ORIGIN, 'origin_para_id', 'origin_para_id'],
+      [CountOption.DESTINATION, 'dest_para_id', 'dest_para_id'],
     ])(
       'should return message counts for %s',
       async (countBy, selectColumn, alias) => {
-        const mockQueryBuilder = {
-          select: vi.fn().mockReturnThis(),
-          addSelect: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          groupBy: vi.fn().mockReturnThis(),
-          getRawMany: vi.fn().mockResolvedValue(mockCounts),
-          addGroupBy: vi.fn().mockReturnThis(),
-        } as unknown as SelectQueryBuilder<Message>;
-        const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
-        createSpy.mockReturnValue(mockQueryBuilder);
-
-        const selectSpy = vi.spyOn(mockQueryBuilder, 'select');
+        const groupBySpy = vi.spyOn(prisma.messages, 'groupBy');
+        groupBySpy.mockResolvedValue([
+          {
+            [selectColumn]: 101,
+            _count: { [alias]: 10 },
+          },
+          {
+            [selectColumn]: 102,
+            _count: { [alias]: 5 },
+          },
+        ] as never);
 
         const results = await service.getTotalMessageCounts(
           ecosystem,
@@ -299,44 +263,20 @@ describe('MessageService', () => {
           countBy,
         );
 
-        expect(results).toEqual(
-          mockCounts.map((item) => ({
-            ecosystem,
-            paraId: item.paraId,
-            totalCount: parseInt(item.totalCount),
-          })),
-        );
-        expect(createSpy).toHaveBeenCalledTimes(1);
-        expect(selectSpy).toHaveBeenCalledWith(selectColumn, alias);
+        expect(results).toEqual([
+          { ecosystem, paraId: 101, totalCount: 10 },
+          { ecosystem, paraId: 102, totalCount: 5 },
+        ]);
+        expect(groupBySpy).toHaveBeenCalledTimes(1);
       },
     );
 
     it('should combine counts for both origin and destination', async () => {
-      const mockQueryBuilderOrigin = {
-        select: vi.fn().mockReturnThis(),
-        addSelect: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        groupBy: vi.fn().mockReturnThis(),
-        getRawMany: vi
-          .fn()
-          .mockResolvedValue([{ ecosystem, paraId: 101, totalCount: '5' }]),
-        addGroupBy: vi.fn().mockReturnThis(),
-      } as unknown as SelectQueryBuilder<Message>;
-      const mockQueryBuilderDestination = {
-        select: vi.fn().mockReturnThis(),
-        addSelect: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        groupBy: vi.fn().mockReturnThis(),
-        getRawMany: vi.fn().mockResolvedValue([
-          { ecosystem, paraId: 101, totalCount: '7' },
-          { ecosystem, paraId: 102, totalCount: '3' },
-        ]),
-        addGroupBy: vi.fn().mockReturnThis(),
-      } as unknown as SelectQueryBuilder<Message>;
-      const createSpy = vi.spyOn(mockRepository, 'createQueryBuilder');
-      createSpy
-        .mockReturnValueOnce(mockQueryBuilderOrigin)
-        .mockReturnValueOnce(mockQueryBuilderDestination);
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
+      querySpy.mockResolvedValue([
+        { para_id: '101', total_count: '12' },
+        { para_id: '102', total_count: '3' },
+      ]);
 
       const results = await service.getTotalMessageCounts(
         ecosystem,
@@ -349,7 +289,7 @@ describe('MessageService', () => {
         { ecosystem, paraId: 101, totalCount: 12 },
         { ecosystem, paraId: 102, totalCount: 3 },
       ]);
-      expect(createSpy).toHaveBeenCalledTimes(2);
+      expect(querySpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -381,8 +321,7 @@ describe('MessageService', () => {
         },
       ];
 
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
       querySpy.mockResolvedValue(mockResult);
 
       const results = await service.countAssetsBySymbol(
@@ -416,12 +355,13 @@ describe('MessageService', () => {
           amount: '420',
         },
       ]);
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(
+        expect.any(String),
         paraIds,
         ecosystemsList,
         startTime,
         endTime,
-      ]);
+      );
     });
 
     it('should return asset counts by symbol when no paraIds are provided', async () => {
@@ -430,8 +370,7 @@ describe('MessageService', () => {
         { ecosystem, symbol: 'SILVER', count: '7', amount: '420' },
       ];
 
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
       querySpy.mockResolvedValue(mockResult);
 
       const results = await service.countAssetsBySymbol(
@@ -445,11 +384,12 @@ describe('MessageService', () => {
         { ecosystem, symbol: 'GOLD', count: 10, amount: '69' },
         { ecosystem, symbol: 'SILVER', count: 7, amount: '420' },
       ]);
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(
+        expect.any(String),
         ecosystem,
         startTime,
         endTime,
-      ]);
+      );
     });
   });
 
@@ -465,7 +405,7 @@ describe('MessageService', () => {
         { ecosystem, from_account_id: 'account1', message_count: '6' },
         { ecosystem, from_account_id: 'account2', message_count: '7' },
       ];
-      const querySpy = vi.spyOn(mockRepository, 'query');
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
       querySpy.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
@@ -486,7 +426,11 @@ describe('MessageService', () => {
         expect.stringContaining(
           'WHERE ecosystem = $1 AND origin_block_timestamp BETWEEN',
         ),
-        [ecosystem, startTime, endTime, ...paraIds, threshold],
+        ecosystem,
+        startTime,
+        endTime,
+        ...paraIds,
+        threshold,
       );
     });
 
@@ -495,7 +439,7 @@ describe('MessageService', () => {
         { ecosystem, from_account_id: 'account3', message_count: '8' },
       ];
 
-      const querySpy = vi.spyOn(mockRepository, 'query');
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
       querySpy.mockResolvedValue(mockResult);
 
       const results = await service.getAccountXcmCounts(
@@ -511,13 +455,15 @@ describe('MessageService', () => {
       // Ensure that the WHERE clause does not include paraIds
       expect(querySpy).toHaveBeenCalledWith(
         expect.not.stringContaining('origin_para_id IN'),
-        [ecosystem, startTime, endTime, threshold],
+        ecosystem,
+        startTime,
+        endTime,
+        threshold,
       );
     });
 
     it('should handle exceptions', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
+      const querySpy = vi.spyOn(prisma, '$queryRawUnsafe');
       querySpy.mockRejectedValue(new Error('Database error'));
 
       await expect(
@@ -530,13 +476,14 @@ describe('MessageService', () => {
         ),
       ).rejects.toThrow('Database error');
 
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
+      expect(querySpy).toHaveBeenCalledWith(
+        expect.any(String),
         ecosystem,
         startTime,
         endTime,
         ...paraIds,
         threshold,
-      ]);
+      );
     });
   });
 });

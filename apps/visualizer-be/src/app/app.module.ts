@@ -1,34 +1,19 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { Channel } from '../channels/channel.entity.js';
 import { ChannelModule } from '../channels/channels.module.js';
 import { LiveDataModule } from '../livedata/livedata.module.js';
-import { Asset, Message } from '../messages/message.entity.js';
 import { MessageModule } from '../messages/messages.module.js';
-
-const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
-  type: 'postgres',
-  host: config.get('DB_HOST'),
-  port: config.get('DB_PORT'),
-  username: config.get('DB_USER'),
-  password: config.get('DB_PASS'),
-  database: config.get('DB_NAME'),
-  entities: [Message, Asset, Channel],
-});
+import { PrismaModule } from '../prisma/prisma.module.js';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: typeOrmConfig,
-    }),
+    PrismaModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
