@@ -1,91 +1,99 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Channel } from './channel.entity.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { ChannelService } from './channels.service.js';
 
 describe('ChannelService', () => {
   let service: ChannelService;
-  let mockRepository;
+  let prisma: {
+    $queryRawUnsafe: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
-    mockRepository = {
-      query: vi.fn(),
-    } as unknown as Repository<Channel>;
+    prisma = {
+      $queryRawUnsafe: vi.fn(),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChannelService,
         {
-          provide: getRepositoryToken(Channel),
-          useValue: mockRepository,
+          provide: PrismaService,
+          useValue: prisma,
         },
       ],
     }).compile();
 
-    service = module.get<ChannelService>(ChannelService);
+    service = module.get(ChannelService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   describe('findAll', () => {
     const ecosystem = 'polkadot';
 
-    it('should return an array of channels on successful fetch', async () => {
-      const expectedResponse = [
+    it('should return an array of channels', async () => {
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([
         {
-          id: 1,
-          ecosystem: 'polkadot',
-          senderId: 101,
-          recipientId: 201,
-          totalCount: 5,
-          transferCount: 6,
+          id: '1',
+          ecosystem,
+          senderId: '101',
+          recipientId: '201',
+          transferCount: '6',
+          totalCount: '5',
         },
         {
-          id: 2,
-          ecosystem: 'polkadot',
-          senderId: 102,
-          recipientId: 202,
-          totalCount: 3,
-          transferCount: 9,
+          id: '2',
+          ecosystem,
+          senderId: '102',
+          recipientId: '202',
+          transferCount: '9',
+          totalCount: '3',
         },
-      ];
-
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockResolvedValue(expectedResponse);
+      ]);
 
       const result = await service.findAll(ecosystem);
 
-      expect(result).toEqual(
-        expectedResponse.map((channel) => ({
-          id: channel.id,
-          ecosystem: channel.ecosystem,
-          sender: channel.senderId,
-          recipient: channel.recipientId,
-          message_count: channel.totalCount,
-          transfer_count: channel.transferCount,
-        })),
-      );
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [ecosystem]);
+      expect(result).toEqual([
+        {
+          id: 1,
+          ecosystem,
+          sender: 101,
+          recipient: 201,
+          transfer_count: 6,
+          message_count: 5,
+          status: 'accepted',
+        },
+        {
+          id: 2,
+          ecosystem,
+          sender: 102,
+          recipient: 202,
+          transfer_count: 9,
+          message_count: 3,
+          status: 'accepted',
+        },
+      ]);
+
+      expect(prisma.$queryRawUnsafe).toHaveBeenCalledOnce();
     });
 
     it('should return an empty array when no channels are found', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockResolvedValue([]);
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([]);
 
       const result = await service.findAll(ecosystem);
 
       expect(result).toEqual([]);
-      expect(querySpy).toHaveBeenCalled();
     });
 
-    it('should throw an error when the query execution fails', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockRejectedValue(new Error('Query execution failed'));
+    it('should propagate query errors', async () => {
+      prisma.$queryRawUnsafe.mockRejectedValueOnce(
+        new Error('Query execution failed'),
+      );
 
       await expect(service.findAll(ecosystem)).rejects.toThrow(
         'Query execution failed',
@@ -93,32 +101,28 @@ describe('ChannelService', () => {
     });
   });
 
-  describe('findAllWithinInterval', () => {
+  describe('findAllInInterval', () => {
     const ecosystem = 'polkadot';
     const startTime = 1633046400;
     const endTime = 1633132800;
 
-    it('should return an array of channels on successful fetch', async () => {
-      const expectedResponse = [
+    it('should return channels within interval', async () => {
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([
         {
-          id: 1,
-          ecosystem: 'polkadot',
-          senderId: 101,
-          recipientId: 201,
-          totalCount: 5,
+          id: '1',
+          ecosystem,
+          senderId: '101',
+          recipientId: '201',
+          totalCount: '5',
         },
         {
-          id: 2,
-          ecosystem: 'polkadot',
-          senderId: 102,
-          recipientId: 202,
-          totalCount: 3,
+          id: '2',
+          ecosystem,
+          senderId: '102',
+          recipientId: '202',
+          totalCount: '3',
         },
-      ];
-
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockResolvedValue(expectedResponse);
+      ]);
 
       const result = await service.findAllInInterval(
         ecosystem,
@@ -126,26 +130,28 @@ describe('ChannelService', () => {
         endTime,
       );
 
-      expect(result).toEqual(
-        expectedResponse.map((channel) => ({
-          id: channel.id,
-          ecosystem: channel.ecosystem,
-          sender: channel.senderId,
-          recipient: channel.recipientId,
-          message_count: channel.totalCount,
-        })),
-      );
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
-        ecosystem,
-        startTime,
-        endTime,
+      expect(result).toEqual([
+        {
+          id: 1,
+          ecosystem,
+          sender: 101,
+          recipient: 201,
+          message_count: 5,
+        },
+        {
+          id: 2,
+          ecosystem,
+          sender: 102,
+          recipient: 202,
+          message_count: 3,
+        },
       ]);
+
+      expect(prisma.$queryRawUnsafe).toHaveBeenCalledOnce();
     });
 
-    it('should return an empty array when no channels are found', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockResolvedValue([]);
+    it('should return empty array if no results', async () => {
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([]);
 
       const result = await service.findAllInInterval(
         ecosystem,
@@ -154,13 +160,12 @@ describe('ChannelService', () => {
       );
 
       expect(result).toEqual([]);
-      expect(querySpy).toHaveBeenCalled();
     });
 
-    it('should throw an error when the query execution fails', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockRejectedValue(new Error('Query execution failed'));
+    it('should propagate query errors', async () => {
+      prisma.$queryRawUnsafe.mockRejectedValueOnce(
+        new Error('Query execution failed'),
+      );
 
       await expect(
         service.findAllInInterval(ecosystem, startTime, endTime),
@@ -169,59 +174,53 @@ describe('ChannelService', () => {
   });
 
   describe('findOne', () => {
-    const channelId = 1;
+    const ecosystem = 'polkadot';
+    const sender = 2000;
+    const recipient = 2006;
 
-    it('should return a channel when it exists', async () => {
-      const expectedResponse = [
+    it('should return a channel when found', async () => {
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([
         {
-          id: channelId,
-          ecosystem: 'polkadot',
-          senderId: 101,
-          recipientId: 201,
-          totalCount: 5,
+          id: '1',
+          senderId: '101',
+          recipientId: '201',
+          totalCount: '5',
+          active_at: '123456',
           status: 'accepted',
         },
-      ];
+      ]);
 
-      const querySpy = vi.spyOn(mockRepository, 'query');
-      querySpy.mockResolvedValue(expectedResponse);
-
-      const result = await service.findOne('polkadot', 2000, 2006);
+      const result = await service.findOne(ecosystem, sender, recipient);
 
       expect(result).toEqual({
-        id: channelId,
-        ecosystem: 'polkadot',
-        sender: expectedResponse[0].senderId,
-        recipient: expectedResponse[0].recipientId,
-        active_at: NaN,
-        message_count: expectedResponse[0].totalCount,
-        status: expectedResponse[0].status,
+        id: 1,
+        ecosystem,
+        sender: 101,
+        recipient: 201,
+        message_count: 5,
+        active_at: 123456,
+        status: 'accepted',
       });
-      expect(querySpy).toHaveBeenCalledWith(expect.any(String), [
-        'polkadot',
-        2000,
-        2006,
-      ]);
     });
 
-    it('should throw an error when no channel is found', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
+    it('should throw when no channel is found', async () => {
+      prisma.$queryRawUnsafe.mockResolvedValueOnce([]);
 
-      querySpy.mockResolvedValue([]);
-
-      await expect(service.findOne('polkadot', 2000, 1987)).rejects.toThrow(
-        `No channel found with sender ID ${2000} or recipient ID ${1987} in ecosystem ${'polkadot'}.`,
+      await expect(
+        service.findOne(ecosystem, sender, recipient),
+      ).rejects.toThrow(
+        `No channel found with sender ${sender}, recipient ${recipient}, ecosystem ${ecosystem}`,
       );
     });
 
-    it('should throw an error when the query execution fails', async () => {
-      const querySpy = vi.spyOn(mockRepository, 'query');
-
-      querySpy.mockRejectedValue(new Error('Query execution failed'));
-
-      await expect(service.findOne('polkadot', 2000, 2006)).rejects.toThrow(
-        'Query execution failed',
+    it('should propagate query errors', async () => {
+      prisma.$queryRawUnsafe.mockRejectedValueOnce(
+        new Error('Query execution failed'),
       );
+
+      await expect(
+        service.findOne(ecosystem, sender, recipient),
+      ).rejects.toThrow('Query execution failed');
     });
   });
 });

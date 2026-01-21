@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model channels {
+  id                        Int     @id @default(autoincrement())
+  ecosystem                 String
+  sender                    Int
+  recipient                 Int
+  status                    String? @db.VarChar(255)
+  transfer_count            Int?
+  message_count             Int?
+  active_at                 BigInt?
+  proposed_max_capacity     Int?
+  proposed_max_message_size Int?
+
+  @@unique([ecosystem, sender, recipient])
+}
+
+model messages {
+  ecosystem               String
+  message_hash            String  @db.VarChar
+  origin_event_index      String? @db.VarChar
+  from_account_id         String? @db.VarChar
+  origin_para_id          Int?
+  origin_block_timestamp  BigInt?
+  relayed_block_timestamp BigInt?
+  block_num               BigInt?
+  status                  String? @db.VarChar
+  relayed_event_index     String? @db.VarChar
+  dest_event_index        String? @db.VarChar
+  dest_para_id            Int?
+  to_account_id           String? @db.VarChar
+  confirm_block_timestamp BigInt?
+  extrinsic_index         String? @db.VarChar
+  relayed_extrinsic_index String? @db.VarChar
+  dest_extrinsic_index    String? @db.VarChar
+  child_para_id           Int?
+  child_dest              String? @db.VarChar
+  protocol                String? @db.VarChar
+  message_type            String? @db.VarChar
+  unique_id               String? @db.VarChar
+  xcm_version             Int?
+  assets                  Json?
+
+  @@id([ecosystem, message_hash])
+}

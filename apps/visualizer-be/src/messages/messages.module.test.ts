@@ -1,9 +1,8 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { Message } from './message.entity.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { MessageResolver } from './messages.resolver.js';
 import { MessageService } from './messages.service.js';
 
@@ -12,10 +11,13 @@ describe('MessageModule', () => {
   let messageService: MessageService;
   let messageResolver: MessageResolver;
 
+  let prisma: {
+    $queryRawUnsafe: ReturnType<typeof vi.fn>;
+  };
+
   beforeAll(async () => {
-    const mockRepository = {
-      find: vi.fn(),
-      save: vi.fn(),
+    prisma = {
+      $queryRawUnsafe: vi.fn(),
     };
 
     module = await Test.createTestingModule({
@@ -23,8 +25,8 @@ describe('MessageModule', () => {
         MessageService,
         MessageResolver,
         {
-          provide: getRepositoryToken(Message),
-          useValue: mockRepository,
+          provide: PrismaService,
+          useValue: prisma,
         },
       ],
     }).compile();

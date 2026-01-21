@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { AccountXcmCountType } from './account-msg-count.model.js';
 import { AssetCount } from './asset-count.model.js';
+import { Asset, Message } from './message.model.js';
 import { MessageCount } from './message-count.model.js';
 import { MessageCountByDay } from './message-count-by-day.model.js';
 import { MessageCountByStatus } from './message-count-by-status.model.js';
@@ -186,5 +187,110 @@ describe('MessageCount', () => {
     expect(messageCount.ecosystem).toBe('');
     expect(messageCount.paraId).toBe(0);
     expect(messageCount.totalCount).toBe(0);
+  });
+});
+
+describe('Message', () => {
+  it('should create a Message object with required and optional fields', () => {
+    const message = new Message();
+
+    message.message_hash = '0xabc';
+    message.ecosystem = 'polkadot';
+    message.block_num = 123;
+    message.status = 'success';
+
+    expect(message.message_hash).toBe('0xabc');
+    expect(message.ecosystem).toBe('polkadot');
+    expect(message.block_num).toBe(123);
+    expect(message.status).toBe('success');
+  });
+
+  it('should handle undefined nullable fields', () => {
+    const message = new Message();
+
+    message.message_hash = '0xdef';
+    message.ecosystem = 'kusama';
+
+    expect(message.origin_event_index).toBeUndefined();
+    expect(message.from_account_id).toBeUndefined();
+    expect(message.origin_para_id).toBeUndefined();
+    expect(message.block_num).toBeUndefined();
+    expect(message.status).toBeUndefined();
+    expect(message.assets).toBeUndefined();
+  });
+
+  it('should handle assets array', () => {
+    const asset = new Asset();
+    asset.symbol = 'DOT';
+    asset.amount = '1000000000';
+    asset.decimals = 10;
+
+    const message = new Message();
+    message.message_hash = '0x123';
+    message.ecosystem = 'polkadot';
+    message.assets = [asset];
+
+    expect(message.assets).toHaveLength(1);
+    expect(message.assets?.[0].symbol).toBe('DOT');
+    expect(message.assets?.[0].amount).toBe('1000000000');
+    expect(message.assets?.[0].decimals).toBe(10);
+  });
+
+  it('should handle edge cases like 0 and empty strings', () => {
+    const message = new Message();
+
+    message.message_hash = '';
+    message.ecosystem = '';
+    message.origin_para_id = 0;
+    message.block_num = 0;
+    message.status = '';
+
+    expect(message.message_hash).toBe('');
+    expect(message.ecosystem).toBe('');
+    expect(message.origin_para_id).toBe(0);
+    expect(message.block_num).toBe(0);
+    expect(message.status).toBe('');
+  });
+});
+
+describe('Asset', () => {
+  it('should create an Asset object with fields', () => {
+    const asset = new Asset();
+
+    asset.enum_key = 'Native';
+    asset.asset_module = 'Balances';
+    asset.amount = '500';
+    asset.decimals = 12;
+    asset.symbol = 'KSM';
+
+    expect(asset.enum_key).toBe('Native');
+    expect(asset.asset_module).toBe('Balances');
+    expect(asset.amount).toBe('500');
+    expect(asset.decimals).toBe(12);
+    expect(asset.symbol).toBe('KSM');
+  });
+
+  it('should handle undefined nullable fields', () => {
+    const asset = new Asset();
+
+    expect(asset.enum_key).toBeUndefined();
+    expect(asset.asset_module).toBeUndefined();
+    expect(asset.amount).toBeUndefined();
+    expect(asset.decimals).toBeUndefined();
+    expect(asset.symbol).toBeUndefined();
+  });
+
+  it('should handle edge cases like empty strings and 0', () => {
+    const asset = new Asset();
+
+    asset.enum_key = '';
+    asset.amount = '';
+    asset.decimals = 0;
+    asset.symbol = '';
+
+    expect(asset.enum_key).toBe('');
+    expect(asset.amount).toBe('');
+    expect(asset.decimals).toBe(0);
+    expect(asset.symbol).toBe('');
   });
 });

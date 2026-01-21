@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ChannelResult } from 'src/types.js';
-import { Repository } from 'typeorm';
 
-import { Channel } from './channel.entity.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { ChannelResult } from '../types.js';
 
 @Injectable()
 export class ChannelService {
-  constructor(
-    @InjectRepository(Channel)
-    private channelRepository: Repository<Channel>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(ecosystem: string): Promise<Partial<Channel>[]> {
+  async findAll(ecosystem: string) {
     const query = `
       WITH norm AS (
         SELECT
@@ -35,9 +30,10 @@ export class ChannelService {
       ORDER BY "senderId", "recipientId";
     `;
 
-    const results = await this.channelRepository.query<ChannelResult[]>(query, [
+    const results = await this.prisma.$queryRawUnsafe<ChannelResult[]>(
+      query,
       ecosystem,
-    ]);
+    );
 
     return results.map(
       ({
@@ -48,12 +44,13 @@ export class ChannelService {
         transferCount,
         totalCount,
       }) => ({
-        id: parseInt(id, 10),
-        ecosystem: ecosystem,
-        sender: parseInt(senderId, 10),
-        recipient: parseInt(recipientId, 10),
-        transfer_count: parseInt(transferCount, 10),
-        message_count: parseInt(totalCount, 10),
+        id: Number(id),
+        ecosystem,
+        sender: Number(senderId),
+        recipient: Number(recipientId),
+        transfer_count: Number(transferCount),
+        message_count: Number(totalCount),
+        status: 'accepted',
       }),
     );
   }
@@ -62,7 +59,7 @@ export class ChannelService {
     ecosystem: string,
     startTime: number,
     endTime: number,
-  ): Promise<Partial<Channel>[]> {
+  ) {
     const query = `
       SELECT
         LEAST(ch.sender, ch.recipient) AS "senderId",
@@ -90,28 +87,25 @@ export class ChannelService {
       ORDER BY "totalCount" DESC;
     `;
 
-    const results = await this.channelRepository.query<ChannelResult[]>(query, [
+    const results = await this.prisma.$queryRawUnsafe<ChannelResult[]>(
+      query,
       ecosystem,
       startTime,
       endTime,
-    ]);
+    );
 
     return results.map(
       ({ id, ecosystem, senderId, recipientId, totalCount }) => ({
-        id: parseInt(id, 10),
-        ecosystem: ecosystem,
-        sender: parseInt(senderId, 10),
-        recipient: parseInt(recipientId, 10),
-        message_count: parseInt(totalCount, 10),
+        id: Number(id),
+        ecosystem,
+        sender: Number(senderId),
+        recipient: Number(recipientId),
+        message_count: Number(totalCount),
       }),
     );
   }
 
-  async findOne(
-    ecosystem: string,
-    sender: number,
-    recipient: number,
-  ): Promise<Partial<Channel>> {
+  async findOne(ecosystem: string, sender: number, recipient: number) {
     const query = `
       SELECT
         ch.sender AS "senderId",
@@ -123,16 +117,19 @@ export class ChannelService {
       FROM
         channels ch
       LEFT JOIN
-        messages msg ON (msg.origin_para_id = ch.sender AND msg.dest_para_id = ch.recipient)
+        messages msg
+          ON msg.origin_para_id = ch.sender
+         AND msg.dest_para_id = ch.recipient
       WHERE
         ch.ecosystem = $1
         AND ch.status = 'accepted'
-        AND (ch.sender = $2 AND ch.recipient = $3)
+        AND ch.sender = $2
+        AND ch.recipient = $3
       GROUP BY
         ch.sender, ch.recipient, ch.id, ch.status;
     `;
 
-    const result = await this.channelRepository.query<
+    const result = await this.prisma.$queryRawUnsafe<
       {
         id: string;
         senderId: string;
@@ -141,22 +138,24 @@ export class ChannelService {
         active_at: string;
         status: string;
       }[]
-    >(query, [ecosystem, sender, recipient]);
+    >(query, ecosystem, sender, recipient);
 
-    if (result.length === 0) {
+    if (!result.length) {
       throw new Error(
-        `No channel found with sender ID ${sender} or recipient ID ${recipient} in ecosystem ${ecosystem}.`,
+        `No channel found with sender ${sender}, recipient ${recipient}, ecosystem ${ecosystem}`,
       );
     }
 
+    const row = result[0];
+
     return {
-      id: parseInt(result[0].id, 10),
-      ecosystem: ecosystem,
-      sender: parseInt(result[0].senderId, 10),
-      recipient: parseInt(result[0].recipientId, 10),
-      message_count: parseInt(result[0].totalCount, 10),
-      active_at: parseInt(result[0].active_at, 10),
-      status: result[0].status,
+      id: Number(row.id),
+      ecosystem,
+      sender: Number(row.senderId),
+      recipient: Number(row.recipientId),
+      message_count: Number(row.totalCount),
+      active_at: Number(row.active_at),
+      status: row.status,
     };
   }
 }

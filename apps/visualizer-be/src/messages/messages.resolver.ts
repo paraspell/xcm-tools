@@ -2,11 +2,11 @@ import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { TSubstrateChain } from '@paraspell/sdk';
 
 import { CountOption } from '../types.js';
-import { Message } from './message.entity.js';
 import { MessageService } from './messages.service.js';
 import {
   AccountXcmCountType,
   AssetCount,
+  Message,
   MessageCount,
   MessageCountByDay,
   MessageCountByStatus,
