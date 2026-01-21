@@ -113,16 +113,5 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 <br>
 
 **Tools supported by:**
-<p align="center">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://github.com/user-attachments/assets/88d41183-6e04-47a7-9931-a7d9de043a3e"
-    >
-    <img
-      width="750"
-      alt="version"
-      src="https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c"
-    />
-  </picture>
-</p>
+![version](https://github.com/user-attachments/assets/88d41183-6e04-47a7-9931-a7d9de043a3e#gh-dark-mode-only)
+![version](https://github.com/user-attachments/assets/29e4b099-d90c-46d6-a3ce-94edfbda003c#gh-light-mode-only)
