@@ -10,7 +10,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import cx from 'clsx';
 import type { FC } from 'react';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 import type { TNavItem } from '../../types';
 import classes from './LinksGroup.module.css';

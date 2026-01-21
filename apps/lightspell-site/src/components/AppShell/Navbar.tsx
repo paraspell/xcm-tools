@@ -1,5 +1,5 @@
 import { Anchor, Button, Divider, Group, Stack } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { links } from "./links";
 import classes from "./Navbar.module.css";

@@ -1,4 +1,4 @@
-import { Route, Routes as ReactRouterRoutes } from "react-router-dom";
+import { Route, Routes as ReactRouterRoutes } from "react-router";
 
 import HomePage from "../routes/HomePage";
 import NotFoundPage from "../routes/NotFoundPage";

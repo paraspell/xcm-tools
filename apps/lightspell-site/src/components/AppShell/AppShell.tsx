@@ -1,7 +1,7 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 import { Footer } from "../Footer/Footer";
 import Routes from "../Routes";

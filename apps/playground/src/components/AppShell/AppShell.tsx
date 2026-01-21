@@ -26,7 +26,7 @@ import {
   IconZoomCode,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router';
 
 import { NAVIGATION_ITEMS } from '../../constants';
 import { useWallet } from '../../hooks';

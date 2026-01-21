@@ -13,7 +13,7 @@ import {
 } from 'polkadot-api/pjs-signer';
 import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import { PageRoute } from '../components/PageRoute';

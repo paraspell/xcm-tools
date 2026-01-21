@@ -1,6 +1,6 @@
 import { Anchor, Burger, Button, Container, Group, Image } from "@mantine/core";
 import type { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import classes from "./Header.module.css";
 import { links } from "./links";

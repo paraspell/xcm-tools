@@ -1,5 +1,5 @@
 import { Button, Container, Group, Text, Title } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import Illustration from "./Illustration";
 import classes from "./NotFound.module.css";

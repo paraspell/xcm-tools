@@ -1,7 +1,7 @@
 import { Anchor, Button, Divider, Group, Menu, Stack } from "@mantine/core";
 import { GithubIcon } from "@mantinex/dev-icons";
 import { IconChevronDown } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { links } from "./links";
 import classes from "./Navbar.module.css";

@@ -4,7 +4,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import { Box, Flex, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 
 import LeftPanel from './components/LeftPanel';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';

@@ -9,7 +9,7 @@ import {
 import { MantineProvider } from "@mantine/core";
 import hljs from "highlight.js/lib/core";
 import tsLang from "highlight.js/lib/languages/typescript";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 
 import AppShell from "./components/AppShell/AppShell";
 import ScrollToAnchor from "./components/ScrollToAnchor";

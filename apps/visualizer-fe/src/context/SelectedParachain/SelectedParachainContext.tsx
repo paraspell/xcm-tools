@@ -1,7 +1,7 @@
 import type { TSubstrateChain } from '@paraspell/sdk';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { createContext, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import type { ChannelsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';

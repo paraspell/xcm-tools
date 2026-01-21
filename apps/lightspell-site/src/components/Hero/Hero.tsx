@@ -1,6 +1,6 @@
 import { Button, Container, Group, Image, Text } from "@mantine/core";
 import { GithubIcon } from "@mantinex/dev-icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import classes from "./Hero.module.css";
 
