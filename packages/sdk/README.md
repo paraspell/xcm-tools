@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/sdk</h1>
-  <h4 align="center"> SDK for handling XCM asset transfers across Polkadot and Kusama ecosystems. </h4>
+  <h4 align="center"> SDK for handling XCM asset transfers across Polkadot, Kusama, Paseo and Westend ecosystems. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/sdk">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk?style=flat-square" />
@@ -65,23 +65,20 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed
 ```
 ## Implementation
 
-```
-NOTES:
-- You can now query Ethereum asset balances on Ethereum via balance query
-- The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
-- V10 > V11 Migration guide https://paraspell.github.io/docs/migration/v10-to-v11.html
-- Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
-```
-
-```
-Latest news:
-- V11 > V12 Migration guide https://paraspell.github.io/docs/migration/v11-to-v12.html
-```
+> [!NOTE]
+> - Local transfers are now available for every currency and every chain. To try them, simply use the same origin and destination parameters.
+> - Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
+> - You can now query Ethereum asset balances on Ethereum via balance query
+> - The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
+> - Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
+> 
+> **Latest news:**
+> - V11 > V12 Migration guide https://paraspell.github.io/docs/migration/v11-to-v12.html
 
 ### Sending XCM
 For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
 
-#### Transfer assets from Parachain to Parachain
+#### Transfer assets from Substrate to Substrate
 
 ```ts
 const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
@@ -103,75 +100,7 @@ await builder.disconnect()
 /*
 EXAMPLE:
 const builder = Builder()
-  .from('Acala')
-  .to('Astar')
-  .currency({
-    symbol: 'ACA',
-    amount: '1000000000'
-  })
-  .address(address)
-
-const tx = await builder.build()
-
-//Disconnect API after TX
-await builder.disconnect()
-*/
-```
-
-#### Transfer assets from the Relay chain to the Parachain
-
-```ts
-const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TRelaychain) // Kusama | Polkadot | Westend | Paseo
-      .to(TChain/*,customParaId - optional*/ | Location object)
-      .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
-      .address(address | Location object)
-      /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
-      .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
-
-const tx = await builder.build()
-
-//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
-await builder.disconnect()
-
-/*
-EXAMPLE:
-const builder = await Builder()
-  .from('Polkadot')
-  .to('Astar')
-  .currency({
-    symbol: 'DOT',
-    amount: '1000000000'
-  })
-  .address(address)
-
-const tx = await builder.build()
-
-//Disconnect API after TX
-await builder.disconnect()
-*/
-```
-
-#### Transfer assets from Parachain to Relay chain
-
-```ts
-const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TSubstrateChain)
-      .to(TRelaychain) // Kusama | Polkadot | Westend | Paseo
-      .currency({symbol: 'DOT', amount: amount /*Use "ALL" to transfer everything*/})
-      .address(address | Location object)
-      /*.xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
-        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
-
-const tx = await builder.build()
-
-//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
-await builder.disconnect()
-
-/*
-EXAMPLE:
-const builder = await Builder()
-  .from('Astar')
+  .from('AssetHubPolkadot')
   .to('Polkadot')
   .currency({
     symbol: 'DOT',
@@ -531,7 +460,8 @@ console.log(SUPPORTED_PALLETS)
 
 - Run all core tests and checks using `pnpm runAll`
 
-XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
+> [!NOTE]
+> XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
 
 ## Contribute to XCM Tools and earn rewards 💰
 

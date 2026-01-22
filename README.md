@@ -6,10 +6,6 @@ ParaSpell✨ monorepo for XCM-Tool set
 <img width="400" alt="ParaSpell logo" src="https://github.com/paraspell/xcm-tools/assets/55763425/a65e3626-84cf-444b-ab77-9375508e5895">
 </p>
 
-**AI-generated podcast about ParaSpell XCM tools:**
-
-Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools](https://github.com/paraspell/presskit/blob/main/podcasts_notebooklm/ParaSpell_Podcast_by_NotebookLM.wav).
-
 **Monorepo contains the following XCM tools:**
 - [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **two** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) & [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) as the `first` and `only` XCM SDK in the ecosystem.
 - [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) ⚡️ (<img width="50" alt="Lightspell logo" src="https://user-images.githubusercontent.com/55763425/251588168-4855abc3-445a-4207-9a65-e891975be62c.png">): An API that provides the ability to integrate XCM interoperability into your decentralized application in a package-less way, offloading heavy computing tasks from your decentralized application, and reducing associated costs.
@@ -110,7 +106,16 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 </details>
 
+<details><summary><b>Podcast about XCM Tools</b></summary>
 <br>
+
+Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools](https://github.com/paraspell/presskit/blob/main/podcasts_notebooklm/ParaSpell_Podcast_by_NotebookLM.wav).
+
+</details>
+
+<br>
+
+
 
 **Tools supported by:**
 <p align="center">

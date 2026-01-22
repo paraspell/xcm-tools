@@ -73,7 +73,7 @@ export const Hero = () => {
         style={{ position: "relative" }}
       >
         <h1 className={classes.title}>
-          Welcome Polkadot and Kusama magician 👋
+          Welcome Polkadot, Kusama, Paseo and Westend magician 👋
         </h1>
 
         <Title

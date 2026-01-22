@@ -16,10 +16,10 @@ export function Faq() {
           </Accordion.Control>
           <Accordion.Panel>
             XCM API is a RESTful service designed to facilitate cross-chain
-            communication and asset transfers across the Polkadot and Kusama
-            ecosystems. It enables developers to interact with various
-            blockchain protocols directly over HTTP, making it easier to build
-            and scale decentralized applications.
+            communication and asset transfers across the Polkadot, Kusama, Paseo
+            and Westend ecosystems. It enables developers to interact with
+            various blockchain protocols directly over HTTP, making it easier to
+            build and scale decentralized applications.
           </Accordion.Panel>
         </Accordion.Item>
 

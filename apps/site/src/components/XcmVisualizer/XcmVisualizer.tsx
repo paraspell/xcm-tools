@@ -23,11 +23,11 @@ const XcmVisualizer = () => (
         <Image src={visualizerLogoImg} w={32} h={32} />
       </Group>
       <Text c="dimmed" maw={550}>
-        Experience the Polkadot and Kusama ecosystems like never before with our
-        XCM Visualizer — the first and only XCM-oriented visualization tool.
-        Effortlessly decode and visualize complex cross-chain messaging data,
-        explore network infrastructure, and gain valuable insights into
-        cross-chain interactions.
+        Experience the Polkadot, Kusama, Paseo and Westend ecosystems like never
+        before with our XCM Visualizer — the first and only XCM-oriented
+        visualization tool. Effortlessly decode and visualize complex
+        cross-chain messaging data, explore network infrastructure, and gain
+        valuable insights into cross-chain interactions.
       </Text>
 
       <Image

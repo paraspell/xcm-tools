@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/assets</h1>
-  <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
+  <h4 align="center"> Pallet queries for Polkadot, Kusama, Paseo and Westend Parachains. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/assets">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/assets?style=flat-square" />
@@ -186,7 +186,8 @@ getAssetLocation(TChain, { symbol: symbol } | { id: assetId })
 
 - Update existential deposits in the map using script - `pnpm updateEds`
 
-Assets can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/assets).
+> [!NOTE]
+> Asset queries can be tested in [XCM Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## Contribute to XCM Tools and earn rewards 💰
 

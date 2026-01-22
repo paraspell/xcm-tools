@@ -69,7 +69,7 @@ const XcmApi = () => {
         <Text c="dimmed" maw={550}>
           Accelerate your cross-chain interactions with a powerful,
           developer-friendly API designed for seamless asset transfers between
-          the Polkadot and Kusama ecosystems.
+          the Polkadot, Kusama, Paseo and Westend ecosystems.
         </Text>
 
         <SimpleGrid

@@ -21,43 +21,34 @@
 <br /><br />
 <br /><br />
 
-### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call with one signature or two signatures (In cases where one signature calls are not supported)**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **556** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+**Implemented exchanges**
+| Swap Type   | DEX               | Pools | Notes                                |
+|------------|-------------------|-------|--------------------------------------|
+| One-click  | Hydration         | 210   | —                                    |
+| One-click  | AssetHub Polkadot | 32    | Requires specific native tokens      |
+| Two-click  | Acala             | 36    | Requires native token                                    |
+| Two-click  | Basilisk          | 15    | —                                    |
+| Two-click  | Bifrost Kusama    | 66    | Requires native token                |
+| Two-click  | Bifrost Polkadot  | 45    | Requires native token                |
+| Two-click  | Karura            | 136   | Requires native token                                    |
+| Two-click  | AssetHub Kusama   | 16    | Requires specific native tokens      |
 
-**Exchanges implemented:**
-```
-1️⃣ Supporting one click swaps
-- Hydration / 210 Pools available
-- AssetHubPolkadot / 32 Pools available
+**Total pools available:** 556
 
-2️⃣ Supporting standard two click swaps
-- Acala / 36 Pools available
-- Basilisk / 15 Pools available
-- BifrostKusama / 66 Pools available / Requires native token for swaps
-- BifrostPolkadot / 45 Pools available / Requires native token for swaps
-- Karura / 136 Pools available
-- AssetHubKusama / 16 Pools available / Requires specific native tokens for swaps
-```
+> [!NOTE]
+> - 📣 Some exchanges require native tokens to proceed with swaps.
+>
+>- 📣 Router supports one-click cross-chain swaps! Supported exchanges are AssetHubPolkadot and Hydration.
+>   - 📋 **Sidenote**: Not all chains can be selected as origin for one-click cross-chain swaps, because their barrier doesn't support execute extrinsic. All chains can be selected as a destination, however. For origin chains that do not support execute extrinsic, we automatically default to the original two-click scenario.
 
-**⚠️ IMPORTANT NOTES:** 
-```
-- 📣 Some exchanges require native tokens to proceed with swaps.
-
-- 📣 Router now supports one-click cross-chain swaps! Supported exchanges are AssetHubPolkadot and Hydration.
-        -Sidenote: Not all chains can be selected as origin for one-click cross-chain swaps, because their barrier doesn't support executing instructions. All chains can be selected as a destination, however. For origin chains that do not support execute instruction, we automatically default to the original two-click scenario.
-```
 
 # Installation
 #### Install dependencies
 
-```
-⚠️ NOTE
-Enabling Wasm is required by Hydration SDK in order for XCM-Router to work in your dAPP. You can either enable it in web app config or by plugin.
-Hydration also requires augment package - https://github.com/galacticcouncil/sdk/issues/114
-
-⚠️⚠️ NOTE
-XCM Router is now migrated towards PAPI library! To migrate you just need to replace old PJS injector with PAPI signer and install new peer dependency. Explore docs to find out more.
-```
+> [!IMPORTANT]
+> - ⚠️  **WebAssembly (Wasm) must be enabled in your project** because of the Hydration SDK (One of the exchanges implemented in XCM Router). Wasm can be enabled either through the web application configuration or through the appropriate plugin. Additionally, Hydration requires the use of the **augment package** (see: https://github.com/galacticcouncil/sdk/issues/114).
+>
+> - ⚠️  **XCM Router has been migrated to the PAPI library.** If you used XCM Router prior to migration, replace the legacy Polkadot.js (PJS) injector with the PAPI signer and install the newly required peer dependency. Follow the setup guide for more information.
 
 ```bash
 yarn add || pnpm | npm install polkadot-api
@@ -280,19 +271,6 @@ const assets = getExchangeAssets('AssetHubPolkadotDex')
 const pairs = getExchangePairs(exchange) // exchange can be also array of exchanges such as [“HydrationDex”, “AcalaDex”] or undefined which will return all available pairs for all dexes
 ```
 
-## List of DEX chains, assets, and Parachains supported by XCM Router
-
-| DEX | Can send to/receive from | Supported assets | Notes |
-| ------------- | ------------- | ------------- |------------- |
-| Acala DEX |Polkadot Relay, Astar, HydraDX, Interlay, Moonbeam, Parallel, AssetHubPolkadot, Unique network|ACA, DOT, aSEED, USDCet, UNQ, IBTC, INTR, lcDOT, LDOT| Fees are paid by either ACA or DOT|
-|Karura DEX| Kusama Relay, Altair, Basilisk, BifrostKusama, Calamari, Crab, Parallel Heiko, Kintsugi, Moonriver, Quartz, Crust Shadow, Shiden, AssetHubKusama| BNC, USDCet, RMRK, ARIS, AIR, QTZ, CSM, USDT, KAR, KBTC, KINT, KSM, aSEED, LKSM, PHA, tKSM, TAI | Fees are paid by either KAR or KSM|
-|Hydration DEX| Polkadot Relay, Acala, Interlay, AssetHubPolkadot, Zeitgeist, Astar, Centrifuge, BifrostPolkadot, Mythos | USDT, MYTH, HDX, WETH, GLMR, IBTC, BNC, WBTC, vDOT, DAI, CFG, DOT, DAI, ZTG, WBTC, INTR, ASTR, LRNA, USDC| Chain automatically gives you native asset to pay for fees.|
-| Basilisk DEX | Kusama Relay, Karura, AssetHubKusama, Tinkernet, Robonomics| BSX, USDT, aSEED, XRT, KSM, TNKR| Chain automatically gives you native asset to pay for fees.|
-|Bifrost Kusama DEX| Kusama Relay, AssetHubKusama, Karura, Moonriver, Kintsugi| BNC, vBNC, vsKSM, vKSM, USDT, aSEED, KAR, ZLK, RMRK, KBTC, MOVR, vMOVR| Chain requires native BNC asset for fees.|
-|Bifrost Polkadot DEX| Polkadot Relay, AssetHubPolkadot, Moonbeam, Astar, Interlay| BNC, vDOT, vsDOT, USDT, FIL, vFIL, ASTR, vASTR, GLMR, vGLMR, MANTA, vMANTA|Chain requires native BNC asset for fees.|
-|AssetHubPolkadot| Polkadot Relay, Any Parachain it has HRMP channel with | DOT, WETH.e, USDC, USDT, LAOS, MYTH, WBBTC.e, ASX, BILL, DEMO, TATE, PINK, MODE, MVPW, PIGS, DED, wstETH.e, TTT, KSM, tBTC.e, PEPE.e, SHIB.e, TON.e, NAT, NT2, DOTA, STINK, MTC, AJUN, GGI, GLMR, NIN | Requires specific native tokens for swaps |
-|AssetHubKusama| Kusama Relay, Any Parachain it has HRMP channel with | KSM, DOT, USDC, USDT, BILLCOIN, WOOD, dUSD, TACP, TSM, MA42, USDT, DMO, JAM | Requires specific native tokens for swaps |
-
 ## 💻 Testing
 
 - Run compilation using `pnpm compile`
@@ -301,7 +279,8 @@ const pairs = getExchangePairs(exchange) // exchange can be also array of exchan
 
 - Run unit tests using `pnpm test`
 
-XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
+> [!NOTE]
+> XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
 
 ## Contribute to XCM Tools and earn rewards 💰
 
