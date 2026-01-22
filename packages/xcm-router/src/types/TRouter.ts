@@ -212,10 +212,7 @@ export type TDexConfig = {
 
 export type TAssetsRecord = Record<TExchangeChain, TDexConfig>;
 
-export type TExchangeInput =
-  | TExchangeChain
-  | [TExchangeChain, TExchangeChain, ...TExchangeChain[]]
-  | undefined;
+export type TExchangeInput = TExchangeChain | [TExchangeChain, ...TExchangeChain[]] | undefined;
 
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 

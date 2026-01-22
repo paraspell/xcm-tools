@@ -8,7 +8,7 @@ import {
   getXcmFees,
   transfer,
 } from '../transfer';
-import type { TTransferOptions } from '../types';
+import type { TExchangeInput, TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
 vi.mock('../transfer');
@@ -233,6 +233,37 @@ describe('Builder', () => {
         amount,
         senderAddress,
         recipientAddress,
+        slippagePct,
+      },
+      undefined,
+    );
+  });
+
+  it('should construct transactions using RouterBuilder with single element exchange array', async () => {
+    await RouterBuilder()
+      .from(from)
+      .exchange([exchange] as TExchangeInput)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .buildTransactions();
+
+    expect(buildApiTransactionsSpy).toHaveBeenCalledWith(
+      {
+        from,
+        exchange: [exchange],
+        to,
+        currencyFrom,
+        currencyTo,
+        amount,
+        senderAddress,
+        recipientAddress,
+        signer,
         slippagePct,
       },
       undefined,
