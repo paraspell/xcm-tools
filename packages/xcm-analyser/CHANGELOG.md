@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.1...xcm-analyser-v3.0.2) (2026-01-22)
+
+
+### Bug Fixes
+
+* Update LICENSES and Sponsor logos ([2e3a881](https://github.com/paraspell/xcm-tools/commit/2e3a881a3d843101bdaf93db945e0a2bb48a7cf3))
+
+
+### Documentation
+
+* Update readmes to be up to date ([864f206](https://github.com/paraspell/xcm-tools/commit/864f206106c545fbbd68d292139ab3224e474bb2))
+
 ## [3.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.0...xcm-analyser-v3.0.1) (2025-12-30)
 
 
