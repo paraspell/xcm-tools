@@ -9,6 +9,8 @@ export const record: Record<TExchangeChain, ExchangeChain> = {
   // Reuse classes for Kusama equivalents
   AssetHubPolkadotDex: new AssetHubExchange('AssetHubPolkadot', 'AssetHubPolkadotDex'),
   AssetHubKusamaDex: new AssetHubExchange('AssetHubKusama', 'AssetHubKusamaDex'),
+  AssetHubPaseoDex: new AssetHubExchange('AssetHubPaseo', 'AssetHubPaseoDex'),
+  AssetHubWestendDex: new AssetHubExchange('AssetHubWestend', 'AssetHubWestendDex'),
   HydrationDex: new HydrationExchange('Hydration', 'HydrationDex'),
   AcalaDex: new AcalaExchange('Acala', 'AcalaDex'),
   KaruraDex: new AcalaExchange('Karura', 'KaruraDex'),

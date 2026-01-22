@@ -242,6 +242,37 @@ describe.sequential('E2E tests', () => {
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(1);
     });
+
+    it('should build a transfer extrinsic without error on AssetHubPaseoDex', async () => {
+      const hashes = await RouterBuilder()
+        .from('HydrationPaseo')
+        .exchange('AssetHubPaseoDex')
+        .currencyFrom({ symbol: 'PAS' })
+        .currencyTo({ id: 1984 })
+        .amount('5000000000')
+        .senderAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('1')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(1);
+    });
+
+    it('should build a transfer extrinsic without error on AssetHubWestendDex', async () => {
+      const hashes = await RouterBuilder()
+        .exchange('AssetHubWestendDex')
+        .currencyFrom({ id: 6 })
+        .currencyTo({ id: 10111 })
+        .amount('5000000000')
+        .senderAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('1')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(1);
+    });
   });
 
   describe('Auto exchange selection', () => {

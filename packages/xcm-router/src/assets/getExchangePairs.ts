@@ -10,7 +10,7 @@ const resolveRouterAsset = (
   pairKey: string | object,
 ): TRouterAsset | undefined => {
   const exchangeAssets = getExchangeConfig(exchange).assets;
-  const isAh = exchange === 'AssetHubPolkadotDex' || exchange === 'AssetHubKusamaDex';
+  const isAh = exchange.includes('AssetHub');
 
   if (typeof pairKey === 'object') {
     const candidates = exchangeAssets.filter((a) => a.location);
