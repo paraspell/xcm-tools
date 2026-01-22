@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/pallets</h1>
-  <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
+  <h4 align="center"> Pallet queries for Polkadot, Kusama, Paseo and Westend ecosystems. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/pallets">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/pallets?style=flat-square" />
@@ -94,7 +94,8 @@ getOtherAssetsPallets(chain: TChain)
 
 - Update XCM pallets in the map using script - `pnpm updatePallets`
 
-Pallet queries can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+> [!NOTE]
+> Pallet queries can be tested in [XCM Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## Contribute to XCM Tools and earn rewards 💰
 
@@ -118,6 +119,6 @@ Published under [MIT License](https://playground.paraspell.xyz/xcm-sdk/pallets).
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_transparent.png">
       <source media="(prefers-color-scheme: light)" srcset="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_w3f_standard.png">
-      <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_w3f_standard.png">
+      <img width="750" alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://github.com/paraspell/presskit/blob/main/logos_supporters/polkadot_kusama_w3f_standard.png">
     </picture>
 </p>

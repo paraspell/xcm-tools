@@ -10,82 +10,48 @@
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
-  <p align="center"> Now live at https://xcm-visualizer.paraspell.xyz/</p>
+  <p align="center">Live at https://xcm-visualizer.paraspell.xyz/</p>
   <p>XCM Visualizer documentation <a href = "https://paraspell.github.io/docs/visualizer/getting-start.html" \>[here]</p>
 </div>
 
 <br /><br />
 <br /><br />
 
-## Introduction
-<img width="200" alt="logo" src="https://github.com/paraspell/xcm-tools/assets/55763425/2a2a071d-32c5-4fea-a6cb-fc5177c73548.png">
+## Developer guide
 
+1. Install dependencies:
+   - Node.js `^24`
+   - PostgreSQL
 
-With the Polkadot ecosystem and its cross-chain message format (XCM) growing rapidly, there is a huge demand for visualization of this technology's capability.
-Potential investors or network stakeholders can now observe important details about network infrastructure, which could help them decide on an ideal network worth investing in.
+2. Configure environment variables:
+   - In the `backend` directory, create a `.env` file based on `.env.example`
+   - Update it with your local PostgreSQL credentials
 
-**Reasons to use this visualization tool for the exploration of the ecosystem and XCM:**
+3. Initialize the database:
+   - Import the [xcm_database_dump_2023_2024](https://drive.google.com/file/d/1v7z85kz-ez_0Vy8GffMEuWlWq2_T2dQq/view) file into your PostgreSQL database to load example data for the XCM Visualizer
 
-- First and only XCM-oriented visualization tool in the ecosystem
-- Send XCM messages in all three scenarios (HRMP, UMP, DMP)
-- Ability to observe how the network scaled in time (Go through specific selected history)
-- Find out which chains participate in cross-chain messaging the most
-- Observe which accounts are most active in cross-chain messaging
-- Detect which channels are used the most
-- See which assets are transferred the most
-- Discover how many messages were sent at a specific time frame
-- Learn all details mentioned above for any chain you select (Even multiple chains at the same time)
-- Customize the selected time frame
-- Customize colour schemes to make your desired details stand out even more
-- Always have the latest data - Visualizer updates for new XCM messages every day (Automatically)
-- Open source and 100% free forever
+4. Run the following commands:
 
-## Problem addressed
-
-There are no XCM visualization tools in the ecosystem. Users, especially investors who wish to invest in the network or its infrastructure (Parachains) could benefit from such a tool by finding out specific cross-chain details for any chain in the ecosystem. Currently, the network focuses primarily on development rather than visualization - hence the lack of visualization tools. Data scientists could use this tool to extract crucial information that could help resolve potential bottlenecks or surges in cross-chain messages throughout the ecosystems. They can also create informative reports about the state of networks in the ecosystem as well as create predictions or plans to increase growth in certain areas. **XCM Visualizer can greatly enhance the visualization tool set in the Polkadot ecosystem.**
-
-## Tech stack
-
-TypeScript
-
-**Front end:**
-
-- Vite,
-- Three.js,
-- React Three Fiber,
-- Mantine UI
-
-## Development
-
-The production version of the XCM Visualizer is available at [https://xcm-visualizer.paraspell.xyz/](https://xcm-visualizer.paraspell.xyz/).
-
-To run the project locally, you need to have Node.js v.20^ installed, as well as PostgreSQL database.
-
-In backend folder create .env file following .env.example file. After your database is set up, you can import the database dump from the [xcm_database_dump.tar](https://drive.google.com/file/d/1mBYi9zh8iuEWtQtcZdg-sgGtRwJFRLje/view?usp=sharing) file to try the XCM Visualizer with the example data.
-
-Then, run the following commands:
-
-Install dependencies:
-
-```bash
-# This has to be run from monorepository root
-
-pnpm install
-pnpm build
-```
-
-Run backend from [backend folder](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-be):
-
-```bash
-pnpm start
-```
-
-Run frontend:
-
-```bash
-pnpm dev
-```
-
+   Before you begin with any commands make sure to run following from monorepository root:
+    
+    ```bash
+    pnpm install
+    pnpm build
+    ```
+    
+    Then run backend from [backend folder](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-be):
+    
+    ```bash
+    cd ./apps/visualizer-be
+    pnpm start
+    ```
+    
+    And run frontend:
+    
+    ```bash
+    cd ./apps/visualizer-fe
+    pnpm dev
+    ```
 ## Contribute to XCM Tools and earn rewards 💰
 
 We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
@@ -100,6 +66,6 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/apps/visualizer-fe/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/apps/visualizer-be/LICENSE).
 
 Deployed on [Netfify](https://www.netlify.com/) ⚙️

@@ -7,10 +7,10 @@ const Research = () => (
     <Title order={1}>Research</Title>
     <Text c="dimmed" maw={550}>
       At ParaSpell, we continually research the latest advancements in the
-      Polkadot and Kusama ecosystems. Our focus is on optimizing cross-chain
-      transfers and interactions, ensuring our tools stay ahead of trends. By
-      combining academic insights with practical engineering, we deliver
-      innovative, future-proof solutions for decentralized systems.
+      Polkadot, Kusama, Paseo and Westend ecosystems. Our focus is on optimizing
+      cross-chain transfers and interactions, ensuring our tools stay ahead of
+      trends. By combining academic insights with practical engineering, we
+      deliver innovative, future-proof solutions for decentralized systems.
     </Text>
     <ArticleCard
       title="First pallet-agnostic cross-chain NFT pallet for Polkadot Paraverse"

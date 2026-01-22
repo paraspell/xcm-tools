@@ -71,9 +71,9 @@ const XcmSdk = () => {
         <Title className={classes.title}>XCM SDK 🪄</Title>
         <Text c="dimmed" maw={550}>
           Explore our XCM SDK — a complete toolkit for building secure and
-          efficient cross-chain dapps within the Polkadot and Kusama ecosystems.
-          Experiment with XCM transfers, asset queries, and cross-chain bridges
-          with no setup required.
+          efficient cross-chain dapps within the Polkadot, Kusama, Paseo and
+          Westend ecosystems. Experiment with XCM transfers, asset queries, and
+          cross-chain bridges with no setup required.
         </Text>
 
         <SimpleGrid

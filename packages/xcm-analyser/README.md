@@ -30,21 +30,21 @@
 pnpm | npm install || yarn add @paraspell/xcm-analyser 
 ```
 ## Implementation
-```
-NOTE:
-The following junction types are supported:
 
-Parachain
-AccountId32
-AccountIndex64
-AccountKey20
-PalletInstance
-GeneralIndex
-GeneralKey
-OnlyChild
-Plurality
-GlobalConsensus
-```
+> [!NOTE]
+> **The following junction types are supported:**
+> - Parachain
+> - AccountId32
+> - AccountIndex64
+> - AccountKey20
+> - PalletInstance
+> - GeneralIndex
+> - GeneralKey
+> - OnlyChild
+> - Plurality
+> - GlobalConsensus
+
+
 #### Compile a single location object to the URL
 
 To compile a single location object to url use the following structure:
@@ -180,7 +180,8 @@ This should result into:
 
 - Run an example from [example file](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-analyser/scripts/example.ts) using `pnpm runExample`
 
-XCM Analyser can be tested in [Playground](https://playground.paraspell.xyz/xcm-analyser).
+> [!NOTE]
+> XCM Analyser can be tested in [Playground](https://playground.paraspell.xyz/xcm-analyser).
 
 ## Contribute to XCM Tools and earn rewards 💰
 
@@ -197,4 +198,5 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-analyser/LICENSE).
+
 
