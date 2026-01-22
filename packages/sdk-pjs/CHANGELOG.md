@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.3.0...sdk-pjs-v12.4.0) (2026-01-22)
+
+
+### Bug Fixes
+
+* Add logos that change based on mode ☀️🌑 ([fb3dedf](https://github.com/paraspell/xcm-tools/commit/fb3dedf4683453942c8d07e0744e15d78e71cdc0))
+* Update LICENSES and Sponsor logos ([2e3a881](https://github.com/paraspell/xcm-tools/commit/2e3a881a3d843101bdaf93db945e0a2bb48a7cf3))
+
+
+### Documentation
+
+* Update readmes to be up to date ([864f206](https://github.com/paraspell/xcm-tools/commit/864f206106c545fbbd68d292139ab3224e474bb2))
+
 ## [12.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.2.2...sdk-pjs-v12.3.0) (2026-01-19)
 
 
