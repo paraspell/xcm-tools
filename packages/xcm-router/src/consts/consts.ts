@@ -4,6 +4,8 @@
 export const EXCHANGE_CHAINS = [
   'AssetHubPolkadotDex',
   'AssetHubKusamaDex',
+  'AssetHubPaseoDex',
+  'AssetHubWestendDex',
   'HydrationDex',
   'KaruraDex',
   'AcalaDex',
