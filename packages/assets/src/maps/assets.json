@@ -17782,6 +17782,24 @@
         "isFeeAsset": true
       },
       {
+        "symbol": "HOLLAR",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "GeneralIndex": 222
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "20000000000000000"
+      },
+      {
         "symbol": "MERC",
         "decimals": 18,
         "location": {
