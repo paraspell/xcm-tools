@@ -14,9 +14,9 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Moonbeam<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Moonbeam<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Moonbeam',
     info: string = 'moonbeam',

@@ -42,7 +42,7 @@ describe('Crab', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(chain.isRelayToParaEnabled()).toBe(false)
   })
 })

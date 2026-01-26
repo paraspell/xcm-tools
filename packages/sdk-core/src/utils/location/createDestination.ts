@@ -1,27 +1,21 @@
-import type {
-  TJunction,
-  TLocation,
-  TParachain,
-  TRelaychain,
-  TSubstrateChain,
-  Version
-} from '@paraspell/sdk-common'
 import {
-  getJunctionValue,
   isExternalChain,
   isSnowbridge,
   isSubstrateBridge,
-  PARACHAINS
+  isTLocation,
+  Parents,
+  type TJunction,
+  type TLocation,
+  type TSubstrateChain,
+  type Version
 } from '@paraspell/sdk-common'
-import { isTLocation, Parents } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../chains/config'
-import { RoutingResolutionError } from '../../errors'
-import type { TXcmVersioned } from '../../types'
-import { type TDestination } from '../../types'
-import { addXcmVersionHeader, createX1Payload, getRelayChainOf } from '../../utils'
-import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
-import { resolveScenario } from '../../utils/transfer/resolveScenario'
+import type { TDestination, TXcmVersioned } from '../../types'
+import { addXcmVersionHeader } from '../addXcmVersionHeader'
+import { getRelayChainOf } from '../chain'
+import { resolveScenario } from '../transfer/resolveScenario'
+import { createX1Payload } from './createX1Payload'
+import { getEthereumJunction } from './getEthereumJunction'
 
 export const createDestination = (
   version: Version,
@@ -90,28 +84,3 @@ export const createVersionedDestination = (
 
   return addXcmVersionHeader(plainDestination, version)
 }
-
-export const resolveTChainFromLocation = (
-  relaychain: TRelaychain,
-  location: TLocation
-): TParachain => {
-  const parachainId = getJunctionValue(location, 'Parachain')
-  if (parachainId === undefined) {
-    throw new RoutingResolutionError('Parachain ID not found in destination location.')
-  }
-
-  const chain =
-    PARACHAINS.find(
-      chain => getParaId(chain) === parachainId && getRelayChainOf(chain) === relaychain
-    ) ?? null
-
-  if (chain === null) {
-    throw new RoutingResolutionError(
-      'Chain with specified paraId not found in destination location.'
-    )
-  }
-
-  return chain
-}
-
-export { constructRelayToParaParams } from './constructRelayToParaParams'

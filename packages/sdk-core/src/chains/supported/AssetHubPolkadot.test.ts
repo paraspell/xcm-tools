@@ -34,7 +34,6 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 }))
 
 vi.mock('../../utils/location')
-vi.mock('../../pallets/xcmPallet/utils')
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../transfer')
 vi.mock('../../utils/transfer')

@@ -1,5 +1,5 @@
 import { isAssetEqual } from '@paraspell/assets'
-import type { TParachain } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
@@ -22,7 +22,7 @@ const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
 const FEE_PADDING_PERCENTAGE = 40
 
 export const handleExecuteTransfer = async <TApi, TRes>(
-  chain: TParachain,
+  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedExtrinsics> => {
   const {

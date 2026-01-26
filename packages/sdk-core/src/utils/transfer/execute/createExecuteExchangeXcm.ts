@@ -1,11 +1,10 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../../constants'
-import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TSerializedExtrinsics, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
 import { assertHasLocation } from '../../assertions'
-import { createBeneficiaryLocation, localizeLocation } from '../../location'
+import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 
 export const createExecuteExchangeXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,

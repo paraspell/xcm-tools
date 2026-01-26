@@ -5,13 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
-import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext } from '../../types'
-import { createBeneficiaryLocation, localizeLocation } from '../../utils'
+import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { createCustomXcm } from './createCustomXcm'
 
 vi.mock('@paraspell/sdk-common')
-vi.mock('../../pallets/xcmPallet/utils')
 vi.mock('../../utils/location')
 
 describe('createCustomXcm', () => {

@@ -17,10 +17,10 @@ import type {
 } from '../../types'
 import { assertHasId, assertHasLocation, createAsset } from '../../utils'
 import { handleExecuteTransfer } from '../../utils/transfer'
+import Chain from '../Chain'
 import { getParaId } from '../config'
-import Parachain from '../Parachain'
 
-class Hydration<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',

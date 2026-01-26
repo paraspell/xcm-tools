@@ -3,18 +3,16 @@
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Ajuna<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
@@ -28,8 +26,8 @@ class Ajuna<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTra
     return transferPolkadotXcm(input)
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

@@ -51,8 +51,8 @@ describe('EnergyWebX', () => {
     })
   })
 
-  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(chain.isRelayToParaEnabled()).toBe(false)
   })
 
   it('should query balance foreign with asset location and address', async () => {

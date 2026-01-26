@@ -4,10 +4,9 @@ import { isRelayChain, isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
 import { addXcmVersionHeader, createAsset } from '../../utils'
-import { localizeLocation } from '../../utils/location'
+import { createDestination, localizeLocation } from '../../utils/location'
 
 export const resolveTransferType = <TApi, TRes>({
   origin,

@@ -8,9 +8,9 @@ import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions
 } from '../../types'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Quartz<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Quartz<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Quartz', 'quartz', 'Kusama', Version.V5)
   }

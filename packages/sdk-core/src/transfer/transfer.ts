@@ -2,20 +2,12 @@
 
 import type { TAssetInfo } from '@paraspell/assets'
 import { normalizeLocation } from '@paraspell/assets'
-import {
-  isExternalChain,
-  isRelayChain,
-  isSubstrateBridge,
-  isTLocation,
-  Parents
-} from '@paraspell/sdk-common'
+import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
-import { InvalidAddressError, MissingParameterError, ScenarioNotSupportedError } from '../errors'
-import type { TRelayToParaDestination, TSendOptions } from '../types'
+import type { TSendOptions } from '../types'
 import { abstractDecimals, getChain, validateAddress } from '../utils'
 import { getChainVersion } from '../utils/chain'
-import { transferRelayToPara } from './transferRelayToPara'
 import {
   resolveAsset,
   resolveFeeAsset,
@@ -75,69 +67,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const originVersion = getChainVersion(origin)
 
   const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
-
-  const resolvedVersion = selectXcmVersion(version, originVersion, destVersion)
-
-  if (isRelayChain(origin)) {
-    if (typeof destination === 'string' && isExternalChain(destination)) {
-      throw new ScenarioNotSupportedError(
-        'Transfers from relay chain to Ethereum are not supported.'
-      )
-    }
-
-    if (!asset) {
-      throw new MissingParameterError(
-        'asset',
-        'Asset is required for relay chain to relay chain transfers.'
-      )
-    }
-
-    const isLocalTransfer = origin === destination
-
-    if (isLocalTransfer) {
-      if (isTLocation(address)) {
-        throw new InvalidAddressError('Location address is not supported for local transfers.')
-      }
-
-      await api.init(origin, TX_CLIENT_TIMEOUT_MS)
-      return api.deserializeExtrinsics(
-        isAmountAll
-          ? {
-              module: 'Balances',
-              method: 'transfer_all',
-              params: {
-                dest: { Id: address },
-                keepAlive: true
-              }
-            }
-          : {
-              module: 'Balances',
-              method: 'transfer_keep_alive',
-              params: {
-                dest: { Id: address },
-                value: finalAmount
-              }
-            }
-      )
-    }
-
-    return transferRelayToPara({
-      api,
-      origin,
-      destination: destination as TRelayToParaDestination,
-      address,
-      senderAddress,
-      assetInfo: {
-        ...asset,
-        amount: finalAmount
-      },
-      currency,
-      paraIdTo,
-      version: resolvedVersion,
-      pallet,
-      method
-    })
-  }
 
   const overriddenAsset = resolveOverriddenAsset(
     options,

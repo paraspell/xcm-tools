@@ -7,12 +7,11 @@ import { Version } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TSerializedExtrinsics } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class EnergyWebX<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'EnergyWebX',
     info: string = 'ewx',
@@ -32,8 +31,8 @@ class EnergyWebX<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotX
     return transferPolkadotXcm(input, 'reserve_transfer_assets')
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 
   async getBalanceForeign<TApi, TRes>(

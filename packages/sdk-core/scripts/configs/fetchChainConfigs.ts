@@ -5,7 +5,7 @@
 import axios from 'axios'
 import { Project, SyntaxKind, Node } from 'ts-morph'
 import { writeFileSync } from 'fs'
-import { PARACHAINS } from '../../src'
+import { PARACHAINS, SUBSTRATE_CHAINS } from '../../src'
 import { getChain } from '../../src/utils'
 import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../../src'
 
@@ -156,7 +156,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
   await processEndpointsFromUrl(westendUrl, 'Westend')
   await processEndpointsFromUrl(paseoUrl, 'Paseo')
 
-  const chains = PARACHAINS.map(chain => {
+  const chains = SUBSTRATE_CHAINS.map(chain => {
     return getChain(chain)
   })
 
@@ -173,11 +173,6 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
       }
     }
   })
-
-  obj['Polkadot'] = chainConfig.find(c => c.info === 'polkadot') as TModifiedChainConfig
-  obj['Kusama'] = chainConfig.find(c => c.info === 'kusama') as TModifiedChainConfig
-  obj['Westend'] = chainConfig.find(c => c.info === 'westend') as TModifiedChainConfig
-  obj['Paseo'] = chainConfig.find(c => c.info === 'paseo') as TModifiedChainConfig
 
   obj['Polkadot'].relayChain = undefined
   obj['Kusama'].relayChain = undefined

@@ -7,9 +7,9 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Centrifuge<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Centrifuge<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }

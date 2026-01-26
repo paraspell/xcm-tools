@@ -3,7 +3,6 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -37,8 +36,8 @@ describe('Astar', () => {
     )
   })
 
-  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => astar.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(astar.isRelayToParaEnabled()).toBe(false)
   })
 
   describe('transferLocalNonNativeAsset', () => {

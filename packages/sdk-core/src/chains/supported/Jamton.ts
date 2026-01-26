@@ -8,9 +8,9 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation, createAsset } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Jamton<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Jamton<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }

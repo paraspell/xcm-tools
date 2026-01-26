@@ -11,9 +11,9 @@ import {
   type TForeignOrTokenAsset,
   type TXTokensTransferOptions
 } from '../../types'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Interlay<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Interlay<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }

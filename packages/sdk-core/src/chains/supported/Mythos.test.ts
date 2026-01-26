@@ -104,8 +104,8 @@ describe('Mythos', () => {
     expect(result).toBe('handled')
   })
 
-  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-    expect(() => mythos.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(mythos.isRelayToParaEnabled()).toBe(false)
   })
 
   describe('Ethereum transfers', () => {

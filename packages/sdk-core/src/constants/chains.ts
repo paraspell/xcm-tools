@@ -41,6 +41,7 @@ import Karura from '../chains/supported/Karura'
 import KiltPaseo from '../chains/supported/KiltPaseo'
 import KiltSpiritnet from '../chains/supported/KiltSpiritnet'
 import Kintsugi from '../chains/supported/Kintsugi'
+import Kusama from '../chains/supported/Kusama'
 import Laos from '../chains/supported/Laos'
 import LaosPaseo from '../chains/supported/LaosPaseo'
 import Manta from '../chains/supported/Manta'
@@ -50,6 +51,7 @@ import Mythos from '../chains/supported/Mythos'
 import NeuroWeb from '../chains/supported/NeuroWeb'
 import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
 import Nodle from '../chains/supported/Nodle'
+import Paseo from '../chains/supported/Paseo'
 import PAssetHub from '../chains/supported/PAssetHub'
 import Peaq from '../chains/supported/Peaq'
 import Pendulum from '../chains/supported/Pendulum'
@@ -59,16 +61,19 @@ import PeoplePaseo from '../chains/supported/PeoplePaseo'
 import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Phala from '../chains/supported/Phala'
+import Polkadot from '../chains/supported/Polkadot'
 import Quartz from '../chains/supported/Quartz'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
+import Westend from '../chains/supported/Westend'
 import Xode from '../chains/supported/Xode'
 import Zeitgeist from '../chains/supported/Zeitgeist'
 import ZeitgeistPaseo from '../chains/supported/ZeitgeistPaseo'
 
 export const chains = <TApi, TRes>() => ({
   // Polkadot chains
+  Polkadot: new Polkadot<TApi, TRes>(),
   AssetHubPolkadot: new AssetHubPolkadot<TApi, TRes>(),
   Acala: new Acala<TApi, TRes>(),
   Ajuna: new Ajuna<TApi, TRes>(),
@@ -101,6 +106,7 @@ export const chains = <TApi, TRes>() => ({
   Xode: new Xode<TApi, TRes>(),
 
   // Kusama chains
+  Kusama: new Kusama<TApi, TRes>(),
   AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
   BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
   CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
@@ -121,6 +127,7 @@ export const chains = <TApi, TRes>() => ({
   Zeitgeist: new Zeitgeist<TApi, TRes>(),
 
   // Westend chains
+  Westend: new Westend<TApi, TRes>(),
   AssetHubWestend: new AssetHubWestend<TApi, TRes>(),
   BridgeHubWestend: new BridgeHubWestend<TApi, TRes>(),
   CollectivesWestend: new CollectivesWestend<TApi, TRes>(),
@@ -129,6 +136,7 @@ export const chains = <TApi, TRes>() => ({
   Penpal: new Penpal<TApi, TRes>(),
 
   // Paseo chains
+  Paseo: new Paseo<TApi, TRes>(),
   AssetHubPaseo: new AssetHubPaseo<TApi, TRes>(),
   BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),
   CoretimePaseo: new CoretimePaseo<TApi, TRes>(),

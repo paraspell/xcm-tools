@@ -18,6 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
+import { getChain } from '../../utils'
 import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
 
 vi.mock('@paraspell/pallets')
@@ -31,7 +32,7 @@ vi.mock('@paraspell/assets', () => ({
   isTAsset: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/utils')
+vi.mock('../../utils')
 
 describe('validateCurrency', () => {
   let consoleWarnSpy: MockInstance
@@ -197,6 +198,21 @@ describe('validateDestination', () => {
 
     expect(() => validateDestination(origin, destination)).toThrow()
     expect(isRelayChain).toHaveBeenCalled()
+  })
+
+  it('should throw ScenarioNotSupportedError when origin is a relay chain and destination parachain does not support relay to para transfers', () => {
+    origin = 'Polkadot'
+    destination = 'Acala'
+
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === origin)
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(false)
+    vi.mocked(getChain).mockReturnValueOnce({
+      isRelayToParaEnabled: () => false
+    } as unknown as ReturnType<typeof getChain>)
+
+    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
+    expect(getChain).toHaveBeenCalledWith(destination)
   })
 })
 

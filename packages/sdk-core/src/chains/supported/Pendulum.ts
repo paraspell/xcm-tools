@@ -6,9 +6,9 @@ import { Version } from '@paraspell/sdk-common'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Pendulum<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Pendulum<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }

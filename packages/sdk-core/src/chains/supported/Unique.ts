@@ -12,9 +12,9 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId, assertHasLocation } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Unique<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Unique<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Unique', 'unique', 'Polkadot', Version.V5)
   }
