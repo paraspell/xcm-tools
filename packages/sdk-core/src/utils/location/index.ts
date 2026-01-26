@@ -1,4 +1,5 @@
 export * from './createBeneficiaryLocation'
+export * from './createDestination'
 export * from './createX1Payload'
 export * from './getChainLocation'
 export * from './localizeLocation'

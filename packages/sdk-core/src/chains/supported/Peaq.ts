@@ -5,15 +5,11 @@ import { Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
-import {
-  type IXTokensTransfer,
-  type TSerializedExtrinsics,
-  type TXTokensTransferOptions
-} from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Peaq<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Peaq', 'peaq', 'Polkadot', Version.V4)
   }
@@ -29,8 +25,8 @@ class Peaq<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer
     return transferXTokens(input, BigInt(asset.assetId))
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

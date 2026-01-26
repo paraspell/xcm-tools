@@ -5,9 +5,8 @@ import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { UnsupportedOperationError } from '../../../errors'
-import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
-import { getChainLocation } from '../../location/getChainLocation'
+import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
@@ -18,8 +17,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
   isTrustedChain: vi.fn()
 }))
 
-vi.mock('../../../pallets/xcmPallet/utils')
-vi.mock('../../location/getChainLocation')
+vi.mock('../../location')
 vi.mock('./createAssetsFilter')
 vi.mock('./prepareExecuteContext')
 

@@ -42,20 +42,14 @@ import {
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
-import { createDestination, createVersionedDestination } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
-import {
-  createTypeAndThenCall,
-  createTypeThenAutoReserve,
-  getParaEthTransferFees
-} from '../transfer'
+import { createTypeAndThenCall, getParaEthTransferFees } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
   IXTransferTransfer,
   TPolkadotXCMTransferOptions,
-  TRelayToParaOptions,
   TScenario,
   TSendInternalOptions,
   TSerializedExtrinsics,
@@ -76,7 +70,7 @@ import {
 import { createAsset } from '../utils/asset'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
-import { localizeLocation } from '../utils/location'
+import { createDestination, createVersionedDestination, localizeLocation } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
@@ -93,8 +87,8 @@ const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
-abstract class Parachain<TApi, TRes> {
-  private readonly _chain: TParachain
+abstract class Chain<TApi, TRes> {
+  private readonly _chain: TSubstrateChain
 
   // Property _info maps our chain names to names which polkadot libs are using
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
@@ -106,7 +100,7 @@ abstract class Parachain<TApi, TRes> {
 
   private readonly _version: Version
 
-  constructor(chain: TParachain, info: string, ecosystem: TRelaychain, version: Version) {
+  constructor(chain: TSubstrateChain, info: string, ecosystem: TRelaychain, version: Version) {
     this._info = info
     this._ecosystem = ecosystem
     this._chain = chain
@@ -121,7 +115,7 @@ abstract class Parachain<TApi, TRes> {
     return this._ecosystem
   }
 
-  get chain(): TParachain {
+  get chain(): TSubstrateChain {
     return this._chain
   }
 
@@ -134,6 +128,10 @@ abstract class Parachain<TApi, TRes> {
     const isExternalAsset = asset.location?.parents === Parents.TWO
     if (isExternalAsset) return false
     return !this.shouldUseNativeAssetTeleport(options) || !supportsPolkadotXCM(this)
+  }
+
+  isRelayToParaEnabled(): boolean {
+    return true
   }
 
   async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
@@ -175,7 +173,7 @@ abstract class Parachain<TApi, TRes> {
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
 
     const supportsTypeThen = await api.hasMethod(
-      'PolkadotXcm',
+      isRelayChain(this.chain) ? 'XcmPallet' : 'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 
@@ -390,45 +388,6 @@ abstract class Parachain<TApi, TRes> {
       asset.location && findAssetInfo(assetHubChain, { location: asset.location }, null)
 
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
-  }
-
-  async transferRelayToPara(
-    options: TRelayToParaOptions<TApi, TRes>
-  ): Promise<TSerializedExtrinsics> {
-    const { api, origin, version, assetInfo, address, senderAddress, destination, paraIdTo } =
-      options
-
-    if (this.isReceivingTempDisabled('RelayToPara')) {
-      throw new FeatureTemporarilyDisabledError(
-        `Receiving on ${this.chain} is temporarily disabled`
-      )
-    }
-
-    const paraId = resolveParaId(paraIdTo, destination)
-    const destChain = resolveDestChain(this.chain, paraId)
-    const scenario: TScenario = 'RelayToPara'
-
-    if (!destChain) {
-      throw new UnsupportedOperationError(
-        'Cannot override destination when using type and then transfer.'
-      )
-    }
-
-    return createTypeThenAutoReserve(getRelayChainOf(destChain), {
-      ...options,
-      chain: origin,
-      beneficiaryLocation: createBeneficiaryLocation({
-        api,
-        address,
-        version
-      }),
-      senderAddress,
-      asset: this.createAsset(assetInfo, version),
-      destLocation: createDestination(version, this.chain, destination, paraId),
-      scenario,
-      destChain,
-      paraIdTo: paraId
-    })
   }
 
   createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {
@@ -684,4 +643,4 @@ abstract class Parachain<TApi, TRes> {
   }
 }
 
-export default Parachain
+export default Chain

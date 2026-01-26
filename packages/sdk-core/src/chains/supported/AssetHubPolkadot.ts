@@ -9,19 +9,18 @@ import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { createBeneficiaryLocation } from '../../utils/location'
+import { createBeneficiaryLocation, createVersionedDestination } from '../../utils/location'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { handleExecuteTransfer } from '../../utils/transfer'
+import Chain from '../Chain'
 import { getParaId } from '../config'
-import Parachain from '../Parachain'
 
-class AssetHubPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'AssetHubPolkadot',
     info: string = 'PolkadotAssetHub',

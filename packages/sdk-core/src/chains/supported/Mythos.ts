@@ -6,12 +6,12 @@ import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
   type TSerializedExtrinsics
 } from '../../types'
+import { createVersionedDestination } from '../../utils'
 import {
   assertAddressIsString,
   assertHasId,
@@ -23,8 +23,8 @@ import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDes
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { handleToAhTeleport } from '../../utils/transfer'
+import Chain from '../Chain'
 import { getParaId } from '../config'
-import Parachain from '../Parachain'
 
 export const createTypeAndThenTransfer = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -81,7 +81,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   }
 }
 
-class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Mythos<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Mythos', 'mythos', 'Polkadot', Version.V5)
   }
@@ -110,8 +110,8 @@ class Mythos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTr
     return defaultTx
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 }
 

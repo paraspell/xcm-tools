@@ -48,7 +48,7 @@ describe('KiltSpiritnet', () => {
     ).toThrow(ScenarioNotSupportedError)
   })
 
-  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(chain.isRelayToParaEnabled()).toBe(false)
   })
 })

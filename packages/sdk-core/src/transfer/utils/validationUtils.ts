@@ -15,6 +15,7 @@ import {
 
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
+import { getChain } from '../../utils'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if (Array.isArray(currency)) {
@@ -77,6 +78,13 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
       throw new ScenarioNotSupportedError(
         'Origin and destination must share the same relay chain unless using a bridge.'
       )
+    }
+  }
+
+  if (isRelayChain(origin) && typeof destination === 'string' && !isExternalChain(destination)) {
+    const chain = getChain(destination)
+    if (!chain.isRelayToParaEnabled()) {
+      throw new ScenarioNotSupportedError({ chain: destination, scenario: 'RelayToPara' })
     }
   }
 }

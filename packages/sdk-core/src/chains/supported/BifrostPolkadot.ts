@@ -10,9 +10,9 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class BifrostPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class BifrostPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'BifrostPolkadot',
     info: string = 'bifrost',

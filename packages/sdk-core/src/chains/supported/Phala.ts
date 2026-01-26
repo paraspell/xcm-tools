@@ -5,9 +5,9 @@ import { transferXTransfer } from '../../pallets/xTransfer'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Phala<TApi, TRes> extends Parachain<TApi, TRes> implements IXTransferTransfer {
+class Phala<TApi, TRes> extends Chain<TApi, TRes> implements IXTransferTransfer {
   constructor() {
     super('Phala', 'phala', 'Polkadot', Version.V3)
   }

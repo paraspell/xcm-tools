@@ -12,9 +12,9 @@ import type {
 } from '../../types'
 import { type TXcmForeignAsset, type TZeitgeistAsset } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Zeitgeist<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Zeitgeist<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Zeitgeist',
     info: string = 'zeitgeist',

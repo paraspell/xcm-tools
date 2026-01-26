@@ -55,7 +55,7 @@ describe('Nodle', () => {
     expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
   })
 
-  it('should throw ScenarioNotSupportedError when calling transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(chain.isRelayToParaEnabled()).toBe(false)
   })
 })

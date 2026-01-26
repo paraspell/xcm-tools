@@ -5,9 +5,9 @@ import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Encointer<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Encointer<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Encointer', 'encointer', 'Kusama', Version.V5)
   }

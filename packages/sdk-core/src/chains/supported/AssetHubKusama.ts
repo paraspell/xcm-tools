@@ -9,9 +9,9 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { getChain } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class AssetHubKusama<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class AssetHubKusama<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('AssetHubKusama', 'KusamaAssetHub', 'Kusama', Version.V5)
   }

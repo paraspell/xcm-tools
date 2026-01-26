@@ -7,9 +7,9 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TMantaAsset, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Manta<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Manta<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   static readonly NATIVE_ASSET_ID = 1n
 
   constructor() {

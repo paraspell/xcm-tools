@@ -52,7 +52,7 @@ describe('Laos', () => {
     expect(() => chain.transferPolkadotXCM(input)).toThrow(TransferToAhNotSupported)
   })
 
-  it('should throw ScenarioNotSupportedError for transferRelayToPara', () => {
-    expect(() => chain.transferRelayToPara()).toThrow(ScenarioNotSupportedError)
+  it('should return false for isRelayToParaEnabled', () => {
+    expect(chain.isRelayToParaEnabled()).toBe(false)
   })
 })

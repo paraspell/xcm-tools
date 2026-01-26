@@ -7,14 +7,7 @@ import type {
   WithAmount
 } from '@paraspell/assets'
 import type { TAssetsPallet, TPallet } from '@paraspell/pallets'
-import type {
-  TChain,
-  TLocation,
-  TParachain,
-  TRelaychain,
-  TSubstrateChain,
-  Version
-} from '@paraspell/sdk-common'
+import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { WithApi } from './TApi'
@@ -47,7 +40,7 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   asset: WithAmount<TAssetInfo>
   address: TAddress
   scenario: TScenario
-  origin: TParachain
+  origin: TSubstrateChain
   destination: TDestination
   paraIdTo?: number
   version: Version
@@ -61,7 +54,7 @@ export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAssetInfo>
   recipientAddress: TAddress
-  origin: TParachain
+  origin: TSubstrateChain
   paraIdTo?: number
   destination: TDestination
   overriddenAsset?: TLocation | TAsset[]
@@ -85,7 +78,6 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
-export type TRelayToParaDestination = TParachain | TLocation
 
 export type TSendBaseOptions = {
   /**
@@ -162,54 +154,6 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   version: Version
   isAmountAll: boolean
 }
-
-type TRelayToParaBaseOptions = {
-  /**
-   * The origin chain
-   */
-  origin: TRelaychain
-  /**
-   * The destination chain or XCM location
-   */
-  destination: TRelayToParaDestination
-  /**
-   * The destination address. A SS58 or H160 format.
-   */
-  address: TAddress
-  /**
-   * The sender address. A SS58 or H160 format.
-   */
-  senderAddress?: string
-  /**
-   * The optional destination parachain ID
-   */
-  paraIdTo?: number
-  /**
-   * The optional overrided XCM version
-   */
-  version: Version
-  /**
-   * The DOT or KSM asset to transfer
-   */
-  assetInfo: WithAmount<TAssetInfo>
-  /**
-   * The currency to transfer. Either ID, symbol, location, or multi-asset
-   */
-  currency: TCurrencyInputWithAmount
-  /**
-   * The optional pallet override
-   */
-  pallet?: string
-  /**
-   * The optional pallet method override
-   */
-  method?: string
-}
-
-/**
- * Options for transferring from a relay chain to a parachain
- */
-export type TRelayToParaOptions<TApi, TRes> = WithApi<TRelayToParaBaseOptions, TApi, TRes>
 
 export type TSerializedExtrinsics = {
   module: TPallet

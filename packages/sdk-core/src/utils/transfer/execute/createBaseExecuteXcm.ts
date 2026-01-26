@@ -3,9 +3,8 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { UnsupportedOperationError } from '../../../errors'
-import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
-import { getChainLocation } from '../../location/getChainLocation'
+import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 

@@ -9,9 +9,9 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { getChain } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Moonriver<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Moonriver<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Moonriver', 'moonriver', 'Kusama', Version.V5)
   }

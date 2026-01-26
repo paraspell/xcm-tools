@@ -11,9 +11,9 @@ import {
   type TXTokensTransferOptions
 } from '../../types'
 import { assertHasId, getChain } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class CrustShadow<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class CrustShadow<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('CrustShadow', 'shadow', 'Kusama', Version.V3)
   }

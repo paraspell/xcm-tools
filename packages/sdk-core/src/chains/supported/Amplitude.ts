@@ -6,9 +6,9 @@ import { Version } from '@paraspell/sdk-common'
 import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXcmAsset, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Amplitude<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Amplitude<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Amplitude', 'amplitude', 'Kusama', Version.V3)
   }

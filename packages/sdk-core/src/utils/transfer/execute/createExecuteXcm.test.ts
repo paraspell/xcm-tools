@@ -3,25 +3,15 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_LOCATION } from '../../../constants'
-import { createDestination } from '../../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
 import { assertHasLocation } from '../../assertions'
-import { createBeneficiaryLocation, localizeLocation } from '../../location'
+import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
 vi.mock('../../../constants', () => ({
   DOT_LOCATION: { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 }))
-
-vi.mock('../../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn()
-}))
-
-vi.mock('../../location', () => ({
-  localizeLocation: vi.fn(),
-  createBeneficiaryLocation: vi.fn()
-}))
-
+vi.mock('../../location')
 vi.mock('../../assertions')
 
 describe('createExecuteExchangeXcm', () => {

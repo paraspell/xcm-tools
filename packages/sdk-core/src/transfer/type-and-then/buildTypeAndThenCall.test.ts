@@ -5,13 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { localizeLocation } from '../../utils'
+import { createDestination, localizeLocation } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
 vi.mock('../../chains/config')
-vi.mock('../../pallets/xcmPallet/utils')
 vi.mock('../../utils/location')
 
 vi.mock('@paraspell/sdk-common', async importActual => ({

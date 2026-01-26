@@ -685,17 +685,6 @@ describe('Builder', () => {
       )
     })
 
-    it('should fail to initiate a relay to para transfer to ethereum', () => {
-      expect(() =>
-        Builder(mockApi)
-          .from('Polkadot')
-          .to('Ethereum')
-          .currency({ symbol: 'DOT', amount: AMOUNT })
-          .address(ADDRESS)
-          .build()
-      ).toThrow()
-    })
-
     it('should request a relay to para transfer api call', async () => {
       await Builder(mockApi)
         .from('Polkadot')

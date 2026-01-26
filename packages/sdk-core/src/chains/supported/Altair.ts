@@ -7,9 +7,9 @@ import { transferXTokens } from '../../pallets/xTokens'
 import type { TForeignOrNativeAsset, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Altair<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Altair<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Altair', 'altair', 'Kusama', Version.V4)
   }

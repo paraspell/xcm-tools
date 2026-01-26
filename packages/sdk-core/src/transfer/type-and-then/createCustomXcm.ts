@@ -3,11 +3,10 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
-import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSenderAddress, createAsset, normalizeAmount } from '../../utils'
+import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { createBeneficiaryLocation, localizeLocation } from '../../utils/location'
 import type { createRefundInstruction } from './utils'
 
 const resolveBuyExecutionAmount = <TApi, TRes>(

@@ -6,9 +6,9 @@ import { Version } from '@paraspell/sdk-common'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TForeignOrTokenAsset, TScenario, TSendInternalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class Curio<TApi, TRes> extends Parachain<TApi, TRes> implements IXTokensTransfer {
+class Curio<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Curio', 'curio', 'Kusama', Version.V3)
   }

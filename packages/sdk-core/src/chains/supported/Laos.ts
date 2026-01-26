@@ -6,14 +6,10 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type {
-  IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
-  TSerializedExtrinsics
-} from '../../types'
-import Parachain from '../Parachain'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import Chain from '../Chain'
 
-class Laos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Laos<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'Laos',
     info: string = 'laos',
@@ -43,8 +39,8 @@ class Laos<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTran
     return transferPolkadotXcm(input)
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 }
 

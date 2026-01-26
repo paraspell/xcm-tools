@@ -7,9 +7,9 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Parachain from '../Parachain'
+import Chain from '../Chain'
 
-class RobonomicsPolkadot<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class RobonomicsPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V3)
   }

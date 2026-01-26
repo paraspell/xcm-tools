@@ -5,14 +5,10 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import {
-  type IPolkadotXCMTransfer,
-  type TPolkadotXCMTransferOptions,
-  type TSerializedExtrinsics
-} from '../../types'
-import Parachain from '../Parachain'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
+import Chain from '../Chain'
 
-class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkadotXCMTransfer {
+class KiltSpiritnet<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor(
     chain: TParachain = 'KiltSpiritnet',
     info: string = 'kilt',
@@ -34,8 +30,8 @@ class KiltSpiritnet<TApi, TRes> extends Parachain<TApi, TRes> implements IPolkad
     return transferPolkadotXcm(input)
   }
 
-  transferRelayToPara(): Promise<TSerializedExtrinsics> {
-    throw new ScenarioNotSupportedError({ chain: this.chain, scenario: 'RelayToPara' })
+  isRelayToParaEnabled(): boolean {
+    return false
   }
 }
 

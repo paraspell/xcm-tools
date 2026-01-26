@@ -23,23 +23,17 @@ import {
   UnsupportedOperationError
 } from '../errors'
 import { getPalletInstance } from '../pallets'
-import { constructRelayToParaParams } from '../pallets/xcmPallet/utils'
-import { createTypeAndThenCall, createTypeThenAutoReserve } from '../transfer'
+import { createTypeAndThenCall } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
-import type {
-  BaseAssetsPallet,
-  TRelayToParaOptions,
-  TSerializedExtrinsics,
-  TTransferLocalOptions
-} from '../types'
+import type { BaseAssetsPallet, TSerializedExtrinsics, TTransferLocalOptions } from '../types'
 import {
   type TPolkadotXcmMethod,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
   type TXTransferTransferOptions
 } from '../types'
-import { createBeneficiaryLocation, getChain, resolveDestChain } from '../utils'
-import Parachain from './Parachain'
+import { getChain, resolveDestChain } from '../utils'
+import Chain from './Chain'
 
 vi.mock('../constants/chains')
 vi.mock('../utils/location')
@@ -59,16 +53,6 @@ vi.mock('../utils', async () => {
     getRelayChainOf: vi.fn().mockReturnValue('Polkadot'),
     resolveDestChain: vi.fn(),
     getChain: vi.fn()
-  }
-})
-
-vi.mock('../pallets/xcmPallet/utils', async () => {
-  const actual = await vi.importActual('../pallets/xcmPallet/utils')
-  return {
-    ...actual,
-    constructRelayToParaParams: vi.fn().mockReturnValue('parameters'),
-    createVersionedDestination: vi.fn().mockReturnValue('polkadotXcmHeader'),
-    createDestination: vi.fn()
   }
 })
 
@@ -118,7 +102,7 @@ vi.mock('../utils/ethereum/generateMessageId', () => ({
   generateMessageId: vi.fn().mockReturnValue('0xmessageId')
 }))
 
-class TestParachainBase extends Parachain<unknown, unknown> {
+class TestParachainBase extends Chain<unknown, unknown> {
   throwIfTempDisabled() {}
 }
 
@@ -206,7 +190,7 @@ describe('Parachain', () => {
   })
 
   describe('Sending / receiving disabled', () => {
-    class SendDisabledParachain extends Parachain<unknown, unknown> {
+    class SendDisabledParachain extends Chain<unknown, unknown> {
       isSendingTempDisabled() {
         return true
       }
@@ -229,7 +213,7 @@ describe('Parachain', () => {
     })
 
     it('should throw if receiving is disabled', async () => {
-      class ReceiveDisabledParachain extends Parachain<unknown, unknown> {
+      class ReceiveDisabledParachain extends Chain<unknown, unknown> {
         isReceivingTempDisabled() {
           return true
         }
@@ -825,69 +809,5 @@ describe('Parachain', () => {
     vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
 
     await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(BridgeHaltedError)
-  })
-
-  describe('transferRelayToPara', () => {
-    let chain: TestParachain
-    const api = {} as unknown
-
-    const baseOptions = {
-      api,
-      version: Version.V4,
-      pallet: 'XcmPallet',
-      assetInfo: { symbol: 'DOT', amount: 100n, location: RELAY_LOCATION },
-      address: '5FMockedAddress',
-      destination: 'Acala',
-      paraIdTo: 2000
-    } as TRelayToParaOptions<unknown, unknown>
-
-    const mockCall: TSerializedExtrinsics = {
-      module: 'XcmPallet',
-      method: 'transfer_assets_using_type_and_then',
-      params: {}
-    }
-
-    beforeEach(() => {
-      chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
-      vi.resetAllMocks()
-      vi.mocked(resolveDestChain).mockReturnValue('Acala')
-      vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
-      vi.mocked(createTypeThenAutoReserve).mockResolvedValue(mockCall)
-      vi.mocked(constructRelayToParaParams).mockReturnValue(
-        'params' as unknown as Record<string, unknown>
-      )
-    })
-
-    it('should call createTypeAndThenCall', async () => {
-      vi.mocked(createBeneficiaryLocation).mockReturnValue(RELAY_LOCATION)
-
-      const result = await chain.transferRelayToPara({
-        ...baseOptions,
-        method: 'transfer_assets_using_type_and_then'
-      })
-
-      expect(createTypeThenAutoReserve).toHaveBeenCalledOnce()
-      expect(result).toBe(mockCall)
-    })
-
-    it('should throw if destChain is not resolved in type-and-then path', async () => {
-      vi.mocked(resolveDestChain).mockReturnValueOnce(undefined)
-
-      await expect(
-        chain.transferRelayToPara({
-          ...baseOptions,
-          method: 'transfer_assets_using_type_and_then'
-        })
-      ).rejects.toThrow('Cannot override destination when using type and then transfer.')
-    })
-
-    it('should default pallet to XcmPallet when not provided', async () => {
-      const result = await chain.transferRelayToPara({
-        ...baseOptions,
-        pallet: undefined
-      })
-
-      expect(result.module).toBe('XcmPallet')
-    })
   })
 })
