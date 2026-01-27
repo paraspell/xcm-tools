@@ -1,71 +1,72 @@
-import { ETH_MAINNET_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
+import { getParaId } from '@paraspell/sdk-core'
 import { Context } from '@snowbridge/api'
-import type { Config, SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
-import { describe, expect, it, vi } from 'vitest'
+import type { Environment } from '@snowbridge/base-types'
+import type { AbstractProvider } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createContext } from './createContext'
 
-vi.mock('@snowbridge/api', () => ({
-  Context: vi.fn(class {})
-}))
-vi.mock('ethers', () => ({
-  AbstractProvider: vi.fn(class {})
-}))
+vi.mock('@snowbridge/api', () => {
+  const Context = vi.fn(
+    class {
+      setEthProvider = vi.fn()
+    }
+  )
+
+  return { Context }
+})
 
 describe('createContext', () => {
-  const mockConfig: Config = {
-    BEACON_HTTP_API: 'http://beacon-api.test',
-    ETHEREUM_CHAINS: {
-      '1': 'http://ethereum-chain.test'
-    },
-    GRAPHQL_API_URL: 'http://graphql.test',
-    RELAY_CHAIN_URL: 'http://relay-chain.test',
-    GATEWAY_CONTRACT: '0xGatewayContract',
-    BEEFY_CONTRACT: '0xBeefyContract',
-    ASSET_HUB_PARAID: 1000,
-    BRIDGE_HUB_PARAID: 2000,
-    PRIMARY_GOVERNANCE_CHANNEL_ID: '1',
-    SECONDARY_GOVERNANCE_CHANNEL_ID: '2',
-    RELAYERS: [],
-    PARACHAINS: {
-      '1000': 'http://asset-hub.test',
-      '1002': 'http://bridge-hub.test'
-    }
-  }
+  const mockEnv = {
+    name: 'test-env',
+    ethChainId: 1
+  } as Environment
 
-  const mockEnv: SnowbridgeEnvironment = {
-    name: 'test-environment',
-    ethChainId: 1,
-    config: mockConfig,
-    locations: []
-  }
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-  it('creates a context with the correct structure', () => {
+  it('creates Context with execution URL when provider is string', () => {
     const executionUrl = 'http://execution-url.test'
 
     createContext(executionUrl, mockEnv)
 
-    expect(Context).toHaveBeenCalledWith({
-      environment: mockEnv.name,
-      ethereum: {
-        ethChainId: mockEnv.ethChainId,
-        ethChains: {
-          [ETH_MAINNET_CHAIN_ID.toString()]: executionUrl,
-          [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
-        },
-        beacon_url: mockConfig.BEACON_HTTP_API
+    expect(Context).toHaveBeenCalledOnce()
+
+    const args = vi.mocked(Context).mock.calls[0][0]
+
+    expect(args).toMatchObject({
+      ...mockEnv,
+      assetOverrides: {
+        '3369': [
+          {
+            token: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+            symbol: 'MYTH',
+            decimals: 18,
+            isSufficient: true
+          }
+        ]
       },
-      graphqlApiUrl: mockConfig.GRAPHQL_API_URL,
-      polkadot: {
-        assetHubParaId: mockConfig.ASSET_HUB_PARAID,
-        bridgeHubParaId: mockConfig.BRIDGE_HUB_PARAID,
-        parachains: mockConfig.PARACHAINS,
-        relaychain: mockConfig.RELAY_CHAIN_URL
+      precompiles: {
+        '2004': '0x000000000000000000000000000000000000081A'
       },
-      appContracts: {
-        gateway: mockConfig.GATEWAY_CONTRACT,
-        beefy: mockConfig.BEEFY_CONTRACT
+      ethereumChains: {
+        [mockEnv.ethChainId.toString()]: executionUrl,
+        [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
       }
     })
+  })
+
+  it('sets provider manually when executionUrl is AbstractProvider', () => {
+    const provider = {} as unknown as AbstractProvider
+
+    createContext(provider, mockEnv)
+
+    const mockInstance = vi.mocked(Context).mock.instances[0]
+
+    const spy = vi.spyOn(mockInstance, 'setEthProvider')
+
+    expect(Context).toHaveBeenCalledOnce()
+    expect(spy).toHaveBeenCalledWith(mockEnv.ethChainId, provider)
   })
 })

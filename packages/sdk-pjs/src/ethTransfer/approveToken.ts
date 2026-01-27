@@ -1,19 +1,17 @@
-import { UnsupportedOperationError } from '@paraspell/sdk-core'
-import { environment } from '@snowbridge/api'
+import { assertHasId, findAssetInfoOrThrow } from '@paraspell/sdk-core'
 import { WETH9__factory } from '@snowbridge/contract-types'
+import { environmentFor } from '@snowbridge/registry'
 import type { Signer } from 'ethers'
 
 export const approveToken = async (signer: Signer, amount: bigint, symbol: string) => {
-  const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
+  const { gatewayContract } = environmentFor('polkadot_mainnet')
 
-  const contract = env.locations[0].erc20tokensReceivable.find(t => t.id === symbol)
+  const asset = findAssetInfoOrThrow('Ethereum', { symbol }, null)
 
-  if (!contract) {
-    throw new UnsupportedOperationError(`Token ${symbol} not supported`)
-  }
+  assertHasId(asset)
 
-  const weth9 = WETH9__factory.connect(contract.address, signer)
-  const result = await weth9.approve(env.config.GATEWAY_CONTRACT, amount)
+  const weth9 = WETH9__factory.connect(asset.assetId, signer)
+  const result = await weth9.approve(gatewayContract, amount)
   const receipt = await result.wait()
 
   return { result, receipt }
