@@ -1,4 +1,5 @@
 import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -47,6 +48,7 @@ describe('dryRun', () => {
       senderAddress: address,
       currency: {} as TCurrencyInputWithAmount,
       address,
+      version: Version.V5,
       tx: {}
     })
 

@@ -34,7 +34,7 @@ describe('prepareExecuteContext', () => {
       originFee: 100000000n
     },
     version: Version.V3
-  } as TCreateBaseTransferXcmOptions
+  } as TCreateBaseTransferXcmOptions<unknown>
 
   const mockAsset = { id: {}, fun: { Fungible: 1000000000000n } } as TAsset
   const mockLocalizedLocation = { parents: 0, interior: { Here: null } }
@@ -72,7 +72,7 @@ describe('prepareExecuteContext', () => {
       feeAssetInfo: {
         location: mockFeeLocation
       }
-    } as TCreateBaseTransferXcmOptions
+    } as TCreateBaseTransferXcmOptions<unknown>
 
     vi.mocked(isAssetEqual).mockReturnValue(false)
 
@@ -93,7 +93,7 @@ describe('prepareExecuteContext', () => {
       feeAssetInfo: {
         location: mockLocation
       }
-    } as TCreateBaseTransferXcmOptions
+    } as TCreateBaseTransferXcmOptions<unknown>
 
     vi.mocked(isAssetEqual).mockReturnValue(true)
 

@@ -3,18 +3,13 @@ import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
-import { InvalidAddressError } from '../errors'
-import type { TAddress } from '../types'
+import type { IPolkadotApi } from '../../api'
+import { InvalidAddressError } from '../../errors'
+import type { TAddress } from '../../types'
 import { validateAddress } from './validateAddress'
 
-vi.mock('viem', () => ({
-  isAddress: vi.fn()
-}))
-
-vi.mock('@paraspell/assets', () => ({
-  isChainEvm: vi.fn()
-}))
+vi.mock('viem')
+vi.mock('@paraspell/assets')
 
 describe('validateAddress', () => {
   const mockApi = {

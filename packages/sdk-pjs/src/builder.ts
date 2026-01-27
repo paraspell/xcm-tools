@@ -21,11 +21,8 @@ export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
   return BuilderImpl<TPjsApi, Extrinsic>(pjsApi)
 }
 
-export type GeneralBuilder<T extends Partial<TSendBaseOptions> = object> = GeneralBuilderCore<
-  TPjsApi,
-  Extrinsic,
-  T
->
+export type GeneralBuilder<T extends Partial<TSendBaseOptions<Extrinsic>> = object> =
+  GeneralBuilderCore<TPjsApi, Extrinsic, T>
 
 export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {
   const pjsApi = new PolkadotJsApi(api)

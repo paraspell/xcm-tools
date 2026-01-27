@@ -33,7 +33,8 @@ export const calculateTotalXcmFee = (
 export const verifyEdOnDestinationInternal = async <TApi, TRes>(
   options: TVerifyEdOnDestinationOptions<TApi, TRes>
 ) => {
-  const { api, buildTx, origin, destination, currency, address, senderAddress, feeAsset } = options
+  const { api, buildTx, origin, destination, currency, address, senderAddress, feeAsset, version } =
+    options
 
   if (isExternalChain(destination)) return true
 
@@ -76,6 +77,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>(
       ...currency,
       amount
     },
+    version,
     feeAsset,
     disableFallback: false
   })

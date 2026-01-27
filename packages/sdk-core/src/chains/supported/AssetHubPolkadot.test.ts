@@ -58,7 +58,6 @@ describe('AssetHubPolkadot', () => {
     assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true },
     asset: {} as TAsset,
     scenario: 'ParaToRelay',
-    destLocation: {} as TLocation,
     beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
     address: 'address',
@@ -117,7 +116,7 @@ describe('AssetHubPolkadot', () => {
         } as TPolkadotXCMTransferOptions<unknown, unknown>
         const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
         await chain.transferPolkadotXCM(input)
-        expect(handleExecuteTransfer).toHaveBeenCalledWith('AssetHubPolkadot', input)
+        expect(handleExecuteTransfer).toHaveBeenCalledWith(input)
         expect(spy).toHaveBeenCalledTimes(1)
       })
 

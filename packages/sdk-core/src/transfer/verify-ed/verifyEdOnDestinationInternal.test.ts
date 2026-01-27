@@ -1,7 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetOnDestOrThrow, getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
+import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -43,7 +43,8 @@ describe('verifyEdOnDestinationInternal', () => {
     destination: mockDestination,
     address: mockAddress,
     senderAddress: mockSenderAddress,
-    currency: mockCurrency
+    currency: mockCurrency,
+    version: Version.V5
   } as TVerifyEdOnDestinationOptions<unknown, unknown>
 
   const asset = {

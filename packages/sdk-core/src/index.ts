@@ -11,6 +11,7 @@ export {
   ETH_MAINNET_CHAIN_ID,
   ETH_TESTNET_CHAIN_ID,
   RELAY_LOCATION,
+  TRANSACT_ORIGINS,
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'

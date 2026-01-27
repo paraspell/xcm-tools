@@ -12,20 +12,11 @@ import type {
   GeneralBuilder,
   TBuilderOptions,
   TCurrencyCore,
-  TCurrencyInput,
   TPapiApiOrUrl,
-  WithComplexAmount,
 } from '@paraspell/sdk';
 import {
   BatchMode,
-  Foreign,
-  ForeignAbstract,
-  getOtherAssets,
-  isRelayChain,
-  Native,
-  Override,
   replaceBigInt,
-  type TLocation,
   type TPapiTransaction,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
@@ -36,9 +27,12 @@ import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import {
   createBuilderOptions,
+  determineCurrency,
+  determineFeeAsset,
   fetchFromApi,
   getTxFromApi,
   resolveSenderAddress,
+  setupBaseBuilder,
   submitTx,
 } from '../../utils';
 import {
@@ -50,10 +44,7 @@ import BatchTypeSelectModal from '../BatchTypeSelectModal/BatchTypeSelectModal';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type {
-  TCurrencyEntryTransformed,
-  TFormValuesTransformed,
-} from './XcmTransferForm';
+import type { TFormValuesTransformed } from './XcmTransferForm';
 import XcmTransferForm from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -94,97 +85,6 @@ const XcmTransfer = () => {
       scrollIntoView();
     }
   }, [error, scrollIntoView]);
-
-  const determineCurrency = (
-    { from }: TFormValuesTransformed,
-    {
-      isCustomCurrency,
-      customCurrency,
-      customCurrencyType,
-      customCurrencySymbolSpecifier,
-      currency,
-    }: TCurrencyEntryTransformed,
-  ): TCurrencyInput => {
-    if (isCustomCurrency) {
-      if (customCurrencyType === 'id') {
-        return {
-          id: customCurrency,
-        };
-      } else if (customCurrencyType === 'symbol') {
-        if (customCurrencySymbolSpecifier === 'native') {
-          return {
-            symbol: Native(customCurrency),
-          };
-        }
-
-        if (customCurrencySymbolSpecifier === 'foreign') {
-          return {
-            symbol: Foreign(customCurrency),
-          };
-        }
-
-        if (customCurrencySymbolSpecifier === 'foreignAbstract') {
-          return {
-            symbol: ForeignAbstract(customCurrency),
-          };
-        }
-
-        return {
-          symbol: customCurrency,
-        };
-      } else if (customCurrencyType === 'overridenLocation') {
-        return {
-          location: Override(JSON.parse(customCurrency) as TLocation),
-        };
-      } else {
-        return {
-          location: JSON.parse(customCurrency) as TLocation,
-        };
-      }
-    } else if (currency) {
-      const hasDuplicateIds = isRelayChain(from)
-        ? false
-        : getOtherAssets(from).filter(
-            (asset) =>
-              !asset.isNative &&
-              !currency.isNative &&
-              asset.assetId === currency.assetId,
-          ).length > 1;
-
-      if (!currency.isNative && currency.assetId && !hasDuplicateIds) {
-        return {
-          id: currency.assetId,
-        };
-      }
-
-      if (currency.location) {
-        return {
-          location: currency.location,
-        };
-      }
-
-      return currency.isNative
-        ? { symbol: Native(currency.symbol) }
-        : { symbol: currency.symbol };
-    } else {
-      throw Error('Currency is required');
-    }
-  };
-
-  const determineFeeAsset = (
-    formValues: TFormValuesTransformed,
-    transformedFeeAsset?: TCurrencyEntryTransformed,
-  ): TCurrencyInput | undefined => {
-    if (!transformedFeeAsset) return undefined;
-
-    if (
-      transformedFeeAsset.currencyOptionId ||
-      transformedFeeAsset.isCustomCurrency
-    ) {
-      return determineCurrency(formValues, transformedFeeAsset);
-    }
-    return undefined;
-  };
 
   const submitBatch = async (
     items: TFormValuesTransformed[],
@@ -271,44 +171,7 @@ const XcmTransfer = () => {
           builder: GeneralBuilder,
           item: TFormValuesTransformed,
         ) => {
-          const {
-            from,
-            to,
-            currencies,
-            address,
-            ahAddress,
-            transformedFeeAsset,
-            xcmVersion,
-            pallet,
-            method,
-          } = item;
-          const currencyInputs = currencies.map((c) => ({
-            ...determineCurrency(item, c),
-            amount: c.amount,
-          }));
-
-          let tmpBuilder = builder
-            .from(from)
-            .to(to)
-            .currency(
-              currencyInputs.length === 1
-                ? currencyInputs[0]
-                : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-            )
-            .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
-            .address(address)
-            .senderAddress(senderAddress)
-            .ahAddress(ahAddress);
-
-          if (xcmVersion) {
-            tmpBuilder = tmpBuilder.xcmVersion(xcmVersion);
-          }
-
-          if (pallet && method) {
-            tmpBuilder = tmpBuilder.customPallet(pallet, method);
-          }
-
-          return tmpBuilder.addToBatch();
+          return setupBaseBuilder(builder, item, senderAddress).addToBatch();
         };
 
         const initialBuilder = Builder(builderOptions);
@@ -378,18 +241,7 @@ const XcmTransfer = () => {
     ) => GeneralBuilder) &
       ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
 
-    const {
-      from,
-      to,
-      currencies,
-      transformedFeeAsset,
-      address,
-      ahAddress,
-      xcmVersion,
-      pallet,
-      method,
-      useApi,
-    } = formValues;
+    const { currencies, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
@@ -425,31 +277,13 @@ const XcmTransfer = () => {
         true,
       );
     } else {
-      let builder = Builder(builderOptions)
-        .from(from)
-        .to(to)
-        .currency(
-          currencyInputs.length === 1
-            ? currencyInputs[0]
-            : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-        )
-        .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
-        .address(address)
-        .senderAddress(senderAddress)
-        .ahAddress(ahAddress);
-
-      if (xcmVersion) {
-        builder = builder.xcmVersion(xcmVersion);
-      }
-
-      if (pallet && method) {
-        builder = builder.customPallet(pallet, method);
-      }
+      const builder = Builder(builderOptions);
+      const finalBuilder = setupBaseBuilder(builder, formValues, senderAddress);
 
       result =
         submitType === 'dryRun'
-          ? await builder.dryRun()
-          : await builder.dryRunPreview({ mintFeeAssets: true });
+          ? await finalBuilder.dryRun()
+          : await finalBuilder.dryRunPreview({ mintFeeAssets: true });
     }
 
     setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -464,19 +298,7 @@ const XcmTransfer = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const {
-      from,
-      to,
-      currencies,
-      transformedFeeAsset,
-      address,
-      ahAddress,
-      xcmVersion,
-      localAccount,
-      pallet,
-      method,
-      useApi,
-    } = formValues;
+    const { from, currencies, localAccount, useApi } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -602,31 +424,17 @@ const XcmTransfer = () => {
           true,
         );
       } else {
-        let builder = Builder(builderOptions)
-          .from(from)
-          .to(to)
-          .currency(
-            currencyInputs.length === 1
-              ? currencyInputs[0]
-              : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-          )
-          .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
-          .address(address)
-          .senderAddress(senderAddress)
-          .ahAddress(ahAddress);
+        const builder = Builder(builderOptions);
+        const finalBuilder = setupBaseBuilder(
+          builder,
+          formValues,
+          senderAddress,
+        );
 
-        if (xcmVersion) {
-          builder = builder.xcmVersion(xcmVersion);
-        }
+        if (localAccount) hash = await finalBuilder.signAndSubmit();
+        else tx = await finalBuilder.build();
 
-        if (pallet && method) {
-          builder = builder.customPallet(pallet, method);
-        }
-
-        if (localAccount) hash = await builder.signAndSubmit();
-        else tx = await builder.build();
-
-        api = builder.getApi();
+        api = finalBuilder.getApi();
       }
 
       if (!api) {

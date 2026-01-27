@@ -4,9 +4,15 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics,
+  TTransferLocalOptions
+} from '../../types'
 import { getChain } from '../../utils'
+import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import type Hydration from './Hydration'
 
@@ -26,6 +32,7 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
 }))
 
 vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../utils/transfer')
 
 type WithTransferToEthereum = Hydration<unknown, unknown> & {
   transferToEthereum: Hydration<unknown, unknown>['transferToEthereum']
@@ -177,6 +184,40 @@ describe('Hydration', () => {
           overriddenAsset: expect.arrayContaining([expect.anything(), expect.anything()])
         })
       )
+    })
+
+    it('should call handleExecuteTransfer for non-native asset/feeAsset', async () => {
+      const mockTx = {} as TSerializedExtrinsics
+
+      const mockApi = {
+        deserializeExtrinsics: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      vi.mocked(handleExecuteTransfer).mockResolvedValue(mockTx)
+
+      const input = {
+        ...mockInput,
+        api: mockApi,
+        senderAddress: '0xPolkadotSender',
+        assetInfo: {
+          symbol: 'USDC',
+          assetId: '123',
+          amount: 1000n,
+          location: DOT_LOCATION
+        },
+        feeAssetInfo: {
+          symbol: 'USDT',
+          assetId: '456',
+          location: DOT_LOCATION
+        },
+        destination: 'Hydration'
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
+      await hydration.transferPolkadotXCM(input)
+
+      expect(spy).toHaveBeenCalledWith(mockTx)
     })
   })
 

@@ -1,10 +1,13 @@
 import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
+import { createDestination } from '../../utils'
 import { transferPolkadotXcm } from './transferPolkadotXcm'
+
+vi.mock('../../utils/location')
 
 const mockApi = {
   deserializeExtrinsics: vi.fn()
@@ -35,9 +38,12 @@ const mockVersionedAssets: TXcmVersioned<TAsset[]> = {
 const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
 
 describe('transferPolkadotXcm', () => {
+  beforeEach(() => {
+    vi.mocked(createDestination).mockReturnValue(mockLocation)
+  })
+
   const baseOptions = {
     api: mockApi,
-    destLocation: mockLocation,
     beneficiaryLocation: mockLocation,
     asset: mockAsset,
     assetInfo: { amount: 123n } as WithAmount<TAssetInfo>,

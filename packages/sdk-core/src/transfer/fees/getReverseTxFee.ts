@@ -42,6 +42,6 @@ export const getReverseTxFee = async <TApi, TRes>(
     .currency(currencyInput)
     ['buildInternal']()
 
-  const rawFee = await api.calculateTransactionFee(tx, fromAddress)
-  return padFee(rawFee, origin, destination, 'destination')
+  const { partialFee } = await api.getPaymentInfo(tx, fromAddress)
+  return padFee(partialFee, origin, destination, 'destination')
 }

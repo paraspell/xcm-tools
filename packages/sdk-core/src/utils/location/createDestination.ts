@@ -11,9 +11,9 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { TDestination, TXcmVersioned } from '../../types'
-import { addXcmVersionHeader } from '../addXcmVersionHeader'
 import { getRelayChainOf } from '../chain'
 import { resolveScenario } from '../transfer/resolveScenario'
+import { addXcmVersionHeader } from '../xcm-version'
 import { createX1Payload } from './createX1Payload'
 import { getEthereumJunction } from './getEthereumJunction'
 

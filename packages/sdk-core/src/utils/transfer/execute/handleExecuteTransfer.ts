@@ -1,5 +1,4 @@
 import { isAssetEqual } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
@@ -22,11 +21,11 @@ const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
 const FEE_PADDING_PERCENTAGE = 40
 
 export const handleExecuteTransfer = async <TApi, TRes>(
-  chain: TSubstrateChain,
   options: TPolkadotXCMTransferOptions<TApi, TRes>
 ): Promise<TSerializedExtrinsics> => {
   const {
     api,
+    chain,
     senderAddress,
     paraIdTo,
     destChain,
@@ -35,7 +34,8 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     feeCurrency,
     address,
     feeAssetInfo,
-    version
+    version,
+    transactOptions
   } = options
 
   assertSenderAddress(senderAddress)
@@ -63,7 +63,8 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     recipientAddress: address,
     senderAddress,
     version,
-    paraIdTo
+    paraIdTo,
+    transactOptions
   }
 
   // We mint 1000 units of feeAsset and use 100
@@ -75,7 +76,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   const call = createExecuteCall(
     chain,
-    createDirectExecuteXcm({
+    await createDirectExecuteXcm({
       ...internalOptions,
       fees: {
         originFee: feeAssetAmount,
@@ -93,6 +94,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     senderAddress,
     address,
     currency,
+    version,
     feeAsset: feeCurrency,
     useRootOrigin: true
   })
@@ -111,7 +113,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee
   )
 
-  const xcm = createDirectExecuteXcm({
+  const xcm = await createDirectExecuteXcm({
     ...internalOptions,
     fees: {
       originFee,

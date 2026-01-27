@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
 import type { TChainEndpoint, TSwapConfig } from './TDryRun'
@@ -29,6 +29,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   senderAddress: string
   address: string
   currency: WithAmount<TCurrencyCore>
+  version?: Version
   feeAsset?: TCurrencyInput
   disableFallback: TDisableFallback
   // Used when there is an asset swap on some hop
@@ -53,12 +54,12 @@ export type TGetXcmFeeInternalOptions<
 
 export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeInternalOptions<TApi, TRes>,
-  'disableFallback' | 'useRootOrigin' | 'buildTx'
+  'disableFallback' | 'useRootOrigin' | 'buildTx' | 'version'
 >
 
 export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeInternalOptions<TApi, TRes>,
-  'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx'
+  'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx' | 'version'
 >
 
 export type TGetXcmFeeBuilderOptions = {
@@ -71,6 +72,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   destination: TChain
   senderAddress: string
   currency: WithAmount<TCurrencyCore>
+  version?: Version
   feeAsset?: TCurrencyInput
   disableFallback: boolean
   useRootOrigin?: boolean
@@ -99,6 +101,7 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   forwardedXcms: any
   tx: TRes
   asset: TAssetInfo
+  version: Version
   originFee: bigint
   feeAsset?: TCurrencyInput
   disableFallback: boolean
@@ -115,7 +118,13 @@ export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<
 
 export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
   TGetFeeForDestChainOptions<TApi, TRes>,
-  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee' | 'prevChain'
+  | 'destination'
+  | 'disableFallback'
+  | 'forwardedXcms'
+  | 'asset'
+  | 'originFee'
+  | 'prevChain'
+  | 'version'
 > & {
   destination: TSubstrateChain
 }
@@ -193,4 +202,9 @@ export type TGetXcmFeeEstimateDetail = {
 export type TGetXcmFeeEstimateResult = {
   origin: TGetXcmFeeEstimateDetail
   destination: TGetXcmFeeEstimateDetail
+}
+
+export type TPaymentInfo = {
+  partialFee: bigint
+  weight: TWeight
 }

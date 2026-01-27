@@ -1,4 +1,4 @@
-import type { TChain, Version } from '@paraspell/sdk';
+import type { TChain, TTransactOptions, Version } from '@paraspell/sdk';
 import type { IconProps } from '@tabler/icons-react';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
@@ -87,4 +87,8 @@ export type TAdvancedOptions = {
   xcmVersion: Version | null;
   pallet?: string;
   method?: string;
+};
+
+export type TTransactFields = {
+  transactOptions: TTransactOptions<string, string | number>;
 };

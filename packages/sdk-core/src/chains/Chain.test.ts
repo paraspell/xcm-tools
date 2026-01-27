@@ -119,10 +119,6 @@ class TestParachain extends TestParachainBase {
     return 'transferPolkadotXCM called'
   }
 
-  public exposeCanUseXTokens(options: TSendInternalOptions<unknown, unknown>): boolean {
-    return this.canUseXTokens(options)
-  }
-
   public exposeTransferToEthereum(
     options: TPolkadotXCMTransferOptions<unknown, unknown>,
     useOnlyDepositAsset = false
@@ -241,17 +237,6 @@ describe('Parachain', () => {
     })
   })
 
-  it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
-    const options = {
-      api,
-      to: 'Astar',
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown>
-    expect(chain.exposeCanUseXTokens(options)).toBe(true)
-  })
-
   it('throws when Astar sends a relay/system asset', async () => {
     const astar = new OnlyPolkadotXCMParachain('Astar', 'TestChain', 'Polkadot', Version.V4)
 
@@ -272,22 +257,6 @@ describe('Parachain', () => {
     await expect(astar.transfer(options)).rejects.toThrow(
       'Astar system asset transfers are temporarily disabled'
     )
-  })
-
-  it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
-    const options = {
-      api,
-      to: 'Astar',
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown>
-
-    const transferXTokensSpy = vi.spyOn(chain, 'transferXTokens')
-
-    const result = await chain.transfer(options)
-
-    expect(transferXTokensSpy).toHaveBeenCalled()
-    expect(result).toBe('transferXTokens called')
   })
 
   it('throws when relay asset is used and type-and-then is not supported', async () => {
@@ -388,16 +357,16 @@ describe('Parachain', () => {
     const options = {
       api,
       to: 'Astar',
-      assetInfo: { symbol: 'DOT', amount: 100n },
+      assetInfo: { symbol: 'DOT', amount: 100n, location: DOT_LOCATION },
       address: 'destinationAddress'
     } as TSendInternalOptions<unknown, unknown>
 
-    const spy = vi.spyOn(chain, 'transferXTokens')
+    const spy = vi.spyOn(chain, 'transferPolkadotXCM')
 
     const result = await chain.transfer(options)
 
     expect(spy).toHaveBeenCalled()
-    expect(result).toBe('transferXTokens called')
+    expect(result).toBe('transferPolkadotXCM called')
   })
 
   it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', async () => {
@@ -482,32 +451,6 @@ describe('Parachain', () => {
     } as TSendInternalOptions<unknown, unknown>
 
     await expect(chain.transfer(options)).rejects.toThrow(NoXCMSupportImplementedError)
-  })
-
-  it('should not call transferXTokens when canUseXTokens returns false', async () => {
-    class SomeParachain extends TestParachain {
-      canUseXTokens() {
-        return false
-      }
-    }
-
-    const chain = new SomeParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
-    chain.transferXTransfer = vi.fn().mockReturnValue('transferXTransfer called')
-
-    const options = {
-      api,
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown>
-
-    const transferXTokensSpy = vi.spyOn(chain, 'transferXTokens')
-    const transferXTransferSpy = vi.spyOn(chain, 'transferXTransfer')
-
-    const result = await chain.transfer(options)
-
-    expect(transferXTokensSpy).not.toHaveBeenCalled()
-    expect(transferXTransferSpy).toHaveBeenCalled()
-    expect(result).toBe('transferXTransfer called')
   })
 
   it('should create xcm asset', () => {

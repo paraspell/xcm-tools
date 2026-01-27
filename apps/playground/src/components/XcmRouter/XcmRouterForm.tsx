@@ -54,7 +54,7 @@ import {
   useRouterCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers/advancedOptions';
+import { advancedOptionsParsers } from '../../parsers';
 import type {
   TAdvancedOptions,
   TRouterSubmitType,

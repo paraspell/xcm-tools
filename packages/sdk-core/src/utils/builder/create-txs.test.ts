@@ -114,7 +114,7 @@ describe('overrideTxAmount', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx: builtTx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
+    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
 
     const out = await overrideTxAmount(options, builder, '50')
 
@@ -137,7 +137,7 @@ describe('createTx', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx: realTx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
+    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
 
     const res = await createTx(baseOptions, builder, undefined)
 
@@ -154,7 +154,7 @@ describe('createTx', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress>
+    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
 
     const res = await createTx(options, builder, '200')
 
