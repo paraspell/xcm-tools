@@ -8,8 +8,8 @@ import {
   RoutingResolutionError,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
-import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
-import type { RegistryOptions } from '@snowbridge/api/dist/assets_v2'
+import { toPolkadotV2 } from '@snowbridge/api'
+import { assetRegistryFor, environmentFor } from '@snowbridge/registry'
 
 import type { TPjsEvmBuilderOptions } from '../types'
 import { isEthersSigner } from '../utils'
@@ -56,33 +56,14 @@ export const transferEthToPolkadot = async <TApi, TRes>({
 
   const amount = abstractDecimals(currency.amount, ethAsset.decimals, api)
 
-  const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
+  const env = environmentFor('polkadot_mainnet')
   const context = createContext(provider, env)
 
   const destParaId = getParaId(to)
 
   assertHasId(ethAsset)
 
-  const overrides: Partial<RegistryOptions> = {
-    precompiles: { '2004': '0x000000000000000000000000000000000000081A' },
-    assetOverrides: {
-      '3369': [
-        {
-          token: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-          name: 'Mythos',
-          minimumBalance: 10_000_000_000_000_000n,
-          symbol: 'MYTH',
-          decimals: 18,
-          isSufficient: true
-        }
-      ]
-    }
-  }
-
-  const registry = await assetsV2.buildRegistry({
-    ...(await assetsV2.fromContext(context)),
-    ...overrides
-  })
+  const registry = assetRegistryFor('polkadot_mainnet')
 
   const fee = await toPolkadotV2.getDeliveryFee(
     {

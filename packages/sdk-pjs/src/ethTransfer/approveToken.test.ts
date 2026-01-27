@@ -1,10 +1,16 @@
-import { environment } from '@snowbridge/api'
+import type { TAssetInfo } from '@paraspell/sdk-core'
+import { findAssetInfoOrThrow } from '@paraspell/sdk-core'
+import type { Environment } from '@snowbridge/base-types'
 import type { WETH9 } from '@snowbridge/contract-types'
 import { WETH9__factory } from '@snowbridge/contract-types'
+import { environmentFor } from '@snowbridge/registry'
 import type { Signer } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { approveToken } from './approveToken'
+
+vi.mock('@snowbridge/registry')
+vi.mock('@paraspell/sdk-core')
 
 describe('approveToken', () => {
   const tokenSymbol = 'TEST'
@@ -13,19 +19,16 @@ describe('approveToken', () => {
   const amount = 1000n
 
   const fakeEnv = {
-    name: 'polkadot_mainnet',
-    ethChainId: 1,
-    locations: [
-      {
-        erc20tokensReceivable: [{ id: tokenSymbol, address: tokenAddress }]
-      }
-    ],
-    config: { GATEWAY_CONTRACT: gatewayAddress }
-  } as (typeof environment.SNOWBRIDGE_ENV)['polkadot_mainnet']
+    gatewayContract: gatewayAddress
+  } as Environment
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(environment, 'SNOWBRIDGE_ENV', 'get').mockReturnValue({ polkadot_mainnet: fakeEnv })
+    vi.mocked(environmentFor).mockReturnValue(fakeEnv)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      symbol: tokenSymbol,
+      assetId: tokenAddress
+    } as TAssetInfo)
   })
 
   it('calls approve and returns the result and receipt', async () => {
@@ -38,17 +41,10 @@ describe('approveToken', () => {
     } as unknown as WETH9
     const spy = vi.spyOn(WETH9__factory, 'connect').mockReturnValue(fakeContractInstance)
     const result = await approveToken(fakeSigner, amount, tokenSymbol)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol }, null)
     expect(spy).toHaveBeenCalledWith(tokenAddress, fakeSigner)
     expect(fakeContractInstance.approve).toHaveBeenCalledWith(gatewayAddress, amount)
     expect(fakeWait).toHaveBeenCalled()
     expect(result).toEqual({ result: fakeResult, receipt: fakeReceipt })
-  })
-
-  it('throws an error when the token is not supported', async () => {
-    const fakeSigner = {} as Signer
-    const invalidSymbol = 'UNKNOWN'
-    await expect(approveToken(fakeSigner, amount, invalidSymbol)).rejects.toThrow(
-      `Token ${invalidSymbol} not supported`
-    )
   })
 })
