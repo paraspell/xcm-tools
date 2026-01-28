@@ -42,7 +42,7 @@
     "@snowbridge/contract-types": "0.3.2",
     "@snowbridge/registry": "^0.3.2",
     "ethers": "6.15.0",
-    "viem": "2.40.3"
+    "viem": "2.45.0"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",

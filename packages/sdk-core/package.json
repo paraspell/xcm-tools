@@ -41,7 +41,7 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^2.0.0",
-    "viem": "2.40.3"
+    "viem": "2.45.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
