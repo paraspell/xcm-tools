@@ -36,7 +36,7 @@
     
     ```bash
     pnpm install
-    pnpm build
+    pnpm --filter visualizer-be... --filter visualizer-fe... build
     ```
     
     Then run backend:

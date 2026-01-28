@@ -31,6 +31,10 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - uses: pnpm/action-setup@v4
       - run: pnpm install
+      - run: |
+          for app in apps/xcm-api apps/visualizer-be; do
+            echo DATABASE_URL="file:./dev.db" > $app/.env
+          done
       - run: pnpm build
       - run: pnpm compile
       - run: pnpm format:check

@@ -95,6 +95,8 @@ Afterwards, you should be able to use any of the following commands (from reposi
 
 `pnpm --filter <package_selector> <command>` or cd into appropriate folder.
 
+`pnpm --filter <package>... build` to build package or app with all its dependencies.
+
 </details>
 
 <details><summary><b>XCM Tools bug bounty:</b></summary>
