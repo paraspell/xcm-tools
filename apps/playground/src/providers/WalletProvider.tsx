@@ -208,7 +208,6 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     }
   }, [selectedAccount, apiType]);
 
-
   // Convert loaded accounts from reactive-dot accounts to our own account format
   useEffect(() => {
     if (!selectedDotWallet) {
