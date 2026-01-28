@@ -15,6 +15,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
       NODE_OPTIONS: "--max_old_space_size=8192"
+
     steps:
       - uses: actions/checkout@v6
       - name: Set alternate npm integrity keys
@@ -29,6 +30,10 @@ jobs:
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
           echo CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" >> .env
+      - run: |
+          for app in apps/visualizer-be apps/xcm-api; do
+            echo DATABASE_URL="file:./dev.db" > $app/.env
+          done
       - run: pnpm install
       - run: pnpm build
       - run: pnpm compile
