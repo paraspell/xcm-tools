@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.4.0...sdk-v12.5.0) (2026-01-28)
+
+
+### Code Refactoring
+
+* **sdk-core:** Generalize relayToPara scenarios ⚙️ ([b565946](https://github.com/paraspell/xcm-tools/commit/b565946ec0241b6589e3271bee056f0af4a14ee4))
+
+
+### Build System
+
+* Update viem to v2.45.0 📦 ([124a73a](https://github.com/paraspell/xcm-tools/commit/124a73a1565082ed3eea6ac5af549e7c4aa9db68))
+
 ## [12.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.3.0...sdk-v12.4.0) (2026-01-22)
 
 
