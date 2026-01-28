@@ -1,4 +1,4 @@
-import type { TChain, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk-pjs';
+import type { TAmount, TChain, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk';
 import type { PolkadotSigner } from 'polkadot-api';
 
 import {
@@ -95,7 +95,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param amount - The amount to transfer.
    * @returns The current builder instance.
    */
-  amount(amount: string | bigint): RouterBuilderCore<T & { amount: string }> {
+  amount(amount: TAmount): RouterBuilderCore<T & { amount: TAmount }> {
     return new RouterBuilderCore(this._builderOptions, {
       ...this._options,
       amount: amount.toString(),
