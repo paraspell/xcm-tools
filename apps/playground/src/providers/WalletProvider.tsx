@@ -411,7 +411,6 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   };
 
   const onDisconnect = () => {
-    // void dotDisconnectWallet(dotSelectedWallet);
     shouldOpenAccountsModal.current = false;
     savedAddressRef.current = undefined;
     setSelectedDotWallet(undefined);
