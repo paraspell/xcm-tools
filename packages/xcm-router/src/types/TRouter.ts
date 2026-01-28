@@ -1,4 +1,5 @@
 import type {
+  TAmount,
   TAssetInfo,
   TChain,
   TCurrencyInput,
@@ -107,7 +108,7 @@ export type TTransferOptions = {
    * The amount to transfer.
    * @example '1000000000000000'
    */
-  amount: string;
+  amount: TAmount;
   /**
    * The sender address.
    */
