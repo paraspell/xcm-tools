@@ -1,3 +1,4 @@
+import { createFormActions } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import {
   web3Accounts,
@@ -18,10 +19,15 @@ import { useLocation } from 'react-router';
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import { PageRoute } from '../components/PageRoute';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
-import { DAPP_NAME } from '../constants';
+import { DAPP_NAME, MAIN_FORM_NAME } from '../constants';
 import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
 import { WalletContext } from './WalletContext';
+
+const formActions = createFormActions<{
+  address: string;
+  recipientAddress: string;
+}>(MAIN_FORM_NAME);
 
 export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
 const STORAGE_API_TYPE_KEY = 'paraspell_api_type';
@@ -271,6 +277,10 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
 
   const onAccountSelect = (account: TWalletAccount) => {
     setSelectedAccount(account);
+    // TODO: Will be unified in v13 when xcm-router recipientAddress
+    // is renamed to address
+    formActions.setFieldValue('address', account.address);
+    formActions.setFieldValue('recipientAddress', account.address);
     closeAccountsModal();
   };
 

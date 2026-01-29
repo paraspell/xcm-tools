@@ -43,7 +43,6 @@ import z from 'zod';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import {
-  useAutoFillWalletAddress,
   useCurrencyOptions,
   useFeeCurrencyOptions,
   useWallet,
@@ -132,6 +131,14 @@ const XcmUtilsForm: FC<Props> = ({
   initialValues,
   isVisible = true,
 }) => {
+  const {
+    connectWallet,
+    selectedAccount,
+    isInitialized,
+    isLoadingExtensions,
+    setIsUseXcmApiSelected,
+  } = useWallet();
+
   const [queryState, setQueryState] = useQueryStates(
     {
       from: parseAsSubstrateChain.withDefault('Astar'),
@@ -157,7 +164,9 @@ const XcmUtilsForm: FC<Props> = ({
         customCurrencySymbolSpecifier: 'auto',
       }),
 
-      address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+      address: parseAsRecipientAddress.withDefault(
+        selectedAccount?.address ?? DEFAULT_ADDRESS,
+      ),
       ahAddress: parseAsString.withDefault(''),
       useApi: parseAsBoolean.withDefault(false),
       ...advancedOptionsParsers,
@@ -209,8 +218,6 @@ const XcmUtilsForm: FC<Props> = ({
       apiOverrides: { endpoints: { url: validateCustomEndpoint } },
     },
   });
-
-  useAutoFillWalletAddress(form, 'address');
 
   useEffect(() => {
     void setQueryState(form.values);
@@ -385,14 +392,6 @@ const XcmUtilsForm: FC<Props> = ({
       form.setFieldValue('to', currentFrom);
     }
   };
-
-  const {
-    connectWallet,
-    selectedAccount,
-    isInitialized,
-    isLoadingExtensions,
-    setIsUseXcmApiSelected,
-  } = useWallet();
 
   const onConnectWalletClick = () => void connectWallet();
 

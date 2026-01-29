@@ -5,7 +5,7 @@ import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect } from 'react';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
-import { useAutoFillWalletAddress, useWallet } from '../../hooks';
+import { useWallet } from '../../hooks';
 import { advancedOptionsParsers } from '../../parsers/advancedOptions';
 import type { TAdvancedOptions } from '../../types';
 import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
@@ -38,10 +38,20 @@ type Props = {
 };
 
 const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
+  const {
+    connectWallet,
+    selectedAccount,
+    isInitialized,
+    isLoadingExtensions,
+    setIsUseXcmApiSelected,
+  } = useWallet();
+
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsAssetClaimChain.withDefault('Polkadot'),
     amount: parseAsString.withDefault(''),
-    address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    address: parseAsRecipientAddress.withDefault(
+      selectedAccount?.address ?? DEFAULT_ADDRESS,
+    ),
     useApi: parseAsBoolean.withDefault(false),
     ...advancedOptionsParsers,
   });
@@ -59,21 +69,11 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  useAutoFillWalletAddress(form, 'address');
-
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
   const { useApi } = form.getValues();
-
-  const {
-    connectWallet,
-    selectedAccount,
-    isInitialized,
-    isLoadingExtensions,
-    setIsUseXcmApiSelected,
-  } = useWallet();
 
   const onConnectWalletClick = () => void connectWallet();
 
