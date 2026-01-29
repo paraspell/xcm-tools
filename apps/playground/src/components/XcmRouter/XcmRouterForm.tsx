@@ -49,11 +49,7 @@ import type { FC, FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
-import {
-  useAutoFillWalletAddress,
-  useRouterCurrencyOptions,
-  useWallet,
-} from '../../hooks';
+import { useRouterCurrencyOptions, useWallet } from '../../hooks';
 import { advancedOptionsParsers } from '../../parsers/advancedOptions';
 import type {
   TAdvancedOptions,
@@ -107,6 +103,13 @@ type Props = {
 };
 
 export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
+  const {
+    connectWallet,
+    selectedAccount: selectedAccountPolkadot,
+    isInitialized,
+    isLoadingExtensions,
+  } = useWallet();
+
   const [
     walletSelectModalOpened,
     { open: openWalletSelectModal, close: closeWalletSelectModal },
@@ -149,7 +152,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyFromOptionId: parseAsString.withDefault(''),
     currencyToOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
-    recipientAddress: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    recipientAddress: parseAsRecipientAddress.withDefault(
+      selectedAccount?.address ?? DEFAULT_ADDRESS,
+    ),
     slippagePct: parseAsString.withDefault('1'),
     useApi: parseAsBoolean.withDefault(false),
     ...advancedOptionsParsers,
@@ -182,8 +187,6 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     },
     validateInputOnChange: ['exchange'],
   });
-
-  useAutoFillWalletAddress(form, 'recipientAddress');
 
   useEffect(() => {
     void setQueryState(form.values);
@@ -383,13 +386,6 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       form.setFieldValue('currencyToOptionId', Object.keys(currencyToMap)[0]);
     }
   }, [isToNotParaToPara, currencyToMap]);
-
-  const {
-    connectWallet,
-    selectedAccount: selectedAccountPolkadot,
-    isInitialized,
-    isLoadingExtensions,
-  } = useWallet();
 
   const onSubmitInternalBestAmount = () => {
     const results = [

@@ -15,12 +15,8 @@ import { type BrowserProvider, ethers, formatEther } from 'ethers';
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
-import {
-  useAutoFillWalletAddress,
-  useCurrencyOptions,
-  useWallet,
-} from '../../hooks';
+import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
+import { useCurrencyOptions, useWallet } from '../../hooks';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
 import {
@@ -52,19 +48,23 @@ type Props = {
 };
 
 const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
+  const { apiType, selectedAccount } = useWallet();
+
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsEvmChain.withDefault('Ethereum'),
     to: parseAsChain.withDefault('AssetHubPolkadot'),
     currencyOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
-    address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    address: parseAsRecipientAddress.withDefault(
+      selectedAccount?.address ?? DEFAULT_ADDRESS,
+    ),
     ahAddress: parseAsString.withDefault(''),
     useViem: parseAsBoolean.withDefault(false),
   });
 
   const form = useForm<FormValues>({
+    name: MAIN_FORM_NAME,
     initialValues: queryState,
-
     validate: {
       address: (value) =>
         isValidPolkadotAddress(value) || ethers.isAddress(value)
@@ -78,7 +78,6 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     },
   });
 
-  useAutoFillWalletAddress(form, 'address');
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
@@ -146,8 +145,6 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
       onSubmitInternal(form.getValues(), undefined, 'approve');
     }
   };
-
-  const { apiType } = useWallet();
 
   useEffect(() => {
     if (apiType === 'PAPI') {

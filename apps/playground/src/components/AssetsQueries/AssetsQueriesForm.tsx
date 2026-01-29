@@ -21,7 +21,7 @@ import { type FC, useEffect, useRef } from 'react';
 
 import { DEFAULT_ADDRESS } from '../../constants';
 import { ASSET_QUERIES } from '../../consts';
-import { useAutoFillWalletAddress, useWallet } from '../../hooks';
+import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
 import {
   parseAsAssetQuery,
@@ -60,12 +60,16 @@ type Props = {
 };
 
 export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
+  const { setIsUseXcmApiSelected, selectedAccount } = useWallet();
+
   const [queryState, setQueryState] = useQueryStates({
     func: parseAsAssetQuery.withDefault('ASSETS_OBJECT'),
     chain: parseAsSubstrateChain.withDefault('Acala'),
     destination: parseAsChain.withDefault('Astar'),
     currency: parseAsString.withDefault(''),
-    address: parseAsRecipientAddress.withDefault(DEFAULT_ADDRESS),
+    address: parseAsRecipientAddress.withDefault(
+      selectedAccount?.address ?? DEFAULT_ADDRESS,
+    ),
     amount: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
     currencyType: parseAsCurrencyType.withDefault('symbol' as TCurrencyType),
@@ -81,11 +85,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  useAutoFillWalletAddress(form, 'address');
-
   const { func, chain, currencyType, useApi } = form.getValues();
-
-  const { setIsUseXcmApiSelected } = useWallet();
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
