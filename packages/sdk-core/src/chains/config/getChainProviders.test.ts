@@ -50,7 +50,7 @@ describe('getChainProviders', () => {
   })
 
   it('should handle multiple providers correctly and still return the first one', () => {
-    const mockChain: TSubstrateChain = 'Amplitude'
+    const mockChain: TSubstrateChain = 'Astar'
     const mockChainConfig = {
       ...chainConfig,
       providers: [

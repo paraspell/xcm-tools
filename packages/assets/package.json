@@ -38,8 +38,8 @@
     "@paraspell/sdk-common": "workspace:*"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-import-attributes": "^7.27.1",
-    "@babel/preset-env": "^7.28.5",
+    "@babel/plugin-syntax-import-attributes": "^7.28.6",
+    "@babel/preset-env": "^7.28.6",
     "@codecov/rollup-plugin": "^1.9.1",
     "@polkadot/api": "^16.5.4",
     "@polkadot/types": "^16.5.4",
@@ -47,9 +47,9 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@snowbridge/registry": "^0.3.2",
-    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.18",
     "dotenv": "^17.2.3",
-    "rollup": "^4.54.0",
+    "rollup": "^4.57.0",
     "rollup-plugin-dts": "^6.3.0",
     "ts-node": "^10.9.2",
     "viem": "2.45.0"

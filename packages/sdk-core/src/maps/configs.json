@@ -837,17 +837,6 @@
       }
     ]
   },
-  "Amplitude": {
-    "name": "Amplitude",
-    "info": "amplitude",
-    "paraId": 2124,
-    "providers": [
-      {
-        "name": "PendulumChain",
-        "endpoint": "wss://rpc-amplitude.pendulumchain.tech"
-      }
-    ]
-  },
   "Basilisk": {
     "name": "Basilisk",
     "info": "basilisk",

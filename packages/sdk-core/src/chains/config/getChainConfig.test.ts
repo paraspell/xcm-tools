@@ -20,13 +20,13 @@ vi.mock('../../maps/configs.json', () => ({
       paraId: 2088,
       providers: []
     },
-    Amplitude: {
-      name: 'Amplitude',
-      info: 'amplitude',
-      paraId: 2015,
+    Astar: {
+      name: 'Astar',
+      info: 'astar',
+      paraId: 2006,
       providers: [
-        { name: 'Amplitude', endpoint: 'https://providerA.com' },
-        { name: 'Amplitude', endpoint: 'https://providerB.com' }
+        { name: 'Astar', endpoint: 'https://providerA.com' },
+        { name: 'Astar', endpoint: 'https://providerB.com' }
       ]
     }
   }
@@ -62,16 +62,16 @@ describe('getChainConfig', () => {
   })
 
   it('should handle chains with multiple providers', () => {
-    const chain: TSubstrateChain = 'Amplitude'
+    const chain: TSubstrateChain = 'Astar'
     const result = getChainConfig(chain)
 
     expect(result).toEqual({
-      name: 'Amplitude',
-      info: 'amplitude',
-      paraId: 2015,
+      name: 'Astar',
+      info: 'astar',
+      paraId: 2006,
       providers: [
-        { name: 'Amplitude', endpoint: 'https://providerA.com' },
-        { name: 'Amplitude', endpoint: 'https://providerB.com' }
+        { name: 'Astar', endpoint: 'https://providerA.com' },
+        { name: 'Astar', endpoint: 'https://providerB.com' }
       ]
     })
     expect(result.providers).toHaveLength(2)

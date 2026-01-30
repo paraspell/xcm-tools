@@ -9,7 +9,7 @@ import { getChain } from '../src'
 
 const supportsOnlyNativeAsset: TChain[] = ['Nodle', 'Phala']
 
-const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Amplitude', 'Pendulum']
+const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Pendulum']
 
 export const doesNotSupportParaToRelay: TChain[] = [
   'Peaq',

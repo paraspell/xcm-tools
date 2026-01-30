@@ -13,7 +13,7 @@ export default defineConfig(
   {
     settings: {
       react: {
-        version: "19.2.3",
+        version: "19.2.4",
       },
     },
   },
@@ -134,5 +134,5 @@ export default defineConfig(
     rules: {
       "no-restricted-syntax": "off",
     },
-  }
+  },
 );

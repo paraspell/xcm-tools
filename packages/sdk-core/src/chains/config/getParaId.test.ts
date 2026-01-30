@@ -20,7 +20,7 @@ describe('getParaId', () => {
   })
 
   it('should return the correct paraId for another valid chain', () => {
-    const mockChain: TChain = 'Amplitude'
+    const mockChain: TChain = 'Astar'
     const mockConfig = { paraId: 2015 } as TChainConfig
     vi.mocked(getChainConfig).mockReturnValue(mockConfig)
 
