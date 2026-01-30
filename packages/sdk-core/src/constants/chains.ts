@@ -2,7 +2,6 @@ import Acala from '../chains/supported/Acala'
 import Ajuna from '../chains/supported/Ajuna'
 import AjunaPaseo from '../chains/supported/AjunaPaseo'
 import Altair from '../chains/supported/Altair'
-import Amplitude from '../chains/supported/Amplitude'
 import AssetHubKusama from '../chains/supported/AssetHubKusama'
 import AssetHubPaseo from '../chains/supported/AssetHubPaseo'
 import AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
@@ -112,7 +111,6 @@ export const chains = <TApi, TRes>() => ({
   CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
   Encointer: new Encointer<TApi, TRes>(),
   Altair: new Altair<TApi, TRes>(),
-  Amplitude: new Amplitude<TApi, TRes>(),
   Basilisk: new Basilisk<TApi, TRes>(),
   BifrostKusama: new BifrostKusama<TApi, TRes>(),
   CrustShadow: new CrustShadow<TApi, TRes>(),

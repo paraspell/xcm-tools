@@ -9,6 +9,7 @@ import {
   SUBSTRATE_CHAINS,
   TChain,
   TSendBaseOptions,
+  TSendBaseOptionsWithSenderAddress,
   TSubstrateChain,
 } from '@paraspell/sdk';
 
@@ -26,6 +27,18 @@ import {
 @Injectable()
 export class XTransferService {
   private async executeWithBuilder<T>(
+    transfer: XTransferDtoWSenderAddress,
+    executor: (
+      finalBuilder: GeneralBuilder<TSendBaseOptionsWithSenderAddress>,
+    ) => Promise<T>,
+  ): Promise<T> {
+    const { senderAddress } = transfer;
+    return this.executeWithBuilderOptionalSender(transfer, (finalBuilder) =>
+      executor(finalBuilder.senderAddress(senderAddress)),
+    );
+  }
+
+  private async executeWithBuilderOptionalSender<T>(
     transfer: XTransferDto,
     executor: (
       finalBuilder: ReturnType<typeof this.buildXTransfer>,
@@ -109,8 +122,11 @@ export class XTransferService {
       .currency(currency)
       .feeAsset(feeAsset)
       .address(address)
-      .ahAddress(ahAddress)
-      .senderAddress(senderAddress as string);
+      .ahAddress(ahAddress);
+
+    if (senderAddress) {
+      finalBuilder = finalBuilder.senderAddress(senderAddress);
+    }
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
@@ -123,7 +139,7 @@ export class XTransferService {
     return finalBuilder;
   }
 
-  dryRun(transfer: XTransferDto) {
+  dryRun(transfer: XTransferDtoWSenderAddress) {
     return this.executeWithBuilder(transfer, (builder) => builder.dryRun());
   }
 
@@ -136,13 +152,11 @@ export class XTransferService {
   }
 
   getXcmFee(transfer: GetXcmFeeDto) {
-    return this.executeWithBuilder(transfer as XTransferDto, (builder) =>
-      builder.getXcmFee(),
-    );
+    return this.executeWithBuilder(transfer, (builder) => builder.getXcmFee());
   }
 
   getOriginXcmFee(transfer: GetXcmFeeDto) {
-    return this.executeWithBuilder(transfer as XTransferDto, (builder) =>
+    return this.executeWithBuilder(transfer, (builder) =>
       builder.getOriginXcmFee(),
     );
   }
@@ -160,11 +174,14 @@ export class XTransferService {
   }
 
   generateXcmCall(transfer: XTransferDto) {
-    return this.executeWithBuilder(transfer, async (finalBuilder) => {
-      const tx = await finalBuilder.build();
-      const encoded = await tx.getEncodedData();
-      return encoded.asHex();
-    });
+    return this.executeWithBuilderOptionalSender(
+      transfer,
+      async (finalBuilder) => {
+        const tx = await finalBuilder.build();
+        const encoded = await tx.getEncodedData();
+        return encoded.asHex();
+      },
+    );
   }
 
   signAndSubmit(transfer: SignAndSubmitDto) {

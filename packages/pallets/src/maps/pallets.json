@@ -69,7 +69,7 @@
     "otherAssets": ["Assets"]
   },
   "BifrostPolkadot": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -78,10 +78,6 @@
       {
         "name": "PolkadotXcm",
         "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 70
       },
       {
         "name": "Tokens",
@@ -296,33 +292,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Tokens", "OrmlTokens"]
-  },
-  "Amplitude": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "Currencies",
-        "index": 52
-      },
-      {
-        "name": "Tokens",
-        "index": 53
-      },
-      {
-        "name": "XTokens",
-        "index": 54
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Currencies", "Tokens"]
   },
   "Basilisk": {
     "defaultPallet": "XTokens",
@@ -1220,7 +1189,7 @@
     "otherAssets": ["Assets"]
   },
   "BifrostPaseo": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -1229,10 +1198,6 @@
       {
         "name": "PolkadotXcm",
         "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 70
       },
       {
         "name": "Tokens",

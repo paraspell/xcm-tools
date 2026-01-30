@@ -8750,82 +8750,6 @@
       }
     ]
   },
-  "Amplitude": {
-    "relaychainSymbol": "KSM",
-    "nativeAssetSymbol": "AMPE",
-    "isEVM": false,
-    "ss58Prefix": 0,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "AMPE",
-        "isNative": true,
-        "decimals": 12,
-        "existentialDeposit": "1000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2124
-              }
-            ]
-          }
-        }
-      },
-      {
-        "assetId": "2",
-        "symbol": "PICA",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2087
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "1",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "0",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "1000"
-      }
-    ]
-  },
   "Basilisk": {
     "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
@@ -16330,6 +16254,32 @@
         }
       },
       {
+        "symbol": "USDC",
+        "assetId": "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+        "decimals": 6,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 11155111
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "eFRQCY",
         "assetId": "0x72c610e05eaafcdf1fa7a2da15374ee90edb1620",
         "decimals": 12,
@@ -16383,6 +16333,33 @@
       },
       {
         "symbol": "WND",
+        "assetId": "0xb8a0f2703ac6bdd352096c90c2945a097e8f4055",
+        "decimals": 12,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 11155111
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xb8a0f2703ac6bdd352096c90c2945a097e8f4055"
+                }
+              }
+            ]
+          }
+        },
+        "alias": "WND1"
+      },
+      {
+        "symbol": "WND",
         "assetId": "0xf50fb50d65c8c1f6c72e4d8397c984933afc8f7e",
         "decimals": 12,
         "existentialDeposit": "1",
@@ -16405,7 +16382,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "WND2"
       }
     ]
   },

@@ -42,7 +42,6 @@ export const PARACHAINS = [
   'CoretimeKusama',
   'Encointer',
   'Altair',
-  'Amplitude',
   'Basilisk',
   'BifrostKusama',
   'CrustShadow',

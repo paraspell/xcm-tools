@@ -14,7 +14,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Ajuna: ['assets.metadata'],
   AjunaPaseo: ['assets.metadata'],
   Altair: ['ormlAssetRegistry.metadata'],
-  Amplitude: ['assetRegistry.metadata'],
   Astar: ['assets.metadata'],
   AssetHubKusama: ['assets.metadata'],
   AssetHubPaseo: ['assets.metadata'],

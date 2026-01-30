@@ -41,7 +41,6 @@ import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
-import { fetchOtherAssetsAmplitude } from './fetchAmplitudeAssets'
 import { fetchNativeAssetsCurio, fetchOtherAssetsCurio } from './fetchCurioAssets'
 import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
 
@@ -274,10 +273,6 @@ const fetchOtherAssets = async (
 
   if (chain === 'Acala' || chain === 'Karura') {
     otherAssets = await fetchAcalaForeignAssets(api, query)
-  }
-
-  if (chain === 'Amplitude') {
-    otherAssets = await fetchOtherAssetsAmplitude(api, query)
   }
 
   if (chain === 'Curio') {

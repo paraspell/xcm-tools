@@ -149,7 +149,6 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -170,7 +169,6 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -187,7 +185,6 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -205,7 +202,6 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -369,7 +365,10 @@ describe('XTransferService', () => {
 
   describe('dryRun', () => {
     it('returns SDK dry-run result', async () => {
-      const dto: XTransferDto = { ...xTransferDto, senderAddress: 'alice' };
+      const dto: XTransferDtoWSenderAddress = {
+        ...xTransferDto,
+        senderAddress: 'alice',
+      };
 
       const result = await service.dryRun(dto);
 
@@ -518,7 +517,6 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -556,7 +554,6 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -582,7 +579,6 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.to).toHaveBeenCalledWith('Acala');
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -819,7 +815,6 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(from);
       expect(builderMock.to).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
