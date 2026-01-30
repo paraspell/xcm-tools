@@ -365,6 +365,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     setAccounts([]);
     setInjectedExtension(undefined);
     setExtensionInLocalStorage(undefined);
+    setSelectedDotWallet(undefined);
     localStorage.removeItem(STORAGE_ADDRESS_KEY);
   };
 
