@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.4.0...xcm-api-v12.5.0) (2026-01-30)
+
+
+### Build System
+
+* **xcm-api,visualizer-be:** Update to Prisma v7 📦 ([ea6f23c](https://github.com/paraspell/xcm-tools/commit/ea6f23ca4eb5935d9ad930d01cd467d6bee21866))
+
 ## [12.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.3.0...xcm-api-v12.4.0) (2026-01-22)
 
 
