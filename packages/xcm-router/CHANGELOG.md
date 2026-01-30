@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.4.0...xcm-router-v12.5.0) (2026-01-30)
+
+
+### Features
+
+* **xcm-router:** Add missing AssetHub dexes ([b16264f](https://github.com/paraspell/xcm-tools/commit/b16264f9ee82db44d5809a8783595350cb044b84))
+* **xcm-router:** Allow single element aray in exchange() ([e722b57](https://github.com/paraspell/xcm-tools/commit/e722b57364a85d26fdeef45299a6fb930963a720))
+
+
+### Bug Fixes
+
+* **xcm-router:** Use TAmount type for amount 🔧 ([5978673](https://github.com/paraspell/xcm-tools/commit/5978673a5c700a4f43b76d9db400e7c683a62acd))
+
 ## [12.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.3.0...xcm-router-v12.4.0) (2026-01-22)
 
 
