@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.1...xcm-api-v12.6.0) (2026-01-30)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.0...xcm-api-v12.5.1) (2026-01-30)
 
 
