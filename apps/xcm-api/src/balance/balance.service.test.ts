@@ -104,5 +104,20 @@ describe('BalanceService', () => {
       );
       expect(result).toEqual(edMock);
     });
+
+    it('should throw BadRequestException for InvalidCurrencyError', () => {
+      const validChain = 'valid-chain';
+      const params: ExistentialDepositDto = {
+        currency: { symbol: 'INVALID_CURRENCY_XYZ' },
+      };
+
+      vi.mocked(getExistentialDeposit).mockImplementation(() => {
+        throw new InvalidCurrencyError('Invalid currency');
+      });
+
+      expect(() => service.getExistentialDeposit(validChain, params)).toThrow(
+        BadRequestException,
+      );
+    });
   });
 });
