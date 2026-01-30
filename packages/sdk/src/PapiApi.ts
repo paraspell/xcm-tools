@@ -512,11 +512,15 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const hasLocation = resolvedFeeAsset.asset.location
 
+    const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ['Astar']
+
     if (
       (hasXcmPaymentApiSupport(chain) &&
         result.value.local_xcm &&
         hasLocation &&
-        (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
+        (feeAsset ||
+          USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
+          (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
       const getPaymentInfoWeight = async () => {

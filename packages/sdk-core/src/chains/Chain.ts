@@ -279,12 +279,6 @@ abstract class Chain<TApi, TRes> {
         )
       }
 
-      if (this.chain === 'Astar' && assetNeedsTypeThen) {
-        throw new FeatureTemporarilyDisabledError(
-          'Astar system asset transfers are temporarily disabled'
-        )
-      }
-
       const isAHOrigin = this.chain.includes('AssetHub')
       const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
 
