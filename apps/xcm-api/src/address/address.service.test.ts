@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TSubstrateChain } from '@paraspell/sdk';
@@ -8,7 +9,6 @@ import {
 } from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BadRequestException } from '@nestjs/common';
 
 import * as utils from '../utils.js';
 import { AddressService } from './address.service.js';
