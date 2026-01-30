@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.5.0...sdk-pjs-v12.5.1) (2026-01-30)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([0da5837](https://github.com/paraspell/xcm-tools/commit/0da5837c2b424274bf4dfa53afa6dfde5c7e6be6))
+
 ## [12.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.4.0...sdk-pjs-v12.5.0) (2026-01-30)
 
 
