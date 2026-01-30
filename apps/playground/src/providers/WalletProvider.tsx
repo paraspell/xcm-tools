@@ -185,15 +185,17 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
             showErrorNotification('Previously connected extension not found');
             setAccounts([]);
             setSelectedAccount(undefined);
+            setIsInitialized(true);
             return;
           }
 
           const selectedWallet = dotWallets.find(
             (w) => w.name === savedExtensionName,
-          ) as Wallet;
-
-          void connectDotWallet(selectedWallet);
-          setSelectedDotWallet(selectedWallet);
+          );
+          if (selectedWallet) {
+            void connectDotWallet(selectedWallet);
+            setSelectedDotWallet(selectedWallet);
+          }
         }
       }
       setIsInitialized(true);
@@ -275,9 +277,9 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     } else {
       let account = undefined;
       if (injectedExtension) {
-        //For speacial EVM wallet injection in Router
+        //For special EVM wallet injection in Router
         account = injectedExtension
-          ?.getAccounts()
+          .getAccounts()
           .find((account) => account.address === selectedAccount.address);
       } else {
         account = dotAccounts.find(
@@ -294,7 +296,6 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
 
   const initPapiExtensions = () => {
     const extensions = dotWallets.map((wallet) => wallet.name);
-    // console.log('extensions', extensions);
 
     if (!extensions.length) {
       showErrorNotification('No wallet extension found, install it to connect');
@@ -370,6 +371,11 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   const selectPapiWallet = async (walletName: string) => {
     try {
       const selectedWallet = dotWallets.find((w) => w.name === walletName);
+
+      if (!selectedWallet) {
+        throw new Error();
+      }
+
       await connectDotWallet(selectedWallet);
       setSelectedDotWallet(selectedWallet);
       setExtensionInLocalStorage(walletName);
