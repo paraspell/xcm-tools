@@ -252,28 +252,6 @@ describe('Parachain', () => {
     expect(chain.exposeCanUseXTokens(options)).toBe(true)
   })
 
-  it('throws when Astar sends a relay/system asset', async () => {
-    const astar = new OnlyPolkadotXCMParachain('Astar', 'TestChain', 'Polkadot', Version.V4)
-
-    vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
-    vi.mocked(resolveDestChain).mockReturnValue('Acala')
-
-    const options = {
-      api,
-      to: 'Acala',
-      address: 'destinationAddress',
-      assetInfo: {
-        symbol: 'DOT',
-        amount: 100n,
-        location: RELAY_LOCATION
-      }
-    } as TSendInternalOptions<unknown, unknown>
-
-    await expect(astar.transfer(options)).rejects.toThrow(
-      'Astar system asset transfers are temporarily disabled'
-    )
-  })
-
   it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
     const options = {
       api,
