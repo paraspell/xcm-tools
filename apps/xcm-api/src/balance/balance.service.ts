@@ -30,6 +30,10 @@ export class BalanceService {
 
   getExistentialDeposit(chain: string, { currency }: ExistentialDepositDto) {
     validateChain(chain, CHAINS);
-    return getExistentialDeposit(chain as TChain, currency);
+    try {
+      return getExistentialDeposit(chain as TChain, currency);
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 }
