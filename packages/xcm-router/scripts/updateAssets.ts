@@ -3,6 +3,7 @@ import { EXCHANGE_CHAINS } from '../src/consts';
 import { createExchangeInstance } from '../src/exchanges/ExchangeChainFactory';
 import type { TDexConfig, TAssetsRecord, TExchangeChain } from '../src/types';
 import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
+import { addAliasesToDuplicateSymbols } from './addAliases';
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
@@ -53,10 +54,12 @@ void (async () => {
     }
   }
 
-  const merged = {
+  const merged: TAssetsRecord = {
     ...assetsMap,
     ...record,
   };
+
+  addAliasesToDuplicateSymbols(merged);
 
   writeJsonSync('./src/consts/assets.json', merged);
   console.log('Assets update complete!');

@@ -35,18 +35,14 @@ export const getExchangeAsset = (
 
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
-    if (isSymbolSpecifier(currency.symbol)) {
-      throw new UnsupportedOperationError(
-        'Cannot use currency specifiers when using exchange auto select',
-      );
-    }
+    if (!isSymbolSpecifier(currency.symbol)) {
+      const matches = findBestMatches(assets, currency.symbol);
 
-    const matches = findBestMatches(assets, currency.symbol);
-
-    if (matches.length > 1 && throwOnDuplicateSymbol) {
-      throw new RoutingResolutionError(
-        `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by location.`,
-      );
+      if (matches.length > 1 && throwOnDuplicateSymbol) {
+        throw new RoutingResolutionError(
+          `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by location.`,
+        );
+      }
     }
 
     asset = findAssetInfoBySymbol(null, otherAssets, nativeAssets, currency.symbol);
