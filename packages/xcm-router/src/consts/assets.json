@@ -94,7 +94,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC1"
       },
       {
         "symbol": "PINK",
@@ -275,7 +276,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC2"
       },
       {
         "symbol": "tBTC",
@@ -556,7 +558,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDt1"
       },
       {
         "symbol": "BILL",
@@ -598,7 +601,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDt2"
       },
       {
         "symbol": "USDC",
@@ -718,7 +722,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDt3"
       },
       {
         "symbol": "TEER",
@@ -984,7 +989,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC1"
       },
       {
         "symbol": "USDC",
@@ -1005,7 +1011,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC2"
       },
       {
         "symbol": "Ether",
@@ -1064,7 +1071,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC3"
       },
       {
         "symbol": "aUSDC",
@@ -1106,7 +1114,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDT1"
       },
       {
         "symbol": "aUSDT",
@@ -1697,7 +1706,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC2"
       },
       {
         "symbol": "WUD",
@@ -2044,7 +2054,8 @@
       {
         "symbol": "2-Pool",
         "decimals": 18,
-        "assetId": "102"
+        "assetId": "102",
+        "alias": "2-Pool2"
       },
       {
         "symbol": "SUI",
@@ -2185,7 +2196,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDT3"
       },
       {
         "symbol": "4-Pool",
@@ -2216,7 +2228,8 @@
       {
         "symbol": "2-Pool",
         "decimals": 18,
-        "assetId": "101"
+        "assetId": "101",
+        "alias": "2-Pool1"
       },
       {
         "symbol": "3-Pool-MRL",
@@ -2246,7 +2259,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDC1"
       },
       {
         "symbol": "USDT",
@@ -2271,7 +2285,8 @@
               }
             ]
           }
-        }
+        },
+        "alias": "USDT2"
       },
       {
         "symbol": "wstETH",

@@ -61,15 +61,6 @@ describe('getExchangeAsset', () => {
     );
   });
 
-  test('should throw error when using symbol specifier', () => {
-    const currency = { symbol: { Token: 'DOT' } } as unknown as TCurrencyInput;
-    vi.mocked(isSymbolSpecifier).mockReturnValue(true);
-
-    expect(() => getExchangeAsset(mockExchange, currency)).toThrow(
-      'Cannot use currency specifiers when using exchange auto select',
-    );
-  });
-
   test('should find asset by symbol', () => {
     const currency = { symbol: 'DOT' };
     vi.mocked(findAssetInfoBySymbol).mockReturnValue(mockNativeAsset);

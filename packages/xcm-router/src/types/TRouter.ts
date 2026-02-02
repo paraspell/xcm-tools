@@ -199,6 +199,7 @@ export type TRouterAsset = {
   decimals: number;
   assetId?: string;
   location?: TLocation;
+  alias?: string;
 };
 
 export type TPairKey = string | object;
