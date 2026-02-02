@@ -1743,6 +1743,21 @@
         "decimals": 12
       },
       {
+        "symbol": "EWT",
+        "decimals": 18,
+        "assetId": "252525",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3345
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "SUB",
         "decimals": 10,
         "assetId": "24",
@@ -1773,21 +1788,6 @@
                   "length": 4,
                   "data": "0x414a554e00000000000000000000000000000000000000000000000000000000"
                 }
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "EWT",
-        "decimals": 18,
-        "assetId": "252525",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3345
               }
             ]
           }
