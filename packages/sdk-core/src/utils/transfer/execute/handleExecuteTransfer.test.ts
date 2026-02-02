@@ -88,11 +88,10 @@ describe('handleExecuteTransfer', () => {
 
     const dryRunResult = {
       origin: { success: true, fee: 1000n },
-      hops: [{ chain: 'IntermediateChain', result: { success: true, fee: 1000n } }]
+      hops: [{ chain: 'IntermediateChain', result: { success: true, fee: 1600n } }]
     } as unknown as TDryRunResult
     vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
 
-    // origin fee: 1000, padded by 40% = 1400
     // reserve fee: 1000, padded by 40% = 1400
     // total = 2800
 
