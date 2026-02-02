@@ -1,5 +1,3 @@
-import { isAssetEqual } from '@paraspell/assets'
-
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
@@ -109,9 +107,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
   const reserveFee = padValueBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
 
-  checkAmount(
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee
-  )
+  checkAmount(reserveFee)
 
   const xcm = await createDirectExecuteXcm({
     ...internalOptions,
