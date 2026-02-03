@@ -12,7 +12,7 @@ import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions } from '../types'
+import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from '../types'
 import { isEthersSigner } from '../utils'
 import { createContext } from './createContext'
 import { transferEthToPolkadot } from './ethTransfer'
@@ -90,8 +90,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -112,8 +112,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if provider is not provided', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
@@ -127,8 +127,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if signer is not an ethers signer', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -147,8 +147,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws an error if currency is multiasset', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: [],
       from: 'Ethereum',
@@ -166,8 +166,8 @@ describe('transferEthToPolkadot', () => {
 
   it('throws an error if trying to override location', async () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: {
         location: {
@@ -224,8 +224,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -269,8 +269,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -312,8 +312,8 @@ describe('transferEthToPolkadot', () => {
       sendTransaction: vi.fn()
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',

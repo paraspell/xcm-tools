@@ -29,12 +29,12 @@ const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   return pallets[0]
 }
 
-const createMintTxs = <TApi, TRes>(
+const createMintTxs = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   asset: WithAmount<TAssetInfo>,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes, TSigner>
 ): Promise<TSetBalanceRes> => {
   const nativePallet = getNativeAssetsPallet(chain)
   const otherPallets = getOtherAssetsPallets(chain)
@@ -48,25 +48,25 @@ const createMintTxs = <TApi, TRes>(
   return palletInstance.mint(address, asset, balance, chain, api)
 }
 
-const createRequiredMintTxs = <TApi, TRes>(
+const createRequiredMintTxs = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   asset: TAssetInfo,
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes, TSigner>
 ) => {
   const amount = parseUnits(amountHuman, asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
-const createOptionalMintTxs = <TApi, TRes>(
+const createOptionalMintTxs = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   currency: TCurrencyCore,
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes, TSigner>
 ) => {
   const asset = findAssetInfo(chain, currency, null)
   if (!asset) return null
@@ -74,8 +74,8 @@ const createOptionalMintTxs = <TApi, TRes>(
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
-const resultToExtrinsics = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+const resultToExtrinsics = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   address: string,
   { assetStatusTx, balanceTx }: TSetBalanceRes
 ): TRes[] => {
@@ -131,8 +131,8 @@ const mintBonusForSent = (
     : 0n
 }
 
-export const wrapTxBypass = async <TApi, TRes>(
-  dryRunOptions: TDryRunBypassOptions<TApi, TRes>,
+export const wrapTxBypass = async <TApi, TRes, TSigner>(
+  dryRunOptions: TDryRunBypassOptions<TApi, TRes, TSigner>,
   options: TBypassOptions = {
     mintFeeAssets: true,
     sentAssetMintMode: 'bypass'

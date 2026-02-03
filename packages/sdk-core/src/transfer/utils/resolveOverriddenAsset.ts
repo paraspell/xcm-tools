@@ -16,8 +16,8 @@ import type { TSendOptions } from '../../types'
 import { abstractDecimals, assertHasLocation, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
-export const resolveOverriddenAsset = <TApi, TRes>(
-  options: TSendOptions<TApi, TRes>,
+export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
+  options: TSendOptions<TApi, TRes, TSigner>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
   resolvedFeeAsset: TAssetInfo | undefined

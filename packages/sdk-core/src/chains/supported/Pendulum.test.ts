@@ -9,20 +9,20 @@ import type Pendulum from './Pendulum'
 vi.mock('../../pallets/xTokens')
 
 describe('Pendulum', () => {
-  let chain: Pendulum<unknown, unknown>
+  let chain: Pendulum<unknown, unknown, unknown>
 
   const mockInput = {
     asset: { symbol: 'PEN', assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   const mockDOTInput = {
     asset: { symbol: 'DOT', assetId: '123', amount: 100n },
     scenario: 'ParaToPara'
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Pendulum'>('Pendulum')
+    chain = getChain<unknown, unknown, unknown, 'Pendulum'>('Pendulum')
     vi.spyOn(chain, 'getNativeAssetSymbol').mockReturnValue('PEN')
   })
 
@@ -44,7 +44,7 @@ describe('Pendulum', () => {
     const foreignAssetInput = {
       asset: { symbol: 'USDC', assetId: '456', amount: 200n },
       scenario: 'ParaToPara'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     chain.transferXTokens(foreignAssetInput)
 

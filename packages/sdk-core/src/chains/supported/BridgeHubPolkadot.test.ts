@@ -10,15 +10,15 @@ import type BridgeHubPolkadot from './BridgeHubPolkadot'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('BridgeHubPolkadot', () => {
-  let chain: BridgeHubPolkadot<unknown, unknown>
+  let chain: BridgeHubPolkadot<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'DOT', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'BridgeHubPolkadot'>('BridgeHubPolkadot')
+    chain = getChain<unknown, unknown, unknown, 'BridgeHubPolkadot'>('BridgeHubPolkadot')
   })
 
   it('should initialize with correct values', () => {
@@ -33,7 +33,7 @@ describe('BridgeHubPolkadot', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       destChain: 'Moonbeam'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(
       new ScenarioNotSupportedError(
@@ -47,7 +47,7 @@ describe('BridgeHubPolkadot', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       destChain: 'AssetHubPolkadot'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(validInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(validInput)

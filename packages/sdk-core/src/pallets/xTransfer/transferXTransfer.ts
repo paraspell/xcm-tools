@@ -11,8 +11,8 @@ import { createAsset, maybeOverrideAsset } from '../../utils/asset'
 import { ERR_LOCATION_DEST_NOT_SUPPORTED } from '../xTokens'
 import { determineDestWeight } from './utils/determineDestWeight'
 
-export const transferXTransfer = <TApi, TRes>(
-  input: TXTransferTransferOptions<TApi, TRes>
+export const transferXTransfer = <TApi, TRes, TSigner>(
+  input: TXTransferTransferOptions<TApi, TRes, TSigner>
 ): TRes => {
   const {
     api,

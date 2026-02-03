@@ -41,7 +41,7 @@ const mockApi = {
   init: vi.fn(),
   getXcmWeight: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
   api: mockApi,
@@ -56,7 +56,7 @@ const baseOptions = {
   senderAddress: 'alice',
   recipientAddress: 'bob',
   calculateMinAmountOut: vi.fn().mockResolvedValue(1500n)
-} as unknown as TCreateSwapXcmOptions<unknown, unknown>
+} as unknown as TCreateSwapXcmOptions<unknown, unknown, unknown>
 
 const mockDryRunResult = (success = true, includeOrigin = false) =>
   ({

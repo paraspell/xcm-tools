@@ -7,12 +7,15 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class CoretimeKusama<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class CoretimeKusama<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('CoretimeKusama', 'kusamaCoretime', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario } = input
 
     if (scenario === 'ParaToPara') {

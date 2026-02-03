@@ -10,15 +10,15 @@ import type Collectives from './Collectives'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Collectives', () => {
-  let chain: Collectives<unknown, unknown>
+  let chain: Collectives<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'DOT', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Collectives'>('Collectives')
+    chain = getChain<unknown, unknown, unknown, 'Collectives'>('Collectives')
   })
 
   it('should initialize with correct values', () => {
@@ -33,7 +33,7 @@ describe('Collectives', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       destChain: 'Moonbeam'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(ScenarioNotSupportedError)
   })
@@ -43,7 +43,7 @@ describe('Collectives', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       destChain: 'AssetHubPolkadot'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(validInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(validInput)

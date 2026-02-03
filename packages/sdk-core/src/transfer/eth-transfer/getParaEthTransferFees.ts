@@ -1,8 +1,8 @@
 import type { IPolkadotApi } from '../../api'
 import { ASSET_HUB_EXECUTION_FEE } from '../../constants'
 
-export const getParaEthTransferFees = async <TApi, TRes>(
-  ahApi: IPolkadotApi<TApi, TRes>,
+export const getParaEthTransferFees = async <TApi, TRes, TSigner>(
+  ahApi: IPolkadotApi<TApi, TRes, TSigner>,
   shouldDisconnect = true
 ): Promise<[bigint, bigint]> => {
   const DEFAULT_FEE = 2_750_872_500_000n

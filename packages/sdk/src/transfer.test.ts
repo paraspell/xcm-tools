@@ -15,7 +15,7 @@ import {
   handleSwapExecuteTransfer,
   send
 } from './transfer'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
 
 vi.mock('@paraspell/sdk-core', async importActual => ({
   ...(await importActual()),
@@ -33,7 +33,7 @@ describe('Send function using PapiApi', () => {
 
   const options = {
     api: mockApi
-  } as Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api'> & {
+  } as Omit<TSendOptions<TPapiApi, TPapiTransaction, TPapiSigner>, 'api'> & {
     api: TPapiApiOrUrl
   }
 

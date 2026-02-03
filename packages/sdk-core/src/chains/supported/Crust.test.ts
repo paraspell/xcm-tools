@@ -12,7 +12,7 @@ import type Crust from './Crust'
 vi.mock('../../pallets/xTokens')
 
 describe('Crust', () => {
-  let chain: Crust<unknown, unknown>
+  let chain: Crust<unknown, unknown, unknown>
 
   const mockInput = {
     asset: {
@@ -20,10 +20,10 @@ describe('Crust', () => {
       isNative: true,
       amount: 100n
     }
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Crust'>('Crust')
+    chain = getChain<unknown, unknown, unknown, 'Crust'>('Crust')
   })
 
   it('should initialize with correct values', () => {
@@ -46,7 +46,7 @@ describe('Crust', () => {
         amount: 100n,
         assetId: '123'
       }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     chain.transferXTokens(input)
     expect(transferXTokens).toHaveBeenCalledWith(input, { OtherReserve: 123n } as TReserveAsset)
@@ -67,14 +67,14 @@ describe('Crust', () => {
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     it('should throw an error when asset is not a foreign asset', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -84,7 +84,7 @@ describe('Crust', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -94,7 +94,7 @@ describe('Crust', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -117,7 +117,7 @@ describe('Crust', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

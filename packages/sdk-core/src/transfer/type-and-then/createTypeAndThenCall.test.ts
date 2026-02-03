@@ -28,7 +28,7 @@ vi.mock('../../utils')
 vi.mock('../getBridgeStatus')
 
 describe('createTypeAndThenCall', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = Version.V5
   const mockSerializedCall: TSerializedExtrinsics = {
@@ -70,7 +70,7 @@ describe('createTypeAndThenCall', () => {
       currency: { amount: 1000n },
       feeCurrency: undefined
     }
-  } as TTypeAndThenCallContext<unknown, unknown>
+  } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -275,7 +275,7 @@ describe('createTypeAndThenCall', () => {
         ...mockContext.options,
         overriddenAsset: overriddenAssets
       }
-    } as TTypeAndThenCallContext<unknown, unknown>
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockClear()
     vi.mocked(localizeLocation).mockClear()
@@ -308,7 +308,7 @@ describe('createTypeAndThenCall', () => {
         ...mockContext.options,
         overriddenAsset: overriddenLocation
       }
-    } as TTypeAndThenCallContext<unknown, unknown>
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockClear()
     vi.mocked(localizeLocation).mockClear()

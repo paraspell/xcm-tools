@@ -9,17 +9,17 @@ import type Moonbeam from './Moonbeam'
 
 vi.mock('../../pallets/polkadotXcm')
 
-type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
-  transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
+type WithTransferToEthereum = Moonbeam<unknown, unknown, unknown> & {
+  transferToEthereum: Moonbeam<unknown, unknown, unknown>['transferToEthereum']
 }
 
 describe('Moonbeam', () => {
-  let chain: Moonbeam<unknown, unknown>
+  let chain: Moonbeam<unknown, unknown, unknown>
 
   const api = {
     createAccountId: vi.fn(),
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockInput = {
     api,
@@ -29,11 +29,11 @@ describe('Moonbeam', () => {
       symbol: 'GLMR',
       amount: 100n
     }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    chain = getChain<unknown, unknown, 'Moonbeam'>('Moonbeam')
+    chain = getChain<unknown, unknown, unknown, 'Moonbeam'>('Moonbeam')
   })
 
   it('should initialize with correct values', () => {
@@ -57,7 +57,7 @@ describe('Moonbeam', () => {
       ...mockInput,
       destination: 'Ethereum',
       scenario: 'ParaToPara'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(inputEth)
 
@@ -70,7 +70,7 @@ describe('Moonbeam', () => {
   describe('transferLocalNonNativeAsset', () => {
     it('should throw error', () => {
       expect(() =>
-        chain.transferLocalNonNativeAsset({} as TTransferLocalOptions<unknown, unknown>)
+        chain.transferLocalNonNativeAsset({} as TTransferLocalOptions<unknown, unknown, unknown>)
       ).toThrow(`${chain.chain} local transfers are temporarily disabled`)
     })
   })

@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type CoretimeWestend from './CoretimeWestend'
 
 describe('CoretimeWestend', () => {
-  let chain: CoretimeWestend<unknown, unknown>
+  let chain: CoretimeWestend<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'CoretimeWestend'>('CoretimeWestend')
+    chain = getChain<unknown, unknown, unknown, 'CoretimeWestend'>('CoretimeWestend')
   })
 
   it('should initialize with correct values', () => {

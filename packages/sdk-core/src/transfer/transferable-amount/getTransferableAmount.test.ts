@@ -24,7 +24,7 @@ describe('getTransferableAmount', () => {
   const mockApi = {
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}) as unknown)
@@ -37,7 +37,7 @@ describe('getTransferableAmount', () => {
     currency: { symbol: 'DOT', amount: 1000n },
     version: Version.V5,
     buildTx
-  } as TGetTransferableAmountOptions<unknown, unknown>
+  } as TGetTransferableAmountOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()

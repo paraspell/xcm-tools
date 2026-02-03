@@ -106,7 +106,7 @@ describe('transferMoonbeamToEth', () => {
     address: '0xmockedAddress',
     ahAddress: '0xmockedAhAddress',
     currency: { symbol: 'WETH', amount: 1000 }
-  } as unknown as TEvmBuilderOptions<unknown, unknown>
+  } as unknown as TEvmBuilderOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

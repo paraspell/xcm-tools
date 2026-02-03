@@ -57,7 +57,7 @@ const getFailureInfo = (
   return {}
 }
 
-export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean>({
+export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extends boolean>({
   api,
   tx,
   origin,
@@ -71,7 +71,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   swapConfig,
   useRootOrigin,
   skipReverseFeeCalculation
-}: TGetXcmFeeInternalOptions<TApi, TRes, TDisableFallback>): Promise<
+}: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
@@ -174,7 +174,9 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
     }
   }
 
-  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TXcmFeeHopResult> => {
+  const processHop = async (
+    params: HopProcessParams<TApi, TRes, TSigner>
+  ): Promise<TXcmFeeHopResult> => {
     const {
       api: hopApi,
       currentChain,

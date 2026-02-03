@@ -23,7 +23,7 @@ vi.mock('../unit')
 const makeApi = (cfg: TBuilderConfig<unknown>) =>
   ({
     getConfig: vi.fn(() => cfg)
-  }) as unknown as IPolkadotApi<unknown, unknown>
+  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
   api: makeApi({}),
@@ -32,7 +32,7 @@ const baseOptions = {
   senderAddress: 'SENDER',
   address: 'DEST',
   currency: { symbol: 'DOT', amount: '123' }
-} as TCreateTxsOptions<unknown, unknown>
+} as TCreateTxsOptions<unknown, unknown, unknown>
 
 describe('computeOverridenAmount', () => {
   beforeEach(() => {
@@ -114,7 +114,12 @@ describe('overrideTxAmount', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx: builtTx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptionsWithSenderAddress<unknown>
+    >
 
     const out = await overrideTxAmount(options, builder, '50')
 
@@ -137,7 +142,12 @@ describe('createTx', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx: realTx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptionsWithSenderAddress<unknown>
+    >
 
     const res = await createTx(baseOptions, builder, undefined)
 
@@ -154,7 +164,12 @@ describe('createTx', () => {
     const builder = {
       currency: vi.fn().mockReturnThis(),
       buildInternal: vi.fn().mockResolvedValue({ tx, options: {} })
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptionsWithSenderAddress<unknown>
+    >
 
     const res = await createTx(options, builder, '200')
 

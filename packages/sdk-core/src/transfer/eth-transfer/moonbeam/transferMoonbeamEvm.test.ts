@@ -24,7 +24,7 @@ vi.mock('../../../utils')
 const mockApi = {
   init: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 describe('transferMoonbeamEvm', () => {
   const mockViemContract = {
@@ -171,7 +171,7 @@ describe('transferMoonbeamEvm', () => {
         signer: mockSigner,
         address: mockAddress,
         currency: []
-      } as TEvmBuilderOptions<unknown, unknown>)
+      } as TEvmBuilderOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
   })
 
@@ -187,7 +187,7 @@ describe('transferMoonbeamEvm', () => {
           location: { type: 'Override', value: { parents: 1, interior: {} } },
           amount: 1000
         }
-      } as TEvmBuilderOptions<unknown, unknown>)
+      } as TEvmBuilderOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
   })
 })

@@ -11,10 +11,10 @@ import Heima from './Heima'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Heima', () => {
-  let chain: Heima<unknown, unknown>
+  let chain: Heima<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Heima'>('Heima')
+    chain = getChain<unknown, unknown, unknown, 'Heima'>('Heima')
   })
 
   it('should be instantiated correctly', () => {
@@ -29,7 +29,11 @@ describe('Heima', () => {
   })
 
   it('should not suppoert ParaToRelay scenario', () => {
-    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown,
+      unknown
+    >
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
@@ -37,7 +41,7 @@ describe('Heima', () => {
     const input = {
       scenario: 'ParaToPara',
       assetInfo: { symbol: 'XYZ' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
   })
 
@@ -45,7 +49,7 @@ describe('Heima', () => {
     const input = {
       scenario: 'ParaToPara',
       assetInfo: { symbol: 'HEI' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(input)
 

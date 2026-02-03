@@ -10,7 +10,10 @@ import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../ty
 import { assertHasLocation, createAsset } from '../../utils'
 import Chain from '../Chain'
 
-class Jamton<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Jamton<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }
@@ -20,7 +23,7 @@ class Jamton<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransf
     return asset.isNative ? { Native: assetId } : { ForeignAsset: assetId }
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { assetInfo, scenario, destination, version } = input
 
     if (assetInfo.isNative) return transferPolkadotXcm(input)

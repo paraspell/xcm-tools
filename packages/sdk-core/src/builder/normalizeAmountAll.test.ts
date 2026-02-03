@@ -9,7 +9,7 @@ import { normalizeAmountAll } from './normalizeAmountAll'
 
 vi.mock('../transfer')
 
-const mockApi = {} as IPolkadotApi<unknown, unknown>
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
   overrides: Partial<TSendBaseOptions<unknown>> = {}
@@ -34,7 +34,7 @@ describe('normalizeAmountAll', () => {
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
+    } as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown>>
 
     const options = createOptions()
 
@@ -82,7 +82,7 @@ describe('normalizeAmountAll', () => {
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
+    } as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown>>
 
     const options = createOptions({
       currency: { symbol: 'ACA', amount: AMOUNT_ALL } as TSendBaseOptions<unknown>['currency'],

@@ -14,7 +14,7 @@ import type Curio from './Curio'
 vi.mock('../../pallets/xTokens')
 
 describe('Curio', () => {
-  let chain: Curio<unknown, unknown>
+  let chain: Curio<unknown, unknown, unknown>
 
   const mockInput = {
     asset: {
@@ -22,12 +22,12 @@ describe('Curio', () => {
       assetId: '123',
       amount: 100n
     }
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
-  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Curio'>('Curio')
+    chain = getChain<unknown, unknown, unknown, 'Curio'>('Curio')
   })
 
   it('should initialize with correct values', () => {

@@ -14,7 +14,7 @@ vi.mock('../../../chains/config')
 describe('getDestinationLocation', () => {
   const mockApi = {
     accountToHex: vi.fn().mockReturnValue('abc123')
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   let mockDestination: TParachain
 

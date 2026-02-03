@@ -9,7 +9,7 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '@paraspell/sdk-core'
 
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
 /**
@@ -17,14 +17,15 @@ import { createPolkadotJsApiCall } from './utils'
  * @param options - The transfer options.
  * @returns An extrinsic to be signed and sent.
  */
-export const send = createPolkadotJsApiCall(sendImpl<TPjsApi, Extrinsic>)
+export const send = createPolkadotJsApiCall(sendImpl<TPjsApi, Extrinsic, TPjsSigner>)
 
-export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic>)
+export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic, TPjsSigner>)
 
-export const dryRunOrigin = createPolkadotJsApiCall(dryRunOriginImpl<TPjsApi, Extrinsic>)
-
+export const dryRunOrigin = createPolkadotJsApiCall(
+  dryRunOriginImpl<TPjsApi, Extrinsic, TPjsSigner>
+)
 export const transferEthToPolkadot = (
-  options: Omit<TPjsEvmBuilderOptions<TPjsApi, Extrinsic>, 'api'>
+  options: Omit<TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'>
 ) =>
   transferEthToPolkadotImpl({
     ...options,

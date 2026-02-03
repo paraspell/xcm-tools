@@ -17,7 +17,10 @@ import { type TForeignOrTokenAsset } from '../../types'
 import { assertSenderAddress } from '../../utils'
 import Chain from '../Chain'
 
-class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Acala<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Acala',
     info: string = 'acala',
@@ -27,7 +30,7 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -35,7 +38,9 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return false
   }
 
-  async transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+  async transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner>
+  ): Promise<TRes> {
     const { api, assetInfo: asset, address, balance, senderAddress, isAmountAll } = options
 
     const createTx = (amount: bigint) =>
@@ -61,7 +66,7 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return createTx(amount)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, balance, isAmountAll } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
@@ -86,7 +91,11 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
-  getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo): Promise<bigint> {
+  getBalance(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
     if (asset.symbol.toLowerCase() === 'lcdot') {
       throw new InvalidCurrencyError('LcDOT balance is not supported')
     }

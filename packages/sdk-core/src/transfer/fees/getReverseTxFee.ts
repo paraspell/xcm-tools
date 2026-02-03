@@ -18,7 +18,7 @@ const determineAddress = (
   return isAddress(address) ? senderAddress : address
 }
 
-export const getReverseTxFee = async <TApi, TRes>(
+export const getReverseTxFee = async <TApi, TRes, TSigner>(
   {
     api,
     origin,
@@ -26,7 +26,7 @@ export const getReverseTxFee = async <TApi, TRes>(
     senderAddress,
     address,
     skipReverseFeeCalculation
-  }: TGetReverseTxFeeOptions<TApi, TRes>,
+  }: TGetReverseTxFeeOptions<TApi, TRes, TSigner>,
   currencyInput: WithAmount<TCurrencyInput>
 ) => {
   if (skipReverseFeeCalculation) return 0n

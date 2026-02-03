@@ -20,8 +20,8 @@ import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getFailureInfo } from './getFailureInfo'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-export const dryRunInternal = async <TApi, TRes>(
-  options: TDryRunOptions<TApi, TRes>
+export const dryRunInternal = async <TApi, TRes, TSigner>(
+  options: TDryRunOptions<TApi, TRes, TSigner>
 ): Promise<TDryRunResult> => {
   const {
     api,
@@ -87,7 +87,9 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryModified
 
-  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TDryRunChainResult> => {
+  const processHop = async (
+    params: HopProcessParams<TApi, TRes, TSigner>
+  ): Promise<TDryRunChainResult> => {
     const {
       api: hopApi,
       currentChain,

@@ -30,8 +30,8 @@ export const createOriginLocation = (origin: TSubstrateChain, destination: TChai
   }
 }
 
-export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
-  options: TGetFeeForDestChainOptions<TApi, TRes>
+export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TGetFeeForDestChainOptions<TApi, TRes, TSigner>
 ): Promise<TDestXcmFeeDetail<TDisableFallback>> => {
   const {
     api,

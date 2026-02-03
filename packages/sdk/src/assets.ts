@@ -1,6 +1,6 @@
 import { claimAssets as claimAssetsImpl, getBalance as getBalanceImpl } from '@paraspell/sdk-core'
 
-import type { TPapiApi, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
 /**
@@ -8,14 +8,16 @@ import { createPapiApiCall } from './utils'
  *
  * @returns The asset balance as a bigint.
  */
-export const getBalance = createPapiApiCall(getBalanceImpl<TPapiApi, TPapiTransaction>)
+export const getBalance = createPapiApiCall(getBalanceImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
 
 /**
  * Claims assets from a parachain.
  *
  * @returns An extrinsic representing the claim transaction.
  */
-export const claimAssets = createPapiApiCall(claimAssetsImpl<TPapiApi, TPapiTransaction>)
+export const claimAssets = createPapiApiCall(
+  claimAssetsImpl<TPapiApi, TPapiTransaction, TPapiSigner>
+)
 
 export {
   findAssetInfo,

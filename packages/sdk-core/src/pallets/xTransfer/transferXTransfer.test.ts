@@ -11,7 +11,7 @@ import { determineDestWeight } from './utils/determineDestWeight'
 
 const mockApi = {
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const mockLocation: TLocation = {
   parents: Parents.ONE,
@@ -50,7 +50,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Phala',
       destination: 'Basilisk',
       asset: { symbol: 'KSM', amount: 100n }
-    } as TXTransferTransferOptions<unknown, unknown>
+    } as TXTransferTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(maybeOverrideAsset).mockReturnValue(mockAsset)
@@ -78,7 +78,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Phala',
       destination: 'Karura',
       asset: { symbol: 'KSM', amount: 100n }
-    } as TXTransferTransferOptions<unknown, unknown>
+    } as TXTransferTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(maybeOverrideAsset).mockReturnValue(mockAsset)

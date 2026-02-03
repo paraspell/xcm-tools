@@ -11,14 +11,13 @@ import type Zeitgeist from './Zeitgeist'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Zeitgeist', () => {
-  let chain: Zeitgeist<unknown, unknown>
+  let chain: Zeitgeist<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'ZTG', isNative: true, amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Zeitgeist'>('Zeitgeist')
+    chain = getChain<unknown, unknown, unknown, 'Zeitgeist'>('Zeitgeist')
   })
 
   it('should initialize with correct values', () => {
@@ -41,14 +40,14 @@ describe('Zeitgeist', () => {
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     it('should throw an error when asset is not a foreign asset', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', isNative: true, amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -58,7 +57,7 @@ describe('Zeitgeist', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -68,7 +67,7 @@ describe('Zeitgeist', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

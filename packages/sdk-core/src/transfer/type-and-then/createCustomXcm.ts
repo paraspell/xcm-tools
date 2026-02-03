@@ -9,8 +9,8 @@ import { createBeneficiaryLocation, createDestination, localizeLocation } from '
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import type { createRefundInstruction } from './utils'
 
-const resolveBuyExecutionAmount = <TApi, TRes>(
-  { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes>,
+const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
+  { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   isForFeeCalc: boolean,
   { hopFees, destFee }: TTypeAndThenFees,
   systemAssetAmount: bigint
@@ -24,8 +24,8 @@ const resolveBuyExecutionAmount = <TApi, TRes>(
   return isRelayAsset ? assetInfo.amount - hopFees : destFee
 }
 
-export const createCustomXcm = async <TApi, TRes>(
-  context: TTypeAndThenCallContext<TApi, TRes>,
+export const createCustomXcm = async <TApi, TRes, TSigner>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   assetCount: number,
   isForFeeCalc: boolean,
   systemAssetAmount: bigint,

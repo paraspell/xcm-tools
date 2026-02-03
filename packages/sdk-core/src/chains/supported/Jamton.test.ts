@@ -16,11 +16,11 @@ vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils')
 
 describe('Jamton', () => {
-  let chain: Jamton<unknown, unknown>
+  let chain: Jamton<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'Jamton'>('Jamton')
+    chain = getChain<unknown, unknown, unknown, 'Jamton'>('Jamton')
   })
 
   describe('initialization', () => {
@@ -37,13 +37,13 @@ describe('Jamton', () => {
     scenario: 'ParaToPara' as const,
     destination: 'AssetHubPolkadot' as const,
     version: Version.V4
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   it('should handle native asset', async () => {
     const input = {
       ...baseInput,
       assetInfo: { symbol: 'DOTON', isNative: true, amount: 100n }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(input)
 
@@ -119,7 +119,7 @@ describe('Jamton', () => {
         amount: 1000n,
         location: {}
       }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isSymbolMatch).mockReturnValue(true)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockUsdtAsset)

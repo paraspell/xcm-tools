@@ -31,7 +31,12 @@ export type TDryRunBaseOptions<TRes> = {
   bypassOptions?: TBypassOptions
 }
 
-export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>
+export type TDryRunOptions<TApi, TRes, TSigner> = WithApi<
+  TDryRunBaseOptions<TRes>,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TDryRunCallBaseOptions<TRes> = {
   /**
@@ -63,13 +68,19 @@ export type TDryRunCallBaseOptions<TRes> = {
   feeAsset?: TAssetInfo
 }
 
-export type TDryRunBypassOptions<TApi, TRes> = WithApi<
+export type TDryRunBypassOptions<TApi, TRes, TSigner> = WithApi<
   Omit<TDryRunCallBaseOptions<TRes>, 'useRootOrigin' | 'destination'>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
-export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
+export type TDryRunCallOptions<TApi, TRes, TSigner> = WithApi<
+  TDryRunCallBaseOptions<TRes>,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TDryRunXcmBaseOptions<TRes> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,7 +107,12 @@ export type TDryRunXcmBaseOptions<TRes> = {
   originFee: bigint
 }
 
-export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions<TRes>, TApi, TRes>
+export type TDryRunXcmOptions<TApi, TRes, TSigner> = WithApi<
+  TDryRunXcmBaseOptions<TRes>,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TDryRunResBase = {
   asset: TAssetInfo
@@ -135,8 +151,8 @@ export type TDryRunResult = {
   hops: THopInfo[]
 }
 
-export type TResolveHopParams<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TResolveHopParams<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   tx: TRes
   originChain: TSubstrateChain
   currentChain: TSubstrateChain
@@ -149,8 +165,8 @@ export type TResolveHopParams<TApi, TRes> = {
 
 // XCM hop traversal types
 
-export type HopProcessParams<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type HopProcessParams<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   currentChain: TSubstrateChain
   currentOrigin: TSubstrateChain
   currentAsset: TAssetInfo
@@ -160,8 +176,8 @@ export type HopProcessParams<TApi, TRes> = {
   isDestination: boolean
 }
 
-export type HopTraversalConfig<TApi, TRes, THopResult> = {
-  api: IPolkadotApi<TApi, TRes>
+export type HopTraversalConfig<TApi, TRes, TSigner, THopResult> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TChain
   currency: TCurrencyCore
@@ -169,7 +185,7 @@ export type HopTraversalConfig<TApi, TRes, THopResult> = {
   initialForwardedXcms: any
   initialDestParaId: number | undefined
   swapConfig?: TSwapConfig
-  processHop: (params: HopProcessParams<TApi, TRes>) => Promise<THopResult>
+  processHop: (params: HopProcessParams<TApi, TRes, TSigner>) => Promise<THopResult>
   shouldContinue: (hopResult: THopResult) => boolean
   extractNextHopData: (hopResult: THopResult) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

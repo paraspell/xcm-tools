@@ -10,15 +10,15 @@ import type BridgeHubKusama from './BridgeHubKusama'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('BridgeHubKusama', () => {
-  let chain: BridgeHubKusama<unknown, unknown>
+  let chain: BridgeHubKusama<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'RelayToPara',
     assetInfo: { symbol: 'KSM', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'BridgeHubKusama'>('BridgeHubKusama')
+    chain = getChain<unknown, unknown, unknown, 'BridgeHubKusama'>('BridgeHubKusama')
   })
 
   it('should initialize with correct values', () => {
@@ -30,6 +30,7 @@ describe('BridgeHubKusama', () => {
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
     const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
       unknown,
       unknown
     >

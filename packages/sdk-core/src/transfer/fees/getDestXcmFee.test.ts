@@ -16,7 +16,7 @@ vi.mock('./isSufficient')
 const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
-  }) as unknown as IPolkadotApi<unknown, unknown>
+  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 describe('getDestXcmFee', () => {
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -87,7 +87,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -130,7 +130,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -175,7 +175,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'FOO', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -221,7 +221,7 @@ describe('getDestXcmFee', () => {
       asset: { symbol: 'UNIT' },
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>)
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>)
 
     expect(res).toEqual({
       fee: 200n,
@@ -255,7 +255,7 @@ describe('getDestXcmFee', () => {
       asset: { symbol: 'UNIT' },
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -287,7 +287,7 @@ describe('getDestXcmFee', () => {
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: true
-    } as TGetFeeForDestChainOptions<unknown, unknown>)
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>)
 
     expect(res).toEqual({ dryRunError: 'boom' })
     expect('fee' in res).toBe(false)
@@ -324,7 +324,7 @@ describe('getDestXcmFee', () => {
         currencyTo: { symbol: 'USDC' },
         amountOut: 5000n
       }
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -367,7 +367,7 @@ describe('getDestXcmFee', () => {
         currencyTo: { symbol: 'USDC' },
         amountOut: 1234n
       }
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
@@ -393,7 +393,7 @@ describe('getDestXcmFee', () => {
       currency: { symbol: 'UNIT', amount: 1n },
       asset: { symbol: 'UNIT' },
       disableFallback: false
-    } as TGetFeeForDestChainOptions<unknown, unknown>
+    } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
     const res = await getDestXcmFee(options)
 

@@ -12,7 +12,10 @@ import type {
 } from '../../types'
 import Chain from '../Chain'
 
-class BifrostPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class BifrostPolkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'BifrostPolkadot',
     info: string = 'bifrost',
@@ -44,7 +47,7 @@ class BifrostPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadot
     return isVToken ? { VToken2: id } : { Token2: id }
   }
 
-  transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { destination } = options
 
     if (destination === 'Ethereum') {
@@ -54,7 +57,7 @@ class BifrostPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadot
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = { Id: address }

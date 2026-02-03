@@ -5,10 +5,10 @@ import { NumberFormatError } from '../../errors'
 import { isConfig } from '..'
 import { parseUnits } from '../unit'
 
-export const abstractDecimals = <TApi, TRes>(
+export const abstractDecimals = <TApi, TRes, TSigner>(
   amount: TAmount,
   decimals: number | undefined,
-  api: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes, TSigner>
 ): bigint => {
   const config = api.getConfig()
   const abstractDecimals = isConfig(config) && config.abstractDecimals ? true : false

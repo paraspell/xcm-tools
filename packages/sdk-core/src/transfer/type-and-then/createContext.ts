@@ -61,10 +61,10 @@ const resolveReserveChain = (
   return getAssetReserveChain(chain, assetLocation)
 }
 
-export const createTypeAndThenCallContext = async <TApi, TRes>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   overrides: TTypeAndThenOverrides
-): Promise<TTypeAndThenCallContext<TApi, TRes>> => {
+): Promise<TTypeAndThenCallContext<TApi, TRes, TSigner>> => {
   const { api, chain, destination, assetInfo } = options
 
   assertHasLocation(assetInfo)

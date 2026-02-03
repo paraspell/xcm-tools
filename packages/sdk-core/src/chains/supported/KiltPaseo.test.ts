@@ -6,13 +6,13 @@ import { getChain } from '../../utils'
 import type KiltPaseo from './KiltPaseo'
 
 describe('KiltPaseo', () => {
-  let chain: KiltPaseo<unknown, unknown>
+  let chain: KiltPaseo<unknown, unknown, unknown>
 
-  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'KiltPaseo'>('KiltPaseo')
+    chain = getChain<unknown, unknown, unknown, 'KiltPaseo'>('KiltPaseo')
   })
 
   it('should initialize with correct values', () => {

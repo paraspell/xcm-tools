@@ -15,7 +15,7 @@ import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { FEE_PADDING } from '../type-and-then/computeFees'
 import { resolveFeeAsset } from '../utils'
 
-export const getMinTransferableAmountInternal = async <TApi, TRes>({
+export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
   api,
   origin,
   senderAddress,
@@ -27,7 +27,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
   buildTx,
   builder,
   version
-}: TGetMinTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
+}: TGetMinTransferableAmountOptions<TApi, TRes, TSigner>): Promise<bigint> => {
   validateAddress(api, senderAddress, chain, false)
 
   const resolvedFeeAsset = feeAsset
@@ -142,8 +142,8 @@ export const getMinTransferableAmountInternal = async <TApi, TRes>({
   return minAmount
 }
 
-export const getMinTransferableAmount = async <TApi, TRes>(
-  options: TGetMinTransferableAmountOptions<TApi, TRes>
+export const getMinTransferableAmount = async <TApi, TRes, TSigner>(
+  options: TGetMinTransferableAmountOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { api } = options
   api.setDisconnectAllowed(false)

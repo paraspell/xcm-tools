@@ -13,7 +13,7 @@ import { isSufficientOrigin } from './isSufficient'
  * For more details, see the documentation:
  * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
  */
-export const getOriginXcmFeeEstimate = async <TApi, TRes>({
+export const getOriginXcmFeeEstimate = async <TApi, TRes, TSigner>({
   api,
   tx,
   origin,
@@ -21,7 +21,7 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   currency,
   senderAddress,
   feeAsset
-}: TGetOriginXcmFeeEstimateOptions<TApi, TRes>): Promise<TGetXcmFeeEstimateDetail> => {
+}: TGetOriginXcmFeeEstimateOptions<TApi, TRes, TSigner>): Promise<TGetXcmFeeEstimateDetail> => {
   const originAsset = findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, originAsset.decimals, api)

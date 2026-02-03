@@ -3,23 +3,22 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type {
-  IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
-  TSendInternalOptions
-} from '../../types'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class Quartz<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Quartz<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Quartz', 'quartz', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isSendingTempDisabled(): boolean {
     return true
   }
 }

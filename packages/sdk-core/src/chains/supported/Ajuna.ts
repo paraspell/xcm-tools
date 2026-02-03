@@ -12,7 +12,10 @@ import type {
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Ajuna<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Ajuna<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Ajuna',
     info: string = 'ajuna',
@@ -22,7 +25,7 @@ class Ajuna<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -30,7 +33,7 @@ class Ajuna<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

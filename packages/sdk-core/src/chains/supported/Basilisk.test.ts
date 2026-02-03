@@ -9,14 +9,13 @@ import type Basilisk from './Basilisk'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Basilisk', () => {
-  let chain: Basilisk<unknown, unknown>
+  let chain: Basilisk<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'BSX', assetId: '123', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Basilisk'>('Basilisk')
+    chain = getChain<unknown, unknown, unknown, 'Basilisk'>('Basilisk')
   })
 
   it('should initialize with correct values', () => {

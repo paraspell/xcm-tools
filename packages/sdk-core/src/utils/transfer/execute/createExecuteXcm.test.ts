@@ -23,7 +23,7 @@ describe('createDirectExecuteXcm', () => {
     version: Version.V5,
     destChain: 'Polkadot',
     recipientAddress: '5FRecipient'
-  } as TCreateTransferXcmOptions<unknown, unknown>
+  } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -68,7 +68,7 @@ describe('createDirectExecuteXcm', () => {
       transactOptions: {
         call: '0x1234'
       }
-    } as TCreateTransferXcmOptions<unknown, unknown>
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
     vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
       prefix,

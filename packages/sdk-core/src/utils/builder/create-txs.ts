@@ -7,8 +7,8 @@ import { assertToIsString } from '../assertions'
 import { parseUnits } from '../unit'
 import { isConfig } from './isConfig'
 
-export const computeOverridenAmount = <TApi, TRes>(
-  options: TCreateTxsOptions<TApi, TRes>,
+export const computeOverridenAmount = <TApi, TRes, TSigner>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner>,
   increaseAmount: string,
   relative: boolean = true
 ) => {
@@ -28,9 +28,9 @@ export const computeOverridenAmount = <TApi, TRes>(
   }
 }
 
-export const overrideTxAmount = async <TApi, TRes>(
-  options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>,
+export const overrideTxAmount = async <TApi, TRes, TSigner>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TRes>>,
   amount: string,
   relative?: boolean
 ) => {
@@ -43,9 +43,9 @@ export const overrideTxAmount = async <TApi, TRes>(
   return tx
 }
 
-export const createTx = async <TApi, TRes>(
-  options: TCreateTxsOptions<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>,
+export const createTx = async <TApi, TRes, TSigner>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TRes>>,
   amount?: string,
   relative?: boolean
 ): Promise<TRes> => {

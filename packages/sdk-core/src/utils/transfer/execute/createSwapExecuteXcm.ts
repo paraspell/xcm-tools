@@ -11,8 +11,8 @@ import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
-export const createExchangeInstructions = async <TApi, TRes>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes>,
+export const createExchangeInstructions = async <TApi, TRes, TSigner>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>,
   assetFrom: TAsset,
   assetTo: TAsset
 ) => {
@@ -76,8 +76,8 @@ export const createExchangeInstructions = async <TApi, TRes>(
   ]
 }
 
-export const createSwapExecuteXcm = async <TApi, TRes>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes>
+export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>
 ) => {
   const {
     api,

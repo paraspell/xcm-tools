@@ -27,9 +27,9 @@ vi.mock('../../../errors', () => ({
 }))
 
 describe('buildHopInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
-  let mockHopApi: IPolkadotApi<unknown, unknown>
-  let baseOptions: BuildHopInfoOptions<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockHopApi: IPolkadotApi<unknown, unknown, unknown>
+  let baseOptions: BuildHopInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_HOP_FEE = 100000000n
   const DEFAULT_ED = 100000000n
@@ -41,11 +41,11 @@ describe('buildHopInfo', () => {
       init: vi.fn().mockResolvedValue(undefined),
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
       clone: vi.fn().mockReturnValue(mockHopApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     baseOptions = {
       api: mockApi,

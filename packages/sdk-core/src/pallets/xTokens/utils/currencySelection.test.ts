@@ -20,7 +20,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'DOT', isNative: true, amount: 500n },
       destination: 'Polkadot',
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const expected = {
       [version]: createAsset(version, xTransferInput.asset.amount, DOT_LOCATION)
@@ -35,7 +35,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'DOT', isNative: true, amount: 1000n },
       destination: 'AssetHubPolkadot',
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(getOtherAssets).mockReturnValue([
       {
@@ -66,7 +66,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'UNKNOWN', isNative: true, amount: 500n },
       destination: 'AssetHubPolkadot',
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(getOtherAssets).mockReturnValue([])
 
@@ -81,7 +81,7 @@ describe('getModifiedCurrencySelection', () => {
         amount: 1500n
       },
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = getModifiedCurrencySelection(xTransferInput)
 
@@ -109,7 +109,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { assetId: currencyID, amount: 1000n },
       paraIdTo,
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = getModifiedCurrencySelection(xTransferInput)
 
@@ -143,7 +143,7 @@ describe('getModifiedCurrencySelection', () => {
       paraIdTo,
       origin,
       version
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = getModifiedCurrencySelection(xTransferInput)
 

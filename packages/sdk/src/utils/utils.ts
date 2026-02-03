@@ -6,23 +6,25 @@ import type { IPolkadotApi, TBuilderOptions, TSubstrateChain } from '@paraspell/
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 
 import PapiApi from '../PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from '../types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from '../types'
 
 export const createChainClient = (chain: TSubstrateChain, api?: TBuilderOptions<TPapiApiOrUrl>) => {
   const papiApi = new PapiApi(api)
-  return createChainClientInternal<TPapiApi, TPapiTransaction>(papiApi, chain)
+  return createChainClientInternal<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi, chain)
 }
 
 export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult>(
-  apiCall: (options: TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction> }) => Promise<TResult>
+  apiCall: (
+    options: TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
+  ) => Promise<TResult>
 ) => {
   return async (options: TArgs & { api?: TPapiApiOrUrl }): Promise<TResult> => {
     const papiApi = new PapiApi(options.api)
 
     const optionsWithApi = {
       ...options,
-      api: papiApi as IPolkadotApi<TPapiApi, TPapiTransaction>
-    } as TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction> }
+      api: papiApi as IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner>
+    } as TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
 
     return apiCall(optionsWithApi)
   }

@@ -7,12 +7,15 @@ import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../t
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Phala<TApi, TRes> extends Chain<TApi, TRes> implements IXTransferTransfer {
+class Phala<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTransferTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Phala', 'phala', 'Polkadot', Version.V3)
   }
 
-  transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>) {
+  transferXTransfer(input: TXTransferTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     if (asset.symbol !== this.getNativeAssetSymbol()) {
       throw new InvalidCurrencyError(
@@ -22,7 +25,7 @@ class Phala<TApi, TRes> extends Chain<TApi, TRes> implements IXTransferTransfer 
     return transferXTransfer(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

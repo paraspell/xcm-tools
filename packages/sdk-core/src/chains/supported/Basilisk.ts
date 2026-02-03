@@ -6,12 +6,15 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import Hydration from './Hydration'
 
-class Basilisk<TApi, TRes> extends Hydration<TApi, TRes> implements IPolkadotXCMTransfer {
+class Basilisk<TApi, TRes, TSigner>
+  extends Hydration<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Basilisk', 'basilisk', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 }

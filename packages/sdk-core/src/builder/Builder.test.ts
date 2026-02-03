@@ -31,7 +31,7 @@ import type {
 } from '../types'
 import {
   assertAddressIsString,
-  assertDerivationPath,
+  assertSender,
   assertSenderAddress,
   assertToIsString,
   isConfig
@@ -69,7 +69,7 @@ describe('Builder', () => {
       setApi: vi.fn(),
       clone: vi.fn()
     })
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
   const mockExtrinsic = {
     method: 'transfer',
     args: []
@@ -1395,7 +1395,7 @@ describe('Builder', () => {
         .senderAddress(derivationPath)
         .signAndSubmit()
 
-      expect(assertDerivationPath).toHaveBeenCalledWith(derivationPath)
+      expect(assertSender).toHaveBeenCalledWith(derivationPath)
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
       expect(submitSpy).toHaveBeenCalledWith(mockExtrinsic, derivationPath)
       expect(result).toBe(mockTxHash)

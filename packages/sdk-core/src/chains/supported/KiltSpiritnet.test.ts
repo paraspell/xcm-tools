@@ -10,7 +10,7 @@ import type KiltSpiritnet from './KiltSpiritnet'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('KiltSpiritnet', () => {
-  let chain: KiltSpiritnet<unknown, unknown>
+  let chain: KiltSpiritnet<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'ParaToPara',
@@ -18,10 +18,10 @@ describe('KiltSpiritnet', () => {
       symbol: 'KILT',
       amount: 100n
     }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'KiltSpiritnet'>('KiltSpiritnet')
+    chain = getChain<unknown, unknown, unknown, 'KiltSpiritnet'>('KiltSpiritnet')
   })
 
   it('should initialize with correct values', () => {

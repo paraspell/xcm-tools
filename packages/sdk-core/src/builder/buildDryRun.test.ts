@@ -10,7 +10,7 @@ vi.mock('@paraspell/sdk-common')
 vi.mock('../transfer')
 
 describe('buildDryRun', () => {
-  const api = {} as unknown as IPolkadotApi<unknown, unknown>
+  const api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
   const tx = 'TX' as unknown
 
   const baseOptions = {

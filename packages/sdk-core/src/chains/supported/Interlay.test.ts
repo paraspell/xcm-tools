@@ -15,7 +15,7 @@ import type Interlay from './Interlay'
 vi.mock('../../pallets/xTokens')
 
 describe('Interlay', () => {
-  let chain: Interlay<unknown, unknown>
+  let chain: Interlay<unknown, unknown, unknown>
 
   const mockInput = {
     asset: {
@@ -23,10 +23,10 @@ describe('Interlay', () => {
       assetId: '456',
       amount: 100n
     }
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Interlay'>('Interlay')
+    chain = getChain<unknown, unknown, unknown, 'Interlay'>('Interlay')
   })
 
   it('should initialize with correct values', () => {
@@ -62,7 +62,7 @@ describe('Interlay', () => {
 
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   describe('transferLocalNativeAsset', () => {
     it('should call transferLocalNonNativeAsset', async () => {
@@ -70,7 +70,7 @@ describe('Interlay', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
       await chain.transferLocalNativeAsset(mockOptions)
@@ -84,7 +84,7 @@ describe('Interlay', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -107,7 +107,7 @@ describe('Interlay', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

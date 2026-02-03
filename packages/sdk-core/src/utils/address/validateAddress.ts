@@ -6,8 +6,8 @@ import type { IPolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
 import type { TAddress } from '../../types'
 
-export const validateAddress = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+export const validateAddress = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   address: TAddress,
   chain: TChain,
   isDestination = true

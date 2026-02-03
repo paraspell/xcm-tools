@@ -6,8 +6,8 @@ import { assertToIsString } from '../../utils'
 import { ERR_LOCATION_DEST_NOT_SUPPORTED } from './consts'
 import { buildXTokensCall } from './utils'
 
-export const transferXTokens = <TApi, TRes>(
-  input: TXTokensTransferOptions<TApi, TRes>,
+export const transferXTokens = <TApi, TRes, TSigner>(
+  input: TXTokensTransferOptions<TApi, TRes, TSigner>,
   currencySelection: TXTokensCurrencySelection,
   fees: string | number = DEFAULT_FEE
 ): TRes => {

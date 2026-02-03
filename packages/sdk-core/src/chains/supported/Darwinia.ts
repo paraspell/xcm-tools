@@ -12,12 +12,15 @@ import type {
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Darwinia<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Darwinia<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Darwinia', 'darwinia', 'Polkadot', Version.V4)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario, assetInfo: asset } = input
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
@@ -27,7 +30,7 @@ class Darwinia<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

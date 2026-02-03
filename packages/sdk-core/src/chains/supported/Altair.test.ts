@@ -10,14 +10,14 @@ import type Altair from './Altair'
 vi.mock('../../pallets/xTokens')
 
 describe('Altair', () => {
-  let chain: Altair<unknown, unknown>
+  let chain: Altair<unknown, unknown, unknown>
 
   const mockInput = {
     asset: { symbol: 'AIR', assetId: '1', amount: 100n }
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Altair'>('Altair')
+    chain = getChain<unknown, unknown, unknown, 'Altair'>('Altair')
   })
 
   it('should initialize with correct values', () => {
@@ -49,14 +49,14 @@ describe('Altair', () => {
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -79,7 +79,7 @@ describe('Altair', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

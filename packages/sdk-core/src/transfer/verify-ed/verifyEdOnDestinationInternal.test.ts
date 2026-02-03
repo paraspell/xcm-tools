@@ -24,7 +24,7 @@ describe('verifyEdOnDestinationInternal', () => {
     clone: () => ({
       init: vi.fn()
     })
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockOrigin = 'OriginChain' as TSubstrateChain
   const mockDestination = 'DestinationChain' as TChain
@@ -45,7 +45,7 @@ describe('verifyEdOnDestinationInternal', () => {
     senderAddress: mockSenderAddress,
     currency: mockCurrency,
     version: Version.V5
-  } as TVerifyEdOnDestinationOptions<unknown, unknown>
+  } as TVerifyEdOnDestinationOptions<unknown, unknown, unknown>
 
   const asset = {
     symbol: 'DOT',

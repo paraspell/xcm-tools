@@ -35,7 +35,7 @@ vi.mock('./getDestXcmFee')
 
 vi.mock('../../utils/fees/getMythosOriginFee')
 
-const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>) =>
+const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown, unknown>>) =>
   ({
     api: {
       setDisconnectAllowed: vi.fn(),
@@ -43,7 +43,7 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
       clone: vi.fn().mockImplementation(() => createOptions(overrides).api),
       init: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() })
-    } as unknown as IPolkadotApi<unknown, unknown>,
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>,
     builder: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
@@ -52,7 +52,7 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
     currency: 'ACA',
     useRootOrigin: false,
     ...overrides
-  }) as unknown as TGetXcmFeeInternalOptions<unknown, unknown>
+  }) as unknown as TGetXcmFeeInternalOptions<unknown, unknown, unknown>
 
 describe('getXcmFeeOnce', () => {
   const xcmFeeResCurrency = {
@@ -406,11 +406,13 @@ describe('getXcmFeeOnce', () => {
       lastProcessedChain: 'BridgeHubPolkadot'
     })
 
-    vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'paymentInfo',
-      sufficient: false
-    })
+    vi.mocked(addEthereumBridgeFees<unknown, unknown, unknown, TXcmFeeHopResult>).mockResolvedValue(
+      {
+        ...xcmFeeResultbase,
+        feeType: 'paymentInfo',
+        sufficient: false
+      }
+    )
 
     const res = await getXcmFeeOnce(createOptions())
 
@@ -598,10 +600,12 @@ describe('getXcmFeeOnce', () => {
       lastProcessedChain: 'BridgeHubPolkadot'
     })
 
-    vi.mocked(addEthereumBridgeFees<unknown, unknown, TXcmFeeHopResult>).mockResolvedValue({
-      ...xcmFeeResultbase,
-      feeType: 'paymentInfo'
-    })
+    vi.mocked(addEthereumBridgeFees<unknown, unknown, unknown, TXcmFeeHopResult>).mockResolvedValue(
+      {
+        ...xcmFeeResultbase,
+        feeType: 'paymentInfo'
+      }
+    )
 
     const res = await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
@@ -860,7 +864,7 @@ describe('getXcmFeeOnce', () => {
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn().mockReturnValue(mockCloneApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
@@ -900,7 +904,7 @@ describe('getXcmFeeOnce', () => {
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn().mockReturnValue(mockCloneApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
@@ -969,7 +973,9 @@ describe('getXcmFeeOnce', () => {
       destParaId: 1000
     })
 
-    let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    let capturedProcessHop: (
+      params: HopProcessParams<unknown, unknown, unknown>
+    ) => Promise<unknown>
     vi.mocked(traverseXcmHops).mockImplementation(async params => {
       capturedProcessHop = params.processHop
 
@@ -980,7 +986,7 @@ describe('getXcmFeeOnce', () => {
         currentAsset: { symbol: 'ACA' } as TAssetInfo,
         forwardedXcms: [null, [{ key: 'value' }]],
         hasPassedExchange: false
-      } as HopProcessParams<unknown, unknown>)
+      } as HopProcessParams<unknown, unknown, unknown>)
 
       return {
         hops: [
@@ -1023,7 +1029,9 @@ describe('getXcmFeeOnce', () => {
       destParaId: 1000
     })
 
-    let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    let capturedProcessHop: (
+      params: HopProcessParams<unknown, unknown, unknown>
+    ) => Promise<unknown>
     vi.mocked(traverseXcmHops).mockImplementation(async params => {
       capturedProcessHop = params.processHop
 
@@ -1034,7 +1042,7 @@ describe('getXcmFeeOnce', () => {
         currentAsset: { symbol: 'ACA' } as TAssetInfo,
         forwardedXcms: [null, [{ key: 'value' }]],
         hasPassedExchange: true
-      } as HopProcessParams<unknown, unknown>)
+      } as HopProcessParams<unknown, unknown, unknown>)
 
       return {
         hops: [
@@ -1126,7 +1134,9 @@ describe('getXcmFeeOnce', () => {
       destParaId: 1000
     })
 
-    let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    let capturedProcessHop: (
+      params: HopProcessParams<unknown, unknown, unknown>
+    ) => Promise<unknown>
     vi.mocked(traverseXcmHops).mockImplementation(async params => {
       capturedProcessHop = params.processHop
 
@@ -1137,7 +1147,7 @@ describe('getXcmFeeOnce', () => {
         currentAsset: { symbol: 'ACA' } as TAssetInfo,
         forwardedXcms: [null, [{ key: 'value' }]],
         hasPassedExchange: false
-      } as HopProcessParams<unknown, unknown>)
+      } as HopProcessParams<unknown, unknown, unknown>)
 
       return {
         hops: [

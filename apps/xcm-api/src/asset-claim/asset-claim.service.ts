@@ -5,6 +5,7 @@ import {
   SUBSTRATE_CHAINS,
   TAssetClaimOptionsBase,
   TPapiApi,
+  TPapiSigner,
   TPapiTransaction,
   TSubstrateChain,
 } from '@paraspell/sdk';
@@ -35,7 +36,12 @@ export class AssetClaimService {
     const hasOptions = options && Object.keys(options).length > 0;
 
     let builder:
-      | AssetClaimBuilder<TPapiApi, TPapiTransaction, TAssetClaimOptionsBase>
+      | AssetClaimBuilder<
+          TPapiApi,
+          TPapiTransaction,
+          TPapiSigner,
+          TAssetClaimOptionsBase
+        >
       | undefined;
     try {
       builder = Builder(hasOptions ? options : undefined)

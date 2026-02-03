@@ -11,7 +11,7 @@ import {
 import { createPayFees } from './createPayFees'
 import { createTransactInstructions } from './createTransact'
 
-export const handleTransactUsingSend = async <TApi, TRes>({
+export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
   api,
   version,
   chain,
@@ -21,7 +21,7 @@ export const handleTransactUsingSend = async <TApi, TRes>({
   paraIdTo,
   asset,
   transactOptions
-}: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TSerializedExtrinsics> => {
+}: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TSerializedExtrinsics> => {
   const dest = createDestination(version, chain, destination, paraIdTo)
 
   if (!transactOptions?.call) {

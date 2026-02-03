@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type NeuroWebPaseo from './NeuroWebPaseo'
 
 describe('NeuroWebPaseo', () => {
-  let chain: NeuroWebPaseo<unknown, unknown>
+  let chain: NeuroWebPaseo<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'NeuroWebPaseo'>('NeuroWebPaseo')
+    chain = getChain<unknown, unknown, unknown, 'NeuroWebPaseo'>('NeuroWebPaseo')
   })
 
   it('should initialize with correct values', () => {

@@ -20,7 +20,10 @@ import { handleExecuteTransfer } from '../../utils/transfer'
 import Chain from '../Chain'
 import { getParaId } from '../config'
 
-class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Hydration<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',
@@ -30,8 +33,8 @@ class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     super(chain, info, ecosystem, version)
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  async transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, destination, feeAssetInfo: feeAsset, assetInfo: asset, overriddenAsset } = input
 
@@ -64,8 +67,8 @@ class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     return transferPolkadotXcm(input)
   }
 
-  transferMoonbeamWhAsset<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  transferMoonbeamWhAsset<TApi, TRes, TSigner>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { assetInfo, version } = input
 
@@ -89,7 +92,7 @@ class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     })
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     if (isAmountAll) {
@@ -117,7 +120,7 @@ class Hydration<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

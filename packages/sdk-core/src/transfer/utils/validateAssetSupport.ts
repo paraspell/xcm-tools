@@ -109,8 +109,8 @@ export const validateEthereumAsset = (
   }
 }
 
-export const validateAssetSupport = <TApi, TRes>(
-  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
+export const validateAssetSupport = <TApi, TRes, TSigner>(
+  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes, TSigner>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAssetInfo | null

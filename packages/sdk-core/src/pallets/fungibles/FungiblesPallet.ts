@@ -5,8 +5,8 @@ import { assertHasLocation } from '../../utils'
 import { AssetsPallet } from '../assets'
 
 export class FungiblesPallet extends AssetsPallet {
-  async getBalance<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalance<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

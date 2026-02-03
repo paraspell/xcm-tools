@@ -49,11 +49,11 @@ const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
 export const generateE2eTests = <TApi, TRes, TSigner>(
-  Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes>,
+  Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes, TSigner>,
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   validateTransfer: (
-    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress<TRes>>,
+    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSenderAddress<TRes>>,
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
@@ -330,7 +330,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       // Skip temporarily disabled chains
       const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
       const isSendingDisabled = chainInstance?.isSendingTempDisabled(
-        {} as TSendInternalOptions<TApi, TRes>
+        {} as TSendInternalOptions<TApi, TRes, TSigner>
       )
       if (isSendingDisabled) return
 

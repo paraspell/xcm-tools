@@ -3,8 +3,8 @@ import type { TDryRunOptions, TDryRunResult } from '../../types'
 import { validateAddress } from '../../utils'
 import { dryRunInternal } from './dryRunInternal'
 
-export const dryRun = async <TApi, TRes>(
-  options: TDryRunOptions<TApi, TRes>
+export const dryRun = async <TApi, TRes, TSigner>(
+  options: TDryRunOptions<TApi, TRes, TSigner>
 ): Promise<TDryRunResult> => {
   const { api, senderAddress, origin } = options
 

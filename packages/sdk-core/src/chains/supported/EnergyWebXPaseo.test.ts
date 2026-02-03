@@ -7,10 +7,10 @@ import type EnergyWebXPaseo from './EnergyWebXPaseo'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('EnergyWebXPaseo', () => {
-  let chain: EnergyWebXPaseo<unknown, unknown>
+  let chain: EnergyWebXPaseo<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'EnergyWebXPaseo'>('EnergyWebXPaseo')
+    chain = getChain<unknown, unknown, unknown, 'EnergyWebXPaseo'>('EnergyWebXPaseo')
   })
 
   it('should initialize with correct values', () => {

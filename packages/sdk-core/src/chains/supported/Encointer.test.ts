@@ -10,15 +10,15 @@ import type Encointer from './Encointer'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Encointer', () => {
-  let chain: Encointer<unknown, unknown>
+  let chain: Encointer<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'ParaToRelay',
     assetInfo: { symbol: 'KSM', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Encointer'>('Encointer')
+    chain = getChain<unknown, unknown, unknown, 'Encointer'>('Encointer')
   })
 
   it('should initialize with correct values', () => {
@@ -35,6 +35,7 @@ describe('Encointer', () => {
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
     const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
       unknown,
       unknown
     >

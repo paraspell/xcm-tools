@@ -17,6 +17,7 @@ import type {
   TModuleError,
   TPallet,
   TPaymentInfo,
+  TSender,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
@@ -38,6 +39,7 @@ import {
   isAssetXcEqual,
   isConfig,
   isExternalChain,
+  isSenderSigner,
   localizeLocation,
   RELAY_LOCATION,
   RuntimeApiUnavailableError,
@@ -57,7 +59,7 @@ import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
 import { DEFAULT_TTL_MS, EXTENSION_MS, MAX_CLIENTS } from './consts'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
 import { createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
 
 const clientPool = createClientCache<TPjsApi>(
@@ -78,7 +80,7 @@ const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
 
 const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
-class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
+class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   private _config?: TBuilderOptions<TPjsApiOrUrl>
   private api: TPjsApi
   private _ttlMs = DEFAULT_TTL_MS
@@ -807,14 +809,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
   }
 
-  deriveAddress(path: string): string {
-    const { address } = createKeyringPair(path)
+  deriveAddress(sender: TSender<TPjsSigner>): string {
+    if (isSenderSigner(sender)) return sender.address
+    const { address } = createKeyringPair(sender)
     return address
   }
 
-  async signAndSubmit(tx: Extrinsic, path: string): Promise<string> {
-    const pair = createKeyringPair(path)
-    const hash = await tx.signAndSend(pair)
+  async signAndSubmit(tx: Extrinsic, sender: TSender<TPjsSigner>): Promise<string> {
+    const hash = isSenderSigner(sender)
+      ? await tx.signAndSend(sender.address, { signer: sender.signer })
+      : await tx.signAndSend(createKeyringPair(sender))
+
     return hash.toHex()
   }
 }

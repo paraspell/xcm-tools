@@ -6,13 +6,13 @@ import { getChain } from '../../utils'
 import type PAssetHub from './PAssetHub'
 
 describe('PAssetHub', () => {
-  let chain: PAssetHub<unknown, unknown>
+  let chain: PAssetHub<unknown, unknown, unknown>
 
-  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown>
+  const sendOptions = {} as unknown as TSendInternalOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'PAssetHub'>('PAssetHub')
+    chain = getChain<unknown, unknown, unknown, 'PAssetHub'>('PAssetHub')
   })
 
   it('should initialize with correct values', () => {

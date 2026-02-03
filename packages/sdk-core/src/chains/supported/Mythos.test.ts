@@ -37,16 +37,16 @@ const ethAsset: TAssetInfo = {
 }
 
 describe('Mythos', () => {
-  let mythos: Mythos<unknown, unknown>
+  let mythos: Mythos<unknown, unknown, unknown>
   const mockInput = {
     assetInfo: { symbol: 'MYTH', amount: 100n },
     scenario: 'ParaToPara',
     destination: 'Acala'
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mythos = getChain<unknown, unknown, 'Mythos'>('Mythos')
+    mythos = getChain<unknown, unknown, unknown, 'Mythos'>('Mythos')
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
   })
 
@@ -76,6 +76,7 @@ describe('Mythos', () => {
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', async () => {
     const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+      unknown,
       unknown,
       unknown
     >
@@ -114,7 +115,7 @@ describe('Mythos', () => {
       init: vi.fn(),
       quoteAhPrice: vi.fn(),
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const mockEthereumInput = {
       api: mockApi,
@@ -128,7 +129,7 @@ describe('Mythos', () => {
       destination: 'Ethereum',
       senderAddress: '0x1234567890123456789012345678901234567890',
       address: '0x0987654321098765432109876543210987654321'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     beforeEach(() => {
       vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
@@ -191,7 +192,7 @@ describe('Mythos', () => {
 })
 
 describe('createTypeAndThenTransfer', () => {
-  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockOptions = {
     api: mockApi,
@@ -205,7 +206,7 @@ describe('createTypeAndThenTransfer', () => {
     senderAddress: '0x1234567890123456789012345678901234567890',
     address: '0x0987654321098765432109876543210987654321',
     destination: 'Ethereum'
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   const ORIGIN_FEE = 200n
 

@@ -30,9 +30,9 @@ describe('getOriginXcmFeeInternal', () => {
     getPaymentInfo: vi.fn(),
     getDryRunCall: vi.fn(),
     init: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
-  const baseOptions: TGetOriginXcmFeeInternalOptions<unknown, unknown> = {
+  const baseOptions: TGetOriginXcmFeeInternalOptions<unknown, unknown, unknown> = {
     api,
     tx: mockTx,
     origin: 'Moonbeam',

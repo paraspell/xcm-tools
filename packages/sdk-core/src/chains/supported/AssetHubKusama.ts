@@ -11,12 +11,15 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { getChain } from '../../utils'
 import Chain from '../Chain'
 
-class AssetHubKusama<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class AssetHubKusama<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('AssetHubKusama', 'KusamaAssetHub', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { assetInfo: asset, scenario } = input
 
     if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && asset.assetId === undefined) {
@@ -28,18 +31,18 @@ class AssetHubKusama<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotX
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return getChain<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
-      options
-    )
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    return getChain<TApi, TRes, TSigner, 'AssetHubPolkadot'>(
+      'AssetHubPolkadot'
+    ).transferLocalNonNativeAsset(options)
   }
 
-  getBalanceForeign<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  getBalanceForeign<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    return getChain<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').getBalanceForeign(
+    return getChain<TApi, TRes, TSigner, 'AssetHubPolkadot'>('AssetHubPolkadot').getBalanceForeign(
       api,
       address,
       asset

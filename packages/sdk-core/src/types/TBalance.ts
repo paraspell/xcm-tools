@@ -37,8 +37,18 @@ export type TGetBalanceOptionsBase = TGetBalanceCommonOptions & {
   currency?: TCurrencyCore
 }
 
-export type TGetBalanceOptions<TApi, TRes> = WithApi<TGetBalanceOptionsBase, TApi, TRes>
-export type TGetAssetBalanceOptions<TApi, TRes> = WithApi<TGetAssetBalanceOptionsBase, TApi, TRes>
+export type TGetBalanceOptions<TApi, TRes, TSigner> = WithApi<
+  TGetBalanceOptionsBase,
+  TApi,
+  TRes,
+  TSigner
+>
+export type TGetAssetBalanceOptions<TApi, TRes, TSigner> = WithApi<
+  TGetAssetBalanceOptionsBase,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
@@ -62,19 +72,21 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   feeAsset?: TCurrencyInput
 }
 
-export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
+export type TGetTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
   TGetTransferableAmountOptionsBase<TRes>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
-export type TGetMinTransferableAmountOptions<TApi, TRes> = WithApi<
+export type TGetMinTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
     address: string
-    builder: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress<TRes>>
+    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSenderAddress<TRes>>
   },
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
 export type TVerifyEdOnDestinationOptionsBase<TRes> = {
@@ -103,8 +115,9 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   feeAsset?: TCurrencyInput
 }
 
-export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<
+export type TVerifyEdOnDestinationOptions<TApi, TRes, TSigner> = WithApi<
   TVerifyEdOnDestinationOptionsBase<TRes>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >

@@ -10,14 +10,14 @@ import type NeuroWeb from './NeuroWeb'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('NeuroWeb', () => {
-  let chain: NeuroWeb<unknown, unknown>
+  let chain: NeuroWeb<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'DOT', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'NeuroWeb'>('NeuroWeb')
+    chain = getChain<unknown, unknown, unknown, 'NeuroWeb'>('NeuroWeb')
   })
 
   it('should initialize with correct values', () => {
@@ -33,14 +33,14 @@ describe('NeuroWeb', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    let mockApi: IPolkadotApi<unknown, unknown>
+    let mockApi: IPolkadotApi<unknown, unknown, unknown>
     let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
       deserializeExtrinsics = vi.fn()
       mockApi = {
         deserializeExtrinsics
-      } as unknown as IPolkadotApi<unknown, unknown>
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
     })
 
     it('should call transfer_keep_alive when not sending entire balance', async () => {
@@ -50,7 +50,7 @@ describe('NeuroWeb', () => {
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 999n,
         isAmountAll: false
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       await chain.transferLocalNativeAsset(mockOptions)
 
@@ -71,7 +71,7 @@ describe('NeuroWeb', () => {
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 456n,
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       await chain.transferLocalNativeAsset(mockOptions)
 
@@ -87,14 +87,14 @@ describe('NeuroWeb', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    let mockApi: IPolkadotApi<unknown, unknown>
+    let mockApi: IPolkadotApi<unknown, unknown, unknown>
     let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
       deserializeExtrinsics = vi.fn()
       mockApi = {
         deserializeExtrinsics
-      } as unknown as IPolkadotApi<unknown, unknown>
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
     })
 
     it('should call Assets.transfer with asset amount when not sending entire balance', () => {
@@ -104,7 +104,7 @@ describe('NeuroWeb', () => {
         address: '5CLocalDest',
         balance: 999n,
         isAmountAll: false
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       chain.transferLocalNonNativeAsset(mockOptions)
 
@@ -130,7 +130,7 @@ describe('NeuroWeb', () => {
         address: '5CLocalDest',
         balance: 777n,
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const result = chain.transferLocalNonNativeAsset(mockOptions)
 

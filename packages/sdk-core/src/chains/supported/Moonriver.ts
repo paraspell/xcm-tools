@@ -11,17 +11,22 @@ import type {
 import { getChain } from '../../utils'
 import Chain from '../Chain'
 
-class Moonriver<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Moonriver<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Moonriver', 'moonriver', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return getChain<TApi, TRes, 'Moonbeam'>('Moonbeam').transferLocalNonNativeAsset(options)
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    return getChain<TApi, TRes, TSigner, 'Moonbeam'>('Moonbeam').transferLocalNonNativeAsset(
+      options
+    )
   }
 }
 

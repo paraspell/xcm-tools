@@ -6,8 +6,8 @@ import { getChainConfig } from '../../../chains/config'
 
 // Partially inspired by Moonbeam XCM-SDK
 // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/builder/src/contract/contracts/Xtokens/Xtokens.ts#L126
-export const getDestinationLocation = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+export const getDestinationLocation = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   address: string,
   destination: TSubstrateChain
 ) => {

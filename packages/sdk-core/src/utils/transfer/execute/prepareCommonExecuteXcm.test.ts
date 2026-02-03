@@ -17,7 +17,7 @@ vi.mock('./createAssetsFilter')
 vi.mock('./prepareExecuteContext')
 
 describe('prepareCommonExecuteXcm', () => {
-  const mockApi = { api: 'mock' } as unknown as IPolkadotApi<unknown, unknown>
+  const mockApi = { api: 'mock' } as unknown as IPolkadotApi<unknown, unknown, unknown>
   const mockAsset = { id: {}, fun: { Fungible: 1000n } } as TAsset
   const mockFeeAsset = { id: {}, fun: { Fungible: 100n } } as TAsset
   const mockVersion = Version.V3
@@ -40,7 +40,7 @@ describe('prepareCommonExecuteXcm', () => {
     fees: {
       originFee: 100000000n
     }
-  } as TCreateTransferXcmOptions<unknown, unknown>
+  } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
   const mockContext = {
     assetLocalized: mockAsset,
@@ -87,7 +87,7 @@ describe('prepareCommonExecuteXcm', () => {
       feeAssetInfo: {
         location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
       }
-    } as TCreateTransferXcmOptions<unknown, unknown>
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
     const contextWithFee = {
       ...mockContext,
@@ -125,7 +125,7 @@ describe('prepareCommonExecuteXcm', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
-    } as TCreateTransferXcmOptions<unknown, unknown>)
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
@@ -137,7 +137,7 @@ describe('prepareCommonExecuteXcm', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
-    } as TCreateTransferXcmOptions<unknown, unknown>)
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
@@ -160,7 +160,7 @@ describe('prepareCommonExecuteXcm', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
-    } as TCreateTransferXcmOptions<unknown, unknown>)
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any

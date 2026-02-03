@@ -17,7 +17,7 @@ vi.mock('../../pallets/assets/balance')
 vi.mock('../../balance')
 
 describe('isSufficientOrigin', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const origin = 'Acala'
   const destination = 'Astar'
   const senderAddress = 'Alice'
@@ -191,7 +191,7 @@ describe('isSufficientOrigin', () => {
 })
 
 describe('isSufficientDestination', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const destination = 'Astar'
   const address = 'Bob'
   const amount = 100n

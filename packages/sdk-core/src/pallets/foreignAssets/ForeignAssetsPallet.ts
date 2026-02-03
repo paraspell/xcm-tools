@@ -37,8 +37,8 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalance<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

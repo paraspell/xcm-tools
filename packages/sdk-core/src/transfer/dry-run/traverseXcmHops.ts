@@ -13,8 +13,8 @@ import type { HopTraversalConfig, HopTraversalResult } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
 
-export const traverseXcmHops = async <TApi, TRes, THopResult>(
-  config: HopTraversalConfig<TApi, TRes, THopResult>
+export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
+  config: HopTraversalConfig<TApi, TRes, TSigner, THopResult>
 ): Promise<HopTraversalResult<THopResult>> => {
   const {
     api,
@@ -122,8 +122,8 @@ export const traverseXcmHops = async <TApi, TRes, THopResult>(
   }
 }
 
-export const addEthereumBridgeFees = async <TApi, TRes, TResult extends { fee?: bigint }>(
-  api: IPolkadotApi<TApi, TRes>,
+export const addEthereumBridgeFees = async <TApi, TRes, TSigner, TResult extends { fee?: bigint }>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   bridgeHubResult: TResult | undefined,
   destination: TChain,
   assetHubChain: TSubstrateChain

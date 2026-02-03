@@ -22,20 +22,20 @@ vi.mock('./utils/buildXTokensCall', () => ({
 describe('transferXTokens', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,
     origin: 'Acala',
     scenario: 'ParaToPara'
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('executes transfer transaction with default fee', () => {
-    const input: TXTokensTransferOptions<unknown, unknown> = {
+    const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
         symbol: 'ACA',
@@ -65,7 +65,7 @@ describe('transferXTokens', () => {
   })
 
   it('executes transfer transaction with provided fee', () => {
-    const input: TXTokensTransferOptions<unknown, unknown> = {
+    const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
         symbol: 'ACA',

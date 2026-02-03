@@ -11,14 +11,14 @@ import type Astar from './Astar'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Astar', () => {
-  let astar: Astar<unknown, unknown>
+  let astar: Astar<unknown, unknown, unknown>
   const mockInput = {
     scenario: 'ParaToPara',
     assetInfo: { symbol: 'DOT', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    astar = getChain<unknown, unknown, 'Astar'>('Astar')
+    astar = getChain<unknown, unknown, unknown, 'Astar'>('Astar')
   })
 
   it('should initialize with correct values', () => {
@@ -43,14 +43,14 @@ describe('Astar', () => {
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     it('should throw an error when asset is not a foreign asset', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => astar.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -60,7 +60,7 @@ describe('Astar', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => astar.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
     })
@@ -70,7 +70,7 @@ describe('Astar', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -93,7 +93,7 @@ describe('Astar', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
