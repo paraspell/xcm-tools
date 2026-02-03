@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   push:
@@ -17,86 +17,118 @@ jobs:
       NODE_OPTIONS: "--max_old_space_size=8192"
 
     steps:
-      - uses: actions/checkout@v6
-      - name: Set alternate npm integrity keys
-        run: |
-          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
-      - run: corepack enable
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "pnpm"
-      - run: |
+          cache: pnpm
+
+      - name: Prepare environment
+        run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
           echo CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" >> .env
-      - run: |
           for app in apps/visualizer-be apps/xcm-api; do
             echo DATABASE_URL="file:./dev.db" > $app/.env
           done
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm compile
-      - run: pnpm format:check
-      - run: pnpm lint:check
-      - run: pnpm test:cov
-      - name: Upload XCM SDK core coverage report to Codecov
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Compile project
+        run: pnpm compile
+
+      - name: Run formatting & linting
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pnpm turbo run lint:check || \
+            pnpm turbo run lint --concurrency=1 --force
+            pnpm turbo run format:write --force
+          else
+            pnpm lint:check
+            pnpm format:check
+          fi
+
+      - name: Commit auto-fixes
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          message: 'chore: auto-fix formatting & lint'
+
+      - name: Run tests
+        run: pnpm test:cov
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage
+          path: |
+            packages/**/coverage
+            apps/**/coverage
+
+
+  upload-coverage:
+    needs: ci
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: XCM SDK core
+            directory: packages/sdk-core
+            flags: xcm-sdk-core
+          - name: XCM SDK
+            directory: packages/sdk
+            flags: xcm-sdk
+          - name: XCM SDK PJS
+            directory: packages/sdk-pjs
+            flags: xcm-sdk-pjs
+          - name: SDK common
+            directory: packages/sdk-common
+            flags: sdk-common
+          - name: Assets
+            directory: packages/assets
+            flags: assets
+          - name: Pallets
+            directory: packages/pallets
+            flags: pallets
+          - name: XCM Analyser
+            directory: packages/xcm-analyser
+            flags: xcm-analyser
+          - name: XCM Router
+            directory: packages/xcm-router
+            flags: xcm-router
+          - name: Visualizer BE
+            directory: apps/visualizer-be
+            flags: visualizer-be
+          - name: XCM API
+            directory: apps/xcm-api
+            flags: xcm-api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: coverage
+
+      - name: Upload ${{ matrix.name }} coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-core
-          flags: xcm-sdk-core
-      - name: Upload XCM SDK coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk
-          flags: xcm-sdk
-      - name: Upload XCM SDK PJS coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-pjs
-          flags: xcm-sdk-pjs
-      - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-common
-          flags: sdk-common
-      - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/assets
-          flags: assets
-      - name: Upload Pallets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/pallets
-          flags: pallets
-      - name: Upload XCM Analyser coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/xcm-analyser
-          flags: xcm-analyser
-      - name: Upload XCM Router coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/xcm-router
-          flags: xcm-router
-      - name: Upload Visualizer BE coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/visualizer-be
-          flags: visualizer-be
-      - name: Upload XCM API coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/xcm-api
-          flags: xcm-api
+          directory: ${{ matrix.directory }}
+          flags: ${{ matrix.flags }}
