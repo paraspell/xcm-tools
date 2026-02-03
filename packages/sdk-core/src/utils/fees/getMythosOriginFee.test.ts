@@ -17,13 +17,13 @@ vi.mock('./padFee')
 describe('getMythosOriginFee', () => {
   const mockApi = {
     clone: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockClone = {
     init: vi.fn(),
     disconnect: vi.fn(),
     quoteAhPrice: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()

@@ -11,7 +11,10 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { assertHasLocation } from '../../utils'
 import Chain from '../Chain'
 
-class EnergyWebX<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class EnergyWebX<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'EnergyWebX',
     info: string = 'ewx',
@@ -21,7 +24,7 @@ class EnergyWebX<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTr
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario } = input
 
     if (scenario !== 'ParaToPara') {
@@ -35,8 +38,8 @@ class EnergyWebX<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTr
     return false
   }
 
-  async getBalanceForeign<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalanceForeign<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

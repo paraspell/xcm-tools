@@ -40,7 +40,7 @@ describe('createExecuteExchangeXcm', () => {
       destination: 'dest',
       paraIdTo: 200,
       address: 'address'
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     const weight = {
       refTime: 123n,
       proofSize: 456n
@@ -131,7 +131,7 @@ describe('createExecuteExchangeXcm', () => {
       paraIdTo: 300,
       address: 'address-default',
       version: Version.V4
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     const weight = {
       refTime: 500n,
       proofSize: 600n

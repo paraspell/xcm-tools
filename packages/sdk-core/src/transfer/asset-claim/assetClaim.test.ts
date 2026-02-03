@@ -23,12 +23,12 @@ describe('claimAssets', () => {
     deserializeExtrinsics: vi.fn(),
     disconnect: vi.fn(),
     getApi: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockChain = 'Acala'
 
   it('should return extrinsic call', async () => {
-    const options: TAssetClaimOptions<unknown, unknown> = {
+    const options: TAssetClaimOptions<unknown, unknown, unknown> = {
       api: apiMock,
       chain: mockChain,
       currency: ['asset1', 'asset2'] as unknown as TAsset[],
@@ -56,7 +56,7 @@ describe('claimAssets', () => {
   })
 
   it('should create an API instance if api is not provided', async () => {
-    const options: TAssetClaimOptions<unknown, unknown> = {
+    const options: TAssetClaimOptions<unknown, unknown, unknown> = {
       api: apiMock,
       chain: mockChain,
       currency: ['asset1', 'asset2'] as unknown as TAsset[],
@@ -86,7 +86,7 @@ describe('claimAssets', () => {
   })
 
   it('should use xcmPallet module when chain is on the relay chain', async () => {
-    const options: TAssetClaimOptions<unknown, unknown> = {
+    const options: TAssetClaimOptions<unknown, unknown, unknown> = {
       api: apiMock,
       chain: 'Polkadot',
       currency: ['asset1', 'asset2'] as unknown as TAsset[],

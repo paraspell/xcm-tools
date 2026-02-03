@@ -16,7 +16,7 @@ describe('dryRun', () => {
   const apiMock = {
     init: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   it('returns the dry run result', async () => {
     const address = '0x123'

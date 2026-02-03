@@ -15,7 +15,8 @@ import type { TEvmChainFromPapi } from '../types'
 export class EvmBuilderCore<
   TApi,
   TRes,
-  T extends Partial<TEvmBuilderOptions<TApi, TRes>> = object
+  TSigner,
+  T extends Partial<TEvmBuilderOptions<TApi, TRes, TSigner>> = object
 > {
   protected readonly _options: T
 
@@ -23,7 +24,9 @@ export class EvmBuilderCore<
     this._options = options
   }
 
-  from(chain: TEvmChainFromPapi): EvmBuilderCore<TApi, TRes, T & { from: TEvmChainFromPapi }> {
+  from(
+    chain: TEvmChainFromPapi
+  ): EvmBuilderCore<TApi, TRes, TSigner, T & { from: TEvmChainFromPapi }> {
     return new EvmBuilderCore({ ...this._options, from: chain })
   }
 
@@ -33,7 +36,7 @@ export class EvmBuilderCore<
    * @param chain - The Polkadot chain to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(chain: TChain): EvmBuilderCore<TApi, TRes, T & { to: TChain }> {
+  to(chain: TChain): EvmBuilderCore<TApi, TRes, TSigner, T & { to: TChain }> {
     return new EvmBuilderCore({ ...this._options, to: chain })
   }
 
@@ -45,7 +48,7 @@ export class EvmBuilderCore<
    */
   currency(
     currency: TCurrencyInputWithAmount
-  ): EvmBuilderCore<TApi, TRes, T & { currency: TCurrencyInputWithAmount }> {
+  ): EvmBuilderCore<TApi, TRes, TSigner, T & { currency: TCurrencyInputWithAmount }> {
     return new EvmBuilderCore({ ...this._options, currency })
   }
 
@@ -55,7 +58,7 @@ export class EvmBuilderCore<
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(address: string): EvmBuilderCore<TApi, TRes, T & { address: string }> {
+  address(address: string): EvmBuilderCore<TApi, TRes, TSigner, T & { address: string }> {
     return new EvmBuilderCore({ ...this._options, address })
   }
 
@@ -75,7 +78,7 @@ export class EvmBuilderCore<
    * @param signer - The Ethereum signer to authorize the transfer.
    * @returns An instance of EvmBuilder
    */
-  signer(signer: WalletClient): EvmBuilderCore<TApi, TRes, T & { signer: WalletClient }> {
+  signer(signer: WalletClient): EvmBuilderCore<TApi, TRes, TSigner, T & { signer: WalletClient }> {
     return new EvmBuilderCore({ ...this._options, signer })
   }
 
@@ -84,7 +87,9 @@ export class EvmBuilderCore<
    *
    * @throws Error if any required parameters are missing.
    */
-  async build(this: EvmBuilderCore<TApi, TRes, TEvmBuilderOptions<TApi, TRes>>): Promise<string> {
+  async build(
+    this: EvmBuilderCore<TApi, TRes, TSigner, TEvmBuilderOptions<TApi, TRes, TSigner>>
+  ): Promise<string> {
     const { from, to, address, api } = this._options
     validateAddress(api, address, to)
 
@@ -102,4 +107,5 @@ export class EvmBuilderCore<
  * @param provider - The Ethereum provider to use for the transfer.
  * @returns An instance of EvmBuilder class
  */
-export const EvmBuilder = <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => new EvmBuilderCore({ api })
+export const EvmBuilder = <TApi, TRes, TSigner>(api: IPolkadotApi<TApi, TRes, TSigner>) =>
+  new EvmBuilderCore({ api })

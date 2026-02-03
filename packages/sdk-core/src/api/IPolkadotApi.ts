@@ -10,6 +10,7 @@ import type {
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
+  TSender,
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
@@ -17,7 +18,7 @@ import type {
   TWeight
 } from '../types'
 
-export interface IPolkadotApi<TApi, TRes> {
+export interface IPolkadotApi<TApi, TRes, TSigner> {
   getConfig(): TBuilderOptions<TApiOrUrl<TApi>> | undefined
   getApi(): TApi
   init(chain: TChain, clientTtlMs?: number): Promise<void>
@@ -58,8 +59,8 @@ export interface IPolkadotApi<TApi, TRes> {
   getEvmStorage(contract: string, slot: string): Promise<string>
   getFromRpc(module: string, method: string, key: string): Promise<string>
   blake2AsHex(data: Uint8Array): string
-  clone(): IPolkadotApi<TApi, TRes>
-  createApiForChain(chain: TSubstrateChain): Promise<IPolkadotApi<TApi, TRes>>
+  clone(): IPolkadotApi<TApi, TRes, TSigner>
+  createApiForChain(chain: TSubstrateChain): Promise<IPolkadotApi<TApi, TRes, TSigner>>
   getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResult>
   getDryRunXcm(options: TDryRunXcmBaseOptions<TRes>): Promise<TDryRunChainResult>
   getBridgeStatus(): Promise<TBridgeStatus>
@@ -68,5 +69,6 @@ export interface IPolkadotApi<TApi, TRes> {
   disconnect(force?: boolean): Promise<void>
   validateSubstrateAddress(address: string): boolean
   deriveAddress(path: string): string
-  signAndSubmit(tx: TRes, path: string): Promise<string>
+  deriveAddress(sender: TSender<TSigner>): string
+  signAndSubmit(tx: TRes, sender: TSender<TSigner>): Promise<string>
 }

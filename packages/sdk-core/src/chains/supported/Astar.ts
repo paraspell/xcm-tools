@@ -9,7 +9,10 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Astar<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Astar<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Astar',
     info: string = 'astar',
@@ -19,7 +22,7 @@ class Astar<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input, 'transfer_assets_using_type_and_then')
   }
 
@@ -27,7 +30,7 @@ class Astar<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

@@ -9,7 +9,10 @@ import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Altair<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Altair<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Altair', 'altair', 'Kusama', Version.V4)
   }
@@ -20,13 +23,13 @@ class Altair<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = { Id: address }

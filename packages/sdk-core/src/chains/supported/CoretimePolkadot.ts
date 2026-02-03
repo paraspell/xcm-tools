@@ -8,7 +8,10 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class CoretimePolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class CoretimePolkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'CoretimePolkadot',
     info: string = 'polkadotCoretime',
@@ -18,7 +21,7 @@ class CoretimePolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario } = input
 
     if (scenario === 'ParaToPara') {

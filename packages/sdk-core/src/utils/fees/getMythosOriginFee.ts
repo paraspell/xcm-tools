@@ -7,8 +7,8 @@ import { getParaEthTransferFees } from '../../transfer'
 import { assertHasLocation } from '../assertions'
 import { padValueBy } from './padFee'
 
-export const getMythosOriginFee = async <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>
+export const getMythosOriginFee = async <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const ahApi = api.clone()
   await ahApi.init('AssetHubPolkadot')

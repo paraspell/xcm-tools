@@ -25,14 +25,14 @@ import { createContext } from './createContext'
  *
  * @throws Will throw an error if the transfer validation fails or if the transfer cannot be completed.
  */
-export const transferEthToPolkadot = async <TApi, TRes>({
+export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
   api,
   provider,
   signer,
   address,
   to,
   currency
-}: TPjsEvmBuilderOptions<TApi, TRes>) => {
+}: TPjsEvmBuilderOptions<TApi, TRes, TSigner>) => {
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }

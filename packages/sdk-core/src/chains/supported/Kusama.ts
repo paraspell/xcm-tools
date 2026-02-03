@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import Polkadot from './Polkadot'
 
-class Kusama<TApi, TRes> extends Polkadot<TApi, TRes> {
+class Kusama<TApi, TRes, TSigner> extends Polkadot<TApi, TRes, TSigner> {
   constructor() {
     super('Kusama', 'kusama', 'Kusama', Version.V5)
   }

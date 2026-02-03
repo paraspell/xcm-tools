@@ -27,9 +27,9 @@ import abi from './abi-xcm.json' with { type: 'json' }
 const xcmInterfacePrecompile = '0x000000000000000000000000000000000000081A'
 const XCDOT = '0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080'
 
-export const transferMoonbeamToEth = async <TApi, TRes>(
+export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
   from: TSubstrateChain,
-  { api, to, signer, address, ahAddress, currency }: TEvmBuilderOptions<TApi, TRes>
+  { api, to, signer, address, ahAddress, currency }: TEvmBuilderOptions<TApi, TRes, TSigner>
 ) => {
   if (!ahAddress) {
     throw new MissingParameterError('ahAddress')

@@ -9,7 +9,6 @@ import {
   SUBSTRATE_CHAINS,
   TChain,
   TPapiTransaction,
-  TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress,
   TSubstrateChain,
 } from '@paraspell/sdk';
@@ -263,7 +262,7 @@ export class XTransferService {
 
     let builder = Builder(
       hasOptions ? optionsWithoutMode : undefined,
-    ) as GeneralBuilder<TSendBaseOptions<TPapiTransaction>>;
+    ) as ReturnType<typeof this.buildXTransfer>;
 
     for (const transfer of transfers) {
       this.validateTransfer(transfer);

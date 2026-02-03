@@ -11,15 +11,15 @@ import type Nodle from './Nodle'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Nodle', () => {
-  let chain: Nodle<unknown, unknown>
+  let chain: Nodle<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'NODL', amount: 100n },
     scenario: 'ParaToPara'
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Nodle'>('Nodle')
+    chain = getChain<unknown, unknown, unknown, 'Nodle'>('Nodle')
   })
 
   it('should initialize with correct values', () => {
@@ -41,7 +41,7 @@ describe('Nodle', () => {
       const input = {
         scenario,
         assetInfo: { symbol: 'DOT', amount: 100n }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -51,7 +51,7 @@ describe('Nodle', () => {
     const input = {
       scenario: 'ParaToPara',
       assetInfo: { symbol: 'XYZ' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
   })
 

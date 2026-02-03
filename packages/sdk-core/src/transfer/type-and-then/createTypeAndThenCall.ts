@@ -18,12 +18,12 @@ import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 import { createRefundInstruction } from './utils'
 
-const buildAssets = <TApi, TRes>(
+const buildAssets = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   asset: WithAmount<TAssetWithLocation>,
   feeAmount: bigint,
   isRelayAsset: boolean,
-  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes>
+  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 ) => {
   if (overriddenAsset) {
     if (Array.isArray(overriddenAsset)) return overriddenAsset
@@ -43,8 +43,8 @@ const buildAssets = <TApi, TRes>(
 
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
 
-const resolveSystemAssetAmount = <TApi, TRes>(
-  { systemAsset }: TTypeAndThenCallContext<TApi, TRes>,
+const resolveSystemAssetAmount = <TApi, TRes, TSigner>(
+  { systemAsset }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   isForFeeCalc: boolean,
   fees: TTypeAndThenFees
 ) => {
@@ -54,8 +54,8 @@ const resolveSystemAssetAmount = <TApi, TRes>(
   return fees.destFee + fees.hopFees
 }
 
-export const constructTypeAndThenCall = async <TApi, TRes>(
-  context: TTypeAndThenCallContext<TApi, TRes>,
+export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   fees: TTypeAndThenFees | null = null
 ): Promise<TSerializedExtrinsics> => {
   const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
@@ -95,8 +95,8 @@ export const constructTypeAndThenCall = async <TApi, TRes>(
 /**
  * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
  */
-export const createTypeAndThenCall = async <TApi, TRes>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+export const createTypeAndThenCall = async <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   overrides: TTypeAndThenOverrides = {
     reserveChain: undefined,
     noFeeAsset: false

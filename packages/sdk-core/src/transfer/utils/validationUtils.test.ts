@@ -281,7 +281,7 @@ describe('validateAssetSpecifiers', () => {
 })
 
 describe('validateTransact', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,
@@ -290,7 +290,7 @@ describe('validateTransact', () => {
     senderAddress: 'addr1',
     address: 'addr2',
     transactOptions: { call: '0x123' }
-  } as TSendOptions<unknown, unknown>
+  } as TSendOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

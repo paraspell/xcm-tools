@@ -4,21 +4,21 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../api'
 import type { TPolkadotXCMTransferOptions } from './TTransfer'
 
-export type TChainWithApi<TApi, TRes, T = TSubstrateChain> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TChainWithApi<TApi, TRes, TSigner, T = TSubstrateChain> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   chain: T
 }
 
-export type TTypeAndThenCallContext<TApi, TRes> = {
-  origin: TChainWithApi<TApi, TRes>
-  dest: TChainWithApi<TApi, TRes>
-  reserve: TChainWithApi<TApi, TRes, TChain>
+export type TTypeAndThenCallContext<TApi, TRes, TSigner> = {
+  origin: TChainWithApi<TApi, TRes, TSigner>
+  dest: TChainWithApi<TApi, TRes, TSigner>
+  reserve: TChainWithApi<TApi, TRes, TSigner, TChain>
   isSubBridge: boolean
   isSnowbridge: boolean
   isRelayAsset: boolean
   assetInfo: WithAmount<TAssetWithLocation>
   systemAsset: TAssetInfo
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 }
 
 export type TTypeAndThenFees = {

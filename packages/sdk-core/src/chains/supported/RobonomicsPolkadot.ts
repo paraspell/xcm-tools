@@ -9,12 +9,15 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class RobonomicsPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class RobonomicsPolkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario } = input
 
     if (scenario === 'ParaToPara') {
@@ -28,7 +31,7 @@ class RobonomicsPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolka
     return scenario !== 'RelayToPara'
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

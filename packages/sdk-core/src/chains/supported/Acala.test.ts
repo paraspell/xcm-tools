@@ -11,13 +11,13 @@ vi.mock('../../pallets/polkadotXcm')
 vi.mock('../config')
 
 describe('Acala', () => {
-  let chain: Acala<unknown, unknown>
+  let chain: Acala<unknown, unknown, unknown>
   const mockInput = {
     assetInfo: { symbol: 'ACA', isNative: true, amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Acala'>('Acala')
+    chain = getChain<unknown, unknown, unknown, 'Acala'>('Acala')
   })
 
   it('should initialize with correct values', () => {
@@ -35,7 +35,7 @@ describe('Acala', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
     getPaymentInfo: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   it('should call transferLocalNativeAsset', async () => {
     const mockOptions = {
@@ -43,7 +43,7 @@ describe('Acala', () => {
       assetInfo: { symbol: 'ACA', amount: 100n },
       address: 'address',
       balance: 1000n
-    } as TTransferLocalOptions<unknown, unknown>
+    } as TTransferLocalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -72,7 +72,7 @@ describe('Acala', () => {
       balance: 1000n,
       senderAddress: 'sender',
       isAmountAll: true
-    } as TTransferLocalOptions<unknown, unknown>
+    } as TTransferLocalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -94,7 +94,7 @@ describe('Acala', () => {
       assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
       address: 'address',
       balance: 1000n
-    } as TTransferLocalOptions<unknown, unknown>
+    } as TTransferLocalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -118,7 +118,7 @@ describe('Acala', () => {
       address: 'address',
       balance: 500n,
       isAmountAll: true
-    } as TTransferLocalOptions<unknown, unknown>
+    } as TTransferLocalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

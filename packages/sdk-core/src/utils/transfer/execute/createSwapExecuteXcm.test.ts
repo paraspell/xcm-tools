@@ -57,7 +57,7 @@ describe('createSwapExecuteXcm', () => {
       recipientAddress: 'addr1',
       version: 3,
       paraIdTo: 42
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown>
+    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
 
     const result = (await createSwapExecuteXcm(options)) as unknown as any[]
 
@@ -110,7 +110,7 @@ describe('createSwapExecuteXcm', () => {
       version: 2,
       paraIdTo: 77,
       calculateMinAmountOut
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown>
+    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
 
     const result = await createSwapExecuteXcm(options)
 

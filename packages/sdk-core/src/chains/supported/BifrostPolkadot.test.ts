@@ -9,24 +9,24 @@ import type BifrostPolkadot from './BifrostPolkadot'
 
 vi.mock('../../pallets/polkadotXcm')
 
-type WithTransferToEthereum = BifrostPolkadot<unknown, unknown> & {
-  transferToEthereum: BifrostPolkadot<unknown, unknown>['transferToEthereum']
+type WithTransferToEthereum = BifrostPolkadot<unknown, unknown, unknown> & {
+  transferToEthereum: BifrostPolkadot<unknown, unknown, unknown>['transferToEthereum']
 }
 
 describe('BifrostPolkadot', () => {
-  let chain: BifrostPolkadot<unknown, unknown>
+  let chain: BifrostPolkadot<unknown, unknown, unknown>
 
   const api = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockInput = {
     api,
     assetInfo: { symbol: 'WETH', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'BifrostPolkadot'>('BifrostPolkadot')
+    chain = getChain<unknown, unknown, unknown, 'BifrostPolkadot'>('BifrostPolkadot')
   })
 
   afterEach(() => {
@@ -54,7 +54,7 @@ describe('BifrostPolkadot', () => {
       ...mockInput,
       destination: 'Ethereum',
       scenario: 'ParaToPara'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(inputEth)
 
@@ -70,7 +70,7 @@ describe('BifrostPolkadot', () => {
         api,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(api, 'deserializeExtrinsics')
 
@@ -93,7 +93,7 @@ describe('BifrostPolkadot', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(api, 'deserializeExtrinsics')
 

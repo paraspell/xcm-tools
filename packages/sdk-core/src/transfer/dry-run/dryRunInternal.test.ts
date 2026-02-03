@@ -44,11 +44,11 @@ const createFakeApi = (originDryRun: unknown) =>
       getApi: vi.fn().mockReturnValue({}),
       getDryRunXcm: vi.fn()
     }))
-  }) as unknown as IPolkadotApi<unknown, unknown>
+  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
-  api: IPolkadotApi<unknown, unknown>,
-  overrides?: Partial<TDryRunOptions<unknown, unknown>>
+  api: IPolkadotApi<unknown, unknown, unknown>,
+  overrides?: Partial<TDryRunOptions<unknown, unknown, unknown>>
 ) =>
   ({
     api,
@@ -58,7 +58,7 @@ const createOptions = (
     senderAddress: '5Alice',
     currency: { symbol: 'ACA', amount: 1_000n },
     ...overrides
-  }) as unknown as TDryRunOptions<unknown, unknown>
+  }) as unknown as TDryRunOptions<unknown, unknown, unknown>
 
 afterEach(() => vi.resetAllMocks())
 
@@ -136,13 +136,13 @@ describe('dryRunInternal', () => {
 
     const getDryRunXcmSpy = vi.fn().mockResolvedValue({ success: true, fee: 2_000n })
 
-    let capturedProcessHop: (p: HopProcessParams<unknown, unknown>) => Promise<unknown>
+    let capturedProcessHop: (p: HopProcessParams<unknown, unknown, unknown>) => Promise<unknown>
     vi.mocked(traverseXcmHops).mockImplementation(async params => {
       capturedProcessHop = params.processHop
 
       const mockHopApi = {
         getDryRunXcm: getDryRunXcmSpy
-      } as unknown as IPolkadotApi<unknown, unknown>
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
       const hopResult = await capturedProcessHop({
         api: mockHopApi,
@@ -152,7 +152,7 @@ describe('dryRunInternal', () => {
         forwardedXcms: originOk.forwardedXcms,
         hasPassedExchange: false,
         isDestination: false
-      } as HopProcessParams<unknown, unknown>)
+      } as HopProcessParams<unknown, unknown, unknown>)
 
       return {
         hops: [{ chain: 'AssetHubPolkadot', result: hopResult }]
@@ -329,7 +329,9 @@ describe('dryRunInternal', () => {
         destParaId: 1000
       }
 
-      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      let capturedProcessHop: (
+        params: HopProcessParams<unknown, unknown, unknown>
+      ) => Promise<unknown>
       vi.mocked(traverseXcmHops).mockImplementation(async params => {
         capturedProcessHop = params.processHop
 
@@ -341,7 +343,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown>)
+        } as HopProcessParams<unknown, unknown, unknown>)
 
         return {
           hops: [
@@ -376,7 +378,9 @@ describe('dryRunInternal', () => {
         destParaId: 1000
       }
 
-      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      let capturedProcessHop: (
+        params: HopProcessParams<unknown, unknown, unknown>
+      ) => Promise<unknown>
       vi.mocked(traverseXcmHops).mockImplementation(async params => {
         capturedProcessHop = params.processHop
 
@@ -385,7 +389,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown>
+        } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -395,7 +399,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: true
-        } as HopProcessParams<unknown, unknown>)
+        } as HopProcessParams<unknown, unknown, unknown>)
 
         return {
           hops: [],
@@ -423,7 +427,9 @@ describe('dryRunInternal', () => {
         destParaId: 1000
       }
 
-      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      let capturedProcessHop: (
+        params: HopProcessParams<unknown, unknown, unknown>
+      ) => Promise<unknown>
       vi.mocked(traverseXcmHops).mockImplementation(async params => {
         capturedProcessHop = params.processHop
 
@@ -432,7 +438,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown>
+        } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -442,7 +448,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: true,
           isDestination: false
-        } as HopProcessParams<unknown, unknown>)
+        } as HopProcessParams<unknown, unknown, unknown>)
 
         return {
           hops: [],
@@ -476,7 +482,9 @@ describe('dryRunInternal', () => {
         destParaId: 1000
       }
 
-      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      let capturedProcessHop: (
+        params: HopProcessParams<unknown, unknown, unknown>
+      ) => Promise<unknown>
       vi.mocked(traverseXcmHops).mockImplementation(async params => {
         capturedProcessHop = params.processHop
 
@@ -485,7 +493,7 @@ describe('dryRunInternal', () => {
             success: false,
             failureReason: 'Hop simulation failed'
           })
-        } as unknown as IPolkadotApi<unknown, unknown>
+        } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -495,7 +503,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown>)
+        } as HopProcessParams<unknown, unknown, unknown>)
 
         return {
           hops: [
@@ -666,7 +674,9 @@ describe('dryRunInternal', () => {
         destParaId: 1000
       }
 
-      let capturedProcessHop: (params: HopProcessParams<unknown, unknown>) => Promise<unknown>
+      let capturedProcessHop: (
+        params: HopProcessParams<unknown, unknown, unknown>
+      ) => Promise<unknown>
       vi.mocked(traverseXcmHops).mockImplementation(async params => {
         capturedProcessHop = params.processHop
 
@@ -675,7 +685,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown>
+        } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -685,7 +695,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown>)
+        } as HopProcessParams<unknown, unknown, unknown>)
 
         return {
           hops: [

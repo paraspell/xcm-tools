@@ -12,16 +12,16 @@ vi.mock('../transfer')
 const mockApi = {
   init: vi.fn(),
   callBatchMethod: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const createBuilder = () =>
   ({
     createTxFactory: vi.fn(() => vi.fn())
-  }) as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
+  }) as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown>>
 
 const createSendOptions = (
-  overrides: Partial<TBatchedSendOptions<unknown, unknown>> = {}
-): TBatchedSendOptions<unknown, unknown> => ({
+  overrides: Partial<TBatchedSendOptions<unknown, unknown, unknown>> = {}
+): TBatchedSendOptions<unknown, unknown, unknown> => ({
   from: 'Acala',
   api: mockApi,
   to: 'Hydration',

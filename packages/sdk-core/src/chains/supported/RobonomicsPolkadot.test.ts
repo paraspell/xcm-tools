@@ -12,11 +12,11 @@ import RobonomicsPolkadot from './RobonomicsPolkadot'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('RobonomicsPolkadot', () => {
-  let chain: RobonomicsPolkadot<unknown, unknown>
+  let chain: RobonomicsPolkadot<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    chain = getChain<unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
+    chain = getChain<unknown, unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
   })
 
   it('constructs with correct metadata', () => {
@@ -29,13 +29,21 @@ describe('RobonomicsPolkadot', () => {
 
   describe('transferPolkadotXCM', () => {
     it('throws ScenarioNotSupportedError for ParaToPara', () => {
-      const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
+      const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+        unknown,
+        unknown,
+        unknown
+      >
       expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
       expect(transferPolkadotXcm).not.toHaveBeenCalled()
     })
 
     it('uses limited_reserve_transfer_assets otherwise', async () => {
-      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+        unknown,
+        unknown,
+        unknown
+      >
       await chain.transferPolkadotXCM(input)
       expect(transferPolkadotXcm).toHaveBeenCalledWith(
         input,
@@ -59,14 +67,18 @@ describe('RobonomicsPolkadot', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    const mockApi = { deserializeExtrinsics: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>
+    const mockApi = { deserializeExtrinsics: vi.fn() } as unknown as IPolkadotApi<
+      unknown,
+      unknown,
+      unknown
+    >
 
     it('throws when assetId is missing in assetInfo', () => {
       const bad = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
         address: 'addr'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -79,7 +91,7 @@ describe('RobonomicsPolkadot', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr123'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -102,7 +114,7 @@ describe('RobonomicsPolkadot', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'addr123',
         isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

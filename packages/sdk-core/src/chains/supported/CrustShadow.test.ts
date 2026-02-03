@@ -11,7 +11,7 @@ import type CrustShadow from './CrustShadow'
 vi.mock('../../pallets/xTokens')
 
 describe('CrustShadow', () => {
-  let chain: CrustShadow<unknown, unknown>
+  let chain: CrustShadow<unknown, unknown, unknown>
 
   const mockInput = {
     asset: {
@@ -19,10 +19,10 @@ describe('CrustShadow', () => {
       assetId: '123',
       amount: 100n
     }
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'CrustShadow'>('CrustShadow')
+    chain = getChain<unknown, unknown, unknown, 'CrustShadow'>('CrustShadow')
   })
 
   it('should initialize with correct values', () => {

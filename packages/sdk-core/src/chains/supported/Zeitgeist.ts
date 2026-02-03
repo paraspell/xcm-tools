@@ -14,7 +14,10 @@ import { type TXcmForeignAsset, type TZeitgeistAsset } from '../../types'
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Zeitgeist<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Zeitgeist<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Zeitgeist',
     info: string = 'zeitgeist',
@@ -30,7 +33,7 @@ class Zeitgeist<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -38,7 +41,7 @@ class Zeitgeist<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTra
     return origin !== 'Astar'
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, balance, isAmountAll } = options
 
     assertHasId(asset)

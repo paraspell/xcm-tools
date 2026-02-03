@@ -6,9 +6,9 @@ import { chains } from '../constants'
  * @param chain - The chain identifier.
  * @returns The chain instance
  */
-export const getChain = <TApi, TRes, T extends keyof ReturnType<typeof chains>>(
+export const getChain = <TApi, TRes, TSigner, T extends keyof ReturnType<typeof chains>>(
   chain: T
-): ReturnType<typeof chains<TApi, TRes>>[T] => {
-  const map = chains<TApi, TRes>()
+): ReturnType<typeof chains<TApi, TRes, TSigner>>[T] => {
+  const map = chains<TApi, TRes, TSigner>()
   return map[chain]
 }

@@ -78,19 +78,25 @@ import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
 
-const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
+const supportsXTokens = <TApi, TRes, TSigner>(
+  obj: unknown
+): obj is IXTokensTransfer<TApi, TRes, TSigner> => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
 }
 
-const supportsXTransfer = (obj: unknown): obj is IXTransferTransfer => {
+const supportsXTransfer = <TApi, TRes, TSigner>(
+  obj: unknown
+): obj is IXTransferTransfer<TApi, TRes, TSigner> => {
   return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
-const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
+const supportsPolkadotXCM = <TApi, TRes, TSigner>(
+  obj: unknown
+): obj is IPolkadotXCMTransfer<TApi, TRes, TSigner> => {
   return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
-abstract class Chain<TApi, TRes> {
+abstract class Chain<TApi, TRes, TSigner> {
   private readonly _chain: TSubstrateChain
 
   // Property _info maps our chain names to names which polkadot libs are using
@@ -126,7 +132,7 @@ abstract class Chain<TApi, TRes> {
     return this._version
   }
 
-  async transfer(sendOptions: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+  async transfer(sendOptions: TSendInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const {
       api,
       assetInfo: asset,
@@ -188,7 +194,7 @@ abstract class Chain<TApi, TRes> {
       isSubBridge
 
     if (supportsPolkadotXCM(this) || useTypeAndThen) {
-      const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
+      const options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
         api,
         chain: this.chain,
         beneficiaryLocation: createBeneficiaryLocation({
@@ -277,16 +283,16 @@ abstract class Chain<TApi, TRes> {
         return api.deserializeExtrinsics(call)
       }
 
-      if (supportsPolkadotXCM(this)) {
+      if (supportsPolkadotXCM<TApi, TRes, TSigner>(this)) {
         return this.transferPolkadotXCM(options)
       }
-    } else if (supportsXTokens(this)) {
+    } else if (supportsXTokens<TApi, TRes, TSigner>(this)) {
       const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
       const isJamtonOrigin = this.chain === 'Jamton'
       const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
       const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
 
-      const input: TXTokensTransferOptions<TApi, TRes> = {
+      const input: TXTokensTransferOptions<TApi, TRes, TSigner> = {
         api,
         asset,
         address,
@@ -305,7 +311,7 @@ abstract class Chain<TApi, TRes> {
       }
 
       return this.transferXTokens(input)
-    } else if (supportsXTransfer(this)) {
+    } else if (supportsXTransfer<TApi, TRes, TSigner>(this)) {
       return this.transferXTransfer({
         api,
         asset,
@@ -335,7 +341,10 @@ abstract class Chain<TApi, TRes> {
     }
   }
 
-  throwIfTempDisabled(options: TSendInternalOptions<TApi, TRes>, destChain?: TChain): void {
+  throwIfTempDisabled(
+    options: TSendInternalOptions<TApi, TRes, TSigner>,
+    destChain?: TChain
+  ): void {
     const isSendingDisabled = this.isSendingTempDisabled(options)
     if (isSendingDisabled) {
       throw new FeatureTemporarilyDisabledError(
@@ -355,7 +364,7 @@ abstract class Chain<TApi, TRes> {
     }
   }
 
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes>): boolean {
+  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes, TSigner>): boolean {
     return false
   }
 
@@ -371,7 +380,7 @@ abstract class Chain<TApi, TRes> {
   shouldUseNativeAssetTeleport({
     assetInfo: asset,
     to
-  }: TSendInternalOptions<TApi, TRes>): boolean {
+  }: TSendInternalOptions<TApi, TRes, TSigner>): boolean {
     if (isTLocation(to) || isSubstrateBridge(this.chain, to) || isExternalChain(to)) return false
 
     const isAHPOrigin = this.chain.includes('AssetHub')
@@ -406,7 +415,7 @@ abstract class Chain<TApi, TRes> {
     return getNativeAssetSymbol(this.chain)
   }
 
-  async transferLocal(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
+  async transferLocal(options: TSendInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { api, assetInfo: asset, feeAsset, address, senderAddress, isAmountAll } = options
 
     if (isTLocation(address)) {
@@ -446,7 +455,7 @@ abstract class Chain<TApi, TRes> {
     }
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     const dest = isChainEvm(this.chain) ? address : { Id: address }
@@ -476,7 +485,7 @@ abstract class Chain<TApi, TRes> {
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)
@@ -507,8 +516,8 @@ abstract class Chain<TApi, TRes> {
     })
   }
 
-  protected async transferToEthereum<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>,
+  protected async transferToEthereum<TApi, TRes, TSigner>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
     const { api, assetInfo: asset, version, address, senderAddress, feeAssetInfo: feeAsset } = input
@@ -604,7 +613,7 @@ abstract class Chain<TApi, TRes> {
   }
 
   getBalanceNative(
-    api: IPolkadotApi<TApi, TRes>,
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
@@ -616,8 +625,8 @@ abstract class Chain<TApi, TRes> {
     return undefined
   }
 
-  async getBalanceForeign<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalanceForeign<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ) {
@@ -642,7 +651,7 @@ abstract class Chain<TApi, TRes> {
     throw lastError
   }
 
-  getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo) {
+  getBalance(api: IPolkadotApi<TApi, TRes, TSigner>, address: string, asset: TAssetInfo) {
     const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
     if (isNativeAsset) return this.getBalanceNative(api, address, asset)
     return this.getBalanceForeign(api, address, asset)

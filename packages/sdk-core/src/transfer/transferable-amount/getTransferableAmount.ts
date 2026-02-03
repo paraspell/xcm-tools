@@ -13,7 +13,7 @@ import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'
 import { resolveFeeAsset } from '../utils'
 
-export const getTransferableAmountInternal = async <TApi, TRes>({
+export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
   api,
   senderAddress,
   origin: chain,
@@ -22,7 +22,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   buildTx,
   feeAsset,
   version
-}: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
+}: TGetTransferableAmountOptions<TApi, TRes, TSigner>): Promise<bigint> => {
   validateAddress(api, senderAddress, chain, false)
 
   const resolvedFeeAsset = feeAsset
@@ -80,8 +80,8 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   return transferable > 0n ? transferable : 0n
 }
 
-export const getTransferableAmount = async <TApi, TRes>(
-  options: TGetTransferableAmountOptions<TApi, TRes>
+export const getTransferableAmount = async <TApi, TRes, TSigner>(
+  options: TGetTransferableAmountOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { api } = options
   api.setDisconnectAllowed(false)

@@ -11,10 +11,10 @@ import { getRelayChainOf } from '../../utils/chain/getRelayChainOf'
 import { dryRunInternal } from '../dry-run/dryRunInternal'
 import { createTypeAndThenCall } from './createTypeAndThenCall'
 
-const createCallForReserve = async <TApi, TRes>(
+const createCallForReserve = async <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   reserveChain: TSubstrateChain,
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 ): Promise<{ call: TSerializedExtrinsics; success: boolean }> => {
   const { api, destination, address, senderAddress, currency, feeCurrency, version } = options
 
@@ -47,9 +47,9 @@ const createCallForReserve = async <TApi, TRes>(
  * by dry-running both variants and preferring the one that succeeds. If both fail, returns the
  * AssetHub variant. Supports only relaychain assets.
  */
-export const createTypeThenAutoReserve = async <TApi, TRes>(
+export const createTypeThenAutoReserve = async <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 ): Promise<TSerializedExtrinsics> => {
   // Use dry-run path only when BOTH origin and destination support it
   const originSupports = hasDryRunSupport(chain)

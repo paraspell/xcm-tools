@@ -18,12 +18,12 @@ const calculateMappingSlot = (key: string) => {
 }
 
 export class SystemPallet extends BaseAssetsPallet {
-  async mint<TApi, TRes>(
+  async mint<TApi, TRes, TSigner>(
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
     _chain: TSubstrateChain,
-    api: IPolkadotApi<TApi, TRes>
+    api: IPolkadotApi<TApi, TRes, TSigner>
   ): Promise<TSetBalanceRes> {
     assertHasId(assetInfo)
     const contractAddr = formatAssetIdToERC20(assetInfo.assetId)
@@ -43,7 +43,10 @@ export class SystemPallet extends BaseAssetsPallet {
     }
   }
 
-  async getBalance<TApi, TRes>(api: IPolkadotApi<TApi, TRes>, address: string): Promise<bigint> {
+  async getBalance<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
+    address: string
+  ): Promise<bigint> {
     const balance = await api.queryState<{ data: { free: bigint } }>({
       module: this.palletName,
       method: 'Account',

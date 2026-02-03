@@ -3,9 +3,9 @@ import { convertSs58 as convertSs58Impl } from '@paraspell/sdk-core'
 import type { PolkadotClient } from 'polkadot-api'
 
 import PapiApi from './PapiApi'
-import type { TPapiTransaction } from './types'
+import type { TPapiSigner, TPapiTransaction } from './types'
 
 export const convertSs58 = (address: string, chain: TSubstrateChain) => {
   const papiApi = new PapiApi()
-  return convertSs58Impl<PolkadotClient, TPapiTransaction>(papiApi, address, chain)
+  return convertSs58Impl<PolkadotClient, TPapiTransaction, TPapiSigner>(papiApi, address, chain)
 }

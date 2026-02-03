@@ -82,14 +82,14 @@ describe('crypto helpers', () => {
     const pubkey = makeSeq(32)
     const chain: TSubstrateChain = 'AssetHubPolkadot'
 
-    let apiMock: IPolkadotApi<unknown, unknown>
+    let apiMock: IPolkadotApi<unknown, unknown, unknown>
 
     beforeEach(() => {
       vi.resetAllMocks()
 
       apiMock = {
         accountToUint8a: vi.fn(() => pubkey)
-      } as unknown as IPolkadotApi<unknown, unknown>
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
     })
 
     it('EVM address on EVM chain - returns the address untouched', () => {

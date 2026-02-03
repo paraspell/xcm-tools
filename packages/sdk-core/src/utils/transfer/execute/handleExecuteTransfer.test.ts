@@ -33,7 +33,7 @@ describe('handleExecuteTransfer', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
     getXcmWeight: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockXcm = { [Version.V4]: {} } as Awaited<ReturnType<typeof createDirectExecuteXcm>>
 
@@ -51,7 +51,7 @@ describe('handleExecuteTransfer', () => {
     senderAddress: '0x1234567890abcdef',
     currency: { symbol: 'DOT' },
     version: Version.V4
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   const mockDestChain = 'Hydration'
 
@@ -104,7 +104,7 @@ describe('handleExecuteTransfer', () => {
       senderAddress: '0xvalid',
       destChain: undefined,
       assetInfo: { ...mockInput.assetInfo, amount: 5000n }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await expect(handleExecuteTransfer(input)).rejects.toThrow(
       'Could not determine destination chain for execute transfer'
@@ -118,7 +118,7 @@ describe('handleExecuteTransfer', () => {
       assetInfo: { ...mockInput.assetInfo, amount: 1200n },
       feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(5000))

@@ -21,14 +21,14 @@ const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
 const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 
 // Partially inspired by Moonbeam XCM-SDK
-export const transferMoonbeamEvm = async <TApi, TRes>({
+export const transferMoonbeamEvm = async <TApi, TRes, TSigner>({
   api,
   from,
   to,
   signer,
   address,
   currency
-}: TEvmBuilderOptions<TApi, TRes>): Promise<string> => {
+}: TEvmBuilderOptions<TApi, TRes, TSigner>): Promise<string> => {
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }

@@ -10,15 +10,15 @@ import type CoretimeKusama from './CoretimeKusama'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('CoretimeKusama', () => {
-  let chain: CoretimeKusama<unknown, unknown>
+  let chain: CoretimeKusama<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'ParaToPara',
     assetInfo: { symbol: 'KSM', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'CoretimeKusama'>('CoretimeKusama')
+    chain = getChain<unknown, unknown, unknown, 'CoretimeKusama'>('CoretimeKusama')
   })
 
   it('should initialize with correct values', () => {
@@ -37,7 +37,7 @@ describe('CoretimeKusama', () => {
     const inputWithDifferentScenario = {
       ...mockInput,
       scenario: 'RelayToPara'
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(inputWithDifferentScenario)
 

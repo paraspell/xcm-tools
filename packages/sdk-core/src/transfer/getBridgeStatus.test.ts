@@ -9,7 +9,7 @@ describe('getBridgeStatus', () => {
     init: vi.fn(),
     getBridgeStatus: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   it('returns the bridge status', async () => {
     const mockResult: TBridgeStatus = 'Normal'

@@ -12,7 +12,7 @@ const createMockApi = () => {
   const api = {
     init,
     getApi
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   return { api, init, getApi }
 }

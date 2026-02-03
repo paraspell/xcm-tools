@@ -36,8 +36,8 @@ const makeApi = (originFee: bigint, destFee: bigint) => {
   }
   api.clone.mockReturnValue(destApi)
   return {
-    api: api as unknown as IPolkadotApi<unknown, unknown>,
-    destApi: destApi as unknown as IPolkadotApi<unknown, unknown>
+    api: api as unknown as IPolkadotApi<unknown, unknown, unknown>,
+    destApi: destApi as unknown as IPolkadotApi<unknown, unknown, unknown>
   }
 }
 

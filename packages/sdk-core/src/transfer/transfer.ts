@@ -25,7 +25,9 @@ import {
   validateTransact
 } from './utils'
 
-export const resolveSendParams = <TApi, TRes>(options: TSendOptions<TApi, TRes>) => {
+export const resolveSendParams = <TApi, TRes, TSigner>(
+  options: TSendOptions<TApi, TRes, TSigner>
+) => {
   const {
     api,
     from: origin,
@@ -112,7 +114,9 @@ export const resolveSendParams = <TApi, TRes>(options: TSendOptions<TApi, TRes>)
   }
 }
 
-export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
+export const send = async <TApi, TRes, TSigner>(
+  options: TSendOptions<TApi, TRes, TSigner>
+): Promise<TRes> => {
   const {
     api,
     from: origin,
@@ -134,7 +138,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
-  return getChain<TApi, TRes, typeof origin>(origin).transfer({
+  return getChain<TApi, TRes, TSigner, typeof origin>(origin).transfer({
     api,
     assetInfo: normalizedAsset,
     currency,

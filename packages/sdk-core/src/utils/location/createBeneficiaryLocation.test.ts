@@ -22,7 +22,7 @@ vi.mock('@paraspell/sdk-common', async () => {
 })
 
 describe('createBeneficiaryLocation', () => {
-  let apiMock: IPolkadotApi<unknown, unknown>
+  let apiMock: IPolkadotApi<unknown, unknown, unknown>
 
   const mockOrigin = 'Polkadot'
   const mockDest = 'Acala'
@@ -30,7 +30,7 @@ describe('createBeneficiaryLocation', () => {
   beforeEach(() => {
     apiMock = {
       accountToHex: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
     vi.clearAllMocks()
   })
 

@@ -41,8 +41,8 @@ vi.mock('@paraspell/assets')
 vi.mock('./utils')
 
 describe('send', () => {
-  let apiMock: IPolkadotApi<unknown, unknown>
-  let originChainMock: AssetHubPolkadot<unknown, unknown>
+  let apiMock: IPolkadotApi<unknown, unknown, unknown>
+  let originChainMock: AssetHubPolkadot<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -54,12 +54,12 @@ describe('send', () => {
       deserializeExtrinsics: vi.fn(),
       getApiOrUrl: vi.fn(),
       getConfig: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     originChainMock = {
       transfer: vi.fn().mockResolvedValue('transferResult'),
       version: Version.V4
-    } as unknown as AssetHubPolkadot<unknown, unknown>
+    } as unknown as AssetHubPolkadot<unknown, unknown, unknown>
 
     vi.mocked(getChain).mockReturnValue(originChainMock)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
@@ -82,7 +82,7 @@ describe('send', () => {
       currency: { symbol: 'TEST', amount: '100' },
       address: 'some-address',
       to: 'Astar'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
 
@@ -124,7 +124,7 @@ describe('send', () => {
       currency: { symbol: 'DOT', amount: '100' },
       feeAsset: { symbol: 'USDT' },
       address: 'some-address'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -154,7 +154,7 @@ describe('send', () => {
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       to: 'Astar'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const apiSpy = vi.spyOn(apiMock, 'init')
 
@@ -176,7 +176,7 @@ describe('send', () => {
       },
       address: 'some-address',
       to: 'Astar'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     await expect(send(options)).rejects.toThrow('Invalid currency')
 
@@ -194,7 +194,7 @@ describe('send', () => {
       currency: currency,
       address: 'some-address',
       to: 'Astar'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -219,7 +219,7 @@ describe('send', () => {
       feeAsset: { location: {} },
       address: 'some-address',
       to: 'Astar'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -242,7 +242,7 @@ describe('send', () => {
       address: 'some-address',
       to: 'Astar',
       senderAddress: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     await send(options)
 
@@ -264,7 +264,7 @@ describe('send', () => {
       paraIdTo: undefined,
       version: undefined,
       senderAddress: undefined
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -288,7 +288,7 @@ describe('send', () => {
       to: 'Astar',
       currency: [] as TCurrencyInput,
       address: 'some-address'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -318,7 +318,7 @@ describe('send', () => {
       to: 'Astar',
       currency: { symbol: 'DOT', amount: '1' },
       address: 'some-address'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -344,7 +344,7 @@ describe('send', () => {
       to: 'Astar',
       currency: { symbol: 'TEST', amount: '100' },
       address: 'some-address'
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 

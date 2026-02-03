@@ -11,7 +11,7 @@ describe('createTransactInstructions', () => {
     init: vi.fn(),
     txFromHex: vi.fn(),
     getPaymentInfo: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockWeight: TWeight = {
     refTime: 111n,

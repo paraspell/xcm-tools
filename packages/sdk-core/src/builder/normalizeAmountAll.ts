@@ -7,11 +7,19 @@ import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
 import { assertSenderAddress, assertToIsString } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
-export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseOptions<TRes>>(
-  api: IPolkadotApi<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TOptions>,
+export const normalizeAmountAll = async <
+  TApi,
+  TRes,
+  TSigner,
+  TOptions extends TSendBaseOptions<TRes>
+>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
   options: TOptions
-): Promise<{ options: TSendOptions<TApi, TRes> & TOptions; buildTx: TTxFactory<TRes> }> => {
+): Promise<{
+  options: TSendOptions<TApi, TRes, TSigner> & TOptions
+  buildTx: TTxFactory<TRes>
+}> => {
   const { currency } = options
 
   const isAmountAll = !Array.isArray(currency) && currency.amount === AMOUNT_ALL

@@ -16,7 +16,10 @@ import type {
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Moonbeam<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Moonbeam<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Moonbeam',
     info: string = 'moonbeam',
@@ -26,8 +29,8 @@ class Moonbeam<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     super(chain, info, ecosystem, version)
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    options: TPolkadotXCMTransferOptions<TApi, TRes>
+  async transferPolkadotXCM(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { destination } = options
 
@@ -38,12 +41,12 @@ class Moonbeam<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     throw new ScenarioNotSupportedError(`${this.chain} local transfers are temporarily disabled`)
   }
 
-  getBalanceForeign<TApi, TRes>(
-    _api: IPolkadotApi<TApi, TRes>,
+  getBalanceForeign<TApi, TRes, TSigner>(
+    _api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

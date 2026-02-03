@@ -55,7 +55,7 @@ const mkApi = () => {
     deserializeExtrinsics,
     callDispatchAsMethod,
     callBatchMethod
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 }
 
 const version = Version.V5

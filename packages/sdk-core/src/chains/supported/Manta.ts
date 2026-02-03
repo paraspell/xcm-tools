@@ -9,7 +9,10 @@ import { type IXTokensTransfer, type TMantaAsset, type TXTokensTransferOptions }
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Manta<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Manta<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   static readonly NATIVE_ASSET_ID = 1n
 
   constructor() {
@@ -24,7 +27,7 @@ class Manta<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
     return BigInt(asset.assetId)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
 
     const currencySelection: TMantaAsset = {
@@ -34,7 +37,7 @@ class Manta<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, balance, isAmountAll } = options
 
     assertHasId(asset)

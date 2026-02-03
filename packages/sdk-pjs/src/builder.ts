@@ -8,7 +8,7 @@ import type { AbstractProvider } from 'ethers'
 
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
 
 /**
  * Creates a new Builder instance.
@@ -18,13 +18,13 @@ import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
  */
 export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
   const pjsApi = new PolkadotJsApi(api)
-  return BuilderImpl<TPjsApi, Extrinsic>(pjsApi)
+  return BuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi)
 }
 
 export type GeneralBuilder<T extends Partial<TSendBaseOptions<Extrinsic>> = object> =
-  GeneralBuilderCore<TPjsApi, Extrinsic, T>
+  GeneralBuilderCore<TPjsApi, Extrinsic, TPjsSigner, T>
 
 export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {
   const pjsApi = new PolkadotJsApi(api)
-  return EvmBuilderImpl<TPjsApi, Extrinsic>(pjsApi, provider)
+  return EvmBuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi, provider)
 }

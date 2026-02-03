@@ -6,14 +6,15 @@ import type {
   WithApi
 } from '@paraspell/sdk-core'
 import type { ApiPromise } from '@polkadot/api'
+import type { Signer as PjsSigner } from '@polkadot/api/types'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 export type TPjsApi = ApiPromise
 export type TPjsApiOrUrl = TApiOrUrl<TPjsApi>
-
 export type Extrinsic = SubmittableExtrinsic<'promise'>
+export type TPjsSigner = { signer: PjsSigner; address: string }
 
 type TEvmBuilderOptionsBase = {
   /**
@@ -42,6 +43,11 @@ type TEvmBuilderOptionsBase = {
   signer: Signer | WalletClient
 }
 
-export type TPjsEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes> & {
+export type TPjsEvmBuilderOptions<TApi, TRes, TSigner> = WithApi<
+  TEvmBuilderOptionsBase,
+  TApi,
+  TRes,
+  TSigner
+> & {
   provider?: AbstractProvider
 }

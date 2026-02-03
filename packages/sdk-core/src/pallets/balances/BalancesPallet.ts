@@ -28,7 +28,10 @@ export class BalancesPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes>(api: IPolkadotApi<TApi, TRes>, address: string): Promise<bigint> {
+  async getBalance<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
+    address: string
+  ): Promise<bigint> {
     const balance = await api.queryState<{ free: bigint }>({
       module: this.palletName,
       method: 'Account',

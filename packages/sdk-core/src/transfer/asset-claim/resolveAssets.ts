@@ -5,8 +5,8 @@ import type { Version } from '@paraspell/sdk-common'
 import type { TAssetClaimOptions } from '../../types'
 import { abstractDecimals, assertHasLocation, createAsset, localizeLocation } from '../../utils'
 
-export const resolveAssets = <TApi, TRes>(
-  { api, chain, currency }: TAssetClaimOptions<TApi, TRes>,
+export const resolveAssets = <TApi, TRes, TSigner>(
+  { api, chain, currency }: TAssetClaimOptions<TApi, TRes, TSigner>,
   version: Version
 ): TAsset<bigint>[] => {
   const normalizeAsset = (amount: TAmount, currency: TCurrencyCore) => {

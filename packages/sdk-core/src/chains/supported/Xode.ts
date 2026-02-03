@@ -8,12 +8,15 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class Xode<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Xode<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Xode', 'xode', 'Polkadot', Version.V4)
   }
 
-  transferPolkadotXCM<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { destChain, scenario } = options
 
     if (destChain !== 'AssetHubPolkadot' && scenario === 'ParaToPara') {

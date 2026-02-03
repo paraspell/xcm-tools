@@ -20,6 +20,7 @@ import type {
   TLocation,
   TPallet,
   TPaymentInfo,
+  TSender,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
@@ -46,6 +47,7 @@ import {
   isConfig,
   isExternalChain,
   isRelayChain,
+  isSenderSigner,
   localizeLocation,
   MissingChainApiError,
   padValueBy,
@@ -64,7 +66,7 @@ import { isAddress, isHex } from 'viem'
 import { DEFAULT_TTL_MS, EXTENSION_MS, LEGACY_CHAINS, MAX_CLIENTS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
 import { createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
 const clientPool = createClientCache<TPapiApi>(
@@ -109,7 +111,7 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
 }
 
-class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
+class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   private _config?: TBuilderOptions<TPapiApiOrUrl>
   private api: TPapiApi
   private _ttlMs = DEFAULT_TTL_MS
@@ -946,12 +948,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve()
   }
 
-  deriveAddress(path: string): string {
-    return deriveAddress(path)
+  deriveAddress(sender: TSender<TPapiSigner>): string {
+    return deriveAddress(sender)
   }
 
-  async signAndSubmit(tx: TPapiTransaction, path: string): Promise<string> {
-    const signer = createDevSigner(path)
+  async signAndSubmit(tx: TPapiTransaction, sender: TSender<TPapiSigner>): Promise<string> {
+    const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
     const { txHash } = await tx.signAndSubmit(signer)
     return txHash
   }

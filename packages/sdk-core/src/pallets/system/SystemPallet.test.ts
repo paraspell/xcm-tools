@@ -32,7 +32,7 @@ describe('SystemPallet.setBalance', () => {
     const asset = { assetId: '123', amount: 321n } as WithAmount<TAssetInfo>
     const api = {
       getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:0:32`
     const expectedAmount = `pad:hex:321:32`

@@ -25,14 +25,14 @@ describe('buildLocation', () => {
     asset: { symbol: 'TEST', assetId: '123' },
     origin: 'Acala',
     destination: 'Astar'
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   it('returns location when asset is foreign and origin is Bifrost', () => {
     const input = {
       ...baseInput,
       origin: 'BifrostPolkadot',
       asset: { assetId: '123' }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toEqual({
@@ -51,7 +51,7 @@ describe('buildLocation', () => {
         assetId: '123',
         location
       }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toBe(location)
@@ -61,7 +61,7 @@ describe('buildLocation', () => {
     const input = {
       ...baseInput,
       asset: { assetId: '123' }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toEqual({
@@ -79,7 +79,7 @@ describe('buildLocation', () => {
       ...baseInput,
       destination: 'Polkadot',
       asset: { symbol: 'DOT', isNative: true }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toEqual(DOT_LOCATION)
@@ -91,7 +91,7 @@ describe('buildLocation', () => {
       ...baseInput,
       destination: destObj,
       asset: { symbol: 'DOT', isNative: true }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toBe(destObj)
@@ -107,7 +107,7 @@ describe('buildLocation', () => {
       ...baseInput,
       destination: 'Polkadot',
       asset: { symbol: 'DOT', isNative: true }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildLocation(input)
     expect(result).toBe(location)
@@ -121,7 +121,7 @@ describe('buildLocation', () => {
       ...baseInput,
       destination: 'Polkadot',
       asset: { symbol: 'UNKNOWN', isNative: true }
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     expect(() => buildLocation(input)).toThrow(InvalidCurrencyError)
   })

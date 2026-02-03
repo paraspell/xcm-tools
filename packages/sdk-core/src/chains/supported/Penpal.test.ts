@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type Penpal from './Penpal'
 
 describe('Penpal', () => {
-  let chain: Penpal<unknown, unknown>
+  let chain: Penpal<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'Penpal'>('Penpal')
+    chain = getChain<unknown, unknown, unknown, 'Penpal'>('Penpal')
   })
 
   it('should initialize with correct values', () => {

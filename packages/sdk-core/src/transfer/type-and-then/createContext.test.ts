@@ -135,14 +135,14 @@ describe('createTypeAndThenCallContext', () => {
   const mockApi = {
     clone: vi.fn().mockReturnValue(mockClonedApi),
     init: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockOptions = {
     api: mockApi,
     chain: mockChain,
     destination: mockDestChain,
     assetInfo: mockAsset
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -207,6 +207,7 @@ describe('createTypeAndThenCallContext', () => {
 
     const destApiClone = { init: vi.fn().mockResolvedValue(undefined) } as unknown as IPolkadotApi<
       unknown,
+      unknown,
       unknown
     >
     vi.spyOn(mockApi, 'clone').mockReturnValueOnce(destApiClone)
@@ -233,7 +234,7 @@ describe('createTypeAndThenCallContext', () => {
     const options = {
       ...mockOptions,
       assetInfo: relayAsset
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     const result = await createTypeAndThenCallContext(options, {})
 

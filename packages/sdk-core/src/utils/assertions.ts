@@ -4,7 +4,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidAddressError, MissingParameterError } from '../errors'
-import type { TAddress, TDestination } from '../types'
+import type { TAddress, TDestination, TSender } from '../types'
 
 export const assertToIsString: (
   to: TDestination,
@@ -49,10 +49,16 @@ export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWith
   }
 }
 
-export const assertDerivationPath: (path: string | undefined) => asserts path is string = path => {
-  if (!path) {
+export const assertSender: <TSigner>(
+  sender?: TSender<TSigner>
+) => asserts sender is TSender<TSigner> = <TSigner>(sender?: TSender<TSigner>) => {
+  if (sender === undefined) {
     throw new InvalidAddressError(
-      'Sender address needs to be a derivation path to sign and submit transaction using this method.'
+      'Sender address needs to be a derivation path or signer to sign and submit transaction using this method.'
     )
   }
+}
+
+export const isSenderSigner = <TSigner>(sender: TSender<TSigner>): sender is TSigner => {
+  return typeof sender !== 'string'
 }

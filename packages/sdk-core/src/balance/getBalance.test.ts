@@ -20,7 +20,7 @@ const createMockApi = () =>
   ({
     init: vi.fn().mockResolvedValue(undefined),
     disconnect: vi.fn().mockResolvedValue(undefined)
-  }) as unknown as IPolkadotApi<unknown, unknown>
+  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const baseCurrency = { symbol: 'UNIT' }
 const baseAsset = { assetId: 'UNIT' } as TAssetInfo
@@ -44,7 +44,7 @@ describe('getAssetBalanceInternal', () => {
       address: '0x123',
       chain: 'Ethereum',
       asset
-    } as TGetAssetBalanceOptions<unknown, unknown>)
+    } as TGetAssetBalanceOptions<unknown, unknown, unknown>)
 
     expect(validateAddress).toHaveBeenCalledWith(api, '0x123', 'Ethereum', false)
     expect(initSpy).toHaveBeenCalledWith('Ethereum')
@@ -70,7 +70,7 @@ describe('getAssetBalanceInternal', () => {
       address: 'relay-account',
       chain: 'Polkadot',
       asset: baseAsset
-    } as TGetAssetBalanceOptions<unknown, unknown>)
+    } as TGetAssetBalanceOptions<unknown, unknown, unknown>)
 
     expect(validateAddress).toHaveBeenCalledWith(api, 'relay-account', 'Polkadot', false)
     expect(initSpy).toHaveBeenCalledWith('Polkadot')
@@ -126,7 +126,7 @@ describe('getBalanceInternal', () => {
       address: 'addr',
       chain: 'Astar',
       currency: baseCurrency
-    } as TGetBalanceOptions<unknown, unknown>)
+    } as TGetBalanceOptions<unknown, unknown, unknown>)
 
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Astar', baseCurrency, null)
     expect(chainGetBalance).toHaveBeenCalledWith(api, 'addr', baseAsset)

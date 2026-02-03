@@ -17,7 +17,7 @@ describe('AssetClaimBuilder', () => {
   const mockApi = {
     deriveAddress: vi.fn().mockReturnValue('5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'),
     signAndSubmit: vi.fn().mockResolvedValue('0x1234567890abcdef')
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockExtrinsic = {
     module: 'PolkadotXcm',
@@ -58,7 +58,7 @@ describe('AssetClaimBuilder', () => {
     const derivationPath = '//Alice'
     const resolvedSender = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
 
-    const assertSpy = vi.spyOn(utils, 'assertDerivationPath')
+    const assertSpy = vi.spyOn(utils, 'assertSender')
     const deriveSpy = vi.spyOn(mockApi, 'deriveAddress')
     const submitSpy = vi.spyOn(mockApi, 'signAndSubmit')
 
@@ -78,7 +78,7 @@ describe('AssetClaimBuilder', () => {
         currency,
         address: ADDRESS,
         senderAddress: resolvedSender,
-        path: derivationPath
+        sender: derivationPath
       })
     )
 
@@ -87,7 +87,7 @@ describe('AssetClaimBuilder', () => {
   })
 
   it('throws on signAndSubmit when senderAddress is not a derivation path', async () => {
-    const assertSpy = vi.spyOn(utils, 'assertDerivationPath')
+    const assertSpy = vi.spyOn(utils, 'assertSender')
     const submitSpy = vi.spyOn(mockApi, 'signAndSubmit')
 
     await expect(

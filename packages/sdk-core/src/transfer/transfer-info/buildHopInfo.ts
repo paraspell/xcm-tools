@@ -6,14 +6,14 @@ import {
 
 import type { BuildHopInfoOptions, THopTransferInfo } from '../../types'
 
-export const buildHopInfo = async <TApi, TRes>({
+export const buildHopInfo = async <TApi, TRes, TSigner>({
   api,
   chain,
   fee,
   originChain,
   asset,
   currency
-}: BuildHopInfoOptions<TApi, TRes>) => {
+}: BuildHopInfoOptions<TApi, TRes, TSigner>) => {
   const hopApi = api.clone()
   await hopApi.init(chain)
   hopApi.setDisconnectAllowed(false)

@@ -37,28 +37,30 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   skipReverseFeeCalculation?: boolean
 }
 
-export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
-  TGetXcmFeeBaseOptions<TRes, TDisableFallback>,
+export type TGetXcmFeeOptions<
   TApi,
-  TRes
->
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean = boolean
+> = WithApi<TGetXcmFeeBaseOptions<TRes, TDisableFallback>, TApi, TRes, TSigner>
 
 export type TGetXcmFeeInternalOptions<
   TApi,
   TRes,
+  TSigner,
   TDisableFallback extends boolean = boolean
-> = Omit<TGetXcmFeeOptions<TApi, TRes, TDisableFallback>, 'buildTx'> & {
+> = Omit<TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>, 'buildTx'> & {
   tx: TRes
   useRootOrigin: boolean
 }
 
-export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes>,
+export type TGetXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
+  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
   'disableFallback' | 'useRootOrigin' | 'buildTx' | 'version'
 >
 
-export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes>,
+export type TGetOriginXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
+  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
   'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx' | 'version'
 >
 
@@ -78,14 +80,15 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   useRootOrigin?: boolean
 }
 
-export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
+export type TGetOriginXcmFeeOptions<TApi, TRes, TSigner> = WithApi<
   TGetOriginXcmFeeBaseOptions<TRes>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
-export type TGetOriginXcmFeeInternalOptions<TApi, TRes> = Omit<
-  TGetOriginXcmFeeOptions<TApi, TRes>,
+export type TGetOriginXcmFeeInternalOptions<TApi, TRes, TSigner> = Omit<
+  TGetOriginXcmFeeOptions<TApi, TRes, TSigner>,
   'buildTx'
 > & {
   tx: TRes
@@ -110,14 +113,15 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   skipReverseFeeCalculation?: boolean
 }
 
-export type TGetFeeForDestChainOptions<TApi, TRes> = WithApi<
+export type TGetFeeForDestChainOptions<TApi, TRes, TSigner> = WithApi<
   TGetFeeForDestChainBaseOptions<TRes>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
-export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
-  TGetFeeForDestChainOptions<TApi, TRes>,
+export type TGetReverseTxFeeOptions<TApi, TRes, TSigner> = Omit<
+  TGetFeeForDestChainOptions<TApi, TRes, TSigner>,
   | 'destination'
   | 'disableFallback'
   | 'forwardedXcms'

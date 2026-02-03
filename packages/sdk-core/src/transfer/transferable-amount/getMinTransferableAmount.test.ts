@@ -37,17 +37,22 @@ describe('getMinTransferableAmountInternal', () => {
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}) as unknown)
 
-  const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown>
+  const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown, unknown>
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockBuilder = {
     currency: vi.fn().mockReturnThis(),
     buildInternal: vi.fn().mockReturnValue({} as unknown)
-  } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptionsWithSenderAddress<unknown>>
+  } as unknown as GeneralBuilder<
+    unknown,
+    unknown,
+    unknown,
+    TSendBaseOptionsWithSenderAddress<unknown>
+  >
 
   const baseOptions = {
     api,
@@ -59,7 +64,7 @@ describe('getMinTransferableAmountInternal', () => {
     builder: mockBuilder,
     version: Version.V5,
     buildTx
-  } as TGetMinTransferableAmountOptions<unknown, unknown>
+  } as TGetMinTransferableAmountOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

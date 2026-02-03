@@ -8,10 +8,10 @@ import type { TBatchedSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
-class BatchTransactionManager<TApi, TRes> {
-  transactionOptions: TBatchedSendOptions<TApi, TRes>[] = []
+class BatchTransactionManager<TApi, TRes, TSigner> {
+  transactionOptions: TBatchedSendOptions<TApi, TRes, TSigner>[] = []
 
-  addTransaction(options: TBatchedSendOptions<TApi, TRes>) {
+  addTransaction(options: TBatchedSendOptions<TApi, TRes, TSigner>) {
     this.transactionOptions.push(options)
   }
 
@@ -20,7 +20,7 @@ class BatchTransactionManager<TApi, TRes> {
   }
 
   async buildBatch(
-    api: IPolkadotApi<TApi, TRes>,
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     from: TSubstrateChain,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {

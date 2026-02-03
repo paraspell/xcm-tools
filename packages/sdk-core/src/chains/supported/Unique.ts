@@ -14,23 +14,26 @@ import type {
 import { assertHasId, assertHasLocation } from '../../utils'
 import Chain from '../Chain'
 
-class Unique<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Unique<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Unique', 'unique', 'Polkadot', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     throw new ScenarioNotSupportedError(
       `${this.chain} does not support foreign assets local transfers`
     )
   }
 
-  async getBalanceForeign<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalanceForeign<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

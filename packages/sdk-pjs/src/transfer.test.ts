@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
 import { getBridgeStatus, getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 
 vi.mock('./PolkadotJsApi')
 
@@ -28,7 +28,7 @@ describe('Send Function using PolkadotJsAPI', () => {
 
   const options = {
     api: mockApi
-  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api'> & {
+  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'> & {
     api: TPjsApiOrUrl
   }
 
@@ -67,7 +67,7 @@ describe('Send Function using PolkadotJsAPI', () => {
         currency: {
           symbol: 'ETH'
         }
-      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic>
+      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>
 
       await transferEthToPolkadot(options)
 

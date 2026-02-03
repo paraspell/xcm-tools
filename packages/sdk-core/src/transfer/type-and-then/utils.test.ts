@@ -10,7 +10,7 @@ vi.mock('../../utils', () => ({
 }))
 
 describe('createRefundInstruction', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const mockSenderAddress = '0x123'
   const mockVersion = 'V3' as Version
   const mockBeneficiaryLocation = {} as TLocation

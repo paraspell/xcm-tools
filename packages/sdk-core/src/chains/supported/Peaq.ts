@@ -9,12 +9,15 @@ import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Peaq<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Peaq<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Peaq', 'peaq', 'Polkadot', Version.V4)
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { scenario, asset } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
@@ -29,7 +32,7 @@ class Peaq<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, address, isAmountAll } = options
 
     assertHasId(asset)

@@ -10,7 +10,7 @@ import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 vi.mock('../../utils')
 
 describe('buildClaimAssetsParams', () => {
-  const apiMock = {} as unknown as IPolkadotApi<unknown, unknown>
+  const apiMock = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   it('should build claim assets input with a specified version', () => {
     const version = Version.V5
@@ -25,7 +25,7 @@ describe('buildClaimAssetsParams', () => {
       [version]: data
     }))
 
-    const options: TAssetClaimInternalOptions<unknown, unknown> = {
+    const options: TAssetClaimInternalOptions<unknown, unknown, unknown> = {
       chain: 'Acala',
       api: apiMock,
       currency: [],
@@ -58,7 +58,7 @@ describe('buildClaimAssetsParams', () => {
       [version]: data
     }))
 
-    const options: TAssetClaimInternalOptions<unknown, unknown> = {
+    const options: TAssetClaimInternalOptions<unknown, unknown, unknown> = {
       chain: 'Acala',
       api: apiMock,
       currency: [],

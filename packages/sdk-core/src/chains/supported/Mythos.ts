@@ -26,8 +26,8 @@ import { handleToAhTeleport } from '../../utils/transfer'
 import Chain from '../Chain'
 import { getParaId } from '../config'
 
-export const createTypeAndThenTransfer = async <TApi, TRes>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   chain: TSubstrateChain,
   version: Version
 ): Promise<TSerializedExtrinsics> => {
@@ -81,13 +81,16 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   }
 }
 
-class Mythos<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Mythos<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Mythos', 'mythos', 'Polkadot', Version.V5)
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  async transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, destination, scenario } = input
 

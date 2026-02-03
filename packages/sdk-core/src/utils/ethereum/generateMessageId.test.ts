@@ -32,7 +32,7 @@ describe('generateMessageId', () => {
       stringToUint8a,
       hexToUint8a,
       blake2AsHex
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const getFromRpcSpy = vi.spyOn(api, 'getFromRpc')
     const accountToHexSpy = vi.spyOn(api, 'accountToHex')

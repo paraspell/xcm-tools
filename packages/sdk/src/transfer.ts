@@ -15,7 +15,7 @@ import {
 } from '@paraspell/sdk-core'
 
 import PapiApi from './PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
 /**
@@ -23,16 +23,18 @@ import { createPapiApiCall } from './utils'
  * @param options - The transfer options.
  * @returns An extrinsic to be signed and sent.
  */
-export const send = createPapiApiCall(sendImpl<TPapiApi, TPapiTransaction>)
+export const send = createPapiApiCall(sendImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
 
-export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction>)
+export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
 
-export const dryRunOrigin = createPapiApiCall(dryRunOriginImpl<TPapiApi, TPapiTransaction>)
+export const dryRunOrigin = createPapiApiCall(
+  dryRunOriginImpl<TPapiApi, TPapiTransaction, TPapiSigner>
+)
 
 export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
   const papiApi = new PapiApi(ahApi)
   await papiApi.init('AssetHubPolkadot')
-  return getEthFeesImpl<TPapiApi, TPapiTransaction>(papiApi)
+  return getEthFeesImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
 }
 
 /**
@@ -40,10 +42,12 @@ export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
  */
 export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
   const papiApi = new PapiApi(ahApi)
-  return getBridgeStatusImpl<TPapiApi, TPapiTransaction>(papiApi)
+  return getBridgeStatusImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
 }
 
-export const getOriginXcmFee = createPapiApiCall(getOriginXcmFeeImpl<TPapiApi, TPapiTransaction>)
+export const getOriginXcmFee = createPapiApiCall(
+  getOriginXcmFeeImpl<TPapiApi, TPapiTransaction, TPapiSigner>
+)
 
 export const getXcmFee = async <TDisableFallback extends boolean>(
   options: TGetXcmFeeBaseOptions<TPapiTransaction, TDisableFallback>,
@@ -61,7 +65,7 @@ export const handleSwapExecuteTransfer = (
   builderOptions?: TBuilderOptions<TPapiApiOrUrl>
 ) => {
   const api = new PapiApi(builderOptions)
-  return handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction>({
+  return handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction, TPapiSigner>({
     ...options,
     api
   })

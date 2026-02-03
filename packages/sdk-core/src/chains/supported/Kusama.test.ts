@@ -9,14 +9,13 @@ import type Kusama from './Kusama'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Kusama', () => {
-  let chain: Kusama<unknown, unknown>
+  let chain: Kusama<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { isNative: true, symbol: 'KSM', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Kusama'>('Kusama')
+    chain = getChain<unknown, unknown, unknown, 'Kusama'>('Kusama')
   })
 
   it('should initialize with correct values', () => {

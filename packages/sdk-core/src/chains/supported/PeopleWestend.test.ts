@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type PeopleWestend from './PeopleWestend'
 
 describe('PeopleWestend', () => {
-  let chain: PeopleWestend<unknown, unknown>
+  let chain: PeopleWestend<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'PeopleWestend'>('PeopleWestend')
+    chain = getChain<unknown, unknown, unknown, 'PeopleWestend'>('PeopleWestend')
   })
 
   it('should initialize with correct values', () => {

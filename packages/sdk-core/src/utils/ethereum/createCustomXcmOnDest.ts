@@ -121,7 +121,7 @@ const createMainInstruction = (
   }
 }
 
-export const createCustomXcmOnDest = <TApi, TRes>(
+export const createCustomXcmOnDest = <TApi, TRes, TSigner>(
   {
     api,
     address,
@@ -129,7 +129,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     senderAddress,
     ahAddress,
     version
-  }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   messageId: string,
   ethAsset: TAssetInfo
