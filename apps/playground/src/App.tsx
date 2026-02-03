@@ -9,6 +9,7 @@ import {
 } from '@mantine/code-highlight';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { ReactiveDotProvider } from '@reactive-dot/react';
 import hljs from 'highlight.js/lib/core';
 import tsLang from 'highlight.js/lib/languages/typescript';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
@@ -16,8 +17,8 @@ import { BrowserRouter } from 'react-router';
 
 import { AppShell } from './components/AppShell/AppShell';
 import { WalletProvider } from './providers/WalletProvider';
+import { config } from './reactiveDotConfig';
 import { theme } from './theme/themeConfig';
-
 hljs.registerLanguage('ts', tsLang);
 
 const highlightJsAdapter = createHighlightJsAdapter(hljs);
@@ -28,9 +29,11 @@ const App = () => (
       <NuqsAdapter>
         <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
           <Notifications />
-          <WalletProvider>
-            <AppShell />
-          </WalletProvider>
+          <ReactiveDotProvider config={config}>
+            <WalletProvider>
+              <AppShell />
+            </WalletProvider>
+          </ReactiveDotProvider>
         </CodeHighlightAdapterProvider>
       </NuqsAdapter>
     </MantineProvider>

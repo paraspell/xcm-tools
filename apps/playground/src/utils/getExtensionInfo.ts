@@ -30,6 +30,16 @@ export const getExtensionInfo = (name?: string) => {
         name: 'Polkagate',
         icon: '/wallets/polkagate.png',
       };
+    case 'Mimir':
+      return {
+        name: 'Mimir',
+        icon: '/wallets/mimir.svg',
+      };
+    case 'Ledger':
+      return {
+        name: 'Ledger',
+        icon: '/wallets/ledger.png',
+      };
     default:
       return {
         name: 'Unknown browser extension',
