@@ -5,10 +5,12 @@ import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import type Acala from './Acala'
 
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../config')
+vi.mock('../../utils/transfer')
 
 describe('Acala', () => {
   let chain: Acala<unknown, unknown, unknown>
@@ -45,6 +47,8 @@ describe('Acala', () => {
       balance: 1000n
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
+    vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
+
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await chain.transferLocalNativeAsset(mockOptions)
@@ -74,6 +78,8 @@ describe('Acala', () => {
       isAmountAll: true
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
+    vi.mocked(getLocalTransferAmount).mockReturnValue(990n)
+
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await chain.transferLocalNativeAsset(mockOptions)
@@ -95,6 +101,8 @@ describe('Acala', () => {
       address: 'address',
       balance: 1000n
     } as TTransferLocalOptions<unknown, unknown, unknown>
+
+    vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -119,6 +127,8 @@ describe('Acala', () => {
       balance: 500n,
       isAmountAll: true
     } as TTransferLocalOptions<unknown, unknown, unknown>
+
+    vi.mocked(getLocalTransferAmount).mockReturnValue(500n)
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

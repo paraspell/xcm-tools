@@ -102,6 +102,8 @@ describe('send', () => {
       currency: options.currency,
       feeAsset: undefined,
       feeCurrency: undefined,
+      isAmountAll: undefined,
+      keepAlive: false,
       address: options.address,
       to: options.to,
       paraIdTo: options.paraIdTo,
@@ -110,7 +112,8 @@ describe('send', () => {
       senderAddress: undefined,
       ahAddress: undefined,
       pallet: undefined,
-      method: undefined
+      method: undefined,
+      transactOptions: undefined
     })
 
     expect(result).toBe('transferResult')

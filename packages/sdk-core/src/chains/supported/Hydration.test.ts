@@ -231,7 +231,8 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef',
-        balance: 2000n
+        balance: 2000n,
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -240,7 +241,7 @@ describe('Hydration', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: 'transfer_allow_death',
         params: {
           dest: mockInput.address,
           value: BigInt(mockInput.assetInfo.amount)
@@ -255,7 +256,8 @@ describe('Hydration', () => {
         address: '0x1234567890abcdef',
         balance: 2000n,
         senderAddress: 'sender',
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -321,7 +323,8 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
         address: '0x1234567890abcdef',
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')

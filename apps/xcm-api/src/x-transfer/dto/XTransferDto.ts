@@ -138,6 +138,7 @@ export const XTransferDtoSchema = z
     currency: CurrencySchema,
     feeAsset: CurrencyCoreSchema.optional(),
     xcmVersion: z.enum(versionValues).optional().nullable(),
+    keepAlive: z.boolean().optional(),
     pallet: z.string().optional(),
     method: z.string().optional(),
     senderAddress: z.string().optional(),

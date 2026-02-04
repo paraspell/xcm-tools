@@ -148,6 +148,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       ahAddress,
       pallet,
       method,
+      keepAlive,
       transactOptions
     } = sendOptions
     const scenario = resolveScenario(this.chain, destination)
@@ -156,7 +157,16 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const isLocalTransfer = this.chain === destination
     if (isLocalTransfer) {
-      return this.transferLocal(sendOptions)
+      return this.transferLocal({
+        ...sendOptions,
+        keepAlive: keepAlive ?? true
+      })
+    }
+
+    if (keepAlive) {
+      throw new UnsupportedOperationError(
+        'Keep alive option is not yet supported for XCM transfers.'
+      )
     }
 
     this.throwIfTempDisabled(sendOptions, destChain)
@@ -456,7 +466,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     const dest = isChainEvm(this.chain) ? address : { Id: address }
 
@@ -467,7 +477,7 @@ abstract class Chain<TApi, TRes, TSigner> {
           method: 'transfer_all',
           params: {
             dest,
-            keep_alive: false
+            keep_alive: keepAlive
           }
         })
       )
@@ -476,7 +486,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     return Promise.resolve(
       api.deserializeExtrinsics({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer_allow_death',
         params: {
           dest,
           value: asset.amount
@@ -486,7 +496,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -500,14 +510,14 @@ abstract class Chain<TApi, TRes, TSigner> {
         params: {
           dest,
           currency_id: currencyId,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Tokens',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         dest,
         currency_id: currencyId,

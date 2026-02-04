@@ -130,7 +130,8 @@ export const send = async <TApi, TRes, TSigner>(
     pallet,
     method,
     transactOptions,
-    isAmountAll
+    isAmountAll,
+    keepAlive
   } = options
 
   const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
@@ -154,6 +155,7 @@ export const send = async <TApi, TRes, TSigner>(
     pallet,
     method,
     transactOptions,
-    isAmountAll
+    isAmountAll,
+    keepAlive
   })
 }

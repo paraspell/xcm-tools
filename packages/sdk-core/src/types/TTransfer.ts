@@ -122,6 +122,10 @@ export type TSendBaseOptions<TRes> = {
    */
   pallet?: string
   /**
+   * Whether to keep the account alive after the transfer.
+   */
+  keepAlive?: boolean
+  /**
    * The optional pallet method override
    */
   method?: string

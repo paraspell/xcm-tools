@@ -1,4 +1,5 @@
 export * from './abstractDecimals'
 export * from './execute'
+export * from './getLocalTransferAmount'
 export * from './handleToAhTeleport'
 export * from './throwUnsupportedCurrency'

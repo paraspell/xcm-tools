@@ -50,7 +50,7 @@ export const Transact = <T extends TTransactFields>({ form }: Props<T>) => {
   );
 
   return (
-    <Stack gap="md" py={opened ? 'sm' : '0'}>
+    <Stack gap="md" py="sm">
       {!opened && (
         <Button
           variant="transparent"

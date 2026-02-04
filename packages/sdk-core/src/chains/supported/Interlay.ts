@@ -36,7 +36,7 @@ class Interlay<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     const currencyId = this.getCustomCurrencyId(asset)
 
@@ -47,14 +47,14 @@ class Interlay<TApi, TRes, TSigner>
         params: {
           dest: address,
           currency_id: currencyId,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Tokens',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         dest: address,
         currency_id: currencyId,

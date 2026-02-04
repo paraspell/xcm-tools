@@ -112,6 +112,7 @@ export class XTransferService {
       feeAsset,
       address,
       xcmVersion,
+      keepAlive,
       pallet,
       method,
       senderAddress,
@@ -133,6 +134,10 @@ export class XTransferService {
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
+    }
+
+    if (keepAlive) {
+      finalBuilder = finalBuilder.keepAlive(keepAlive);
     }
 
     if (pallet && method) {

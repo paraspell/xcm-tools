@@ -101,7 +101,8 @@ describe('Peaq', () => {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address',
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
