@@ -103,7 +103,7 @@ describe('send', () => {
       feeAsset: undefined,
       feeCurrency: undefined,
       isAmountAll: undefined,
-      keepAlive: false,
+      keepAlive: undefined,
       address: options.address,
       to: options.to,
       paraIdTo: options.paraIdTo,

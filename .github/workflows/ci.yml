@@ -66,69 +66,68 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           default_author: github_actions
-          message: 'chore: auto-fix formatting & lint'
+          message: "chore: auto-fix formatting & lint"
 
       - name: Run tests
         run: pnpm test:cov
 
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage
-          path: |
-            packages/**/coverage
-            apps/**/coverage
-
-
-  upload-coverage:
-    needs: ci
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - name: XCM SDK core
-            directory: packages/sdk-core
-            flags: xcm-sdk-core
-          - name: XCM SDK
-            directory: packages/sdk
-            flags: xcm-sdk
-          - name: XCM SDK PJS
-            directory: packages/sdk-pjs
-            flags: xcm-sdk-pjs
-          - name: SDK common
-            directory: packages/sdk-common
-            flags: sdk-common
-          - name: Assets
-            directory: packages/assets
-            flags: assets
-          - name: Pallets
-            directory: packages/pallets
-            flags: pallets
-          - name: XCM Analyser
-            directory: packages/xcm-analyser
-            flags: xcm-analyser
-          - name: XCM Router
-            directory: packages/xcm-router
-            flags: xcm-router
-          - name: Visualizer BE
-            directory: apps/visualizer-be
-            flags: visualizer-be
-          - name: XCM API
-            directory: apps/xcm-api
-            flags: xcm-api
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Download coverage artifacts
-        uses: actions/download-artifact@v7
-        with:
-          name: coverage
-
-      - name: Upload ${{ matrix.name }} coverage to Codecov
+      - name: Upload XCM SDK core coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ${{ matrix.directory }}
-          flags: ${{ matrix.flags }}
+          directory: packages/sdk-core
+          flags: xcm-sdk-core
+      - name: Upload XCM SDK coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk
+          flags: xcm-sdk
+      - name: Upload XCM SDK PJS coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk-pjs
+          flags: xcm-sdk-pjs
+      - name: Upload Assets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk-common
+          flags: sdk-common
+      - name: Upload Assets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/assets
+          flags: assets
+      - name: Upload Pallets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/pallets
+          flags: pallets
+      - name: Upload XCM Analyser coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/xcm-analyser
+          flags: xcm-analyser
+      - name: Upload XCM Router coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/xcm-router
+          flags: xcm-router
+      - name: Upload Visualizer BE coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: apps/visualizer-be
+          flags: visualizer-be
+      - name: Upload XCM API coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: apps/xcm-api
+          flags: xcm-api
