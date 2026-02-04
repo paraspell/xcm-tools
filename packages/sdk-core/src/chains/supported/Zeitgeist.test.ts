@@ -6,9 +6,11 @@ import type { IPolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import type Zeitgeist from './Zeitgeist'
 
 vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../utils/transfer')
 
 describe('Zeitgeist', () => {
   let chain: Zeitgeist<unknown, unknown, unknown>
@@ -68,6 +70,8 @@ describe('Zeitgeist', () => {
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
         address: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

@@ -93,7 +93,7 @@ class Hydration<TApi, TRes, TSigner>
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     if (isAmountAll) {
       return Promise.resolve(
@@ -102,7 +102,7 @@ class Hydration<TApi, TRes, TSigner>
           method: 'transfer_all',
           params: {
             dest: address,
-            keep_alive: false
+            keep_alive: keepAlive
           }
         })
       )
@@ -111,7 +111,7 @@ class Hydration<TApi, TRes, TSigner>
     return Promise.resolve(
       api.deserializeExtrinsics({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer_allow_death',
         params: {
           dest: address,
           value: asset.amount
@@ -121,7 +121,7 @@ class Hydration<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -134,14 +134,14 @@ class Hydration<TApi, TRes, TSigner>
         params: {
           dest: address,
           currency_id: currencyId,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Tokens',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         dest: address,
         currency_id: currencyId,

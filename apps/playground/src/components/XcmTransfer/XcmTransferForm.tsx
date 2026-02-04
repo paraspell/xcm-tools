@@ -62,6 +62,7 @@ import {
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
+import { KeepAliveCheckbox } from '../common/KeepAliveCheckbox';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AddressTooltip } from '../Tooltip';
@@ -89,6 +90,7 @@ export type FormValues = {
   address: string;
   ahAddress: string;
   useApi: boolean;
+  keepAlive: boolean;
 } & TAdvancedOptions &
   TTransactFields;
 
@@ -171,14 +173,22 @@ const XcmTransferForm: FC<Props> = ({
     ),
     ahAddress: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
+    keepAlive: parseAsBoolean.withDefault(true),
     ...transactOptionsParsers,
     ...advancedOptionsParsers,
   });
 
-  const form = useForm<FormValues, (values: FormValues) => FormValues>({
+  const form = useForm<FormValues>({
     name: MAIN_FORM_NAME,
     initialValues: initialValues ?? queryState,
-    transformValues: (values) => values,
+    transformValues: (values) => {
+      const { from, to, keepAlive } = values;
+      return {
+        ...values,
+        // Use keepAlive only for local transfers
+        keepAlive: from === to ? keepAlive : false,
+      };
+    },
     validate: {
       address: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
@@ -373,6 +383,8 @@ const XcmTransferForm: FC<Props> = ({
 
   const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
 
+  const isLocalTransfer = from === to;
+
   if (!isVisible) {
     return null;
   }
@@ -527,9 +539,15 @@ const XcmTransferForm: FC<Props> = ({
 
           <Transact form={form} />
 
-          <XcmApiCheckbox
-            {...form.getInputProps('useApi', { type: 'checkbox' })}
-          />
+          <Group gap="lg">
+            <XcmApiCheckbox
+              {...form.getInputProps('useApi', { type: 'checkbox' })}
+            />
+            <KeepAliveCheckbox
+              display={isLocalTransfer ? 'block' : 'none'}
+              {...form.getInputProps('keepAlive', { type: 'checkbox' })}
+            />
+          </Group>
 
           <AdvancedOptions form={form} />
 

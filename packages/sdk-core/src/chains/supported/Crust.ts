@@ -34,7 +34,7 @@ class Crust<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -48,14 +48,14 @@ class Crust<TApi, TRes, TSigner>
         params: {
           id: assetId,
           dest,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Assets',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
         target: dest,

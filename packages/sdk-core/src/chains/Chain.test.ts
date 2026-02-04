@@ -592,7 +592,8 @@ describe('Parachain', () => {
         api,
         assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
         senderAddress: '0x456',
-        address: '0x123'
+        address: '0x123',
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
@@ -601,7 +602,7 @@ describe('Parachain', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: 'transfer_allow_death',
         params: {
           dest: { Id: options.address },
           value: BigInt(options.assetInfo.amount)

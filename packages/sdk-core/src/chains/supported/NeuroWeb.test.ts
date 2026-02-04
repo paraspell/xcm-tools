@@ -49,7 +49,8 @@ describe('NeuroWeb', () => {
         assetInfo: { symbol: 'NEURO', amount: 123n },
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 999n,
-        isAmountAll: false
+        isAmountAll: false,
+        keepAlive: true
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       await chain.transferLocalNativeAsset(mockOptions)
@@ -70,7 +71,8 @@ describe('NeuroWeb', () => {
         assetInfo: { symbol: 'NEURO', amount: 123n },
         address: '5F3sa2TYSF9Kxxxxx',
         balance: 456n,
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       await chain.transferLocalNativeAsset(mockOptions)

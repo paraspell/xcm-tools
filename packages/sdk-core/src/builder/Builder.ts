@@ -178,6 +178,16 @@ export class GeneralBuilder<
   }
 
   /**
+   * Whether to keep the account alive after the transfer.
+   *
+   * @param value - A boolean indicating whether to keep the account alive.
+   * @returns An instance of Builder
+   */
+  keepAlive(keepAlive: boolean) {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, keepAlive })
+  }
+
+  /**
    * Sets a custom pallet for the transaction.
    *
    * @param palletName - The name of the custom pallet to be used.

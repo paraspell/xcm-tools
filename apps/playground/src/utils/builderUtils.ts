@@ -144,6 +144,7 @@ export const setupBaseBuilder = (
     address,
     ahAddress,
     xcmVersion,
+    keepAlive,
     pallet,
     method,
     transactOptions,
@@ -170,6 +171,10 @@ export const setupBaseBuilder = (
 
   if (xcmVersion) {
     finalBuilder = finalBuilder.xcmVersion(xcmVersion);
+  }
+
+  if (keepAlive) {
+    finalBuilder = finalBuilder.keepAlive(keepAlive);
   }
 
   if (pallet && method) {

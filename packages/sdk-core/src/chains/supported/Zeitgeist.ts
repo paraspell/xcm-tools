@@ -12,6 +12,7 @@ import type {
 } from '../../types'
 import { type TXcmForeignAsset, type TZeitgeistAsset } from '../../types'
 import { assertHasId } from '../../utils'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import Chain from '../Chain'
 
 class Zeitgeist<TApi, TRes, TSigner>
@@ -42,11 +43,11 @@ class Zeitgeist<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll } = options
+    const { api, assetInfo: asset, address } = options
 
     assertHasId(asset)
 
-    const amount = isAmountAll ? balance : asset.amount
+    const amount = getLocalTransferAmount(options)
 
     return api.deserializeExtrinsics({
       module: 'AssetManager',

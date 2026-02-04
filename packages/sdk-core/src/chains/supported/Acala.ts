@@ -15,6 +15,7 @@ import type {
 } from '../../types'
 import { type TForeignOrTokenAsset } from '../../types'
 import { assertSenderAddress } from '../../utils'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import Chain from '../Chain'
 
 class Acala<TApi, TRes, TSigner>
@@ -41,7 +42,7 @@ class Acala<TApi, TRes, TSigner>
   async transferLocalNativeAsset(
     options: TTransferLocalOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { api, assetInfo: asset, address, balance, senderAddress, isAmountAll } = options
+    const { api, address, senderAddress, isAmountAll, keepAlive } = options
 
     const createTx = (amount: bigint) =>
       api.deserializeExtrinsics({
@@ -53,27 +54,26 @@ class Acala<TApi, TRes, TSigner>
         }
       })
 
-    let amount: bigint
-
-    if (isAmountAll) {
+    let fee = 0n
+    if (isAmountAll || keepAlive) {
       assertSenderAddress(senderAddress)
-      const { partialFee: fee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), senderAddress)
-      amount = balance - fee
-    } else {
-      amount = asset.amount
+      const { partialFee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), senderAddress)
+      fee = BigInt(partialFee)
     }
+
+    const amount = getLocalTransferAmount(options, fee)
 
     return createTx(amount)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll } = options
+    const { api, assetInfo: asset, address } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
       throw new InvalidCurrencyError('LcDOT local transfers are not supported')
     }
 
-    const amount = isAmountAll ? balance : asset.amount
+    const amount = getLocalTransferAmount(options)
 
     return api.deserializeExtrinsics({
       module: 'Currencies',
