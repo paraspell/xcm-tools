@@ -1,5 +1,26 @@
 # Changelog
 
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.5.1...sdk-core-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add keepAlive flag for local transfers 🪄 ([fcf32ac](https://github.com/paraspell/xcm-tools/commit/fcf32ac00baea19b6304d59a8593c1e0b6f55f17))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix execute small amount check edgecase ⚙️ ([585fdc8](https://github.com/paraspell/xcm-tools/commit/585fdc872a30793d6a2f9564605bec11afb490b8))
+* **sdk-core:** Fix xcm version resolving ⚙️ ([5951bc3](https://github.com/paraspell/xcm-tools/commit/5951bc31a89679a2c1fab7dcaffd293ce56b46e7))
+
+
+### Continuous Integration
+
+* Fix codecov upload creating multiple jobs 🔧 ([00d0032](https://github.com/paraspell/xcm-tools/commit/00d0032ce3cfe93abe2f2e32ffa40613621f93c3))
+* Update lint check command ([edd03f1](https://github.com/paraspell/xcm-tools/commit/edd03f1066bae73bb50476554492ca728252b7dc))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.5.0...sdk-core-v12.5.1) (2026-01-30)
 
 

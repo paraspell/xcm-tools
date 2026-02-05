@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.5.1...sdk-pjs-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Documentation
+
+* Upload readmes & update snapshots ([d515a8b](https://github.com/paraspell/xcm-tools/commit/d515a8b990a531e7ecb172aadcec666757940c3e))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.5.0...sdk-pjs-v12.5.1) (2026-01-30)
 
 
