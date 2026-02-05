@@ -53,7 +53,7 @@ jobs:
       - name: Run formatting & linting
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            pnpm turbo run lint:check || \
+            pnpm lint:check || \
             pnpm turbo run lint --concurrency=1 --force
             pnpm turbo run format:write --force
           else

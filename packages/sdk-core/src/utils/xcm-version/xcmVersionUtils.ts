@@ -1,4 +1,5 @@
-import { isTLocation, TChain, type TSubstrateChain, type Version } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
+import { isTLocation, type TSubstrateChain, type Version } from '@paraspell/sdk-common'
 
 import type { OneKey, TDestination } from '../../types'
 import { getChainVersion } from '../chain'
