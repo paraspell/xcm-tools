@@ -344,7 +344,7 @@ describe('createBaseExecuteXcm', () => {
     )
   })
 
-  it('should create InitiateTransfer when version is V5 or higher', () => {
+  it('should create InitiateTransfer when version is V5 or higher and transactOptions provided', () => {
     vi.mocked(isTrustedChain).mockReturnValue(true)
 
     const result = createBaseExecuteXcm({
@@ -353,18 +353,25 @@ describe('createBaseExecuteXcm', () => {
     })
 
     expect(result[0]).toEqual({
-      InitiateTransfer: {
-        destination: mockDestLocation,
-        remote_fees: {
-          Teleport: mockAssetsFilter
-        },
-        preserve_origin: true,
-        assets: [
+      InitiateTeleport: {
+        assets: mockAssetsFilter,
+        dest: mockDestLocation,
+        xcm: [
           {
-            Teleport: mockAssetsFilter
-          }
-        ],
-        remote_xcm: [
+            PayFees: {
+              asset: {
+                fun: {
+                  Fungible: 9900n
+                },
+                id: {
+                  Concrete: {
+                    interior: 'Here',
+                    parents: 0
+                  }
+                }
+              }
+            }
+          },
           {
             RefundSurplus: undefined
           }
