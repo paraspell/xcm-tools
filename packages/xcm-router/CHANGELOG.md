@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.5.1...xcm-router-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+* **xcm-router:** Add alias field to assets ([f7cc703](https://github.com/paraspell/xcm-tools/commit/f7cc7037f7995afce05eb503bc19c8c23a9450a0))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([7db0393](https://github.com/paraspell/xcm-tools/commit/7db0393b887af58bb7ceff9213f31cfc286d9b94))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.5.0...xcm-router-v12.5.1) (2026-01-30)
 
 

@@ -1,5 +1,26 @@
 # Changelog
 
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.1...xcm-api-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add keepAlive flag for local transfers 🪄 ([fcf32ac](https://github.com/paraspell/xcm-tools/commit/fcf32ac00baea19b6304d59a8593c1e0b6f55f17))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Bug Fixes
+
+* add error handling to existentialDeposit and convertSs58 endpoints ([bef7acd](https://github.com/paraspell/xcm-tools/commit/bef7acd34f4ffbd44d35b79fa3faa44b8ba17938))
+* correct import order in address.service.test.ts ([6618a61](https://github.com/paraspell/xcm-tools/commit/6618a618e133d4c5da051864f20657b907f9274f))
+* **sdk-core:** Fix xcm version resolving ⚙️ ([5951bc3](https://github.com/paraspell/xcm-tools/commit/5951bc31a89679a2c1fab7dcaffd293ce56b46e7))
+
+
+### Documentation
+
+* Upload readmes & update snapshots ([d515a8b](https://github.com/paraspell/xcm-tools/commit/d515a8b990a531e7ecb172aadcec666757940c3e))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.0...xcm-api-v12.5.1) (2026-01-30)
 
 
