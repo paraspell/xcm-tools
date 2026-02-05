@@ -18,7 +18,8 @@ import {
   assertHasLocation,
   RuntimeApiUnavailableError,
   TBuilderConfig,
-  TUrl
+  TUrl,
+  parseUnits
 } from '../src'
 import { GeneralBuilder } from '../dist'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
@@ -281,7 +282,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           const builder = Builder()
             .from('Acala')
             .to('Astar')
-            .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+            .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
             .senderAddress(MOCK_ADDRESS)
             .address(MOCK_ADDRESS)
           await validateTransfer(builder, signer)
@@ -292,7 +293,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           const builder = Builder(acalaProvider)
             .from('Acala')
             .to('Astar')
-            .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+            .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
             .senderAddress(MOCK_ADDRESS)
             .address(MOCK_ADDRESS)
           await validateTransfer(builder, signer)
@@ -303,7 +304,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           const builder = Builder(acalaProviders)
             .from('Acala')
             .to('Astar')
-            .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+            .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
             .senderAddress(MOCK_ADDRESS)
             .address(MOCK_ADDRESS)
           await validateTransfer(builder, signer)

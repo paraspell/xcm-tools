@@ -5,7 +5,7 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { UnsupportedOperationError } from '../../../errors'
 import { createPayFees } from '../../../pallets/polkadotXcm'
-import type { TCreateBaseTransferXcmOptions } from '../../../types'
+import type { TCreateBaseTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
@@ -19,13 +19,14 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => {
   }
 }
 
-const getInstructionType = (
+const getInstructionType = <TRes>(
   version: Version,
   origin: TSubstrateChain,
   destination: TChain,
-  reserveChain?: TSubstrateChain
+  reserveChain?: TSubstrateChain,
+  transactOptions?: TTransactOptions<TRes>
 ) => {
-  if (version >= Version.V5) {
+  if (version >= Version.V5 && transactOptions?.call) {
     return 'InitiateTransfer'
   }
 
@@ -75,6 +76,7 @@ export const createBaseExecuteXcm = <TRes>(
     fees: { originFee, reserveFee },
     version,
     paraIdTo,
+    transactOptions,
     suffixXcm = []
   } = options
 
@@ -95,7 +97,7 @@ export const createBaseExecuteXcm = <TRes>(
     )
   }
 
-  const transferType = getInstructionType(version, chain, destChain, reserveChain)
+  const transferType = getInstructionType(version, chain, destChain, reserveChain, transactOptions)
 
   const isReserveDest = reserveChain === destChain
 

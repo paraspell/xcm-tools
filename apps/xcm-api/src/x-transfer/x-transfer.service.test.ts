@@ -69,6 +69,7 @@ const builderMock = {
   senderAddress: vi.fn().mockReturnThis(),
   ahAddress: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
+  keepAlive: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),
   customPallet: vi.fn().mockReturnThis(),
   transact: vi.fn().mockReturnThis(),
@@ -357,6 +358,18 @@ describe('XTransferService', () => {
         'SovereignAccount',
         undefined,
       );
+    });
+
+    it('should succeed when keepAlive is set to true', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        keepAlive: true,
+      };
+
+      const result = await service.generateXcmCall(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.keepAlive).toHaveBeenCalledWith(true);
     });
   });
 
