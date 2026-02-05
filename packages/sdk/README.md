@@ -66,14 +66,13 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed
 ## Implementation
 
 > [!NOTE]
-> - Local transfers are now available for every currency and every chain. To try them, simply use the same origin and destination parameters.
-> - Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
-> - You can now query Ethereum asset balances on Ethereum via balance query
-> - The Builder() now accepts an optional configuration object (To enhance localhost experience and testing). This object can contain apiOverrides and a development flag. More information in the "Localhost test setup" section.
 > - Brand new asset decimal abstraction introduced. It can be turned on in Builder config. Will be turned on by default in next major release.
+> - V11 > V12 Migration guide https://paraspell.github.io/docs/migration/v11-to-v12.html
 > 
 > **Latest news:**
-> - V11 > V12 Migration guide https://paraspell.github.io/docs/migration/v11-to-v12.html
+> - You can now pass signer directly into senderAddress parameter
+> - The local transfers now have additional builder parameter called keepAlive
+> - Transact is here! Find out more: https://paraspell.github.io/docs/sdk/xcmPallet.html#transact
 
 ### Sending XCM
 For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
@@ -86,13 +85,15 @@ const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - 
       .to(TChain /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]) 
       .address(address | Location object /*If you are sending through xTokens, you need to pass the destination and address Location in one object (x2)*/)
-      .senderAddress(address) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
+      .senderAddress(address | PAPI_SIGNER) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
       /*.ahAddress(ahAddress) - OPTIONAL - used when origin is EVM chain and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address eg. origin: Moonbeam & destination: Ethereum (Multihop goes from Moonbeam > AssetHub > BridgeHub > Ethereum)
         .feeAsset({symbol: 'symbol'} || {id: 'id'} || {location: 'location'}) // Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
         .xcmVersion(Version.V3/V4/V5)  //Optional parameter for manual override of XCM Version used in call
         .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some chain but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
+// Or if you use signers in senderAddress:
+// await builder.signAndSubmit() - Signs and submits the transaction; returns TX hash for tracking
 
 //Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
@@ -123,6 +124,7 @@ const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - 
       .to(TChain) //Has to be the same as the origin (from)
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..])
       .address(address)
+   /* .keepAlive(bool) - Optional: Allows draining the account below the existential deposit. */
 
 const tx = await builder.build()
 
@@ -145,6 +147,58 @@ const tx = await builder.build()
 //Disconnect API after TX
 await builder.disconnect()
 */
+```
+
+#### Transact
+
+```ts
+const builder = Builder(/*client | builder_config | ws_url | [ws_url, ws_url,..] - Optional*/)
+      .from(TSubstrateChain) // 'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
+      .to(TChain) // Has to be same as origin (from)
+      .currency(CURRENCY_SPEC) // Refer to currency spec options below
+      .senderAddress(senderAddress | PAPI SIGNER)
+      .address(address)
+      .transact(hex, /* originType, TWeight - Optional */)
+
+const tx = await builder.build()
+// Or if you use signers in senderAddress:
+// await builder.signAndSubmit() - Signs and submits the transaction; returns TX hash for tracking
+
+//Disconnect API after TX
+await builder.disconnect()
+```
+
+#### Dry run your XCM Calls:
+
+```ts
+//Builder pattern
+const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+        .from(TSubstrateChain)
+        .to(TChain)
+        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
+        /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+        .address(ADDRESS)
+        .senderAddress(address | PAPI_SIGNER)
+        .dryRun()
+
+//Check Parachain for DryRun support - returns true/false
+import { hasDryRunSupport } from "@paraspell/sdk";
+
+const result = hasDryRunSupport(TChain)
+```
+
+#### Dry run preview:
+
+```ts
+//Builder pattern
+const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+        .from(TSubstrateChain)
+        .to(TChain)
+        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
+        /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+        .address(ADDRESS)
+        .senderAddress(address | PAPI_SIGNER)
+        .dryRunPreview(/*{ mintFeeAssets: true } - false by default - Mints fee assets also, if user does not have enough to cover fees on origin.*/)
 ```
 
 #### Batch calls
@@ -189,39 +243,6 @@ const tx = await builder.build()
 await builder.disconnect()
 ```
 
-#### Dry run your XCM Calls:
-
-```ts
-//Builder pattern
-const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(TSubstrateChain)
-        .to(TChain)
-        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
-        /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
-        .dryRun()
-
-//Check Parachain for DryRun support - returns true/false
-import { hasDryRunSupport } from "@paraspell/sdk";
-
-const result = hasDryRunSupport(TChain)
-```
-
-#### Dry run preview:
-
-```ts
-//Builder pattern
-const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-        .from(TSubstrateChain)
-        .to(TChain)
-        .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | {[{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}]})
-        /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
-        .dryRunPreview(/*{ mintFeeAssets: true } - false by default - Mints fee assets also, if user does not have enough to cover fees on origin.*/)
-```
-
 ### Localhost test setup
 
 ```ts
@@ -239,7 +260,7 @@ const builder = await Builder({
   .to(TChain)
   .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or Location: Location*/, amount: amount /*Use "ALL" to transfer everything*/}])
   .address(address) //You can also use prederived accounts - //Alice, //Bob... //Alith, //Balthathar...
-  .senderAddress(address) //You can also use prederived accounts //Alice, //Bob... //Alith, //Balthathar...
+  .senderAddress(address | PAPI_SIGNER) //You can also use prederived accounts //Alice, //Bob... //Alith, //Balthathar...
 
 const tx = await builder.build()
 //Or if you use prederived account as senderAddress:
@@ -252,66 +273,6 @@ await builder.disconnect()
 ### XCM Fee queries
 For full documentation with output examples of XCM Fee queries, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
 
-#### XCM Transfer info
-```ts
-const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TSubstrateChain)
-          .to(TChain)
-          .currency(CURRENCY_SPEC)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getTransferInfo()
-```
-
-#### Transferable amount
-```ts
-const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TSubstrateChain)
-          .to(TChain)
-          .currency(CURRENCY_SPEC)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getTransferableAmount()
-```
-
-#### Minimal transferable amount
-```ts
-const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TSubstrateChain)
-          .to(TChain)
-          .currency(CURRENCY_SPEC)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getMinTransferableAmount()
-```
-
-#### Receivable amount
-```ts
-const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TSubstrateChain)
-          .to(TChain)
-          .currency(CURRENCY_SPEC)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getReceivableAmount()
-```
-
-#### Verify ED on destination
-```ts
-const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-          .from(TSubstrateChain)
-          .to(TChain)
-          .currency(CURRENCY_SPEC)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
-          .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .verifyEdOnDestination()
-```
-
 #### XCM Fee (Origin and Dest.)
 
 ```ts
@@ -321,7 +282,7 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
           .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
@@ -334,8 +295,68 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
           .currency(CURRENCY_SPEC)
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
           .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
+```
+
+#### XCM Transfer info
+```ts
+const info = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(TSubstrateChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
+          .getTransferInfo()
+```
+
+#### Transferable amount
+```ts
+const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(TSubstrateChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
+          .getTransferableAmount()
+```
+
+#### Minimal transferable amount
+```ts
+const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(TSubstrateChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
+          .getMinTransferableAmount()
+```
+
+#### Receivable amount
+```ts
+const receivable = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(TSubstrateChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
+          .getReceivableAmount()
+```
+
+#### Verify ED on destination
+```ts
+const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
+          .from(TSubstrateChain)
+          .to(TChain)
+          .currency(CURRENCY_SPEC)
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(address | PAPI_SIGNER)
+          .verifyEdOnDestination()
 ```
 
 #### Asset balance
