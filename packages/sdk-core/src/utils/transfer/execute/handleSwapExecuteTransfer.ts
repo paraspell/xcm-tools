@@ -1,6 +1,6 @@
 import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
-import { type TLocation } from '@paraspell/sdk-common'
+import { Version, type TLocation } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -18,6 +18,7 @@ import { getChainVersion } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
+import { pickCompatibleXcmVersion, pickRouterCompatibleXcmVersion } from '../../xcm-version'
 
 const FEE_PADDING_PERCENTAGE = 20
 
@@ -195,7 +196,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
 
   validateAmount(assetFrom.amount, MIN_FEE)
 
-  const version = getChainVersion(chain ?? exchangeChain)
+  const version = pickRouterCompatibleXcmVersion(chain, exchangeChain, destChain)
 
   const internalOptions = {
     ...options,

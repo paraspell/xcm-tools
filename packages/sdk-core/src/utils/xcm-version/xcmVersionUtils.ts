@@ -1,4 +1,4 @@
-import { isTLocation, type TSubstrateChain, type Version } from '@paraspell/sdk-common'
+import { isTLocation, TChain, type TSubstrateChain, type Version } from '@paraspell/sdk-common'
 
 import type { OneKey, TDestination } from '../../types'
 import { getChainVersion } from '../chain'
@@ -26,4 +26,18 @@ export const pickCompatibleXcmVersion = (
   const originVersion = getChainVersion(origin)
   const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
   return selectXcmVersion(override, originVersion, destVersion)
+}
+
+export const pickRouterCompatibleXcmVersion = (
+  origin: TSubstrateChain | undefined,
+  exchangeChain: TSubstrateChain,
+  destination: TChain | undefined
+): Version => {
+  const exchangeVersion = getChainVersion(exchangeChain)
+  const originVersion = origin ? getChainVersion(origin) : undefined
+  const destVersion = destination ? getChainVersion(destination) : undefined
+
+  // Find minimum compatible version across all defined chains
+  const minWithOrigin = selectXcmVersion(undefined, exchangeVersion, originVersion)
+  return selectXcmVersion(undefined, minWithOrigin, destVersion)
 }

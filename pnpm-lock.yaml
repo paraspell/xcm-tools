@@ -105,7 +105,7 @@ importers:
         version: 7.0.1(postcss@8.5.6)
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
 
   apps/playground:
     dependencies:
@@ -238,7 +238,7 @@ importers:
         version: 0.11.4
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
       vite-plugin-node-polyfills:
         specifier: ^0.25.0
         version: 0.25.0(rollup@4.57.0)(vite@7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0))
@@ -311,19 +311,19 @@ importers:
         version: 7.0.1(postcss@8.5.6)
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
 
   apps/visualizer-be:
     dependencies:
       '@apollo/server':
-        specifier: ^5.3.0
-        version: 5.3.0(graphql@16.12.0)
+        specifier: ^5.4.0
+        version: 5.4.0(graphql@16.12.0)
       '@as-integrations/express5':
         specifier: ^1.1.2
-        version: 1.1.2(@apollo/server@5.3.0(graphql@16.12.0))(express@5.2.1)
+        version: 1.1.2(@apollo/server@5.4.0(graphql@16.12.0))(express@5.2.1)
       '@nestjs/apollo':
         specifier: ^13.2.3
-        version: 13.2.3(@apollo/server@5.3.0(graphql@16.12.0))(@as-integrations/express5@1.1.2(@apollo/server@5.3.0(graphql@16.12.0))(express@5.2.1))(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/graphql@13.2.3(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bufferutil@4.0.9)(class-transformer@0.5.1)(class-validator@0.14.3)(graphql@16.12.0)(reflect-metadata@0.2.2)(ts-morph@27.0.2)(utf-8-validate@5.0.10))(graphql@16.12.0)
+        version: 13.2.3(@apollo/server@5.4.0(graphql@16.12.0))(@as-integrations/express5@1.1.2(@apollo/server@5.4.0(graphql@16.12.0))(express@5.2.1))(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/graphql@13.2.3(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bufferutil@4.0.9)(class-transformer@0.5.1)(class-validator@0.14.3)(graphql@16.12.0)(reflect-metadata@0.2.2)(ts-morph@27.0.2)(utf-8-validate@5.0.10))(graphql@16.12.0)
       '@nestjs/common':
         specifier: ^11.1.12
         version: 11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -556,7 +556,7 @@ importers:
         version: 7.0.1(postcss@8.5.6)
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+        version: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
       vite-plugin-svgr:
         specifier: ^4.5.0
         version: 4.5.0(rollup@4.57.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0))
@@ -1452,8 +1452,8 @@ packages:
     peerDependencies:
       '@apollo/server': ^4.0.0
 
-  '@apollo/server@5.3.0':
-    resolution: {integrity: sha512-ixchCUA38gjB7k1eGU2fra3eUhGyvFhMsKAr72+DaCRl9NhzXf3V4EVlVdiyS6qrR8xWQ+IdZlj2lb52dkqj+A==}
+  '@apollo/server@5.4.0':
+    resolution: {integrity: sha512-E0/2C5Rqp7bWCjaDh4NzYuEPDZ+dltTf2c0FI6GCKJA6GBetVferX3h1//1rS4+NxD36wrJsGGJK+xyT/M3ysg==}
     engines: {node: '>=20'}
     peerDependencies:
       graphql: ^16.11.0
@@ -12672,12 +12672,12 @@ snapshots:
       '@apollo/utils.logger': 3.0.0
       graphql: 16.12.0
 
-  '@apollo/server-plugin-landing-page-graphql-playground@4.0.1(@apollo/server@5.3.0(graphql@16.12.0))':
+  '@apollo/server-plugin-landing-page-graphql-playground@4.0.1(@apollo/server@5.4.0(graphql@16.12.0))':
     dependencies:
-      '@apollo/server': 5.3.0(graphql@16.12.0)
+      '@apollo/server': 5.4.0(graphql@16.12.0)
       '@apollographql/graphql-playground-html': 1.6.29
 
-  '@apollo/server@5.3.0(graphql@16.12.0)':
+  '@apollo/server@5.4.0(graphql@16.12.0)':
     dependencies:
       '@apollo/cache-control-types': 1.0.3(graphql@16.12.0)
       '@apollo/server-gateway-interface': 2.0.0(graphql@16.12.0)
@@ -12692,6 +12692,7 @@ snapshots:
       '@graphql-tools/schema': 10.0.30(graphql@16.12.0)
       async-retry: 1.3.3
       body-parser: 2.2.2
+      content-type: 1.0.5
       cors: 2.8.5
       finalhandler: 2.1.0
       graphql: 16.12.0
@@ -12776,9 +12777,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@as-integrations/express5@1.1.2(@apollo/server@5.3.0(graphql@16.12.0))(express@5.2.1)':
+  '@as-integrations/express5@1.1.2(@apollo/server@5.4.0(graphql@16.12.0))(express@5.2.1)':
     dependencies:
-      '@apollo/server': 5.3.0(graphql@16.12.0)
+      '@apollo/server': 5.4.0(graphql@16.12.0)
       express: 5.2.1
 
   '@asamuzakjp/css-color@3.2.0':
@@ -15792,10 +15793,10 @@ snapshots:
       chevrotain: 10.5.0
       lilconfig: 2.1.0
 
-  '@nestjs/apollo@13.2.3(@apollo/server@5.3.0(graphql@16.12.0))(@as-integrations/express5@1.1.2(@apollo/server@5.3.0(graphql@16.12.0))(express@5.2.1))(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/graphql@13.2.3(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bufferutil@4.0.9)(class-transformer@0.5.1)(class-validator@0.14.3)(graphql@16.12.0)(reflect-metadata@0.2.2)(ts-morph@27.0.2)(utf-8-validate@5.0.10))(graphql@16.12.0)':
+  '@nestjs/apollo@13.2.3(@apollo/server@5.4.0(graphql@16.12.0))(@as-integrations/express5@1.1.2(@apollo/server@5.4.0(graphql@16.12.0))(express@5.2.1))(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/graphql@13.2.3(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bufferutil@4.0.9)(class-transformer@0.5.1)(class-validator@0.14.3)(graphql@16.12.0)(reflect-metadata@0.2.2)(ts-morph@27.0.2)(utf-8-validate@5.0.10))(graphql@16.12.0)':
     dependencies:
-      '@apollo/server': 5.3.0(graphql@16.12.0)
-      '@apollo/server-plugin-landing-page-graphql-playground': 4.0.1(@apollo/server@5.3.0(graphql@16.12.0))
+      '@apollo/server': 5.4.0(graphql@16.12.0)
+      '@apollo/server-plugin-landing-page-graphql-playground': 4.0.1(@apollo/server@5.4.0(graphql@16.12.0))
       '@nestjs/common': 11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/graphql': 13.2.3(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.12(@nestjs/common@11.1.12(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.12)(@nestjs/websockets@11.1.12)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bufferutil@4.0.9)(class-transformer@0.5.1)(class-validator@0.14.3)(graphql@16.12.0)(reflect-metadata@0.2.2)(ts-morph@27.0.2)(utf-8-validate@5.0.10)
@@ -15804,7 +15805,7 @@ snapshots:
       lodash.omit: 4.5.0
       tslib: 2.8.1
     optionalDependencies:
-      '@as-integrations/express5': 1.1.2(@apollo/server@5.3.0(graphql@16.12.0))(express@5.2.1)
+      '@as-integrations/express5': 1.1.2(@apollo/server@5.4.0(graphql@16.12.0))(express@5.2.1)
 
   '@nestjs/cli@11.0.16(@swc/core@1.15.11(@swc/helpers@0.5.17))(@types/node@25.1.0)':
     dependencies:
@@ -19814,7 +19815,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.53
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -19861,7 +19862,7 @@ snapshots:
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
 
   '@vitest/pretty-format@4.0.18':
     dependencies:
@@ -25806,7 +25807,7 @@ snapshots:
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.57.0)
       node-stdlib-browser: 1.3.1
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - rollup
 
@@ -25815,7 +25816,7 @@ snapshots:
       '@rollup/pluginutils': 5.2.0(rollup@4.57.0)
       '@svgr/core': 8.1.0(typescript@5.9.3)
       '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.9.3))
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -25823,9 +25824,9 @@ snapshots:
 
   vite-plugin-wasm@3.5.0(vite@7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)):
     dependencies:
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
 
-  vite@7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0):
+  vite@7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
@@ -25861,7 +25862,7 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
@@ -25900,7 +25901,7 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0)(terser@5.40.0)(yaml@2.8.0)
+      vite: 7.3.1(@types/node@25.1.0)(jiti@2.4.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.0

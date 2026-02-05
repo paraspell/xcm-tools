@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_LOCATION } from '../../constants'
 import { getChainVersion } from '../chain'
-import { addXcmVersionHeader, pickCompatibleXcmVersion, selectXcmVersion } from './xcmVersionUtils'
+import {
+  addXcmVersionHeader,
+  pickCompatibleXcmVersion,
+  pickRouterCompatibleXcmVersion,
+  selectXcmVersion
+} from './xcmVersionUtils'
 
 describe('addXcmVersionHeader', () => {
   it('should wrap object under xcm version key', () => {
@@ -81,5 +86,59 @@ describe('pickCompatibleXcmVersion', () => {
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     const result = pickCompatibleXcmVersion('Polkadot', 'AssetHubPolkadot')
     expect(result).toBe(Version.V4)
+  })
+})
+
+describe('pickRouterCompatibleXcmVersion', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('should return exchange version when origin and destination are undefined', () => {
+    vi.mocked(getChainVersion).mockReturnValue(Version.V4)
+    const result = pickRouterCompatibleXcmVersion(undefined, 'AssetHubPolkadot', undefined)
+    expect(result).toBe(Version.V4)
+    expect(getChainVersion).toHaveBeenCalledTimes(1)
+    expect(getChainVersion).toHaveBeenCalledWith('AssetHubPolkadot')
+  })
+
+  it('should return minimum version when origin has lower version', () => {
+    vi.mocked(getChainVersion)
+      .mockReturnValueOnce(Version.V4) // exchange
+      .mockReturnValueOnce(Version.V3) // origin
+    const result = pickRouterCompatibleXcmVersion('Polkadot', 'AssetHubPolkadot', undefined)
+    expect(result).toBe(Version.V3)
+  })
+
+  it('should return minimum version when destination has lower version', () => {
+    vi.mocked(getChainVersion)
+      .mockReturnValueOnce(Version.V4) // exchange
+      .mockReturnValueOnce(Version.V3) // destination
+    const result = pickRouterCompatibleXcmVersion(undefined, 'AssetHubPolkadot', 'Kusama')
+    expect(result).toBe(Version.V3)
+  })
+
+  it('should return minimum version across all three chains', () => {
+    vi.mocked(getChainVersion)
+      .mockReturnValueOnce(Version.V4) // exchange
+      .mockReturnValueOnce(Version.V4) // origin
+      .mockReturnValueOnce(Version.V3) // destination
+    const result = pickRouterCompatibleXcmVersion('Polkadot', 'AssetHubPolkadot', 'Kusama')
+    expect(result).toBe(Version.V3)
+  })
+
+  it('should return exchange version when all chains have same version', () => {
+    vi.mocked(getChainVersion).mockReturnValue(Version.V4)
+    const result = pickRouterCompatibleXcmVersion('Polkadot', 'AssetHubPolkadot', 'Kusama')
+    expect(result).toBe(Version.V4)
+  })
+
+  it('should handle origin with lower version than exchange and destination', () => {
+    vi.mocked(getChainVersion)
+      .mockReturnValueOnce(Version.V4) // exchange
+      .mockReturnValueOnce(Version.V3) // origin
+      .mockReturnValueOnce(Version.V4) // destination
+    const result = pickRouterCompatibleXcmVersion('Polkadot', 'AssetHubPolkadot', 'Kusama')
+    expect(result).toBe(Version.V3)
   })
 })
