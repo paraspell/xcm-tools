@@ -6,7 +6,6 @@ import type {
 } from '@paraspell/assets'
 import {
   findAssetInfo,
-  InvalidCurrencyError,
   isAssetEqual,
   isOverrideLocationSpecifier,
   isTAsset
@@ -129,21 +128,6 @@ describe('resolveOverriddenAsset', () => {
         isFeeAsset: true
       }
     ])
-  })
-
-  it('throws an InvalidCurrencyError if fetched asset has no location', () => {
-    const assets = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
-    const options = {
-      ...defaultOptions,
-      currency: assets
-    }
-
-    vi.mocked(isTAsset).mockImplementationOnce(() => false)
-    vi.mocked(findAssetInfo).mockReturnValue({} as TAssetInfo)
-
-    expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
-      InvalidCurrencyError
-    )
   })
 
   it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset is provided', () => {

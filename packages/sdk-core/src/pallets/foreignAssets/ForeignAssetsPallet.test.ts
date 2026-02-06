@@ -1,10 +1,7 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { assertHasLocation } from '../../utils'
 import { ForeignAssetsPallet } from './ForeignAssetsPallet'
-
-vi.mock('../../utils')
 
 describe('ForeignAssetsPallet.setBalance', () => {
   beforeEach(() => {
@@ -17,12 +14,7 @@ describe('ForeignAssetsPallet.setBalance', () => {
     const location = { parents: 1, interior: { Here: null } }
     const asset = { location, amount: 123n } as WithAmount<TAssetInfo>
 
-    vi.mocked(assertHasLocation).mockImplementation(() => {})
-
     const res = await pallet.mint(address, asset)
-
-    expect(assertHasLocation).toHaveBeenCalledTimes(1)
-    expect(assertHasLocation).toHaveBeenCalledWith(asset)
 
     expect(res.assetStatusTx?.module).toBe('ForeignAssets')
     expect(res.assetStatusTx?.method).toBe('force_asset_status')

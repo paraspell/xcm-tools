@@ -161,20 +161,22 @@ describe('buildHopInfo', () => {
   })
 
   it('should handle hop asset without location correctly', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    const asset: TAssetInfo = {
       symbol: 'OTHER',
       assetId: 'otherId',
-      decimals: 12
-    } as TAssetInfo)
+      decimals: 12,
+      location: {
+        parents: 1,
+        interior: 'Here'
+      }
+    }
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
     const options = { ...baseOptions }
     await buildHopInfo(options)
 
-    const expectedCurrencyPayload = { symbol: 'OTHER' }
-
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(
-      options.chain,
-      expectedCurrencyPayload
-    )
+    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.chain, {
+      location: asset.location
+    })
   })
 
   it('should call finally block (disconnect) even if an earlier call fails', async () => {

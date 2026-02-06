@@ -5,19 +5,19 @@ import type { ApiPromise } from '@polkadot/api'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { capitalizeLocation } from './utils'
-import { TAssetInfo } from '../src'
+import { TAssetInfoNoLoc } from './types'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   return fetchBifrostAssets(api, query).then(({ nativeAssets }) => nativeAssets)
 }
 
 export const fetchBifrostForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   return fetchBifrostAssets(api, query).then(({ otherAssets }) => otherAssets)
 }
 
@@ -25,8 +25,8 @@ const fetchBifrostAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<{
-  nativeAssets: TAssetInfo[]
-  otherAssets: TAssetInfo[]
+  nativeAssets: TAssetInfoNoLoc[]
+  otherAssets: TAssetInfoNoLoc[]
 }> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()

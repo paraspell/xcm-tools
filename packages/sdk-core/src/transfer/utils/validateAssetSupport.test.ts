@@ -339,15 +339,16 @@ describe('validateEthereumAsset', () => {
   })
 
   it('should throw InvalidCurrencyError for asset with wrong GlobalConsensus', () => {
-    const asset = {
+    const asset: TAssetInfo = {
       symbol: 'WRONG',
+      decimals: 18,
       location: {
         parents: Parents.TWO,
         interior: {
           X1: [{ GlobalConsensus: { Polkadot: null } }]
         }
       }
-    } as TAssetInfo
+    }
 
     expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError
@@ -358,9 +359,14 @@ describe('validateEthereumAsset', () => {
   })
 
   it('should throw InvalidCurrencyError for asset without location', () => {
-    const asset = {
-      symbol: 'NOLOC'
-    } as TAssetInfo
+    const asset: TAssetInfo = {
+      symbol: 'NOLOC',
+      decimals: 18,
+      location: {
+        parents: Parents.ZERO,
+        interior: { Here: null }
+      }
+    }
 
     expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError

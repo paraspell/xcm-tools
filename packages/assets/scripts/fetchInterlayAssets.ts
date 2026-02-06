@@ -1,12 +1,12 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { TLocation } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const assets = await api.query[module][method].entries()
 
@@ -38,8 +38,8 @@ export const fetchInterlayAssets = async (
 }
 
 export const fetchInterlayNativeAssets = async (
-  nativeAssets: TAssetInfo[]
-): Promise<TAssetInfo[]> => {
+  nativeAssets: TAssetInfoNoLoc[]
+): Promise<TAssetInfoNoLoc[]> => {
   const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
     IBTC: {
       parents: 1,
@@ -113,8 +113,8 @@ export const fetchInterlayNativeAssets = async (
 }
 
 export const fetchKintsugiNativeAssets = async (
-  nativeAssets: TAssetInfo[]
-): Promise<TAssetInfo[]> => {
+  nativeAssets: TAssetInfoNoLoc[]
+): Promise<TAssetInfoNoLoc[]> => {
   const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
     KBTC: {
       parents: 1,

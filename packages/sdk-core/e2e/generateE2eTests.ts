@@ -15,7 +15,6 @@ import {
   RELAYCHAINS,
   isSystemChain,
   hasJunction,
-  assertHasLocation,
   RuntimeApiUnavailableError,
   TBuilderConfig,
   TUrl,
@@ -32,9 +31,7 @@ import {
   getRelayChainSymbol,
   hasSupportForAsset,
   isChainEvm,
-  Native,
-  TAssetInfo,
-  TCurrencyCore
+  Native
 } from '@paraspell/assets'
 
 beforeEach(ctx => {
@@ -164,17 +161,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describeGroup('Ethereum transfers', async () => {
-      const ethAssets = getOtherAssets('AssetHubPolkadot').filter(
-        asset =>
-          asset.location &&
-          hasJunction(asset.location, 'GlobalConsensus', {
-            Ethereum: { chainId: 1 }
-          })
+      const ethAssets = getOtherAssets('AssetHubPolkadot').filter(asset =>
+        hasJunction(asset.location, 'GlobalConsensus', {
+          Ethereum: { chainId: 1 }
+        })
       )
       ethAssets.forEach(asset => {
-        if (!asset.location) return
         it(`should create transfer tx - ${asset.symbol} from AssetHubPolkadot to Ethereum`, async () => {
-          assertHasLocation(asset)
           const builder = Builder(config)
             .from('AssetHubPolkadot')
             .to('Ethereum')
@@ -335,24 +328,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       )
       if (isSendingDisabled) return
 
-      const getCurrency = (asset: TAssetInfo): TCurrencyCore => {
-        if (asset.location) {
-          return { location: asset.location }
-        }
-
-        // Bifrost has duplicated asset ids, thus use symbol specifier
-        if (!asset.isNative && asset.assetId && !chain.startsWith('Bifrost')) {
-          return { id: asset.assetId }
-        }
-
-        return { symbol: asset.symbol }
-      }
-
       describeGroup(`Transfer scenarios for origin ${chain}`, () => {
         describeGroup('ParaToPara', () => {
           scenarios.forEach(({ destChain, asset }) => {
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
-              const currency = getCurrency(asset)
               const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               const address = isChainEvm(destChain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               try {
@@ -360,7 +339,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   .from(chain)
                   .to(destChain)
                   .currency({
-                    ...currency,
+                    location: asset.location,
                     amount: MOCK_AMOUNT
                   })
                   .address(address)
@@ -432,14 +411,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       describeGroup('Local transfer', () => {
         getAssets(chain).forEach(asset => {
           it(`should create local transfer tx on ${chain} - (${asset.symbol})`, async () => {
-            const currency = getCurrency(asset)
             const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
 
             try {
               const builder = Builder(config)
                 .from(chain)
                 .to(chain)
-                .currency({ ...currency, amount: MOCK_AMOUNT })
+                .currency({ location: asset.location, amount: MOCK_AMOUNT })
                 .senderAddress(address)
                 .address(address)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)

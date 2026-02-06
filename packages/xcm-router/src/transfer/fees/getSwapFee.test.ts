@@ -11,10 +11,19 @@ vi.mock('../createSwapTx');
 vi.mock('@paraspell/sdk');
 
 describe('getSwapFee', () => {
+  const dotAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    location: {
+      parents: 1,
+      interior: 'Here',
+    },
+  };
+
   const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
   const options = {
     senderAddress: '0xSender',
-    exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT', decimals: 10 } },
+    exchange: { apiPapi: 'apiInstance', assetFrom: dotAsset },
     amount: '100',
   } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
 
@@ -30,7 +39,7 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
-      asset: { symbol: 'DOT' } as TAssetInfo,
+      asset: dotAsset,
       feeType: 'paymentInfo',
     });
 
@@ -46,7 +55,7 @@ describe('getSwapFee', () => {
         destination: 'TEST_CHAIN',
         senderAddress: '0xSender',
         disableFallback: false,
-        currency: { symbol: 'DOT', amount: '100' },
+        currency: { location: dotAsset.location, amount: '100' },
       }),
     );
 
@@ -54,7 +63,7 @@ describe('getSwapFee', () => {
       result: {
         fee: 1n,
         feeType: 'paymentInfo',
-        asset: { symbol: 'DOT' },
+        asset: dotAsset,
       } as TXcmFeeDetail,
       amountOut: 100n,
     });
@@ -67,7 +76,7 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
-      asset: { symbol: 'DOT' } as TAssetInfo,
+      asset: dotAsset,
       feeType: 'paymentInfo',
     });
 
@@ -102,7 +111,7 @@ describe('getSwapFee', () => {
     vi.mocked(createSwapTx).mockRejectedValueOnce(new AmountTooLowError());
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 3n,
-      asset: { symbol: 'DOT' } as TAssetInfo,
+      asset: dotAsset,
       feeType: 'paymentInfo',
     });
 
@@ -137,7 +146,7 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
-      asset: { symbol: 'DOT' } as TAssetInfo,
+      asset: dotAsset,
       feeType: 'paymentInfo',
       dryRunError: dryError,
     });
@@ -146,7 +155,7 @@ describe('getSwapFee', () => {
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');
-    expect(result.asset).toEqual({ symbol: 'DOT' });
+    expect(result.asset).toEqual(dotAsset);
     expect(result.dryRunError).toBe(dryError);
     expect(amountOut).toBe(200n);
   });
@@ -158,7 +167,7 @@ describe('getSwapFee', () => {
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
-      asset: { symbol: 'DOT' } as TAssetInfo,
+      asset: dotAsset,
       feeType: 'paymentInfo',
     });
 
@@ -166,13 +175,13 @@ describe('getSwapFee', () => {
       ...options,
       exchange: {
         apiPapi: 'apiInstance',
-        assetFrom: { symbol: 'DOT', location: {}, decimals: 10 },
+        assetFrom: dotAsset,
       },
     } as unknown as TTransformedOptions<TBuildTransactionsOptions>);
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');
-    expect(result.asset).toEqual({ symbol: 'DOT' });
+    expect(result.asset).toEqual(dotAsset);
     expect(amountOut).toBe(200n);
   });
 });

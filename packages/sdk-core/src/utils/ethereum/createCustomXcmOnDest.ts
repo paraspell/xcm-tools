@@ -6,7 +6,7 @@ import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sd
 import { MissingParameterError, UnsupportedOperationError } from '../../errors'
 import type { TAddress } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, assertSenderAddress } from '../assertions'
+import { assertHasId, assertSenderAddress } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 import { getEthereumJunction } from '../location/getEthereumJunction'
 
@@ -18,7 +18,6 @@ const createMainInstruction = (
   messageId: string
 ) => {
   assertHasId(ethAsset)
-  assertHasLocation(asset)
 
   const interiorSb: TLocation['interior'] =
     ethAsset.symbol === 'ETH'

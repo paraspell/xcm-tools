@@ -1,4 +1,4 @@
-import type { TAssetInfo } from '@paraspell/sdk-pjs';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -8,17 +8,9 @@ import { getBestAmountOut } from './getBestAmountOut';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { resolveAssets } from './utils/resolveAssets';
 
-vi.mock('../exchanges/ExchangeChainFactory', () => ({
-  createExchangeInstance: vi.fn(),
-}));
-
-vi.mock('./selectBestExchangeAmountOut', () => ({
-  selectBestExchangeAmountOut: vi.fn(),
-}));
-
-vi.mock('./utils/resolveAssets', () => ({
-  resolveAssets: vi.fn(),
-}));
+vi.mock('../exchanges/ExchangeChainFactory');
+vi.mock('./selectBestExchangeAmountOut');
+vi.mock('./utils/resolveAssets');
 
 describe('getBestAmountOut', () => {
   beforeEach(() => {

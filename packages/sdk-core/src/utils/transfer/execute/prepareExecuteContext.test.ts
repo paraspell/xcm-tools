@@ -3,7 +3,6 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { getAssetReserveChain } from '../../chain'
 import { localizeLocation } from '../../location'
@@ -11,7 +10,6 @@ import { prepareExecuteContext } from './prepareExecuteContext'
 
 vi.mock('@paraspell/assets')
 
-vi.mock('../../assertions')
 vi.mock('../../location')
 vi.mock('../../asset')
 vi.mock('../../chain')
@@ -49,7 +47,6 @@ describe('prepareExecuteContext', () => {
   it('creates execute context without fee asset', () => {
     const result = prepareExecuteContext(mockOptions)
 
-    expect(assertHasLocation).toHaveBeenCalledWith(mockOptions.assetInfo)
     expect(getAssetReserveChain).toHaveBeenCalledWith(chain, mockLocation)
     expect(createAsset).toHaveBeenCalledTimes(4)
     expect(localizeLocation).toHaveBeenCalledTimes(3)
@@ -78,8 +75,6 @@ describe('prepareExecuteContext', () => {
 
     const result = prepareExecuteContext(optionsWithFee)
 
-    expect(assertHasLocation).toHaveBeenCalledWith(mockOptions.assetInfo)
-    expect(assertHasLocation).toHaveBeenCalledWith(optionsWithFee.feeAssetInfo)
     expect(createAsset).toHaveBeenCalledTimes(6) // 4 base + 2 fee assets
     expect(localizeLocation).toHaveBeenCalledTimes(4) // 3 base + 1 fee asset
 

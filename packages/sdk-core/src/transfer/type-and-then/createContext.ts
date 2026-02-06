@@ -16,12 +16,7 @@ import type {
   TTypeAndThenCallContext,
   TTypeAndThenOverrides
 } from '../../types'
-import {
-  assertHasLocation,
-  assertToIsString,
-  getAssetReserveChain,
-  getRelayChainOf
-} from '../../utils'
+import { assertToIsString, getAssetReserveChain, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
 export const getBridgeReserve = (
@@ -67,7 +62,6 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
 ): Promise<TTypeAndThenCallContext<TApi, TRes, TSigner>> => {
   const { api, chain, destination, assetInfo } = options
 
-  assertHasLocation(assetInfo)
   assertToIsString(destination)
 
   const destinationChain = destination as TSubstrateChain

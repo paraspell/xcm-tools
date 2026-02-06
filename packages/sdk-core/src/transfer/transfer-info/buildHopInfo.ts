@@ -35,11 +35,7 @@ export const buildHopInfo = async <TApi, TRes, TSigner>({
     } else {
       const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
 
-      const hopCurrencyPayload = hopAsset.location
-        ? { location: hopAsset.location }
-        : { symbol: hopAsset.symbol }
-
-      const ed = getExistentialDepositOrThrow(chain, hopCurrencyPayload)
+      const ed = getExistentialDepositOrThrow(chain, { location: hopAsset.location })
 
       return {
         asset: hopAsset,

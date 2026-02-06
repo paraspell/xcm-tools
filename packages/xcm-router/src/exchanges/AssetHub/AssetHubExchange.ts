@@ -28,14 +28,6 @@ class AssetHubExchange extends ExchangeChain {
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
 
-    if (!assetFrom.location) {
-      throw new RoutingResolutionError('Asset from location not found');
-    }
-
-    if (!assetTo.location) {
-      throw new RoutingResolutionError('Asset to location not found');
-    }
-
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
@@ -158,14 +150,6 @@ class AssetHubExchange extends ExchangeChain {
   async getAmountOut(_api: ApiPromise, options: TGetAmountOutOptions) {
     const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
-    if (!assetFrom.location) {
-      throw new RoutingResolutionError('Asset from location not found');
-    }
-
-    if (!assetTo.location) {
-      throw new RoutingResolutionError('Asset to location not found');
-    }
-
     const nativeAsset = getExchangeAsset(this.exchangeChain, {
       symbol: getNativeAssetSymbol(this.chain),
     });
@@ -195,10 +179,6 @@ class AssetHubExchange extends ExchangeChain {
 
       return amountOut;
     } else {
-      if (!nativeAsset.location) {
-        throw new RoutingResolutionError('Native asset location not found');
-      }
-
       const { amountOut: hop1AmountOut } = await getQuotedAmount(
         papiApi,
         this.chain,

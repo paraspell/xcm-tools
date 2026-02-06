@@ -15,7 +15,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, assertHasLocation, createAsset } from '../../utils'
+import { assertHasId, createAsset } from '../../utils'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import Chain from '../Chain'
 import { getParaId } from '../config'
@@ -43,7 +43,6 @@ class Hydration<TApi, TRes, TSigner>
     }
 
     const isMoonbeamWhAsset =
-      asset.location &&
       hasJunction(asset.location, 'Parachain', getParaId('Moonbeam')) &&
       hasJunction(asset.location, 'PalletInstance', 110)
 
@@ -72,16 +71,12 @@ class Hydration<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { assetInfo, version } = input
 
-    assertHasLocation(assetInfo)
-
     const glmr = findAssetInfoOrThrow(
       this.chain,
       { symbol: getNativeAssetSymbol('Moonbeam') },
       null
     )
     const FEE_AMOUNT = 80000000000000000n // 0.08 GLMR
-
-    assertHasLocation(glmr)
 
     return transferPolkadotXcm({
       ...input,

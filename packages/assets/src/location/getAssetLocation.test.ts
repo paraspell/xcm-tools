@@ -1,14 +1,11 @@
-import type { TLocation } from '@paraspell/sdk-common'
-import { Parents, type TChain } from '@paraspell/sdk-common'
+import { type TChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { findAssetInfo } from '../assets'
 import { type TAssetInfo } from '../types'
 import { getAssetLocation } from './getAssetLocation'
 
-vi.mock('../assets/search', () => ({
-  findAssetInfo: vi.fn()
-}))
+vi.mock('../assets/search')
 
 describe('getAssetLocation', () => {
   const chain: TChain = 'Acala'
@@ -22,17 +19,6 @@ describe('getAssetLocation', () => {
     vi.mocked(findAssetInfo).mockReturnValue(null)
     const result = getAssetLocation(chain, currency)
     expect(result).toBeNull()
-  })
-
-  it('returns asset.location if it exists', () => {
-    const location = {
-      parents: Parents.ZERO,
-      interior: { X2: [{ Parachain: 123 }, { Parachain: 456 }] }
-    } as TLocation
-    const asset = { symbol: 'TEST', location, decimals: 12 }
-    vi.mocked(findAssetInfo).mockReturnValue(asset)
-    const result = getAssetLocation(chain, currency)
-    expect(result).toEqual(location)
   })
 
   it('returns null if asset location does not exists', () => {

@@ -43,9 +43,29 @@ vi.mock('@acala-network/sdk-swap', () => {
 });
 
 vi.mock('@paraspell/sdk', () => ({
-  findAssetById: vi.fn(() => ({ symbol: 'DOT', assetId: '1' })),
-  getNativeAssets: vi.fn(() => [{ symbol: 'ACA', location: { Here: '' } }]),
-  getOtherAssets: vi.fn(() => [{ symbol: 'DOT', assetId: '1', location: undefined }]),
+  findAssetInfoById: vi.fn(() => ({
+    symbol: 'DOT',
+    assetId: '1',
+    decimals: 12,
+    location: { parents: 1, interior: 'Here' },
+  })),
+  getNativeAssets: vi.fn(() => [
+    { symbol: 'ACA', decimals: 12, location: { Here: '' } },
+    { symbol: 'DOT', decimals: 10, location: { parents: 1, interior: 'Here' } },
+    {
+      symbol: 'ASTR',
+      decimals: 18,
+      location: { parents: 1, interior: { X1: { Parachain: 2006 } } },
+    },
+  ]),
+  getOtherAssets: vi.fn(() => [
+    {
+      symbol: 'DOT',
+      assetId: '1',
+      decimals: 12,
+      location: { parents: 1, interior: 'Here' },
+    },
+  ]),
   RoutingResolutionError: class extends Error {},
 }));
 
@@ -74,17 +94,21 @@ describe('getDexConfig', () => {
     expect(cfg.assets.map((a) => a.symbol).sort()).toEqual(['ACA', 'ASTR', 'DOT']);
 
     const ACA_KEY = { Here: '' };
+    const DOT_KEY = { parents: 1, interior: 'Here' };
+    const ASTR_KEY = { parents: 1, interior: { X1: { Parachain: 2006 } } };
     expect(cfg.pairs).toEqual(
       expect.arrayContaining([
-        [ACA_KEY, 'DOT'],
-        ['DOT', 'ASTR'],
+        [ACA_KEY, DOT_KEY],
+        [DOT_KEY, ASTR_KEY],
       ]),
     );
 
     const hasSynthetic = cfg.pairs.some(
       ([x, y]) =>
-        (JSON.stringify(x) === JSON.stringify(ACA_KEY) && y === 'ASTR') ||
-        (x === 'ASTR' && JSON.stringify(y) === JSON.stringify(ACA_KEY)),
+        (JSON.stringify(x) === JSON.stringify(ACA_KEY) &&
+          JSON.stringify(y) === JSON.stringify(ASTR_KEY)) ||
+        (JSON.stringify(x) === JSON.stringify(ASTR_KEY) &&
+          JSON.stringify(y) === JSON.stringify(ACA_KEY)),
     );
     expect(hasSynthetic).toBe(true);
 

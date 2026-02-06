@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { TLocation } from '@paraspell/sdk-pjs';
-import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk-pjs';
+import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfig, TRouterAsset } from '../../../types';
@@ -35,9 +34,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
   const filteredAssets = assets.filter(
     (asset) =>
       poolLocations.has(JSON.stringify(asset.location)) ||
-      poolLocations.has(
-        JSON.stringify(localizeLocation('AssetHubPolkadot', asset.location as TLocation)),
-      ),
+      poolLocations.has(JSON.stringify(localizeLocation('AssetHubPolkadot', asset.location))),
   );
 
   const transformedAssets: TRouterAsset[] = filteredAssets.map((asset) => ({

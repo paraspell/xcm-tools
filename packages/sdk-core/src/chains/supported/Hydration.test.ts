@@ -118,7 +118,11 @@ describe('Hydration', () => {
       vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
         symbol: 'WETH',
-        decimals: 18
+        decimals: 18,
+        location: {
+          parents: 2,
+          interior: 'Here'
+        }
       })
 
       await hydration.transferPolkadotXCM({

@@ -5,8 +5,8 @@
 
 import type { ApiPromise } from '@polkadot/api'
 import { capitalizeLocation } from './utils'
-import { TAssetInfo } from '../src'
 import { TLocation } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
 
 const locationOverrides: Record<string, TLocation> = {
   USD: {
@@ -31,8 +31,8 @@ const fetchCentrifugeAssetsBase = async (
   api: ApiPromise,
   query: string,
   filterFn: (era: any) => boolean,
-  transformFn?: (asset: TAssetInfo) => TAssetInfo
-): Promise<TAssetInfo[]> => {
+  transformFn?: (asset: TAssetInfoNoLoc) => TAssetInfoNoLoc
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -61,7 +61,7 @@ const fetchCentrifugeAssetsBase = async (
             ? capitalizeLocation(locationJson.location.v3 ?? locationJson.location.v4)
             : undefined
 
-        const asset: TAssetInfo = {
+        const asset: TAssetInfoNoLoc = {
           assetId:
             eraObj.type === 'Tranche'
               ? Object.values(eraHuman ?? {})[0][0].replaceAll(',', '')

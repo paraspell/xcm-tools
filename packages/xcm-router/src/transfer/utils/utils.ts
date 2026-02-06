@@ -1,20 +1,8 @@
 import { Builder, isChainEvm } from '@paraspell/sdk';
-import type { TAssetInfo, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
-
-export const getCurrencySelection = (chain: TSubstrateChain, asset: TAssetInfo): TCurrencyInput => {
-  const isBifrost = chain === 'BifrostPolkadot' || chain === 'BifrostKusama';
-  if (!asset.isNative && !isBifrost) {
-    if (asset.assetId) return { id: asset.assetId };
-  }
-
-  if (asset.location) return { location: asset.location };
-
-  return { symbol: asset.symbol };
-};
 
 export const createToExchangeBuilder = ({
   origin: { chain: from, assetFrom },
@@ -28,7 +16,7 @@ export const createToExchangeBuilder = ({
     .from(from)
     .to(baseChain)
     .currency({
-      ...getCurrencySelection(from, assetFrom),
+      location: assetFrom.location,
       amount,
     })
     .address(senderAddress)
@@ -57,7 +45,7 @@ export const createFromExchangeBuilder = ({
     .from(baseChain)
     .to(chain)
     .currency({
-      ...getCurrencySelection(baseChain, assetTo as TAssetInfo),
+      location: assetTo.location,
       amount,
     })
     .address(address)

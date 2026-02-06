@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-import type { IPolkadotApi } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core'
 import {
   findAssetInfoOrThrow,
   getParaId,
@@ -64,12 +64,15 @@ vi.mock('@snowbridge/api', async () => {
 })
 
 describe('transferEthToPolkadot', () => {
+  const ethAsset: TAssetInfo = {
+    symbol: 'ETH',
+    decimals: 18,
+    assetId: 'eth-asset-id',
+    location: { parents: 0, interior: 'Here' }
+  }
+
   it('successfully returns tx response and message receipt', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -193,11 +196,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if message receipt is missing', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -240,11 +239,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if transaction receipt is missing', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(createContext).mockReturnValue({
       config: {},
@@ -285,11 +280,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if validation fails', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({

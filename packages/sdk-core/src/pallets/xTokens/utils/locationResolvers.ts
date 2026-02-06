@@ -1,6 +1,6 @@
 import { getOtherAssets, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
-import { isRelayChain, Parents } from '@paraspell/sdk-common'
+import { isRelayChain } from '@paraspell/sdk-common'
 
 import { DOT_LOCATION } from '../../../constants'
 import type { TDestination, TXTokensTransferOptions } from '../../../types'
@@ -14,39 +14,20 @@ const resolveLocationFromDest = (destination: TDestination, asset: TAssetInfo) =
     ahAsset => ahAsset.symbol?.toLowerCase() === asset.symbol?.toLowerCase()
   )
 
-  if (!assetHubAsset?.location) {
-    throw new InvalidCurrencyError(`Asset ${asset.symbol} not found or has no location`)
+  if (!assetHubAsset) {
+    throw new InvalidCurrencyError(`Asset ${asset.symbol} not found`)
   }
 
   return assetHubAsset.location
 }
 
 export const buildLocation = <TApi, TRes, TSigner>({
-  paraIdTo,
   asset,
-  origin,
   destination
 }: TXTokensTransferOptions<TApi, TRes, TSigner>): TLocation => {
   if (asset.isNative) {
     return resolveLocationFromDest(destination, asset)
   }
 
-  const createDefaultLocation = (assetId: string): TLocation => ({
-    parents: Parents.ONE,
-    interior: {
-      X3: [{ Parachain: paraIdTo }, { PalletInstance: '50' }, { GeneralIndex: BigInt(assetId) }]
-    }
-  })
-
-  const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
-
-  if (isBifrostOrigin) {
-    return createDefaultLocation(asset.assetId as string)
-  }
-
-  if (asset.location) {
-    return asset.location
-  } else {
-    return createDefaultLocation(asset.assetId as string)
-  }
+  return asset.location
 }

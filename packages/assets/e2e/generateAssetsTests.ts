@@ -45,6 +45,7 @@ export const generateAssetsTests = () => {
           getNativeAssets(chain).forEach(asset => {
             expect(asset).toHaveProperty('symbol')
             expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('location')
             expect(asset).toHaveProperty('isNative')
             expect(asset).toHaveProperty('existentialDeposit')
           })
@@ -54,10 +55,8 @@ export const generateAssetsTests = () => {
           getOtherAssets(chain).forEach(asset => {
             expect(asset).toHaveProperty('symbol')
             expect(asset).toHaveProperty('decimals')
+            expect(asset).toHaveProperty('location')
             expect(asset).toHaveProperty('existentialDeposit')
-
-            // Check that asset has either 'assetId' or 'location'
-            expect('assetId' in asset || 'location' in asset).toBe(true)
           })
         })
 
@@ -80,7 +79,7 @@ export const generateAssetsTests = () => {
         it('should return string value for every foreign asset', () => {
           const assets = getOtherAssets(chain)
           assets.forEach(asset => {
-            const assetId = getAssetId(chain as TChain, asset.symbol)
+            const assetId = getAssetId(chain, asset.symbol)
             if (assetId !== null) expect(assetId).toBeTypeOf('string')
           })
         })
@@ -101,6 +100,7 @@ export const generateAssetsTests = () => {
           assets.forEach(asset => {
             expect(asset).toBeTypeOf('object')
             expect(asset).toHaveProperty('symbol')
+            expect(asset).toHaveProperty('location')
             expect(asset.symbol).toBeTypeOf('string')
             expect(asset).toHaveProperty('decimals')
           })
@@ -116,9 +116,7 @@ export const generateAssetsTests = () => {
             expect(asset).toHaveProperty('symbol')
             expect(asset.symbol).toBeTypeOf('string')
             expect(asset).toHaveProperty('decimals')
-
-            // Check that asset has either 'assetId' or 'location'
-            expect('assetId' in asset || 'location' in asset).toBe(true)
+            expect(asset).toHaveProperty('location')
           })
         })
 
@@ -129,6 +127,7 @@ export const generateAssetsTests = () => {
             assets.forEach(asset => {
               expect(asset).toBeTypeOf('object')
               expect(asset).toHaveProperty('symbol')
+              expect(asset).toHaveProperty('location')
               expect(asset.symbol).toBeTypeOf('string')
               expect(asset).toHaveProperty('decimals')
             })
@@ -191,11 +190,9 @@ export const generateAssetsTests = () => {
           it('should return valid decimals for all available assets', () => {
             const assets = getAssets(chain)
             assets.forEach(asset => {
-              if (asset.symbol !== undefined) {
-                const decimals = getAssetDecimals(chain, asset.symbol)
-                expect(decimals).toBeTypeOf('number')
-                expect(decimals).toBeGreaterThanOrEqual(0)
-              }
+              const decimals = getAssetDecimals(chain, asset.symbol)
+              expect(decimals).toBeTypeOf('number')
+              expect(decimals).toBeGreaterThanOrEqual(0)
             })
           })
         })
@@ -211,9 +208,7 @@ export const generateAssetsTests = () => {
           it('should return location for foreign assets', () => {
             const otherAssets = getOtherAssets(chain)
             otherAssets.forEach(asset => {
-              if (asset.location) {
-                expect(asset.location).toBeDefined()
-              }
+              expect(asset.location).toBeDefined()
             })
           })
         })

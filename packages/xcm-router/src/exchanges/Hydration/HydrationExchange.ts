@@ -1,4 +1,5 @@
 import { BigNumber, createSdkContext } from '@galacticcouncil/sdk';
+import type { TAssetInfo } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   formatUnits,
@@ -173,18 +174,22 @@ class HydrationExchange extends ExchangeChain {
 
     const sdkAssets = getAssets(this.chain);
 
-    const transformedAssets = assets.map(({ symbol, id, decimals }) => {
-      const asset =
-        sdkAssets.find((a) => !a.isNative && a.assetId === id) ??
-        sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
+    const transformedAssets: TAssetInfo[] = assets
+      .map(({ symbol, id, decimals }) => {
+        const asset =
+          sdkAssets.find((a) => !a.isNative && a.assetId === id) ??
+          sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
 
-      return {
-        symbol,
-        decimals,
-        assetId: asset && !asset.isNative ? asset.assetId : undefined,
-        location: asset?.location,
-      };
-    });
+        if (!asset?.location) return null;
+
+        return {
+          symbol,
+          decimals,
+          assetId: asset.isNative ? undefined : asset.assetId,
+          location: asset.location,
+        };
+      })
+      .filter((asset) => asset !== null);
 
     return {
       isOmni: true,

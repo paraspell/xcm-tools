@@ -28,7 +28,7 @@ export const resolveAssets = (
 
   const assetFromExchange =
     originSpecified && assetFromOrigin
-      ? getExchangeAssetByOriginAsset(dex.chain, dex.exchangeChain, assetFromOrigin)
+      ? getExchangeAssetByOriginAsset(dex.exchangeChain, assetFromOrigin)
       : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
   if (!assetFromExchange) {

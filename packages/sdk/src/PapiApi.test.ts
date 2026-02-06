@@ -17,7 +17,6 @@ import {
   getChainProviders,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
-  InvalidCurrencyError,
   isAssetEqual,
   isAssetXcEqual,
   isSystemChain,
@@ -588,8 +587,9 @@ describe('PapiApi', () => {
     const chain: TSubstrateChain = 'Moonbeam'
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
-      location: { parents: 0, interior: { Here: null } } as TLocation
-    } as TAssetInfo
+      decimals: 18,
+      location: { parents: 0, interior: { Here: null } }
+    }
 
     beforeEach(() => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -603,8 +603,9 @@ describe('PapiApi', () => {
 
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR',
-        location: { parents: 0, interior: { Here: null } } as TLocation
-      } as TAssetInfo)
+        decimals: 18,
+        location: { parents: 0, interior: { Here: null } }
+      })
 
       vi.mocked(localizeLocation).mockImplementation((_, loc: TLocation) => loc)
 
@@ -624,13 +625,11 @@ describe('PapiApi', () => {
         ]
       ]
 
-      const assetLocalizedLoc = baseAsset.location as TLocation
-
       const res = await papiApi.getDeliveryFee(
         chain,
         forwardedXcm,
         baseAsset,
-        assetLocalizedLoc,
+        baseAsset.location,
         Version.V5
       )
 
@@ -646,15 +645,15 @@ describe('PapiApi', () => {
 
       const asset: TAssetInfo = {
         symbol: 'USDC',
-        location: { parents: 1, interior: { X1: { Parachain: 1000 } } } as TLocation
-      } as TAssetInfo
+        decimals: 6,
+        location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+      }
 
-      const assetLocalizedLoc = asset.location as TLocation
       const res = await papiApi.getDeliveryFee(
         chain,
         forwardedXcm,
         asset,
-        assetLocalizedLoc,
+        asset.location,
         Version.V5
       )
 
@@ -665,13 +664,12 @@ describe('PapiApi', () => {
     it('returns zero when forwardedXcm is empty (no delivery fee)', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const forwardedXcm: any = []
-      const assetLocalizedLoc = baseAsset.location as TLocation
       const res = await papiApi.getDeliveryFee(
         chain,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         forwardedXcm,
         baseAsset,
-        assetLocalizedLoc,
+        baseAsset.location,
         Version.V5
       )
       expect(res).toBe(0n)
@@ -689,16 +687,15 @@ describe('PapiApi', () => {
 
       const asset: TAssetInfo = {
         symbol: 'USDT',
-        location: { parents: 1, interior: { X1: { Parachain: 1001 } } } as TLocation
-      } as TAssetInfo
-
-      const assetLocalizedLoc = asset.location as TLocation
+        decimals: 6,
+        location: { parents: 1, interior: { X1: { Parachain: 1001 } } }
+      }
 
       const res = await papiApi.getDeliveryFee(
         chain,
         forwardedXcm,
         asset,
-        assetLocalizedLoc,
+        asset.location,
         Version.V5
       )
 
@@ -713,16 +710,15 @@ describe('PapiApi', () => {
 
       const asset: TAssetInfo = {
         symbol: 'USDT',
-        location: { parents: 1, interior: { X1: { Parachain: 1001 } } } as TLocation
-      } as TAssetInfo
-
-      const assetLocalizedLoc = asset.location as TLocation
+        decimals: 6,
+        location: { parents: 1, interior: { X1: { Parachain: 1001 } } }
+      }
 
       const res = await papiApi.getDeliveryFee(
         chain,
         forwardedXcm,
         asset,
-        assetLocalizedLoc,
+        asset.location,
         Version.V5
       )
 
@@ -736,8 +732,6 @@ describe('PapiApi', () => {
       const forwardedXcm1 = { some: 'xcm1' }
       const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
 
-      const assetLocalizedLoc = baseAsset.location as TLocation
-
       const transformedThird = { transformedThird: true }
       vi.mocked(transform).mockReturnValueOnce(transformedThird)
 
@@ -749,7 +743,7 @@ describe('PapiApi', () => {
         chain,
         forwardedXcm,
         baseAsset,
-        assetLocalizedLoc,
+        baseAsset.location,
         Version.V5
       )
 
@@ -759,7 +753,7 @@ describe('PapiApi', () => {
         forwardedXcm0,
         forwardedXcm1
       )
-      expect(addXcmVersionHeader).toHaveBeenCalledWith(assetLocalizedLoc, Version.V5)
+      expect(addXcmVersionHeader).toHaveBeenCalledWith(baseAsset.location, Version.V5)
       expect(transform).toHaveBeenCalledTimes(1)
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenNthCalledWith(
         2,
@@ -777,14 +771,12 @@ describe('PapiApi', () => {
       const forwardedXcm1 = { some: 'xcm1' }
       const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
 
-      const assetLocalizedLoc = baseAsset.location as TLocation
-
       vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).mockRejectedValueOnce(
         new Error('some other runtime error')
       )
 
       await expect(
-        papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, assetLocalizedLoc, Version.V5)
+        papiApi.getDeliveryFee(chain, forwardedXcm, baseAsset, baseAsset.location, Version.V5)
       ).rejects.toThrow('some other runtime error')
 
       expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).toHaveBeenCalledTimes(1)
@@ -798,8 +790,9 @@ describe('PapiApi', () => {
     const localXcm = { type: 'V4', value: [] }
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
-      location: { parents: 0, interior: { Here: null } } as TLocation
-    } as TAssetInfo
+      decimals: 18,
+      location: { parents: 0, interior: { Here: null } }
+    }
 
     beforeEach(() => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
@@ -905,13 +898,13 @@ describe('PapiApi', () => {
       location: {
         parents: 1,
         interior: { X1: [{ Parachain: 1000 }] }
-      } as TLocation
+      }
     }
 
     it('converts relay fee via AssetHub and returns bigint', async () => {
       const fallbackFee = 777n
       const convertedFee = 999n
-      const localizedLoc = { parents: 0, interior: { Here: null } } as TLocation
+      const localizedLoc = { parents: 0, interior: { Here: null } }
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
@@ -2076,13 +2069,18 @@ describe('PapiApi', () => {
     })
 
     it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
-      const mockAssetDetails = { symbol: 'USDT', decimals: 6, assetId: 'test-asset-id' }
+      const mockAssetDetails: TAssetInfo = {
+        symbol: 'USDT',
+        decimals: 6,
+        assetId: 'test-asset-id',
+        location: { parents: 0, interior: { Here: null } }
+      }
       const testAmount = 10000n
       const testOriginFee = 100n
       const foreignAssetsIssuedAmount = 500n
 
       const baseOptions: TDryRunXcmBaseOptions<TPapiTransaction> = {
-        originLocation: { parents: 0, interior: { Here: null } } as TLocation,
+        originLocation: { parents: 0, interior: { Here: null } },
         xcm: { some: 'xcm-payload' },
         tx: mockTransaction,
         chain: 'AssetHubPolkadot',
@@ -2535,38 +2533,6 @@ describe('PapiApi', () => {
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: []
       })
-    })
-
-    it('should fail to get fee from XcmPaymentApi if chain is Moonbeam and asset has no ML', () => {
-      const mockApiResponse = {
-        success: true,
-        value: {
-          execution_result: {
-            type: 'Complete',
-            value: {
-              used: { ref_time: 11n, proof_size: 22n }
-            }
-          },
-          emitted_events: [],
-          forwarded_xcms: []
-        }
-      }
-
-      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
-
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
-
-      return expect(
-        papiApi.getDryRunXcm({
-          originLocation,
-          xcm: dummyXcm,
-          tx: mockTransaction,
-          chain: 'Moonbeam',
-          origin: 'Acala',
-          asset: { symbol: 'AUSD' }
-        } as TDryRunXcmBaseOptions<TPapiTransaction>)
-      ).rejects.toThrow(InvalidCurrencyError)
     })
   })
 

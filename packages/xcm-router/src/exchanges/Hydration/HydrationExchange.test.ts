@@ -330,8 +330,8 @@ describe('HydrationExchange', () => {
       vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
       vi.mocked(getAssets).mockReturnValue([
-        { symbol: 'ABC', decimals: 12, assetId: '1' },
-        { symbol: 'XYZ', decimals: 12, assetId: '2' },
+        { symbol: 'ABC', decimals: 12, assetId: '1', location: { parents: 0, interior: 'Here' } },
+        { symbol: 'XYZ', decimals: 12, assetId: '2', location: { parents: 1, interior: 'Here' } },
       ]);
 
       const result = await chain.getDexConfig(api);
@@ -339,8 +339,22 @@ describe('HydrationExchange', () => {
       expect(result).toEqual({
         isOmni: true,
         assets: [
-          { symbol: 'ABC', assetId: '1', location: undefined },
-          { symbol: 'XYZ', assetId: '2', location: undefined },
+          {
+            symbol: 'ABC',
+            assetId: '1',
+            location: {
+              parents: 0,
+              interior: 'Here',
+            },
+          },
+          {
+            symbol: 'XYZ',
+            assetId: '2',
+            location: {
+              parents: 1,
+              interior: 'Here',
+            },
+          },
         ],
         pairs: [],
       });

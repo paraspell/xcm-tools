@@ -61,7 +61,6 @@ import {
   addXcmVersionHeader,
   assertAddressIsString,
   assertHasId,
-  assertHasLocation,
   assertSenderAddress,
   createBeneficiaryLocation,
   getChain,
@@ -263,7 +262,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
 
       // Handle common cases
-      const isExternalAsset = asset.location?.parents === Parents.TWO
+      const isExternalAsset = asset.location.parents === Parents.TWO
 
       const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
 
@@ -390,14 +389,12 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
-    const isRegisteredOnAh =
-      asset.location && findAssetInfo(assetHubChain, { location: asset.location }, null)
+    const isRegisteredOnAh = findAssetInfo(assetHubChain, { location: asset.location }, null)
 
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
   createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {
-    assertHasLocation(asset)
     const { amount, location } = asset
     return createAsset(version, amount, localizeLocation(this.chain, location))
   }
@@ -519,7 +516,6 @@ abstract class Chain<TApi, TRes, TSigner> {
       throw new BridgeHaltedError()
     }
 
-    assertHasLocation(asset)
     assertAddressIsString(address)
     assertSenderAddress(senderAddress)
 

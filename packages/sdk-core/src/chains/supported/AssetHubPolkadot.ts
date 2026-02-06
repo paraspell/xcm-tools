@@ -11,7 +11,7 @@ import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
+import { addXcmVersionHeader, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, createVersionedDestination } from '../../utils/location'
@@ -39,8 +39,6 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     const { api, version, destination, senderAddress, address, paraIdTo, assetInfo: asset } = input
 
     assertSenderAddress(senderAddress)
-
-    assertHasLocation(asset)
 
     const messageId = await generateMessageId(
       api,
@@ -179,12 +177,11 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     const ASSETS_PALLET_ID = 50
 
     const hasRequiredJunctions =
-      asset.location &&
       hasJunction(asset.location, 'PalletInstance', ASSETS_PALLET_ID) &&
       hasJunction(asset.location, 'GeneralIndex') &&
       !hasJunction(asset.location, 'GlobalConsensus')
 
-    if (!asset.location || hasRequiredJunctions) {
+    if (hasRequiredJunctions) {
       return getPalletInstance('Assets').getBalance(api, address, asset)
     }
 

@@ -63,7 +63,10 @@
         "name": "Acala Foundation 3",
         "endpoint": "wss://acala-rpc-3.aca-api.network/ws"
       },
-
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://acala-rpc.n.dwellir.com"
+      },
       {
         "name": "IBP1",
         "endpoint": "wss://acala.ibp.network"

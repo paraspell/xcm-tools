@@ -1,11 +1,11 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
+import { TAssetInfoNoLoc } from './types'
 
 export const fetchEnergyWebXAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 

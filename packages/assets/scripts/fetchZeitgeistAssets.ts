@@ -1,7 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
-import { getNativeAssetSymbol, type TAssetInfo } from '../src'
+import { type TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
 
 const getNativeKey = (chain: TSubstrateChain) => {
   if (chain === 'Jamton') return 'Native'
@@ -51,7 +52,7 @@ const fetchAssets = async (
   chain: TSubstrateChain,
   query: string,
   isNative: boolean
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -102,7 +103,7 @@ export const fetchZeitgeistNativeAssets = async (
   api: ApiPromise,
   chain: TSubstrateChain,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   return (await fetchAssets(api, chain, query, true)).map(asset => ({
     ...asset,
     isNative: true
@@ -113,6 +114,6 @@ export const fetchZeitgeistForeignAssets = async (
   api: ApiPromise,
   chain: TSubstrateChain,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   return fetchAssets(api, chain, query, false)
 }

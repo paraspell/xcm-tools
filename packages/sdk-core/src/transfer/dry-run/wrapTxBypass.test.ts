@@ -75,15 +75,30 @@ describe('wrapTxBypass', () => {
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
-    const relayAsset = { symbol: 'RelayDOT', decimals: 10 } as TAssetInfo
-    const feeAsset = { symbol: 'USDC', decimals: 6, assetId: undefined } as TAssetInfo
-    const mainAsset = {
+    const nativeAsset: TAssetInfo = {
+      symbol: 'ACA',
+      decimals: 12,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    }
+
+    const relayAsset: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: 'Here' }
+    }
+
+    const feeAsset: TAssetInfo = {
+      symbol: 'USDC',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
+    }
+
+    const mainAsset: WithAmount<TAssetInfo> = {
       symbol: 'USDT',
       decimals: 6,
-      assetId: undefined,
+      location: { parents: 1, interior: { X2: [{ Parachain: 1000 }, { GeneralIndex: '0x01' }] } },
       amount: 1000n
-    } as WithAmount<TAssetInfo>
+    }
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
     vi.mocked(findAssetInfo).mockReturnValueOnce(relayAsset).mockReturnValue(relayAsset)

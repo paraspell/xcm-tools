@@ -9,7 +9,7 @@ import type {
   TCurrencyType,
   TCustomCurrencySymbolSpecifier,
 } from '../components/AssetsQueries/AssetsQueriesForm';
-import { ASSET_QUERIES, PALLETS_QUERIES } from '../consts';
+import { ASSET_QUERIES, PALLETS_QUERIES } from '../constants';
 import type { TAssetsQuery, TPalletsQuery } from '../types';
 import { isValidWalletAddress } from './validationUtils';
 
