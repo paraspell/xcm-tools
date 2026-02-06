@@ -14,14 +14,12 @@ const findEthAssetBySymbol = (
   symbol: string,
   otherAssets: TAssetInfo[]
 ): TAssetInfo | undefined => {
-  const ethCompatibleAssets = otherAssets.filter(
-    asset =>
-      asset.location &&
-      deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
-        Ethereum: {
-          chainId: 1
-        }
-      })
+  const ethCompatibleAssets = otherAssets.filter(asset =>
+    deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
+      Ethereum: {
+        chainId: 1
+      }
+    })
   )
   return findBestMatches(ethCompatibleAssets, symbol)[0]
 }

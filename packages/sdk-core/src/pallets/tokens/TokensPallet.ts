@@ -9,10 +9,9 @@ const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
   if (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo') {
     const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
 
-    const resolvedAsset =
-      isEthAsset && asset.location
-        ? findAssetInfoOrThrow(chain, { location: asset.location }, null)
-        : asset
+    const resolvedAsset = isEthAsset
+      ? findAssetInfoOrThrow(chain, { location: asset.location }, null)
+      : asset
 
     return getChain(chain).getCustomCurrencyId(resolvedAsset)
   } else {

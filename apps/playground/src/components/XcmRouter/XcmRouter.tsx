@@ -12,21 +12,15 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TBuilderConfig, TSubstrateChain, TUrl } from '@paraspell/sdk';
-import {
-  getOtherAssets,
-  replaceBigInt,
-  type TAssetInfo,
-  type TCurrencyInput,
-} from '@paraspell/sdk';
+import type { TBuilderConfig, TUrl } from '@paraspell/sdk';
+import { replaceBigInt } from '@paraspell/sdk';
 import type {
   TExchangeInput,
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
-import { createExchangeInstance, RouterBuilder } from '@paraspell/xcm-router';
+import { RouterBuilder } from '@paraspell/xcm-router';
 import axios, { AxiosError } from 'axios';
-import { ethers } from 'ethers';
 import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
 import { getWsProvider } from 'polkadot-api/ws-provider';
@@ -35,7 +29,7 @@ import Confetti from 'react-confetti';
 
 import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
-import { API_URL } from '../../consts';
+import { API_URL } from '../../constants';
 import { useWallet } from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
 import {
@@ -98,74 +92,6 @@ export const XcmRouter = () => {
     setProgressInfo(status);
   };
 
-  const determineCurrency = (
-    chain: TSubstrateChain | undefined,
-    asset: TAssetInfo,
-    isAutoExchange = false,
-  ): TCurrencyInput => {
-    if (asset.location) return { location: asset.location };
-
-    if (asset.isNative) {
-      return { symbol: asset.symbol };
-    }
-
-    if (asset.assetId === undefined && asset.location === undefined) {
-      return { symbol: asset.symbol };
-    }
-
-    if (ethers.isAddress(asset.assetId)) {
-      return { symbol: asset.symbol };
-    }
-
-    if (isAutoExchange) {
-      return asset.location
-        ? { location: asset.location }
-        : { symbol: asset.symbol };
-    }
-
-    const hasDuplicateIds =
-      chain &&
-      getOtherAssets(chain).filter(
-        (other) =>
-          other.assetId !== undefined && other.assetId === asset.assetId,
-      ).length > 1;
-
-    if (hasDuplicateIds) {
-      return { symbol: asset.symbol };
-    }
-
-    if (asset.assetId) return { id: asset.assetId };
-
-    throw new Error('Invalid currency input');
-  };
-
-  const resolveCurrencyInputs = (params: {
-    from?: TSubstrateChain;
-    exchange: TExchangeInput;
-    currencyFrom: TAssetInfo;
-    currencyTo: TAssetInfo;
-  }) => {
-    const { from, exchange, currencyFrom, currencyTo } = params;
-
-    const exchangeChain =
-      exchange && !Array.isArray(exchange)
-        ? createExchangeInstance(exchange).chain
-        : undefined;
-
-    const fromChain = from ?? exchangeChain;
-
-    const isAutoExchange = exchange === undefined || Array.isArray(exchange);
-
-    return {
-      currencyFromInput: determineCurrency(fromChain, currencyFrom),
-      currencyToInput: determineCurrency(
-        exchangeChain,
-        currencyTo,
-        isAutoExchange,
-      ),
-    };
-  };
-
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
@@ -185,19 +111,12 @@ export const XcmRouter = () => {
       evmSigner,
     } = formValues;
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     await RouterBuilder(builderOptions)
       .from(from)
       .exchange(exchange)
       .to(to)
-      .currencyFrom(currencyFromInput)
-      .currencyTo(currencyToInput)
+      .currencyFrom({ location: currencyFrom.location })
+      .currencyTo({ location: currencyTo.location })
       .amount(amount)
       .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
@@ -216,22 +135,15 @@ export const XcmRouter = () => {
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const { currencyFrom, currencyTo, from } = formValues;
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
+    const { currencyFrom, currencyTo } = formValues;
 
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: currencyFromInput,
-          currencyTo: currencyToInput,
+          currencyFrom: { location: currencyFrom.location },
+          currencyTo: { location: currencyTo.location },
           exchange,
           senderAddress,
           options: builderOptions,
@@ -321,21 +233,14 @@ export const XcmRouter = () => {
 
     setLoading(true);
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
+            currencyFrom: { location: currencyFrom.location },
+            currencyTo: { location: currencyTo.location },
             exchange,
             senderAddress: selectedAccount?.address,
             options: builderOptions,
@@ -349,8 +254,8 @@ export const XcmRouter = () => {
           .from(from)
           .exchange(exchange)
           .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
+          .currencyFrom({ location: currencyFrom.location })
+          .currencyTo({ location: currencyTo.location })
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -396,21 +301,14 @@ export const XcmRouter = () => {
 
     setLoading(true);
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
+            currencyFrom: { location: currencyFrom.location },
+            currencyTo: { location: currencyTo.location },
             exchange,
             senderAddress,
             options: builderOptions,
@@ -424,8 +322,8 @@ export const XcmRouter = () => {
           .from(from)
           .exchange(exchange)
           .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
+          .currencyFrom({ location: currencyFrom.location })
+          .currencyTo({ location: currencyTo.location })
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -475,21 +373,14 @@ export const XcmRouter = () => {
 
     setLoading(true);
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
+            currencyFrom: { location: currencyFrom.location },
+            currencyTo: { location: currencyTo.location },
             exchange,
             senderAddress,
             options: builderOptions,
@@ -503,8 +394,8 @@ export const XcmRouter = () => {
           .from(from)
           .exchange(exchange)
           .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
+          .currencyFrom({ location: currencyFrom.location })
+          .currencyTo({ location: currencyTo.location })
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -554,21 +445,14 @@ export const XcmRouter = () => {
 
     setLoading(true);
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
+            currencyFrom: { location: currencyFrom.location },
+            currencyTo: { location: currencyTo.location },
             exchange,
             senderAddress,
             options: builderOptions,
@@ -582,8 +466,8 @@ export const XcmRouter = () => {
           .from(from)
           .exchange(exchange)
           .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
+          .currencyFrom({ location: currencyFrom.location })
+          .currencyTo({ location: currencyTo.location })
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -619,21 +503,14 @@ export const XcmRouter = () => {
 
     setLoading(true);
 
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
       let result;
       if (useApi) {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
+            currencyFrom: { location: currencyFrom.location },
+            currencyTo: { location: currencyTo.location },
             options: builderOptions,
           },
           '/router/best-amount-out',
@@ -645,8 +522,8 @@ export const XcmRouter = () => {
           .from(from)
           .exchange(exchange)
           .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
+          .currencyFrom({ location: currencyFrom.location })
+          .currencyTo({ location: currencyTo.location })
           .amount(formValues.amount)
           .getBestAmountOut();
       }

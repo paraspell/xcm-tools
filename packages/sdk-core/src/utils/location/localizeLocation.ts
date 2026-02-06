@@ -121,7 +121,7 @@ export const localizeLocation = (
           { Parachain: getParaId(origin) }
         ]
       }
-    } as TLocation
+    }
   }
 
   if (
@@ -145,7 +145,7 @@ export const localizeLocation = (
       interior: {
         [`X${updatedJunctions.length}`]: updatedJunctions
       }
-    } as TLocation
+    }
   }
 
   const shouldSetParentsToZero =

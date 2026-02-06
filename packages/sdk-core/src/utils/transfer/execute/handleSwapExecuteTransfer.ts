@@ -1,6 +1,5 @@
 import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
-import { type TLocation } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -211,7 +210,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     address: recipientAddress,
     version,
     currency: {
-      location: assetFrom.location as TLocation,
+      location: assetFrom.location,
       amount: assetFrom.amount
     },
     swapConfig: {

@@ -1,4 +1,4 @@
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -13,8 +13,7 @@ import {
   getChainKey,
   getChainsByEcosystem,
   getParachainById,
-  getParachainEcosystem,
-  getParachainId
+  getParachainEcosystem
 } from '../../utils/utils';
 import LineBetween from '../LineBetween/LineBetween';
 import ParachainNode from '../Parachain/Parachain';
@@ -52,8 +51,8 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     return getChainsByEcosystem(ecosystem)
       .slice()
       .sort((a, b) => {
-        const countA = paraIdToCountMap[getParachainId(a)] || RELAYCHAIN_ID;
-        const countB = paraIdToCountMap[getParachainId(b)] || RELAYCHAIN_ID;
+        const countA = paraIdToCountMap[getParaId(a)] || RELAYCHAIN_ID;
+        const countB = paraIdToCountMap[getParaId(b)] || RELAYCHAIN_ID;
         return countB - countA;
       });
   }, [ecosystem, paraIdToCountMap]);
@@ -61,7 +60,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
   const parachainScales = useMemo(() => {
     const scales: Partial<Record<TSubstrateChain, number>> = {};
     sortedParachainNames.forEach(chain => {
-      const count = paraIdToCountMap[getParachainId(chain)] ?? 0;
+      const count = paraIdToCountMap[getParaId(chain)] ?? 0;
       scales[chain] = calculateChainScale(count, parachainArrangement);
     });
 
@@ -99,7 +98,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       } else {
         const chainEcosystem = getParachainEcosystem(p);
         if (chainEcosystem === ecosystem) {
-          ids.add(getParachainId(p));
+          ids.add(getParaId(p));
         }
       }
     });

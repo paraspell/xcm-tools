@@ -1,9 +1,9 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { getJunctionValue, hasJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { createChainClient } from '../../sdk-pjs/src'
 import { getParaId, getRelayChainOf } from '../../sdk-core/src'
+import { TAssetInfoNoLoc } from './types'
 
 const ALLOWED_AH_ASSET_SYMBOLS = ['BILL']
 
@@ -25,11 +25,34 @@ const resolveAhMetadata = async (
   return { symbol, decimals }
 }
 
+const hydrationLocationOverrides: Record<string, TLocation> = {
+  '42': {
+    parents: 2,
+    interior: {
+      X2: [
+        {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 1
+            }
+          }
+        },
+        {
+          AccountKey20: {
+            network: null,
+            key: '0x1abaea1f7c830bd89acc67ec4af516284b1bc33c'
+          }
+        }
+      ]
+    }
+  }
+}
+
 export const fetchHydrationAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 
@@ -78,7 +101,8 @@ export const fetchHydrationAssets = async (
           symbol: resultSymbol,
           decimals: resultDecimals,
           existentialDeposit,
-          location
+          location:
+            location ?? (chain === 'Hydration' ? hydrationLocationOverrides[assetId] : undefined)
         }
       }
     )

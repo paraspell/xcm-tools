@@ -7,7 +7,7 @@ import { Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation, createAsset } from '../../utils'
+import { createAsset } from '../../utils'
 import Chain from '../Chain'
 
 class Jamton<TApi, TRes, TSigner>
@@ -36,8 +36,6 @@ class Jamton<TApi, TRes, TSigner>
 
     if (isSymbolMatch(assetInfo.symbol, 'WUD')) {
       const usdt = findAssetInfoOrThrow(this.chain, { symbol: 'USDt' }, null)
-      assertHasLocation(assetInfo)
-      assertHasLocation(usdt)
       const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
       return transferPolkadotXcm({
         ...input,

@@ -30,7 +30,6 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
-  assertHasLocation,
   BatchMode,
   computeFeeFromDryRun,
   createClientCache,
@@ -529,14 +528,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const hasLocation = resolvedFeeAsset.asset.location
-
     const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ['Astar']
 
     if (
       (hasXcmPaymentApiSupport(chain) &&
         result.value.local_xcm &&
-        hasLocation &&
         (feeAsset ||
           USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
           (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
@@ -637,8 +633,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       return deliveryFeeResolved
     } else {
       try {
-        assertHasLocation(nativeAsset)
-
         const res = await this.quoteAhPrice(
           localizeLocation(chain, nativeAsset.location),
           assetLocalizedLoc,
@@ -678,8 +672,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     const weight = overridenWeight
       ? { proof_size: overridenWeight?.proofSize, ref_time: overridenWeight?.refTime }
       : await queryWeight()
-
-    assertHasLocation(asset)
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
@@ -740,7 +732,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     await ahApi.init(assetHubChain)
 
-    assertHasLocation(asset)
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
     const convertedExecFee = await ahApi.quoteAhPrice(

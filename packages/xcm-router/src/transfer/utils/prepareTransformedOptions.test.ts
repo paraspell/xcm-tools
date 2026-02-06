@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import * as assets from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
-import type { TTransferOptions } from '../../types';
+import type { TRouterAsset, TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import { determineFeeCalcAddress } from './utils';
@@ -24,6 +24,24 @@ vi.mock('@paraspell/sdk', async (importActual) => ({
 }));
 
 describe('prepareTransformedOptions', () => {
+  const acaAsset: TRouterAsset = {
+    symbol: 'ACA',
+    decimals: 8,
+    location: {
+      parents: 1,
+      interior: 'Here',
+    },
+  };
+
+  const astrAsset: TRouterAsset = {
+    symbol: 'ASTR',
+    decimals: 8,
+    location: {
+      parents: 2,
+      interior: 'Here',
+    },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -114,10 +132,7 @@ describe('prepareTransformedOptions', () => {
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
-    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({
-      symbol: 'EXCHANGE_ACA',
-      decimals: 8,
-    });
+    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
     vi.mocked(assets.getExchangeAsset).mockReturnValue(null);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
@@ -142,11 +157,8 @@ describe('prepareTransformedOptions', () => {
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
-    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({
-      symbol: 'EXCHANGE_ACA',
-      decimals: 8,
-    });
-    vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR', decimals: 8 });
+    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
+    vi.mocked(assets.getExchangeAsset).mockReturnValue(astrAsset);
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(false);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 
@@ -174,13 +186,11 @@ describe('prepareTransformedOptions', () => {
     } as unknown as ExchangeChain;
 
     const mockOriginAsset = { symbol: 'ACA', decimals: 8 } as sdkPapi.TAssetInfo;
-    const mockExchangeAssetFrom = { symbol: 'EXCHANGE_ACA', decimals: 8 };
-    const mockExchangeAssetTo = { symbol: 'ASTR', decimals: 8 };
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
     vi.mocked(findAssetInfo).mockReturnValue(mockOriginAsset);
-    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(mockExchangeAssetFrom);
-    vi.mocked(assets.getExchangeAsset).mockReturnValue(mockExchangeAssetTo);
+    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
+    vi.mocked(assets.getExchangeAsset).mockReturnValue(astrAsset);
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(true);
     vi.mocked(sdkPapi.createChainClient).mockResolvedValue({} as sdkPapi.TPapiApi);
     vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
@@ -198,8 +208,8 @@ describe('prepareTransformedOptions', () => {
       apiPapi: expect.any(Object),
       baseChain: mockDexChain.chain,
       exchangeChain: mockDexChain.exchangeChain,
-      assetFrom: mockExchangeAssetFrom,
-      assetTo: mockExchangeAssetTo,
+      assetFrom: acaAsset,
+      assetTo: astrAsset,
     });
     expect(result.options.feeCalcAddress).toBe('feeCalcAddr');
   });
@@ -219,12 +229,9 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeChain;
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA', decimals: 8 } as sdkPapi.TAssetInfo);
-    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({
-      symbol: 'EXCHANGE_ACA',
-      decimals: 8,
-    });
-    vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR', decimals: 8 });
+    vi.mocked(findAssetInfo).mockReturnValue(acaAsset);
+    vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
+    vi.mocked(assets.getExchangeAsset).mockReturnValue(astrAsset);
     vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(true);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(false);
 

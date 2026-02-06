@@ -1304,11 +1304,6 @@
         }
       },
       {
-        "symbol": "2-Pool-GDOT",
-        "decimals": 18,
-        "assetId": "690"
-      },
-      {
         "symbol": "GDOT",
         "decimals": 18,
         "assetId": "69",
@@ -1328,11 +1323,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "2-Pool-GETH",
-        "decimals": 18,
-        "assetId": "4200"
       },
       {
         "symbol": "GETH",
@@ -1396,11 +1386,6 @@
         }
       },
       {
-        "symbol": "3-Pool",
-        "decimals": 18,
-        "assetId": "103"
-      },
-      {
         "symbol": "a3-Pool",
         "decimals": 18,
         "assetId": "1008",
@@ -1420,11 +1405,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "2-Pool-HUSDC",
-        "decimals": 18,
-        "assetId": "110"
       },
       {
         "symbol": "HUSDC",
@@ -1448,11 +1428,6 @@
         }
       },
       {
-        "symbol": "2-Pool-HUSDT",
-        "decimals": 18,
-        "assetId": "111"
-      },
-      {
         "symbol": "HUSDT",
         "decimals": 18,
         "assetId": "1111",
@@ -1474,11 +1449,6 @@
         }
       },
       {
-        "symbol": "2-Pool-HUSDS",
-        "decimals": 18,
-        "assetId": "112"
-      },
-      {
         "symbol": "HUSDS",
         "decimals": 18,
         "assetId": "1112",
@@ -1498,11 +1468,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "2-Pool-HUSDe",
-        "decimals": 18,
-        "assetId": "113"
       },
       {
         "symbol": "HUSDe",
@@ -1749,10 +1714,6 @@
         }
       },
       {
-        "symbol": "HDXb",
-        "decimals": 12
-      },
-      {
         "symbol": "EWT",
         "decimals": 18,
         "assetId": "252525",
@@ -1802,10 +1763,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "HDXb",
-        "decimals": 12
       },
       {
         "symbol": "INTR",
@@ -2052,12 +2009,6 @@
         }
       },
       {
-        "symbol": "2-Pool",
-        "decimals": 18,
-        "assetId": "102",
-        "alias": "2-Pool2"
-      },
-      {
         "symbol": "SUI",
         "decimals": 9,
         "assetId": "1000753",
@@ -2146,11 +2097,6 @@
         }
       },
       {
-        "symbol": "H2O",
-        "decimals": 12,
-        "assetId": "1"
-      },
-      {
         "symbol": "DAI",
         "decimals": 18,
         "assetId": "18",
@@ -2200,11 +2146,6 @@
         "alias": "USDT3"
       },
       {
-        "symbol": "4-Pool",
-        "decimals": 18,
-        "assetId": "100"
-      },
-      {
         "symbol": "iBTC",
         "decimals": 8,
         "assetId": "11",
@@ -2224,17 +2165,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "2-Pool",
-        "decimals": 18,
-        "assetId": "101",
-        "alias": "2-Pool1"
-      },
-      {
-        "symbol": "3-Pool-MRL",
-        "decimals": 18,
-        "assetId": "105"
       },
       {
         "symbol": "USDC",
@@ -2336,11 +2266,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "2-Pool-WETH",
-        "decimals": 18,
-        "assetId": "104"
       },
       {
         "symbol": "sUSDS",
@@ -2505,6 +2430,22 @@
       },
       {
         "symbol": "BNC",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         "decimals": 12
       },
       {
@@ -2564,10 +2505,6 @@
         "decimals": 12
       },
       {
-        "symbol": "TAI",
-        "decimals": 12
-      },
-      {
         "symbol": "tKSM",
         "decimals": 10,
         "assetId": "0",
@@ -2608,10 +2545,6 @@
             ]
           }
         }
-      },
-      {
-        "symbol": "PHA",
-        "decimals": 12
       },
       {
         "symbol": "KBTC",
@@ -2786,7 +2719,22 @@
             ]
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -3159,7 +3107,22 @@
             "Here": null
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -3373,7 +3336,22 @@
             ]
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -3575,7 +3553,22 @@
             ]
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -3805,7 +3798,22 @@
             ]
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -4035,7 +4043,22 @@
             ]
           }
         },
-        "BNC"
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       ],
       [
         {
@@ -4157,7 +4180,22 @@
         "PHA"
       ],
       [
-        "BNC",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         {
           "parents": 1,
           "interior": {
@@ -4170,7 +4208,22 @@
         }
       ],
       [
-        "BNC",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         {
           "parents": 1,
           "interior": {
@@ -4189,7 +4242,22 @@
         }
       ],
       [
-        "BNC",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         {
           "parents": 1,
           "interior": {
@@ -4208,7 +4276,22 @@
         }
       ],
       [
-        "BNC",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         {
           "parents": 1,
           "interior": {
@@ -4226,9 +4309,42 @@
           }
         }
       ],
-      ["BNC", "PHA"],
       [
-        "BNC",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
         {
           "parents": 1,
           "interior": {

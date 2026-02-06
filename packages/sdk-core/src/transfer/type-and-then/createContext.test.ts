@@ -1,4 +1,5 @@
-import { findNativeAssetInfoOrThrow, type TAssetWithLocation } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import {
   isExternalChain,
   isRelayChain,
@@ -13,7 +14,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation, getAssetReserveChain, getRelayChainOf } from '../../utils'
+import { getAssetReserveChain, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { createTypeAndThenCallContext, getBridgeReserve } from './createContext'
 
@@ -115,14 +116,14 @@ describe('createTypeAndThenCallContext', () => {
   const mockDestChain: TChain = 'Acala'
   const mockReserveChain: TSubstrateChain = 'Polkadot'
 
-  const mockAsset = {
+  const mockAsset: WithAmount<TAssetInfo> = {
     amount: 1000n,
     symbol: 'DOT',
     decimals: 10,
     location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
-  } as TAssetWithLocation
+  }
 
-  const mockSystemAsset = {
+  const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 12,
     location: RELAY_LOCATION
@@ -152,7 +153,6 @@ describe('createTypeAndThenCallContext', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
-    vi.mocked(assertHasLocation).mockReturnValue(undefined)
   })
 
   it('should create context with relay chain as destination', async () => {
@@ -229,7 +229,7 @@ describe('createTypeAndThenCallContext', () => {
     const relayAsset = {
       ...mockAsset,
       location: RELAY_LOCATION
-    } as TAssetWithLocation
+    }
 
     const options = {
       ...mockOptions,

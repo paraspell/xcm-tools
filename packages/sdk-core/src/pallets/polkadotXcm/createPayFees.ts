@@ -1,7 +1,7 @@
 import type { TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
-import type { TWeight } from '../../../dist'
+import type { TWeight } from '../../types'
 
 export const createPayFees = (version: Version, asset: TAsset, weight?: TWeight) => {
   if (version < Version.V5) {

@@ -39,7 +39,7 @@ const validateBridgeAsset = (
   const ecosystem = getRelayChainOf(destination).toLowerCase()
 
   const isBridgedSystemAsset =
-    asset.location?.parents === Parents.TWO &&
+    asset.location.parents === Parents.TWO &&
     deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), { [ecosystem]: null })
 
   const isBridgedStablecoin = isStableCoinAsset(asset)
@@ -95,7 +95,7 @@ export const validateEthereumAsset = (
   ]
 
   const isEthCompatibleAsset =
-    (asset.location?.parents === Parents.TWO &&
+    (asset.location.parents === Parents.TWO &&
       deepEqual(
         getJunctionValue(asset.location, 'GlobalConsensus'),
         getEthereumJunction(origin, false).GlobalConsensus

@@ -1,10 +1,9 @@
 import type { TAssetInfo, TChain } from '@paraspell/sdk';
-import { getAssets } from '@paraspell/sdk';
+import { getAssets, isAssetEqual } from '@paraspell/sdk';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import type { TExchangeInput } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
-import { isRouterAssetEqual } from './isRouterAssetEqual';
 
 /**
  * Retrieves the list of assets supported for transfer from the origin chain to the exchange chain.
@@ -32,6 +31,6 @@ export const getSupportedAssetsFrom = (
 
   const fromAssets = getAssets(from);
   return fromAssets.filter((fromAsset) =>
-    exchangeAssets.some((exchangeAsset) => isRouterAssetEqual(fromAsset, exchangeAsset)),
+    exchangeAssets.some((exchangeAsset) => isAssetEqual(fromAsset, exchangeAsset)),
   );
 };

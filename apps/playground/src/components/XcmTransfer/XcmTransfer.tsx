@@ -135,12 +135,12 @@ const XcmTransfer = () => {
             transfers: items.map((item) => {
               const { feeAsset, transformedFeeAsset, ...safeValues } = item;
               const currencyInputs = item.currencies.map((c) => ({
-                ...determineCurrency(item, c),
+                ...determineCurrency(c),
                 amount: c.amount,
               }));
               return {
                 ...safeValues,
-                feeAsset: determineFeeAsset(item, transformedFeeAsset),
+                feeAsset: determineFeeAsset(transformedFeeAsset),
                 senderAddress,
                 currency:
                   currencyInputs.length === 1
@@ -244,7 +244,7 @@ const XcmTransfer = () => {
     const { currencies, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
+      ...determineCurrency(c),
       amount: c.amount,
     }));
 
@@ -270,7 +270,7 @@ const XcmTransfer = () => {
           senderAddress,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-          feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+          feeAsset: determineFeeAsset(transformedFeeAsset),
         },
         submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
         'POST',
@@ -387,7 +387,7 @@ const XcmTransfer = () => {
 
       const currencyInputs = currencies.map((c) => {
         return {
-          ...determineCurrency(formValues, c),
+          ...determineCurrency(c),
           amount: c.amount,
         };
       });
@@ -412,7 +412,7 @@ const XcmTransfer = () => {
           {
             ...safeFormValues,
             options: builderOptions,
-            feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+            feeAsset: determineFeeAsset(transformedFeeAsset),
             currency:
               currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           },

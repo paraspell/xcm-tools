@@ -31,7 +31,12 @@ vi.mock('./getExchangeConfig');
 
 describe('getExchangeAsset', () => {
   const mockExchange = 'AcalaDex';
-  const mockNativeAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true };
+  const mockNativeAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    isNative: true,
+    location: { parents: 1, interior: 'Here' },
+  };
   const mockForeignAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
@@ -94,16 +99,12 @@ describe('getExchangeAsset', () => {
     const location = { parents: 0, interior: 'Here' };
     const currency = { location } as TCurrencyInput;
 
-    vi.mocked(findAssetInfoByLoc)
-      .mockReturnValueOnce(undefined)
-      .mockReturnValueOnce(mockNativeAsset);
+    vi.mocked(findAssetInfoByLoc).mockReturnValueOnce(mockNativeAsset);
 
     const result = getExchangeAsset(mockExchange, currency);
 
     expect(result).toEqual(mockNativeAsset);
-    expect(findAssetInfoByLoc).toHaveBeenCalledTimes(2);
-    expect(findAssetInfoByLoc).toHaveBeenNthCalledWith(1, expect.any(Array), location);
-    expect(findAssetInfoByLoc).toHaveBeenNthCalledWith(2, expect.any(Array), location);
+    expect(findAssetInfoByLoc).toHaveBeenCalledWith(expect.any(Array), location);
   });
 
   test('should find asset by id', () => {
@@ -127,20 +128,5 @@ describe('getExchangeAsset', () => {
     const currency = {} as TCurrencyInput;
 
     expect(() => getExchangeAsset(mockExchange, currency)).toThrow('Invalid currency input');
-  });
-
-  test('should enhance foreign assets with location from otherAssets', () => {
-    const foreignAssetWithoutLocation = {
-      ...mockForeignAsset,
-      location: undefined,
-    };
-    const otherAssets = [mockForeignAsset];
-
-    vi.mocked(getExchangeAssets).mockReturnValue([foreignAssetWithoutLocation]);
-    vi.mocked(getOtherAssets).mockReturnValue(otherAssets);
-
-    getExchangeAsset(mockExchange, { symbol: 'USDT' });
-
-    expect(findAssetInfoBySymbol).toHaveBeenCalled();
   });
 });

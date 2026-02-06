@@ -32,6 +32,7 @@ const createRouterAsset = (symbol: string, decimals = 12): TRouterAsset => ({
   symbol,
   decimals,
   assetId: `${symbol}-ID`,
+  location: { parents: 1, interior: 'Here' },
 });
 
 const createAssetInfo = (symbol: string, decimals = 12): TAssetInfo =>

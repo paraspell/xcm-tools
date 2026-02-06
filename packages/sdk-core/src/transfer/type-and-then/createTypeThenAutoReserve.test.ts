@@ -12,7 +12,6 @@ vi.mock('@paraspell/assets')
 vi.mock('../../utils/chain/getRelayChainOf')
 vi.mock('./createTypeAndThenCall')
 vi.mock('../dry-run/dryRunInternal')
-vi.mock('../../utils/assertions')
 
 const mkApi = () => {
   const deserializeExtrinsics = vi.fn((_s: TSerializedExtrinsics) => ({ tx: 'ok' }))

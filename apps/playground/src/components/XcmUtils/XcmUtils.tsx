@@ -86,7 +86,7 @@ const XcmUtils = () => {
     const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
+      ...determineCurrency(c),
       amount: c.isMax ? 'ALL' : c.amount,
     }));
 
@@ -95,7 +95,7 @@ const XcmUtils = () => {
       senderAddress: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+      feeAsset: determineFeeAsset(transformedFeeAsset),
     };
 
     let result;
@@ -201,7 +201,7 @@ const XcmUtils = () => {
     const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
+      ...determineCurrency(c),
       amount: c.isMax ? 'ALL' : c.amount,
     }));
 
@@ -210,7 +210,7 @@ const XcmUtils = () => {
       senderAddress: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+      feeAsset: determineFeeAsset(transformedFeeAsset),
     };
 
     let result;

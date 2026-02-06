@@ -1,6 +1,6 @@
-import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
-import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -84,17 +84,18 @@ describe('transferMoonbeamToEth', () => {
     }))
   }
 
-  const moonbeamAsset = {
+  const moonbeamAsset: TAssetInfo = {
     symbol: 'WETH',
     decimals: 18,
-    location: { valid: 'location' } as unknown as TLocation,
-    assetId: '0xmockedAssetId'
+    assetId: '0xmockedAssetId',
+    location: { parents: 2, interior: 'Here' }
   }
 
-  const ethereumAsset = {
+  const ethereumAsset: TAssetInfo = {
     symbol: 'WETH',
     decimals: 18,
-    assetId: '0xethAssetId'
+    assetId: '0xethAssetId',
+    location: { parents: 0, interior: 'Here' }
   }
 
   const from: TSubstrateChain = 'Moonbeam'

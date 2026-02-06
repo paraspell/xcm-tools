@@ -50,7 +50,6 @@ import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
-  IXTransferTransfer,
   TPolkadotXCMTransferOptions,
   TScenario,
   TSendInternalOptions,
@@ -62,7 +61,6 @@ import {
   addXcmVersionHeader,
   assertAddressIsString,
   assertHasId,
-  assertHasLocation,
   assertSenderAddress,
   createBeneficiaryLocation,
   getChain,
@@ -82,12 +80,6 @@ const supportsXTokens = <TApi, TRes, TSigner>(
   obj: unknown
 ): obj is IXTokensTransfer<TApi, TRes, TSigner> => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
-}
-
-const supportsXTransfer = <TApi, TRes, TSigner>(
-  obj: unknown
-): obj is IXTransferTransfer<TApi, TRes, TSigner> => {
-  return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
 const supportsPolkadotXCM = <TApi, TRes, TSigner>(
@@ -270,7 +262,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
 
       // Handle common cases
-      const isExternalAsset = asset.location?.parents === Parents.TWO
+      const isExternalAsset = asset.location.parents === Parents.TWO
 
       const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
 
@@ -321,18 +313,6 @@ abstract class Chain<TApi, TRes, TSigner> {
       }
 
       return this.transferXTokens(input)
-    } else if (supportsXTransfer<TApi, TRes, TSigner>(this)) {
-      return this.transferXTransfer({
-        api,
-        asset,
-        recipientAddress: address,
-        paraIdTo: paraId,
-        origin: this.chain,
-        destination,
-        overriddenAsset,
-        pallet,
-        method
-      })
     }
 
     throw new NoXCMSupportImplementedError(this._chain)
@@ -409,14 +389,12 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
-    const isRegisteredOnAh =
-      asset.location && findAssetInfo(assetHubChain, { location: asset.location }, null)
+    const isRegisteredOnAh = findAssetInfo(assetHubChain, { location: asset.location }, null)
 
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
   createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {
-    assertHasLocation(asset)
     const { amount, location } = asset
     return createAsset(version, amount, localizeLocation(this.chain, location))
   }
@@ -538,7 +516,6 @@ abstract class Chain<TApi, TRes, TSigner> {
       throw new BridgeHaltedError()
     }
 
-    assertHasLocation(asset)
     assertAddressIsString(address)
     assertSenderAddress(senderAddress)
 

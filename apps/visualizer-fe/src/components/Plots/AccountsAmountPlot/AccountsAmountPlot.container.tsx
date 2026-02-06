@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { Center, Flex, Group, Loader, Stack } from '@mantine/core';
+import { getParaId } from '@paraspell/sdk';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,6 @@ import type { AccountCountsQuery } from '../../../gql/graphql';
 import convertToCsv from '../../../utils/convertToCsv';
 import downloadSvg from '../../../utils/downloadSvg';
 import { downloadZip } from '../../../utils/downloadZip';
-import { getParachainId } from '../../../utils/utils';
 import DownloadButtons from '../../DownloadButtons';
 import SliderInput from '../../SliderInput';
 import AccountsAmountPlot from './AccountsAmountPlot';
@@ -34,7 +34,7 @@ const AccountsAmountPlotContainer = () => {
     variables: {
       ecosystem: selectedEcosystem.toString().toLowerCase(),
       threshold,
-      paraIds: selectedParachains.map(parachain => getParachainId(parachain)),
+      paraIds: selectedParachains.map(parachain => getParaId(parachain)),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }

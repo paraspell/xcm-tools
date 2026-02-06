@@ -5,13 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
-import { assertHasLocation } from '../assertions'
 import { getMythosOriginFee } from './getMythosOriginFee'
 import { padValueBy } from './padFee'
 
 vi.mock('../../transfer')
 vi.mock('@paraspell/assets')
-vi.mock('../assertions')
 vi.mock('./padFee')
 
 describe('getMythosOriginFee', () => {
@@ -37,7 +35,6 @@ describe('getMythosOriginFee', () => {
       decimals: 18,
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
-    vi.mocked(assertHasLocation).mockReturnValue(undefined)
     vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(200n)
     vi.mocked(padValueBy).mockReturnValue(220n)
 
@@ -51,7 +48,6 @@ describe('getMythosOriginFee', () => {
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockClone, false)
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Mythos')
-    expect(assertHasLocation).toHaveBeenCalled()
     expect(quoteSpy).toHaveBeenCalledWith(expect.anything(), { parents: 1, interior: [] }, 150n)
     expect(padValueBy).toHaveBeenCalledWith(200n, 10)
     expect(res).toBe(220n)
@@ -64,9 +60,7 @@ describe('getMythosOriginFee', () => {
       decimals: 18,
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
-    vi.mocked(assertHasLocation).mockReturnValue(undefined)
     vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(undefined)
-
     await expect(getMythosOriginFee(mockApi)).rejects.toThrow(UnableToComputeError)
   })
 })

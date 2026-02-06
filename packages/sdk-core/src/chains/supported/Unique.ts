@@ -11,7 +11,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, assertHasLocation } from '../../utils'
+import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
 class Unique<TApi, TRes, TSigner>
@@ -37,7 +37,6 @@ class Unique<TApi, TRes, TSigner>
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    assertHasLocation(asset)
     assertHasId(asset)
 
     const collectionId = await api.queryState({

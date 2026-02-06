@@ -3,8 +3,6 @@ import {
   Foreign,
   ForeignAbstract,
   type GeneralBuilder,
-  getOtherAssets,
-  isRelayChain,
   Native,
   Override,
   type TBuilderConfig,
@@ -42,16 +40,13 @@ export const createBuilderOptions = ({
   xcmFormatCheck,
 });
 
-export const determineCurrency = (
-  { from }: TFormValuesTransformed,
-  {
-    isCustomCurrency,
-    customCurrency,
-    customCurrencyType,
-    customCurrencySymbolSpecifier,
-    currency,
-  }: TCurrencyEntryTransformed,
-): TCurrencyInput => {
+export const determineCurrency = ({
+  isCustomCurrency,
+  customCurrency,
+  customCurrencyType,
+  customCurrencySymbolSpecifier,
+  currency,
+}: TCurrencyEntryTransformed): TCurrencyInput => {
   if (isCustomCurrency) {
     if (customCurrencyType === 'id') {
       return {
@@ -89,37 +84,15 @@ export const determineCurrency = (
       };
     }
   } else if (currency) {
-    const hasDuplicateIds = isRelayChain(from)
-      ? false
-      : getOtherAssets(from).filter(
-          (asset) =>
-            !asset.isNative &&
-            !currency.isNative &&
-            asset.assetId === currency.assetId,
-        ).length > 1;
-
-    if (!currency.isNative && currency.assetId && !hasDuplicateIds) {
-      return {
-        id: currency.assetId,
-      };
-    }
-
-    if (currency.location) {
-      return {
-        location: currency.location,
-      };
-    }
-
-    return currency.isNative
-      ? { symbol: Native(currency.symbol) }
-      : { symbol: currency.symbol };
+    return {
+      location: currency.location,
+    };
   } else {
     throw Error('Currency is required');
   }
 };
 
 export const determineFeeAsset = (
-  formValues: TFormValuesTransformed,
   transformedFeeAsset?: TCurrencyEntryTransformed,
 ): TCurrencyInput | undefined => {
   if (!transformedFeeAsset) return undefined;
@@ -128,7 +101,7 @@ export const determineFeeAsset = (
     transformedFeeAsset.currencyOptionId ||
     transformedFeeAsset.isCustomCurrency
   ) {
-    return determineCurrency(formValues, transformedFeeAsset);
+    return determineCurrency(transformedFeeAsset);
   }
   return undefined;
 };
@@ -152,7 +125,7 @@ export const setupBaseBuilder = (
   } = formValues;
 
   const currencyInputs = formValues.currencies.map((c) => ({
-    ...determineCurrency(formValues, c),
+    ...determineCurrency(c),
     amount: c.amount,
   }));
 
@@ -164,7 +137,7 @@ export const setupBaseBuilder = (
         ? currencyInputs[0]
         : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
     )
-    .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
+    .feeAsset(determineFeeAsset(transformedFeeAsset))
     .address(address)
     .senderAddress(senderAddress)
     .ahAddress(ahAddress);

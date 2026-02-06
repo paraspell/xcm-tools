@@ -103,10 +103,6 @@ class TestParachain extends TestParachainBase {
     return 'transferXTokens called'
   }
 
-  transferXTransfer() {
-    return 'transferXTransfer called'
-  }
-
   transferPolkadotXCM() {
     return 'transferPolkadotXCM called'
   }
@@ -116,12 +112,6 @@ class TestParachain extends TestParachainBase {
     useOnlyDepositAsset = false
   ) {
     return this.transferToEthereum(options, useOnlyDepositAsset)
-  }
-}
-
-class NoXTokensParachain extends TestParachainBase {
-  transferXTransfer() {
-    return 'transferXTransfer called'
   }
 }
 
@@ -332,23 +322,6 @@ describe('Parachain', () => {
     })
   })
 
-  it('should call transferXTransfer when supportsXTransfer returns true', async () => {
-    const chain = new NoXTokensParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
-    const options = {
-      api,
-      to: 'Astar',
-      assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
-
-    const transferXTransferSpy = vi.spyOn(chain, 'transferXTransfer')
-
-    const result = await chain.transfer(options)
-
-    expect(transferXTransferSpy).toHaveBeenCalled()
-    expect(result).toBe('transferXTransfer called')
-  })
-
   it('throws when destination chain cannot receive from origin (canReceiveFrom=false)', async () => {
     const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
@@ -502,7 +475,15 @@ describe('Parachain', () => {
 
     const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
 
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123', decimals: 18 })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({
+      symbol: 'WETH',
+      assetId: '123',
+      decimals: 18,
+      location: {
+        parents: 1,
+        interior: { X1: { Parachain: 2000 } }
+      }
+    })
 
     await chain.exposeTransferToEthereum(options)
 

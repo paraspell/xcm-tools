@@ -45,7 +45,12 @@ describe('getAssetInfo', () => {
   it('should return asset by id if found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TRouterAsset = { symbol: 'HDX', decimals: 12, assetId: '2' };
+    const currency: TRouterAsset = {
+      symbol: 'HDX',
+      decimals: 12,
+      assetId: '2',
+      location: { parents: 0, interior: 'Here' },
+    };
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[1]);

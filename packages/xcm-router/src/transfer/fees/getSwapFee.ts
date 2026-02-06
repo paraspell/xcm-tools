@@ -29,16 +29,6 @@ export const getSwapFee = async (
     amountOut = 0n;
   }
 
-  const currency = assetFrom.location
-    ? {
-        location: assetFrom.location,
-        amount,
-      }
-    : {
-        symbol: assetFrom.symbol,
-        amount,
-      };
-
   const buildTx = async (overrideAmount?: string) => {
     const txOptions = {
       ...options,
@@ -56,7 +46,10 @@ export const getSwapFee = async (
     origin: exchange.chain,
     destination: exchange.chain,
     senderAddress: senderAddress,
-    currency,
+    currency: {
+      location: assetFrom.location,
+      amount,
+    },
     disableFallback: false,
   });
 

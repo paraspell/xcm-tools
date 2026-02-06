@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/sdk';
 import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
@@ -26,6 +27,25 @@ vi.mock('@paraspell/sdk', async () => {
 vi.mock('./utils');
 vi.mock('./buildTransactions');
 
+const acaAsset: TAssetInfo = {
+  symbol: 'ACA',
+  decimals: 12,
+  assetId: '1',
+  location: { parents: 0, interior: 'Here' },
+};
+
+const ausdAsset: TAssetInfo = {
+  symbol: 'AUSD',
+  decimals: 12,
+  assetId: '2',
+  location: {
+    parents: 1,
+    interior: {
+      X1: [{ Parachain: 2000 }],
+    },
+  },
+};
+
 const createInitialOptions = () =>
   ({
     from: 'Acala',
@@ -53,8 +73,8 @@ const createOptions = (
     exchangeChain: 'AcalaDex',
     api: {} as ApiPromise,
     apiPapi: {} as PolkadotClient,
-    assetFrom: { symbol: 'ACA', decimals: 12 },
-    assetTo: { symbol: 'AUSD', decimals: 12 },
+    assetFrom: acaAsset,
+    assetTo: ausdAsset,
   },
   amount: 1000n,
   ...overrides,
@@ -99,8 +119,8 @@ describe('dryRunRouter', () => {
         exchangeChain: 'AcalaDex',
         api: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
-        assetFrom: { symbol: 'ACA', decimals: 12 },
-        assetTo: { symbol: 'AUSD', decimals: 12 },
+        assetFrom: acaAsset,
+        assetTo: ausdAsset,
       },
     });
 
@@ -155,8 +175,8 @@ describe('dryRunRouter', () => {
         exchangeChain: 'HydrationDex',
         api: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
-        assetFrom: { symbol: 'BNC', decimals: 12 },
-        assetTo: { symbol: 'GLMR', decimals: 18 },
+        assetFrom: ausdAsset,
+        assetTo: acaAsset,
       },
     });
 

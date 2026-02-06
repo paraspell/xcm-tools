@@ -1,4 +1,4 @@
-import type { TAssetInfoWithId, TAssetWithLocation } from '@paraspell/assets'
+import type { TAssetInfoWithId } from '@paraspell/assets'
 import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
@@ -30,16 +30,6 @@ export const assertSenderAddress: (
 ) => asserts address is string = address => {
   if (!address) {
     throw new MissingParameterError('senderAddress')
-  }
-}
-
-export const assertHasLocation: (
-  asset: TAssetInfo
-) => asserts asset is TAssetWithLocation = asset => {
-  if (!asset.location) {
-    throw new InvalidCurrencyError(
-      `Asset ${JSON.stringify(asset, replaceBigInt)} is missing location`
-    )
   }
 }
 

@@ -25,7 +25,6 @@ import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getChainDisplayName } from '../../../../utils';
-import { getParachainId } from '../../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
@@ -123,7 +122,7 @@ const defaultProps: Partial<ChartTooltipProps> = {
 
 const getParaId = (label?: string, total?: string): number | undefined => {
   if (!label || (total && label.includes(total))) return undefined;
-  return getParachainId(label as TSubstrateChain);
+  return getParaId(label as TSubstrateChain);
 };
 
 const getLinkByEcosystem = (ecosystem: TRelaychain): string => {

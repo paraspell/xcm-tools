@@ -64,8 +64,18 @@ describe('AssetsService', () => {
         supportsDryRunApi: false,
         supportsXcmPaymentApi: true,
         assets: [
-          { symbol, decimals, isNative: true },
-          { assetId, symbol: 'BSK', decimals },
+          {
+            symbol,
+            decimals,
+            isNative: true,
+            location: { parents: 0, interior: 'Here' },
+          },
+          {
+            assetId,
+            symbol: 'BSK',
+            decimals,
+            location: { parents: 1, interior: 'Here' },
+          },
         ],
       };
 

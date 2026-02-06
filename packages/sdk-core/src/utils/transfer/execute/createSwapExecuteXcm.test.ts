@@ -7,7 +7,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
 import { addXcmVersionHeader } from '../../xcm-version'
@@ -19,7 +18,6 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 vi.mock('@paraspell/assets')
 vi.mock('../../../chains/config')
 vi.mock('../../xcm-version')
-vi.mock('../../assertions')
 vi.mock('../../location')
 vi.mock('../../asset')
 vi.mock('./createBaseExecuteXcm')
@@ -32,7 +30,6 @@ describe('createSwapExecuteXcm', () => {
   })
 
   it('builds a simple swap XCM when no multi-hop and no destChain', async () => {
-    vi.mocked(assertHasLocation).mockImplementation(() => {})
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(isMultiHopSwap).mockReturnValue(false)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
@@ -79,7 +76,6 @@ describe('createSwapExecuteXcm', () => {
   })
 
   it('builds a multi-hop swap XCM with destChain and chain provided', async () => {
-    vi.mocked(assertHasLocation).mockImplementation(() => {})
     vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')
     vi.mocked(isMultiHopSwap).mockReturnValue(true)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ location: {} } as any)

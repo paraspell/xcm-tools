@@ -1,7 +1,6 @@
 import { type TAssetInfo } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
-import { assertHasLocation } from '../../utils'
 import { AssetsPallet } from '../assets'
 
 export class FungiblesPallet extends AssetsPallet {
@@ -10,8 +9,6 @@ export class FungiblesPallet extends AssetsPallet {
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    assertHasLocation(asset)
-
     const balance = await api.queryState<{ balance: bigint }>({
       module: this.palletName,
       method: 'Account',

@@ -1,4 +1,4 @@
-import { type TAssetWithLocation, type WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
@@ -20,7 +20,7 @@ import { createRefundInstruction } from './utils'
 
 const buildAssets = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
-  asset: WithAmount<TAssetWithLocation>,
+  asset: WithAmount<TAssetInfo>,
   feeAmount: bigint,
   isRelayAsset: boolean,
   { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>

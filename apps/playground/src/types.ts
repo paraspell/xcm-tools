@@ -3,7 +3,7 @@ import type { IconProps } from '@tabler/icons-react';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
 
-import type { ASSET_QUERIES, PALLETS_QUERIES } from './consts';
+import type { ASSET_QUERIES, PALLETS_QUERIES } from './constants';
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 

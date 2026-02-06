@@ -62,7 +62,7 @@ export const createDestination = (
       ? 'Here'
       : createX1Payload(version, junction ?? { Parachain: chainId })
 
-  return isLocDestination ? destination : ({ parents: parentsResolved, interior } as TLocation)
+  return isLocDestination ? destination : { parents: parentsResolved, interior }
 }
 
 export const createVersionedDestination = (

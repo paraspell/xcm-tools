@@ -1,13 +1,58 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
+import { type TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
+import { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
+
+const getNativeKey = (chain: TSubstrateChain) => {
+  if (chain === 'Jamton') return 'Native'
+  return 'NativeAssetId'
+}
+
+const jamtonLocationOverrides: Record<string, TLocation> = {
+  jamTON: {
+    parents: 1,
+    interior: {
+      X3: [
+        {
+          Parachain: 1000
+        },
+        {
+          PalletInstance: 50
+        },
+        {
+          GeneralIndex: 22222078
+        }
+      ]
+    }
+  },
+  stDOT: {
+    parents: 1,
+    interior: {
+      X3: [
+        {
+          Parachain: 2004
+        },
+        {
+          PalletInstance: 110
+        },
+        {
+          AccountKey20: {
+            network: null,
+            key: '0xbc7e02c4178a7df7d3e564323a5c359dc96c4db4'
+          }
+        }
+      ]
+    }
+  }
+}
 
 const fetchAssets = async (
   api: ApiPromise,
+  chain: TSubstrateChain,
   query: string,
-  isNative: boolean,
-  nativeKey = 'NativeAssetId'
-): Promise<TAssetInfo[]> => {
+  isNative: boolean
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -18,7 +63,10 @@ const fetchAssets = async (
           args: [era]
         }
       ]) => {
-        const hasNativeAssetId = Object.prototype.hasOwnProperty.call(era.toHuman(), nativeKey)
+        const hasNativeAssetId = Object.prototype.hasOwnProperty.call(
+          era.toHuman(),
+          getNativeKey(chain)
+        )
         return isNative ? hasNativeAssetId : !hasNativeAssetId
       }
     )
@@ -45,7 +93,7 @@ const fetchAssets = async (
           symbol,
           decimals: +decimals,
           existentialDeposit: minimalBalance ?? existentialDeposit,
-          location
+          location: chain === 'Jamton' && isNative ? jamtonLocationOverrides[symbol] : location
         }
       }
     )
@@ -53,22 +101,19 @@ const fetchAssets = async (
 
 export const fetchZeitgeistNativeAssets = async (
   api: ApiPromise,
-  query: string,
-  nativeKey?: string
-): Promise<TAssetInfo[]> => {
-  return (await fetchAssets(api, query, true, nativeKey)).map(asset => ({
-    isNative: true,
-    assetId: asset.assetId,
-    symbol: asset.symbol,
-    decimals: asset.decimals,
-    existentialDeposit: asset.existentialDeposit
+  chain: TSubstrateChain,
+  query: string
+): Promise<TAssetInfoNoLoc[]> => {
+  return (await fetchAssets(api, chain, query, true)).map(asset => ({
+    ...asset,
+    isNative: true
   }))
 }
 
 export const fetchZeitgeistForeignAssets = async (
   api: ApiPromise,
-  query: string,
-  nativeKey?: string
-): Promise<TAssetInfo[]> => {
-  return fetchAssets(api, query, false, nativeKey)
+  chain: TSubstrateChain,
+  query: string
+): Promise<TAssetInfoNoLoc[]> => {
+  return fetchAssets(api, chain, query, false)
 }

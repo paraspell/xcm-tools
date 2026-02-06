@@ -2,12 +2,9 @@ import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasLocation } from '../../utils'
 
 export class ForeignAssetsPallet extends BaseAssetsPallet {
   mint(address: string, asset: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
-    assertHasLocation(asset)
-
     const { location, amount } = asset
 
     return Promise.resolve({
@@ -42,7 +39,6 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    assertHasLocation(asset)
     const balance = await api.queryState<{ balance: bigint }>({
       module: this.palletName,
       method: 'Account',

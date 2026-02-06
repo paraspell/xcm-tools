@@ -24,7 +24,6 @@ vi.mock('@paraspell/assets', async importActual => ({
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
 vi.mock('../../transfer')
-vi.mock('../../utils/assertions')
 vi.mock('../../utils/ethereum/generateMessageId')
 vi.mock('../../utils/ethereum/createCustomXcmOnDest')
 vi.mock('../../utils/fees/getMythosOriginFee')

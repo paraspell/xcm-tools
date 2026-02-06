@@ -6,10 +6,7 @@ import type { TGetBestAmountOutOptions } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { buildToExchangeExtrinsic } from './utils';
 
-vi.mock('./utils', () => ({
-  buildToExchangeExtrinsic: vi.fn(),
-}));
-
+vi.mock('./utils');
 vi.mock('../consts', () => ({
   FALLBACK_FEE_CALC_ADDRESS: 'fallback_address',
   FALLBACK_FEE_CALC_EVM_ADDRESS: 'fallback_evm_address',
@@ -18,7 +15,12 @@ vi.mock('../consts', () => ({
 describe('canBuildToExchangeTx', () => {
   const mockOriginApi = {} as TPapiApi;
   const mockTx = 'mocked_tx' as unknown as TPapiTransaction;
-  const mockAssetFromOrigin: TAssetInfo = { assetId: '1', symbol: 'DOT', decimals: 10 };
+  const mockAssetFromOrigin: TAssetInfo = {
+    assetId: '1',
+    symbol: 'DOT',
+    decimals: 10,
+    location: { parents: 1, interior: 'Here' },
+  };
   const defaultOptions = {
     from: 'Polkadot' as TParachain,
     amount: '10000000000',

@@ -5,7 +5,7 @@ import { PALLETS, SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect } from 'react';
 
-import { PALLETS_QUERIES } from '../../consts';
+import { PALLETS_QUERIES } from '../../constants';
 import { useWallet } from '../../hooks';
 import type { TPalletsQuery } from '../../types';
 import {

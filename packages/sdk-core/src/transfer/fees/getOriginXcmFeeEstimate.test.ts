@@ -24,7 +24,12 @@ describe('getOriginXcmFeeEstimate', () => {
   const mockOriginChain = 'origin' as TSubstrateChain
   const mockDestinationChain = 'destination' as TChain
   const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
-  const mockAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    isNative: true,
+    location: { parents: 1, interior: 'Here' }
+  }
 
   const MOCK_RAW_FEE = 100000000000n
   const MOCK_PADDED_FEE = 120000000000n

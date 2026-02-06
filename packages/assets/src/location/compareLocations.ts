@@ -4,7 +4,7 @@ const sanitizeLocation = (location: string): string => location.replace(/"(\d+),
 
 export const compareLocations = (input: string, asset: TAssetInfo): boolean => {
   const sanitizedInput = sanitizeLocation(input)
-  const assetMLStr = JSON.stringify(asset.location ?? '')
+  const assetMLStr = JSON.stringify(asset.location)
 
   const sanitizedAssetMLStr = sanitizeLocation(assetMLStr)
 

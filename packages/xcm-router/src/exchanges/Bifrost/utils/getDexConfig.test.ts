@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Pair, Trade } from '@crypto-dex-sdk/amm';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { getAssets } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -56,9 +57,25 @@ const makeApi = (pairEntries: any[]) =>
     },
   }) as unknown as Parameters<typeof getDexConfig>[0];
 
-const makeSdkAssets = () => [
-  { symbol: 'btc', assetId: '1', decimals: 12, location: undefined },
-  { symbol: 'eth', assetId: '2', decimals: 12, location: undefined },
+const makeSdkAssets = (): TAssetInfo[] => [
+  {
+    symbol: 'btc',
+    assetId: '1',
+    decimals: 12,
+    location: {
+      parents: 1,
+      interior: 'Here',
+    },
+  },
+  {
+    symbol: 'eth',
+    assetId: '2',
+    decimals: 12,
+    location: {
+      parents: 2,
+      interior: 'Here',
+    },
+  },
 ];
 
 describe('getDexConfig', () => {
@@ -100,7 +117,18 @@ describe('getDexConfig', () => {
 
     const cfg = await getDexConfig(api, 'BifrostPolkadot');
 
-    expect(cfg.pairs).toEqual([['1', '2']]);
+    expect(cfg.pairs).toEqual([
+      [
+        {
+          parents: 1,
+          interior: 'Here',
+        },
+        {
+          parents: 2,
+          interior: 'Here',
+        },
+      ],
+    ]);
   });
 
   it('generates synthetic pair when a trade route exists', async () => {
@@ -114,6 +142,17 @@ describe('getDexConfig', () => {
 
     const cfg = await getDexConfig(api, 'BifrostPolkadot');
 
-    expect(cfg.pairs).toEqual([['1', '2']]);
+    expect(cfg.pairs).toEqual([
+      [
+        {
+          parents: 1,
+          interior: 'Here',
+        },
+        {
+          parents: 2,
+          interior: 'Here',
+        },
+      ],
+    ]);
   });
 });

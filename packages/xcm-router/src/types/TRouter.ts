@@ -198,7 +198,7 @@ export type TRouterAsset = {
   symbol: string;
   decimals: number;
   assetId?: string;
-  location?: TLocation;
+  location: TLocation;
   alias?: string;
 };
 

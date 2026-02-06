@@ -94,13 +94,6 @@ export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint 
   return missing > 0n ? missing : null
 }
 
-const assetKey = (a: TAssetInfo) =>
-  a.location
-    ? JSON.stringify(a.location)
-    : !a.isNative && a.assetId != null
-      ? `id:${a.assetId}`
-      : `sym:${a.symbol}`
-
 const mintBonusForSent = (
   chain: TSubstrateChain,
   sent: TAssetInfo,
@@ -120,7 +113,7 @@ const mintBonusForSent = (
   const preminted = [native, relay, feeAsset]
     .filter((a): a is TAssetInfo => !!a)
     .filter(a => {
-      const k = assetKey(a)
+      const k = JSON.stringify(a.location)
       if (seen.has(k)) return false
       seen.add(k)
       return true

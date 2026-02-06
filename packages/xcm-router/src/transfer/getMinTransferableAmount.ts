@@ -1,9 +1,8 @@
-import type { TCurrencyCore } from '@paraspell/sdk';
 import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
-import type { TRouterAsset, TTransformedOptions } from '../types/TRouter';
+import type { TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
   createToExchangeBuilder,
@@ -11,26 +10,15 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const toCurrencyCore = (asset: TRouterAsset): TCurrencyCore => {
-  if (asset.location) {
-    return { location: asset.location };
-  }
-
-  if (asset.assetId) {
-    return { id: asset.assetId };
-  }
-
-  return { symbol: asset.symbol };
-};
-
 const computeExchangeMinAmount = async (
   dex: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<bigint> => {
   const { exchange } = options;
 
-  const currency = toCurrencyCore(exchange.assetFrom);
-  const existentialDeposit = getExistentialDepositOrThrow(exchange.baseChain, currency);
+  const existentialDeposit = getExistentialDepositOrThrow(exchange.baseChain, {
+    location: exchange.assetFrom.location,
+  });
 
   const nativeSymbol = getNativeAssetSymbol(exchange.baseChain);
   const isNativeAsset = exchange.assetFrom.symbol === nativeSymbol;

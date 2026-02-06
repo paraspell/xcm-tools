@@ -672,29 +672,6 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
-  "Phala": {
-    "defaultPallet": "XTransfer",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 33
-      },
-      {
-        "name": "Balances",
-        "index": 40
-      },
-      {
-        "name": "Assets",
-        "index": 42
-      },
-      {
-        "name": "XTransfer",
-        "index": 82
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
   "KiltSpiritnet": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -713,33 +690,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Fungibles"]
-  },
-  "Curio": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "Currencies",
-        "index": 72
-      },
-      {
-        "name": "Tokens",
-        "index": 73
-      },
-      {
-        "name": "XTokens",
-        "index": 75
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Currencies", "Tokens"]
   },
   "BridgeHubPolkadot": {
     "defaultPallet": "PolkadotXcm",

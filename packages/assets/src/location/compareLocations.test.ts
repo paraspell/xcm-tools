@@ -4,30 +4,16 @@ import { describe, expect, it } from 'vitest'
 import type { TAssetInfo } from '../types'
 import { compareLocations } from './compareLocations'
 
-const createAsset = (location?: TLocation): TAssetInfo =>
-  ({
-    symbol: 'TEST',
-    decimals: 12,
-    location
-  }) as TAssetInfo
-
 describe('compareLocations', () => {
+  const dotAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    location: { parents: 1, interior: 'Here' }
+  }
+
   it('returns true when the JSON string matches the asset location exactly', () => {
-    const location: TLocation = {
-      parents: 1,
-      interior: {
-        X1: [
-          {
-            Parachain: 1000
-          }
-        ]
-      }
-    }
-
-    const asset = createAsset(location)
-    const input = JSON.stringify(location)
-
-    expect(compareLocations(input, asset)).toBe(true)
+    const input = JSON.stringify(dotAsset.location)
+    expect(compareLocations(input, dotAsset)).toBe(true)
   })
 
   it('matches locations when numeric strings contain commas in the asset data', () => {
@@ -45,7 +31,10 @@ describe('compareLocations', () => {
       }
     }
 
-    const asset = createAsset(assetLocation)
+    const asset = {
+      ...dotAsset,
+      location: assetLocation
+    }
     const input = JSON.stringify(inputLocation)
 
     expect(compareLocations(input, asset)).toBe(true)
@@ -57,16 +46,11 @@ describe('compareLocations', () => {
       interior: 'Here'
     }
 
-    const asset = createAsset(location)
+    const asset = {
+      ...dotAsset,
+      location
+    }
 
     expect(compareLocations('not-json', asset)).toBe(false)
-  })
-
-  it('returns false when the asset does not have a location', () => {
-    const input = JSON.stringify({ parents: 0, interior: 'Here' })
-
-    const asset = createAsset()
-
-    expect(compareLocations(input, asset)).toBe(false)
   })
 })

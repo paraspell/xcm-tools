@@ -19,8 +19,7 @@ import {
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { type FC, useEffect, useRef } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
-import { ASSET_QUERIES } from '../../consts';
+import { ASSET_QUERIES, DEFAULT_ADDRESS } from '../../constants';
 import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
 import {

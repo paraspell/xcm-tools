@@ -51,28 +51,12 @@ export type TXTokensTransferOptions<TApi, TRes, TSigner> = {
   useMultiAssetTransfer?: boolean
 }
 
-export type TXTransferTransferOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
-  asset: WithAmount<TAssetInfo>
-  recipientAddress: TAddress
-  origin: TSubstrateChain
-  paraIdTo?: number
-  destination: TDestination
-  overriddenAsset?: TLocation | TAsset[]
-  pallet?: string
-  method?: string
-}
-
 export interface IPolkadotXCMTransfer<TApi, TRes, TSigner> {
   transferPolkadotXCM: (input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>) => Promise<TRes>
 }
 
 export interface IXTokensTransfer<TApi, TRes, TSigner> {
   transferXTokens: (input: TXTokensTransferOptions<TApi, TRes, TSigner>) => TRes
-}
-
-export interface IXTransferTransfer<TApi, TRes, TSigner> {
-  transferXTransfer: (input: TXTransferTransferOptions<TApi, TRes, TSigner>) => TRes
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -201,8 +185,6 @@ export type TDestWeight = {
   ref_time: bigint
   proof_size: bigint
 }
-
-export type TXTransferMethod = 'transfer'
 
 export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
 

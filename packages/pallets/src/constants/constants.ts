@@ -1,4 +1,4 @@
-export const CROSSCHAIN_PALLETS = ['XTokens', 'PolkadotXcm', 'XTransfer', 'XcmPallet'] as const
+export const CROSSCHAIN_PALLETS = ['XTokens', 'PolkadotXcm', 'XcmPallet'] as const
 
 export const ASSETS_PALLETS = [
   'Balances',

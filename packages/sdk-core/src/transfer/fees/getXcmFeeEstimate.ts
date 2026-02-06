@@ -86,13 +86,12 @@ export const getXcmFeeEstimate = async <TApi, TRes, TSigner>(
 
   const originFeeDetails = await getOriginXcmFeeEstimate(options)
 
-  const currencyInput = originAsset.location
-    ? { location: originAsset.location, amount }
-    : { symbol: originAsset.symbol, amount }
-
   const destinationFee = isExternalChain(destination)
     ? 0n
-    : await getReverseTxFee({ ...options, api: destApi, destination }, currencyInput)
+    : await getReverseTxFee(
+        { ...options, api: destApi, destination },
+        { location: originAsset.location, amount }
+      )
 
   const destinationSufficient = await isSufficientDestination(
     destApi,

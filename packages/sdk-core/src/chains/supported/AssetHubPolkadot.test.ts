@@ -81,7 +81,17 @@ describe('AssetHubPolkadot', () => {
 
   describe('transferPolkadotXcm', () => {
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', decimals: 10, assetId: '' }])
+      vi.mocked(getOtherAssets).mockReturnValue([
+        {
+          symbol: 'DOT',
+          decimals: 10,
+          assetId: '',
+          location: {
+            parents: 1,
+            interior: 'Here'
+          }
+        }
+      ])
 
       const input = {
         ...mockInput,

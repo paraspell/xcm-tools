@@ -156,8 +156,15 @@ describe('BifrostExchange', () => {
           mockApi,
           {
             ...swapOptions,
-            assetFrom: { symbol: 'KSM', decimals: 12 },
-            assetTo: { symbol: 'BNC', decimals: 12 },
+            assetFrom: {
+              symbol: 'KSM',
+              decimals: 12,
+              location: {
+                parents: 0,
+                interior: 'Here',
+              },
+            },
+            assetTo: { symbol: 'BNC', decimals: 12, location: { parents: 1, interior: 'Here' } },
           },
           mockToDestTransactionFee,
         ),

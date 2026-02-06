@@ -46,11 +46,7 @@ export const findAssetInfoOnDest = (
     return null
   }
 
-  const assetByLocation = resolvedOriginAsset.location
-    ? findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
-    : null
-
-  return assetByLocation ?? findAssetInfo(destination, { symbol: resolvedOriginAsset.symbol }, null)
+  return findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
 }
 
 export const findAssetOnDestOrThrow = (
