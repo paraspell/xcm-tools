@@ -111,3 +111,34 @@ export const fetchInterlayNativeAssets = async (
     }
   })
 }
+
+export const fetchKintsugiNativeAssets = async (
+  nativeAssets: TAssetInfo[]
+): Promise<TAssetInfo[]> => {
+  const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
+    KBTC: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2092
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x000b000000000000000000000000000000000000000000000000000000000000'
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  return nativeAssets.map(asset => {
+    const customLoc = CUSTOM_NATIVE_JUNCTIONS[asset.symbol]
+    return {
+      ...asset,
+      location: customLoc
+    }
+  })
+}

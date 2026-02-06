@@ -63,10 +63,7 @@
         "name": "Acala Foundation 3",
         "endpoint": "wss://acala-rpc-3.aca-api.network/ws"
       },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://acala-rpc.n.dwellir.com"
-      },
+
       {
         "name": "IBP1",
         "endpoint": "wss://acala.ibp.network"
@@ -466,21 +463,6 @@
       }
     ]
   },
-  "Phala": {
-    "name": "Phala Network",
-    "info": "phala",
-    "paraId": 2035,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://phala-rpc.n.dwellir.com"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://phala.public.curie.radiumblock.co/ws"
-      }
-    ]
-  },
   "KiltSpiritnet": {
     "name": "KILT Spiritnet",
     "info": "kilt",
@@ -493,17 +475,6 @@
       {
         "name": "IBP2",
         "endpoint": "wss://kilt.dotters.network"
-      }
-    ]
-  },
-  "Curio": {
-    "name": "Curio",
-    "info": "curio",
-    "paraId": 3339,
-    "providers": [
-      {
-        "name": "Curio",
-        "endpoint": "wss://parachain.curioinvest.com/"
       }
     ]
   },

@@ -6,6 +6,26 @@
 import type { ApiPromise } from '@polkadot/api'
 import { capitalizeLocation } from './utils'
 import { TAssetInfo } from '../src'
+import { TLocation } from '@paraspell/sdk-common'
+
+const locationOverrides: Record<string, TLocation> = {
+  USD: {
+    parents: 1,
+    interior: {
+      X3: [
+        {
+          Parachain: 1000
+        },
+        {
+          PalletInstance: 50
+        },
+        {
+          GeneralIndex: 1984
+        }
+      ]
+    }
+  }
+}
 
 const fetchCentrifugeAssetsBase = async (
   api: ApiPromise,
@@ -48,7 +68,7 @@ const fetchCentrifugeAssetsBase = async (
               : Object.values(eraHuman ?? {})[0].replaceAll(',', ''),
           symbol,
           decimals: +decimals,
-          location,
+          location: location ?? locationOverrides[symbol],
           existentialDeposit
         }
 

@@ -1,7 +1,7 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
-import { getParaId } from '../../sdk-core/src'
+import { getParaId, TLocation, TSubstrateChain } from '../../sdk-core/src'
 
 const ACALA_ASSET_GENERAL_KEYS = new Map<string, { length: number; data: string; paraId?: number }>(
   [
@@ -67,16 +67,29 @@ const KARURA_ASSET_GENERAL_KEYS = new Map<
       data: '0x000b000000000000000000000000000000000000000000000000000000000000',
       paraId: 2092
     }
+  ],
+  [
+    'BNC',
+    {
+      length: 2,
+      data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+      paraId: 2001
+    }
+  ],
+  [
+    'VSKSM',
+    {
+      length: 2,
+      data: '0x0404000000000000000000000000000000000000000000000000000000000000'
+    }
   ]
 ])
 
-const constructNativeLocation = (chain: 'Acala' | 'Karura', symbol: string): any | undefined => {
+const constructNativeLocation = (chain: TSubstrateChain, symbol: string): TLocation | undefined => {
   const assetMap = chain === 'Acala' ? ACALA_ASSET_GENERAL_KEYS : KARURA_ASSET_GENERAL_KEYS
   const assetInfo = assetMap.get(symbol)
 
-  if (!assetInfo) {
-    return undefined
-  }
+  if (!assetInfo) return undefined
 
   return {
     parents: 1,
@@ -95,7 +108,7 @@ const constructNativeLocation = (chain: 'Acala' | 'Karura', symbol: string): any
 }
 
 const fetchAssets = async (
-  chain: 'Acala' | 'Karura',
+  chain: TSubstrateChain,
   api: ApiPromise,
   query: string,
   isNative: boolean,
@@ -149,7 +162,7 @@ const fetchAssets = async (
           return {
             ...baseAsset,
             assetId,
-            location: assetId.startsWith('0x') ? undefined : await fetchLocation()
+            location: await fetchLocation()
           }
         }
       )
@@ -170,4 +183,4 @@ export const fetchAcalaNativeAssets = async (
 export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => fetchAssets('Acala', api, query, false, ['ForeignAssetId', 'Erc20'])
+): Promise<TAssetInfo[]> => fetchAssets('Acala', api, query, false, ['ForeignAssetId'])
