@@ -3815,6 +3815,33 @@
         "alias": "CFG2"
       },
       {
+        "assetId": "44",
+        "symbol": "EURC",
+        "decimals": 6,
+        "existentialDeposit": "11596",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x3f9610a50630bc7d4530736942ee2bc9e00e8de8"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "EURC2"
+      },
+      {
         "assetId": "15",
         "symbol": "vDOT",
         "decimals": 10,
@@ -4148,7 +4175,8 @@
         "assetId": "42",
         "symbol": "EURC",
         "decimals": 6,
-        "existentialDeposit": "14000"
+        "existentialDeposit": "14000",
+        "alias": "EURC1"
       },
       {
         "assetId": "102",
@@ -17647,6 +17675,29 @@
         },
         "existentialDeposit": "1",
         "alias": "USDC2"
+      },
+      {
+        "assetId": "50000309",
+        "symbol": "USDC",
+        "decimals": 2,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000309
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "100",
+        "alias": "USDC3"
       },
       {
         "assetId": "1984",
