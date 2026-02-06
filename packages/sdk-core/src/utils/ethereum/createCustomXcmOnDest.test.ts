@@ -14,8 +14,6 @@ vi.mock('../location', () => ({
   createBeneficiaryLocation: vi.fn(() => 'mockedBeneficiary')
 }))
 
-vi.mock('../assertions')
-
 vi.mock('../../pallets/xcmPallet/utils', () => ({
   createDestination: vi.fn(() => ({}))
 }))

@@ -475,7 +475,15 @@ describe('Parachain', () => {
 
     const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
 
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({ symbol: 'WETH', assetId: '123', decimals: 18 })
+    vi.mocked(findAssetInfoByLoc).mockReturnValue({
+      symbol: 'WETH',
+      assetId: '123',
+      decimals: 18,
+      location: {
+        parents: 1,
+        interior: { X1: { Parachain: 2000 } }
+      }
+    })
 
     await chain.exposeTransferToEthereum(options)
 

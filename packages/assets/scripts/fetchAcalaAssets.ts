@@ -1,7 +1,7 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { getParaId, TLocation, TSubstrateChain } from '../../sdk-core/src'
+import { TAssetInfoNoLoc } from './types'
 
 const ACALA_ASSET_GENERAL_KEYS = new Map<string, { length: number; data: string; paraId?: number }>(
   [
@@ -113,7 +113,7 @@ const fetchAssets = async (
   query: string,
   isNative: boolean,
   key: string[]
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
 
@@ -137,7 +137,7 @@ const fetchAssets = async (
         ]) => {
           const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
 
-          const baseAsset: TAssetInfo = {
+          const baseAsset: TAssetInfoNoLoc = {
             symbol,
             decimals: +decimals,
             existentialDeposit: minimalBalance ?? existentialDeposit
@@ -173,7 +173,7 @@ export const fetchAcalaNativeAssets = async (
   chain: 'Acala' | 'Karura',
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   return (await fetchAssets(chain, api, query, true, ['NativeAssetId'])).map(asset => ({
     ...asset,
     isNative: true
@@ -183,4 +183,4 @@ export const fetchAcalaNativeAssets = async (
 export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => fetchAssets('Acala', api, query, false, ['ForeignAssetId'])
+): Promise<TAssetInfoNoLoc[]> => fetchAssets('Acala', api, query, false, ['ForeignAssetId'])

@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInput, TLocation } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput } from '@paraspell/sdk';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -30,7 +30,6 @@ export const getExchangeAsset = (
   const assets = getExchangeAssets(exchange);
 
   const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TAssetInfo[];
-
   const otherAssets = assets.filter((asset) => !('isNative' in asset)) as TAssetInfo[];
 
   let asset: TRouterAsset | undefined;
@@ -47,9 +46,7 @@ export const getExchangeAsset = (
 
     asset = findAssetInfoBySymbol(null, otherAssets, nativeAssets, currency.symbol);
   } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
-    asset =
-      findAssetInfoByLoc(otherAssets, currency.location as string | TLocation) ??
-      findAssetInfoByLoc(nativeAssets, currency.location as string | TLocation);
+    asset = findAssetInfoByLoc(assets, currency.location);
   } else if ('id' in currency) {
     asset = findAssetInfoById(otherAssets, currency.id);
   } else {

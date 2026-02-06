@@ -4,7 +4,6 @@ import type { IPolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
-import { assertHasLocation } from '../assertions'
 import { padValueBy } from './padFee'
 
 export const getMythosOriginFee = async <TApi, TRes, TSigner>(
@@ -16,7 +15,6 @@ export const getMythosOriginFee = async <TApi, TRes, TSigner>(
   const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi, false)
 
   const nativeAsset = findNativeAssetInfoOrThrow('Mythos')
-  assertHasLocation(nativeAsset)
 
   const feeConverted = await ahApi.quoteAhPrice(
     DOT_LOCATION,

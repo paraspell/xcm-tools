@@ -27,7 +27,6 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
-  assertHasLocation,
   BatchMode,
   createClientCache,
   createClientPoolHelpers,
@@ -444,10 +443,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
         }
       : undefined
 
-    const nativeAsset = findNativeAssetInfoOrThrow(chain)
-
-    const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
-
     const destParaId =
       forwardedXcms.length === 0
         ? undefined
@@ -458,7 +453,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     if (
       (hasXcmPaymentApiSupport(chain) &&
         resultJson.ok.local_xcm &&
-        hasLocation &&
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
@@ -513,8 +507,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     overridenWeight?: TWeight
   ): Promise<bigint> {
     const weight = overridenWeight ?? (await this.getXcmWeight(localXcm))
-
-    assertHasLocation(asset)
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
@@ -595,8 +587,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     }
 
     try {
-      assertHasLocation(nativeAsset)
-
       const res = await this.quoteAhPrice(
         localizeLocation(chain, nativeAsset.location),
         assetLocalizedLoc,
@@ -638,7 +628,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     await ahApi.init(assetHubChain)
 
-    assertHasLocation(asset)
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
     const convertedExecFee = await ahApi.quoteAhPrice(

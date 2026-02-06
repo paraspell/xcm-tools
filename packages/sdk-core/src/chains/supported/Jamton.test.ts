@@ -1,4 +1,4 @@
-import type { TAsset, TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation, createAsset } from '../../utils'
+import { createAsset } from '../../utils'
 import { getChain } from '../../utils/getChain'
 import type Jamton from './Jamton'
 
@@ -17,6 +17,25 @@ vi.mock('../../utils')
 
 describe('Jamton', () => {
   let chain: Jamton<unknown, unknown, unknown>
+
+  const baseInput = {
+    assetInfo: {},
+    scenario: 'ParaToPara' as const,
+    destination: 'AssetHubPolkadot' as const,
+    version: Version.V4
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+  const usdtAsset: TAssetInfo = {
+    symbol: 'USDT',
+    assetId: '123',
+    decimals: 6,
+    location: {
+      parents: 1,
+      interior: {
+        X1: [{ Parachain: 1000 }]
+      }
+    }
+  }
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -32,13 +51,6 @@ describe('Jamton', () => {
     })
   })
 
-  const baseInput = {
-    assetInfo: {},
-    scenario: 'ParaToPara' as const,
-    destination: 'AssetHubPolkadot' as const,
-    version: Version.V4
-  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
   it('should handle native asset', async () => {
     const input = {
       ...baseInput,
@@ -53,7 +65,7 @@ describe('Jamton', () => {
   it('should handle foreign asset', async () => {
     const input = {
       ...baseInput,
-      assetInfo: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
+      assetInfo: { ...usdtAsset, amount: 100n }
     }
     vi.mocked(isSymbolMatch).mockReturnValue(false)
 
@@ -65,7 +77,7 @@ describe('Jamton', () => {
   it('should throw ScenarioNotSupportedError for ParaToPara to non-AssetHubPolkadot', () => {
     const input = {
       ...baseInput,
-      assetInfo: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
+      assetInfo: { ...usdtAsset, amount: 100n },
       scenario: 'ParaToPara' as const,
       destination: 'Acala' as const
     }
@@ -80,7 +92,7 @@ describe('Jamton', () => {
   it('should allow ParaToPara to AssetHubPolkadot', async () => {
     const input = {
       ...baseInput,
-      assetInfo: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
+      assetInfo: { ...usdtAsset, amount: 100n },
       scenario: 'ParaToPara' as const,
       destination: 'AssetHubPolkadot' as const
     }
@@ -94,7 +106,7 @@ describe('Jamton', () => {
   it('should allow non-ParaToPara scenarios to any destination', async () => {
     const input = {
       ...baseInput,
-      assetInfo: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n },
+      assetInfo: { ...usdtAsset, amount: 100n },
       scenario: 'ParaToRelay' as const,
       destination: 'Acala' as const
     }
@@ -125,30 +137,31 @@ describe('Jamton', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockUsdtAsset)
     vi.mocked(createAsset)
       .mockReturnValueOnce({
-        mockAsset: 'usdt',
-        isFeeAsset: true
-      } as unknown as TAsset)
-      .mockReturnValueOnce({ mockAsset: 'wud' } as unknown as TAsset)
+        id: usdtAsset.location,
+        fun: { Fungible: 180_000n }
+      })
+      .mockReturnValueOnce({ id: input.assetInfo.location, fun: { Fungible: 1000n } })
 
     await chain.transferPolkadotXCM(input)
 
     expect(isSymbolMatch).toHaveBeenCalledWith('WUD', 'WUD')
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' }, null)
-    expect(assertHasLocation).toHaveBeenCalledWith(input.assetInfo)
-    expect(assertHasLocation).toHaveBeenCalledWith(mockUsdtAsset)
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 180_000n, mockUsdtAsset.location)
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.assetInfo.location)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith({
       ...input,
-      overriddenAsset: [{ mockAsset: 'usdt', isFeeAsset: true }, { mockAsset: 'wud' }]
+      overriddenAsset: [
+        { id: usdtAsset.location, fun: { Fungible: 180_000n }, isFeeAsset: true },
+        { id: input.assetInfo.location, fun: { Fungible: 1000n } }
+      ]
     })
   })
 
   it('should not treat non-WUD symbols as WUD', async () => {
     const input = {
       ...baseInput,
-      assetInfo: { symbol: 'USDT', assetId: '123', decimals: 6, amount: 100n }
+      assetInfo: { ...usdtAsset, amount: 100n }
     }
     vi.mocked(isSymbolMatch).mockReturnValue(false)
 

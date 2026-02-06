@@ -45,8 +45,9 @@ import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAss
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
 import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
+import { TAssetInfoNoLoc } from './types'
 
-const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> => {
+const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfoNoLoc[]> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
@@ -62,7 +63,7 @@ const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> 
 const resolveNativeAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   if (chain === 'Penpal') {
     return [
       {
@@ -93,8 +94,8 @@ const fetchNativeAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
-  let nativeAssets: TAssetInfo[] = []
+): Promise<TAssetInfoNoLoc[]> => {
+  let nativeAssets: TAssetInfoNoLoc[] = []
 
   if (chain.startsWith('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
@@ -185,7 +186,7 @@ const fetchNativeAssets = async (
     return interior ? { parents: 1, interior } : null
   }
 
-  const cleanAsset = (asset: TAssetInfo): TAssetInfo => {
+  const cleanAsset = (asset: TAssetInfoNoLoc): TAssetInfoNoLoc => {
     const generatedLoc = getNativeLocation(asset.symbol)
 
     const location = asset.location ?? (generatedLoc ? capitalizeLocation(generatedLoc) : null)
@@ -201,7 +202,10 @@ const fetchNativeAssets = async (
   return reordered.map(cleanAsset)
 }
 
-const fetchOtherAssetsDefault = async (api: ApiPromise, query: string): Promise<TAssetInfo[]> => {
+const fetchOtherAssetsDefault = async (
+  api: ApiPromise,
+  query: string
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
 
   const res = await api.query[module][method].entries()
@@ -258,8 +262,8 @@ const fetchOtherAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
-  let otherAssets: TAssetInfo[] = []
+): Promise<TAssetInfoNoLoc[]> => {
+  let otherAssets: TAssetInfoNoLoc[] = []
 
   if (chain.includes('AssetHub')) {
     otherAssets = await fetchAssetHubAssets(chain, api, query)
@@ -357,7 +361,7 @@ const fetchChainAssets = async (
 
   const queryPath = query[0]
 
-  let otherAssets: TAssetInfo[] = []
+  let otherAssets: TAssetInfoNoLoc[] = []
 
   if (queryPath) {
     otherAssets = await fetchOtherAssets(chain, api, queryPath)
@@ -399,7 +403,7 @@ const fetchChainAssets = async (
   const joinedAssets = [...nativeAssets, ...otherAssets]
 
   return {
-    assets: joinedAssets.filter(asset => asset.location !== undefined),
+    assets: joinedAssets.filter((asset): asset is TAssetInfo => asset.location !== undefined),
     nativeAssetSymbol,
     ss58Prefix,
     isEVM: isChainEvm(api),

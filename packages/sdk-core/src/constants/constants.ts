@@ -26,28 +26,7 @@ export const RELAY_LOCATION: TLocation = {
   interior: { Here: null }
 }
 
-export const AH_REQUIRES_FEE_ASSET_LOCS: TLocation[] = [
-  {
-    parents: Parents.ONE,
-    interior: {
-      X3: [
-        {
-          Parachain: 1000
-        },
-        {
-          PalletInstance: 50
-        },
-        {
-          GeneralIndex: 50000075
-        }
-      ]
-    }
-  }
-]
-
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
-
-export const FEE_PADDING_FACTOR = 130n // 30% padding
 
 export const TX_CLIENT_TIMEOUT_MS = 20 * 60 * 1000 // 20 minutes
 export const DRY_RUN_CLIENT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
@@ -62,3 +41,6 @@ export const MIN_AMOUNT = 2n
 export const AMOUNT_ALL = 'ALL'
 
 export const TRANSACT_ORIGINS = ['Native', 'SovereignAccount', 'Superuser', 'Xcm'] as const
+
+export const ERR_LOCATION_DEST_NOT_SUPPORTED =
+  'XCM Location destinations are not supported for specific transfer you are trying to create. In special cases such as xTokens pallet, try using address location instead (for both destination and address in same location set (eg. X2 - Parachain, Address). For further assistance please open issue in our repository.'

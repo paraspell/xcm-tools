@@ -323,7 +323,11 @@ describe('getTransferInfo', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
-      decimals: 6
+      decimals: 6,
+      location: {
+        parents: 1,
+        interior: { X1: [{ Parachain: 1000 }] }
+      }
     })
     vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(getAssetBalanceInternal)

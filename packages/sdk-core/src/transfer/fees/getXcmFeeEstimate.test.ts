@@ -154,7 +154,11 @@ describe('getXcmFeeEstimate', () => {
     const rawOrigin = 1000n
     const rawDest = 2000n
 
-    const unitAsset = { symbol: 'UNIT', decimals: 12 } as TAssetInfo
+    const unitAsset: TAssetInfo = {
+      symbol: 'UNIT',
+      decimals: 12,
+      location: { parents: 0, interior: { Here: null } }
+    }
 
     vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({
       fee: rawOrigin,
@@ -162,7 +166,7 @@ describe('getXcmFeeEstimate', () => {
       sufficient: true
     })
     vi.mocked(padFee).mockImplementationOnce(() => 2600n)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ABC' } as TAssetInfo)
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(unitAsset)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(unitAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue(unitAsset.symbol)
     vi.mocked(getReverseTxFee).mockResolvedValue(rawDest)
@@ -185,7 +189,7 @@ describe('getXcmFeeEstimate', () => {
         destination: 'Hydration',
         currency: { symbol: 'ABC', amount: 5n }
       },
-      { symbol: 'ABC', amount: 5n }
+      { location: unitAsset.location, amount: 5n }
     )
 
     expect(res).toEqual({

@@ -13,8 +13,6 @@ import { firstValueFrom } from 'rxjs';
 
 import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
 
-const getPairKey = (a: TRouterAsset) => (a.location as object | undefined) ?? a.assetId ?? a.symbol;
-
 export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<TDexConfig> => {
   const wallet = new Wallet(api);
   await wallet.isReady;
@@ -36,7 +34,8 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
       if (key.toLowerCase() === 'token') {
         const sdkAsset = getNativeAssets(chain).find((a) => a.symbol === symbol);
-        routerAsset = { symbol, location: sdkAsset?.location, decimals: sdkAsset?.decimals ?? 0 };
+        if (!sdkAsset) throw new RoutingResolutionError(`Native asset not found: ${symbol}`);
+        routerAsset = { symbol, location: sdkAsset.location, decimals: sdkAsset.decimals };
       } else {
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
@@ -68,7 +67,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
     const key = [tA.symbol, tB.symbol].sort().join('-');
     if (seen.has(key)) return;
     seen.add(key);
-    directPairs.push([getPairKey(a), getPairKey(b)]);
+    directPairs.push([a.location, b.location]);
   });
 
   const acalaDex = new AcalaDex({ api, wallet });
@@ -98,7 +97,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
           }),
         );
 
-        syntheticPairs.push([getPairKey(A), getPairKey(B)]);
+        syntheticPairs.push([A.location, B.location]);
         seen.add(key);
       } catch {
         /* no path - ignore */

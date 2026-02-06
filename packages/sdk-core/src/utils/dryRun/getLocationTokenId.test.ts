@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getLocationTokenId } from './getLocationTokenId'
@@ -8,7 +8,14 @@ import { getLocationTokenId } from './getLocationTokenId'
 vi.mock('@paraspell/assets')
 
 describe('getLocationTokenId', () => {
-  const mockChain = {} as TSubstrateChain
+  const mockChain: TSubstrateChain = 'Acala'
+
+  const location: TLocation = {
+    parents: 1,
+    interior: {
+      X1: [{ Parachain: 1000 }]
+    }
+  }
 
   it('should return the native asset symbol when location interior type is "Here"', () => {
     const location = {
@@ -26,7 +33,7 @@ describe('getLocationTokenId', () => {
   })
 
   it('should return the asset ID of a valid foreign asset', () => {
-    const location = {
+    const locationPapi = {
       interior: {
         type: 'X2',
         value: [
@@ -37,20 +44,20 @@ describe('getLocationTokenId', () => {
     }
 
     const foreignAssets: TAssetInfo[] = [
-      { assetId: '123', symbol: 'USDT', decimals: 6 },
-      { assetId: '456', symbol: 'ETH', decimals: 18 }
+      { assetId: '123', symbol: 'USDT', decimals: 6, location },
+      { assetId: '456', symbol: 'ETH', decimals: 18, location }
     ]
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenId(location, mockChain)
+    const result = getLocationTokenId(locationPapi, mockChain)
 
     expect(result).toBe('123')
     expect(getOtherAssets).toHaveBeenCalledWith(mockChain)
   })
 
   it('should return null if the foreign asset is not found', () => {
-    const location = {
+    const locationPapi = {
       interior: {
         type: 'X2',
         value: [
@@ -61,13 +68,13 @@ describe('getLocationTokenId', () => {
     }
 
     const foreignAssets: TAssetInfo[] = [
-      { assetId: '123', symbol: 'USDT', decimals: 6 },
-      { assetId: '456', symbol: 'ETH', decimals: 18 }
+      { assetId: '123', symbol: 'USDT', decimals: 6, location },
+      { assetId: '456', symbol: 'ETH', decimals: 18, location }
     ]
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenId(location, mockChain)
+    const result = getLocationTokenId(locationPapi, mockChain)
 
     expect(result).toBeNull()
   })

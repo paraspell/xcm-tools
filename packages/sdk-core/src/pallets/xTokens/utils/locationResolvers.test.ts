@@ -27,22 +27,6 @@ describe('buildLocation', () => {
     destination: 'Astar'
   } as TXTokensTransferOptions<unknown, unknown, unknown>
 
-  it('returns location when asset is foreign and origin is Bifrost', () => {
-    const input = {
-      ...baseInput,
-      origin: 'BifrostPolkadot',
-      asset: { assetId: '123' }
-    } as TXTokensTransferOptions<unknown, unknown, unknown>
-
-    const result = buildLocation(input)
-    expect(result).toEqual({
-      parents: Parents.ONE,
-      interior: {
-        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: 123n }]
-      }
-    })
-  })
-
   it('returns asset.location when foreign asset has location', () => {
     const location = { parents: Parents.ONE, interior: 'Here' }
     const input = {
@@ -55,21 +39,6 @@ describe('buildLocation', () => {
 
     const result = buildLocation(input)
     expect(result).toBe(location)
-  })
-
-  it('returns default location when foreign asset has no location and origin is not Bifrost', () => {
-    const input = {
-      ...baseInput,
-      asset: { assetId: '123' }
-    } as TXTokensTransferOptions<unknown, unknown, unknown>
-
-    const result = buildLocation(input)
-    expect(result).toEqual({
-      parents: Parents.ONE,
-      interior: {
-        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: 123n }]
-      }
-    })
   })
 
   it('returns DOT_LOCATION when asset is native and destination is relay chain', () => {

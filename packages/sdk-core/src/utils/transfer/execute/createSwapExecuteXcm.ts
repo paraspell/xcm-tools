@@ -2,7 +2,6 @@ import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from 
 
 import { getParaId } from '../../../chains/config'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
 import { addXcmVersionHeader } from '../../xcm-version'
@@ -30,8 +29,6 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
   const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
-
-  assertHasLocation(nativeAsset)
 
   if (!needsMultiHop) {
     return [
@@ -91,9 +88,6 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     version,
     paraIdTo
   } = options
-
-  assertHasLocation(assetInfoFrom)
-  assertHasLocation(assetInfoTo)
 
   const assetFrom = createAsset(
     version,

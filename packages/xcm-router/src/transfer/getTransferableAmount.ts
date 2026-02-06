@@ -3,7 +3,7 @@ import { getBalance, getExistentialDepositOrThrow, getNativeAssetSymbol } from '
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
-import type { TRouterAsset, TTransformedOptions } from '../types/TRouter';
+import type { TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
   createToExchangeBuilder,
@@ -11,25 +11,15 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const toCurrencyCore = (asset: TRouterAsset): TCurrencyCore => {
-  if (asset.location) {
-    return { location: asset.location };
-  }
-
-  if (asset.assetId) {
-    return { id: asset.assetId };
-  }
-
-  return { symbol: asset.symbol };
-};
-
 const computeLocalTransferableAmount = async (
   dex: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<bigint> => {
   const { exchange, senderAddress } = options;
 
-  const currency = toCurrencyCore(exchange.assetFrom);
+  const currency: TCurrencyCore = {
+    location: exchange.assetFrom.location,
+  };
 
   const balance = await getBalance({
     api: exchange.apiPapi,

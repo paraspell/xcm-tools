@@ -1,4 +1,4 @@
-import type { TAssetInfo, TAssetWithLocation, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
@@ -16,7 +16,7 @@ export type TTypeAndThenCallContext<TApi, TRes, TSigner> = {
   isSubBridge: boolean
   isSnowbridge: boolean
   isRelayAsset: boolean
-  assetInfo: WithAmount<TAssetWithLocation>
+  assetInfo: WithAmount<TAssetInfo>
   systemAsset: TAssetInfo
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 }

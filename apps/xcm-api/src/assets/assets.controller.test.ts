@@ -45,8 +45,18 @@ describe('AssetsController', () => {
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       assets: [
-        { symbol, decimals, isNative: true },
-        { assetId: '234123123', symbol: 'FKK', decimals },
+        {
+          symbol,
+          decimals,
+          isNative: true,
+          location: { parents: 0, interior: 'Here' },
+        },
+        {
+          assetId: '234123123',
+          symbol: 'FKK',
+          decimals,
+          location: { parents: 1, interior: 'Here' },
+        },
       ],
       nativeAssetSymbol: symbol,
     } as TChainAssetsInfo;
@@ -152,7 +162,14 @@ describe('AssetsController', () => {
 
   describe('getOtherAssets', () => {
     it('should return other assets for a valid chain', () => {
-      const mockResult = [{ assetId: '234123123', symbol: 'FKK', decimals }];
+      const mockResult: TAssetInfo[] = [
+        {
+          assetId: '234123123',
+          symbol: 'FKK',
+          decimals,
+          location: { parents: 0, interior: 'Here' },
+        },
+      ];
       const spy = vi
         .spyOn(assetsService, 'getOtherAssets')
         .mockReturnValue(mockResult);

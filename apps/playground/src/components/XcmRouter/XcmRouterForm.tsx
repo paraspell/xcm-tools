@@ -288,17 +288,14 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToOptionId,
   );
 
-  const pairKey = (asset?: { location?: object; symbol?: string }) =>
-    asset?.location ? JSON.stringify(asset.location) : asset?.symbol;
-
   useEffect(() => {
     if (!currencyFromOptionId || !currencyToOptionId) return;
 
     const fromAsset = currencyFromMap[currencyFromOptionId];
     const toAsset = currencyToMap[currencyToOptionId];
 
-    const fromKey = pairKey(fromAsset);
-    const toKey = pairKey(toAsset);
+    const fromKey = JSON.stringify(fromAsset.location);
+    const toKey = JSON.stringify(toAsset.location);
 
     if (fromKey && toKey && !adjacency.get(fromKey)?.has(toKey)) {
       form.setFieldValue('currencyToOptionId', '');

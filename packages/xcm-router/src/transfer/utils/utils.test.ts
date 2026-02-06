@@ -11,6 +11,7 @@ import type {
   TBuildFromExchangeTxOptions,
   TBuildToExchangeTxOptions,
   TExchangeInfo,
+  TRouterAsset,
 } from '../../types';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
@@ -49,6 +50,20 @@ describe('transfer utils', () => {
   let parachainApi: ApiPromise;
   let relaychainApi: TPapiApi;
 
+  const astrAsset: TRouterAsset = {
+    symbol: 'ASTR',
+    decimals: 12,
+    assetId: '0x1234567890abcdef',
+    location: { parents: 1, interior: 'Here' },
+  };
+
+  const glmrAsset: TRouterAsset = {
+    symbol: 'GLMR',
+    decimals: 12,
+    assetId: '0xabcdef1234567890',
+    location: { parents: 1, interior: 'Here' },
+  };
+
   beforeAll(async () => {
     parachainApi = await createChainClientPjs('Acala');
     parachainPapiApi = await createChainClient('Acala');
@@ -67,7 +82,7 @@ describe('transfer utils', () => {
         origin: {
           api: relaychainApi,
           chain: 'Polkadot',
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetFrom: astrAsset,
         },
         exchange: {
           baseChain: 'Acala',
@@ -86,7 +101,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: from,
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetFrom: astrAsset,
         },
         exchange: {
           baseChain: 'Acala',
@@ -106,7 +121,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetFrom: astrAsset,
         },
         exchange: {
           baseChain: 'Acala',
@@ -118,7 +133,10 @@ describe('transfer utils', () => {
       expect(extrinsic).toBeDefined();
 
       expect(builderMock.currency).toHaveBeenCalledWith({
-        id: '0x1234567890abcdef',
+        location: {
+          parents: 1,
+          interior: 'Here',
+        },
         amount: customAmount,
       });
       expect(builderMock.address).toHaveBeenCalledWith(customSenderAddress);
@@ -131,7 +149,7 @@ describe('transfer utils', () => {
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
+          assetFrom: astrAsset,
         },
         exchange: {
           baseChain: 'Acala',
@@ -142,7 +160,10 @@ describe('transfer utils', () => {
       expect(extrinsic).toBeDefined();
       expect(builderMock.currency).toHaveBeenCalledWith({
         amount: options.amount,
-        id: '0x1234567890abcdef',
+        location: {
+          parents: 1,
+          interior: 'Here',
+        },
       });
     });
   });
@@ -161,8 +182,8 @@ describe('transfer utils', () => {
           apiPapi: parachainPapiApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', decimals: 12, assetId: '0xabcdef1234567890' },
+          assetFrom: astrAsset,
+          assetTo: glmrAsset,
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
@@ -182,8 +203,8 @@ describe('transfer utils', () => {
           api: parachainApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', decimals: 12, assetId: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', decimals: 12, assetId: '0xabcdef1234567890' },
+          assetFrom: astrAsset,
+          assetTo: glmrAsset,
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);

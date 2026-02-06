@@ -11,9 +11,7 @@ export const findStablecoinAssets = (chain: TChain): TAssetInfo[] => {
 
   return STABLECOIN_IDS.map(id => {
     const matches = assets.filter(asset => isStableCoinAsset(asset, id))
-    const consensusMatch = matches.find(
-      asset => asset.location && hasJunction(asset.location, 'GlobalConsensus')
-    )
+    const consensusMatch = matches.find(asset => hasJunction(asset.location, 'GlobalConsensus'))
     return consensusMatch ?? matches[0]
   })
 }

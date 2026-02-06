@@ -3,7 +3,6 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { DOT_LOCATION } from '../../../constants'
 import type { TSerializedExtrinsics, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 
 export const createExecuteExchangeXcm = <TApi, TRes, TSigner>(
@@ -22,8 +21,6 @@ export const createExecuteExchangeXcm = <TApi, TRes, TSigner>(
     address: address,
     version
   })
-
-  assertHasLocation(asset)
 
   const transformedLocation = localizeLocation(origin, asset.location)
 

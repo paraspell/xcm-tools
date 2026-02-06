@@ -28,12 +28,6 @@ const mockOriginAssetWithLocation: TAssetInfo = {
   location: mockLocation
 }
 
-const mockOriginAssetWithoutLocation: TAssetInfo = {
-  symbol: mockAssetSymbol,
-  assetId: '1',
-  decimals: 10
-}
-
 const mockDestinationAsset: TAssetInfo = {
   symbol: mockAssetSymbol,
   assetId: '2',
@@ -50,7 +44,7 @@ const mockStablecoinAsset: TAssetInfo = {
     interior: {
       X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }]
     }
-  } as TLocation
+  }
 }
 
 describe('findAssetOnDest', () => {
@@ -80,57 +74,6 @@ describe('findAssetOnDest', () => {
     )
     expect(result).toEqual(mockDestinationAsset)
     expect(findAssetInfoOrThrow).toHaveBeenCalledTimes(1)
-  })
-
-  it('should find asset on destination by symbol if origin asset has location but asset is NOT found by location', () => {
-    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithLocation)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(null).mockReturnValueOnce(mockDestinationAsset)
-
-    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
-
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginChain,
-      currencyInput,
-      mockDestinationChain
-    )
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationChain,
-      { location: mockLocation },
-      null
-    )
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationChain,
-      { symbol: mockAssetSymbol },
-      null
-    )
-    expect(result).toEqual(mockDestinationAsset)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledTimes(1)
-    expect(findAssetInfo).toHaveBeenCalledTimes(2)
-  })
-
-  it('should find asset on destination by symbol if origin asset does NOT have location', () => {
-    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
-
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockOriginAssetWithoutLocation)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
-
-    const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
-
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-      mockOriginChain,
-      currencyInput,
-      mockDestinationChain
-    )
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationChain,
-      { symbol: mockAssetSymbol },
-      null
-    )
-    expect(result).toEqual(mockDestinationAsset)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledTimes(1)
-    expect(findAssetInfo).toHaveBeenCalledTimes(1)
   })
 
   it('should lookup native asset first for substrate bridge (AssetHubPolkadot -> AssetHubKusama)', () => {
@@ -232,7 +175,7 @@ describe('findAssetOnDest', () => {
     const result = findAssetInfoOnDest(mockOriginChain, mockDestinationChain, currencyInput)
 
     expect(result).toBeNull()
-    expect(findAssetInfo).toHaveBeenCalledTimes(2)
+    expect(findAssetInfo).toHaveBeenCalledTimes(1)
   })
 
   it('should throw error if findAssetInfoOrThrow throws an error', () => {

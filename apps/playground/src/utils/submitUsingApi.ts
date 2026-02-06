@@ -5,7 +5,7 @@ import axios, { AxiosError } from 'axios';
 import type { PolkadotClient } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
 
-import { API_URL } from '../consts';
+import { API_URL } from '../constants';
 import type { TApiType } from '../types';
 
 export const fetchFromApi = async <T>(

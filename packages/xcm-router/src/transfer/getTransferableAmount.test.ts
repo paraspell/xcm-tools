@@ -26,36 +26,54 @@ import {
   validateTransferOptions,
 } from './utils';
 
-vi.mock('./utils');
-vi.mock('./fees');
 vi.mock('@paraspell/sdk');
 
-const createRouterAsset = (symbol: string, decimals = 12): TRouterAsset => ({
-  symbol,
-  decimals,
-  assetId: `${symbol}-ID`,
-});
+vi.mock('./utils');
+vi.mock('./fees');
 
-const createAssetInfo = (symbol: string, decimals = 12): TAssetInfo =>
-  ({
-    symbol,
-    decimals,
-    assetId: `${symbol}-ID`,
-  }) as TAssetInfo;
+const sdkAsset: TAssetInfo = {
+  symbol: 'DOT',
+  assetId: '1',
+  decimals: 10,
+  location: {
+    parents: 1,
+    interior: 'Here',
+  },
+};
 
-const createExchangeInfo = (assetFromSymbol: string, assetToSymbol = 'ASTR'): TExchangeInfo => ({
+const routerAsset: TRouterAsset = {
+  symbol: 'ASTR',
+  assetId: 'ASTR-ID',
+  decimals: 18,
+  location: {
+    parents: 1,
+    interior: {
+      X1: [{ Parachain: 1000 }],
+    },
+  },
+};
+
+const createExchangeInfo = (assetFromSymbol: string, assetToSymbol?: string): TExchangeInfo => ({
   api: {} as TPjsApi,
   apiPapi: {} as TPapiApi,
   baseChain: 'Hydration',
   exchangeChain: 'HydrationDex',
-  assetFrom: createRouterAsset(assetFromSymbol),
-  assetTo: createRouterAsset(assetToSymbol),
+  assetFrom: {
+    ...routerAsset,
+    symbol: assetFromSymbol,
+  },
+  assetTo: assetToSymbol
+    ? {
+        ...routerAsset,
+        symbol: assetToSymbol,
+      }
+    : routerAsset,
 });
 
-const createOriginInfo = (chain: TSubstrateChain, assetSymbol: string): TOriginInfo => ({
+const createOriginInfo = (chain: TSubstrateChain): TOriginInfo => ({
   api: {} as TPapiApi,
   chain,
-  assetFrom: createAssetInfo(assetSymbol),
+  assetFrom: sdkAsset,
 });
 
 const createOptions = (
@@ -111,7 +129,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(prepareTransformedOptions).mockResolvedValue({
       dex: createExchangeChainStub(),
       options: createTransformedOptions({
-        origin: createOriginInfo('Polkadot', 'DOT'),
+        origin: createOriginInfo('Polkadot'),
         exchange: createExchangeInfo('DOT'),
         amount: 1000n,
       }),
@@ -152,7 +170,10 @@ describe('getTransferableAmount', () => {
     const swapDetail: TXcmFeeDetail = {
       fee: 300n,
       feeType: 'dryRun',
-      asset: createAssetInfo('HDX'),
+      asset: {
+        ...sdkAsset,
+        symbol: 'HDX',
+      },
     };
     vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
 
@@ -163,7 +184,7 @@ describe('getTransferableAmount', () => {
       api: expect.anything(),
       chain: 'Hydration',
       address: 'sender',
-      currency: expect.objectContaining({ id: 'HDX-ID' }),
+      currency: expect.objectContaining({ location: routerAsset.location }),
     });
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith('Hydration', expect.anything());
     expect(getSwapFee).toHaveBeenCalledTimes(1);

@@ -12,9 +12,6 @@ import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './bifros
 export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<TDexConfig> => {
   const chainId = getParaId(chain);
 
-  const pairKey = (asset: TRouterAsset) =>
-    (asset.location as object | undefined) ?? asset.assetId ?? asset.symbol;
-
   const tokenMap = getTokenMap(chain, chainId);
   const sdkAssets = getAssets(chain);
 
@@ -76,7 +73,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
       if (seen.has(dedup)) return;
       seen.add(dedup);
 
-      pairs.push([pairKey(raA), pairKey(raB)]);
+      pairs.push([raA.location, raB.location]);
     },
   );
 
@@ -104,7 +101,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
         const minUnit = Amount.fromRawAmount(tokA, '1');
         getBestTrade(chainId, filtered, minUnit, tokB);
 
-        syntheticPairs.push([pairKey(a), pairKey(b)]);
+        syntheticPairs.push([a.location, b.location]);
         seen.add(dedup);
       } catch {
         /* no route ⇒ skip */

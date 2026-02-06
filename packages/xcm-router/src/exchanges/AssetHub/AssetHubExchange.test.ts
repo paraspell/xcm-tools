@@ -66,20 +66,6 @@ describe('AssetHubExchange', () => {
   });
 
   describe('swapCurrency', () => {
-    it('should throw if assetFrom.location is missing', async () => {
-      const opts = { ...baseSwapOptions, assetFrom: { symbol: 'ASSET1' } } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, 50n)).rejects.toThrow(
-        'Asset from location not found',
-      );
-    });
-
-    it('should throw if assetTo.location is missing', async () => {
-      const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, 50n)).rejects.toThrow(
-        'Asset to location not found',
-      );
-    });
-
     it('should throw AmountTooLowError if amount is too small', async () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce({
         amountOut: 100n,
@@ -352,18 +338,6 @@ describe('AssetHubExchange', () => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
     });
 
-    it('should throw if assetFrom.location is missing', async () => {
-      const opts = { ...baseSwapOptions, assetFrom: { symbol: 'ASSET1' } } as TSwapOptions;
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
-        'Asset from location not found',
-      );
-    });
-
-    it('should throw if assetTo.location is missing', async () => {
-      const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow('Asset to location not found');
-    });
-
     it('should throw when native asset not found', async () => {
       vi.mocked(getExchangeAsset).mockReturnValue(null);
       const opts = {
@@ -596,19 +570,6 @@ describe('AssetHubExchange', () => {
 
       await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
         `Second hop (${assetNative.symbol} -> ${assetB.symbol}) resulted in zero or negative output.`,
-      );
-    });
-
-    it('should throw if native asset location is missing in multi-hop', async () => {
-      vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'NATIVE', decimals: 12 });
-      const opts = {
-        ...baseSwapOptions,
-        assetFrom: assetA,
-        assetTo: assetB,
-      } as TSwapOptions;
-
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
-        'Native asset location not found',
       );
     });
   });

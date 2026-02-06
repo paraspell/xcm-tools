@@ -1,9 +1,9 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { getJunctionValue, hasJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { createChainClient } from '../../sdk-pjs/src'
 import { getParaId, getRelayChainOf } from '../../sdk-core/src'
+import { TAssetInfoNoLoc } from './types'
 
 const ALLOWED_AH_ASSET_SYMBOLS = ['BILL']
 
@@ -52,7 +52,7 @@ export const fetchHydrationAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 

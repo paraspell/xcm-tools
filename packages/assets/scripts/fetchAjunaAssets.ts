@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
 
 const ajunaPaseolocationOverrides: Record<string, TLocation> = {
   USDT: {
@@ -37,7 +37,7 @@ export const fetchAjunaOtherAssets = async (
   api: ApiPromise,
   chain: TSubstrateChain,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 

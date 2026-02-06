@@ -8,7 +8,6 @@ import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation } from '../../utils'
 import Chain from '../Chain'
 
 class EnergyWebX<TApi, TRes, TSigner>
@@ -43,8 +42,6 @@ class EnergyWebX<TApi, TRes, TSigner>
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    assertHasLocation(asset)
-
     const balance = await api.queryState<{ balance: bigint }>({
       module: 'Assets',
       method: 'Account',

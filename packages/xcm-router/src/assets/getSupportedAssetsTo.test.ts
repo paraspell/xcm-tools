@@ -9,24 +9,33 @@ import type { TExchangeChain } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
   getAssets: vi.fn(),
-  normalizeSymbol: (symbol: string) => symbol.toLowerCase(),
 }));
 
-vi.mock('../exchanges/ExchangeChainFactory', () => ({
-  createExchangeInstance: vi.fn(),
-}));
-
-vi.mock('./getExchangeConfig', () => ({
-  getExchangeAssets: vi.fn(),
-}));
-
-vi.mock('../consts', () => ({
-  EXCHANGE_CHAINS: ['AcalaDex', 'BifrostPolkadotDex'],
-}));
+vi.mock('../exchanges/ExchangeChainFactory');
+vi.mock('./getExchangeConfig');
 
 describe('getSupportedAssetsTo', () => {
+  const abcAsset: TAssetInfo = {
+    symbol: 'ABC',
+    decimals: 12,
+    location: {
+      parents: 0,
+      interior: 'Here',
+    },
+  };
+
+  const defAsset: TAssetInfo = {
+    symbol: 'DEF',
+    decimals: 12,
+    location: {
+      parents: 1,
+      interior: 'Here',
+    },
+  };
+
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -35,7 +44,7 @@ describe('getSupportedAssetsTo', () => {
     const mockExchange: TExchangeChain = 'AcalaDex';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
-    const exchangeAssets = [{ symbol: 'ABC' }, { symbol: 'DEF' }] as TAssetInfo[];
+    const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
     const result = getSupportedAssetsTo(mockExchange, undefined);
@@ -48,15 +57,15 @@ describe('getSupportedAssetsTo', () => {
     const mockExchange: TExchangeChain = 'AcalaDex';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
-    const exchangeAssets = [{ symbol: 'ABC' }, { symbol: 'DEF' }] as TAssetInfo[];
+    const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
     const toChain: TChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([{ symbol: 'abc' }] as TAssetInfo[]);
+    vi.mocked(getAssets).mockReturnValue([abcAsset]);
 
     const result = getSupportedAssetsTo(mockExchange, toChain);
 
     expect(getAssets).toHaveBeenCalledWith(toChain);
-    expect(result).toEqual([{ symbol: 'ABC' }]);
+    expect(result).toEqual([abcAsset]);
   });
 
   it('should return flattened assets from all exchange chains when exchange is "Auto select" and "to" is undefined', () => {
@@ -70,8 +79,8 @@ describe('getSupportedAssetsTo', () => {
       return {} as ExchangeChain;
     });
 
-    const assets1 = [{ symbol: 'ABC' }] as TAssetInfo[];
-    const assets2 = [{ symbol: 'DEF' }] as TAssetInfo[];
+    const assets1 = [abcAsset];
+    const assets2 = [defAsset];
     vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
       if (exchange === 'AcalaDex') return assets1;
       if (exchange === 'BifrostPolkadotDex') return assets2;
@@ -95,8 +104,8 @@ describe('getSupportedAssetsTo', () => {
       return {} as ExchangeChain;
     });
 
-    const assets1 = [{ symbol: 'ABC' }] as TAssetInfo[];
-    const assets2 = [{ symbol: 'DEF' }] as TAssetInfo[];
+    const assets1 = [abcAsset];
+    const assets2 = [defAsset];
     vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
       if (exchange === 'AcalaDex') return assets1;
       if (exchange === 'BifrostPolkadotDex') return assets2;
@@ -104,11 +113,11 @@ describe('getSupportedAssetsTo', () => {
     });
 
     const toChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([{ symbol: 'DEF' }] as TAssetInfo[]);
+    vi.mocked(getAssets).mockReturnValue([defAsset]);
 
     const result = getSupportedAssetsTo(exchange, toChain);
 
     expect(getAssets).toHaveBeenCalledWith(toChain);
-    expect(result).toEqual([{ symbol: 'DEF' }]);
+    expect(result).toEqual([defAsset]);
   });
 });

@@ -37,7 +37,12 @@ describe('findAssetInfoOrThrow', () => {
   it('should return the asset from Ethereum fallback if chain is AssetHubPolkadot and primary findAsset fails', () => {
     const chain: TChain = 'AssetHubPolkadot'
     const destination: TChain = 'Astar'
-    const ethereumAsset: TAssetInfo = { symbol: 'USDT', decimals: 6, assetId: 'USDT_ETH' }
+    const ethereumAsset: TAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      assetId: 'USDT_ETH',
+      location: { parents: 2, interior: 'Here' }
+    }
 
     vi.mocked(findAssetInfo).mockImplementationOnce((n, c, d) => {
       if (n === 'AssetHubPolkadot' && c === mockCurrencyObject && d === destination) {

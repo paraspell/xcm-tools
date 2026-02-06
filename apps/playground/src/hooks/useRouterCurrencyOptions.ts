@@ -1,4 +1,5 @@
-import { type TAssetInfo, type TChain } from '@paraspell/sdk';
+import type { TLocation } from '@paraspell/sdk';
+import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
 import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
 import { getExchangePairs } from '@paraspell/xcm-router';
 import {
@@ -7,16 +8,9 @@ import {
 } from '@paraspell/xcm-router';
 import { useMemo } from 'react';
 
-const pairKey = (
-  asset: Pick<TRouterAsset | TAssetInfo, 'symbol' | 'location'>,
-) => (asset.location ? JSON.stringify(asset.location) : asset.symbol);
-
-const assetKeys = (
-  asset: Pick<TRouterAsset | TAssetInfo, 'symbol' | 'location'>,
-): string[] => {
+const assetKeys = (asset: { location: TLocation }): string[] => {
   const keys: string[] = [];
-  if (asset.location) keys.push(JSON.stringify(asset.location));
-  if (asset.symbol) keys.push(asset.symbol);
+  keys.push(JSON.stringify(asset.location));
   return keys;
 };
 
@@ -40,7 +34,7 @@ export const useRouterCurrencyOptions = (
   const currencyFromMap = useMemo(
     () =>
       supportedAssetsFrom.reduce((map: Record<string, TAssetInfo>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+        const key = `${asset.symbol}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -50,7 +44,7 @@ export const useRouterCurrencyOptions = (
   const currencyToMap = useMemo(
     () =>
       supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+        const key = `${asset.symbol}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -81,23 +75,17 @@ export const useRouterCurrencyOptions = (
   const currencyFromOptions = useMemo(() => {
     return Object.keys(currencyFromMap).flatMap((key) => {
       const asset = currencyFromMap[key];
-      const currentKey = pairKey(asset);
+      const currentKey = JSON.stringify(asset.location);
 
       if (selectedTo && key !== selectedFrom) {
-        const toKey = pairKey(currencyToMap[selectedTo] ?? {});
+        const toKey = JSON.stringify(currencyToMap[selectedTo].location ?? {});
         if (!adjacency.get(currentKey)?.has(toKey)) return [];
       }
 
       return [
         {
           value: key,
-          label: `${asset.symbol} - ${
-            'assetId' in asset || 'location' in asset
-              ? 'assetId' in asset
-                ? asset.assetId
-                : 'Location'
-              : 'Native'
-          }`,
+          label: asset.symbol,
         },
       ];
     });
@@ -106,30 +94,26 @@ export const useRouterCurrencyOptions = (
   const currencyToOptions = useMemo(() => {
     return Object.keys(currencyToMap).flatMap((key) => {
       const asset = currencyToMap[key];
-      const currentKey = pairKey(asset);
+      const currentKey = JSON.stringify(asset.location);
 
       if (selectedFrom && key !== selectedTo) {
-        const fromKey = pairKey(currencyFromMap[selectedFrom] ?? {});
+        const fromKey = JSON.stringify(
+          currencyFromMap[selectedFrom].location ?? {},
+        );
         if (!adjacency.get(fromKey)?.has(currentKey)) return [];
       }
 
       return [
         {
           value: key,
-          label: `${asset.symbol} - ${
-            'assetId' in asset || 'location' in asset
-              ? 'assetId' in asset
-                ? asset.assetId
-                : 'Location'
-              : 'Native'
-          }`,
+          label: asset.symbol,
         },
       ];
     });
   }, [currencyToMap, selectedFrom, selectedTo, adjacency]);
 
-  const isFromNotParaToPara = from === 'Polkadot' || from === 'Kusama';
-  const isToNotParaToPara = to === 'Polkadot' || to === 'Kusama';
+  const isFromNotParaToPara = from && isRelayChain(from);
+  const isToNotParaToPara = to && isRelayChain(to);
 
   return {
     currencyFromOptions,

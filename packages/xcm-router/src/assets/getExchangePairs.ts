@@ -15,11 +15,11 @@ const resolveRouterAsset = (
   if (typeof pairKey === 'object') {
     const candidates = exchangeAssets.filter((a) => a.location);
 
-    let found = candidates.find((a) => deepEqual(pairKey, a.location!));
+    let found = candidates.find((a) => deepEqual(pairKey, a.location));
 
     if (!found && isAh) {
       const keyXfm = reverseTransformLocation(pairKey as TLocation);
-      found = candidates.find((a) => deepEqual(keyXfm, a.location!));
+      found = candidates.find((a) => deepEqual(keyXfm, a.location));
     }
     return found;
   }

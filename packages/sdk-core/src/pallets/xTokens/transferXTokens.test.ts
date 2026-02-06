@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -30,6 +31,13 @@ describe('transferXTokens', () => {
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown, unknown>
 
+  const acaAsset: TAssetInfo = {
+    symbol: 'ACA',
+    decimals: 12,
+    assetId: '123',
+    location: { parents: 0, interior: 'Here' }
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -38,9 +46,7 @@ describe('transferXTokens', () => {
     const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
-        symbol: 'ACA',
-        decimals: 12,
-        assetId: '123',
+        ...acaAsset,
         amount: 3000n
       },
       destination: 'Hydration'
@@ -68,9 +74,7 @@ describe('transferXTokens', () => {
     const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
-        symbol: 'ACA',
-        decimals: 12,
-        assetId: '123',
+        ...acaAsset,
         amount: 3000n
       },
       destination: 'Hydration'

@@ -1,4 +1,4 @@
-import { deepEqual, normalizeSymbol } from '@paraspell/sdk';
+import { isAssetEqual } from '@paraspell/sdk';
 
 import { EXCHANGE_CHAINS } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
@@ -21,27 +21,14 @@ export const supportsExchangePair = (
     }
 
     const pairs = getExchangePairs(ex);
-    const isBifrost = ex === 'BifrostPolkadotDex' || ex === 'BifrostKusamaDex';
-
-    const sameAsset = (x: TRouterAsset, y: TRouterAsset): boolean => {
-      if (x.location && y.location && deepEqual(x.location, y.location)) {
-        return true;
-      }
-      if (!isBifrost && x.assetId && y.assetId && x.assetId === y.assetId) {
-        return true;
-      }
-      return normalizeSymbol(x.symbol) === normalizeSymbol(y.symbol);
-    };
 
     const supportedHere = pairs.some(
       ([pA, pB]) =>
-        (sameAsset(pA, assetA) && sameAsset(pB, assetB)) ||
-        (sameAsset(pA, assetB) && sameAsset(pB, assetA)),
+        (isAssetEqual(pA, assetA) && isAssetEqual(pB, assetB)) ||
+        (isAssetEqual(pA, assetB) && isAssetEqual(pB, assetA)),
     );
 
-    if (supportedHere) {
-      return true;
-    }
+    if (supportedHere) return true;
   }
 
   return false;

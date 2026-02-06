@@ -5,6 +5,7 @@ import {
   getNativeAssetSymbol,
   hasDryRunSupport
 } from '@paraspell/assets'
+import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -21,9 +22,20 @@ vi.mock('../../utils')
 
 describe('getOriginXcmFeeInternal', () => {
   const mockSymbol = 'TOKEN'
+  const location: TLocation = {
+    parents: 1,
+    interior: {
+      X1: [{ Parachain: 1000 }]
+    }
+  }
   const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
-  const mockAsset: TAssetInfo = { symbol: 'USDT', decimals: 6, isNative: true }
-  const nativeAsset = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = {
+    symbol: 'USDT',
+    decimals: 6,
+    isNative: true,
+    location: location
+  }
+  const nativeAsset = { symbol: 'DOT', decimals: 10, isNative: true, location }
   const mockTx = {}
 
   const api = {
