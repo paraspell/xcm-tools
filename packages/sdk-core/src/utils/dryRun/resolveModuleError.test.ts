@@ -44,9 +44,9 @@ describe('resolveModuleError', () => {
 
   it('should throw an error if pallet is not supported', () => {
     const error: TModuleError = { index: '3', error: '0x00' }
-    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'XTransfer' }])
+    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'System' }])
 
-    expect(() => resolveModuleError(mockChain, error)).toThrow('Pallet XTransfer is not supported')
+    expect(() => resolveModuleError(mockChain, error)).toThrow('Pallet System is not supported')
   })
 
   it('should throw an error if pallet is not found', () => {

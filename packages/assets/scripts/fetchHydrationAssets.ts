@@ -25,6 +25,29 @@ const resolveAhMetadata = async (
   return { symbol, decimals }
 }
 
+const hydrationLocationOverrides: Record<string, TLocation> = {
+  '42': {
+    parents: 2,
+    interior: {
+      X2: [
+        {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 1
+            }
+          }
+        },
+        {
+          AccountKey20: {
+            network: null,
+            key: '0x1abaea1f7c830bd89acc67ec4af516284b1bc33c'
+          }
+        }
+      ]
+    }
+  }
+}
+
 export const fetchHydrationAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
@@ -78,7 +101,8 @@ export const fetchHydrationAssets = async (
           symbol: resultSymbol,
           decimals: resultDecimals,
           existentialDeposit,
-          location
+          location:
+            location ?? (chain === 'Hydration' ? hydrationLocationOverrides[assetId] : undefined)
         }
       }
     )

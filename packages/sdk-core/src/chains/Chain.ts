@@ -50,7 +50,6 @@ import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
-  IXTransferTransfer,
   TPolkadotXCMTransferOptions,
   TScenario,
   TSendInternalOptions,
@@ -82,12 +81,6 @@ const supportsXTokens = <TApi, TRes, TSigner>(
   obj: unknown
 ): obj is IXTokensTransfer<TApi, TRes, TSigner> => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
-}
-
-const supportsXTransfer = <TApi, TRes, TSigner>(
-  obj: unknown
-): obj is IXTransferTransfer<TApi, TRes, TSigner> => {
-  return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
 const supportsPolkadotXCM = <TApi, TRes, TSigner>(
@@ -321,18 +314,6 @@ abstract class Chain<TApi, TRes, TSigner> {
       }
 
       return this.transferXTokens(input)
-    } else if (supportsXTransfer<TApi, TRes, TSigner>(this)) {
-      return this.transferXTransfer({
-        api,
-        asset,
-        recipientAddress: address,
-        paraIdTo: paraId,
-        origin: this.chain,
-        destination,
-        overriddenAsset,
-        pallet,
-        method
-      })
     }
 
     throw new NoXCMSupportImplementedError(this._chain)

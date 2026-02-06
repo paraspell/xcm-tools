@@ -18,7 +18,11 @@ const fetchWithTimeout = async (
   const fetchPromise = (async (): Promise<TDexConfig> => {
     const dex = createExchangeInstance(exchangeChain);
     const api = await dex.createApiInstance();
-    return await dex.getDexConfig(api);
+    const config = await dex.getDexConfig(api);
+    return {
+      ...config,
+      assets: config.assets.filter((asset) => asset.location !== undefined),
+    };
   })();
 
   try {

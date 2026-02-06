@@ -27,32 +27,32 @@ describe('getSupportedAssets', () => {
 
   it('should return common assets between origin and destination', () => {
     const mockOriginAssets = [
-      { symbol: 'PHA', assetId: '300', decimals: 18 },
+      { symbol: 'AJUN', assetId: '300', decimals: 18 },
       { symbol: 'DOT', assetId: '100', decimals: 18 }
     ]
-    const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400', decimals: 18 }]
+    const mockDestinationAssets = [{ symbol: 'AJUN', assetId: '400', decimals: 18 }]
     vi.mocked(getAssets).mockImplementation(chain => {
-      if (chain === 'Phala') return mockOriginAssets
+      if (chain === 'Ajuna') return mockOriginAssets
       if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
     vi.mocked(findStablecoinAssets).mockReturnValue([])
 
-    const result = getSupportedAssets('Phala', 'Polkadot')
-    expect(result).toEqual([{ symbol: 'PHA', decimals: 18, assetId: '300' }])
+    const result = getSupportedAssets('Ajuna', 'Polkadot')
+    expect(result).toEqual([{ symbol: 'AJUN', decimals: 18, assetId: '300' }])
   })
 
   it('should return empty array if no common assets between origin and destination', () => {
-    const mockOriginAssets = [{ symbol: 'PHA', assetId: '300', decimals: 18 }]
+    const mockOriginAssets = [{ symbol: 'AJUN', assetId: '300', decimals: 18 }]
     const mockDestinationAssets = [{ symbol: 'DOT', assetId: '100', decimals: 18 }]
     vi.mocked(getAssets).mockImplementation(chain => {
-      if (chain === 'Phala') return mockOriginAssets
+      if (chain === 'Ajuna') return mockOriginAssets
       if (chain === 'Polkadot') return mockDestinationAssets
       return []
     })
     vi.mocked(findStablecoinAssets).mockReturnValue([])
 
-    const result = getSupportedAssets('Phala', 'Polkadot')
+    const result = getSupportedAssets('Ajuna', 'Polkadot')
     expect(result).toEqual([])
   })
 })

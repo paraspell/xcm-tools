@@ -32,16 +32,18 @@ import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
 import { fetchHydrationAssets } from './fetchHydrationAssets'
-import { fetchPhalaAssets } from './fetchPhalaAssets'
 import { fetchAstarAssets } from './fetchAstarAssets'
 import { fetchDarwiniaAssets } from './fetchDarwiniaAssets'
-import { fetchInterlayAssets, fetchInterlayNativeAssets } from './fetchInterlayAssets'
+import {
+  fetchInterlayAssets,
+  fetchInterlayNativeAssets,
+  fetchKintsugiNativeAssets
+} from './fetchInterlayAssets'
 import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
-import { fetchNativeAssetsCurio, fetchOtherAssetsCurio } from './fetchCurioAssets'
 import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> => {
@@ -94,16 +96,12 @@ const fetchNativeAssets = async (
 ): Promise<TAssetInfo[]> => {
   let nativeAssets: TAssetInfo[] = []
 
-  if (chain === 'Curio') {
-    nativeAssets = await fetchNativeAssetsCurio(api, query)
-  }
-
   if (chain.startsWith('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
   if (chain === 'Jamton') {
-    nativeAssets = await fetchZeitgeistNativeAssets(api, query, 'Native')
+    nativeAssets = await fetchZeitgeistNativeAssets(api, chain, query)
   }
 
   if (chain === 'Acala' || chain === 'Karura') {
@@ -118,6 +116,10 @@ const fetchNativeAssets = async (
 
   if (chain === 'Interlay') {
     nativeAssets = await fetchInterlayNativeAssets(defaultNativeAssets)
+  }
+
+  if (chain === 'Kintsugi') {
+    nativeAssets = await fetchKintsugiNativeAssets(defaultNativeAssets)
   }
 
   const transformed = nativeAssets.length > 0 ? nativeAssets : defaultNativeAssets
@@ -264,19 +266,11 @@ const fetchOtherAssets = async (
   }
 
   if (chain.startsWith('Zeitgeist') || chain === 'Jamton') {
-    otherAssets = await fetchZeitgeistForeignAssets(
-      api,
-      query,
-      chain === 'Jamton' ? 'Native' : undefined
-    )
+    otherAssets = await fetchZeitgeistForeignAssets(api, chain, query)
   }
 
   if (chain === 'Acala' || chain === 'Karura') {
     otherAssets = await fetchAcalaForeignAssets(api, query)
-  }
-
-  if (chain === 'Curio') {
-    otherAssets = await fetchOtherAssetsCurio(api, query)
   }
 
   if (chain.startsWith('Bifrost')) {
@@ -299,20 +293,16 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (chain.startsWith('Kilt') || chain === 'Penpal') {
+  if (chain.startsWith('Kilt') || chain === 'Penpal' || chain.startsWith('NeuroWeb')) {
     otherAssets = await fetchKiltForeignAssets(api, query)
   }
 
-  if (chain.startsWith('Ajuna') || chain.startsWith('Integritee')) {
-    otherAssets = await fetchAjunaOtherAssets(api, query)
+  if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq') {
+    otherAssets = await fetchAjunaOtherAssets(api, chain, query)
   }
 
   if (chain === 'Manta') {
     otherAssets = await fetchMantaOtherAssets(api, query)
-  }
-
-  if (chain === 'Phala') {
-    otherAssets = await fetchPhalaAssets(api, query)
   }
 
   if (chain === 'Astar' || chain === 'Shiden') {
@@ -406,8 +396,10 @@ const fetchChainAssets = async (
 
   await api.disconnect()
 
+  const joinedAssets = [...nativeAssets, ...otherAssets]
+
   return {
-    assets: [...nativeAssets, ...otherAssets],
+    assets: joinedAssets.filter(asset => asset.location !== undefined),
     nativeAssetSymbol,
     ss58Prefix,
     isEVM: isChainEvm(api),

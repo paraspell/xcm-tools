@@ -4,7 +4,7 @@ import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/s
 import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders } from '../../sdk-core/dist'
 
-const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTransfer', 'XTokens', 'PolkadotXcm']
+const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTokens', 'PolkadotXcm']
 
 const nativeAssetPalletsByPriority: TAssetsPallet[] = ['Balances', 'Currencies', 'Tokens']
 

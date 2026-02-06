@@ -25,7 +25,6 @@ import CoretimeWestend from '../chains/supported/CoretimeWestend'
 import Crab from '../chains/supported/Crab'
 import Crust from '../chains/supported/Crust'
 import CrustShadow from '../chains/supported/CrustShadow'
-import Curio from '../chains/supported/Curio'
 import Darwinia from '../chains/supported/Darwinia'
 import Encointer from '../chains/supported/Encointer'
 import EnergyWebX from '../chains/supported/EnergyWebX'
@@ -59,7 +58,6 @@ import PeopleKusama from '../chains/supported/PeopleKusama'
 import PeoplePaseo from '../chains/supported/PeoplePaseo'
 import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
-import Phala from '../chains/supported/Phala'
 import Polkadot from '../chains/supported/Polkadot'
 import Quartz from '../chains/supported/Quartz'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
@@ -97,9 +95,7 @@ export const chains = <TApi, TRes, TSigner>() => ({
   NeuroWeb: new NeuroWeb<TApi, TRes, TSigner>(),
   Pendulum: new Pendulum<TApi, TRes, TSigner>(),
   Collectives: new Collectives<TApi, TRes, TSigner>(),
-  Phala: new Phala<TApi, TRes, TSigner>(),
   KiltSpiritnet: new KiltSpiritnet<TApi, TRes, TSigner>(),
-  Curio: new Curio<TApi, TRes, TSigner>(),
   Mythos: new Mythos<TApi, TRes, TSigner>(),
   Peaq: new Peaq<TApi, TRes, TSigner>(),
   Xode: new Xode<TApi, TRes, TSigner>(),

@@ -1,9 +1,8 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import type { TWeight } from '../../../dist'
 import type { IPolkadotApi } from '../../api'
-import type { TTransactOptions } from '../../types'
+import type { TTransactOptions, TWeight } from '../../types'
 
 const resolveTx = async <TApi, TRes, TSigner>(
   destApi: IPolkadotApi<TApi, TRes, TSigner>,

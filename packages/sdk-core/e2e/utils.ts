@@ -7,7 +7,7 @@ import {
 import { isRelayChain, SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChain } from '../src'
 
-const supportsOnlyNativeAsset: TChain[] = ['Nodle', 'Phala']
+const supportsOnlyNativeAsset: TChain[] = ['Nodle']
 
 const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Pendulum']
 
