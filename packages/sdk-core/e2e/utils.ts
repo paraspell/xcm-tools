@@ -1,10 +1,10 @@
 import {
+  findAssetInfo,
   getAssets,
   getNativeAssetSymbol,
-  getRelayChainSymbol,
-  hasSupportForAsset
+  getRelayChainSymbol
 } from '@paraspell/assets'
-import { isRelayChain, SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import { SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChain } from '../src'
 
 const supportsOnlyNativeAsset: TChain[] = ['Nodle']
@@ -28,8 +28,8 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
 
   for (const destChain of SUBSTRATE_CHAINS) {
     if (destChain === originChain) continue
-    const chainInstance = !isRelayChain(destChain) ? getChain(destChain) : null
-    if (chainInstance?.isReceivingTempDisabled('RelayToPara')) continue
+    const chainInstance = getChain(destChain)
+    if (chainInstance.isReceivingTempDisabled('RelayToPara')) continue
     if (getRelayChainSymbol(originChain) !== getRelayChainSymbol(destChain)) continue
 
     // Loop through assets to find the first compatible one
@@ -37,13 +37,8 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
       if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
       if (isAssetIdRequired && asset.isNative) continue
 
-      const notCompatible =
-        ['DOT', 'KSM'].includes(asset.symbol) &&
-        (destChain === 'AssetHubPolkadot' || destChain === 'AssetHubKusama')
-
-      if (hasSupportForAsset(destChain, asset.symbol) && !notCompatible) {
+      if (findAssetInfo(destChain, { location: asset.location }, null)) {
         scenarios.push({ originChain, destChain, asset })
-
         if (!includeAll) break
       }
     }

@@ -230,7 +230,12 @@ const fetchOtherAssetsDefault = async (
           decimals: +valueHuman.decimals,
           location:
             valueHuman.symbol === 'DOT'
-              ? ({ parents: 1, interior: 'Here' } as TLocation)
+              ? {
+                  parents: 1,
+                  interior: {
+                    Here: null
+                  }
+                }
               : undefined,
           existentialDeposit:
             valueHuman.existentialDeposit ??

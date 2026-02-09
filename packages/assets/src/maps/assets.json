@@ -10896,7 +10896,9 @@
         "decimals": 10,
         "location": {
           "parents": 1,
-          "interior": "Here"
+          "interior": {
+            "Here": null
+          }
         },
         "existentialDeposit": "100"
       }

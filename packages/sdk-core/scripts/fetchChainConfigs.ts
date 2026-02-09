@@ -5,9 +5,9 @@
 import axios from 'axios'
 import { Project, SyntaxKind, Node } from 'ts-morph'
 import { writeFileSync } from 'fs'
-import { PARACHAINS, SUBSTRATE_CHAINS } from '../../src'
-import { getChain } from '../../src/utils'
-import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../../src'
+import { SUBSTRATE_CHAINS } from '../src'
+import { getChain } from '../src/utils'
+import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../src'
 
 const overrides: Partial<Record<TSubstrateChain, TProviderEntry[]>> = {
   Peaq: [

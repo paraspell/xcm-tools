@@ -32,7 +32,7 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/configs/fetchChainConfigs.ts",
+    "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/fetchChainConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
