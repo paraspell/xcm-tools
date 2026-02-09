@@ -39,6 +39,7 @@ export class RouterController {
   }
 
   @Post()
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
   generateExtrinsics(@Body() params: RouterDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, params);
     return this.routerService.generateExtrinsics(params);
@@ -52,6 +53,7 @@ export class RouterController {
   }
 
   @Post('best-amount-out')
+  @UsePipes(new ZodValidationPipe(RouterBestAmountOutSchema))
   getBestAmountOut(
     @Body() params: RouterBestAmountOutDto,
     @Req() req: Request,

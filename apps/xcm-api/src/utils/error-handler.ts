@@ -66,6 +66,12 @@ export const handleXcmApiError = (error: unknown): never => {
   }
 
   if (error instanceof Error) {
+    if (
+      error.message.includes('address') ||
+      error.message.includes('checksum')
+    ) {
+      throw new BadRequestException(error.message);
+    }
     throw new InternalServerErrorException(error.message);
   }
 
