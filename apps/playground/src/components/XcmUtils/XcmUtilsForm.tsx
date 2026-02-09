@@ -322,35 +322,35 @@ const XcmUtilsForm: FC<Props> = ({
   const onSubmitGetXcmFee = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getXcmFee');
+      onSubmitInternal(form.getTransformedValues(), 'getXcmFee');
     }
   };
 
   const onSubmitGetOriginXcmFee = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getOriginXcmFee');
+      onSubmitInternal(form.getTransformedValues(), 'getOriginXcmFee');
     }
   };
 
   const onSubmitGetTransferableAmount = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getTransferableAmount');
+      onSubmitInternal(form.getTransformedValues(), 'getTransferableAmount');
     }
   };
 
   const onSubmitGetMinTransferableAmount = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getMinTransferableAmount');
+      onSubmitInternal(form.getTransformedValues(), 'getMinTransferableAmount');
     }
   };
 
   const onSubmitVerifyEdOnDestination = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'verifyEdOnDestination');
+      onSubmitInternal(form.getTransformedValues(), 'verifyEdOnDestination');
     }
   };
 
@@ -360,7 +360,7 @@ const XcmUtilsForm: FC<Props> = ({
     if (!validateEvmOriginRequirements()) return;
 
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getTransferInfo');
+      onSubmitInternal(form.getTransformedValues(), 'getTransferInfo');
     }
   };
 
@@ -370,7 +370,7 @@ const XcmUtilsForm: FC<Props> = ({
     if (!validateEvmOriginRequirements()) return;
 
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), 'getReceivableAmount');
+      onSubmitInternal(form.getTransformedValues(), 'getReceivableAmount');
     }
   };
 

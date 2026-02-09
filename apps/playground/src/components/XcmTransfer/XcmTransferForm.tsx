@@ -312,21 +312,21 @@ const XcmTransferForm: FC<Props> = ({
   const onSubmitInternalDryRun = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'dryRun');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'dryRun');
     }
   };
 
   const onSubmitInternalDryRunPreview = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'dryRunPreview');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'dryRunPreview');
     }
   };
 
   const onSubmitInternalAddToBatch = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'addToBatch');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'addToBatch');
     }
   };
 
@@ -601,7 +601,11 @@ const XcmTransferForm: FC<Props> = ({
                     <Menu.Item
                       leftSection={<IconTrash size={16} />}
                       onClick={() =>
-                        onSubmitInternal(form.getValues(), undefined, 'delete')
+                        onSubmitInternal(
+                          form.getTransformedValues(),
+                          undefined,
+                          'delete',
+                        )
                       }
                     >
                       Delete from batch
