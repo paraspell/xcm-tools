@@ -1,5 +1,3 @@
-import AccountsAmountPlotContainer from '../components/Plots/AccountsAmountPlot/AccountsAmountPlot.container';
+import { AccountsAmountPlotContainer } from '../components/Plots/AccountsAmountPlot/AccountsAmountPlot.container';
 
-const Scene2dBubblePlot = () => <AccountsAmountPlotContainer />;
-
-export default Scene2dBubblePlot;
+export const Scene2dBubblePlot = AccountsAmountPlotContainer;

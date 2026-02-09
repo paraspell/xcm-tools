@@ -27,7 +27,7 @@ type Props = {
   loading: boolean;
 };
 
-const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
+export const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const [queryState, setQueryState] = useQueryStates({
     func: parseAsPalletsQuery.withDefault('ALL_PALLETS'),
     chain: parseAsSubstrateChain.withDefault('Acala'),
@@ -99,5 +99,3 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     </Paper>
   );
 };
-
-export default PalletsQueriesForm;

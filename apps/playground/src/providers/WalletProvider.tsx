@@ -16,9 +16,9 @@ import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 
-import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
+import { AccountSelectModal } from '../components/AccountSelectModal/AccountSelectModal';
 import { PageRoute } from '../components/PageRoute';
-import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
+import { PolkadotWalletSelectModal } from '../components/WalletSelectModal/WalletSelectModal';
 import { DAPP_NAME, MAIN_FORM_NAME } from '../constants';
 import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';

@@ -19,7 +19,7 @@ export const LiveDataContext = createContext<LiveDataContextType | null>(null);
 export const makeConnKey = (ecosystem: string, a: number, b: number) =>
   `${ecosystem.toLowerCase()}:${Math.min(a, b)}-${Math.max(a, b)}`;
 
-export default function LiveDataProvider({ children }: { children: ReactNode }) {
+export const LiveDataProvider = ({ children }: { children: ReactNode }) => {
   const [liveDataEnabled, setLiveDataEnabled] = useState(false);
   const [liveData, setLiveData] = useState<LiveXcmMsg[]>([]);
 
@@ -95,4 +95,4 @@ export default function LiveDataProvider({ children }: { children: ReactNode }) 
       {children}
     </LiveDataContext.Provider>
   );
-}
+};

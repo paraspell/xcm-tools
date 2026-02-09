@@ -10,7 +10,7 @@ type Props = {
   toggleMenu: () => void;
 };
 
-const Header: FC<Props> = ({ menuOpened, toggleMenu }) => {
+export const Header: FC<Props> = ({ menuOpened, toggleMenu }) => {
   const items = links.map((link) => (
     <Anchor
       component={Link}
@@ -43,5 +43,3 @@ const Header: FC<Props> = ({ menuOpened, toggleMenu }) => {
     </Container>
   );
 };
-
-export default Header;

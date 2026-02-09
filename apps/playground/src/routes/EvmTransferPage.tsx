@@ -1,3 +1,3 @@
-import EvmTransfer from '../components/EvmTransfer/EvmTransfer';
+import { EvmTransfer } from '../components/EvmTransfer/EvmTransfer';
 
-export const EvmTransferPage = () => <EvmTransfer />;
+export const EvmTransferPage = EvmTransfer;

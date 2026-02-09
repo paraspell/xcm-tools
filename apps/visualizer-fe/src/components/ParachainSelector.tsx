@@ -12,7 +12,7 @@ type Props = MultiSelectProps & {
   onCustomChange: (parachain: TSubstrateChain[]) => void;
 };
 
-const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
+export const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
   const { t } = useTranslation();
 
   const data = useMemo(
@@ -41,5 +41,3 @@ const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
     />
   );
 };
-
-export default ParachainSelector;

@@ -47,7 +47,7 @@ type Props = {
   provider: BrowserProvider | null;
 };
 
-const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
+export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
   const { apiType, selectedAccount } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
@@ -252,5 +252,3 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     </Paper>
   );
 };
-
-export default EvmTransferForm;

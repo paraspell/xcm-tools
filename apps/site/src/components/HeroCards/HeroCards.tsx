@@ -54,7 +54,7 @@ Acala/para-id
   "paraId": 2000
 } `;
 
-const HeroCards = () => {
+export const HeroCards = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${em(992)})`);
   const isVerySmallScreen = useMediaQuery(`(max-width: ${em(831)})`);
 
@@ -285,5 +285,3 @@ const HeroCards = () => {
     </Group>
   );
 };
-
-export default HeroCards;

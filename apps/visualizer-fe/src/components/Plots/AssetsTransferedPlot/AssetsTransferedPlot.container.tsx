@@ -7,15 +7,13 @@ import { assetCountsBySymbolQueryDocument } from '../../../api/messages';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { AssetCountsBySymbolQuery } from '../../../gql/graphql';
-import convertToCsv from '../../../utils/convertToCsv';
-import downloadSvg from '../../../utils/downloadSvg';
-import { downloadZip } from '../../../utils/downloadZip';
-import DownloadButtons from '../../DownloadButtons';
-import AssetsTransferedPlot from './AssetsTransferedPlot';
+import { convertToCsv, downloadSvg, downloadZip } from '../../../utils';
+import { DownloadButtons } from '../../DownloadButtons';
+import { AssetsTransferredPlot } from './AssetsTransferedPlot';
 
 const now = Date.now();
 
-const AssetsTransferedPlotContainer = () => {
+export const AssetsTransferedPlotContainer = () => {
   const { t } = useTranslation();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -90,7 +88,7 @@ const AssetsTransferedPlotContainer = () => {
           checked={showAmounts}
         />
       </Group>
-      <AssetsTransferedPlot
+      <AssetsTransferredPlot
         ref={ref}
         counts={data?.assetCountsBySymbol ?? []}
         showAmounts={showAmounts}
@@ -100,5 +98,3 @@ const AssetsTransferedPlotContainer = () => {
 };
 
 AssetsTransferedPlotContainer.displayName = 'AssetsTransferedPlotContainer';
-
-export default AssetsTransferedPlotContainer;

@@ -13,135 +13,139 @@ import { ASSET_QUERIES, PALLETS_QUERIES } from '../constants';
 import type { TAssetsQuery, TPalletsQuery } from '../types';
 import { isValidWalletAddress } from './validationUtils';
 
-function isValidSubstrateChain(value: string | null): value is TSubstrateChain {
+const isValidSubstrateChain = (
+  value: string | null,
+): value is TSubstrateChain => {
   return value !== null && SUBSTRATE_CHAINS.includes(value as TSubstrateChain);
-}
+};
 
-function isValidChain(value: string | null): value is TChain {
+const isValidChain = (value: string | null): value is TChain => {
   return value !== null && CHAINS.includes(value as TChain);
-}
+};
 
-function isValidEvmChain(value: string | null): value is TEvmChainFrom {
+const isValidEvmChain = (value: string | null): value is TEvmChainFrom => {
   return (
     value !== null &&
     ['Darwinia', 'Moonbeam', 'Moonriver', 'Ethereum'].includes(
       value as TEvmChainFrom,
     )
   );
-}
+};
 
-function isValidAssetClaimChain(
+const isValidAssetClaimChain = (
   value: string | null,
-): value is TSubstrateChain {
+): value is TSubstrateChain => {
   return (
     value !== null &&
     ASSET_CLAIM_SUPPORTED_CHAINS.includes(value as TSubstrateChain)
   );
-}
+};
 
-function isValidExchangeChain(value: string | null): value is TExchangeChain {
+const isValidExchangeChain = (
+  value: string | null,
+): value is TExchangeChain => {
   return value !== null && EXCHANGE_CHAINS.includes(value as TExchangeChain);
-}
+};
 
-function isValidAssetQuery(value: string | null): value is TAssetsQuery {
+const isValidAssetQuery = (value: string | null): value is TAssetsQuery => {
   return value !== null && ASSET_QUERIES.includes(value as TAssetsQuery);
-}
+};
 
-function isValidPalletsQuery(value: string | null): value is TPalletsQuery {
+const isValidPalletsQuery = (value: string | null): value is TPalletsQuery => {
   return value !== null && PALLETS_QUERIES.includes(value as TPalletsQuery);
-}
+};
 
 export const parseAsSubstrateChain = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidSubstrateChain(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsChain = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidChain(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsEvmChain = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidEvmChain(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsAssetClaimChain = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidAssetClaimChain(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsExchangeChain = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidExchangeChain(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsAssetQuery = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidAssetQuery(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsPalletsQuery = createParser({
-  parse(query) {
+  parse: (query) => {
     return isValidPalletsQuery(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsRecipientAddress = createParser({
-  parse(query) {
+  parse: (query) => {
     return query !== null && isValidWalletAddress(query) ? query : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsCurrencyType = createParser({
-  parse(query) {
+  parse: (query) => {
     return query !== null && ['id', 'symbol', 'location'].includes(query)
       ? (query as TCurrencyType)
       : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });
 
 export const parseAsCustomCurrencySymbolSpecifier = createParser({
-  parse(query) {
+  parse: (query) => {
     return query !== null &&
       ['auto', 'native', 'foreign', 'foreignAbstract'].includes(query)
       ? (query as TCustomCurrencySymbolSpecifier)
       : null;
   },
-  serialize(value) {
+  serialize: (value) => {
     return value;
   },
 });

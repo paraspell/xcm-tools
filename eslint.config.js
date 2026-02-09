@@ -9,6 +9,19 @@ import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 import { defineConfig } from "eslint/config";
 
+const arrowFunctionRules = [
+  {
+    selector:
+      "FunctionExpression:not(MethodDefinition > FunctionExpression, Property[method=true] > FunctionExpression)",
+    message: "Use arrow functions instead of function expressions.",
+  },
+  {
+    selector: "FunctionDeclaration",
+    message:
+      "Use arrow functions assigned to variables instead of function declarations.",
+  },
+];
+
 export default defineConfig(
   {
     settings: {
@@ -74,6 +87,8 @@ export default defineConfig(
       ],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      "prefer-arrow-callback": "error",
+      "no-restricted-syntax": ["error", ...arrowFunctionRules],
     },
   },
   {
@@ -84,8 +99,8 @@ export default defineConfig(
   },
   {
     files: [
-      "apps/{playground,visualizer-fe,landing-page}/**/*.ts",
-      "apps/{playground,visualizer-fe,landing-page}/**/*.tsx",
+      "apps/{playground,visualizer-fe,site,lightspell-site}/**/*.ts",
+      "apps/{playground,visualizer-fe,site,lightspell-site}/**/*.tsx",
     ],
     ...reactPlugin.configs.flat?.recommended,
     rules: {
@@ -112,6 +127,7 @@ export default defineConfig(
     rules: {
       "no-restricted-syntax": [
         "error",
+        ...arrowFunctionRules,
         {
           selector: "NewExpression[callee.name='Error']",
           message:

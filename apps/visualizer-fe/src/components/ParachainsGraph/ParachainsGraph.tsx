@@ -15,9 +15,9 @@ import {
   getParachainById,
   getParachainEcosystem
 } from '../../utils/utils';
-import LineBetween from '../LineBetween/LineBetween';
-import ParachainNode from '../Parachain/Parachain';
-import Relaychain from '../Relaychain/Relaychain';
+import { LineBetween } from '../LineBetween/LineBetween';
+import { Parachain } from '../Parachain/Parachain';
+import { Relaychain } from '../Relaychain/Relaychain';
 
 type Props = {
   channels: ChannelsQuery['channels'];
@@ -25,7 +25,7 @@ type Props = {
   ecosystem: TRelaychain;
 };
 
-const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem }) => {
+export const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem }) => {
   const {
     selectedParachains,
     toggleParachain,
@@ -163,7 +163,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
       />
       {sortedParachainNames?.map((chain, index) => {
         return (
-          <ParachainNode
+          <Parachain
             key={chain}
             name={chain}
             index={index}
@@ -229,5 +229,3 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     </group>
   );
 };
-
-export default ParachainsGraph;

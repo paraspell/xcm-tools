@@ -2,12 +2,12 @@ import { Center, Group, Loader, Stack, Switch } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
 import { useLiveData } from '../../../context/LiveData/useLiveData';
-import convertToCsv from '../../../utils/convertToCsv';
+import { convertToCsv } from '../../../utils/convertToCsv';
 import { downloadZip } from '../../../utils/downloadZip';
-import DownloadButtons from '../../DownloadButtons';
+import { DownloadButtons } from '../../DownloadButtons';
 import { LiveDataPlot } from './LiveDataPlot';
 
-const LiveDataPlotContainer = () => {
+export const LiveDataPlotContainer = () => {
   const { t } = useTranslation();
 
   const { liveData, liveDataEnabled, setLiveDataEnabled } = useLiveData();
@@ -51,5 +51,3 @@ const LiveDataPlotContainer = () => {
     </Stack>
   );
 };
-
-export default LiveDataPlotContainer;

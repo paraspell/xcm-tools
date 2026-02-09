@@ -6,13 +6,13 @@ import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
 import { BrowserRouter } from 'react-router';
 
-import LeftPanel from './components/LeftPanel';
-import LoadingScreen from './components/LoadingScreen/LoadingScreen';
-import RightPanel from './components/RightPanel';
-import DeviceTypeProvider from './context/DeviceType/DeviceTypeContext';
-import LiveDataProvider from './context/LiveData/LiveDataContext';
-import SelectedEcosystemProvider from './context/SelectedEcosystem/SelectedEcosystemContext';
-import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
+import { LeftPanel } from './components/LeftPanel';
+import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
+import { RightPanel } from './components/RightPanel';
+import { DeviceTypeProvider } from './context/DeviceType/DeviceTypeContext';
+import { LiveDataProvider } from './context/LiveData/LiveDataContext';
+import { SelectedEcosystemProvider } from './context/SelectedEcosystem/SelectedEcosystemContext';
+import { SelectedParachainProvider } from './context/SelectedParachain/SelectedParachainContext';
 
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 
@@ -31,7 +31,7 @@ export const client = new ApolloClient({
   )
 });
 
-const App = () => (
+export const App = () => (
   <ApolloProvider client={client}>
     <BrowserRouter>
       <DeviceTypeProvider>
@@ -55,5 +55,3 @@ const App = () => (
     </BrowserRouter>
   </ApolloProvider>
 );
-
-export default App;

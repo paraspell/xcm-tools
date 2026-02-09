@@ -39,7 +39,7 @@ const data = [
   },
 ];
 
-const XcmRouter = () => {
+export const XcmRouter = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -148,5 +148,3 @@ const XcmRouter = () => {
     </div>
   );
 };
-
-export default XcmRouter;

@@ -34,11 +34,11 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type { TAssetClaimFormValues } from './AssetClaimForm';
-import AssetClaimForm from './AssetClaimForm';
+import { AssetClaimForm } from './AssetClaimForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const AssetClaim = () => {
+export const AssetClaim = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [
@@ -243,5 +243,3 @@ const AssetClaim = () => {
     </Stack>
   );
 };
-
-export default AssetClaim;

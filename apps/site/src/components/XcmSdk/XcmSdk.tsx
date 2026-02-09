@@ -42,7 +42,7 @@ const data = [
   },
 ];
 
-const XcmSdk = () => {
+export const XcmSdk = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -156,5 +156,3 @@ const XcmSdk = () => {
     </div>
   );
 };
-
-export default XcmSdk;

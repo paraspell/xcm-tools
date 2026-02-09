@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { links } from "./links";
 import classes from "./Navbar.module.css";
 
-const Navbar = () => {
+export const Navbar = () => {
   const items = links.map((link) => (
     <Anchor
       component={Link}
@@ -30,5 +30,3 @@ const Navbar = () => {
     </>
   );
 };
-
-export default Navbar;

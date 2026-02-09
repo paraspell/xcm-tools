@@ -1,6 +1,6 @@
 type CsvRow<T> = Omit<T, '__typename'> & { paraId?: number | null };
 
-const convertToCsv = <T>(data: CsvRow<T>[], headers: (keyof CsvRow<T>)[]): string => {
+export const convertToCsv = <T>(data: CsvRow<T>[], headers: (keyof CsvRow<T>)[]): string => {
   const csvRows = data.map(row =>
     headers
       .map(header => {
@@ -14,5 +14,3 @@ const convertToCsv = <T>(data: CsvRow<T>[], headers: (keyof CsvRow<T>)[]): strin
   );
   return [headers.join(','), ...csvRows].join('\n');
 };
-
-export default convertToCsv;

@@ -39,7 +39,7 @@ const data = [
   },
 ];
 
-const XcmApi = () => {
+export const XcmApi = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -148,5 +148,3 @@ const XcmApi = () => {
     </div>
   );
 };
-
-export default XcmApi;

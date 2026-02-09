@@ -15,7 +15,7 @@ import visualizerLogoImg from "../../assets/visualizer_logo.png";
 import visualizerMockupImg from "../../assets/visualizer-mockup-2-h.png";
 import classes from "./XcmVisualizer.module.css";
 
-const XcmVisualizer = () => (
+export const XcmVisualizer = () => (
   <div className={classes.wrapper} id="xcm-visualizer">
     <div className={classes.body}>
       <Group align="center" gap="sm" mb="md">
@@ -109,5 +109,3 @@ const XcmVisualizer = () => (
     </Box>
   </div>
 );
-
-export default XcmVisualizer;

@@ -29,7 +29,7 @@ import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
 
-export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesLabels {
+export const getSeriesLabels = (series: ChartSeries[] | undefined): ChartSeriesLabels => {
   if (!series) {
     return {};
   }
@@ -44,10 +44,10 @@ export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesL
     acc[item.name] = item.label;
     return acc;
   }, {});
-}
+};
 
-function updateChartTooltipPayload(payload: Record<string, any>[]): Record<string, any>[] {
-  return payload.map(item => {
+const updateChartTooltipPayload = (payload: Record<string, any>[]): Record<string, any>[] =>
+  payload.map(item => {
     const matchFound = item.name.search(/\./);
     if (matchFound >= 0) {
       const newDataKey = item.name.substring(0, matchFound);
@@ -69,9 +69,11 @@ function updateChartTooltipPayload(payload: Record<string, any>[]): Record<strin
     }
     return item;
   });
-}
 
-export function getFilteredChartTooltipPayload(payload: Record<string, any>[], segmentId?: string) {
+export const getFilteredChartTooltipPayload = (
+  payload: Record<string, any>[],
+  segmentId?: string
+) => {
   const duplicatesFilter = updateChartTooltipPayload(
     payload.filter(item => item.fill !== 'none' || !item.color)
   );
@@ -81,9 +83,9 @@ export function getFilteredChartTooltipPayload(payload: Record<string, any>[], s
   }
 
   return duplicatesFilter.filter(item => item.name === segmentId);
-}
+};
 
-function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter') {
+const getData = (item: Record<string, any>, type: 'area' | 'radial' | 'scatter') => {
   if (type === 'radial' || type === 'scatter') {
     if (Array.isArray(item.value)) {
       return item.value[1] - item.value[0];
@@ -95,7 +97,7 @@ function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter')
     return item.payload[item.dataKey][1] - item.payload[item.dataKey][0];
   }
   return item.payload[item.name];
-}
+};
 
 export type ChartTooltipStylesNames =
   | 'tooltip'
@@ -137,7 +139,7 @@ const generateExplorerLink = (ecosystem: TRelaychain, from: number | undefined, 
   return `${baseUrl}&time_dimension=date${fromChain}${start}${end}`;
 };
 
-const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
@@ -271,6 +273,4 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   );
 });
 
-ChartTooltip.displayName = '@mantine/charts/ChartTooltip';
-
-export default ChartTooltip;
+CustomChartTooltip.displayName = '@mantine/charts/ChartTooltip';

@@ -10,7 +10,7 @@ type Props = StackProps & {
   max?: number;
 };
 
-const SliderInput: FC<Props> = ({ value, onCustomChange, min, max, ...props }) => {
+export const SliderInput: FC<Props> = ({ value, onCustomChange, min, max, ...props }) => {
   const { t } = useTranslation();
   return (
     <Stack gap={4} {...props}>
@@ -21,5 +21,3 @@ const SliderInput: FC<Props> = ({ value, onCustomChange, min, max, ...props }) =
     </Stack>
   );
 };
-
-export default SliderInput;

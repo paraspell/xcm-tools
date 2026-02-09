@@ -1,3 +1,3 @@
-import XcmTransfer from '../components/XcmTransfer/XcmTransfer';
+import { XcmTransfer } from '../components/XcmTransfer/XcmTransfer';
 
-export const XcmTransferPage = () => <XcmTransfer />;
+export const XcmTransferPage = XcmTransfer;

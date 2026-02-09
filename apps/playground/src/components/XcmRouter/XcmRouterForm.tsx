@@ -64,12 +64,12 @@ import {
   parseAsRecipientAddress,
   parseAsSubstrateChain,
 } from '../../utils/parsers';
-import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
+import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AmountTooltip } from '../Tooltip';
-import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
+import { PolkadotWalletSelectModal } from '../WalletSelectModal/WalletSelectModal';
 
 export type TRouterFormValues = {
   from?: TSubstrateChain;
@@ -431,7 +431,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack gap="lg">
-          <WalletSelectModal
+          <PolkadotWalletSelectModal
             isOpen={walletSelectModalOpened}
             onClose={closeWalletSelectModal}
             providers={extensions}

@@ -13,7 +13,7 @@ type Props = {
   onChange: (value: TRelaychain) => void;
 };
 
-const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
+export const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption()
   });
@@ -79,5 +79,3 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
     </Combobox>
   );
 };
-
-export default EcosystemSelect;

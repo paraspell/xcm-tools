@@ -32,7 +32,7 @@ const data = [
   },
 ];
 
-export function Tryit() {
+export const TryIt = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -88,4 +88,4 @@ export function Tryit() {
       </div>
     </div>
   );
-}
+};

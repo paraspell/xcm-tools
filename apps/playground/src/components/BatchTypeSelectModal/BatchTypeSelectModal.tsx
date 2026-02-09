@@ -65,5 +65,3 @@ export const BatchTypeSelectModal: FC<Props> = ({
     </Modal>
   );
 };
-
-export default BatchTypeSelectModal;

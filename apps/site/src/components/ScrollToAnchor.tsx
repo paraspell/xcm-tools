@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 
 const OFFSET = 100;
 
-const ScrollToAnchor = () => {
+export const ScrollToAnchor = () => {
   const location = useLocation();
   const lastHash = useRef("");
 
@@ -32,5 +32,3 @@ const ScrollToAnchor = () => {
 
   return null;
 };
-
-export default ScrollToAnchor;

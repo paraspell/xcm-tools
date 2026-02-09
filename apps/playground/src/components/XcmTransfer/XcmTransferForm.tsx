@@ -130,7 +130,7 @@ export const FeeAssetSchema = CurrencyEntrySchema.omit({
   isMax: true,
 });
 
-const XcmTransferForm: FC<Props> = ({
+export const XcmTransferForm: FC<Props> = ({
   onSubmit,
   loading,
   isBatchMode,
@@ -628,5 +628,3 @@ const XcmTransferForm: FC<Props> = ({
     </Paper>
   );
 };
-
-export default XcmTransferForm;

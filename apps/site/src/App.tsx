@@ -11,15 +11,15 @@ import hljs from "highlight.js/lib/core";
 import tsLang from "highlight.js/lib/languages/typescript";
 import { BrowserRouter } from "react-router";
 
-import AppShell from "./components/AppShell/AppShell";
-import ScrollToAnchor from "./components/ScrollToAnchor";
+import { AppShell } from "./components/AppShell/AppShell";
+import { ScrollToAnchor } from "./components/ScrollToAnchor";
 import { theme } from "./theme";
 
 hljs.registerLanguage("typescript", tsLang);
 
 const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
-const App = () => (
+export const App = () => (
   <BrowserRouter>
     <MantineProvider theme={theme} forceColorScheme="light">
       <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
@@ -29,5 +29,3 @@ const App = () => (
     </MantineProvider>
   </BrowserRouter>
 );
-
-export default App;
