@@ -1,12 +1,12 @@
 import { Group } from '@mantine/core';
 
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
-import Scene3d from '../pages/Scene3d';
-import ChannelAlertContainer from './ChannelInfo/ChannelAlert.container';
-import EcosystemSelectContainer from './EcosystemSelect/EcosystemSelect.container';
-import Footer from './Footer/Footer';
+import { Scene3d } from '../pages/Scene3d';
+import { ChannelAlertContainer } from './ChannelInfo/ChannelAlert.container';
+import { EcosystemSelectContainer } from './EcosystemSelect/EcosystemSelect.container';
+import { Footer } from './Footer/Footer';
 
-const LeftPanel = () => {
+export const LeftPanel = () => {
   const { selectedChannel } = useSelectedParachain();
   return (
     <Group flex={1} w="60%" h="100%" pos="relative">
@@ -17,5 +17,3 @@ const LeftPanel = () => {
     </Group>
   );
 };
-
-export default LeftPanel;

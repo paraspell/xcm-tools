@@ -28,7 +28,7 @@ const data = [
   },
 ];
 
-export function FeaturesIcons() {
+export const FeaturesIcons = () => {
   const items = data.map((item) => (
     <div className={classes.item} key={item.title}>
       <ThemeIcon
@@ -70,4 +70,4 @@ export function FeaturesIcons() {
       </SimpleGrid>
     </Container>
   );
-}
+};

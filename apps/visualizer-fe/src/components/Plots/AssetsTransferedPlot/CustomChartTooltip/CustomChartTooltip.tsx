@@ -26,7 +26,8 @@ import { getChainDisplayName } from '../../../../utils';
 import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
-export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesLabels {
+
+export const getSeriesLabels = (series: ChartSeries[] | undefined): ChartSeriesLabels => {
   if (!series) {
     return {};
   }
@@ -41,9 +42,12 @@ export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesL
     acc[item.name] = item.label;
     return acc;
   }, {});
-}
+};
 
-export function getFilteredChartTooltipPayload(payload: Record<string, any>[], segmentId?: string) {
+export const getFilteredChartTooltipPayload = (
+  payload: Record<string, any>[],
+  segmentId?: string
+) => {
   const duplicatesFilter = payload.filter(item => item.fill !== 'none' || !item.color);
 
   if (!segmentId) {
@@ -51,9 +55,9 @@ export function getFilteredChartTooltipPayload(payload: Record<string, any>[], s
   }
 
   return duplicatesFilter.filter(item => item.name === segmentId);
-}
+};
 
-function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter') {
+const getData = (item: Record<string, any>, type: 'area' | 'radial' | 'scatter') => {
   if (type === 'radial' || type === 'scatter') {
     if (Array.isArray(item.value)) {
       return item.value[1] - item.value[0];
@@ -65,7 +69,7 @@ function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter')
     return item.payload[item.dataKey][1] - item.payload[item.dataKey][0];
   }
   return item.payload[item.name] ?? item.value;
-}
+};
 
 export type ChartTooltipStylesNames =
   | 'tooltip'
@@ -112,7 +116,7 @@ const generateExplorerLink = (
   return `${baseUrl}${timeDimension}${fromChain}${start}${end}&symbol=${symbol}`;
 };
 
-const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
@@ -208,6 +212,4 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   );
 });
 
-ChartTooltip.displayName = '@mantine/charts/ChartTooltip';
-
-export default ChartTooltip;
+CustomChartTooltip.displayName = '@mantine/charts/ChartTooltip';

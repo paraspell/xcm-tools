@@ -4,12 +4,12 @@ import { useEffect } from "react";
 import { useLocation } from "react-router";
 
 import { Footer } from "../Footer/Footer";
-import Routes from "../Routes";
-import ScrollToTop from "../ScrollToTop";
-import Header from "./Header";
-import Navbar from "./Navbar";
+import { Routes } from "../Routes";
+import { ScrollToTop } from "../ScrollToTop";
+import { Header } from "./Header";
+import { Navbar } from "./Navbar";
 
-const AppShell = () => {
+export const AppShell = () => {
   const [opened, { toggle, close }] = useDisclosure();
 
   const { pathname, hash } = useLocation();
@@ -44,5 +44,3 @@ const AppShell = () => {
     </MantineAppShell>
   );
 };
-
-export default AppShell;

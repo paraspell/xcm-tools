@@ -3,21 +3,18 @@ import { IconAt, IconMapPin, IconSun } from "@tabler/icons-react";
 
 import classes from "./ContactIcons.module.css";
 
-interface ContactIconProps extends Omit<
-  React.ComponentPropsWithoutRef<"div">,
-  "title"
-> {
+type ContactIconProps = Omit<React.ComponentPropsWithoutRef<"div">, "title"> & {
   icon: typeof IconSun;
   title: React.ReactNode;
   description: React.ReactNode;
-}
+};
 
-function ContactIcon({
+const ContactIcon = ({
   icon: Icon,
   title,
   description,
   ...others
-}: ContactIconProps) {
+}: ContactIconProps) => {
   return (
     <div className={classes.wrapper} {...others}>
       <Box mr="md">
@@ -32,7 +29,7 @@ function ContactIcon({
       </div>
     </div>
   );
-}
+};
 
 const MOCKDATA = [
   { title: "Email", description: "info.lightspell@gmail.com", icon: IconAt },
@@ -44,9 +41,9 @@ const MOCKDATA = [
   },
 ];
 
-export function ContactIconsList() {
+export const ContactIconsList = () => {
   const items = MOCKDATA.map((item, index) => (
     <ContactIcon key={index} {...item} />
   ));
   return <Stack>{items}</Stack>;
-}
+};

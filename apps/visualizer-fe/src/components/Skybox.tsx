@@ -5,7 +5,7 @@ import { CubeTextureLoader } from 'three';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 import { loadImageFromDB } from '../utils/idbUtils';
 
-const SkyBox = () => {
+export const SkyBox = () => {
   const { scene } = useThree();
   const { skyboxTrigger } = useSelectedParachain();
 
@@ -27,5 +27,3 @@ const SkyBox = () => {
 
   return null;
 };
-
-export default SkyBox;

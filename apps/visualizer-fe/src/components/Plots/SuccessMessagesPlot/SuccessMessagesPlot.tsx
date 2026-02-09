@@ -9,13 +9,13 @@ import { useSelectedParachain } from '../../../context/SelectedParachain/useSele
 import type { MessageCountsQuery } from '../../../gql/graphql';
 import { getChainDisplayName } from '../../../utils';
 import { formatNumber } from '../utils';
-import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
+import { CustomChartTooltip } from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {
   counts: MessageCountsQuery['messageCounts'];
 };
 
-const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
+export const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
   const { selectedParachains } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
@@ -75,5 +75,3 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
 });
 
 SuccessMessagesPlot.displayName = 'SuccessMessagesPlot';
-
-export default SuccessMessagesPlot;

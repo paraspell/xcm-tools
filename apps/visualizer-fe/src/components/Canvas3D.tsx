@@ -6,7 +6,7 @@ type Props = {
   children?: ReactNode;
 };
 
-const Canvas3D: FC<Props> = ({ children }) => {
+export const Canvas3D: FC<Props> = ({ children }) => {
   return (
     <Canvas
       gl={{
@@ -25,5 +25,3 @@ const Canvas3D: FC<Props> = ({ children }) => {
     </Canvas>
   );
 };
-
-export default Canvas3D;

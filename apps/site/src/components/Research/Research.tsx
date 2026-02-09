@@ -1,8 +1,8 @@
 import { Stack, Text, Title } from "@mantine/core";
 
-import ArticleCard from "../ArticleCard/ArticleCard";
+import { ArticleCard } from "../ArticleCard/ArticleCard";
 
-const Research = () => (
+export const Research = () => (
   <Stack gap="xl" id="research" p={24}>
     <Title order={1}>Research</Title>
     <Text c="dimmed" maw={550}>
@@ -36,5 +36,3 @@ const Research = () => (
     />
   </Stack>
 );
-
-export default Research;

@@ -8,15 +8,13 @@ import { messageCountsByDayQueryDocument } from '../../../api/messages';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../../gql/graphql';
-import convertToCsv from '../../../utils/convertToCsv';
-import downloadSvg from '../../../utils/downloadSvg';
-import { downloadZip } from '../../../utils/downloadZip';
-import DownloadButtons from '../../DownloadButtons';
-import AmountTransferedPlot from './AmountTransferedPlot';
+import { convertToCsv, downloadSvg, downloadZip } from '../../../utils';
+import { DownloadButtons } from '../../DownloadButtons';
+import { AmountTransferredPlot } from './AmountTransferedPlot';
 
 const now = Date.now();
 
-const AmountTransferedPlotContainer = () => {
+export const AmountTransferedPlotContainer = () => {
   const { t } = useTranslation();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -113,7 +111,7 @@ const AmountTransferedPlotContainer = () => {
           </div>
         </Tooltip>
       </Group>
-      <AmountTransferedPlot
+      <AmountTransferredPlot
         ref={ref}
         counts={data?.messageCountsByDay ?? []}
         showMedian={showMedian}
@@ -121,5 +119,3 @@ const AmountTransferedPlotContainer = () => {
     </Stack>
   );
 };
-
-export default AmountTransferedPlotContainer;

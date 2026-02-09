@@ -6,7 +6,7 @@ import { useEffect, useImperativeHandle, useRef } from 'react';
 import type { Group, Mesh, SphereGeometry } from 'three';
 import { Color, TextureLoader } from 'three';
 
-import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
+import { useAdjustUVs } from '../../hooks/useAdjustUVs';
 import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
 const SCALE_FACTOR = 2.25;
@@ -19,10 +19,10 @@ type Props = {
   isSelected?: boolean;
 };
 
-const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
+export const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
   const logo = getRelaychainLogo(ecosystem);
   const texture = useLoader(TextureLoader, logo);
-  const sphereRef = useRef<Mesh>(null);
+  const sphereRef = useRef<Mesh<SphereGeometry>>(null);
   const groupRef = useRef<Group>(null);
 
   useImperativeHandle(ref, () => groupRef.current!);
@@ -33,12 +33,7 @@ const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
     }
   }, [texture]);
 
-  useEffect(() => {
-    if (sphereRef.current) {
-      adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
-      adjustUVs(sphereRef.current.geometry as SphereGeometry, SCALE_FACTOR);
-    }
-  }, []);
+  useAdjustUVs(sphereRef, SCALE_X_FACTOR, SCALE_FACTOR);
 
   useFrame(({ camera }) => {
     if (groupRef.current) {
@@ -63,5 +58,3 @@ const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
 };
 
 Relaychain.displayName = 'Relaychain';
-
-export default Relaychain;

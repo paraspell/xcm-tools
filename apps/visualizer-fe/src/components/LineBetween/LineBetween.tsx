@@ -34,7 +34,7 @@ type Props = {
   toParaId: number;
 };
 
-const LineBetween: FC<Props> = ({
+export const LineBetween: FC<Props> = ({
   startObject,
   endObject,
   lineWidth,
@@ -190,5 +190,3 @@ const LineBetween: FC<Props> = ({
     </group>
   );
 };
-
-export default LineBetween;

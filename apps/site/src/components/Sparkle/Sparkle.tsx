@@ -1,6 +1,6 @@
 import classes from "./Sparkle.module.css";
 
-const Sparkle = () => (
+export const Sparkle = () => (
   <>
     <svg id={classes.one} width="100" height="100" viewBox="0 0 100 100">
       <g id={classes.sparkle1} className={classes.sparkleElements}>
@@ -33,5 +33,3 @@ const Sparkle = () => (
     </svg>
   </>
 );
-
-export default Sparkle;

@@ -9,16 +9,14 @@ import { accountXcmCountsQueryDocument } from '../../../api/messages';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { AccountCountsQuery } from '../../../gql/graphql';
-import convertToCsv from '../../../utils/convertToCsv';
-import downloadSvg from '../../../utils/downloadSvg';
-import { downloadZip } from '../../../utils/downloadZip';
-import DownloadButtons from '../../DownloadButtons';
-import SliderInput from '../../SliderInput';
-import AccountsAmountPlot from './AccountsAmountPlot';
+import { convertToCsv, downloadSvg, downloadZip } from '../../../utils';
+import { DownloadButtons } from '../../DownloadButtons';
+import { SliderInput } from '../../SliderInput';
+import { AccountsAmountPlot } from './AccountsAmountPlot';
 
 const now = Date.now();
 
-const AccountsAmountPlotContainer = () => {
+export const AccountsAmountPlotContainer = () => {
   const { t } = useTranslation();
 
   const ref = useRef<HighchartsReactRefObject>(null);
@@ -93,5 +91,3 @@ const AccountsAmountPlotContainer = () => {
     </Stack>
   );
 };
-
-export default AccountsAmountPlotContainer;

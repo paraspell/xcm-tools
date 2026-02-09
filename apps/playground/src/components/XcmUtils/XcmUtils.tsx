@@ -36,11 +36,11 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type { FormValuesTransformed } from './XcmUtilsForm';
-import XcmTransferForm from './XcmUtilsForm';
+import { XcmUtilsForm } from './XcmUtilsForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const XcmUtils = () => {
+export const XcmUtils = () => {
   const { selectedAccount, apiType } = useWallet();
 
   const [
@@ -403,7 +403,7 @@ const XcmUtils = () => {
               Query XCM information and fees.
             </Text>
           </Box>
-          <XcmTransferForm onSubmit={onSubmit} loading={loading} />
+          <XcmUtilsForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Center ref={targetRef}>
           {errorAlertOpened && error && (
@@ -421,5 +421,3 @@ const XcmUtils = () => {
     </>
   );
 };
-
-export default XcmUtils;

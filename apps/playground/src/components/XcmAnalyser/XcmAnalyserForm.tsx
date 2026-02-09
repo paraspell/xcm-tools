@@ -24,7 +24,7 @@ type Props = {
   loading: boolean;
 };
 
-const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
+export const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
   const [queryState, setQueryState] = useQueryStates({
     input: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
@@ -67,5 +67,3 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
     </Paper>
   );
 };
-
-export default AnalyserForm;

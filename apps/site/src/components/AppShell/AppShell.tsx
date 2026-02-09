@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
 import { Footer } from "../Footer/Footer";
-import Routes from "../Routes";
-import ScrollToTop from "../ScrollToTop";
-import StickyBar from "../StickyBar";
-import Header from "./Header";
-import Navbar from "./Navbar";
+import { Routes } from "../Routes";
+import { ScrollToTop } from "../ScrollToTop";
+import { StickyBar } from "../StickyBar";
+import { Header } from "./Header";
+import { Navbar } from "./Navbar";
 
-const AppShell = () => {
+export const AppShell = () => {
   const [pinned, setPinned] = useState(true);
 
   const [opened, { toggle, close }] = useDisclosure();
@@ -90,5 +90,3 @@ const AppShell = () => {
     </MantineAppShell>
   );
 };
-
-export default AppShell;

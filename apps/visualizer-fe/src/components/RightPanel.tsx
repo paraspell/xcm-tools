@@ -4,12 +4,12 @@ import { useState } from 'react';
 
 import { useDeviceType } from '../context/DeviceType/useDeviceType';
 import { PageRoute } from '../PageRoute';
-import CollapseButton from './CollapseButton';
-import TabNavigator from './TabNavigator/TabNavigator';
+import { CollapseButton } from './CollapseButton';
+import { TabNavigator } from './TabNavigator/TabNavigator';
 
 const AnimatedDiv = animated('div');
 
-const RightPanel = () => {
+export const RightPanel = () => {
   const { isMobile } = useDeviceType();
 
   const [width, setWidth] = useState(isMobile ? '0%' : '40%');
@@ -48,5 +48,3 @@ const RightPanel = () => {
     </AnimatedDiv>
   );
 };
-
-export default RightPanel;

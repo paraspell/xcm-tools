@@ -1,9 +1,9 @@
-import Canvas3D from '../components/Canvas3D';
-import Lights from '../components/Lights';
-import SkyBox from '../components/Skybox';
-import MainScene from '../MainScene';
+import { Canvas3D } from '../components/Canvas3D';
+import { Lights } from '../components/Lights';
+import { SkyBox } from '../components/Skybox';
+import { MainScene } from '../MainScene';
 
-const Scene3d = () => (
+export const Scene3d = () => (
   <div id="canvas-container">
     <Canvas3D>
       <Lights />
@@ -12,5 +12,3 @@ const Scene3d = () => (
     </Canvas3D>
   </div>
 );
-
-export default Scene3d;

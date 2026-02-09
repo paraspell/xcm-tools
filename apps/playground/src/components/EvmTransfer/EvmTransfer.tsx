@@ -32,14 +32,14 @@ import {
 } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import EthAccountsSelectModal from '../EthAccountsSelectModal';
-import EthWalletSelectModal from '../EthWalletSelectModal';
+import { EthAccountsSelectModal } from '../EthAccountsSelectModal';
+import { EthWalletSelectModal } from '../EthWalletSelectModal';
 import type { FormValuesTransformed } from './EvmTransferForm';
-import EvmTransferForm from './EvmTransferForm';
+import { EvmTransferForm } from './EvmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const EvmTransfer = () => {
+export const EvmTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
@@ -437,5 +437,3 @@ const EvmTransfer = () => {
     </Stack>
   );
 };
-
-export default EvmTransfer;

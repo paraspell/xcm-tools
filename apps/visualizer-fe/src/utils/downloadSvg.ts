@@ -31,7 +31,7 @@ const readElement = (parentNode: Element, origData: Element) => {
   }
 };
 
-const downloadSvg = (el: HTMLDivElement, padding = 10) => {
+export const downloadSvg = (el: HTMLDivElement, padding = 10) => {
   const svgElement = el.querySelector('svg');
 
   if (!svgElement) {
@@ -71,5 +71,3 @@ const downloadSvg = (el: HTMLDivElement, padding = 10) => {
   link.download = 'chart.svg';
   link.click();
 };
-
-export default downloadSvg;

@@ -3,7 +3,7 @@ import { Flex, Image, Stack, Title } from "@mantine/core";
 import polkadotLogoImg from "../../assets/polkadot.svg";
 import web3FoundationLogoImg from "../../assets/web3foundation.svg";
 
-const Sponsors = () => (
+export const Sponsors = () => (
   <Stack px={24} gap="xl">
     <Title order={2} fw={700} ta="center">
       Project is supported by
@@ -30,5 +30,3 @@ const Sponsors = () => (
     </Flex>
   </Stack>
 );
-
-export default Sponsors;

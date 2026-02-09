@@ -8,7 +8,7 @@ type Props = {
   isMobile: boolean;
 };
 
-const CollapseButton: FC<Props> = ({ onClick, isCollapsed, isMobile }) => (
+export const CollapseButton: FC<Props> = ({ onClick, isCollapsed, isMobile }) => (
   <ActionIcon
     onClick={onClick}
     variant="default"
@@ -30,5 +30,3 @@ const CollapseButton: FC<Props> = ({ onClick, isCollapsed, isMobile }) => (
     {isCollapsed ? <IconChevronLeft size={24} /> : <IconChevronRight size={24} />}
   </ActionIcon>
 );
-
-export default CollapseButton;

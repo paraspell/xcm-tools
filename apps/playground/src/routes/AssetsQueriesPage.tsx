@@ -1,3 +1,3 @@
 import { AssetsQueries } from '../components/AssetsQueries/AssetsQueries';
 
-export const AssetsQueriesPage = () => <AssetsQueries />;
+export const AssetsQueriesPage = AssetsQueries;

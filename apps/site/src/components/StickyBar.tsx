@@ -2,7 +2,7 @@ import { ActionIcon, Flex, Group, Text, Tooltip } from "@mantine/core";
 import { IconInfoCircle, IconX } from "@tabler/icons-react";
 import type { FC } from "react";
 
-import AudioPlayer from "./AudioPlayer";
+import { AudioPlayer } from "./AudioPlayer";
 
 const complianceStatement = `
 Compliance statement:
@@ -16,7 +16,7 @@ type Props = {
   onCloseClick: () => void;
 };
 
-const StickyBar: FC<Props> = ({ onCloseClick }) => (
+export const StickyBar: FC<Props> = ({ onCloseClick }) => (
   <Flex
     bg="#f0197a"
     h={{ base: 54, sm: 28 }}
@@ -64,5 +64,3 @@ const StickyBar: FC<Props> = ({ onCloseClick }) => (
     </ActionIcon>
   </Flex>
 );
-
-export default StickyBar;

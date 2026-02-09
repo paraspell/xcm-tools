@@ -40,16 +40,16 @@ import {
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
-import BatchTypeSelectModal from '../BatchTypeSelectModal/BatchTypeSelectModal';
+import { BatchTypeSelectModal } from '../BatchTypeSelectModal/BatchTypeSelectModal';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type { TFormValuesTransformed } from './XcmTransferForm';
-import XcmTransferForm from './XcmTransferForm';
+import { XcmTransferForm } from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const XcmTransfer = () => {
+export const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [
@@ -564,5 +564,3 @@ const XcmTransfer = () => {
     </>
   );
 };
-
-export default XcmTransfer;

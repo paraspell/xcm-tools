@@ -44,7 +44,7 @@ const features = [
   },
 ];
 
-export function Features() {
+export const Features = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = features.map((feature) => (
@@ -94,4 +94,4 @@ export function Features() {
       </Grid>
     </div>
   );
-}
+};

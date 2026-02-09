@@ -13,7 +13,7 @@ type Props = {
   onDisconnect?: () => void;
 };
 
-const PolkadotWalletSelectModal: FC<Props> = ({
+export const PolkadotWalletSelectModal: FC<Props> = ({
   isOpen,
   onClose,
   providers,
@@ -61,5 +61,3 @@ const PolkadotWalletSelectModal: FC<Props> = ({
     </Modal>
   );
 };
-
-export default PolkadotWalletSelectModal;

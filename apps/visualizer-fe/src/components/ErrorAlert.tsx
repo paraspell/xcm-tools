@@ -10,7 +10,7 @@ type Props = {
   onAlertCloseClick: () => void;
 };
 
-const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => {
+export const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -25,5 +25,3 @@ const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => {
     </Alert>
   );
 };
-
-export default ErrorAlert;

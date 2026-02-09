@@ -133,7 +133,7 @@ export const FeeAssetSchema = TCurrencyEntrySchema.omit({
   isMax: true,
 });
 
-const XcmUtilsForm: FC<Props> = ({
+export const XcmUtilsForm: FC<Props> = ({
   onSubmit,
   loading,
   initialValues,
@@ -658,5 +658,3 @@ const XcmUtilsForm: FC<Props> = ({
     </Paper>
   );
 };
-
-export default XcmUtilsForm;

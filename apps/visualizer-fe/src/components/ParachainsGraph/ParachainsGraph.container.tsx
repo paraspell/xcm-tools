@@ -8,7 +8,7 @@ import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
-import ParachainsGraph from './ParachainsGraph';
+import { ParachainsGraph } from './ParachainsGraph';
 
 const now = Date.now();
 
@@ -16,7 +16,7 @@ type Props = {
   ecosystem: TRelaychain;
 };
 
-const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
+export const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
   const { dateRange, parachainArrangement } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
   const { isTouch } = useDeviceType();
@@ -52,5 +52,3 @@ const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
 
   return <></>;
 };
-
-export default ParachainsGraphContainer;

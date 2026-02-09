@@ -37,7 +37,7 @@ type Props = {
   loading: boolean;
 };
 
-const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
+export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   const {
     connectWallet,
     selectedAccount,
@@ -136,5 +136,3 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     </Paper>
   );
 };
-
-export default AssetClaimForm;

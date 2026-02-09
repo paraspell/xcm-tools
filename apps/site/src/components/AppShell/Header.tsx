@@ -21,7 +21,7 @@ type Props = {
   pinned: boolean;
 };
 
-const Header: FC<Props> = ({ menuOpened, toggleMenu, pinned }) => {
+export const Header: FC<Props> = ({ menuOpened, toggleMenu, pinned }) => {
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
       <Menu.Item component={Link} to={item.link} key={item.link}>
@@ -117,5 +117,3 @@ const Header: FC<Props> = ({ menuOpened, toggleMenu, pinned }) => {
     </Container>
   );
 };
-
-export default Header;

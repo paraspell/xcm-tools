@@ -57,7 +57,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }}
 `;
 
-export function Learn() {
+export const Learn = () => {
   const iconStyle = { width: rem(12), height: rem(12) };
 
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -138,4 +138,4 @@ export function Learn() {
       </Grid>
     </div>
   );
-}
+};

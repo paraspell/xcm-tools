@@ -5,7 +5,7 @@ import { useSelectedEcosystem } from '../context/SelectedEcosystem/useSelectedEc
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 import { encodeDate, encodeEcosystem, encodeList, setOrDelete } from '../routes/urlFilters';
 
-export function useFilterSync() {
+export const useFilterSync = () => {
   const { selectedParachains, dateRange } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,4 +35,4 @@ export function useFilterSync() {
       setSearchParams(next, { replace: true });
     }
   }, [encoded.ecosystem, encoded.parachains, encoded.from, encoded.to]);
-}
+};

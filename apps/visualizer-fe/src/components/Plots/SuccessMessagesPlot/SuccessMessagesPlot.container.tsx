@@ -7,15 +7,13 @@ import { messageCountsQueryDocument } from '../../../api/messages';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsQuery } from '../../../gql/graphql';
-import convertToCsv from '../../../utils/convertToCsv';
-import downloadSvg from '../../../utils/downloadSvg';
-import { downloadZip } from '../../../utils/downloadZip';
-import DownloadButtons from '../../DownloadButtons';
-import SuccessMessagesPlot from './SuccessMessagesPlot';
+import { convertToCsv, downloadSvg, downloadZip } from '../../../utils';
+import { DownloadButtons } from '../../DownloadButtons';
+import { SuccessMessagesPlot } from './SuccessMessagesPlot';
 
 const now = Date.now();
 
-const SuccessMessagesPlotContainer = () => {
+export const SuccessMessagesPlotContainer = () => {
   const { t } = useTranslation();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -87,5 +85,3 @@ const SuccessMessagesPlotContainer = () => {
     </Stack>
   );
 };
-
-export default SuccessMessagesPlotContainer;

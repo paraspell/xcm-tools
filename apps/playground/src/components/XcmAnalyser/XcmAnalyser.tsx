@@ -12,7 +12,7 @@ import { convertLocationToUrlJson } from '@paraspell/xcm-analyser';
 import { useEffect, useState } from 'react';
 
 import type { FormValues } from '../../components/XcmAnalyser/XcmAnalyserForm';
-import AnalyserForm from '../../components/XcmAnalyser/XcmAnalyserForm';
+import { AnalyserForm } from '../../components/XcmAnalyser/XcmAnalyserForm';
 import { fetchFromApi } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';

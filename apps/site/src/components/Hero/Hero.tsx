@@ -10,9 +10,9 @@ import {
 } from "@mantine/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import HeroCards from "../HeroCards/HeroCards";
-import ParticlesNetwork from "../ParticlesNetwork";
-import Sparkle from "../Sparkle/Sparkle";
+import { HeroCards } from "../HeroCards/HeroCards";
+import { ParticlesNetwork } from "../ParticlesNetwork";
+import { Sparkle } from "../Sparkle/Sparkle";
 import classes from "./Hero.module.css";
 
 export const Hero = () => {

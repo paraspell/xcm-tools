@@ -41,7 +41,7 @@ interface SelectedParachainProviderProps {
   children: ReactNode;
 }
 
-const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
+export const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
   // Set defaults from url params
   const [searchParams] = useSearchParams();
   const [selectedParachains, setSelectedParachains] = useState<TSubstrateChain[]>(
@@ -113,5 +113,3 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
     </SelectedParachainContext.Provider>
   );
 };
-
-export default SelectedParachainProvider;

@@ -4,11 +4,11 @@ import "./App.css";
 import { MantineProvider } from "@mantine/core";
 import { BrowserRouter } from "react-router";
 
-import AppShell from "./components/AppShell/AppShell";
-import ScrollToAnchor from "./components/ScrollToAnchor";
+import { AppShell } from "./components/AppShell/AppShell";
+import { ScrollToAnchor } from "./components/ScrollToAnchor";
 import { theme } from "./theme";
 
-const App = () => (
+export const App = () => (
   <BrowserRouter>
     <MantineProvider theme={theme}>
       <AppShell />
@@ -16,5 +16,3 @@ const App = () => (
     </MantineProvider>
   </BrowserRouter>
 );
-
-export default App;

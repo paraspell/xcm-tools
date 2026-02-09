@@ -16,7 +16,7 @@ interface SelectedEcosystemProviderProps {
   children: ReactNode;
 }
 
-const SelectedEcosystemProvider = ({ children }: SelectedEcosystemProviderProps) => {
+export const SelectedEcosystemProvider = ({ children }: SelectedEcosystemProviderProps) => {
   // Set defaults from url params
   const [searchParams] = useSearchParams();
   const [selectedEcosystem, setSelectedEcosystem] = useState<TRelaychain>(
@@ -34,5 +34,3 @@ const SelectedEcosystemProvider = ({ children }: SelectedEcosystemProviderProps)
     </SelectedEcosystemContext.Provider>
   );
 };
-
-export default SelectedEcosystemProvider;

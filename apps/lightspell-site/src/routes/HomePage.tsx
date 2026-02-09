@@ -6,9 +6,9 @@ import { Faq } from "../components/Faq/Faq";
 import { Features } from "../components/Features/Features";
 import { Hero } from "../components/Hero/Hero";
 import { Learn } from "../components/Learn/Learn";
-import { Tryit } from "../components/TryIt/TryIt";
+import { TryIt } from "../components/TryIt/TryIt";
 
-const HomePage = () => {
+export const HomePage = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   return (
@@ -17,7 +17,7 @@ const HomePage = () => {
       <Container size="md" pl={0} pr={0} pb={isSmallScreen ? 80 : 160} pt="xl">
         <Stack gap={isSmallScreen ? 60 : 160}>
           <Features />
-          <Tryit />
+          <TryIt />
           <Learn />
           <Faq />
           <ContactUs />
@@ -26,5 +26,3 @@ const HomePage = () => {
     </>
   );
 };
-
-export default HomePage;
