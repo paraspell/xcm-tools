@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.6.0...xcm-router-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
 ## [12.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.5.1...xcm-router-v12.6.0) (2026-02-05)
 
 
