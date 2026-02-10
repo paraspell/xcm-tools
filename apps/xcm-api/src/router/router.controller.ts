@@ -7,9 +7,11 @@ import {
   ExchangePairsDto,
   ExchangePairsSchema,
   RouterBestAmountOutDto,
+  RouterBestAmountOutSchema,
   RouterDto,
   RouterDtoSchema,
 } from './dto/RouterDto.js';
+import { BestAmountOutCompatPipe } from './pipes/best-amount-out-compat.pipe.js';
 import { RouterService } from './router.service.js';
 
 @Controller('router')
@@ -52,6 +54,10 @@ export class RouterController {
   }
 
   @Post('best-amount-out')
+  @UsePipes(
+    new BestAmountOutCompatPipe(),
+    new ZodValidationPipe(RouterBestAmountOutSchema),
+  )
   getBestAmountOut(
     @Body() params: RouterBestAmountOutDto,
     @Req() req: Request,
