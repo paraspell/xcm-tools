@@ -31,11 +31,11 @@ export type TokenAddressMap = ChainTokenMap;
 
 type PairsReturn = Array<[PairState, Pair | null]>;
 
-export function getPairs(
+export const getPairs = (
   chainId: ParachainId | undefined,
   currencies: Array<[Currency | undefined, Currency | undefined]>,
-) {
-  return currencies
+) =>
+  currencies
     .filter((currencies): currencies is [Type, Type] => {
       const [currencyA, currencyB] = currencies;
       return Boolean(
@@ -64,11 +64,9 @@ export function getPairs(
       },
       [[], [], []],
     );
-}
 
-export function uniqePairKey(tokenA: Token, tokenB: Token): string {
-  return `${tokenA.address}-${tokenB.address}`;
-}
+export const uniqePairKey = (tokenA: Token, tokenB: Token): string =>
+  `${tokenA.address}-${tokenB.address}`;
 
 export enum PairState {
   LOADING,
@@ -77,11 +75,11 @@ export enum PairState {
   INVALID,
 }
 
-export async function fetchPairs(
+export const fetchPairs = async (
   api: ApiPromise,
   chainId: number | undefined,
   currencies: Array<[Currency | undefined, Currency | undefined]>,
-): Promise<PairsReturn> {
+): Promise<PairsReturn> => {
   const [tokensA, tokensB] = getPairs(chainId, currencies);
 
   const [validTokensA, validTokensB, reservesCalls] = tokensA.reduce<
@@ -150,13 +148,13 @@ export async function fetchPairs(
       ),
     ];
   });
-}
+};
 
 type Mutable<T> = {
   -readonly [P in keyof T]: Mutable<T[P]>;
 };
 
-export function tokensToChainTokenMap(tokens: TokenList): ChainTokenMap {
+export const tokensToChainTokenMap = (tokens: TokenList): ChainTokenMap => {
   const [list, infos] = [tokens, tokens.tokens];
   const map = infos.reduce<Mutable<ChainTokenMap>>((map, info) => {
     const token = new WrappedTokenInfo(info, list);
@@ -171,7 +169,7 @@ export function tokensToChainTokenMap(tokens: TokenList): ChainTokenMap {
     return map;
   }, {}) as ChainTokenMap;
   return map;
-}
+};
 
 export const getTokenMap = (chain: TChain, chainId: number): Record<string, Token> => {
   const map =

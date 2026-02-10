@@ -1,22 +1,22 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
 
-interface CallOptions<T> {
+type CallOptions<T> = {
   defaultValue?: T;
   transform?: (value: unknown, api: ApiPromise) => T;
-}
+};
 
-interface UseCallMultiOptions<T> {
+type UseCallMultiOptions<T> = {
   api: ApiPromise;
   calls?: Array<QueryableStorageMultiArg<'promise'>> | null | false;
   options?: CallOptions<T>;
-}
+};
 
-export async function fetchCallMulti<T>({
+export const fetchCallMulti = async <T>({
   api,
   calls,
   options = {},
-}: UseCallMultiOptions<T>): Promise<T> {
+}: UseCallMultiOptions<T>): Promise<T> => {
   if (!calls || calls.length === 0 || !api.isConnected) {
     return options.defaultValue as T;
   }
@@ -38,4 +38,4 @@ export async function fetchCallMulti<T>({
   } else {
     return options.defaultValue as T;
   }
-}
+};
