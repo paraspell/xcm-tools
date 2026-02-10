@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.6.0...sdk-pjs-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
 ## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v12.5.1...sdk-pjs-v12.6.0) (2026-02-05)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-common-v12.6.0...sdk-common-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+
 ## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v12.5.1...sdk-common-v12.6.0) (2026-02-05)
 
 
