@@ -3,12 +3,12 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
+import { createPayFees } from '../../pallets/polkadotXcm'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSenderAddress, createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import type { createRefundInstruction } from './utils'
-import { createPayFees } from '../../pallets/polkadotXcm'
 
 const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
   { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
