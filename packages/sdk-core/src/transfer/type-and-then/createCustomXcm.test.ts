@@ -35,15 +35,15 @@ describe('createCustomXcm', () => {
     { DepositAsset: unknown }
   > => typeof instruction === 'object' && instruction !== null && 'DepositAsset' in instruction
 
-  const isBuyExecutionStep = (
+  const isPayFeesStep = (
     step: unknown
   ): step is Extract<
     Extract<
       Awaited<ReturnType<typeof createCustomXcm>>[number],
       { DepositReserveAsset: unknown }
     >['DepositReserveAsset']['xcm'][number],
-    { BuyExecution: unknown }
-  > => typeof step === 'object' && step !== null && 'BuyExecution' in step
+    { PayFees: unknown }
+  > => typeof step === 'object' && step !== null && 'PayFees' in step
 
   const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const mockAddress = '0x123'
@@ -161,9 +161,10 @@ describe('createCustomXcm', () => {
       expect(initiateTeleport.dest).toBeDefined()
 
       const xcm = initiateTeleport.xcm
-      expect(xcm).toHaveLength(2)
-      expect(xcm[0]).toHaveProperty('BuyExecution')
-      expect(xcm[1]).toHaveProperty('DepositAsset')
+      expect(xcm).toHaveLength(3)
+      expect(xcm[0]).toHaveProperty('PayFees')
+      expect(xcm[1]).toHaveProperty('RefundSurplus')
+      expect(xcm[2]).toHaveProperty('DepositAsset')
     })
 
     it('uses destination api for beneficiary when bridge between AssetHubPolkadot and AssetHubKusama is in use', async () => {
@@ -214,7 +215,7 @@ describe('createCustomXcm', () => {
       expect(depositReserveAsset.assets.Definite?.[0].fun).toEqual({ Fungible: 1000000n })
     })
 
-    it('calculates BuyExecution fees correctly with DOT included', async () => {
+    it('calculates PayFees correctly with DOT included', async () => {
       const result = await createCustomXcm(
         {
           ...mockContext,
@@ -233,17 +234,15 @@ describe('createCustomXcm', () => {
       const depositReserveInstruction = result.find(isDepositReserveInstruction)
       expect(depositReserveInstruction).toBeDefined()
 
-      const buyExecutionStep =
-        depositReserveInstruction!.DepositReserveAsset.xcm.find(isBuyExecutionStep)
-      expect(buyExecutionStep).toBeDefined()
+      const payFeesStep = depositReserveInstruction!.DepositReserveAsset.xcm.find(isPayFeesStep)
+      expect(payFeesStep).toBeDefined()
 
-      const buyExecution = buyExecutionStep!.BuyExecution
-      expect(buyExecution.fees.fun.Fungible).toBe(200n)
-      expect(buyExecution.fees.id).toEqual(RELAY_LOCATION)
-      expect(buyExecution.weight_limit).toBe('Unlimited')
+      const payFees = payFeesStep!.PayFees
+      expect(payFees.asset.fun.Fungible).toBe(200n)
+      expect(payFees.asset.id).toEqual(RELAY_LOCATION)
     })
 
-    it('calculates BuyExecution fees correctly without DOT', async () => {
+    it('calculates PayFees correctly without DOT', async () => {
       const result = await createCustomXcm(
         { ...mockContext, isRelayAsset: false },
         2,
@@ -259,13 +258,12 @@ describe('createCustomXcm', () => {
       const depositReserveInstruction = result.find(isDepositReserveInstruction)
       expect(depositReserveInstruction).toBeDefined()
 
-      const buyExecutionStep =
-        depositReserveInstruction!.DepositReserveAsset.xcm.find(isBuyExecutionStep)
-      expect(buyExecutionStep).toBeDefined()
+      const payFeesStep = depositReserveInstruction!.DepositReserveAsset.xcm.find(isPayFeesStep)
+      expect(payFeesStep).toBeDefined()
 
-      const buyExecution = buyExecutionStep!.BuyExecution
-      expect(buyExecution.fees.fun.Fungible).toBe(200n)
-      expect(buyExecution.fees.id).toEqual(RELAY_LOCATION)
+      const payFees = payFeesStep!.PayFees
+      expect(payFees.asset.fun.Fungible).toBe(200n)
+      expect(payFees.asset.id).toEqual(RELAY_LOCATION)
     })
 
     it('uses default fees when fees parameter not provided', async () => {
@@ -286,11 +284,9 @@ describe('createCustomXcm', () => {
       const depositReserveAsset = depositReserveInstruction!.DepositReserveAsset
       expect(depositReserveAsset.assets).toHaveProperty('Definite')
 
-      const buyExecutionStep =
-        depositReserveInstruction!.DepositReserveAsset.xcm.find(isBuyExecutionStep)
-      if (buyExecutionStep) {
-        expect(buyExecutionStep.BuyExecution.fees.fun.Fungible).toBe(MIN_AMOUNT)
-      }
+      const payFeesStep = depositReserveInstruction!.DepositReserveAsset.xcm.find(isPayFeesStep)
+      expect(payFeesStep).toBeDefined()
+      expect(payFeesStep!.PayFees.asset.fun.Fungible).toBe(MIN_AMOUNT)
     })
 
     it('throws AmountTooLowError when buyExecutionAmount is negative', async () => {

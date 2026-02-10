@@ -8,6 +8,7 @@ import { assertSenderAddress, createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import type { createRefundInstruction } from './utils'
+import { createPayFees } from '../../pallets/polkadotXcm'
 
 const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
   { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
@@ -104,15 +105,13 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
           Definite: assetsFilter
         }
 
-    const buyExecution = {
-      BuyExecution: {
-        fees: createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized),
-        weight_limit: 'Unlimited'
-      }
-    }
+    const feeInstruction = createPayFees(
+      version,
+      createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized)
+    )
 
     if (isSubBridge) {
-      return [buyExecution, depositInstruction]
+      return [...feeInstruction, depositInstruction]
     }
 
     const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
@@ -126,7 +125,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
           InitiateTeleport: {
             assets: filter,
             dest: destLoc,
-            xcm: [buyExecution, depositInstruction]
+            xcm: [...feeInstruction, depositInstruction]
           }
         }
       ]
@@ -138,7 +137,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
         DepositReserveAsset: {
           assets: filter,
           dest: destLoc,
-          xcm: [buyExecution, depositInstruction]
+          xcm: [...feeInstruction, depositInstruction]
         }
       }
     ]
