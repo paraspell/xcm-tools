@@ -596,6 +596,54 @@ describe('AssetsService', () => {
     });
   });
 
+  describe('getAssetReserveChain', () => {
+    let findAssetInfoOrThrowSpy: MockInstance;
+    let getAssetReserveChainSpy: MockInstance;
+
+    beforeEach(() => {
+      findAssetInfoOrThrowSpy = vi.spyOn(paraspellSdk, 'findAssetInfoOrThrow');
+      getAssetReserveChainSpy = vi.spyOn(paraspellSdk, 'getAssetReserveChain');
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return reserve chain for a valid chain and currency', () => {
+      const location = { parents: 1, interior: { X1: { Parachain: 1000 } } };
+      findAssetInfoOrThrowSpy.mockReturnValue({
+        symbol: 'DOT',
+        decimals: 10,
+        location,
+      });
+      getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot');
+
+      const result = service.getAssetReserveChain(chain, {
+        currency: { symbol },
+      });
+
+      expect(result).toBe('AssetHubPolkadot');
+      expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith(
+        chain,
+        { symbol },
+        null,
+      );
+      expect(getAssetReserveChainSpy).toHaveBeenCalledWith(chain, location);
+    });
+
+    it('should call handleXcmApiError when findAssetInfoOrThrow throws', () => {
+      findAssetInfoOrThrowSpy.mockImplementation(() => {
+        throw new paraspellSdk.InvalidCurrencyError('Asset not found');
+      });
+
+      expect(() =>
+        service.getAssetReserveChain(chain, {
+          currency: { symbol: 'UNKNOWN' },
+        }),
+      ).toThrow(BadRequestException);
+    });
+  });
+
   describe('getFeeAssets', () => {
     it('should return fee assets for a valid chain', () => {
       const chain = 'Acala';

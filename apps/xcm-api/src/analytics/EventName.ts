@@ -5,6 +5,7 @@ export enum EventName {
   GET_ASSET_ID = 'Get Asset Id',
   FIND_ASSET = 'Find Asset',
   GET_ASSET_LOCATION = 'Get Asset Location',
+  GET_ASSET_RESERVE_CHAIN = 'Get Asset Reserve Chain',
   GET_RELAYCHAIN_SYMBOL = 'Get Relaychain Symbol',
   GET_NATIVE_ASSETS = 'Get Native Assets',
   GET_OTHER_ASSETS = 'Get Other Assets',
