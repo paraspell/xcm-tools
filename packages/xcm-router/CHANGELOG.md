@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.6.2...xcm-router-v12.6.3) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Synchronize main versions
+
 ## [12.6.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.6.1...xcm-router-v12.6.2) (2026-02-11)
 
 
