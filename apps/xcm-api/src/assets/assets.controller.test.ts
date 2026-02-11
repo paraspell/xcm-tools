@@ -274,6 +274,25 @@ describe('AssetsController', () => {
     });
   });
 
+  describe('getAssetReserveChain', () => {
+    it('should return reserve chain for a valid chain and currency', () => {
+      const mockResult = 'AssetHubPolkadot';
+      const params = { currency: { symbol: 'DOT' } };
+      const spy = vi
+        .spyOn(assetsService, 'getAssetReserveChain')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getAssetReserveChain(
+        chain,
+        params,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(chain, params);
+    });
+  });
+
   describe('getFeeAssets', () => {
     it('should return fee assets for a valid chain', () => {
       const mockResult = [{ symbol, decimals, isNative: true }] as TAssetInfo[];

@@ -100,6 +100,7 @@ export const AssetsQueries = () => {
       'ASSET_BALANCE',
       'ASSET_LOCATION',
       'ASSET_INFO',
+      'ASSET_RESERVE_CHAIN',
       'EXISTENTIAL_DEPOSIT',
     ]);
 

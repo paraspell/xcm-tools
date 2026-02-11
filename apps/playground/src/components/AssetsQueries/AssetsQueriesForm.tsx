@@ -89,6 +89,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const showSymbolInput =
     func === 'ASSET_ID' ||
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
@@ -98,6 +99,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const supportsCurrencyType =
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
@@ -121,6 +123,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ASSET_BALANCE' ||
     func === 'ASSET_INFO' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'HAS_DRY_RUN_SUPPORT' ||
     func === 'ALL_SYMBOLS';
 

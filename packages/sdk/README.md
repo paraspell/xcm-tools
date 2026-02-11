@@ -399,6 +399,9 @@ import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, ge
 //Get chains that support the specific asset related to origin
 getSupportedDestinations(TChain, CURRENCY)
 
+//Get reserve chain for specific asset on specific chain
+getAssetReserveChain(chain: TSubstrateChain, location: TLocation)
+
 //Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
 findAssetInfo(TChain, CURRENCY, DESTINATION?)
 

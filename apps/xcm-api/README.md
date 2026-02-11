@@ -439,6 +439,17 @@ const response = await fetch("http://localhost:3001/v5/assets/:chain/location", 
     })
 });
 
+// Retrieve reserve chain for specific asset on specific chain
+const response = await fetch("http://localhost:3001/v5//assets/:chain/reserve-chain", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+    })
+});
+
 // Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
 const response = await fetch("http://localhost:3001/v5/assets/:chain/asset-info", {
     method: 'POST',

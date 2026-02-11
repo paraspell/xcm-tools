@@ -66,6 +66,19 @@ export class AssetsController {
     return this.assetsService.getAssetLocation(chain, params);
   }
 
+  @Post('assets/:chain/reserve-chain')
+  getAssetReserveChain(
+    @Param('chain') chain: string,
+    @Body(new ZodValidationPipe(AssetLocationDtoSchema))
+    params: AssetLocationDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_ASSET_RESERVE_CHAIN, req, {
+      chain,
+    });
+    return this.assetsService.getAssetReserveChain(chain, params);
+  }
+
   @Post('assets/:chain/asset-info')
   getAssetInfo(
     @Param('chain') chain: string,
