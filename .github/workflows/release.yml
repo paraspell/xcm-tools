@@ -23,37 +23,69 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NODE_OPTIONS: "--max_old_space_size=8192"
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: "https://registry.npmjs.org"
-      - uses: pnpm/action-setup@v4
-      - run: pnpm install
-      - run: |
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prepare environment
+        run: |
           for app in apps/xcm-api apps/visualizer-be; do
             echo DATABASE_URL="file:./dev.db" > $app/.env
           done
-      - run: pnpm build
-      - run: pnpm compile
-      - run: pnpm format:check
-      - run: pnpm lint:check
-      - run: pnpm test
-      - run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Compile project
+        run: pnpm compile
+
+      - name: Check lint
+        run: pnpm lint:check
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Configure npm auth
+        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: pnpm publish -r --no-git-checks --access=public
+
+      - name: Publish packages
+        run: pnpm publish -r --no-git-checks --access=public
 
   deploy_xcm_api_and_visualizer_be:
     needs: release-please
     if: needs.release-please.outputs.sdk_core_released == 'true'
     runs-on: self-hosted
     steps:
-      - run: git pull
-      - run: pnpm install
-      - run: pnpm --filter xcm-api... build
-      - run: pnpm --filter visualizer-be... build
+      - name: Pull latest changes
+        run: git pull
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build XCM API
+        run: pnpm --filter xcm-api... build
+
+      - name: Build Visualizer BE
+        run: pnpm --filter visualizer-be... build
+
       - name: Restart PM2 process
         run: |
           pm2 restart xcm-api
