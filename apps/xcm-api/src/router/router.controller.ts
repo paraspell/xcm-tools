@@ -40,6 +40,7 @@ export class RouterController {
   }
 
   @Post()
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
   generateExtrinsics(@Body() params: RouterDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, params);
     return this.routerService.generateExtrinsics(params);
