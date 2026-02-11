@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.1...sdk-core-v12.6.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect type in PJS Assets pallet implementation 🔧 ([719aa05](https://github.com/paraspell/xcm-tools/commit/719aa0592bb05e68ca8bfd598fdbb7f6862962bf))
+
 ## [12.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.0...sdk-core-v12.6.1) (2026-02-10)
 
 
