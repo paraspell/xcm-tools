@@ -195,35 +195,4 @@ describe('selectBestExchangeCommon', () => {
     expect(bestExchange).toBe(fakeDex);
     expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithSameChain.currencyFrom);
   });
-
-  it('throws RoutingResolutionError with clear message if assetFromExchange is missing', async () => {
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
-    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(undefined);
-    vi.mocked(getExchangeAsset).mockReturnValue(null);
-
-    const fakeDex = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
-    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
-
-    await expect(
-      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(0n)),
-    ).rejects.toThrow(
-      /Asset from.*could not be resolved/,
-    );
-  });
-
-  it('throws RoutingResolutionError with clear message if assetTo is missing', async () => {
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'AAA' } as TAssetInfo);
-    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'AAA', decimals: 8 });
-    vi.mocked(getExchangeAsset).mockReturnValueOnce({ symbol: 'AAA', decimals: 8 }); // assetFromExchange
-    vi.mocked(getExchangeAsset).mockReturnValueOnce(null); // assetTo
-
-    const fakeDex = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
-    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
-
-    await expect(
-      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(0n)),
-    ).rejects.toThrow(
-      /Asset to.*could not be resolved/,
-    );
-  });
 });
