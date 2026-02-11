@@ -440,7 +440,7 @@ const response = await fetch("http://localhost:3001/v5/assets/:chain/location", 
 });
 
 // Retrieve reserve chain for specific asset on specific chain
-const response = await fetch("http://localhost:3001/v5//assets/:chain/reserve-chain", {
+const response = await fetch("http://localhost:3001/v5/assets/:chain/reserve-chain", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
