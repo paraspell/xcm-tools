@@ -82,6 +82,8 @@ export class AssetsPallet extends BaseAssetsPallet {
       }
     }
 
-    return balance?.balance ?? 0n
+    const value = balance?.balance
+
+    return value !== undefined ? BigInt(value) : 0n
   }
 }
