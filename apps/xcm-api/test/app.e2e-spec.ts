@@ -1253,6 +1253,21 @@ describe('XCM API (e2e)', () => {
           expect(Array.isArray(data)).not.toBeTruthy();
         });
     });
+
+    it(`Router best-amount-out - invalid legacy body returns 400 - ${routerUrl}`, async () => {
+      const invalidBody = {
+        fromAsset: 'DOT',
+        toAsset: 'USDT',
+        amount: 1000000000,
+        fromChain: 'polkadot',
+        toChain: 'statemint',
+      };
+
+      return request(app.getHttpServer())
+        .post(`${routerUrl}/best-amount-out`)
+        .send(invalidBody)
+        .expect(400);
+    });
   });
 
   describe('Asset claim controller', () => {

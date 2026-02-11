@@ -73,17 +73,13 @@ export const selectBestExchangeCommon = async <
         : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
     if (!assetFromExchange) {
-      throw new RoutingResolutionError(
-        `Asset from (${JSON.stringify(currencyFrom)}) could not be resolved for exchange ${exchangeChain}. Please specify a valid asset symbol or location.`
-      );
+      continue;
     }
 
     const assetTo = getExchangeAsset(dex.exchangeChain, currencyTo, true);
 
     if (!assetTo) {
-      throw new RoutingResolutionError(
-        `Asset to (${JSON.stringify(currencyTo)}) could not be resolved for exchange ${exchangeChain}. Please specify a valid asset symbol or location.`
-      );
+      continue;
     }
 
     if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
