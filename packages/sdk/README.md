@@ -479,6 +479,8 @@ console.log(SUPPORTED_PALLETS)
 
 - Run end-to-end tests using `pnpm test:e2e`
 
+- Run full end-to-end tests using `pnpm test:e2e:chopsticks`
+
 - Run all core tests and checks using `pnpm runAll`
 
 > [!NOTE]
