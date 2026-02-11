@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.2...sdk-v12.6.3) (2026-02-11)
+
+
+### Documentation
+
+* Add chopsticks ([bf92346](https://github.com/paraspell/xcm-tools/commit/bf9234612e2946ba9351a5a1765a57e8e27d7c6e))
+
 ## [12.6.2](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.1...sdk-v12.6.2) (2026-02-11)
 
 
