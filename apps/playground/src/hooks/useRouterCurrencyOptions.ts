@@ -78,7 +78,9 @@ export const useRouterCurrencyOptions = (
       const currentKey = JSON.stringify(asset.location);
 
       if (selectedTo && key !== selectedFrom) {
-        const toKey = JSON.stringify(currencyToMap[selectedTo].location ?? {});
+        const toAsset = currencyToMap[selectedTo];
+        if (!toAsset) return [];
+        const toKey = JSON.stringify(toAsset.location ?? {});
         if (!adjacency.get(currentKey)?.has(toKey)) return [];
       }
 
@@ -97,9 +99,9 @@ export const useRouterCurrencyOptions = (
       const currentKey = JSON.stringify(asset.location);
 
       if (selectedFrom && key !== selectedTo) {
-        const fromKey = JSON.stringify(
-          currencyFromMap[selectedFrom].location ?? {},
-        );
+        const fromAsset = currencyFromMap[selectedFrom];
+        if (!fromAsset) return [];
+        const fromKey = JSON.stringify(fromAsset.location ?? {});
         if (!adjacency.get(fromKey)?.has(currentKey)) return [];
       }
 
