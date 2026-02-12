@@ -3,6 +3,7 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
+import { createPayFees } from '../../pallets/polkadotXcm'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSenderAddress, createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
@@ -104,15 +105,13 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
           Definite: assetsFilter
         }
 
-    const buyExecution = {
-      BuyExecution: {
-        fees: createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized),
-        weight_limit: 'Unlimited'
-      }
-    }
+    const buyInstruction = createPayFees(
+      version,
+      createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized)
+    )
 
     if (isSubBridge) {
-      return [buyExecution, depositInstruction]
+      return [...buyInstruction, depositInstruction]
     }
 
     const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
@@ -126,7 +125,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
           InitiateTeleport: {
             assets: filter,
             dest: destLoc,
-            xcm: [buyExecution, depositInstruction]
+            xcm: [...buyInstruction, depositInstruction]
           }
         }
       ]
@@ -138,7 +137,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
         DepositReserveAsset: {
           assets: filter,
           dest: destLoc,
-          xcm: [buyExecution, depositInstruction]
+          xcm: [...buyInstruction, depositInstruction]
         }
       }
     ]
