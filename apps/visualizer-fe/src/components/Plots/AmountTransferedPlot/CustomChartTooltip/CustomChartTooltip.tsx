@@ -18,7 +18,7 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
 import { IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { MouseEvent } from 'react';
@@ -122,7 +122,7 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string, total?: string): number | undefined => {
+const resolveParaId = (label?: string, total?: string): number | undefined => {
   if (!label || (total && label.includes(total))) return undefined;
   return getParaId(label as TSubstrateChain);
 };
@@ -231,7 +231,7 @@ export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => 
       !parachainName.includes(t('charts.amounts.median')) &&
       !parachainName.includes(t('charts.common.total'))
     ) {
-      paraId = getParaId(parachainName);
+      paraId = resolveParaId(parachainName);
     }
 
     const ecosystem: TRelaychain = 'Polkadot';
