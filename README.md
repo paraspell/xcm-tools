@@ -99,6 +99,20 @@ Afterwards, you should be able to use any of the following commands (from reposi
 
 </details>
 
+<details><summary><b>Podcast about XCM Tools:</b></summary>
+<br>
+
+Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools](https://github.com/paraspell/presskit/blob/main/podcasts_notebooklm/ParaSpell_Podcast_by_NotebookLM.wav).
+
+</details>
+
+<details><summary><b>Downtime check:</b></summary>
+<br>
+
+Your favourite tool seems to be down? Check this link to confirm: [status.paraspell.xyz](https://status.paraspell.xyz/)
+
+</details>
+
 <details><summary><b>XCM Tools bug bounty:</b></summary>
 <br>
 
@@ -108,16 +122,7 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 </details>
 
-<details><summary><b>Podcast about XCM Tools</b></summary>
 <br>
-
-Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools](https://github.com/paraspell/presskit/blob/main/podcasts_notebooklm/ParaSpell_Podcast_by_NotebookLM.wav).
-
-</details>
-
-<br>
-
-
 
 **Tools supported by:**
 <p align="center">

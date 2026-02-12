@@ -3,20 +3,23 @@
 <div align="center">
   <h1 align="center">XCM-API</h1>
   <h4 align="center">The 🥇 XCM-API for Polkadot, Kusama, Paseo & Westend ecosystems.</h4>
-  <h4 align="center"> Enhance the cross-chain experience of your decentralized application. Package-lessly.</h4>
+  <h4 align="center">Enhance the cross-chain experience of your decentralized application. Package-lessly.</h4>
+
   <p align="center">
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
+    <a href="https://status.lightspell.xyz/">
+      <img alt="XCM API Status" src="https://status.paraspell.xyz/api/badge/3/status" />
+    </a>
   </p>
-  <p align="center"> Now live at https://api.lightspell.xyz/v5</p>
-  <p>XCM API downtime monitoring <a href = "https://status.lightspell.xyz/" \>[here]</p>
-  <p>XCM API documentation <a href = "https://paraspell.github.io/docs/api/g-started.html" \>[here]</p>	  
-    <p>XCM API starter template project <a href = "https://github.com/paraspell/xcm-api-template
-    " \>[here]</p>
-</div>
 
-<br /><br />
+  <p align="center">Now live at https://api.lightspell.xyz/v5</p>
+
+  <p>XCM API downtime monitoring <a href="https://status.paraspell.xyz/">[here]</a></p>
+  <p>XCM API documentation <a href="https://paraspell.github.io/docs/api/g-started.html">[here]</a></p>
+  <p>XCM API starter template project <a href="https://github.com/paraspell/xcm-api-template">[here]</a></p>
+</div>
 <br /><br />
 
 ## Implementation
