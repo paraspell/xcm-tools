@@ -16,7 +16,7 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -92,7 +92,7 @@ const defaultProps: Partial<ChartTooltipProps> = {
   showColor: true
 };
 
-const getParaId = (label?: string, total?: string): number | undefined => {
+const resolveParaId = (label?: string, total?: string): number | undefined => {
   if (!label || (total && label.includes(total))) return undefined;
   return getParaId(label as TSubstrateChain);
 };
@@ -163,7 +163,7 @@ export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => 
   const labels = getSeriesLabels(series);
   const _label = label || scatterLabel;
 
-  const paraId = getParaId(label as string, t('charts.common.total'));
+  const paraId = resolveParaId(label as string, t('charts.common.total'));
   const ecosystem = filteredPayload[0]?.payload.ecosystem;
 
   const [startDate, endDate] = dateRange;
