@@ -294,6 +294,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     const fromAsset = currencyFromMap[currencyFromOptionId];
     const toAsset = currencyToMap[currencyToOptionId];
 
+    if (!fromAsset || !toAsset) return;
+
     const fromKey = JSON.stringify(fromAsset.location);
     const toKey = JSON.stringify(toAsset.location);
 
