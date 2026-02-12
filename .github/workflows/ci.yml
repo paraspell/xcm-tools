@@ -55,11 +55,9 @@ jobs:
           retention-days: 1
 
   lint-format:
-    name: Lint & Format
+    name: Compile & Lint & Format
     needs: build
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max_old_space_size=8192"
 
     steps:
       - name: Checkout repository
@@ -85,6 +83,9 @@ jobs:
         with:
           name: build-output
 
+      - name: Compile project
+        run: pnpm compile
+
       - name: Run formatting & linting
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.pull_request.head.repo.full_name == github.repository }}" = "true" ]; then
@@ -104,7 +105,7 @@ jobs:
           message: "chore: auto-fix formatting & lint"
 
   test-coverage:
-    name: Compile & Test & Coverage
+    name: Test & Coverage
     needs: build
     runs-on: ubuntu-latest
 
@@ -128,9 +129,6 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: build-output
-
-      - name: Compile project
-        run: pnpm compile
 
       - name: Run tests
         run: pnpm test:cov
