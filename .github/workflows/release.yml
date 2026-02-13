@@ -87,7 +87,7 @@ jobs:
 
       - name: Restart PM2 process
         run: |
-          pm2 restart xcm-api
-          pm2 restart visualizer-be
+          pm2 reload xcm-api
+          pm2 reload visualizer-be
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2
