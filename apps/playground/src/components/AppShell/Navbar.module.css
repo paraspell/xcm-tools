@@ -1,8 +1,3 @@
-.header {
-  padding-bottom: var(--mantine-spacing-md);
-  margin-bottom: calc(var(--mantine-spacing-md) * 0);
-}
-
 .appShellMain {
   background-color: var(--color-body);
   margin-top: 90px;
@@ -14,9 +9,31 @@
   padding: var(--mantine-spacing-xl);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.shellNavbar {
+  transition: width 0.2s ease;
+}
+
+.navbarCollapsed {
+  height: 100%;
+  width: 100%;
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
 }
 
 .socials {
   border-top: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  justify-content: space-between;
+}
+
+.socialsCollapsed {
+  border-top: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
 }
