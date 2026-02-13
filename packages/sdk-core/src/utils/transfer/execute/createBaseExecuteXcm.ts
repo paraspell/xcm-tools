@@ -128,29 +128,80 @@ export const createBaseExecuteXcm = <TRes>(
 
   switch (transferType) {
     case 'InitiateTransfer': {
-      const transferFilter = getInitiateTransferType(chain, destChain, reserveChain)
-      mainInstructions = [
-        {
-          InitiateTransfer: {
-            destination: destLocation,
-            remote_fees: {
-              [transferFilter]: createAssetsFilter(assetLocalized, version)
-            },
-            preserve_origin: true,
-            assets: [
-              {
-                [transferFilter]: createAssetsFilter(assetLocalized, version)
-              }
-            ],
-            remote_xcm: [
-              {
-                RefundSurplus: undefined
+      const isHop = reserveChain !== chain && !isReserveDest
+
+      if (isHop) {
+        // Hop scenario: origin → reserve → destination
+        const transferTypeToReserve = getInitiateTransferType(chain, reserveChain, reserveChain)
+        const transferTypeToDest = getInitiateTransferType(reserveChain, destChain, reserveChain)
+
+        const reserveLocation = getChainLocation(chain, reserveChain)
+        const destFromReserve = createDestination(version, reserveChain, destChain, paraIdTo)
+
+        mainInstructions = [
+          {
+            InitiateTransfer: {
+              destination: reserveLocation,
+              remote_fees: {
+                [transferTypeToReserve]: createAssetsFilter(assetLocalized, version)
               },
-              ...suffixXcm
-            ]
+              preserve_origin: true,
+              assets: [
+                {
+                  [transferTypeToReserve]: createAssetsFilter(assetLocalized, version)
+                }
+              ],
+              remote_xcm: [
+                {
+                  InitiateTransfer: {
+                    destination: destFromReserve,
+                    remote_fees: {
+                      ['ReserveDeposit']: createAssetsFilter(assetLocalizedToReserve, version)
+                    },
+                    preserve_origin: true,
+                    assets: [
+                      {
+                        ['ReserveDeposit']: createAssetsFilter(assetLocalizedToReserve, version)
+                      }
+                    ],
+                    remote_xcm: [
+                      {
+                        RefundSurplus: undefined
+                      },
+                      ...suffixXcm
+                    ]
+                  }
+                }
+              ]
+            }
           }
-        }
-      ]
+        ]
+      } else {
+        // Direct transfer (no hop)
+        const transferFilter = getInitiateTransferType(chain, destChain, reserveChain)
+        mainInstructions = [
+          {
+            InitiateTransfer: {
+              destination: destLocation,
+              remote_fees: {
+                [transferFilter]: createAssetsFilter(assetLocalized, version)
+              },
+              preserve_origin: true,
+              assets: [
+                {
+                  [transferFilter]: createAssetsFilter(assetLocalized, version)
+                }
+              ],
+              remote_xcm: [
+                {
+                  RefundSurplus: undefined
+                },
+                ...suffixXcm
+              ]
+            }
+          }
+        ]
+      }
       break
     }
 

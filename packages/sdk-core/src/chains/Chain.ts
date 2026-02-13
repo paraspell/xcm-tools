@@ -226,15 +226,8 @@ abstract class Chain<TApi, TRes, TSigner> {
       // Transact instruction required separate handling
       // It is only supported in execute or using send extrinsics for < V5
       if (transactOptions?.call) {
-        if (!isTrustedChain(this.chain) && !isTrustedChain(destChain!)) {
-          throw new UnsupportedOperationError(
-            'Transact instruction is only supported for transfers involving trusted chains.'
-          )
-        }
-
         const promise =
           version < Version.V5 ? handleTransactUsingSend(options) : handleExecuteTransfer(options)
-
         return api.deserializeExtrinsics(await promise)
       }
 
