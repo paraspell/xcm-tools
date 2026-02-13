@@ -16,7 +16,21 @@
   flex-direction: column;
 }
 
+.navbarCollapsed {
+  height: 100%;
+  width: 100%;
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
 .socials {
   border-top: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.socialsCollapsed {
+  border-top: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  flex-wrap: wrap;
 }

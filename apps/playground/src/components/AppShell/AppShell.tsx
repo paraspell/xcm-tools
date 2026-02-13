@@ -10,6 +10,7 @@ import {
   useComputedColorScheme,
   useMantineColorScheme,
   useMantineTheme,
+  useMatches,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -19,6 +20,8 @@ import {
   IconBrightnessDown,
   IconChartDots3,
   IconExternalLink,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarRightCollapseFilled,
   IconMoon,
   IconNotes,
   IconRoute,
@@ -45,8 +48,13 @@ import { PageRoute } from '../PageRoute';
 import { Header } from './Header/Header';
 import classes from './Navbar.module.css';
 
+const EXPANDED_NAVBAR_WIDTH = 280;
+const COLLAPSED_NAVBAR_WIDTH = 88;
+
 export const AppShell = () => {
-  const [opened, { toggle }] = useDisclosure();
+  const [mobileMenuOpened, { toggle: toggleMobileMenu }] = useDisclosure();
+  const [desktopMenuOpened, { toggle: toggleDesktopMenu }] =
+    useDisclosure(true);
 
   const {
     connectWallet,
@@ -58,7 +66,7 @@ export const AppShell = () => {
   } = useWallet();
 
   const onMobileMenuClick = () => {
-    toggle();
+    toggleMobileMenu();
   };
 
   const { setColorScheme } = useMantineColorScheme();
@@ -122,14 +130,22 @@ export const AppShell = () => {
   const theme = useMantineTheme();
 
   const colorScheme = useComputedColorScheme();
+  const isDesktop = useMatches({ base: false, xs: true });
+  const isSidebarCollapsed = isDesktop && !desktopMenuOpened;
+  const desktopNavbarWidth = desktopMenuOpened
+    ? EXPANDED_NAVBAR_WIDTH
+    : COLLAPSED_NAVBAR_WIDTH;
 
   return (
     <MantineAppShell
       header={{ height: pinned ? 100 : 64, offset: false }}
       navbar={{
-        width: 280,
+        width: {
+          base: EXPANDED_NAVBAR_WIDTH,
+          xs: desktopNavbarWidth,
+        },
         breakpoint: 'xs',
-        collapsed: { mobile: !opened },
+        collapsed: { mobile: !mobileMenuOpened },
       }}
       padding={{
         base: 16,
@@ -158,7 +174,7 @@ export const AppShell = () => {
       >
         <Header
           onMenuClick={onMobileMenuClick}
-          menuOpened={opened}
+          menuOpened={mobileMenuOpened}
           apiTypeInitialized={isInitialized}
           isLoadingExtensions={isLoadingExtensions}
           isPinned={pinned}
@@ -170,59 +186,103 @@ export const AppShell = () => {
       <MantineAppShell.Navbar
         withBorder={false}
         style={{
-          paddingTop: opened ? 100 : 0,
+          paddingTop: !isDesktop && mobileMenuOpened ? 100 : 0,
         }}
       >
-        <Paper shadow="sm" radius={0} className={classes.navbar}>
-          <Group className={classes.header} pt="0" pb="lg">
-            <Group w={160} flex={1}>
-              <Anchor href="https://paraspell.xyz/" target="_blank">
-                <Image src="/logo.png" fit="contain" px={8} pl={16} />
-              </Anchor>
+        <Paper
+          shadow="sm"
+          radius={0}
+          className={
+            isSidebarCollapsed ? classes.navbarCollapsed : classes.navbar
+          }
+        >
+          <Group
+            className={classes.header}
+            pt="0"
+            pb="lg"
+            justify={isSidebarCollapsed ? 'center' : 'flex-start'}
+          >
+            {!isSidebarCollapsed && (
+              <Group w={160} flex={1}>
+                <Anchor href="https://paraspell.xyz/" target="_blank">
+                  <Image src="/logo.png" fit="contain" px={8} pl={16} />
+                </Anchor>
+              </Group>
+            )}
+            <Group
+              gap="xs"
+              justify={isSidebarCollapsed ? 'center' : 'flex-start'}
+            >
+              <ActionIcon
+                variant="light"
+                size="md"
+                visibleFrom="xs"
+                onClick={toggleDesktopMenu}
+                aria-label={
+                  desktopMenuOpened ? 'Collapse side menu' : 'Expand side menu'
+                }
+              >
+                {isSidebarCollapsed ? (
+                  <IconLayoutSidebarRightCollapseFilled size={16} />
+                ) : (
+                  <IconLayoutSidebarLeftCollapse size={16} />
+                )}
+              </ActionIcon>
+              <ActionIcon variant="light" size="md" onClick={toggleColorScheme}>
+                {computedColorScheme === 'dark' ? (
+                  <IconBrightnessDown size={22} />
+                ) : (
+                  <IconMoon size={14} />
+                )}
+              </ActionIcon>
             </Group>
-            <ActionIcon variant="light" size="md" onClick={toggleColorScheme}>
-              {computedColorScheme === 'dark' ? (
-                <IconBrightnessDown size={22} />
-              ) : (
-                <IconMoon size={14} />
-              )}
-            </ActionIcon>
           </Group>
 
           <LinksGroup
             label="XCM SDK"
             icon={IconBoxSeam}
+            url={PageRoute.XCM_SDK.XCM_TRANSFER}
             links={NAVIGATION_ITEMS}
+            collapsed={isSidebarCollapsed}
+            forceActiveWhenCollapsed
           />
 
           <LinksGroup
             label="XCM Router"
             icon={IconRoute}
             url={PageRoute.XCM_ROUTER}
+            collapsed={isSidebarCollapsed}
           />
 
           <LinksGroup
             label="XCM Analyser"
             icon={IconZoomCode}
             url={PageRoute.XCM_ANALYSER}
+            collapsed={isSidebarCollapsed}
           />
 
           <Stack flex={1} justify="flex-end">
-            <Button
-              component="a"
-              href="https://paraspell.github.io/"
-              target="_blank"
-              variant="outline"
-              rightSection={<IconExternalLink size={16} />}
-            >
-              Read docs
-            </Button>
+            {!isSidebarCollapsed && (
+              <Button
+                component="a"
+                href="https://paraspell.github.io/"
+                target="_blank"
+                variant="outline"
+                rightSection={<IconExternalLink size={16} />}
+              >
+                Read docs
+              </Button>
+            )}
             <Group
               pb="xs"
               pt="md"
-              gap="lg"
-              justify="space-between"
-              className={classes.socials}
+              gap={isSidebarCollapsed ? 'xs' : 'lg'}
+              justify={isSidebarCollapsed ? 'center' : 'space-between'}
+              align={isSidebarCollapsed ? 'center' : 'center'}
+              style={isSidebarCollapsed ? { flexDirection: 'column' } : {}}
+              className={
+                isSidebarCollapsed ? classes.socialsCollapsed : classes.socials
+              }
             >
               <ActionIcon
                 component="a"
