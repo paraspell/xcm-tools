@@ -56,15 +56,15 @@ export const createTransactInstructions = async <TApi, TRes, TSigner>(
   const weightKey = version < Version.V5 ? 'require_weight_at_most' : 'fallback_max_weight'
   const weight = await resolveMaxWeight(api, version, destChain, address, options)
   return [
-    {
-      Transact: {
-        origin_kind: originKind ?? 'SovereignAccount',
-        [weightKey]: convertWeight(weight),
-        call
-      }
-    },
-    {
-      ExpectTransactStatus: { Success: undefined }
-    }
+    // {
+    //   Transact: {
+    //     origin_kind: originKind ?? 'SovereignAccount',
+    //     [weightKey]: convertWeight(weight),
+    //     call
+    //   }
+    // },
+    // {
+    //   ExpectTransactStatus: { Success: undefined }
+    // }
   ]
 }

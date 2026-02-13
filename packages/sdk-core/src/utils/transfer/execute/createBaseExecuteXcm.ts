@@ -6,6 +6,7 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 import { UnsupportedOperationError } from '../../../errors'
 import { createPayFees } from '../../../pallets/polkadotXcm'
 import type { TCreateBaseTransferXcmOptions, TTransactOptions } from '../../../types'
+import { createAsset } from '../../asset'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
@@ -76,6 +77,7 @@ export const createBaseExecuteXcm = <TRes>(
     fees: { originFee, reserveFee },
     version,
     paraIdTo,
+    assetInfo,
     transactOptions,
     suffixXcm = []
   } = options
@@ -143,12 +145,16 @@ export const createBaseExecuteXcm = <TRes>(
             InitiateTransfer: {
               destination: reserveLocation,
               remote_fees: {
-                [transferTypeToReserve]: createAssetsFilter(assetLocalized, version)
+                ['ReserveWithdraw']: {
+                  Definite: [createAsset(version, 1000000000n, assetInfo.location)]
+                }
               },
               preserve_origin: true,
               assets: [
                 {
-                  [transferTypeToReserve]: createAssetsFilter(assetLocalized, version)
+                  ['ReserveWithdraw']: {
+                    Definite: [createAsset(version, 10000000000n, assetInfo.location)]
+                  }
                 }
               ],
               remote_xcm: [
@@ -156,12 +162,16 @@ export const createBaseExecuteXcm = <TRes>(
                   InitiateTransfer: {
                     destination: destFromReserve,
                     remote_fees: {
-                      ['ReserveDeposit']: createAssetsFilter(assetLocalizedToReserve, version)
+                      ReserveDeposit: {
+                        Definite: [createAsset(version, 1000000000n, assetInfo.location)]
+                      }
                     },
                     preserve_origin: true,
                     assets: [
                       {
-                        ['ReserveDeposit']: createAssetsFilter(assetLocalizedToReserve, version)
+                        ['ReserveDeposit']: {
+                          Definite: [createAsset(version, 10000000000n / 2n, assetInfo.location)]
+                        }
                       }
                     ],
                     remote_xcm: [

@@ -125,11 +125,11 @@ export const validateTransact = <TApi, TRes, TSigner>({
     throw new ValidationError('Transact call hex must be a valid hex string.')
   }
 
-  if (isChainEvm(from) || (typeof to === 'string' && isChainEvm(to))) {
-    throw new UnsupportedOperationError(
-      'Transact option is only supported for Substrate to Substrate scenarios.'
-    )
-  }
+  // if (isChainEvm(from) || (typeof to === 'string' && isChainEvm(to))) {
+  //   throw new UnsupportedOperationError(
+  //     'Transact option is only supported for Substrate to Substrate scenarios.'
+  //   )
+  // }
 
   if (
     typeof address === 'string' &&
