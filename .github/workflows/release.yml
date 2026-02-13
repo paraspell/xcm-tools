@@ -16,13 +16,14 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
 
-  publish_packages:
+  publish_packages_and_deploy_websites:
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -67,6 +68,18 @@ jobs:
 
       - name: Publish packages
         run: pnpm publish -r --no-git-checks --access=public
+
+      - name: Publish Playground
+        run: pnpm exec netlify deploy --no-build --prod --site paraspell-playground --filter @paraspell/playground
+
+      - name: Publish Visualizer FE
+        run: pnpm exec netlify deploy --no-build --prod --site xcm-visualizer --filter visualizer-fe
+
+      - name: Publish ParaSpell Website
+        run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
+
+      - name: Publish LightSpell Website
+        run: pnpm exec netlify deploy --no-build --prod --site lightspell-site --filter @paraspell/lightspell-site
 
   deploy_xcm_api_and_visualizer_be:
     needs: release-please
