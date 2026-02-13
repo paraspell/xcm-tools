@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.3...sdk-v12.7.0) (2026-02-13)
+
+
+### Features
+
+* **xcm-api,playground:** Expose getAssetReserveChain ✨ ([81ecaa9](https://github.com/paraspell/xcm-tools/commit/81ecaa90adc333aae4ed374a0301ffd4c749961c))
+
 ## [12.6.3](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.2...sdk-v12.6.3) (2026-02-11)
 
 

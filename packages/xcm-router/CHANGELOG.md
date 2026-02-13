@@ -1,5 +1,18 @@
 # Changelog
 
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.6.3...xcm-router-v12.7.0) (2026-02-13)
+
+
+### Bug Fixes
+
+* **xcm-api:** validate router best-amount-out and add regression test ([93f77d8](https://github.com/paraspell/xcm-tools/commit/93f77d8be2bd1fae31fed49e4aa0d2cc3f103353))
+* **xcm-router:** handle ambiguous asset selection with 400 error and add tests ([d6c2989](https://github.com/paraspell/xcm-tools/commit/d6c2989000879b2604ec103621d1f6bc239c7728))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([ee0fe76](https://github.com/paraspell/xcm-tools/commit/ee0fe763b1b6a4f2d79fc28c86e0243c0b8f642a))
+
 ## [12.6.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.6.2...xcm-router-v12.6.3) (2026-02-11)
 
 

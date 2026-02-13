@@ -1,5 +1,23 @@
 # Changelog
 
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.3...xcm-api-v12.7.0) (2026-02-13)
+
+
+### Features
+
+* **xcm-api,playground:** Expose getAssetReserveChain ✨ ([81ecaa9](https://github.com/paraspell/xcm-tools/commit/81ecaa90adc333aae4ed374a0301ffd4c749961c))
+
+
+### Bug Fixes
+
+* **xcm-api:** validate router best-amount-out and add regression test ([93f77d8](https://github.com/paraspell/xcm-tools/commit/93f77d8be2bd1fae31fed49e4aa0d2cc3f103353))
+
+
+### Documentation
+
+* Add UP/DOWN badge ([3af74c3](https://github.com/paraspell/xcm-tools/commit/3af74c395b4feafb401af24dcd2d01da0b27feaf))
+* Fix API readme ([916505a](https://github.com/paraspell/xcm-tools/commit/916505a98763b10e722d85fb7b7a9c917475674a))
+
 ## [12.6.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.2...xcm-api-v12.6.3) (2026-02-11)
 
 
