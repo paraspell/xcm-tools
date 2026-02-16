@@ -34,7 +34,6 @@ export const LinksGroup: FC<Props> = ({
   url,
   links,
   collapsed = false,
-  forceActiveWhenCollapsed = false,
 }) => {
   const { pathname } = useLocation();
   const hasLinks = Array.isArray(links);
@@ -43,6 +42,8 @@ export const LinksGroup: FC<Props> = ({
   const isChildRouteActive = hasLinks
     ? links.some((linkItem) => linkItem.url === pathname)
     : false;
+  const isLinkActive = (isActive: boolean) =>
+    !displayChildren && (isActive || isChildRouteActive);
   const items = (hasLinks ? links : []).map(({ label, url, Icon }) => (
     <Group
       gap={8}
@@ -79,11 +80,7 @@ export const LinksGroup: FC<Props> = ({
               className={({ isActive }) =>
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 cx(className, {
-                  'active-link':
-                    (isActive && url && !hasLinks) ||
-                    (collapsed &&
-                      forceActiveWhenCollapsed &&
-                      (isActive || isChildRouteActive)),
+                  'active-link': isLinkActive(isActive),
                 })
               }
               to={url}
@@ -99,7 +96,7 @@ export const LinksGroup: FC<Props> = ({
           className={cx(classes.control, {
             [classes.controlCollapsed]: collapsed,
           })}
-          aria-label={collapsed ? label : undefined}
+          aria-label={label}
         >
           <Group justify={collapsed ? 'center' : 'space-between'} gap={0}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>

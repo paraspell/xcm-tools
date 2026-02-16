@@ -14,6 +14,11 @@
   padding: var(--mantine-spacing-xl);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.shellNavbar {
+  transition: width 0.2s ease;
 }
 
 .navbarCollapsed {
@@ -33,4 +38,5 @@
   border-top: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   flex-wrap: wrap;
+  flex-direction: column;
 }

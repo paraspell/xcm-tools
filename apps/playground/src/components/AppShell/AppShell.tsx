@@ -50,11 +50,13 @@ import classes from './Navbar.module.css';
 
 const EXPANDED_NAVBAR_WIDTH = 280;
 const COLLAPSED_NAVBAR_WIDTH = 88;
+const SIDEBAR_STORAGE_KEY = 'xcm-tools:sidebar-opened';
 
 export const AppShell = () => {
   const [mobileMenuOpened, { toggle: toggleMobileMenu }] = useDisclosure();
-  const [desktopMenuOpened, { toggle: toggleDesktopMenu }] =
-    useDisclosure(true);
+  const [desktopMenuOpened, setDesktopMenuOpened] = useState<boolean>(() => {
+    return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) !== 'false';
+  });
 
   const {
     connectWallet,
@@ -67,6 +69,10 @@ export const AppShell = () => {
 
   const onMobileMenuClick = () => {
     toggleMobileMenu();
+  };
+
+  const toggleDesktopMenu = () => {
+    setDesktopMenuOpened((prev) => !prev);
   };
 
   const { setColorScheme } = useMantineColorScheme();
@@ -92,6 +98,10 @@ export const AppShell = () => {
       document.head.removeChild(link);
     };
   }, [computedColorScheme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(desktopMenuOpened));
+  }, [desktopMenuOpened]);
 
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
@@ -185,6 +195,7 @@ export const AppShell = () => {
       </MantineAppShell.Header>
       <MantineAppShell.Navbar
         withBorder={false}
+        className={classes.shellNavbar}
         style={{
           paddingTop: !isDesktop && mobileMenuOpened ? 100 : 0,
         }}
@@ -212,6 +223,9 @@ export const AppShell = () => {
             <Group
               gap="xs"
               justify={isSidebarCollapsed ? 'center' : 'flex-start'}
+              style={{
+                flexDirection: isSidebarCollapsed ? 'column' : 'row',
+              }}
             >
               <ActionIcon
                 variant="light"
@@ -244,7 +258,6 @@ export const AppShell = () => {
             url={PageRoute.XCM_SDK.XCM_TRANSFER}
             links={NAVIGATION_ITEMS}
             collapsed={isSidebarCollapsed}
-            forceActiveWhenCollapsed
           />
 
           <LinksGroup
@@ -278,8 +291,7 @@ export const AppShell = () => {
               pt="md"
               gap={isSidebarCollapsed ? 'xs' : 'lg'}
               justify={isSidebarCollapsed ? 'center' : 'space-between'}
-              align={isSidebarCollapsed ? 'center' : 'center'}
-              style={isSidebarCollapsed ? { flexDirection: 'column' } : {}}
+              align="center"
               className={
                 isSidebarCollapsed ? classes.socialsCollapsed : classes.socials
               }
