@@ -10,14 +10,12 @@ import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-const updateAsset = (asset: TAsset, amount: bigint): TAsset => {
-  return {
-    ...asset,
-    fun: {
-      Fungible: amount
-    }
+const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
+  ...asset,
+  fun: {
+    Fungible: amount
   }
-}
+})
 
 const getInstructionType = <TRes>(
   version: Version,
