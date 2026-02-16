@@ -8,6 +8,10 @@ import {
 } from '@paraspell/xcm-router';
 import { useMemo } from 'react';
 
+const getLabel = (asset: TAssetInfo) => {
+  return `${asset.symbol} - ${'assetId' in asset ? asset.assetId : 'Location'}`;
+};
+
 const assetKeys = (asset: { location: TLocation }): string[] => {
   const keys: string[] = [];
   keys.push(JSON.stringify(asset.location));
@@ -87,7 +91,7 @@ export const useRouterCurrencyOptions = (
       return [
         {
           value: key,
-          label: asset.symbol,
+          label: getLabel(asset),
         },
       ];
     });
@@ -108,7 +112,7 @@ export const useRouterCurrencyOptions = (
       return [
         {
           value: key,
-          label: asset.symbol,
+          label: getLabel(asset),
         },
       ];
     });

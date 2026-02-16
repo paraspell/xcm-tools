@@ -3,6 +3,7 @@ import {
   findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
+  isBridgedSystemAsset,
   type TAssetInfo
 } from '@paraspell/assets'
 import { isExternalChain, isTLocation, Parents } from '@paraspell/sdk-common'
@@ -27,6 +28,7 @@ vi.mock('@paraspell/assets', () => ({
   findAssetInfoOnDest: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isAssetEqual: vi.fn(),
+  isBridgedSystemAsset: vi.fn(),
   isStableCoinAsset: vi.fn()
 }))
 
@@ -40,6 +42,7 @@ describe('validateAssetSupport', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
   })
 
   it('should not throw when bridged asset matches target relay consensus', () => {
@@ -64,6 +67,7 @@ describe('validateAssetSupport', () => {
     vi.mocked(findAssetInfoOnDest).mockReturnValue(asset)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(true)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
     expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
@@ -92,6 +96,7 @@ describe('validateAssetSupport', () => {
 
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       InvalidCurrencyError

@@ -1,4 +1,10 @@
-import { getAssets, isAssetEqual, type TChain } from '@paraspell/sdk';
+import {
+  getAssets,
+  isAssetEqual,
+  isExternalChain,
+  isSystemAsset,
+  type TChain,
+} from '@paraspell/sdk';
 
 import { EXCHANGE_CHAINS } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
@@ -17,28 +23,36 @@ export const getSupportedAssetsTo = (
   to: TChain | undefined,
 ): TRouterAsset[] => {
   if (exchange === undefined) {
-    let allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
+    const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
       getExchangeAssets(exchangeChain),
     ).flat();
     if (to) {
       const toAssets = getAssets(to);
 
-      allExchangeAssets = allExchangeAssets.filter((asset) =>
+      const filteredExchangeAssets = allExchangeAssets.filter((asset) =>
         toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
       );
+      if (isExternalChain(to)) {
+        filteredExchangeAssets.push(...allExchangeAssets.filter((asset) => isSystemAsset(asset)));
+      }
+      return filteredExchangeAssets;
     }
     return allExchangeAssets;
   }
 
-  let exchangeAssets = Array.isArray(exchange)
+  const exchangeAssets = Array.isArray(exchange)
     ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
     : getExchangeAssets(exchange);
 
   if (to) {
     const toAssets = getAssets(to);
-    exchangeAssets = exchangeAssets.filter((asset) =>
+    const filteredExchangeAssets = exchangeAssets.filter((asset) =>
       toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
     );
+    if (isExternalChain(to)) {
+      filteredExchangeAssets.push(...exchangeAssets.filter((asset) => isSystemAsset(asset)));
+    }
+    return filteredExchangeAssets;
   }
 
   return exchangeAssets;
