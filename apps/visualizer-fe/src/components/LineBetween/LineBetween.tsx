@@ -1,12 +1,11 @@
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame } from '@react-three/fiber';
-import type { FC } from 'react';
-import { useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import type { InstancedMesh, LineCurve3, Mesh, MeshStandardMaterial } from 'three';
 import { DoubleSide, Object3D, Vector3 } from 'three';
 
+import { makeConnKey } from '../../context/LiveData/LiveDataContext';
 import { useLiveData } from '../../context/LiveData/useLiveData';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { Message } from './LineBetween.types';
 import {
   computeMessageSpeed,
@@ -14,7 +13,6 @@ import {
   ensureOrUpdateCurve,
   ensureTubeGeometry,
   MAX_INSTANCES,
-  pickLineColor,
   setLineMaterial,
   spawnIfDue,
   tickMessages,
@@ -25,34 +23,24 @@ type Props = {
   startObject: Object3D | null;
   endObject: Object3D | null;
   lineWidth: number;
-  isHighlighted: boolean;
-  isSelected: boolean;
-  isSecondary: boolean;
+  color: string;
   onClick: (event: ThreeEvent<MouseEvent>) => void;
   ecosystem: string;
   fromParaId: number;
   toParaId: number;
 };
 
-export const LineBetween: FC<Props> = ({
+const LineBetweenInner = ({
   startObject,
   endObject,
   lineWidth,
-  isHighlighted,
-  isSelected,
-  isSecondary,
+  color,
   onClick,
   ecosystem,
   fromParaId,
   toParaId
-}) => {
-  const {
-    primaryChannelColor,
-    highlightedChannelColor,
-    secondaryChannelColor,
-    selectedChannelColor
-  } = useSelectedParachain();
-  const { liveDataEnabled, getQueueForConnection, makeConnKey } = useLiveData();
+}: Props) => {
+  const { liveDataEnabled, getQueueForConnection } = useLiveData();
 
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<MeshStandardMaterial>(null);
@@ -69,25 +57,6 @@ export const LineBetween: FC<Props> = ({
   const liveSeenRef = useRef<Set<string>>(new Set());
   const sphereSize = useMemo(() => computeSphereSize(lineWidth), [lineWidth]);
   const messageSpeed = useMemo(() => computeMessageSpeed(lineWidth), [lineWidth]);
-
-  const color = useMemo(
-    () =>
-      pickLineColor(isHighlighted, isSelected, isSecondary, {
-        primary: primaryChannelColor,
-        highlighted: highlightedChannelColor,
-        secondary: secondaryChannelColor,
-        selected: selectedChannelColor
-      }),
-    [
-      isHighlighted,
-      isSelected,
-      isSecondary,
-      primaryChannelColor,
-      highlightedChannelColor,
-      secondaryChannelColor,
-      selectedChannelColor
-    ]
-  );
 
   const connKey = useMemo(
     () => makeConnKey(ecosystem, fromParaId, toParaId),
@@ -190,3 +159,5 @@ export const LineBetween: FC<Props> = ({
     </group>
   );
 };
+
+export const LineBetween = memo(LineBetweenInner);

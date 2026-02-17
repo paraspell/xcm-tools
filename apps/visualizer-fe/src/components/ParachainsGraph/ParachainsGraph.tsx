@@ -1,7 +1,7 @@
 import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { FC } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Group, Object3D } from 'three';
 
 import { BASE_CHAIN_SCALE, RELAYCHAIN_ID } from '../../consts/consts';
@@ -16,6 +16,7 @@ import {
   getParachainEcosystem
 } from '../../utils/utils';
 import { LineBetween } from '../LineBetween/LineBetween';
+import { pickLineColor } from '../LineBetween/LineBetween.utils';
 import { Parachain } from '../Parachain/Parachain';
 import { Relaychain } from '../Relaychain/Relaychain';
 
@@ -33,7 +34,13 @@ export const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosy
     setSelectedChannel,
     setChannelAlertOpen,
     parachainArrangement,
-    toggleActiveEditParachain
+    toggleActiveEditParachain,
+    primaryChannelColor,
+    highlightedChannelColor,
+    secondaryChannelColor,
+    selectedChannelColor,
+    activeEditParachain,
+    animationEnabled
   } = useSelectedParachain();
 
   const [refsInitialized, setRefsInitialized] = useState(false);
@@ -67,28 +74,52 @@ export const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosy
     return scales;
   }, [sortedParachainNames, paraIdToCountMap, parachainArrangement]);
 
-  const handleParachainClick = (chain: TSubstrateChain) => {
-    toggleParachain(chain);
-  };
+  const handleParachainClick = useCallback(
+    (chain: TSubstrateChain) => toggleParachain(chain),
+    [toggleParachain]
+  );
 
-  const onRightClick = (chain: TSubstrateChain) => {
-    if (ecosystem) {
-      toggleActiveEditParachain(chain);
-    }
-  };
+  const onRightClick = useCallback(
+    (chain: TSubstrateChain) => {
+      if (ecosystem) toggleActiveEditParachain(chain);
+    },
+    [ecosystem, toggleActiveEditParachain]
+  );
 
-  const onRelaychainClick = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
-    toggleParachain(ecosystem);
-  };
-
-  const onChannelClick =
-    (channel: ChannelsQuery['channels'][number]) => (event: ThreeEvent<MouseEvent>) => {
+  const onRelaychainClick = useCallback(
+    (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
+      toggleParachain(ecosystem);
+    },
+    [ecosystem, toggleParachain]
+  );
 
-      setChannelAlertOpen(true);
-      setSelectedChannel(channel);
+  const channelClickCache = useRef(new Map<number, (event: ThreeEvent<MouseEvent>) => void>());
+  const getChannelClickHandler = useCallback(
+    (channel: ChannelsQuery['channels'][number]) => {
+      const cached = channelClickCache.current.get(channel.id);
+      if (cached) return cached;
+      const handler = (event: ThreeEvent<MouseEvent>) => {
+        event.stopPropagation();
+        setChannelAlertOpen(true);
+        setSelectedChannel(channel);
+      };
+      channelClickCache.current.set(channel.id, handler);
+      return handler;
+    },
+    [setChannelAlertOpen, setSelectedChannel]
+  );
+
+  const refCallbackCache = useRef(new Map<string, (el: Object3D | null) => void>());
+  const getRefCallback = useCallback((key: string) => {
+    const cached = refCallbackCache.current.get(key);
+    if (cached) return cached;
+    const cb = (el: Object3D | null) => {
+      parachainRefs.current[key] = el;
     };
+    refCallbackCache.current.set(key, cb);
+    return cb;
+  }, []);
 
   const selectedParachainIds = useMemo(() => {
     const ids = new Set<number>();
@@ -172,9 +203,9 @@ export const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosy
             isSelected={selectedParachainsSet.has(chain)}
             scale={parachainScales[chain] ?? BASE_CHAIN_SCALE}
             ecosystem={ecosystem}
-            ref={el => {
-              parachainRefs.current[`${ecosystem};${chain}`] = el;
-            }}
+            activeEditParachain={activeEditParachain}
+            animationEnabled={animationEnabled}
+            ref={getRefCallback(`${ecosystem};${chain}`)}
           />
         );
       })}
@@ -210,16 +241,21 @@ export const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosy
 
           const isSelected = selectedChannel?.id === channel.id;
 
+          const color = pickLineColor(isHighlighted, isSelected, isSecondary, {
+            primary: primaryChannelColor,
+            highlighted: highlightedChannelColor,
+            secondary: secondaryChannelColor,
+            selected: selectedChannelColor
+          });
+
           return (
             <LineBetween
               key={channel.id}
               startObject={senderObject}
               endObject={recipientObject}
               lineWidth={lineWidth}
-              isHighlighted={isHighlighted}
-              isSelected={isSelected}
-              isSecondary={isSecondary}
-              onClick={onChannelClick(channel)}
+              color={color}
+              onClick={getChannelClickHandler(channel)}
               ecosystem={ecosystem}
               fromParaId={channel.sender}
               toParaId={channel.recipient}

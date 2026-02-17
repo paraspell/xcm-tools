@@ -3,13 +3,12 @@ import { Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { easePoly } from 'd3-ease';
-import type { FC, RefCallback } from 'react';
-import { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import type { RefCallback } from 'react';
+import { memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import type { Group, Mesh, MeshStandardMaterial, SphereGeometry } from 'three';
 import { Color, TextureLoader } from 'three';
 
 import { FONT_URL } from '../../consts/consts';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useAdjustUVs } from '../../hooks/useAdjustUVs';
 import { getChainNameNoEcosystem } from '../../utils';
 import { lightenColor } from '../../utils/lightenColor';
@@ -28,10 +27,12 @@ type Props = {
   onRightClick: (name: TSubstrateChain) => void;
   scale: number;
   ecosystem: TRelaychain;
+  activeEditParachain: TSubstrateChain | null;
+  animationEnabled: boolean;
   ref: RefCallback<Group | null>;
 };
 
-export const Parachain: FC<Props> = ({
+const ParachainInner = ({
   ref,
   name,
   index,
@@ -39,10 +40,10 @@ export const Parachain: FC<Props> = ({
   onClick,
   onRightClick,
   scale,
-  ecosystem
-}) => {
-  const { activeEditParachain, animationEnabled } = useSelectedParachain();
-
+  ecosystem,
+  activeEditParachain,
+  animationEnabled
+}: Props) => {
   const initialPosition = useMemo(() => getParachainPosition(index, ecosystem), [index, ecosystem]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [floatingOffset, setFloatingOffset] = useState<number>(0);
@@ -162,3 +163,5 @@ export const Parachain: FC<Props> = ({
     </group>
   );
 };
+
+export const Parachain = memo(ParachainInner);
