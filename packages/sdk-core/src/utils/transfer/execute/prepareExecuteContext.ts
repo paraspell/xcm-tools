@@ -14,6 +14,8 @@ export type TExecuteContext = {
   assetLocalizedToReserve: TAsset
   feeAsset?: TAsset
   feeAssetLocalized?: TAsset
+  feeAssetLocalizedToDest?: TAsset
+  feeAssetLocalizedToReserve?: TAsset
   reserveChain: TSubstrateChain
 }
 
@@ -52,6 +54,20 @@ export const prepareExecuteContext = <TRes>({
       ? createAsset(version, originFee, localizeLocation(chain, feeAssetInfo.location))
       : undefined
 
+  const feeAssetLocalizedToDest =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(version, originFee, localizeLocation(destChain, feeAssetInfo.location))
+      : undefined
+
+  const feeAssetLocalizedToReserve =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(
+          version,
+          originFee,
+          localizeLocation(reserveChain ?? chain, feeAssetInfo.location)
+        )
+      : undefined
+
   return {
     amount,
     asset,
@@ -60,6 +76,8 @@ export const prepareExecuteContext = <TRes>({
     assetLocalizedToReserve,
     feeAsset,
     feeAssetLocalized,
+    feeAssetLocalizedToDest,
+    feeAssetLocalizedToReserve,
     reserveChain
   }
 }

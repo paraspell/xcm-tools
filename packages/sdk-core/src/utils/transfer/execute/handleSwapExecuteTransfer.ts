@@ -1,5 +1,15 @@
-import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  findNativeAssetInfoOrThrow,
+  hasXcmPaymentApiSupport,
+  isAssetEqual,
+  type TCurrencyCore
+} from '@paraspell/assets'
+import {
+  isExternalChain,
+  type TChain,
+  type TParachain,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -13,6 +23,7 @@ import type {
   TSwapFeeEstimates,
   TWeight
 } from '../../../types'
+import { getRelayChainOf } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
 import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
 import { createExecuteCall } from './createExecuteCall'
@@ -196,6 +207,14 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
 
   const version = pickRouterCompatibleXcmVersion(chain, exchangeChain, destChain)
 
+  const isEthereumDest = destChain !== undefined && isExternalChain(destChain)
+
+  // When main asset is DOT and dest is Ethereum, fees come from the same asset
+  // (no separate fee asset needed). Only skip fee validation when currencies differ.
+  const hasSeparateFeeAsset =
+    isEthereumDest &&
+    !isAssetEqual(assetFrom, findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain)))
+
   const internalOptions = {
     ...options,
     version,
@@ -228,7 +247,10 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
   }
 
   const totalFeesPre = calculateTotalFees(chain, fees)
-  validateAmount(assetFrom.amount, totalFeesPre)
+
+  if (!hasSeparateFeeAsset) {
+    validateAmount(assetFrom.amount, totalFeesPre)
+  }
 
   // First dry run with dummy fees to extract actual fees
   const { call: initialCall } = await createXcmAndCall({
@@ -266,15 +288,20 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     // We set the exchange fee to non-zero value to prevent creating dummy tx
     extractedFees.exchangeFee = MIN_FEE
   }
-
   const totalFees = calculateTotalFees(chain, extractedFees)
 
-  validateAmount(assetFrom.amount, totalFees)
+  if (!hasSeparateFeeAsset) {
+    validateAmount(assetFrom.amount, totalFees)
+  }
 
   let updatedAssetTo = assetTo
 
   if (chain) {
-    const amountAvailableForSwap = assetFrom.amount - totalFees
+    // When fees are paid from a separate asset (e.g. DOT for Ethereum),
+    // the full main asset amount is available for the swap
+    const amountAvailableForSwap = hasSeparateFeeAsset
+      ? assetFrom.amount
+      : assetFrom.amount - totalFees
 
     const recalculatedMinAmountOut = await calculateMinAmountOut(amountAvailableForSwap)
 

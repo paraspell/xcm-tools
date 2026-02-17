@@ -145,6 +145,35 @@ describe('prepareCommonExecuteXcm', () => {
     expect(buyExecution.BuyExecution.fees).toBe(mockAsset)
   })
 
+  it('uses jit_withdraw when useJitWithdraw is true even with fee asset', () => {
+    const optionsWithFee = {
+      ...baseOptions,
+      feeAssetInfo: {
+        location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+      },
+      useJitWithdraw: true
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>
+
+    const contextWithFee = {
+      ...mockContext,
+      feeAssetLocalized: mockFeeAsset
+    }
+
+    vi.mocked(prepareExecuteContext).mockReturnValue(contextWithFee)
+    vi.mocked(sortAssets).mockReturnValue([mockAsset, mockFeeAsset])
+
+    const result = prepareCommonExecuteXcm(optionsWithFee)
+
+    // DOT should still be in WithdrawAsset
+    expect(sortAssets).toHaveBeenCalledWith([mockAsset, mockFeeAsset])
+
+    // But should use jit_withdraw instead of BuyExecution
+    expect(result.prefix).toEqual([
+      { WithdrawAsset: [mockAsset, mockFeeAsset] },
+      { SetFeesMode: { jit_withdraw: true } }
+    ])
+  })
+
   it('uses custom assetToDeposit when provided', () => {
     const customAsset = { id: {}, fun: { Fungible: 500n } } as TAsset
     prepareCommonExecuteXcm(baseOptions, customAsset)

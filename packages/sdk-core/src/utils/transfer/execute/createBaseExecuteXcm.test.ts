@@ -91,16 +91,24 @@ describe('createBaseExecuteXcm', () => {
 
     it('should handle teleport with fee multi-asset', () => {
       vi.mocked(isTrustedChain).mockReturnValue(true)
+
+      const mockFeeAssetToDest: TAsset = {
+        id: { Concrete: { parents: 1, interior: 'Here' } },
+        fun: { Fungible: 100n }
+      }
+
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
-        feeAsset: {} as TAsset
+        feeAsset: {} as TAsset,
+        feeAssetLocalizedToDest: mockFeeAssetToDest
       })
 
-      const result = createBaseExecuteXcm(mockBaseOptions)
+      const result = createBaseExecuteXcm({ ...mockBaseOptions, useFeeAssetOnHops: true })
 
       const teleportInstruction = result[0] as any
       const buyExecution = teleportInstruction.InitiateTeleport.xcm[0].BuyExecution
-      expect(buyExecution.fees.fun.Fungible).toBe(10000n)
+      expect(buyExecution.fees).toBe(mockFeeAssetToDest)
+      expect(buyExecution.fees.fun.Fungible).toBe(100n)
     })
 
     it('should include suffix XCM instructions', () => {
@@ -189,18 +197,37 @@ describe('createBaseExecuteXcm', () => {
 
     it('should handle reserve transfer with fee multi-asset', () => {
       vi.mocked(isTrustedChain).mockReturnValue(false)
+
+      const mockFeeAssetToReserve: TAsset = {
+        id: { Concrete: { parents: 1, interior: 'Here' } },
+        fun: { Fungible: 100n }
+      }
+      const mockFeeAssetToDest: TAsset = {
+        id: { Concrete: { parents: 1, interior: 'Here' } },
+        fun: { Fungible: 100n }
+      }
+
       vi.mocked(prepareExecuteContext).mockReturnValue({
         ...mockPrepareExecuteContext,
         reserveChain: 'Acala',
-        feeAsset: {} as TAsset
+        feeAsset: {} as TAsset,
+        feeAssetLocalizedToReserve: mockFeeAssetToReserve,
+        feeAssetLocalizedToDest: mockFeeAssetToDest
       })
 
-      const result = createBaseExecuteXcm(mockBaseOptions)
+      const result = createBaseExecuteXcm({ ...mockBaseOptions, useFeeAssetOnHops: true })
 
       const reserveInstruction = result[0] as any
+      // InitiateReserveWithdraw BuyExecution uses fee asset directly
+      const reserveBuyExecution = reserveInstruction.InitiateReserveWithdraw.xcm[0].BuyExecution
+      expect(reserveBuyExecution.fees).toBe(mockFeeAssetToReserve)
+      expect(reserveBuyExecution.fees.fun.Fungible).toBe(100n)
+
+      // DepositReserveAsset BuyExecution uses fee asset directly
       const depositAsset = reserveInstruction.InitiateReserveWithdraw.xcm[1].DepositReserveAsset
-      const buyExecution = depositAsset.xcm[0].BuyExecution
-      expect(buyExecution.fees.fun.Fungible).toBe(9950n) // amount - reserveFee only
+      const destBuyExecution = depositAsset.xcm[0].BuyExecution
+      expect(destBuyExecution.fees).toBe(mockFeeAssetToDest)
+      expect(destBuyExecution.fees.fun.Fungible).toBe(100n)
     })
   })
 

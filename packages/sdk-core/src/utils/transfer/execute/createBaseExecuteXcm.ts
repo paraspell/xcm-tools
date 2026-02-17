@@ -66,7 +66,9 @@ const getInitiateTransferType = (
 }
 
 export const createBaseExecuteXcm = <TRes>(
-  options: TCreateBaseTransferXcmOptions<TRes> & { suffixXcm?: unknown[] }
+  options: TCreateBaseTransferXcmOptions<TRes> & {
+    suffixXcm?: unknown[]
+  }
 ) => {
   const {
     chain,
@@ -75,6 +77,7 @@ export const createBaseExecuteXcm = <TRes>(
     version,
     paraIdTo,
     transactOptions,
+    useFeeAssetOnHops,
     suffixXcm = []
   } = options
 
@@ -84,8 +87,13 @@ export const createBaseExecuteXcm = <TRes>(
     assetLocalizedToReserve,
     assetLocalizedToDest,
     feeAsset,
+    feeAssetLocalizedToReserve,
+    feeAssetLocalizedToDest,
     reserveChain
   } = prepareExecuteContext(options)
+
+  const hopFeeAssetToReserve = useFeeAssetOnHops ? feeAssetLocalizedToReserve : undefined
+  const hopFeeAssetToDest = useFeeAssetOnHops ? feeAssetLocalizedToDest : undefined
 
   const destLocation = createDestination(version, chain, destChain, paraIdTo)
 
@@ -96,6 +104,10 @@ export const createBaseExecuteXcm = <TRes>(
   }
 
   const transferType = getInstructionType(version, chain, destChain, reserveChain, transactOptions)
+
+  const routingAssetsFilter = feeAsset
+    ? { Wild: { AllCounted: 2 } }
+    : createAssetsFilter(assetLocalized, version)
 
   const isReserveDest = reserveChain === destChain
 
@@ -109,12 +121,11 @@ export const createBaseExecuteXcm = <TRes>(
             xcm: [
               ...createPayFees(
                 version,
-                updateAsset(
-                  assetLocalizedToDest,
-                  reserveFee === 1000n
-                    ? amount / 2n
-                    : amount - (feeAsset ? reserveFee : originFee + reserveFee)
-                )
+                hopFeeAssetToDest ??
+                  updateAsset(
+                    assetLocalizedToDest,
+                    reserveFee === 1000n ? amount / 2n : amount - originFee - reserveFee
+                  )
               ),
               ...suffixXcm
             ]
@@ -132,12 +143,12 @@ export const createBaseExecuteXcm = <TRes>(
           InitiateTransfer: {
             destination: destLocation,
             remote_fees: {
-              [transferFilter]: createAssetsFilter(assetLocalized, version)
+              [transferFilter]: routingAssetsFilter
             },
             preserve_origin: true,
             assets: [
               {
-                [transferFilter]: createAssetsFilter(assetLocalized, version)
+                [transferFilter]: routingAssetsFilter
               }
             ],
             remote_xcm: [
@@ -157,12 +168,12 @@ export const createBaseExecuteXcm = <TRes>(
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(assetLocalized, version),
+            assets: routingAssetsFilter,
             dest: destLocation,
             xcm: [
               ...createPayFees(
                 version,
-                updateAsset(assetLocalizedToDest, feeAsset ? amount : amount - originFee)
+                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFee)
               ),
               ...suffixXcm
             ]
@@ -176,12 +187,12 @@ export const createBaseExecuteXcm = <TRes>(
       mainInstructions = [
         {
           InitiateTeleport: {
-            assets: createAssetsFilter(assetLocalized, version),
+            assets: routingAssetsFilter,
             dest: getChainLocation(chain, reserveChain),
             xcm: [
               ...createPayFees(
                 version,
-                updateAsset(assetLocalizedToReserve, feeAsset ? amount : amount - originFee)
+                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - originFee)
               ),
               // Then deposit to final destination
               ...resolvedDepositInstruction
@@ -196,14 +207,14 @@ export const createBaseExecuteXcm = <TRes>(
       mainInstructions = [
         {
           InitiateReserveWithdraw: {
-            assets: createAssetsFilter(assetLocalized, version),
+            assets: routingAssetsFilter,
             reserve: getChainLocation(chain, reserveChain),
             xcm: [
               ...createPayFees(
                 version,
-                // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
+                // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
                 // than requested, so we need to account for that
-                updateAsset(assetLocalizedToReserve, amount - 2n)
+                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
               ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
