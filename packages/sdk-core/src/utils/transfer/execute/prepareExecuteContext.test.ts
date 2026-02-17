@@ -59,6 +59,8 @@ describe('prepareExecuteContext', () => {
       assetLocalizedToReserve: mockAsset,
       feeAsset: undefined,
       feeAssetLocalized: undefined,
+      feeAssetLocalizedToDest: undefined,
+      feeAssetLocalizedToReserve: undefined,
       reserveChain: 'AssetHubPolkadot'
     })
   })
@@ -75,11 +77,13 @@ describe('prepareExecuteContext', () => {
 
     const result = prepareExecuteContext(optionsWithFee)
 
-    expect(createAsset).toHaveBeenCalledTimes(6) // 4 base + 2 fee assets
-    expect(localizeLocation).toHaveBeenCalledTimes(4) // 3 base + 1 fee asset
+    expect(createAsset).toHaveBeenCalledTimes(8) // 4 base + 4 fee assets
+    expect(localizeLocation).toHaveBeenCalledTimes(6) // 3 base + 3 fee assets
 
     expect(result.feeAsset).toBe(mockAsset)
     expect(result.feeAssetLocalized).toBe(mockAsset)
+    expect(result.feeAssetLocalizedToDest).toBe(mockAsset)
+    expect(result.feeAssetLocalizedToReserve).toBe(mockAsset)
   })
 
   it('does not create fee assets when fee asset equals main asset', () => {
@@ -98,6 +102,8 @@ describe('prepareExecuteContext', () => {
     expect(createAsset).toHaveBeenCalledTimes(4) // Only base assets
     expect(result.feeAsset).toBeUndefined()
     expect(result.feeAssetLocalized).toBeUndefined()
+    expect(result.feeAssetLocalizedToDest).toBeUndefined()
+    expect(result.feeAssetLocalizedToReserve).toBeUndefined()
   })
 
   it('localizes to different chains correctly', () => {

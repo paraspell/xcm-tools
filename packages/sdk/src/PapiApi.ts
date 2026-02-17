@@ -358,8 +358,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TPapiTransaction>) {
-    const { chain, address } = options
-    if (!chain.startsWith('Hydration'))
+    const { chain, address, feeAsset } = options
+
+    if (!chain.startsWith('Hydration') || feeAsset)
       return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
 
     const assetId = await this.api

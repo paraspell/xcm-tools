@@ -1,8 +1,20 @@
-import { findAssetInfoOrThrow, getNativeAssetSymbol, Native, type TAsset } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  findNativeAssetInfoOrThrow,
+  getNativeAssetSymbol,
+  isAssetEqual,
+  Native,
+  type TAsset
+} from '@paraspell/assets'
+import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
+import { getParaEthTransferFees } from '../../../transfer'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
 import { createAsset } from '../../asset'
+import { getRelayChainOf } from '../../chain'
+import { createEthereumBridgeInstructions } from '../../ethereum/createCustomXcmOnDest'
+import { generateMessageId } from '../../ethereum/generateMessageId'
 import { localizeLocation } from '../../location'
 import { addXcmVersionHeader } from '../../xcm-version'
 import { createAssetsFilter } from './createAssetsFilter'
@@ -13,7 +25,8 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>,
   assetFrom: TAsset,
-  assetTo: TAsset
+  assetTo: TAsset,
+  hasSeparateFeeAsset: boolean
 ) => {
   const {
     chain,
@@ -36,7 +49,7 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
         ExchangeAsset: {
           give: createAssetsFilter(assetFrom, version),
           want: [assetTo],
-          maximal: false
+          maximal: hasSeparateFeeAsset
         }
       }
     ]
@@ -84,10 +97,18 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     assetInfoFrom,
     assetInfoTo,
     fees: { originReserveFee, destReserveFee },
+    senderAddress,
     recipientAddress,
     version,
     paraIdTo
   } = options
+
+  const isEthereumDest = destChain !== undefined && isExternalChain(destChain)
+
+  // For Ethereum destination, the actual hop target is AssetHub (bridge hub)
+  const resolvedDestChain: TSubstrateChain | undefined = isEthereumDest
+    ? (`AssetHub${getRelayChainOf(chain ?? exchangeChain)}` as TSubstrateChain)
+    : undefined
 
   const assetFrom = createAsset(
     version,
@@ -103,52 +124,128 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     localizeLocation(exchangeChain, assetInfoTo.location)
   )
 
+  // For Ethereum, localize to AssetHub since that's where instructions execute
   const assetToLocalizedToDest = createAsset(
     version,
     amountOut,
-    localizeLocation(destChain ?? exchangeChain, assetInfoTo.location)
+    localizeLocation(resolvedDestChain ?? destChain ?? exchangeChain, assetInfoTo.location)
   )
+
+  // For Ethereum destination, use DOT as feeAsset for bridge fees
+  let ethFeeAssetInfo
+  let ethBridgeFee = 0n
+  // Whether main asset IS DOT — no separate fee asset needed
+  let isMainAssetDot = false
+  if (isEthereumDest) {
+    const nativeFeeAssetInfo = findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain))
+    const ahApi = await api.createApiForChain('AssetHubPolkadot')
+    const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
+    ethBridgeFee = bridgeFee + executionFee
+
+    isMainAssetDot = isAssetEqual(assetInfoFrom, nativeFeeAssetInfo)
+    if (!isMainAssetDot) {
+      ethFeeAssetInfo = nativeFeeAssetInfo
+    }
+  }
+
+  const hasSeparateFeeAsset = isEthereumDest && !isMainAssetDot
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
     {
       api,
       chain: chain ?? exchangeChain,
-      destChain: destChain ?? exchangeChain,
+      destChain: resolvedDestChain ?? destChain ?? exchangeChain,
       assetInfo: assetInfoFrom,
+      feeAssetInfo: ethFeeAssetInfo,
+      useJitWithdraw: isEthereumDest,
       recipientAddress,
-      // Deal with this after feeAsset for swaps is supported
-      fees: { originFee: 0n, reserveFee: originReserveFee },
+      fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
       version
     },
     assetToLocalizedToDest
   )
 
-  const exchangeInstructions = await createExchangeInstructions(options, assetFrom, assetTo)
+  const exchangeInstructions = await createExchangeInstructions(
+    options,
+    assetFrom,
+    assetTo,
+    hasSeparateFeeAsset
+  )
 
-  const exchangeToDestXcm = destChain
-    ? createBaseExecuteXcm({
-        chain: exchangeChain,
-        destChain,
+  let exchangeToDestXcm: unknown[]
+
+  if (isEthereumDest) {
+    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol }, null)
+
+    const messageId = await generateMessageId(
+      api,
+      senderAddress,
+      getParaId(chain ?? exchangeChain),
+      ethAsset.assetId!,
+      recipientAddress,
+      amountOut
+    )
+
+    const snowbridgeInstructions = createEthereumBridgeInstructions(
+      {
+        api,
+        address: recipientAddress,
         assetInfo: assetInfoTo,
-        paraIdTo,
-        version,
-        recipientAddress,
-        // Deal with this after feeAsset is supported
-        fees: { originFee: 0n, reserveFee: destReserveFee },
-        suffixXcm: [depositInstruction]
-      })
-    : [depositInstruction]
+        senderAddress,
+        version
+      },
+      chain ?? exchangeChain,
+      messageId,
+      ethAsset
+    )
+
+    // If exchange chain is already AssetHub, instructions run directly there
+    // Otherwise, route from exchange chain to AssetHub with bridge instructions as suffix
+    exchangeToDestXcm =
+      exchangeChain === resolvedDestChain
+        ? snowbridgeInstructions
+        : createBaseExecuteXcm({
+            chain: exchangeChain,
+            destChain: resolvedDestChain!,
+            assetInfo: assetInfoTo,
+            feeAssetInfo: ethFeeAssetInfo,
+            useFeeAssetOnHops: hasSeparateFeeAsset,
+            paraIdTo: getParaId(resolvedDestChain!),
+            version,
+            recipientAddress,
+            fees: {
+              originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
+              reserveFee: destReserveFee
+            },
+            suffixXcm: snowbridgeInstructions
+          })
+  } else if (destChain) {
+    exchangeToDestXcm = createBaseExecuteXcm({
+      chain: exchangeChain,
+      destChain,
+      assetInfo: assetInfoTo,
+      paraIdTo,
+      version,
+      recipientAddress,
+      // Deal with this after feeAsset is supported
+      fees: { originFee: 0n, reserveFee: destReserveFee },
+      suffixXcm: [depositInstruction]
+    })
+  } else {
+    exchangeToDestXcm = [depositInstruction]
+  }
 
   const finalXcm = chain
     ? createBaseExecuteXcm({
         chain,
         destChain: exchangeChain,
         assetInfo: assetInfoFrom,
+        feeAssetInfo: ethFeeAssetInfo,
+        useFeeAssetOnHops: hasSeparateFeeAsset,
         paraIdTo: getParaId(exchangeChain),
         version,
         recipientAddress,
-        // Deal with this after feeAsset is supported
-        fees: { originFee: 0n, reserveFee: originReserveFee },
+        fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
         suffixXcm: [...exchangeInstructions, ...exchangeToDestXcm]
       })
     : [...exchangeInstructions, ...exchangeToDestXcm]

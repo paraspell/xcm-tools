@@ -243,7 +243,10 @@ export type TCreateBaseTransferXcmOptions<TRes> = {
   feeAssetInfo?: TAssetInfo
   fees: TTransferFeeEstimates
   recipientAddress: string
+  senderAddress?: string
   version: Version
+  useJitWithdraw?: boolean
+  useFeeAssetOnHops?: boolean
   // refactor this
   paraIdTo?: number
   transactOptions?: TTransactOptions<TRes>
@@ -291,4 +294,13 @@ export type TCreateSwapXcmInternalOptions<TApi, TRes, TSigner> = WithApi<
   fees: TSwapFeeEstimates
   // refactor this
   paraIdTo?: number
+}
+
+export type TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
+  address: TAddress
+  assetInfo: TAssetInfo
+  senderAddress: string
+  ahAddress?: string
+  version: Version
 }
