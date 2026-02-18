@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.7.0...assets-v12.7.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix bridge system asset selection 🔧 ([3305d89](https://github.com/paraspell/xcm-tools/commit/3305d892146a662ef993bab65607074ac3008e2c))
+
 ## [12.7.0](https://github.com/paraspell/xcm-tools/compare/assets-v12.6.3...assets-v12.7.0) (2026-02-13)
 
 

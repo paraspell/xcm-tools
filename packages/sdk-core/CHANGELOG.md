@@ -1,5 +1,14 @@
 # Changelog
 
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.7.0...sdk-core-v12.7.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix bridge system asset selection 🔧 ([3305d89](https://github.com/paraspell/xcm-tools/commit/3305d892146a662ef993bab65607074ac3008e2c))
+* **sdk-core:** Fix wh assets minting on Moonbeam 🔧 ([3173743](https://github.com/paraspell/xcm-tools/commit/3173743f0c249d1f3cbfb358af0c1e4201ac819a))
+* **xcm-router:** Add support for snowbridge transfer to execute swaps 🔧 ([04b9f07](https://github.com/paraspell/xcm-tools/commit/04b9f07595ce6bf2fca68bb099ef6df231ae1364))
+
 ## [12.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.3...sdk-core-v12.7.0) (2026-02-13)
 
 
