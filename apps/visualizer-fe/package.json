@@ -30,6 +30,8 @@
     "@tabler/icons-react": "^3.36.1",
     "d3-ease": "^3.0.1",
     "dayjs": "^1.11.19",
+    "echarts": "^6.0.0",
+    "echarts-for-react": "^3.0.6",
     "graphql": "^16.12.0",
     "highcharts": "^12.5.0",
     "highcharts-react-official": "^3.2.3",
