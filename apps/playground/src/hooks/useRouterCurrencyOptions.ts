@@ -5,6 +5,7 @@ import { getExchangePairs } from '@paraspell/xcm-router';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
+  getSupportedFeeAssets,
 } from '@paraspell/xcm-router';
 import { useMemo } from 'react';
 
@@ -118,6 +119,30 @@ export const useRouterCurrencyOptions = (
     });
   }, [currencyToMap, selectedFrom, selectedTo, adjacency]);
 
+  const supportedFeeAssets = useMemo(
+    () => getSupportedFeeAssets(from, exchangeChain),
+    [from, exchangeChain],
+  );
+
+  const feeCurrencyMap = useMemo(
+    () =>
+      supportedFeeAssets.reduce((map: Record<string, TAssetInfo>, asset) => {
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
+        map[key] = asset;
+        return map;
+      }, {}),
+    [supportedFeeAssets],
+  );
+
+  const feeCurrencyOptions = useMemo(
+    () =>
+      Object.keys(feeCurrencyMap).map((key) => ({
+        value: key,
+        label: `${feeCurrencyMap[key].symbol} - ${!feeCurrencyMap[key].isNative ? (feeCurrencyMap[key].assetId ?? 'Location') : 'Native'}`,
+      })),
+    [feeCurrencyMap],
+  );
+
   const isFromNotParaToPara = from && isRelayChain(from);
   const isToNotParaToPara = to && isRelayChain(to);
 
@@ -126,6 +151,8 @@ export const useRouterCurrencyOptions = (
     currencyToOptions,
     currencyFromMap,
     currencyToMap,
+    feeCurrencyOptions,
+    feeCurrencyMap,
     isFromNotParaToPara,
     isToNotParaToPara,
     adjacency,

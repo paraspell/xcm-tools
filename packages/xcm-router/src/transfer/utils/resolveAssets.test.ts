@@ -1,4 +1,9 @@
-import { findAssetInfo, hasSupportForAsset, type TAssetInfo } from '@paraspell/sdk';
+import {
+  findAssetInfo,
+  findAssetInfoOrThrow,
+  hasSupportForAsset,
+  type TAssetInfo,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
@@ -6,7 +11,15 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TRouterAsset, TTransferOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@paraspell/sdk')>();
+  return {
+    ...actual,
+    findAssetInfo: vi.fn(),
+    findAssetInfoOrThrow: vi.fn(),
+    hasSupportForAsset: vi.fn(),
+  };
+});
 
 vi.mock('../../assets');
 
@@ -192,5 +205,34 @@ describe('resolveAssets', () => {
       assetFromExchange: mockAssetFromExchange,
       assetTo: mockAssetTo,
     });
+  });
+
+  it('throws error when feeAsset resolves but is not a valid fee asset', () => {
+    const feeLocation = { parents: 1, interior: { X1: { PalletInstance: 50 } } };
+
+    const options = {
+      from: undefined,
+      to: undefined,
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'USDT' },
+    } as unknown as TTransferOptions;
+
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      if ('symbol' in currency && currency.symbol === 'USDT')
+        return { symbol: 'USDT', decimals: 6, location: feeLocation } as TRouterAsset;
+      return null;
+    });
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+      symbol: 'USDT',
+      decimals: 6,
+      location: feeLocation,
+      isFeeAsset: false,
+    } as TAssetInfo);
+
+    expect(() => resolveAssets(dex, options)).toThrow('is not a valid fee asset');
   });
 });

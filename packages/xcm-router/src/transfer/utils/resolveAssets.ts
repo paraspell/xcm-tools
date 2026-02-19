@@ -1,4 +1,9 @@
-import { findAssetInfo, hasSupportForAsset, RoutingResolutionError } from '@paraspell/sdk';
+import {
+  findAssetInfo,
+  findAssetInfoOrThrow,
+  hasSupportForAsset,
+  RoutingResolutionError,
+} from '@paraspell/sdk';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -11,7 +16,8 @@ export const resolveAssets = (
     to,
     currencyFrom,
     currencyTo,
-  }: Pick<TTransferOptions, 'from' | 'to' | 'currencyFrom' | 'currencyTo'>,
+    feeAsset,
+  }: Pick<TTransferOptions, 'from' | 'to' | 'currencyFrom' | 'currencyTo' | 'feeAsset'>,
 ) => {
   const originSpecified = from && from !== dex.chain;
   const destinationSpecified = to && to !== dex.chain;
@@ -51,9 +57,41 @@ export const resolveAssets = (
     );
   }
 
+  const feeAssetFromOrigin =
+    feeAsset && originSpecified
+      ? (findAssetInfo(from, feeAsset, dex.chain) ?? undefined)
+      : undefined;
+
+  if (feeAsset && originSpecified && !feeAssetFromOrigin) {
+    throw new RoutingResolutionError(`Fee asset ${JSON.stringify(feeAsset)} not found in ${from}.`);
+  }
+
+  const feeAssetFromExchange = feeAsset
+    ? feeAssetFromOrigin
+      ? getExchangeAssetByOriginAsset(dex.exchangeChain, feeAssetFromOrigin)
+      : (getExchangeAsset(dex.exchangeChain, feeAsset) ?? undefined)
+    : undefined;
+
+  const resolvedFeeAssetLocation = feeAssetFromOrigin?.location ?? feeAssetFromExchange?.location;
+
+  if (feeAsset && resolvedFeeAssetLocation) {
+    const sdkAsset = findAssetInfoOrThrow(
+      from ?? dex.chain,
+      { location: resolvedFeeAssetLocation },
+      null,
+    );
+    if (!sdkAsset.isFeeAsset) {
+      throw new RoutingResolutionError(
+        `Asset ${JSON.stringify(feeAsset)} is not a valid fee asset in ${from ?? dex.chain}.`,
+      );
+    }
+  }
+
   return {
     assetFromOrigin,
     assetFromExchange,
     assetTo,
+    feeAssetFromOrigin,
+    feeAssetFromExchange,
   };
 };

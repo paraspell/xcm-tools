@@ -135,6 +135,11 @@ export type TTransferOptions = {
   evmSigner?: PolkadotSigner;
 
   /**
+   * The asset used to pay XCM fees.
+   */
+  feeAsset?: TCurrencyInput;
+
+  /**
    * The callback function to call when the transaction status changes.
    */
   onStatusChange?: TStatusChangeCallback;
@@ -169,6 +174,7 @@ export type TOriginInfo = {
   api: TPapiApi;
   chain: TSubstrateChain;
   assetFrom: TAssetInfo;
+  feeAssetInfo?: TAssetInfo;
 };
 
 export type TExchangeInfo = {
@@ -178,6 +184,7 @@ export type TExchangeInfo = {
   exchangeChain: TExchangeChain;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
+  feeAssetInfo?: TAssetInfo;
 };
 
 export type TDestinationInfo = {

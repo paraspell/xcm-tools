@@ -104,6 +104,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
@@ -117,6 +118,7 @@ export const XcmRouter = () => {
       .to(to)
       .currencyFrom({ location: currencyFrom.location })
       .currencyTo({ location: currencyTo.location })
+      .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
       .amount(amount)
       .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
@@ -135,7 +137,7 @@ export const XcmRouter = () => {
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const { currencyFrom, currencyTo } = formValues;
+    const { currencyFrom, currencyTo, feeAsset } = formValues;
 
     try {
       const response = await axios.post(
@@ -144,6 +146,7 @@ export const XcmRouter = () => {
           ...formValues,
           currencyFrom: { location: currencyFrom.location },
           currencyTo: { location: currencyTo.location },
+          feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
           exchange,
           senderAddress,
           options: builderOptions,
@@ -225,6 +228,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
@@ -241,6 +245,7 @@ export const XcmRouter = () => {
             ...formValues,
             currencyFrom: { location: currencyFrom.location },
             currencyTo: { location: currencyTo.location },
+            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
             exchange,
             senderAddress: selectedAccount?.address,
             options: builderOptions,
@@ -256,6 +261,7 @@ export const XcmRouter = () => {
           .to(to)
           .currencyFrom({ location: currencyFrom.location })
           .currencyTo({ location: currencyTo.location })
+          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -293,6 +299,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
@@ -309,6 +316,7 @@ export const XcmRouter = () => {
             ...formValues,
             currencyFrom: { location: currencyFrom.location },
             currencyTo: { location: currencyTo.location },
+            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
             exchange,
             senderAddress,
             options: builderOptions,
@@ -324,6 +332,7 @@ export const XcmRouter = () => {
           .to(to)
           .currencyFrom({ location: currencyFrom.location })
           .currencyTo({ location: currencyTo.location })
+          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -365,6 +374,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
@@ -381,6 +391,7 @@ export const XcmRouter = () => {
             ...formValues,
             currencyFrom: { location: currencyFrom.location },
             currencyTo: { location: currencyTo.location },
+            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
             exchange,
             senderAddress,
             options: builderOptions,
@@ -396,6 +407,7 @@ export const XcmRouter = () => {
           .to(to)
           .currencyFrom({ location: currencyFrom.location })
           .currencyTo({ location: currencyTo.location })
+          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)
@@ -437,6 +449,7 @@ export const XcmRouter = () => {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       recipientAddress,
       evmInjectorAddress: evmSenderAddress,
@@ -453,6 +466,7 @@ export const XcmRouter = () => {
             ...formValues,
             currencyFrom: { location: currencyFrom.location },
             currencyTo: { location: currencyTo.location },
+            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
             exchange,
             senderAddress,
             options: builderOptions,
@@ -468,6 +482,7 @@ export const XcmRouter = () => {
           .to(to)
           .currencyFrom({ location: currencyFrom.location })
           .currencyTo({ location: currencyTo.location })
+          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
           .amount(amount)
           .senderAddress(senderAddress)
           .recipientAddress(recipientAddress)

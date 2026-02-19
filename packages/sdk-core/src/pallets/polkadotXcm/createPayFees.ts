@@ -1,28 +1,17 @@
 import type { TAsset } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import type { Version } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../../types'
 
-export const createPayFees = (version: Version, asset: TAsset, weight?: TWeight) => {
-  if (version < Version.V5) {
-    return [
-      {
-        BuyExecution: {
-          fees: asset,
-          weight_limit: weight
-            ? { Limited: { ref_time: weight.refTime, proof_size: weight.proofSize } }
-            : 'Unlimited'
-        }
-      }
-    ]
+// PayFees instruction is removed temporarily in favor of BuyExecution everywhere,
+// but we keep this function for now in case we need to add it back in the future
+export const createPayFees = (_version: Version, asset: TAsset, weight?: TWeight) => [
+  {
+    BuyExecution: {
+      fees: asset,
+      weight_limit: weight
+        ? { Limited: { ref_time: weight.refTime, proof_size: weight.proofSize } }
+        : 'Unlimited'
+    }
   }
-
-  return [
-    {
-      PayFees: {
-        asset
-      }
-    },
-    { RefundSurplus: undefined }
-  ]
-}
+]

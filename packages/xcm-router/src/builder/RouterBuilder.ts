@@ -90,6 +90,18 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   }
 
   /**
+   * Specifies the asset used to pay XCM fees.
+   *
+   * @param currency - The fee asset currency, or `undefined` to use the default.
+   * @returns The current builder instance.
+   */
+  feeAsset(
+    currency: TCurrencyInput | undefined,
+  ): RouterBuilderCore<T & { feeAsset: TCurrencyInput | undefined }> {
+    return new RouterBuilderCore(this._builderOptions, { ...this._options, feeAsset: currency });
+  }
+
+  /**
    * Specifies the amount to transfer.
    *
    * @param amount - The amount to transfer.

@@ -95,6 +95,10 @@ export const createBaseExecuteXcm = <TRes>(
   const hopFeeAssetToReserve = useFeeAssetOnHops ? feeAssetLocalizedToReserve : undefined
   const hopFeeAssetToDest = useFeeAssetOnHops ? feeAssetLocalizedToDest : undefined
 
+  // When fees are paid in a separate asset, originFee is denominated in that asset's
+  // currency and must not be subtracted from the transfer amount.
+  const originFeeDeduction = feeAsset ? 0n : originFee
+
   const destLocation = createDestination(version, chain, destChain, paraIdTo)
 
   if (chain !== 'AssetHubPolkadot' && reserveChain === undefined) {
@@ -124,7 +128,7 @@ export const createBaseExecuteXcm = <TRes>(
                 hopFeeAssetToDest ??
                   updateAsset(
                     assetLocalizedToDest,
-                    reserveFee === 1000n ? amount / 2n : amount - originFee - reserveFee
+                    reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
                   )
               ),
               ...suffixXcm
@@ -173,7 +177,7 @@ export const createBaseExecuteXcm = <TRes>(
             xcm: [
               ...createPayFees(
                 version,
-                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFee)
+                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
               ),
               ...suffixXcm
             ]
@@ -192,7 +196,8 @@ export const createBaseExecuteXcm = <TRes>(
             xcm: [
               ...createPayFees(
                 version,
-                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - originFee)
+                hopFeeAssetToReserve ??
+                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
               ),
               // Then deposit to final destination
               ...resolvedDepositInstruction

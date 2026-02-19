@@ -25,6 +25,7 @@ import type {
 } from '../../../types'
 import { getRelayChainOf } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
+import { parseUnits } from '../../unit'
 import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
@@ -85,6 +86,7 @@ const extractFeesFromDryRun = (
   requireHopsSuccess: boolean = false
 ): TSwapFeeEstimates => {
   const fees: TSwapFeeEstimates = {
+    originFee: 0n,
     originReserveFee: 0n,
     exchangeFee: 0n,
     destReserveFee: 0n
@@ -196,6 +198,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     assetInfoFrom: assetFrom,
     assetInfoTo: assetTo,
     currencyTo,
+    feeAssetInfo,
     senderAddress,
     recipientAddress,
     calculateMinAmountOut
@@ -232,6 +235,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
       location: assetFrom.location,
       amount: assetFrom.amount
     },
+    feeAsset: feeAssetInfo ? { location: feeAssetInfo.location } : undefined,
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
       exchangeChain,
@@ -240,7 +244,14 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     useRootOrigin: true
   }
 
+  const FEE_ASSET_AMOUNT = 100
+
+  const dummyOriginFee = feeAssetInfo
+    ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
+    : 0n
+
   const fees: TSwapFeeEstimates = {
+    originFee: dummyOriginFee,
     originReserveFee: MIN_FEE,
     exchangeFee: 0n,
     destReserveFee: MIN_FEE
@@ -283,6 +294,12 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     destChain,
     false
   )
+
+  // Set originFee from dry run origin fee (padded), same as handleExecuteTransfer
+  extractedFees.originFee =
+    feeAssetInfo && firstDryRunResult.origin.success
+      ? padValueBy(firstDryRunResult.origin.fee, FEE_PADDING_PERCENTAGE)
+      : 0n
 
   if (extractedFees.exchangeFee === 0n) {
     // We set the exchange fee to non-zero value to prevent creating dummy tx

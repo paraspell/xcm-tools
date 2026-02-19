@@ -60,6 +60,7 @@ const builderMock = {
   to: vi.fn().mockReturnThis(),
   currencyFrom: vi.fn().mockReturnThis(),
   currencyTo: vi.fn().mockReturnThis(),
+  feeAsset: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
   senderAddress: vi.fn().mockReturnThis(),
   evmSenderAddress: vi.fn().mockReturnThis(),

@@ -29,7 +29,8 @@ export const prepareTransformedOptions = async (
       ? createExchangeInstance(exchange)
       : await selectBestExchange(options, originApi, builderOptions, isForFeeEstimation);
 
-  const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
+  const { assetFromOrigin, assetFromExchange, assetTo, feeAssetFromOrigin, feeAssetFromExchange } =
+    resolveAssets(dex, options);
 
   if (!supportsExchangePair(dex.exchangeChain, assetFromExchange, assetTo)) {
     throw new UnsupportedOperationError(
@@ -53,6 +54,7 @@ export const prepareTransformedOptions = async (
             api: originApi,
             chain: from,
             assetFrom: assetFromOrigin,
+            feeAssetInfo: feeAssetFromOrigin,
           }
         : undefined,
     exchange: {
@@ -62,6 +64,7 @@ export const prepareTransformedOptions = async (
       exchangeChain: dex.exchangeChain,
       assetFrom: assetFromExchange,
       assetTo,
+      feeAssetInfo: feeAssetFromExchange,
     },
     destination:
       destinationSpecified && recipientAddress

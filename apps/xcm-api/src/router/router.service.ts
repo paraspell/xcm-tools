@@ -73,6 +73,7 @@ export class RouterService {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       senderAddress,
       evmSenderAddress,
@@ -106,6 +107,7 @@ export class RouterService {
         .to(toChain ?? undefined)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
+        .feeAsset(feeAsset)
         .amount(amount.toString())
         .senderAddress(senderAddress)
         .evmSenderAddress(evmSenderAddress)
@@ -145,6 +147,7 @@ export class RouterService {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       senderAddress,
       evmSenderAddress,
@@ -178,6 +181,7 @@ export class RouterService {
         .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
+        .feeAsset(feeAsset)
         .amount(amount.toString())
         .senderAddress(senderAddress)
         .evmSenderAddress(evmSenderAddress)
@@ -220,6 +224,7 @@ export class RouterService {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       senderAddress,
       evmSenderAddress,
@@ -253,6 +258,7 @@ export class RouterService {
         .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
+        .feeAsset(feeAsset)
         .amount(amount.toString())
         .senderAddress(senderAddress)
         .evmSenderAddress(evmSenderAddress)
@@ -271,6 +277,7 @@ export class RouterService {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       senderAddress,
       evmSenderAddress,
@@ -304,6 +311,7 @@ export class RouterService {
         .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
+        .feeAsset(feeAsset)
         .amount(amount.toString())
         .senderAddress(senderAddress)
         .evmSenderAddress(evmSenderAddress)
@@ -322,6 +330,7 @@ export class RouterService {
       to,
       currencyFrom,
       currencyTo,
+      feeAsset,
       amount,
       senderAddress,
       evmSenderAddress,
@@ -355,6 +364,7 @@ export class RouterService {
         .to(toChain)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
+        .feeAsset(feeAsset)
         .amount(amount.toString())
         .senderAddress(senderAddress)
         .evmSenderAddress(evmSenderAddress)
