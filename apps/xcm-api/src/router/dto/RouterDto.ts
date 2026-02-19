@@ -19,6 +19,7 @@ export const RouterDtoSchema = z.object({
   to: z.string().nullable().optional(),
   currencyFrom: CurrencyCoreSchema,
   currencyTo: CurrencyCoreSchema,
+  feeAsset: CurrencyCoreSchema.optional(),
   recipientAddress: z
     .string()
     .min(1, { message: 'Recipient address is required' }),

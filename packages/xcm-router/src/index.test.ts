@@ -6,6 +6,7 @@ import {
   getExchangePairs,
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
+  getSupportedFeeAssets,
 } from './assets';
 import * as RouterBuilder from './builder/RouterBuilder';
 import * as Consts from './consts';
@@ -59,6 +60,7 @@ describe('Index re-exports', () => {
   it('should specific functions from assets', () => {
     expect(moduleExports.getSupportedAssetsFrom).toBe(getSupportedAssetsFrom);
     expect(moduleExports.getSupportedAssetsTo).toBe(getSupportedAssetsTo);
+    expect(moduleExports.getSupportedFeeAssets).toBe(getSupportedFeeAssets);
     expect(moduleExports.getExchangeAssets).toBe(getExchangeAssets);
     expect(moduleExports.getExchangeConfig).toBe(getExchangeConfig);
     expect(moduleExports.getExchangePairs).toBe(getExchangePairs);

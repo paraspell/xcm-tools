@@ -22,7 +22,7 @@ export const prepareExtrinsics = async (
     builderOptions,
   } = options;
 
-  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
+  if ((origin || destination) && dex.chain.includes('AssetHub')) {
     try {
       const amountOut = await dex.getAmountOut(exchange.api, {
         ...options,
@@ -43,6 +43,7 @@ export const prepareExtrinsics = async (
           assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
           senderAddress: evmSenderAddress ?? senderAddress,
           currencyTo,
+          feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
           recipientAddress: recipientAddress ?? senderAddress,
           calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
             dex.getAmountOut(exchange.api, {

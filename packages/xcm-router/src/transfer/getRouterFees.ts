@@ -21,6 +21,7 @@ export const getRouterFees = async (
     exchange,
     currencyFrom,
     currencyTo,
+    feeAsset,
     destination,
     amount,
     recipientAddress,
@@ -29,7 +30,7 @@ export const getRouterFees = async (
     builderOptions,
   } = options;
 
-  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
+  if ((origin || destination) && dex.chain.includes('AssetHub')) {
     try {
       const buildTx = async (overrideAmount?: string) => {
         const amt =
@@ -55,6 +56,7 @@ export const getRouterFees = async (
             } as WithAmount<TAssetInfo>,
             assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
             currencyTo,
+            feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
             senderAddress: evmSenderAddress ?? senderAddress,
             recipientAddress: recipientAddress ?? senderAddress,
             calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
@@ -89,6 +91,7 @@ export const getRouterFees = async (
           senderAddress: evmSenderAddress ?? senderAddress,
           address: recipientAddress ?? senderAddress,
           currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
+          feeAsset,
           disableFallback: false,
           swapConfig: {
             currencyTo: currencyTo as TCurrencyCore,

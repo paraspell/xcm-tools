@@ -96,7 +96,8 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     destChain,
     assetInfoFrom,
     assetInfoTo,
-    fees: { originReserveFee, destReserveFee },
+    feeAssetInfo,
+    fees: { originFee, originReserveFee, destReserveFee },
     senderAddress,
     recipientAddress,
     version,
@@ -148,7 +149,10 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     }
   }
 
-  const hasSeparateFeeAsset = isEthereumDest && !isMainAssetDot
+  // Ethereum fee asset takes precedence over user-provided feeAssetInfo
+  const resolvedFeeAssetInfo = ethFeeAssetInfo ?? feeAssetInfo
+
+  const hasSeparateFeeAsset = (isEthereumDest && !isMainAssetDot) || !!feeAssetInfo
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
     {
@@ -156,10 +160,13 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
       chain: chain ?? exchangeChain,
       destChain: resolvedDestChain ?? destChain ?? exchangeChain,
       assetInfo: assetInfoFrom,
-      feeAssetInfo: ethFeeAssetInfo,
+      feeAssetInfo: resolvedFeeAssetInfo,
       useJitWithdraw: isEthereumDest,
       recipientAddress,
-      fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
+      fees: {
+        originFee: hasSeparateFeeAsset ? ethBridgeFee || originFee : originFee,
+        reserveFee: originReserveFee
+      },
       version
     },
     assetToLocalizedToDest
@@ -169,7 +176,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     options,
     assetFrom,
     assetTo,
-    hasSeparateFeeAsset
+    isEthereumDest && hasSeparateFeeAsset
   )
 
   let exchangeToDestXcm: unknown[]

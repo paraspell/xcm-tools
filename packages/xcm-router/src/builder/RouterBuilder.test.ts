@@ -141,6 +141,32 @@ describe('Builder', () => {
     );
   });
 
+  it('should construct a transfer using RouterBuilder with feeAsset', async () => {
+    const feeAsset = { symbol: 'DOT' };
+
+    await RouterBuilder()
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .feeAsset(feeAsset)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .build();
+
+    expect(transferSpy).toHaveBeenCalledWith(
+      {
+        ...transferParams,
+        feeAsset,
+      },
+      undefined,
+    );
+  });
+
   it('should construct a transfer using RouterBuilder with automatic selection', async () => {
     const onStatusChange = vi.fn();
 

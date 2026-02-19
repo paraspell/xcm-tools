@@ -47,32 +47,33 @@ describe('createPayFees', () => {
     ])
   })
 
-  it('should create PayFees + RefundSurplus instructions for V5 and above', () => {
+  it('should create BuyExecution with Unlimited weight for V5 and above', () => {
     const result = createPayFees(Version.V5, asset)
 
     expect(result).toEqual([
       {
-        PayFees: {
-          asset
+        BuyExecution: {
+          fees: asset,
+          weight_limit: 'Unlimited'
         }
-      },
-      {
-        RefundSurplus: undefined
       }
     ])
   })
 
-  it('should ignore weight parameter for V5', () => {
+  it('should create BuyExecution with Limited weight for V5 when weight is provided', () => {
     const result = createPayFees(Version.V5, asset, weight)
 
     expect(result).toEqual([
       {
-        PayFees: {
-          asset
+        BuyExecution: {
+          fees: asset,
+          weight_limit: {
+            Limited: {
+              ref_time: weight.refTime,
+              proof_size: weight.proofSize
+            }
+          }
         }
-      },
-      {
-        RefundSurplus: undefined
       }
     ])
   })

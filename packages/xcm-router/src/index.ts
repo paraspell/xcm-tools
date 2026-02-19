@@ -4,6 +4,7 @@ export {
   getExchangePairs,
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
+  getSupportedFeeAssets,
 } from './assets';
 export * from './builder/RouterBuilder';
 export * from './consts';

@@ -73,7 +73,7 @@ describe('createSwapExecuteXcm', () => {
       destChain: undefined,
       assetInfoFrom: { amount: 2000n, location: {} } as any,
       assetInfoTo: { amount: 1500n, location: {} } as any,
-      fees: { originReserveFee: 10n, exchangeFee: 0n, destReserveFee: 20n },
+      fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 0n, destReserveFee: 20n },
       recipientAddress: 'addr1',
       version: 3,
       paraIdTo: 42
@@ -124,7 +124,7 @@ describe('createSwapExecuteXcm', () => {
       destChain: 'Moonriver' as any,
       assetInfoFrom: { amount: 2000n, location: {} } as any,
       assetInfoTo: { amount: 1500n, location: {} } as any,
-      fees: { originReserveFee: 5n, exchangeFee: 10n, destReserveFee: 15n },
+      fees: { originFee: 0n, originReserveFee: 5n, exchangeFee: 10n, destReserveFee: 15n },
       recipientAddress: 'addr2',
       version: 2,
       paraIdTo: 77,
@@ -158,7 +158,7 @@ describe('createSwapExecuteXcm', () => {
         symbol: 'WETH'
       } as any,
       assetInfoTo: { amount: 3000n, location: {}, symbol: 'WETH', assetId: '0x123' } as any,
-      fees: { originReserveFee: 10n, exchangeFee: 5n, destReserveFee: 20n },
+      fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 5n, destReserveFee: 20n },
       senderAddress: 'sender1',
       recipientAddress: 'ethAddr',
       version: 3,
@@ -250,7 +250,7 @@ describe('createSwapExecuteXcm', () => {
       assetInfoFrom: { amount: 1000n, location: {} } as any,
       assetInfoTo: { amount: 500n, location: {} } as any,
       version: 3,
-      fees: { originReserveFee: 0n, exchangeFee: 0n },
+      fees: { originFee: 0n, originReserveFee: 0n, exchangeFee: 0n },
       calculateMinAmountOut: vi.fn()
     } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
 

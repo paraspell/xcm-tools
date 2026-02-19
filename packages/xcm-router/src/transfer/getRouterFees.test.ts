@@ -226,10 +226,10 @@ describe('getRouterFees', () => {
     });
   });
 
-  it('uses execute transfer for Hydration DEX with destination only (origin undefined)', async () => {
-    const hydrationDex = {
+  it('uses execute transfer for AssetHub DEX with destination only (origin undefined)', async () => {
+    const assetHubDex = {
       get chain() {
-        return 'Hydration';
+        return 'AssetHubPolkadot';
       },
       getAmountOut: vi.fn().mockResolvedValue(5000n),
     } as unknown as ExchangeChain;
@@ -239,7 +239,7 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    const result = await getRouterFees(hydrationDex, localOptions);
+    const result = await getRouterFees(assetHubDex, localOptions);
 
     expect(result.origin).toEqual(
       expect.objectContaining({ asset: executeTransferResult.origin.asset }),
@@ -353,9 +353,9 @@ describe('getRouterFees', () => {
   });
 
   it('calculateMinAmountOut defaults assetTo to options.exchange.assetTo when not provided', async () => {
-    const hydrationDex = {
+    const assetHubDex = {
       get chain() {
-        return 'Hydration';
+        return 'AssetHubPolkadot';
       },
       getAmountOut: vi.fn().mockResolvedValue(111n),
     } as unknown as ExchangeChain;
@@ -365,7 +365,7 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    await getRouterFees(hydrationDex, localOptions);
+    await getRouterFees(assetHubDex, localOptions);
 
     const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
       a?: string,
@@ -376,7 +376,7 @@ describe('getRouterFees', () => {
       calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<unknown>;
     };
 
-    const spy = vi.spyOn(hydrationDex, 'getAmountOut');
+    const spy = vi.spyOn(assetHubDex, 'getAmountOut');
 
     await arg.calculateMinAmountOut(777n);
 
@@ -394,7 +394,7 @@ describe('getRouterFees', () => {
 
   it('throws RoutingResolutionError when getXcmFee returns NoDeal on HydrationDex', async () => {
     const dex = {
-      chain: 'Hydration',
+      chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockResolvedValue(1234n),
     } as unknown as ExchangeChain;
 

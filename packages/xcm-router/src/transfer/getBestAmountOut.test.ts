@@ -41,6 +41,8 @@ describe('getBestAmountOut', () => {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
       assetFromExchange: { symbol: 'BTC_EXCHANGE' } as TRouterAsset,
       assetTo: { symbol: 'ETH_EXCHANGE' } as TRouterAsset,
+      feeAssetFromOrigin: undefined,
+      feeAssetFromExchange: undefined,
     };
     vi.mocked(resolveAssets).mockReturnValue(fakeAssets);
 
@@ -89,6 +91,8 @@ describe('getBestAmountOut', () => {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
       assetFromExchange: { symbol: 'USD_EXCHANGE' } as TRouterAsset,
       assetTo: { symbol: 'EUR_EXCHANGE' } as TRouterAsset,
+      feeAssetFromOrigin: undefined,
+      feeAssetFromExchange: undefined,
     };
     vi.mocked(resolveAssets).mockReturnValue(fakeAssets);
 

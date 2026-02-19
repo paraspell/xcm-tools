@@ -385,8 +385,8 @@ describe('createBaseExecuteXcm', () => {
         dest: mockDestLocation,
         xcm: [
           {
-            PayFees: {
-              asset: {
+            BuyExecution: {
+              fees: {
                 fun: {
                   Fungible: 9900n
                 },
@@ -396,11 +396,9 @@ describe('createBaseExecuteXcm', () => {
                     parents: 0
                   }
                 }
-              }
+              },
+              weight_limit: 'Unlimited'
             }
-          },
-          {
-            RefundSurplus: undefined
           }
         ]
       }

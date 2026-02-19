@@ -266,6 +266,7 @@ export type TCreateBaseSwapXcmOptions = {
   assetInfoFrom: WithAmount<TAssetInfo>
   assetInfoTo: WithAmount<TAssetInfo>
   currencyTo: TCurrencyInput
+  feeAssetInfo?: TAssetInfo
   senderAddress: string
   recipientAddress: string
   calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>
@@ -279,6 +280,7 @@ export type TCreateSwapXcmOptions<TApi, TRes, TSigner> = WithApi<
 >
 
 export type TSwapFeeEstimates = {
+  originFee: bigint
   originReserveFee: bigint
   exchangeFee: bigint
   destReserveFee: bigint
