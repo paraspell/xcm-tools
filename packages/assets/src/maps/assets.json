@@ -4593,6 +4593,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1043",
+        "symbol": "aPRIME",
+        "decimals": 6,
+        "existentialDeposit": "9901",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x4c892a298a9c6b4ced988b3d6e9cf93333aadcf7"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "9",
         "symbol": "ASTR",
         "decimals": 18,

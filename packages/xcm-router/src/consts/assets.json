@@ -1537,6 +1537,30 @@
         }
       },
       {
+        "symbol": "PRIME",
+        "decimals": 6,
+        "assetId": "43",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x52b2f622f5676e92dbea3092004eb9ffb85a8d07"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "HDX",
         "decimals": 12,
         "location": {
