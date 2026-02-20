@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.7.1...xcm-router-v12.8.0) (2026-02-20)
+
+
+### Features
+
+* **xcm-router:** Add feeAsset method to router builder ✨ ([489b040](https://github.com/paraspell/xcm-tools/commit/489b0405691e00b5306d8ec031cce1eac392d922))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([0a7f2c7](https://github.com/paraspell/xcm-tools/commit/0a7f2c750ebbdea87098f1270f9882437c9a1a31))
+
 ## [12.7.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.7.0...xcm-router-v12.7.1) (2026-02-18)
 
 

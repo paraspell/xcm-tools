@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.7.1...sdk-core-v12.8.0) (2026-02-20)
+
+
+### Features
+
+* **xcm-router:** Add feeAsset method to router builder ✨ ([489b040](https://github.com/paraspell/xcm-tools/commit/489b0405691e00b5306d8ec031cce1eac392d922))
+
+
+### Bug Fixes
+
+* **sdk-core:** Add support for Moonbeam local transfers 🔧 ([be26f7e](https://github.com/paraspell/xcm-tools/commit/be26f7e8bdb4ba657bcf9ffeb50ec1981e8105b9))
+
 ## [12.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.7.0...sdk-core-v12.7.1) (2026-02-18)
 
 
