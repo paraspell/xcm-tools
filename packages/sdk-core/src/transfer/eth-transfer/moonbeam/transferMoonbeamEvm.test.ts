@@ -1,5 +1,9 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  getNativeAssetSymbol,
+  isOverrideLocationSpecifier
+} from '@paraspell/assets'
 import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -10,15 +14,18 @@ import { abstractDecimals, formatAssetIdToERC20 } from '../../../utils'
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
 import { transferMoonbeamEvm } from './transferMoonbeamEvm'
+import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 vi.mock('@paraspell/assets', () => ({
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  getNativeAssetSymbol: vi.fn()
+  getNativeAssetSymbol: vi.fn(),
+  isOverrideLocationSpecifier: vi.fn().mockReturnValue(false)
 }))
 vi.mock('viem')
 
 vi.mock('./getDestinationLocation')
+vi.mock('./transferMoonbeamLocal')
 vi.mock('../../../utils')
 
 const mockApi = {
@@ -57,6 +64,7 @@ describe('transferMoonbeamEvm', () => {
     >)
     vi.mocked(createPublicClient).mockReturnValue({} as PublicClient)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
+    vi.mocked(transferMoonbeamLocal).mockResolvedValue('0xLocalTxHash')
   })
 
   it('uses native asset ID if found asset is the native symbol', async () => {
@@ -176,6 +184,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('throws if trying to override location', async () => {
+    vi.mocked(isOverrideLocationSpecifier).mockReturnValueOnce(true)
     await expect(
       transferMoonbeamEvm({
         api: mockApi,
@@ -189,5 +198,30 @@ describe('transferMoonbeamEvm', () => {
         }
       } as TEvmBuilderOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
+  })
+
+  it('delegates to transferMoonbeamLocal when from === to', async () => {
+    const localAsset = { symbol: 'xcDOT', assetId: '0xABCDEF', decimals: 10 } as TAssetInfo
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(localAsset)
+
+    const options = {
+      api: mockApi,
+      from: 'Moonbeam',
+      to: 'Moonbeam',
+      signer: mockSigner,
+      address: mockAddress,
+      currency: { symbol: 'xcDOT', amount: '5000000' }
+    } as TEvmBuilderOptions<unknown, unknown, unknown>
+
+    const result = await transferMoonbeamEvm(options)
+
+    expect(transferMoonbeamLocal).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ symbol: 'xcDOT', assetId: '0xABCDEF', amount: 5000000n }),
+      options
+    )
+    expect(result).toBe('0xLocalTxHash')
+    expect(getContract).not.toHaveBeenCalled()
+    expect(getDestinationLocation).not.toHaveBeenCalled()
   })
 })

@@ -15,20 +15,18 @@ import { abstractDecimals, assertHasId, formatAssetIdToERC20 } from '../../../ut
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
+import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
 const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 
 // Partially inspired by Moonbeam XCM-SDK
-export const transferMoonbeamEvm = async <TApi, TRes, TSigner>({
-  api,
-  from,
-  to,
-  signer,
-  address,
-  currency
-}: TEvmBuilderOptions<TApi, TRes, TSigner>): Promise<string> => {
+export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
+  options: TEvmBuilderOptions<TApi, TRes, TSigner>
+): Promise<string> => {
+  const { api, from, to, signer, address, currency } = options
+
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
   }
@@ -37,21 +35,27 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>({
     throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
+  const foundAsset = findAssetInfoOrThrow(from, currency, to)
+
+  const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
+
+  const client = createPublicClient({
+    chain: signer.chain,
+    transport: http()
+  })
+
+  if (from === to) {
+    return transferMoonbeamLocal(client, { ...foundAsset, amount }, options)
+  }
+
   const contract = getContract({
     abi,
     address: CONTRACT_ADDRESS,
     client: {
-      public: createPublicClient({
-        chain: signer.chain,
-        transport: http()
-      }),
+      public: client,
       wallet: signer
     }
   })
-
-  const foundAsset = findAssetInfoOrThrow(from, currency, to)
-
-  const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
   let asset: string
   if (foundAsset.symbol === getNativeAssetSymbol(from)) {

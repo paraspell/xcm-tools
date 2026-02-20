@@ -42,7 +42,9 @@ class Moonbeam<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    throw new ScenarioNotSupportedError(`${this.chain} local transfers are temporarily disabled`)
+    throw new ScenarioNotSupportedError(
+      `${this.chain} local transfers are supported only from EVM Builder`
+    )
   }
 
   getBalanceForeign<TApi, TRes, TSigner>(

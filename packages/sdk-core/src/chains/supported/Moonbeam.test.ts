@@ -71,7 +71,7 @@ describe('Moonbeam', () => {
     it('should throw error', () => {
       expect(() =>
         chain.transferLocalNonNativeAsset({} as TTransferLocalOptions<unknown, unknown, unknown>)
-      ).toThrow(`${chain.chain} local transfers are temporarily disabled`)
+      ).toThrow(`${chain.chain} local transfers are supported only from EVM Builder`)
     })
   })
 })
