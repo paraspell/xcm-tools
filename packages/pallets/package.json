@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/pallets",
-  "version": "12.7.1",
+  "version": "12.8.0",
   "description": "Pallets for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
