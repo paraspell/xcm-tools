@@ -161,20 +161,29 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describeGroup('Ethereum transfers', async () => {
-      const ethAssets = getOtherAssets('AssetHubPolkadot').filter(asset =>
-        hasJunction(asset.location, 'GlobalConsensus', {
-          Ethereum: { chainId: 1 }
-        })
-      )
-      ethAssets.forEach(asset => {
-        it(`should create transfer tx - ${asset.symbol} from AssetHubPolkadot to Ethereum`, async () => {
-          const builder = Builder(config)
-            .from('AssetHubPolkadot')
-            .to('Ethereum')
-            .currency({ location: asset.location, amount: MOCK_AMOUNT })
-            .address(MOCK_ETH_ADDRESS)
-            .senderAddress(MOCK_ADDRESS)
-          await validateTransfer(builder, signer)
+      // Loop through all chains and add tests for each chain that supports transfer to Ethereum
+      filteredChains.forEach(chain => {
+        const chainInstance = getChain(chain)
+        // Check if chain supports transfer to Ethereum
+        const supportsEthereum = typeof chainInstance.transferToEthereum === 'function' ||
+          (typeof chainInstance.transferPolkadotXCM === 'function' &&
+            chainInstance.transferPolkadotXCM.toString().includes('destination === "Ethereum"'))
+        if (!supportsEthereum) return
+        const ethAssets = getOtherAssets(chain).filter(asset =>
+          hasJunction(asset.location, 'GlobalConsensus', {
+            Ethereum: { chainId: 1 }
+          })
+        )
+        ethAssets.forEach(asset => {
+          it(`should create transfer tx - ${asset.symbol} from ${chain} to Ethereum`, async () => {
+            const builder = Builder(config)
+              .from(chain)
+              .to('Ethereum')
+              .currency({ location: asset.location, amount: MOCK_AMOUNT })
+              .address(MOCK_ETH_ADDRESS)
+              .senderAddress(MOCK_ADDRESS)
+            await validateTransfer(builder, signer)
+          })
         })
       })
     })
