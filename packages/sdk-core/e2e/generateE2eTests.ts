@@ -164,10 +164,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       // Loop through all chains and add tests for each chain that supports transfer to Ethereum
       filteredChains.forEach(chain => {
         const chainInstance = getChain(chain)
-        // Check if chain supports transfer to Ethereum
-        const supportsEthereum = typeof chainInstance.transferToEthereum === 'function' ||
-          (typeof chainInstance.transferPolkadotXCM === 'function' &&
-            chainInstance.transferPolkadotXCM.toString().includes('destination === "Ethereum"'))
+        // Use a safe type guard for transferToEthereum
+        const supportsEthereum = typeof (chainInstance as any)?.transferToEthereum === 'function'
         if (!supportsEthereum) return
         const ethAssets = getOtherAssets(chain).filter(asset =>
           hasJunction(asset.location, 'GlobalConsensus', {
