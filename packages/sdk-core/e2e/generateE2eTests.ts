@@ -160,7 +160,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
     })
 
-    // ...existing code...
 
     describeGroup('RelayToPara', () => {
       RELAYCHAINS.forEach(relayChain => {
