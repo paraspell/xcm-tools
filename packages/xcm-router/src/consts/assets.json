@@ -1561,6 +1561,27 @@
         }
       },
       {
+        "symbol": "aPRIME",
+        "decimals": 6,
+        "assetId": "1043",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x4c892a298a9c6b4ced988b3d6e9cf93333aadcf7"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "HDX",
         "decimals": 12,
         "location": {
