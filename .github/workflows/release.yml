@@ -70,10 +70,10 @@ jobs:
         run: pnpm publish -r --no-git-checks --access=public
 
       - name: Publish Playground
-        run: pnpm exec netlify deploy --no-build --prod --site paraspell-playground --filter @paraspell/playground
+        run: pnpm exec netlify deploy --prod --site paraspell-playground --filter @paraspell/playground
 
       - name: Publish Visualizer FE
-        run: pnpm exec netlify deploy --no-build --prod --site xcm-visualizer --filter visualizer-fe
+        run: pnpm exec netlify deploy --prod --site xcm-visualizer --filter visualizer-fe
 
       - name: Publish ParaSpell Website
         run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
