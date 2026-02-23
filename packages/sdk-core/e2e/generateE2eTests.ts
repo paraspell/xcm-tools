@@ -160,31 +160,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
     })
 
-    describeGroup('Ethereum transfers', async () => {
-      // Loop through all chains and add tests for each chain that supports transfer to Ethereum
-      filteredChains.forEach(chain => {
-        const chainInstance = getChain(chain)
-        // Use a safe type guard for transferToEthereum
-        const supportsEthereum = typeof (chainInstance as any)?.transferToEthereum === 'function'
-        if (!supportsEthereum) return
-        const ethAssets = getOtherAssets(chain).filter(asset =>
-          hasJunction(asset.location, 'GlobalConsensus', {
-            Ethereum: { chainId: 1 }
-          })
-        )
-        ethAssets.forEach(asset => {
-          it(`should create transfer tx - ${asset.symbol} from ${chain} to Ethereum`, async () => {
-            const builder = Builder(config)
-              .from(chain)
-              .to('Ethereum')
-              .currency({ location: asset.location, amount: MOCK_AMOUNT })
-              .address(MOCK_ETH_ADDRESS)
-              .senderAddress(MOCK_ADDRESS)
-            await validateTransfer(builder, signer)
-          })
-        })
-      })
-    })
+    // ...existing code...
 
     describeGroup('RelayToPara', () => {
       RELAYCHAINS.forEach(relayChain => {

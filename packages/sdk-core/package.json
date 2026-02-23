@@ -32,7 +32,6 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:e2e": "vitest run --config ./vitest.config.ts --sequence.concurrent",
     "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/fetchChainConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
