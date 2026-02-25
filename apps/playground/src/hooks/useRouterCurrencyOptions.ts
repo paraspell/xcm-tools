@@ -9,6 +9,9 @@ import {
 } from '@paraspell/xcm-router';
 import { useMemo } from 'react';
 
+const getAssetKey = (asset: TAssetInfo) =>
+  `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? (asset.assetId ?? 'NO-ID') : 'NO_ID'}`;
+
 const getLabel = (asset: TAssetInfo) => {
   return `${asset.symbol} - ${'assetId' in asset ? asset.assetId : 'Location'}`;
 };
@@ -39,7 +42,7 @@ export const useRouterCurrencyOptions = (
   const currencyFromMap = useMemo(
     () =>
       supportedAssetsFrom.reduce((map: Record<string, TAssetInfo>, asset) => {
-        const key = `${asset.symbol}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+        const key = getAssetKey(asset);
         map[key] = asset;
         return map;
       }, {}),
@@ -49,7 +52,7 @@ export const useRouterCurrencyOptions = (
   const currencyToMap = useMemo(
     () =>
       supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
-        const key = `${asset.symbol}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+        const key = getAssetKey(asset);
         map[key] = asset;
         return map;
       }, {}),

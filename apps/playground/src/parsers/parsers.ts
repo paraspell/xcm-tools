@@ -1,6 +1,7 @@
 import { TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
 import { EXCHANGE_CHAINS } from '@paraspell/sdk';
 import {
+  createParser,
   parseAsBoolean,
   parseAsJson,
   parseAsNativeArrayOf,
@@ -9,8 +10,13 @@ import {
 } from 'nuqs';
 import z from 'zod';
 
-import { DEFAULT_SWAP_OPTIONS, DEFAULT_TRANSACT_OPTIONS } from '../constants';
-import { CustomEndpointSchema } from '../utils';
+import {
+  DEFAULT_SWAP_OPTIONS,
+  DEFAULT_TRANSACT_OPTIONS,
+  SYMBOL_TYPES,
+  TRANSFER_CURRENCY_TYPES,
+} from '../constants';
+import { CustomEndpointSchema, isValidWalletAddress } from '../utils';
 
 export const CurrencyEntrySchema = z.object({
   currencyOptionId: z.string(),
@@ -18,12 +24,8 @@ export const CurrencyEntrySchema = z.object({
   amount: z.string(),
   isCustomCurrency: z.boolean(),
   isMax: z.boolean().optional(),
-  customCurrencyType: z
-    .enum(['id', 'symbol', 'location', 'overridenLocation'])
-    .optional(),
-  customCurrencySymbolSpecifier: z
-    .enum(['auto', 'native', 'foreign', 'foreignAbstract'])
-    .optional(),
+  customCurrencyType: z.enum(TRANSFER_CURRENCY_TYPES).optional(),
+  customCurrencySymbolSpecifier: z.enum(SYMBOL_TYPES).optional(),
 });
 
 export const FeeAssetSchema = CurrencyEntrySchema.omit({
@@ -73,3 +75,10 @@ const SwapOptionsSchema = z.object({
 export const swapOptionsParsers = {
   swapOptions: parseAsJson(SwapOptionsSchema).withDefault(DEFAULT_SWAP_OPTIONS),
 };
+
+export const parseAsWalletAddress = createParser({
+  parse: (query) => {
+    return query !== null && isValidWalletAddress(query) ? query : null;
+  },
+  serialize: (value) => value,
+});

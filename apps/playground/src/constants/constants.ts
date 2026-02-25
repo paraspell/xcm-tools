@@ -1,3 +1,4 @@
+import type { TSubstrateChain } from '@paraspell/sdk';
 import {
   IconBoxAlignBottomRight,
   IconCoins,
@@ -126,3 +127,31 @@ export const PALLETS_QUERIES = [
   'NATIVE_ASSETS_PALLET',
   'OTHER_ASSETS_PALLETS',
 ] as const;
+
+export const CURRENCY_TYPES = ['id', 'symbol', 'location'] as const;
+
+export const TRANSFER_CURRENCY_TYPES = [
+  ...CURRENCY_TYPES,
+  'overridenLocation',
+] as const;
+
+export const SYMBOL_TYPES = [
+  'auto',
+  'native',
+  'foreign',
+  'foreignAbstract',
+] as const;
+
+export const EVM_ORIGIN_CHAINS = [
+  'Ethereum',
+  'Moonbeam',
+  'Moonriver',
+  'Darwinia',
+] as const;
+
+export const ASSET_CLAIM_CHAINS: TSubstrateChain[] = [
+  'Polkadot',
+  'Kusama',
+  'AssetHubPolkadot',
+  'AssetHubKusama',
+];

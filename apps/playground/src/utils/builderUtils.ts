@@ -18,15 +18,20 @@ import {
   type TUrl,
   type WithComplexAmount,
 } from '@paraspell/sdk';
+import type { TRouterBuilderOptions } from '@paraspell/xcm-router';
+import { RouterBuilder } from '@paraspell/xcm-router';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 
+import type { TRouterFormValuesTransformed } from '../components/XcmRouter/XcmRouterForm';
 import type {
   TAdvancedOptions,
   TCurrencyEntryBase,
   TCurrencyEntryBaseTransformed,
   TFormValuesTransformed,
   TSwapOptions,
+  TSymbolType,
+  TTransferCurrencyType,
 } from '../types';
 import { resolveExchange } from './routerUtils';
 
@@ -64,6 +69,36 @@ export const resolveCurrencyAsset = <T extends TCurrencyEntryBase>(
   return currency ? { ...entry, currency } : { ...entry };
 };
 
+export const resolveCustomCurrencyCore = (
+  currency: string,
+  currencyType?: TTransferCurrencyType,
+  currencySymbolSpecifier?: TSymbolType,
+): TCurrencyCore => {
+  if (currencyType === 'id') {
+    return { id: currency };
+  }
+
+  if (currencyType === 'symbol') {
+    if (currencySymbolSpecifier === 'native') {
+      return { symbol: Native(currency) };
+    }
+
+    if (currencySymbolSpecifier === 'foreign') {
+      return { symbol: Foreign(currency) };
+    }
+
+    if (currencySymbolSpecifier === 'foreignAbstract') {
+      return { symbol: ForeignAbstract(currency) };
+    }
+
+    return { symbol: currency };
+  }
+
+  return {
+    location: JSON.parse(currency) as TLocation,
+  };
+};
+
 export const determineCurrencyCore = ({
   isCustomCurrency,
   customCurrency,
@@ -72,37 +107,11 @@ export const determineCurrencyCore = ({
   currency,
 }: TCurrencyEntryBaseTransformed): TCurrencyCore => {
   if (isCustomCurrency) {
-    if (customCurrencyType === 'id') {
-      return {
-        id: customCurrency,
-      };
-    } else if (customCurrencyType === 'symbol') {
-      if (customCurrencySymbolSpecifier === 'native') {
-        return {
-          symbol: Native(customCurrency),
-        };
-      }
-
-      if (customCurrencySymbolSpecifier === 'foreign') {
-        return {
-          symbol: Foreign(customCurrency),
-        };
-      }
-
-      if (customCurrencySymbolSpecifier === 'foreignAbstract') {
-        return {
-          symbol: ForeignAbstract(customCurrency),
-        };
-      }
-
-      return {
-        symbol: customCurrency,
-      };
-    } else {
-      return {
-        location: JSON.parse(customCurrency) as TLocation,
-      };
-    }
+    return resolveCustomCurrencyCore(
+      customCurrency,
+      customCurrencyType,
+      customCurrencySymbolSpecifier,
+    );
   } else if (currency) {
     return {
       location: currency.location,
@@ -236,4 +245,36 @@ export const setupBaseBuilder = (
   }
 
   return finalBuilder;
+};
+
+export const setupBaseRouterBuilder = (
+  options: TRouterBuilderOptions,
+  {
+    from,
+    exchange,
+    to,
+    currencyFrom,
+    currencyTo,
+    feeAsset,
+    amount,
+    recipientAddress,
+    slippagePct,
+    evmInjectorAddress,
+  }: TRouterFormValuesTransformed,
+  senderAddress: string,
+) => {
+  const builder = RouterBuilder(options)
+    .from(from)
+    .exchange(exchange)
+    .to(to)
+    .currencyFrom(currencyFrom)
+    .currencyTo(currencyTo)
+    .feeAsset(feeAsset)
+    .amount(amount)
+    .senderAddress(senderAddress)
+    .recipientAddress(recipientAddress)
+    .evmSenderAddress(evmInjectorAddress)
+    .slippagePct(slippagePct);
+
+  return builder;
 };

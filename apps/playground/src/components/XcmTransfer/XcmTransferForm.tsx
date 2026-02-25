@@ -30,6 +30,7 @@ import {
   parseAsJson,
   parseAsNativeArrayOf,
   parseAsString,
+  parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
 import type { FC, FormEvent } from 'react';
@@ -51,6 +52,7 @@ import {
   advancedOptionsParsers,
   CurrencyEntrySchema,
   FeeAssetSchema,
+  parseAsWalletAddress,
   swapOptionsParsers,
   transactOptionsParsers,
 } from '../../parsers';
@@ -66,11 +68,6 @@ import {
   validateCustomEndpoint,
   validateTransferAddress,
 } from '../../utils';
-import {
-  parseAsChain,
-  parseAsRecipientAddress,
-  parseAsSubstrateChain,
-} from '../../utils/parsers';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { KeepAliveCheckbox } from '../common/KeepAliveCheckbox';
@@ -104,15 +101,15 @@ export const XcmTransferForm: FC<Props> = ({
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
-    from: parseAsSubstrateChain.withDefault('Astar'),
-    to: parseAsChain.withDefault('Hydration'),
+    from: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Astar'),
+    to: parseAsStringLiteral(CHAINS).withDefault('Hydration'),
     currencies: parseAsNativeArrayOf(
       parseAsJson(CurrencyEntrySchema),
     ).withDefault([DEFAULT_CURRENCY_ENTRY]),
     feeAsset: parseAsJson(FeeAssetSchema).withDefault(
       DEFAULT_CURRENCY_ENTRY_BASE,
     ),
-    address: parseAsRecipientAddress.withDefault(
+    address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     ahAddress: parseAsString.withDefault(''),

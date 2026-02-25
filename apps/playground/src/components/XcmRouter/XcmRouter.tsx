@@ -11,8 +11,6 @@ import {
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { TBuilderConfig, TUrl } from '@paraspell/sdk';
 import { replaceBigInt } from '@paraspell/sdk';
-import type { TExchangeInput } from '@paraspell/xcm-router';
-import { RouterBuilder } from '@paraspell/xcm-router';
 import axios, { AxiosError } from 'axios';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
@@ -30,6 +28,7 @@ import type {
 import {
   createBuilderOptions,
   fetchFromApi,
+  setupBaseRouterBuilder,
   submitApiTransactions,
   submitSdkTransactions,
 } from '../../utils';
@@ -90,37 +89,19 @@ export const XcmRouter = () => {
 
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      feeAsset,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-      evmSigner,
-    } = formValues;
+    const { evmSigner } = formValues;
 
-    const txContexts = await RouterBuilder(builderOptions)
-      .from(from)
-      .exchange(exchange)
-      .to(to)
-      .currencyFrom({ location: currencyFrom.location })
-      .currencyTo({ location: currencyTo.location })
-      .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
-      .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
-      .evmSenderAddress(evmSenderAddress)
-      .slippagePct(slippagePct)
-      .buildTransactions();
+    const builder = setupBaseRouterBuilder(
+      builderOptions,
+      formValues,
+      senderAddress,
+    );
+
+    const txContexts = await builder.buildTransactions();
 
     await submitSdkTransactions({
       txContexts,
@@ -132,22 +113,15 @@ export const XcmRouter = () => {
 
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const { currencyFrom, currencyTo, feeAsset } = formValues;
-
     try {
       const response = await axios.post<TApiTransaction[]>(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: { location: currencyFrom.location },
-          currencyTo: { location: currencyTo.location },
-          feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
-          exchange,
           senderAddress,
           options: builderOptions,
         },
@@ -191,22 +165,10 @@ export const XcmRouter = () => {
 
   const submitGetXcmFee = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      feeAsset,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
 
@@ -216,11 +178,7 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: { location: currencyFrom.location },
-            currencyTo: { location: currencyTo.location },
-            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
-            exchange,
-            senderAddress: selectedAccount?.address,
+            senderAddress,
             options: builderOptions,
           },
           '/router/xcm-fees',
@@ -228,19 +186,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom({ location: currencyFrom.location })
-          .currencyTo({ location: currencyTo.location })
-          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .getXcmFees();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getXcmFees();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
       openOutputAlert();
@@ -261,22 +212,10 @@ export const XcmRouter = () => {
 
   const submitGetTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      feeAsset,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
 
@@ -286,10 +225,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: { location: currencyFrom.location },
-            currencyTo: { location: currencyTo.location },
-            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -298,19 +233,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom({ location: currencyFrom.location })
-          .currencyTo({ location: currencyTo.location })
-          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .getTransferableAmount();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getTransferableAmount();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -336,22 +264,10 @@ export const XcmRouter = () => {
 
   const submitGetMinTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      feeAsset,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
 
@@ -361,10 +277,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: { location: currencyFrom.location },
-            currencyTo: { location: currencyTo.location },
-            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -373,19 +285,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom({ location: currencyFrom.location })
-          .currencyTo({ location: currencyTo.location })
-          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .getMinTransferableAmount();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getMinTransferableAmount();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -411,22 +316,10 @@ export const XcmRouter = () => {
 
   const submitDryRun = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      feeAsset,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
 
@@ -436,10 +329,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: { location: currencyFrom.location },
-            currencyTo: { location: currencyTo.location },
-            feeAsset: feeAsset ? { location: feeAsset.location } : undefined,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -448,19 +337,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom({ location: currencyFrom.location })
-          .currencyTo({ location: currencyTo.location })
-          .feeAsset(feeAsset ? { location: feeAsset.location } : undefined)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .dryRun();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.dryRun();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -482,10 +364,10 @@ export const XcmRouter = () => {
 
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     builderOptions: TBuilderConfig<TUrl>,
+    senderAddress: string,
   ) => {
-    const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
 
@@ -495,8 +377,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: { location: currencyFrom.location },
-            currencyTo: { location: currencyTo.location },
             options: builderOptions,
           },
           '/router/best-amount-out',
@@ -504,14 +384,13 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom({ location: currencyFrom.location })
-          .currencyTo({ location: currencyTo.location })
-          .amount(formValues.amount)
-          .getBestAmountOut();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+
+        result = await builder.getBestAmountOut();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
       openOutputAlert();
@@ -544,17 +423,18 @@ export const XcmRouter = () => {
 
     closeOutputAlert();
 
-    const exchange = formValues.exchange;
-
     if (submitType === 'getBestAmountOut') {
-      await submitGetBestAmountOut(formValues, exchange, builderOptions);
+      await submitGetBestAmountOut(
+        formValues,
+        builderOptions,
+        selectedAccount.address,
+      );
       return;
     }
 
     if (submitType === 'getMinTransferableAmount') {
       await submitGetMinTransferableAmount(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -564,7 +444,6 @@ export const XcmRouter = () => {
     if (submitType === 'getTransferableAmount') {
       await submitGetTransferableAmount(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -574,7 +453,6 @@ export const XcmRouter = () => {
     if (submitType === 'getXcmFee') {
       await submitGetXcmFee(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -582,12 +460,7 @@ export const XcmRouter = () => {
     }
 
     if (submitType === 'dryRun') {
-      await submitDryRun(
-        formValues,
-        exchange,
-        selectedAccount.address,
-        builderOptions,
-      );
+      await submitDryRun(formValues, selectedAccount.address, builderOptions);
       return;
     }
 
@@ -624,7 +497,6 @@ export const XcmRouter = () => {
       if (useApi) {
         await submitUsingApi(
           formValues,
-          exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
           builderOptions,
@@ -632,7 +504,6 @@ export const XcmRouter = () => {
       } else {
         await submitUsingRouterModule(
           formValues,
-          exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
           builderOptions,

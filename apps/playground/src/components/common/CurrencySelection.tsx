@@ -8,15 +8,17 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
-import type { LooseKeys, UseFormReturnType } from '@mantine/form';
-import type { FC } from 'react';
-import { useEffect } from 'react';
+import { createFormActions, type UseFormReturnType } from '@mantine/form';
+import { useEffect, useRef } from 'react';
 
-import type { TCurrencyEntryBase, TFormValues } from '../../types';
+import { MAIN_FORM_NAME } from '../../constants';
+import type { TCurrencyEntryBase } from '../../types';
 
-type Props = {
-  form: UseFormReturnType<TFormValues>;
-  fieldPath: LooseKeys<TFormValues>;
+const { setFieldValue } = createFormActions(MAIN_FORM_NAME);
+
+type Props<T extends object> = {
+  form: UseFormReturnType<T>;
+  fieldPath: string;
   fieldValue: TCurrencyEntryBase;
   currencyOptions: ComboboxItem[];
   showOverrideLocation?: boolean;
@@ -25,9 +27,10 @@ type Props = {
   disabled?: boolean;
   label?: string;
   description?: string;
+  onClear?: () => void;
 };
 
-export const CurrencySelection: FC<Props> = ({
+export const CurrencySelection = <T extends object>({
   form,
   fieldPath,
   fieldValue,
@@ -38,15 +41,18 @@ export const CurrencySelection: FC<Props> = ({
   disabled,
   label = 'Currency',
   description,
-}) => {
-  const { from, to } = form.getValues();
-
+  onClear,
+}: Props<T>) => {
   const isCustomCurrency = fieldValue.isCustomCurrency;
   const customCurrencyType = fieldValue.customCurrencyType;
 
+  const prevCustomCurrencyType = useRef(customCurrencyType);
+
   useEffect(() => {
+    if (prevCustomCurrencyType.current === customCurrencyType) return;
+    prevCustomCurrencyType.current = customCurrencyType;
     if (!customCurrencyType) return;
-    form.setFieldValue(`${fieldPath}.customCurrency`, '');
+    setFieldValue(`${fieldPath}.customCurrency`, '');
   }, [customCurrencyType]);
 
   const options = [
@@ -71,7 +77,7 @@ export const CurrencySelection: FC<Props> = ({
         (customCurrencyType === 'id' || customCurrencyType === 'symbol') && (
           <TextInput
             size={size}
-            label="Custom currency"
+            label={`${label} - Custom`}
             placeholder={customCurrencyType === 'id' ? 'Asset ID' : 'Symbol'}
             required={required}
             {...form.getInputProps(`${fieldPath}.customCurrency`)}
@@ -102,7 +108,6 @@ export const CurrencySelection: FC<Props> = ({
 
       {!isCustomCurrency && (
         <Select
-          key={from + to}
           size={size}
           label={label}
           description={description}
@@ -112,6 +117,8 @@ export const CurrencySelection: FC<Props> = ({
           searchable
           required={required}
           disabled={disabled}
+          clearable={!!onClear}
+          onClear={onClear}
           data-testid="select-currency"
           {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
         />

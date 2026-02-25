@@ -15,7 +15,13 @@ import type { PolkadotSigner } from 'polkadot-api';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
 
-import type { ASSET_QUERIES, PALLETS_QUERIES } from './constants';
+import type {
+  ASSET_QUERIES,
+  CURRENCY_TYPES,
+  PALLETS_QUERIES,
+  SYMBOL_TYPES,
+  TRANSFER_CURRENCY_TYPES,
+} from './constants';
 
 export type TApiTransaction = Omit<
   TTransactionContext<TPapiApi, TPapiTransaction>,
@@ -120,16 +126,18 @@ export type TTransactFields = {
   transactOptions: TTransactOptions<string, string | number>;
 };
 
+export type TCurrencyType = (typeof CURRENCY_TYPES)[number];
+
+export type TTransferCurrencyType = (typeof TRANSFER_CURRENCY_TYPES)[number];
+
+export type TSymbolType = (typeof SYMBOL_TYPES)[number];
+
 export type TCurrencyEntryBase = {
   currencyOptionId: string;
   customCurrency: string;
   isCustomCurrency: boolean;
-  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
-  customCurrencySymbolSpecifier?:
-    | 'auto'
-    | 'native'
-    | 'foreign'
-    | 'foreignAbstract';
+  customCurrencyType?: TTransferCurrencyType;
+  customCurrencySymbolSpecifier?: TSymbolType;
 };
 
 export type TCurrencyEntry = TCurrencyEntryBase & {
