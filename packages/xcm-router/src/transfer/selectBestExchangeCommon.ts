@@ -1,5 +1,6 @@
 import {
   applyDecimalAbstraction,
+  EXCHANGE_CHAINS,
   findAssetInfo,
   getRelayChainOf,
   hasSupportForAsset,
@@ -10,7 +11,6 @@ import {
 import type { PolkadotClient } from 'polkadot-api';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
-import { EXCHANGE_CHAINS } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';

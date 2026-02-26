@@ -4,14 +4,14 @@ import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
-import { assertSenderAddress, assertToIsString } from '../utils'
+import { assertSenderAddress, assertToIsString, executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <
   TApi,
   TRes,
   TSigner,
-  TOptions extends TSendBaseOptions<TRes>
+  TOptions extends TSendBaseOptions<TRes, TSigner>
 >(
   api: IPolkadotApi<TApi, TRes, TSigner>,
   builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
@@ -20,7 +20,7 @@ export const normalizeAmountAll = async <
   options: TSendOptions<TApi, TRes, TSigner> & TOptions
   buildTx: TTxFactory<TRes>
 }> => {
-  const { currency } = options
+  const { currency, swapOptions } = options
 
   const isAmountAll = !Array.isArray(currency) && currency.amount === AMOUNT_ALL
 
@@ -36,16 +36,20 @@ export const normalizeAmountAll = async <
   assertToIsString(options.to)
   assertSenderAddress(options.senderAddress)
 
-  const transferable = await getTransferableAmountInternal({
-    api,
-    buildTx,
-    origin: options.from,
-    destination: options.to,
-    senderAddress: options.senderAddress,
-    feeAsset: options.feeAsset,
-    version: options.version,
-    currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
-  })
+  const transferable = swapOptions
+    ? await executeWithRouter({ ...options, api, swapOptions }, builder =>
+        builder.getTransferableAmount()
+      )
+    : await getTransferableAmountInternal({
+        api,
+        buildTx,
+        origin: options.from,
+        destination: options.to,
+        senderAddress: options.senderAddress,
+        feeAsset: options.feeAsset,
+        version: options.version,
+        currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
+      })
 
   const finalBuildTx = builder
     .currency({

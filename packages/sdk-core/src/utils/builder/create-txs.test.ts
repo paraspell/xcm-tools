@@ -12,7 +12,7 @@ import type {
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { parseUnits } from '../unit'
-import { computeOverridenAmount, createTx, overrideTxAmount } from './create-txs'
+import { computeOverridenAmount, createTxOverrideAmount, overrideTxAmount } from './create-txs'
 import { isConfig } from './isConfig'
 
 vi.mock('@paraspell/assets')
@@ -118,7 +118,7 @@ describe('overrideTxAmount', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown>
     >
 
     const out = await overrideTxAmount(options, builder, '50')
@@ -146,10 +146,10 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown>
     >
 
-    const res = await createTx(baseOptions, builder, undefined)
+    const res = await createTxOverrideAmount(baseOptions, builder, undefined)
 
     expect(builder['buildInternal']).toHaveBeenCalledTimes(1)
     expect(builder.currency).not.toHaveBeenCalled()
@@ -168,10 +168,10 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown>
     >
 
-    const res = await createTx(options, builder, '200')
+    const res = await createTxOverrideAmount(options, builder, '200')
 
     expect(builder.currency).toHaveBeenCalledWith(
       expect.objectContaining({ amount: 323 }) // 123 + 200

@@ -1,8 +1,7 @@
-import type { TLocation } from '@paraspell/sdk';
-import { deepEqual, reverseTransformLocation } from '@paraspell/sdk';
+import type { TExchangeChain, TExchangeInput, TLocation } from '@paraspell/sdk';
+import { deepEqual, EXCHANGE_CHAINS, reverseTransformLocation } from '@paraspell/sdk';
 
-import { EXCHANGE_CHAINS } from '../consts';
-import type { TExchangeChain, TExchangeInput, TRouterAsset } from '../types';
+import type { TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 
 const resolveRouterAsset = (

@@ -3,6 +3,8 @@ import type {
   TAssetInfo,
   TChain,
   TCurrencyInput,
+  TExchangeChain,
+  TExchangeInput,
   TLocation,
   TPapiApi,
   TPapiTransaction,
@@ -12,10 +14,7 @@ import type {
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import type { EXCHANGE_CHAINS } from '../consts';
 import type { TRouterBuilderOptions } from './TRouterBuilder';
-
-export type TExchangeChain = (typeof EXCHANGE_CHAINS)[number];
 
 export type TSwapOptions = {
   papiApi: TPapiApi;
@@ -220,8 +219,6 @@ export type TDexConfig = {
 };
 
 export type TAssetsRecord = Record<TExchangeChain, TDexConfig>;
-
-export type TExchangeInput = TExchangeChain | [TExchangeChain, ...TExchangeChain[]] | undefined;
 
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 

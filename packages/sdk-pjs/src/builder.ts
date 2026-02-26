@@ -21,7 +21,7 @@ export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
   return BuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi)
 }
 
-export type GeneralBuilder<T extends Partial<TSendBaseOptions<Extrinsic>> = object> =
+export type GeneralBuilder<T extends Partial<TSendBaseOptions<Extrinsic, TPjsSigner>> = object> =
   GeneralBuilderCore<TPjsApi, Extrinsic, TPjsSigner, T>
 
 export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {

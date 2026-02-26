@@ -3,8 +3,8 @@ import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
-import { InvalidAddressError, MissingParameterError } from '../errors'
-import type { TAddress, TDestination, TSender } from '../types'
+import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
+import type { TAddress, TDestination, TSender, TSwapOptions } from '../types'
 
 export const assertToIsString: (
   to: TDestination,
@@ -51,4 +51,12 @@ export const assertSender: <TSigner>(
 
 export const isSenderSigner = <TSigner>(sender: TSender<TSigner>): sender is TSigner => {
   return typeof sender !== 'string'
+}
+
+export const assertSwapSupport = <TSigner>(options: TSwapOptions<TSigner> | undefined) => {
+  if (options) {
+    throw new UnsupportedOperationError(
+      'Swap options are not supported by this operation. Please open an issue if you would like to see this supported.'
+    )
+  }
 }

@@ -8,6 +8,7 @@ import {
   isExternalChain,
   SUBSTRATE_CHAINS,
   TChain,
+  TPapiSigner,
   TPapiTransaction,
   TSendBaseOptionsWithSenderAddress,
   TSubstrateChain,
@@ -30,7 +31,7 @@ export class XTransferService {
     transfer: XTransferDtoWSenderAddress,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+        TSendBaseOptionsWithSenderAddress<TPapiTransaction, TPapiSigner>
       >,
     ) => Promise<T>,
   ): Promise<T> {

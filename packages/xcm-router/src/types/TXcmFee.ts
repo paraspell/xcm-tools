@@ -1,13 +1,16 @@
 import type { TGetXcmFeeResult, TXcmFeeDetail, TXcmFeeHopInfo } from '@paraspell/sdk';
 
-import type { TWithExchange } from './TRouter';
+/**
+ * @deprecated Use `TXcmFeeHopInfo` from `@paraspell/sdk` directly. Will be removed in v13.
+ */
+export type TRouterXcmFeeHopInfo = TXcmFeeHopInfo;
 
-export type TRouterXcmFeeHopInfo = TWithExchange<TXcmFeeHopInfo>;
+/**
+ * @deprecated Use `TXcmFeeDetail` from `@paraspell/sdk` directly. Will be removed in v13.
+ */
+export type TRouterXcmFeeDetail = TXcmFeeDetail;
 
-export type TRouterXcmFeeDetail = TWithExchange<TXcmFeeDetail>;
-
-export type TRouterXcmFeeResult = TGetXcmFeeResult & {
-  origin: TRouterXcmFeeDetail;
-  destination: TRouterXcmFeeDetail;
-  hops: TRouterXcmFeeHopInfo[];
-};
+/**
+ * @deprecated Use `TGetXcmFeeResult` from `@paraspell/sdk` directly. Will be removed in v13.
+ */
+export type TRouterXcmFeeResult = TGetXcmFeeResult;

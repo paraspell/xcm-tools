@@ -1,11 +1,9 @@
-import type { TAssetInfo, TChain } from '@paraspell/sdk';
-import { getAssets, isExternalChain, isSystemAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS, getAssets, isExternalChain, isSystemAsset } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { EXCHANGE_CHAINS } from '../consts';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import type { TExchangeChain } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
