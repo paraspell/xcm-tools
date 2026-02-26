@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
+  TApiType,
   TAssetInfo,
   TBridgeStatus,
   TBuilderOptions,
@@ -89,6 +90,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
   constructor(config?: TBuilderOptions<TPjsApiOrUrl>) {
     this._config = config
+  }
+
+  getType(): TApiType {
+    return 'PJS'
   }
 
   getConfig() {

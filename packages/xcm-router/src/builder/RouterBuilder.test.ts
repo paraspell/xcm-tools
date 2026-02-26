@@ -1,3 +1,4 @@
+import type { TExchangeInput } from '@paraspell/sdk';
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -8,7 +9,7 @@ import {
   getXcmFees,
   transfer,
 } from '../transfer';
-import type { TExchangeInput, TTransferOptions } from '../types';
+import type { TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
 vi.mock('../transfer');
@@ -267,9 +268,11 @@ describe('Builder', () => {
   });
 
   it('should construct transactions using RouterBuilder with single element exchange array', async () => {
+    const exchange: TExchangeInput = ['HydrationDex'];
+
     await RouterBuilder()
       .from(from)
-      .exchange([exchange] as TExchangeInput)
+      .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
@@ -283,7 +286,7 @@ describe('Builder', () => {
     expect(buildApiTransactionsSpy).toHaveBeenCalledWith(
       {
         from,
-        exchange: [exchange],
+        exchange,
         to,
         currencyFrom,
         currencyTo,

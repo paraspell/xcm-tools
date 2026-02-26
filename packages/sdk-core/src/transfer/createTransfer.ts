@@ -25,7 +25,7 @@ import {
   validateTransact
 } from './utils'
 
-export const resolveSendParams = <TApi, TRes, TSigner>(
+export const resolveTransferParams = <TApi, TRes, TSigner>(
   options: TSendOptions<TApi, TRes, TSigner>
 ) => {
   const {
@@ -114,7 +114,7 @@ export const resolveSendParams = <TApi, TRes, TSigner>(
   }
 }
 
-export const send = async <TApi, TRes, TSigner>(
+export const createTransfer = async <TApi, TRes, TSigner>(
   options: TSendOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const {
@@ -135,7 +135,7 @@ export const send = async <TApi, TRes, TSigner>(
   } = options
 
   const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
-    resolveSendParams(options)
+    resolveTransferParams(options)
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 

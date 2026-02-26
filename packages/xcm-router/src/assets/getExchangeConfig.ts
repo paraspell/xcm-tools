@@ -1,5 +1,7 @@
+import type { TExchangeChain } from '@paraspell/sdk';
+
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
-import type { TAssetsRecord, TDexConfig, TExchangeChain, TRouterAsset } from '../types';
+import type { TAssetsRecord, TDexConfig, TRouterAsset } from '../types';
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 

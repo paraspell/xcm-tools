@@ -13,7 +13,8 @@ const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', location: mlA, d
 const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
 const assetC: TRouterAsset = { symbol: 'ZZZ', assetId: '9', decimals: 12, location: mlc };
 
-vi.mock('../consts', () => ({
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
   EXCHANGE_CHAINS: ['AcalaDex', 'BifrostPolkadotDex'],
 }));
 

@@ -1,8 +1,7 @@
-import type { TAssetInfo, TChain } from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TExchangeInput } from '@paraspell/sdk';
 import { getAssets, isAssetEqual } from '@paraspell/sdk';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import type { TExchangeInput } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 /**

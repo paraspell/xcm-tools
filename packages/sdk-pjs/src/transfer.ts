@@ -2,8 +2,7 @@ import {
   dryRun as dryRunImpl,
   dryRunOrigin as dryRunOriginImpl,
   getBridgeStatus as getBridgeStatusImpl,
-  getParaEthTransferFees as getEthFeesImpl,
-  send as sendImpl
+  getParaEthTransferFees as getEthFeesImpl
 } from '@paraspell/sdk-core'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '@paraspell/sdk-core'
 
@@ -12,13 +11,6 @@ import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
-/**
- * Transfers assets from parachain to another parachain or from/to relay chain.
- * @param options - The transfer options.
- * @returns An extrinsic to be signed and sent.
- */
-export const send = createPolkadotJsApiCall(sendImpl<TPjsApi, Extrinsic, TPjsSigner>)
-
 export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic, TPjsSigner>)
 
 export const dryRunOrigin = createPolkadotJsApiCall(
@@ -26,7 +18,7 @@ export const dryRunOrigin = createPolkadotJsApiCall(
 )
 export const transferEthToPolkadot = (
   options: Omit<TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'>
-) =>
+): ReturnType<typeof transferEthToPolkadotImpl> =>
   transferEthToPolkadotImpl({
     ...options,
     api: new PolkadotJsApi()

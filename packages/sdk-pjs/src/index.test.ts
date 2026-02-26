@@ -8,7 +8,6 @@ describe('Index Exports', () => {
       key =>
         ![
           'xcmPallet',
-          'send',
           'getDryRun',
           'getParaEthTransferFees',
           'assets',
@@ -31,7 +30,6 @@ describe('Index Exports', () => {
   })
 
   it('should export transfer functions', () => {
-    expect(moduleExports.send).toBeDefined()
     expect(moduleExports.dryRun).toBeDefined()
     expect(moduleExports.getParaEthTransferFees).toBeDefined()
   })

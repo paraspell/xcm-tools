@@ -4,6 +4,7 @@ import type {
   TPapiTransaction,
   TParachain,
   TXcmFeeDetail,
+  TXcmFeeHopInfo,
 } from '@paraspell/sdk';
 import {
   DryRunFailedError,

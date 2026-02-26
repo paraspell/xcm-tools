@@ -42,7 +42,7 @@ export const validateTransfer = async (
     TPapiApi,
     TPapiTransaction,
     TPapiSigner,
-    TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+    TSendBaseOptionsWithSenderAddress<TPapiTransaction, TPapiSigner>
   >,
   signer: PolkadotSigner
 ) => {

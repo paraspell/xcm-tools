@@ -1,7 +1,7 @@
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk';
 import { deepEqual } from '@paraspell/sdk';
 
-import type { TExchangeChain, TRouterAsset } from '../types';
+import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAssetByOriginAsset = (

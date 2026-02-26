@@ -20,7 +20,6 @@ import {
 } from '../transfer';
 import type {
   TBuildTransactionsOptions,
-  TExchangeInput,
   TGetBestAmountOutOptions,
   TRouterBuilderOptions,
   TStatusChangeCallback,
