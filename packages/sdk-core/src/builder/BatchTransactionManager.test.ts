@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { send } from '../transfer'
+import { createTransfer } from '../transfer'
 import type { TBatchedSendOptions, TSendBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import BatchTransactionManager from './BatchTransactionManager'
@@ -17,7 +17,7 @@ const mockApi = {
 const createBuilder = () =>
   ({
     createTxFactory: vi.fn(() => vi.fn())
-  }) as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown>>
+  }) as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown, unknown>>
 
 const createSendOptions = (
   overrides: Partial<TBatchedSendOptions<unknown, unknown, unknown>> = {}
@@ -70,17 +70,17 @@ describe('BatchTransactionManager', () => {
       const manager = new BatchTransactionManager()
       manager.addTransaction(createSendOptions())
       manager.addTransaction(createSendOptions())
-      vi.mocked(send).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(createTransfer).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
-      expect(send).toHaveBeenCalledTimes(2)
+      expect(createTransfer).toHaveBeenCalledTimes(2)
     })
 
     it('uses batch when BATCH mode is selected', async () => {
       const spy = vi.spyOn(mockApi, 'callBatchMethod')
       const manager = new BatchTransactionManager()
       manager.addTransaction(createSendOptions())
-      vi.mocked(send).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(createTransfer).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH })
 
@@ -90,18 +90,18 @@ describe('BatchTransactionManager', () => {
     it('uses batchAll when BATCH_ALL mode is selected', async () => {
       const manager = new BatchTransactionManager()
       manager.addTransaction(createSendOptions())
-      vi.mocked(send).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(createTransfer).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
 
-      expect(send).toHaveBeenCalled()
+      expect(createTransfer).toHaveBeenCalled()
     })
 
     it('should fail if different origins are used', async () => {
       const manager = new BatchTransactionManager()
       manager.addTransaction(createSendOptions())
       manager.addTransaction(createSendOptions({ from: 'Karura' }))
-      vi.mocked(send).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(createTransfer).mockResolvedValue({ hash: 'hash' })
 
       await expect(
         manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })

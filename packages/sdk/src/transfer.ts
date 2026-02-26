@@ -10,20 +10,12 @@ import {
   getOriginXcmFee as getOriginXcmFeeImpl,
   getParaEthTransferFees as getEthFeesImpl,
   getXcmFee as getXcmFeeImpl,
-  handleSwapExecuteTransfer as handleSwapExecuteTransferImpl,
-  send as sendImpl
+  handleSwapExecuteTransfer as handleSwapExecuteTransferImpl
 } from '@paraspell/sdk-core'
 
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
-
-/**
- * Transfers assets from parachain to another parachain or from/to relay chain.
- * @param options - The transfer options.
- * @returns An extrinsic to be signed and sent.
- */
-export const send = createPapiApiCall(sendImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
 
 export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
 

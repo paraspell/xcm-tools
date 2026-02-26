@@ -10,6 +10,7 @@ import { blake2b } from '@noble/hashes/blake2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import type {
   IPolkadotApi,
+  TApiType,
   TAssetInfo,
   TBuilderOptions,
   TChain,
@@ -120,6 +121,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
   constructor(config?: TBuilderOptions<TPapiApiOrUrl>) {
     this._config = config
+  }
+
+  getType(): TApiType {
+    return 'PAPI'
   }
 
   getConfig() {

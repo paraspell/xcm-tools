@@ -5,6 +5,7 @@ import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk
 import type {
   BatchMode,
   TApiOrUrl,
+  TApiType,
   TBridgeStatus,
   TBuilderOptions,
   TDryRunCallBaseOptions,
@@ -19,6 +20,7 @@ import type {
 } from '../types'
 
 export interface IPolkadotApi<TApi, TRes, TSigner> {
+  getType(): TApiType
   getConfig(): TBuilderOptions<TApiOrUrl<TApi>> | undefined
   getApi(): TApi
   init(chain: TChain, clientTtlMs?: number): Promise<void>

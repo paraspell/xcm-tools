@@ -14,7 +14,6 @@ export {
   dryRunOrigin,
   getParaEthTransferFees,
   getTokenBalance,
-  send,
   transferEthToPolkadot,
   getBridgeStatus
 } from './transfer'

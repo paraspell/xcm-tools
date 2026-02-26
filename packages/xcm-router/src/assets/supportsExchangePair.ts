@@ -1,7 +1,7 @@
-import { isAssetEqual } from '@paraspell/sdk';
+import type { TExchangeInput } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS, isAssetEqual } from '@paraspell/sdk';
 
-import { EXCHANGE_CHAINS } from '../consts';
-import type { TExchangeInput, TRouterAsset } from '../types';
+import type { TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 import { getExchangePairs } from './getExchangePairs';
 

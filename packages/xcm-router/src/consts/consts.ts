@@ -1,18 +1,3 @@
-/**
- * Supported exchange chains
- */
-export const EXCHANGE_CHAINS = [
-  'AssetHubPolkadotDex',
-  'AssetHubKusamaDex',
-  'AssetHubPaseoDex',
-  'AssetHubWestendDex',
-  'HydrationDex',
-  'KaruraDex',
-  'AcalaDex',
-  'BifrostKusamaDex',
-  'BifrostPolkadotDex',
-] as const;
-
 export const FEE_BUFFER_PCT = 10;
 export const DEST_FEE_BUFFER_PCT = -1;
 

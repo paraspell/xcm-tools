@@ -18,7 +18,7 @@ import {
   validateAddress,
   validateDestinationAddress
 } from '../utils'
-import { send } from './transfer'
+import { createTransfer } from './createTransfer'
 import {
   resolveAsset,
   resolveFeeAsset,
@@ -86,7 +86,7 @@ describe('send', () => {
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
 
-    const result = await send(options)
+    const result = await createTransfer(options)
 
     expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.feeAsset)
     expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
@@ -131,7 +131,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    const result = await send(options)
+    const result = await createTransfer(options)
 
     expect(resolveFeeAsset).toHaveBeenCalledWith({ symbol: 'USDT' }, 'Acala', 'Astar', {
       symbol: 'DOT',
@@ -161,7 +161,7 @@ describe('send', () => {
 
     const apiSpy = vi.spyOn(apiMock, 'init')
 
-    await expect(send(options)).rejects.toThrow('Initialization Error')
+    await expect(createTransfer(options)).rejects.toThrow('Initialization Error')
 
     expect(apiSpy).toHaveBeenCalled()
   })
@@ -181,7 +181,7 @@ describe('send', () => {
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
 
-    await expect(send(options)).rejects.toThrow('Invalid currency')
+    await expect(createTransfer(options)).rejects.toThrow('Invalid currency')
 
     const apiSpy = vi.spyOn(apiMock, 'init')
     expect(apiSpy).not.toHaveBeenCalled()
@@ -201,7 +201,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    const result = await send(options)
+    const result = await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -226,7 +226,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    const result = await send(options)
+    const result = await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -247,7 +247,7 @@ describe('send', () => {
       senderAddress: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
     } as TSendOptions<unknown, unknown, unknown>
 
-    await send(options)
+    await createTransfer(options)
 
     expect(validateAddress).toHaveBeenCalledWith(
       apiMock,
@@ -271,7 +271,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    const result = await send(options)
+    const result = await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -295,7 +295,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    await send(options)
+    await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -325,7 +325,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    await send(options)
+    await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -351,7 +351,7 @@ describe('send', () => {
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
-    await send(options)
+    await createTransfer(options)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({

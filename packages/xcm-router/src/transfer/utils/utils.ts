@@ -25,8 +25,10 @@ export const createToExchangeBuilder = ({
 export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
   createToExchangeBuilder(options).build();
 
-export const getToExchangeFee = (options: TBuildToExchangeTxOptions) =>
-  createToExchangeBuilder(options).getXcmFee();
+export const getToExchangeFee = <TDisableFallback extends boolean>(
+  options: TBuildToExchangeTxOptions,
+  disableFallback: TDisableFallback,
+) => createToExchangeBuilder(options).getXcmFee({ disableFallback });
 
 export const createFromExchangeBuilder = ({
   exchange: { apiPapi, baseChain, assetTo },
@@ -54,8 +56,10 @@ export const createFromExchangeBuilder = ({
 export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
   createFromExchangeBuilder(options).build();
 
-export const getFromExchangeFee = (options: TBuildFromExchangeTxOptions) =>
-  createFromExchangeBuilder(options).getXcmFee();
+export const getFromExchangeFee = <TDisableFallback extends boolean>(
+  options: TBuildFromExchangeTxOptions,
+  disableFallback: TDisableFallback,
+) => createFromExchangeBuilder(options).getXcmFee({ disableFallback });
 
 export const determineFeeCalcAddress = (
   senderAddress: string,

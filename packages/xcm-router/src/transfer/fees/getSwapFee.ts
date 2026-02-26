@@ -5,9 +5,10 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 
-export const getSwapFee = async (
+export const getSwapFee = async <TDisableFallback extends boolean = false>(
   exchange: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
+  disableFallback?: TDisableFallback,
 ): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
   const {
     senderAddress,
@@ -50,7 +51,7 @@ export const getSwapFee = async (
       location: assetFrom.location,
       amount,
     },
-    disableFallback: false,
+    disableFallback: disableFallback ?? false,
   });
 
   const finalFee = (result.fee as bigint) * BigInt(txs.length);

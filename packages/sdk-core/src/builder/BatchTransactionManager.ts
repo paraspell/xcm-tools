@@ -3,9 +3,9 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { BatchValidationError } from '../errors'
-import { send } from '../transfer'
 import type { TBatchedSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
+import { createTransferOrSwap } from '../utils'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes, TSigner> {
@@ -44,7 +44,7 @@ class BatchTransactionManager<TApi, TRes, TSigner> {
       })
     )
 
-    const txs = await Promise.all(normalized.map(({ options }) => send(options)))
+    const txs = await Promise.all(normalized.map(({ options }) => createTransferOrSwap(options)))
 
     return api.callBatchMethod(txs, mode)
   }

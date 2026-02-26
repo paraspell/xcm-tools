@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyCore, TGetXcmFeeResult, WithAmount } from '@paraspell/sdk';
 import {
   applyDecimalAbstraction,
   DryRunFailedError,
@@ -8,14 +8,15 @@ import {
 } from '@paraspell/sdk';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptions, TRouterXcmFeeResult, TTransformedOptions } from '../types';
+import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { getSwapFee } from './fees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
-export const getRouterFees = async (
+export const getRouterFees = async <TDisableFallback extends boolean>(
   dex: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
-): Promise<TRouterXcmFeeResult> => {
+  disableFallback: TDisableFallback,
+): Promise<TGetXcmFeeResult> => {
   const {
     origin,
     exchange,
@@ -92,7 +93,7 @@ export const getRouterFees = async (
           address: recipientAddress ?? senderAddress,
           currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
           feeAsset,
-          disableFallback: false,
+          disableFallback,
           swapConfig: {
             currencyTo: currencyTo as TCurrencyCore,
             exchangeChain: exchange.baseChain,
@@ -147,7 +148,7 @@ export const getRouterFees = async (
   // 1. Get fees for origin -> exchange (optional)
   const sendingChain =
     origin && origin.chain !== exchange.baseChain
-      ? await getToExchangeFee({ ...options, origin })
+      ? await getToExchangeFee({ ...options, origin }, disableFallback)
       : undefined;
 
   // 2. Get fees for swap in DEX (always)
@@ -156,13 +157,16 @@ export const getRouterFees = async (
   // 3. Get fees for exchange -> destination (optional)
   const receivingChain =
     destination && destination.chain !== exchange.baseChain
-      ? await getFromExchangeFee({
-          exchange,
-          destination,
-          amount: amountOut,
-          senderAddress,
-          builderOptions,
-        })
+      ? await getFromExchangeFee(
+          {
+            exchange,
+            destination,
+            amount: amountOut,
+            senderAddress,
+            builderOptions,
+          },
+          disableFallback,
+        )
       : undefined;
 
   const mergedHops = [
@@ -177,6 +181,7 @@ export const getRouterFees = async (
             result: {
               ...swapChain,
               fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),
+              isExchange: true,
             },
             isExchange: true,
           },

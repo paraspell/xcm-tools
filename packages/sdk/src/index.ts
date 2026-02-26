@@ -11,7 +11,6 @@ export {
   dryRun,
   dryRunOrigin,
   getParaEthTransferFees,
-  send,
   getBridgeStatus,
   getOriginXcmFee,
   getXcmFee,

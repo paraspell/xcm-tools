@@ -18,7 +18,6 @@ import {
   getTransferInfo,
   getXcmFee,
   getXcmFeeEstimate,
-  send,
   verifyEdOnDestination
 } from '../transfer'
 import type {
@@ -34,6 +33,7 @@ import {
   assertSender,
   assertSenderAddress,
   assertToIsString,
+  createTransferOrSwap,
   isConfig
 } from '../utils'
 import { buildDryRun } from './buildDryRun'
@@ -84,13 +84,13 @@ describe('Builder', () => {
 
   describe('Para to Para / Para to Relay / Relay to Para  transfer', () => {
     beforeEach(() => {
-      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -115,7 +115,7 @@ describe('Builder', () => {
         .build()
 
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -134,7 +134,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -154,7 +154,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -176,7 +176,7 @@ describe('Builder', () => {
         .ahAddress(ASSET_HUB_ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -201,7 +201,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -227,7 +227,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -248,7 +248,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -267,7 +267,7 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -320,7 +320,7 @@ describe('Builder', () => {
 
       await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -341,7 +341,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -363,7 +363,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -388,7 +388,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -420,7 +420,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -444,7 +444,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -479,7 +479,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -500,7 +500,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledTimes(1)
+      expect(createTransferOrSwap).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a para to relay transfer using batching', async () => {
@@ -517,7 +517,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -530,7 +530,7 @@ describe('Builder', () => {
         })
       )
 
-      expect(send).toHaveBeenCalledTimes(2)
+      expect(createTransferOrSwap).toHaveBeenCalledTimes(2)
     })
 
     it('should initiate a para to para transfer using batching', async () => {
@@ -542,7 +542,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -567,7 +567,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
@@ -577,7 +577,7 @@ describe('Builder', () => {
         })
       )
 
-      expect(send).toHaveBeenCalledTimes(2)
+      expect(createTransferOrSwap).toHaveBeenCalledTimes(2)
     })
 
     it('should throw if trying to build when transactions are batched', async () => {
@@ -606,7 +606,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Polkadot',
@@ -625,7 +625,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Polkadot',
@@ -648,7 +648,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Polkadot',
@@ -672,7 +672,7 @@ describe('Builder', () => {
         .xcmVersion(version)
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Polkadot',
@@ -693,7 +693,7 @@ describe('Builder', () => {
         .address(ADDRESS)
         .build()
 
-      expect(send).toHaveBeenCalledTimes(1)
+      expect(createTransferOrSwap).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a double relay to para transfer using batching', async () => {
@@ -710,7 +710,7 @@ describe('Builder', () => {
         .addToBatch()
         .buildBatch()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Polkadot',
@@ -720,7 +720,7 @@ describe('Builder', () => {
         })
       )
 
-      expect(send).toHaveBeenCalledTimes(2)
+      expect(createTransferOrSwap).toHaveBeenCalledTimes(2)
     })
 
     it('should disconnect the api after building', async () => {
@@ -1265,7 +1265,7 @@ describe('Builder', () => {
 
     beforeEach(() => {
       vi.resetAllMocks()
-      vi.mocked(send).mockResolvedValue(mockTx)
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockTx)
       vi.mocked(buildDryRun).mockResolvedValue({
         origin: {
           success: true,
@@ -1377,7 +1377,7 @@ describe('Builder', () => {
 
   describe('signAndSubmit', () => {
     beforeEach(() => {
-      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
     })
 
     it('should sign and submit transaction when senderAddress is a derivation path', async () => {
@@ -1404,7 +1404,7 @@ describe('Builder', () => {
 
   describe('Transact', () => {
     beforeEach(() => {
-      vi.mocked(send).mockResolvedValue(mockExtrinsic)
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
     })
 
     it('should initiate a transact call', async () => {
@@ -1418,7 +1418,7 @@ describe('Builder', () => {
         .transact('0x123')
         .build()
 
-      expect(send).toHaveBeenCalledWith(
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,

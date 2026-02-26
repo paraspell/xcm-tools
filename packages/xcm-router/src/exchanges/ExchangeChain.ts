@@ -1,4 +1,4 @@
-import type { TBuilderOptions, TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
+import type { TBuilderOptions, TExchangeChain, TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
 import type { TParachain, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
@@ -6,7 +6,6 @@ import type { ApiPromise } from '@polkadot/api';
 
 import type {
   TDexConfig,
-  TExchangeChain,
   TGetAmountOutOptions,
   TMultiSwapResult,
   TSingleSwapResult,
