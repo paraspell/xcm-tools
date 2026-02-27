@@ -2708,6 +2708,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1009",
+        "symbol": "aSOL",
+        "decimals": 9,
+        "existentialDeposit": "221956",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2b55b6a5751f26c5cfb02429085bfd5236751443"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "420",
         "symbol": "GETH",
         "decimals": 18,
@@ -4585,6 +4608,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x8236a87084f8b84306f72007f36f2618a5634494"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "9001",
+        "symbol": "GSOL",
+        "decimals": 18,
+        "existentialDeposit": "221802682843910",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xf5f744a4d14a5f49ce173e39b8361733a6e55152"
                 }
               }
             ]
@@ -15366,7 +15412,7 @@
     "isEVM": true,
     "ss58Prefix": 29972,
     "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": false,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "MYTH",
