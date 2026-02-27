@@ -2708,6 +2708,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1009",
+        "symbol": "aSOL",
+        "decimals": 9,
+        "existentialDeposit": "221956",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2b55b6a5751f26c5cfb02429085bfd5236751443"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "420",
         "symbol": "GETH",
         "decimals": 18,
@@ -4585,6 +4608,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x8236a87084f8b84306f72007f36f2618a5634494"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "9001",
+        "symbol": "GSOL",
+        "decimals": 18,
+        "existentialDeposit": "221802682843910",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xf5f744a4d14a5f49ce173e39b8361733a6e55152"
                 }
               }
             ]
@@ -9219,68 +9265,6 @@
       }
     ]
   },
-  "KiltSpiritnet": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "KILT",
-    "isEVM": false,
-    "ss58Prefix": 38,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "KILT",
-        "isNative": true,
-        "decimals": 15,
-        "existentialDeposit": "10000000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2086
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "KILT",
-        "decimals": 18,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 8453
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x5d0dd05bb095fdd6af4865a1adf97c39c85ad2d8"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1"
-      },
-      {
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "1"
-      }
-    ]
-  },
   "Karura": {
     "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KAR",
@@ -10886,44 +10870,6 @@
           }
         },
         "isFeeAsset": true
-      }
-    ]
-  },
-  "RobonomicsPolkadot": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "XRT",
-    "isEVM": false,
-    "ss58Prefix": 32,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "XRT",
-        "isNative": true,
-        "decimals": 9,
-        "existentialDeposit": "1000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3388
-              }
-            ]
-          }
-        }
-      },
-      {
-        "assetId": "4294967295",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "100"
       }
     ]
   },
@@ -15366,7 +15312,7 @@
     "isEVM": true,
     "ss58Prefix": 29972,
     "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": false,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "MYTH",
@@ -16839,73 +16785,6 @@
           }
         },
         "isFeeAsset": true
-      }
-    ]
-  },
-  "PAssetHub": {
-    "relaychainSymbol": "PAS",
-    "nativeAssetSymbol": "PAS",
-    "isEVM": false,
-    "ss58Prefix": 42,
-    "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": true,
-    "assets": [
-      {
-        "symbol": "PAS",
-        "isNative": true,
-        "decimals": 10,
-        "existentialDeposit": "100000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "1984",
-        "symbol": "USDt",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "70000"
-      },
-      {
-        "assetId": "1337",
-        "symbol": "USDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1337
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "70000"
       }
     ]
   },
@@ -19021,68 +18900,6 @@
         },
         "isFeeAsset": true,
         "alias": "WETH1"
-      }
-    ]
-  },
-  "KiltPaseo": {
-    "relaychainSymbol": "PAS",
-    "nativeAssetSymbol": "PILT",
-    "isEVM": false,
-    "ss58Prefix": 38,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "PILT",
-        "isNative": true,
-        "decimals": 15,
-        "existentialDeposit": "10000000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2086
-              }
-            ]
-          }
-        }
-      },
-      {
-        "symbol": "KILT",
-        "decimals": 18,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X2": [
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 84532
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x3079844be6416b6a24a24505fa465eafc3b2b4f9"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1"
-      },
-      {
-        "symbol": "PAS",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "1"
       }
     ]
   },

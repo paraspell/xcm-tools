@@ -321,7 +321,7 @@
     "otherAssets": ["Currencies", "Tokens"]
   },
   "BifrostKusama": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -330,10 +330,6 @@
       {
         "name": "PolkadotXcm",
         "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 70
       },
       {
         "name": "Tokens",
@@ -672,25 +668,6 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
-  "KiltSpiritnet": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 6
-      },
-      {
-        "name": "Fungibles",
-        "index": 49
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 83
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Fungibles"]
-  },
   "BridgeHubPolkadot": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -773,25 +750,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": []
-  },
-  "RobonomicsPolkadot": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 31
-      },
-      {
-        "name": "Assets",
-        "index": 34
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 71
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
   },
   "PeoplePolkadot": {
     "defaultPallet": "PolkadotXcm",
@@ -1077,29 +1035,6 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
-  "PAssetHub": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "Assets",
-        "index": 50
-      },
-      {
-        "name": "ForeignAssets",
-        "index": 53
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets", "ForeignAssets"]
-  },
   "PeoplePaseo": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -1108,12 +1043,16 @@
         "index": 10
       },
       {
+        "name": "Assets",
+        "index": 12
+      },
+      {
         "name": "PolkadotXcm",
         "index": 31
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["Assets"]
   },
   "AjunaPaseo": {
     "defaultPallet": "XTokens",
@@ -1206,25 +1145,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
-  },
-  "KiltPaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 6
-      },
-      {
-        "name": "Fungibles",
-        "index": 49
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 83
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Fungibles"]
   },
   "LaosPaseo": {
     "defaultPallet": "PolkadotXcm",

@@ -1582,6 +1582,72 @@
         }
       },
       {
+        "symbol": "GSOL",
+        "decimals": 18,
+        "assetId": "9001",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xf5f744a4d14a5f49ce173e39b8361733a6e55152"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "SOL",
+        "decimals": 9,
+        "assetId": "1000752",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "aSOL",
+        "decimals": 9,
+        "assetId": "1009",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2b55b6a5751f26c5cfb02429085bfd5236751443"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "HDX",
         "decimals": 12,
         "location": {
@@ -2118,30 +2184,6 @@
         }
       },
       {
-        "symbol": "SOL",
-        "decimals": 9,
-        "assetId": "1000752",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 2004
-              },
-              {
-                "PalletInstance": 110
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "DAI",
         "decimals": 18,
         "assetId": "18",
@@ -2306,6 +2348,30 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "jitoSOL",
+        "decimals": 9,
+        "assetId": "40",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xe9f9a2e3deae4093c00fbc57b22bb51a4c05ad88"
                 }
               }
             ]
@@ -5501,40 +5567,6 @@
         {
           "parents": 1,
           "interior": {
-            "X2": [
-              {
-                "Parachain": 2032
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
             "X3": [
               {
                 "Parachain": 1000
@@ -6062,40 +6094,6 @@
               },
               {
                 "GeneralIndex": 50000069
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 22222012
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2032
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
               }
             ]
           }
