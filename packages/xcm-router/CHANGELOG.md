@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.8.0...xcm-router-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([87562ed](https://github.com/paraspell/xcm-tools/commit/87562ed6b667c09f98bd55a92a5da2dbf1acd55d))
+
 ## [12.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.7.1...xcm-router-v12.8.0) (2026-02-20)
 
 
