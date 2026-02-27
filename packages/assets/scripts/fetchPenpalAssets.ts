@@ -5,7 +5,7 @@ import type { TAssetInfo } from '../src/types'
 import { capitalizeLocation } from './utils'
 import { TLocation } from '@paraspell/sdk-common'
 
-export const fetchKiltForeignAssets = async (
+export const fetchPenpalForeignAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TAssetInfo[]> => {

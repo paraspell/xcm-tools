@@ -193,7 +193,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(1);
+      expect(hashes.length).toBe(2);
     });
   });
 

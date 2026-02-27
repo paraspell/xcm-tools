@@ -24,7 +24,7 @@ import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
-import { fetchKiltForeignAssets } from './fetchKiltAssets'
+import { fetchPenpalForeignAssets } from './fetchPenpalAssets'
 import { TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
 import { getRelayChainSymbolOf, isChainEvm } from './utils'
@@ -302,8 +302,8 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (chain.startsWith('Kilt') || chain === 'Penpal' || chain.startsWith('NeuroWeb')) {
-    otherAssets = await fetchKiltForeignAssets(api, query)
+  if (chain === 'Penpal' || chain.startsWith('NeuroWeb')) {
+    otherAssets = await fetchPenpalForeignAssets(api, query)
   }
 
   if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq') {

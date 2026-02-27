@@ -36,8 +36,6 @@ import HydrationPaseo from '../chains/supported/HydrationPaseo'
 import Interlay from '../chains/supported/Interlay'
 import Jamton from '../chains/supported/Jamton'
 import Karura from '../chains/supported/Karura'
-import KiltPaseo from '../chains/supported/KiltPaseo'
-import KiltSpiritnet from '../chains/supported/KiltSpiritnet'
 import Kintsugi from '../chains/supported/Kintsugi'
 import Kusama from '../chains/supported/Kusama'
 import Laos from '../chains/supported/Laos'
@@ -50,7 +48,6 @@ import NeuroWeb from '../chains/supported/NeuroWeb'
 import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
 import Nodle from '../chains/supported/Nodle'
 import Paseo from '../chains/supported/Paseo'
-import PAssetHub from '../chains/supported/PAssetHub'
 import Peaq from '../chains/supported/Peaq'
 import Pendulum from '../chains/supported/Pendulum'
 import Penpal from '../chains/supported/Penpal'
@@ -60,7 +57,6 @@ import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Polkadot from '../chains/supported/Polkadot'
 import Quartz from '../chains/supported/Quartz'
-import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
 import Westend from '../chains/supported/Westend'
@@ -88,14 +84,12 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Jamton: new Jamton<TApi, TRes, TSigner>(),
   Moonbeam: new Moonbeam<TApi, TRes, TSigner>(),
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes, TSigner>(),
-  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes, TSigner>(),
   PeoplePolkadot: new PeoplePolkadot<TApi, TRes, TSigner>(),
   Manta: new Manta<TApi, TRes, TSigner>(),
   Nodle: new Nodle<TApi, TRes, TSigner>(),
   NeuroWeb: new NeuroWeb<TApi, TRes, TSigner>(),
   Pendulum: new Pendulum<TApi, TRes, TSigner>(),
   Collectives: new Collectives<TApi, TRes, TSigner>(),
-  KiltSpiritnet: new KiltSpiritnet<TApi, TRes, TSigner>(),
   Mythos: new Mythos<TApi, TRes, TSigner>(),
   Peaq: new Peaq<TApi, TRes, TSigner>(),
   Xode: new Xode<TApi, TRes, TSigner>(),
@@ -135,8 +129,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes, TSigner>(),
   CoretimePaseo: new CoretimePaseo<TApi, TRes, TSigner>(),
   EnergyWebXPaseo: new EnergyWebXPaseo<TApi, TRes, TSigner>(),
-  KiltPaseo: new KiltPaseo<TApi, TRes, TSigner>(),
-  PAssetHub: new PAssetHub<TApi, TRes, TSigner>(),
   PeoplePaseo: new PeoplePaseo<TApi, TRes, TSigner>(),
   AjunaPaseo: new AjunaPaseo<TApi, TRes, TSigner>(),
   BifrostPaseo: new BifrostPaseo<TApi, TRes, TSigner>(),

@@ -48,8 +48,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Interlay: ['assetRegistry.metadata'],
   Jamton: ['assetRegistry.metadata'],
   Karura: ['assetRegistry.assetMetadatas'],
-  KiltPaseo: ['fungibles.metadata'],
-  KiltSpiritnet: ['fungibles.metadata'],
   Kintsugi: ['assetRegistry.metadata'],
   Laos: [], // No assets metadata query
   LaosPaseo: [], // No assets metadata query
@@ -60,7 +58,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   NeuroWeb: ['foreignAssets.metadata'],
   NeuroWebPaseo: ['foreignAssets.metadata'],
   Nodle: [],
-  PAssetHub: ['assets.metadata'],
   Peaq: ['assets.metadata'],
   Pendulum: ['assetRegistry.metadata'],
   Penpal: ['foreignAssets.metadata'],
@@ -69,7 +66,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   PeoplePolkadot: [], // No assets metadata query
   PeopleWestend: [], // No assets metadata query
   Quartz: ['foreignAssets.collectionToForeignAsset'],
-  RobonomicsPolkadot: ['assets.metadata'],
   Shiden: ['assets.metadata'],
   Unique: ['foreignAssets.collectionToForeignAsset'],
   Xode: ['assets.metadata'],
