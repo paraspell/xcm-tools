@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.1...sdk-core-v12.8.2) (2026-03-02)
+
+
+### Code Refactoring
+
+* **xcm-router:** Use SDK dry-run & xcm-fee types ⚙️ ([9f0a273](https://github.com/paraspell/xcm-tools/commit/9f0a273c3f24063f5d71ff9f0a64157d5ce45e43))
+
 ## [12.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.0...sdk-core-v12.8.1) (2026-02-27)
 
 
