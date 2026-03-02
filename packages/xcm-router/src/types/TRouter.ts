@@ -283,6 +283,7 @@ export type TBuildFromExchangeTxOptions = {
   builderOptions?: TRouterBuilderOptions;
 };
 
+/** @deprecated - Will be removed in v13. */
 export type TWithExchange<T> = T & {
   isExchange?: boolean;
 };

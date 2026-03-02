@@ -1,10 +1,10 @@
+import type { TGetXcmFeeResult } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
-  TRouterXcmFeeResult,
   TTransferOptions,
 } from '../../types';
 import { getRouterFees } from '../getRouterFees';
@@ -21,7 +21,7 @@ describe('getXcmFees', () => {
     options: { baz: 'qux' } as unknown as (TTransferOptions | TBuildTransactionsOptions) &
       TAdditionalTransferOptions,
   };
-  const feeResult = { fees: [], totalFee: '0.1' } as unknown as TRouterXcmFeeResult;
+  const feeResult = { fees: [], totalFee: '0.1' } as unknown as TGetXcmFeeResult;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,11 +32,11 @@ describe('getXcmFees', () => {
     vi.mocked(prepareTransformedOptions).mockResolvedValue(transformed);
     vi.mocked(getRouterFees).mockResolvedValue(feeResult);
 
-    const result = await getXcmFees(initialOptions);
+    const result = await getXcmFees(initialOptions, false);
 
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
     expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined, true);
-    expect(getRouterFees).toHaveBeenCalledWith(transformed.dex, transformed.options);
+    expect(getRouterFees).toHaveBeenCalledWith(transformed.dex, transformed.options, false);
     expect(result).toBe(feeResult);
   });
 
@@ -46,7 +46,7 @@ describe('getXcmFees', () => {
       throw error;
     });
 
-    await expect(getXcmFees(initialOptions)).rejects.toThrow('validation error');
+    await expect(getXcmFees(initialOptions, false)).rejects.toThrow('validation error');
     expect(prepareTransformedOptions).not.toHaveBeenCalled();
     expect(getRouterFees).not.toHaveBeenCalled();
   });
@@ -56,7 +56,7 @@ describe('getXcmFees', () => {
     vi.mocked(validateTransferOptions).mockImplementation(() => {});
     vi.mocked(prepareTransformedOptions).mockRejectedValue(error);
 
-    await expect(getXcmFees(initialOptions)).rejects.toThrow('prepare error');
+    await expect(getXcmFees(initialOptions, false)).rejects.toThrow('prepare error');
     expect(getRouterFees).not.toHaveBeenCalled();
   });
 
@@ -66,6 +66,6 @@ describe('getXcmFees', () => {
     const error = new Error('router error');
     vi.mocked(getRouterFees).mockRejectedValue(error);
 
-    await expect(getXcmFees(initialOptions)).rejects.toThrow('router error');
+    await expect(getXcmFees(initialOptions, false)).rejects.toThrow('router error');
   });
 });

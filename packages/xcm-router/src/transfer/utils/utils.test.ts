@@ -13,7 +13,12 @@ import type {
   TExchangeInfo,
   TRouterAsset,
 } from '../../types';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import {
+  buildFromExchangeExtrinsic,
+  buildToExchangeExtrinsic,
+  getFromExchangeFee,
+  getToExchangeFee,
+} from './utils';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -26,6 +31,7 @@ const builderMock = {
     signAsync: vi.fn().mockResolvedValue('signedTx'),
     send: vi.fn().mockResolvedValue('sentTx'),
   } as unknown as TPapiTransaction),
+  getXcmFee: vi.fn().mockResolvedValue({ origin: 100n, destination: 200n }),
 };
 
 vi.mock('@paraspell/sdk', async () => {
@@ -209,6 +215,47 @@ describe('transfer utils', () => {
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
+    });
+  });
+
+  describe('getToExchangeFee', () => {
+    it('delegates to builder.getXcmFee with disableFallback', async () => {
+      const result = await getToExchangeFee(
+        {
+          ...transferParams,
+          amount: BigInt(transferParams.amount),
+          origin: { api: parachainPapiApi, chain: 'Acala', assetFrom: astrAsset },
+          exchange: { baseChain: 'Acala' } as TExchangeInfo,
+        },
+        true,
+      );
+
+      expect(builderMock.getXcmFee).toHaveBeenCalledWith({ disableFallback: true });
+      expect(result).toEqual({ origin: 100n, destination: 200n });
+    });
+  });
+
+  describe('getFromExchangeFee', () => {
+    it('delegates to builder.getXcmFee with disableFallback', async () => {
+      const result = await getFromExchangeFee(
+        {
+          ...transferParams,
+          amount: BigInt(transferParams.amount),
+          destination: { chain: 'Polkadot', address: 'MOCK_ADDRESS' },
+          exchange: {
+            api: parachainApi,
+            apiPapi: parachainPapiApi,
+            baseChain: 'Acala',
+            exchangeChain: 'AcalaDex',
+            assetFrom: astrAsset,
+            assetTo: glmrAsset,
+          },
+        },
+        false,
+      );
+
+      expect(builderMock.getXcmFee).toHaveBeenCalledWith({ disableFallback: false });
+      expect(result).toEqual({ origin: 100n, destination: 200n });
     });
   });
 });

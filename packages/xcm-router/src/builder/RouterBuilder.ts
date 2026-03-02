@@ -1,4 +1,12 @@
-import type { TAmount, TChain, TCurrencyInput, TSubstrateChain } from '@paraspell/sdk';
+import type {
+  TAmount,
+  TChain,
+  TCurrencyInput,
+  TDryRunResult,
+  TGetXcmFeeBuilderOptions,
+  TGetXcmFeeResult,
+  TSubstrateChain,
+} from '@paraspell/sdk';
 import type { PolkadotSigner } from 'polkadot-api';
 
 import {
@@ -15,8 +23,6 @@ import type {
   TExchangeInput,
   TGetBestAmountOutOptions,
   TRouterBuilderOptions,
-  TRouterDryRunResult,
-  TRouterXcmFeeResult,
   TStatusChangeCallback,
   TTransferOptions,
 } from '../types';
@@ -209,10 +215,12 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    *
    * @returns The XCM fee result.
    */
-  async getXcmFees(
+  async getXcmFees<TDisableFallback extends boolean = false>(
     this: RouterBuilderCore<TBuildTransactionsOptions>,
-  ): Promise<TRouterXcmFeeResult> {
-    return getXcmFees(this._options, this._builderOptions);
+    options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback },
+  ): Promise<TGetXcmFeeResult> {
+    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback;
+    return getXcmFees(this._options, disableFallback, this._builderOptions);
   }
 
   async getTransferableAmount(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<bigint> {
@@ -241,7 +249,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
     return buildApiTransactions(this._options, this._builderOptions);
   }
 
-  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TRouterDryRunResult> {
+  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TDryRunResult> {
     return dryRunRouter(this._options, this._builderOptions);
   }
 

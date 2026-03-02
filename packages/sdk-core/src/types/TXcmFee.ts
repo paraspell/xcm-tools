@@ -139,6 +139,7 @@ type TXcmFeeBase = {
   asset: TAssetInfo
   weight?: TWeight
   sufficient?: boolean
+  isExchange?: boolean
 }
 
 export type TXcmFeeDetailSuccess = TXcmFeeBase & {
@@ -182,11 +183,15 @@ export type TDestXcmFeeDetail<TDisableFallback extends boolean> =
 export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
   chain: TChain
   result: TConditionalXcmFeeDetail<TDisableFallback>
+  /** @deprecated - Use `result.isExchange` instead. Will be removed in v13. */
+  isExchange?: boolean
 }
 
 export type TXcmFeeHopInfo = {
   chain: TChain
   result: TXcmFeeDetail
+  /** @deprecated - Use `result.isExchange` instead. Will be removed in v13. */
+  isExchange?: boolean
 }
 
 export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
