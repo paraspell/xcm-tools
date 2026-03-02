@@ -124,6 +124,13 @@ export class XTransferController {
     return this.xTransferService.generateXcmCall(bodyParams);
   }
 
+  @Post('x-transfers')
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
+  generateXcmCalls(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_XCM_CALLS, req, bodyParams);
+    return this.xTransferService.generateXcmCalls(bodyParams);
+  }
+
   @Post('x-transfer-batch')
   @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
   generateXcmCallBatch(

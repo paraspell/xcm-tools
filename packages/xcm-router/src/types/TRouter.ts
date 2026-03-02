@@ -49,9 +49,12 @@ export type TMultiSwapResult = {
   amountOut: bigint;
 };
 
+/** @deprecated Use `TSwapEventType` instead. Will be removed in v13 */
 export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
 
 /**
+ * @deprecated Use `TSwapEvent` instead. Will be removed in v13
+ *
  * The transaction progress information.
  */
 export type TRouterEvent = {
@@ -220,6 +223,7 @@ export type TDexConfig = {
 
 export type TAssetsRecord = Record<TExchangeChain, TDexConfig>;
 
+/** @deprecated Will be removed in v13 */
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
 type TBaseTransaction = {

@@ -10,9 +10,6 @@ export default defineConfig({
   plugins: [react(), nodePolyfills(), wasm()],
   build: {
     target: 'esnext',
-    rollupOptions: {
-      external: ['@paraspell/xcm-router'],
-    },
   },
   optimizeDeps: {
     esbuildOptions: {

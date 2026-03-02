@@ -11,7 +11,7 @@ export const normalizeAmountAll = async <
   TApi,
   TRes,
   TSigner,
-  TOptions extends TSendBaseOptions<TRes, TSigner>
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner>
 >(
   api: IPolkadotApi<TApi, TRes, TSigner>,
   builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,

@@ -1,4 +1,4 @@
-import type { ComboboxItem } from '@mantine/core';
+import type { ComboboxItem, MantineSize } from '@mantine/core';
 import {
   Checkbox,
   Group,
@@ -8,51 +8,48 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
-import type { UseFormReturnType } from '@mantine/form';
-import { isRelayChain } from '@paraspell/sdk';
+import type { LooseKeys, UseFormReturnType } from '@mantine/form';
 import type { FC } from 'react';
 import { useEffect } from 'react';
 
-import type { FormValues } from '../XcmUtils/XcmUtilsForm';
+import type { TCurrencyEntryBase, TFormValues } from '../../types';
 
 type Props = {
-  form: UseFormReturnType<FormValues>;
+  form: UseFormReturnType<TFormValues>;
+  fieldPath: LooseKeys<TFormValues>;
+  fieldValue: TCurrencyEntryBase;
   currencyOptions: ComboboxItem[];
-  index: number;
+  showOverrideLocation?: boolean;
+  size?: MantineSize;
+  required?: boolean;
+  disabled?: boolean;
 };
 
 export const CurrencySelection: FC<Props> = ({
   form,
+  fieldPath,
+  fieldValue,
   currencyOptions,
-  index,
+  showOverrideLocation = false,
+  size = 'sm',
+  required = false,
+  disabled,
 }) => {
-  const { from, to, currencies } = form.getValues();
+  const { from, to } = form.getValues();
 
-  const isCustomCurrency = currencies[index].isCustomCurrency;
-  const customCurrencyType = currencies[index].customCurrencyType;
+  const isCustomCurrency = fieldValue.isCustomCurrency;
+  const customCurrencyType = fieldValue.customCurrencyType;
 
   useEffect(() => {
     if (!customCurrencyType) return;
-    form.setFieldValue(`currencies.${index}.customCurrency`, '');
+    form.setFieldValue(`${fieldPath}.customCurrency`, '');
   }, [customCurrencyType]);
-
-  const isRelayToPara = isRelayChain(from);
-  const isParaToRelay = isRelayChain(to);
-
-  const isNotParaToPara = isRelayToPara || isParaToRelay;
-
-  // If it's not para-to-para, we do not allow custom currencies
-  useEffect(() => {
-    if (isNotParaToPara) {
-      form.setFieldValue(`currencies.${index}.isCustomCurrency`, false);
-    }
-  }, [isNotParaToPara]);
 
   const options = [
     { label: 'Asset ID', value: 'id' },
     { label: 'Symbol', value: 'symbol' },
     { label: 'Location', value: 'location' },
-    ...(currencies.length === 1
+    ...(showOverrideLocation
       ? [{ label: 'Override location', value: 'overridenLocation' }]
       : []),
   ];
@@ -64,8 +61,6 @@ export const CurrencySelection: FC<Props> = ({
     { label: 'Foreign abstract', value: 'foreignAbstract' },
   ];
 
-  const size = currencies.length > 1 ? 'xs' : 'sm';
-
   return (
     <Stack gap="xs">
       {isCustomCurrency &&
@@ -74,8 +69,8 @@ export const CurrencySelection: FC<Props> = ({
             size={size}
             label="Custom currency"
             placeholder={customCurrencyType === 'id' ? 'Asset ID' : 'Symbol'}
-            required
-            {...form.getInputProps(`currencies.${index}.customCurrency`)}
+            required={required}
+            {...form.getInputProps(`${fieldPath}.customCurrency`)}
           />
         )}
 
@@ -86,7 +81,7 @@ export const CurrencySelection: FC<Props> = ({
           formatOnBlur
           autosize
           minRows={10}
-          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+          {...form.getInputProps(`${fieldPath}.customCurrency`)}
         />
       )}
 
@@ -97,7 +92,7 @@ export const CurrencySelection: FC<Props> = ({
           formatOnBlur
           autosize
           minRows={10}
-          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+          {...form.getInputProps(`${fieldPath}.customCurrency`)}
         />
       )}
 
@@ -109,48 +104,45 @@ export const CurrencySelection: FC<Props> = ({
           placeholder="Pick value"
           data={currencyOptions}
           allowDeselect={false}
-          disabled={isRelayToPara}
           searchable
-          required
+          required={required}
+          disabled={disabled}
           data-testid="select-currency"
-          {...form.getInputProps(`currencies.${index}.currencyOptionId`)}
+          {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
         />
       )}
 
-      {!isNotParaToPara && (
+      <Group>
         <Group>
-          <Group>
-            <Checkbox
-              size="xs"
-              label="Select custom asset"
-              {...form.getInputProps(`currencies.${index}.isCustomCurrency`, {
-                type: 'checkbox',
-              })}
-            />
-          </Group>
-          <Stack gap={8}>
-            {isCustomCurrency && (
-              <SegmentedControl
-                size="xs"
-                data={options}
-                {...form.getInputProps(
-                  `currencies.${index}.customCurrencyType`,
-                )}
-              />
-            )}
-            {isCustomCurrency && customCurrencyType === 'symbol' && (
-              <SegmentedControl
-                size="xs"
-                w="100%"
-                data={symbolSpecifierOptions}
-                {...form.getInputProps(
-                  `currencies.${index}.customCurrencySymbolSpecifier`,
-                )}
-              />
-            )}
-          </Stack>
+          <Checkbox
+            size="xs"
+            label="Select custom asset"
+            disabled={disabled}
+            {...form.getInputProps(`${fieldPath}.isCustomCurrency`, {
+              type: 'checkbox',
+            })}
+          />
         </Group>
-      )}
+        <Stack gap={8}>
+          {isCustomCurrency && (
+            <SegmentedControl
+              size="xs"
+              data={options}
+              {...form.getInputProps(`${fieldPath}.customCurrencyType`)}
+            />
+          )}
+          {isCustomCurrency && customCurrencyType === 'symbol' && (
+            <SegmentedControl
+              size="xs"
+              w="100%"
+              data={symbolSpecifierOptions}
+              {...form.getInputProps(
+                `${fieldPath}.customCurrencySymbolSpecifier`,
+              )}
+            />
+          )}
+        </Stack>
+      </Group>
     </Stack>
   );
 };

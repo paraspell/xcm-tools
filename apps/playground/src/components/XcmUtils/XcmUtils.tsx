@@ -16,10 +16,12 @@ import type {
 import { replaceBigInt } from '@paraspell/sdk';
 import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
-import type { TSubmitType } from '../../types';
+import type { TFormValuesTransformed, TSubmitType } from '../../types';
 import {
   createBuilderOptions,
   determineCurrency,
@@ -35,13 +37,12 @@ import {
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { FormValuesTransformed } from './XcmUtilsForm';
 import { XcmUtilsForm } from './XcmUtilsForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 export const XcmUtils = () => {
-  const { selectedAccount, apiType } = useWallet();
+  const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [
     outputAlertOpened,
@@ -66,8 +67,9 @@ export const XcmUtils = () => {
   }, [error, scrollIntoView]);
 
   const performFeeOperation = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     selectedAccountAddress: string,
+    signer: PolkadotSigner | Signer,
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
@@ -154,6 +156,7 @@ export const XcmUtils = () => {
           builder,
           formValues,
           selectedAccountAddress,
+          signer,
         );
 
         switch (submitType) {
@@ -181,8 +184,9 @@ export const XcmUtils = () => {
   };
 
   const performInfoOperation = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     selectedAccountAddress: string,
+    signer: PolkadotSigner | Signer,
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
@@ -272,6 +276,7 @@ export const XcmUtils = () => {
           builder,
           formValues,
           selectedAccountAddress,
+          signer,
         );
 
         switch (submitType) {
@@ -308,7 +313,7 @@ export const XcmUtils = () => {
   };
 
   const submit = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => {
     if (!selectedAccount) {
@@ -330,11 +335,14 @@ export const XcmUtils = () => {
     const loadingMessage = opTextMap[submitType] ?? 'Processing request...';
     const notifId = showLoadingNotification('Processing', loadingMessage);
 
+    const signer = await getSigner();
+
     try {
       if (submitType === 'getXcmFee' || submitType === 'getOriginXcmFee') {
         await performFeeOperation(
           formValues,
           selectedAccount.address,
+          signer,
           notifId,
           submitType,
         );
@@ -348,6 +356,7 @@ export const XcmUtils = () => {
         await performInfoOperation(
           formValues,
           selectedAccount.address,
+          signer,
           notifId,
           submitType,
         );
@@ -374,7 +383,7 @@ export const XcmUtils = () => {
   };
 
   const onSubmit = (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => void submit(formValues, submitType);
 

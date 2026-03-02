@@ -11,7 +11,6 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
 import {
   CHAINS,
   isChainEvm,
@@ -35,22 +34,30 @@ import {
 } from 'nuqs';
 import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
-import { z } from 'zod';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
 import {
   useCurrencyOptions,
   useFeeCurrencyOptions,
+  useRouterCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import { advancedOptionsParsers, transactOptionsParsers } from '../../parsers';
+import {
+  advancedOptionsParsers,
+  CurrencyEntrySchema,
+  FeeAssetSchema,
+  swapOptionsParsers,
+  transactOptionsParsers,
+} from '../../parsers';
 import type {
-  TAdvancedOptions,
+  TFormValues,
+  TFormValuesTransformed,
   TSubmitType,
-  TTransactFields,
 } from '../../types';
 import {
   isValidPolkadotAddress,
+  resolveCurrencyAsset,
+  resolveExchange,
   validateCustomEndpoint,
   validateTransferAddress,
 } from '../../utils';
@@ -61,74 +68,20 @@ import {
 } from '../../utils/parsers';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
-import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { KeepAliveCheckbox } from '../common/KeepAliveCheckbox';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
 import { Transact } from '../Transact/Transact';
-
-export type TCurrencyEntry = {
-  currencyOptionId: string;
-  customCurrency: string;
-  amount: string;
-  isCustomCurrency: boolean;
-  isMax?: boolean;
-  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
-  customCurrencySymbolSpecifier?:
-    | 'auto'
-    | 'native'
-    | 'foreign'
-    | 'foreignAbstract';
-};
-
-export type FormValues = {
-  from: TSubstrateChain;
-  to: TChain;
-  currencies: TCurrencyEntry[];
-  feeAsset: Omit<TCurrencyEntry, 'amount' | 'isMax'>;
-  address: string;
-  ahAddress: string;
-  useApi: boolean;
-  keepAlive: boolean;
-} & TAdvancedOptions &
-  TTransactFields;
-
-export type TCurrencyEntryTransformed = TCurrencyEntry & {
-  currency?: TAssetInfo;
-};
-
-export type TFormValuesTransformed = Omit<FormValues, 'currencies'> & {
-  currencies: TCurrencyEntryTransformed[];
-  transformedFeeAsset?: TCurrencyEntryTransformed;
-};
 
 type Props = {
   onSubmit: (values: TFormValuesTransformed, submitType: TSubmitType) => void;
   loading: boolean;
   isBatchMode: boolean;
-  initialValues?: FormValues;
+  initialValues?: TFormValues;
   isVisible?: boolean;
 };
-
-const CurrencyEntrySchema = z.object({
-  currencyOptionId: z.string(),
-  customCurrency: z.string(),
-  amount: z.string(),
-  isCustomCurrency: z.boolean(),
-  isMax: z.boolean().optional(),
-  customCurrencyType: z
-    .enum(['id', 'symbol', 'location', 'overridenLocation'])
-    .optional(),
-  customCurrencySymbolSpecifier: z
-    .enum(['auto', 'native', 'foreign', 'foreignAbstract'])
-    .optional(),
-});
-
-export const FeeAssetSchema = CurrencyEntrySchema.omit({
-  amount: true,
-  isMax: true,
-});
 
 export const XcmTransferForm: FC<Props> = ({
   onSubmit,
@@ -175,18 +128,19 @@ export const XcmTransferForm: FC<Props> = ({
     useApi: parseAsBoolean.withDefault(false),
     keepAlive: parseAsBoolean.withDefault(true),
     ...transactOptionsParsers,
+    ...swapOptionsParsers,
     ...advancedOptionsParsers,
   });
 
-  const form = useForm<FormValues>({
+  const form = useForm<TFormValues>({
     name: MAIN_FORM_NAME,
     initialValues: initialValues ?? queryState,
     transformValues: (values) => {
-      const { from, to, keepAlive } = values;
+      const { from, to, keepAlive, swapOptions } = values;
       return {
         ...values,
         // Use keepAlive only for local transfers
-        keepAlive: from === to ? keepAlive : false,
+        keepAlive: from === to && !swapOptions.currencyTo ? keepAlive : false,
       };
     },
     validate: {
@@ -236,7 +190,7 @@ export const XcmTransferForm: FC<Props> = ({
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { from, to, currencies, useApi } = form.getValues();
+  const { from, to, currencies, feeAsset, useApi } = form.getValues();
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     from,
@@ -246,31 +200,19 @@ export const XcmTransferForm: FC<Props> = ({
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
 
-  const transformCurrency = (
-    entry: TCurrencyEntry,
-    currencyMap: Record<string, TAssetInfo>,
-  ) => {
-    if (entry.isCustomCurrency) {
-      // Custom currency doesn't map to currencyMap
-      return { ...entry };
-    }
-
-    const currency = currencyMap[entry.currencyOptionId];
-
-    if (!currency) {
-      return { ...entry };
-    }
-
-    return { ...entry, currency };
-  };
+  const { currencyToMap: swapCurrencyToMap } = useRouterCurrencyOptions(
+    from,
+    resolveExchange(form.values.swapOptions.exchange),
+    to,
+  );
 
   const onSubmitInternal = (
-    values: FormValues,
+    values: TFormValues,
     _event: FormEvent<HTMLFormElement> | undefined,
     submitType: TSubmitType = 'default',
   ) => {
     // If MAX is selected for a local transfer, convert amount to 'ALL'
-    const normalizedValues: FormValues = {
+    const normalizedValues = {
       ...values,
       currencies: values.currencies.map((c) =>
         c.isMax ? { ...c, amount: 'ALL' } : c,
@@ -279,22 +221,26 @@ export const XcmTransferForm: FC<Props> = ({
 
     // Transform each currency entry
     const transformedCurrencies = normalizedValues.currencies.map((entry) =>
-      transformCurrency(entry, currencyMap),
+      resolveCurrencyAsset(entry, currencyMap),
     );
 
     const transformedFeeAsset =
       normalizedValues.feeAsset.currencyOptionId ||
       normalizedValues.feeAsset.isCustomCurrency
-        ? transformCurrency(
-            normalizedValues.feeAsset as TCurrencyEntry,
-            feeCurrencyMap,
-          )
+        ? resolveCurrencyAsset(normalizedValues.feeAsset, feeCurrencyMap)
+        : undefined;
+
+    const { currencyTo } = normalizedValues.swapOptions;
+    const transformedCurrencyTo =
+      currencyTo.currencyOptionId || currencyTo.isCustomCurrency
+        ? resolveCurrencyAsset(currencyTo, swapCurrencyToMap)
         : undefined;
 
     const transformedValues: TFormValuesTransformed = {
       ...normalizedValues,
       currencies: transformedCurrencies,
       transformedFeeAsset,
+      transformedCurrencyTo,
     };
 
     if (
@@ -433,7 +379,10 @@ export const XcmTransferForm: FC<Props> = ({
                   <Stack gap="xs" flex={1}>
                     <CurrencySelection
                       form={form}
-                      index={index}
+                      fieldPath={`currencies.${index}`}
+                      fieldValue={currencies[index]}
+                      showOverrideLocation={currencies.length === 1}
+                      size={currencies.length > 1 ? 'xs' : 'sm'}
                       currencyOptions={currencyOptions}
                     />
                     <Group gap="xs" wrap="nowrap">
@@ -508,10 +457,13 @@ export const XcmTransferForm: FC<Props> = ({
             </Button>
           </Stack>
 
-          <FeeAssetSelection
-            disabled={feeAssetDisabled}
+          <CurrencySelection
             form={form}
+            fieldPath="feeAsset"
+            fieldValue={feeAsset}
             currencyOptions={feeCurrencyOptions}
+            disabled={feeAssetDisabled}
+            required={false}
           />
 
           <TextInput
@@ -535,7 +487,10 @@ export const XcmTransferForm: FC<Props> = ({
             />
           )}
 
-          <Transact form={form} />
+          <Stack gap="xs">
+            <Swap form={form} />
+            <Transact form={form} />
+          </Stack>
 
           <Group gap="lg">
             <XcmApiCheckbox

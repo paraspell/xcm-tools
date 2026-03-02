@@ -1,5 +1,13 @@
-import type { TChain, TTransactOptions, Version } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TChain,
+  TExchangeChain,
+  TSubstrateChain,
+  TTransactOptions,
+  Version,
+} from '@paraspell/sdk';
 import type { IconProps } from '@tabler/icons-react';
+import type { PolkadotSigner } from 'polkadot-api';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
 
@@ -91,4 +99,65 @@ export type TAdvancedOptions = {
 
 export type TTransactFields = {
   transactOptions: TTransactOptions<string, string | number>;
+};
+
+export type TCurrencyEntryBase = {
+  currencyOptionId: string;
+  customCurrency: string;
+  isCustomCurrency: boolean;
+  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
+  customCurrencySymbolSpecifier?:
+    | 'auto'
+    | 'native'
+    | 'foreign'
+    | 'foreignAbstract';
+};
+
+export type TCurrencyEntry = TCurrencyEntryBase & {
+  amount: string;
+  isMax?: boolean;
+};
+
+export type TCurrencyEntryBaseTransformed = TCurrencyEntryBase & {
+  currency?: TAssetInfo;
+};
+
+export type TCurrencyEntryTransformed = TCurrencyEntry & {
+  currency?: TAssetInfo;
+};
+
+export type TSwapOptions = {
+  currencyTo: TCurrencyEntryBase;
+  exchange: TExchangeChain[];
+  slippage: string;
+  evmSigner?: PolkadotSigner;
+  evmInjectorAddress?: string;
+};
+
+export type TSwapFields = {
+  swapOptions: TSwapOptions;
+};
+
+export type TSwapFormFields = TSwapFields & {
+  from: TSubstrateChain;
+  to: TChain;
+};
+
+export type TFormValues = {
+  from: TSubstrateChain;
+  to: TChain;
+  currencies: TCurrencyEntry[];
+  feeAsset: TCurrencyEntryBase;
+  address: string;
+  ahAddress: string;
+  useApi: boolean;
+  keepAlive: boolean;
+} & TAdvancedOptions &
+  TTransactFields &
+  TSwapFields;
+
+export type TFormValuesTransformed = Omit<TFormValues, 'currencies'> & {
+  currencies: TCurrencyEntryTransformed[];
+  transformedFeeAsset?: TCurrencyEntryBaseTransformed;
+  transformedCurrencyTo?: TCurrencyEntryBaseTransformed;
 };

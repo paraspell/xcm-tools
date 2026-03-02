@@ -40,7 +40,7 @@
     "@tabler/icons-react": "^3.37.1",
     "axios": "^1.13.5",
     "clsx": "^2.1.1",
-    "ethers": "6.16.0",
+    "ethers": "6.15.0",
     "highlight.js": "^11.11.1",
     "nuqs": "^2.8.8",
     "polkadot-api": "^1.23.3",

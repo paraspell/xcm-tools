@@ -43,6 +43,9 @@
     "@scure/base": "^2.0.0",
     "viem": "2.46.3"
   },
+  "peerDependencies": {
+    "@paraspell/xcm-router": "12.8.3"
+  },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
     "@babel/preset-env": "^7.29.0",

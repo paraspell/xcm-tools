@@ -73,6 +73,7 @@ const builderMock = {
   addToBatch: vi.fn().mockReturnThis(),
   customPallet: vi.fn().mockReturnThis(),
   transact: vi.fn().mockReturnThis(),
+  swap: vi.fn().mockReturnThis(),
   buildBatch: vi.fn().mockReturnValue({
     getEncodedData: vi.fn().mockResolvedValue({
       asHex: vi.fn().mockReturnValue(txHashBatch),
@@ -83,6 +84,16 @@ const builderMock = {
       asHex: vi.fn().mockReturnValue(txHash),
     }),
   }),
+  buildAll: vi.fn().mockResolvedValue([
+    {
+      chain: 'Acala',
+      tx: {
+        getEncodedData: vi.fn().mockResolvedValue({
+          asHex: vi.fn().mockReturnValue(txHash),
+        }),
+      },
+    },
+  ]),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
   dryRunPreview: vi.fn().mockResolvedValue(dryRunResult),
   getXcmFee: vi.fn().mockResolvedValue(feeResult),
@@ -370,6 +381,51 @@ describe('XTransferService', () => {
 
       expect(result).toBe(txHash);
       expect(builderMock.keepAlive).toHaveBeenCalledWith(true);
+    });
+
+    it('should succeed when swapOptions are provided', async () => {
+      const swapOptions = {
+        currencyTo: { symbol: 'GLMR' },
+        exchange: 'HydrationDex' as const,
+        slippage: 1,
+      };
+      const options: XTransferDto = {
+        ...xTransferDto,
+        swapOptions,
+      };
+
+      const result = await service.generateXcmCall(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.swap).toHaveBeenCalledWith(swapOptions);
+    });
+
+    it('should not call swap when swapOptions are not provided', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+      };
+
+      await service.generateXcmCall(options);
+
+      expect(builderMock.swap).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('generateXcmCalls', () => {
+    it('should generate multiple XCM calls and return array of transaction contexts', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        senderAddress: undefined,
+      };
+
+      const result = await service.generateXcmCalls(options);
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('chain', 'Acala');
+      expect(result[0]).toHaveProperty('tx', txHash);
+      expect(result[0]).toHaveProperty('wsProviders');
+      expect(builderMock.buildAll).toHaveBeenCalled();
     });
   });
 

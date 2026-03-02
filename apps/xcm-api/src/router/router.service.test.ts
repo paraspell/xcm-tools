@@ -4,9 +4,13 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TChain, TGetXcmFeeResult, TLocation } from '@paraspell/sdk';
+import type {
+  TChain,
+  TDryRunResult,
+  TGetXcmFeeResult,
+  TLocation,
+} from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import type { TRouterDryRunResult } from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -49,7 +53,7 @@ const serializedExtrinsics = [
 const dryRunResponse = {
   origin: { chain: 'Astar' },
   hops: [],
-} as unknown as TRouterDryRunResult;
+} as unknown as TDryRunResult;
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),

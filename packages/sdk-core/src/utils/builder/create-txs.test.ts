@@ -118,7 +118,7 @@ describe('overrideTxAmount', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
     >
 
     const out = await overrideTxAmount(options, builder, '50')
@@ -146,7 +146,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(baseOptions, builder, undefined)
@@ -168,7 +168,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown>
+      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(options, builder, '200')

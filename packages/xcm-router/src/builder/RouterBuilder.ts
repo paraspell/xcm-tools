@@ -2,6 +2,7 @@ import type {
   TAmount,
   TChain,
   TCurrencyInput,
+  TDryRunResult,
   TExchangeInput,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
@@ -22,7 +23,6 @@ import type {
   TBuildTransactionsOptions,
   TGetBestAmountOutOptions,
   TRouterBuilderOptions,
-  TRouterDryRunResult,
   TStatusChangeCallback,
   TTransferOptions,
 } from '../types';
@@ -249,7 +249,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
     return buildApiTransactions(this._options, this._builderOptions);
   }
 
-  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TRouterDryRunResult> {
+  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TDryRunResult> {
     return dryRunRouter(this._options, this._builderOptions);
   }
 

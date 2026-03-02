@@ -4,7 +4,7 @@ import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
 import z from 'zod';
 
-import type { FormValues } from '../components/XcmUtils/XcmUtilsForm';
+import type { TFormValues } from '../types';
 
 export const isValidPolkadotAddress = (address: string) => {
   try {
@@ -24,7 +24,7 @@ export const isDerivationPath = (value: string) => value.startsWith('//');
 
 export const validateTransferAddress = (
   address: string,
-  values: Pick<FormValues, 'from' | 'to'>,
+  values: Pick<TFormValues, 'from' | 'to'>,
   selectedAddress: string | undefined,
 ) => {
   if (!isValidWalletAddress(address) && !isDerivationPath(address)) {
