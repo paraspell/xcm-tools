@@ -116,6 +116,7 @@ export type TDryRunXcmOptions<TApi, TRes, TSigner> = WithApi<
 
 export type TDryRunResBase = {
   asset: TAssetInfo
+  isExchange?: boolean
 }
 
 export type TDryRunChainSuccess = TDryRunResBase & {
@@ -138,6 +139,8 @@ export type TDryRunChainResult = TDryRunChainSuccess | TDryRunChainFailure
 export type THopInfo = {
   chain: TChain
   result: TDryRunChainResult
+  /** @deprecated Use `result.isExchange` instead. Will be removed in v13. */
+  isExchange?: boolean
 }
 
 export type TChainEndpoint = 'origin' | 'destination' | TChain

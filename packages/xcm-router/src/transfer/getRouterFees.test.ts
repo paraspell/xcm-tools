@@ -18,8 +18,6 @@ import type {
   TBuildTransactionsOptions,
   TDestinationInfo,
   TOriginInfo,
-  TRouterXcmFeeHopInfo,
-  TRouterXcmFeeResult,
   TTransformedOptions,
 } from '../types';
 import { getSwapFee } from './fees';
@@ -110,7 +108,7 @@ describe('getRouterFees', () => {
 
       options.origin = { chain: 'Acala', assetFrom: { symbol: 'ACA' } } as unknown as TOriginInfo;
 
-      const result = await getRouterFees(assetHubDex, options);
+      const result = await getRouterFees(assetHubDex, options, false);
 
       expect(result).toEqual({
         ...executeTransferResult,
@@ -144,7 +142,7 @@ describe('getRouterFees', () => {
 
       vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Filtered', 'origin'));
 
-      const result = await getRouterFees(assetHubDex, options);
+      const result = await getRouterFees(assetHubDex, options, false);
 
       expect(getSwapFee).toHaveBeenCalled();
       expect(Array.isArray(result.hops)).toBe(true);
@@ -153,9 +151,9 @@ describe('getRouterFees', () => {
 
   describe('Separate transactions path', () => {
     it('returns only swap when origin & destination are undefined - no exchange in hops', async () => {
-      const result = await getRouterFees(dex, options);
+      const result = await getRouterFees(dex, options, false);
 
-      expect(result).toEqual<TRouterXcmFeeResult>({
+      expect(result).toEqual<TGetXcmFeeResult>({
         failureReason: undefined,
         failureChain: undefined,
         origin: { ...swapFee, isExchange: true },
@@ -167,7 +165,7 @@ describe('getRouterFees', () => {
     it('adds exchange to hops only when origin exists but destination undefined', async () => {
       options.origin = { chain: 'Acala', amount: 1000n } as unknown as TOriginInfo;
 
-      const result = await getRouterFees(dex, options);
+      const result = await getRouterFees(dex, options, false);
 
       expect(result.hops).toEqual([...toExchangeFeeValue.hops]);
       expect(result.origin).toEqual(toExchangeFeeValue.origin);
@@ -177,7 +175,7 @@ describe('getRouterFees', () => {
     it('adds exchange to hops only when destination exists but origin undefined', async () => {
       options.destination = { chain: 'Moonbeam', min: 0n } as unknown as TDestinationInfo;
 
-      const result = await getRouterFees(dex, options);
+      const result = await getRouterFees(dex, options, false);
 
       expect(result.hops).toEqual([...toDestFeeValue.hops]);
       expect(result.origin).toEqual({ ...swapFee, isExchange: true });
@@ -188,9 +186,9 @@ describe('getRouterFees', () => {
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo;
       options.destination = { chain: 'Moonbeam' } as unknown as TDestinationInfo;
 
-      const result = await getRouterFees(dex, options);
+      const result = await getRouterFees(dex, options, false);
 
-      expect(result).toEqual<TRouterXcmFeeResult>({
+      expect(result).toEqual<TGetXcmFeeResult>({
         failureReason: undefined,
         failureChain: undefined,
         origin: toExchangeFeeValue.origin,
@@ -202,6 +200,7 @@ describe('getRouterFees', () => {
             result: {
               ...swapFee,
               fee: (swapFee.fee ?? 0n) + (toDestFeeValue.origin.fee ?? 0n),
+              isExchange: true,
             },
             isExchange: true,
           },
@@ -219,7 +218,7 @@ describe('getRouterFees', () => {
       } as TGetXcmFeeResult<false>;
       vi.mocked(getToExchangeFee).mockResolvedValue(failedToExchangeFee);
 
-      const result = await getRouterFees(dex, options);
+      const result = await getRouterFees(dex, options, false);
 
       expect(result.failureReason).toBe('InsufficientBalance');
       expect(result.failureChain).toBe('origin');
@@ -239,7 +238,7 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    const result = await getRouterFees(assetHubDex, localOptions);
+    const result = await getRouterFees(assetHubDex, localOptions, false);
 
     expect(result.origin).toEqual(
       expect.objectContaining({ asset: executeTransferResult.origin.asset }),
@@ -248,10 +247,7 @@ describe('getRouterFees', () => {
     expect(result.destination.isExchange).toBeUndefined();
 
     expect(
-      result.hops.some(
-        (h) =>
-          h.chain === localOptions.exchange.baseChain && (h as TRouterXcmFeeHopInfo).isExchange,
-      ),
+      result.hops.some((h) => h.chain === localOptions.exchange.baseChain && h.isExchange),
     ).toBe(true);
   });
 
@@ -270,7 +266,7 @@ describe('getRouterFees', () => {
 
     vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Other', 'origin'));
 
-    await expect(getRouterFees(assetHubDex, localOptions)).rejects.toBeInstanceOf(
+    await expect(getRouterFees(assetHubDex, localOptions, false)).rejects.toBeInstanceOf(
       DryRunFailedError,
     );
   });
@@ -289,7 +285,7 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    await getRouterFees(assetHubDex, localOptions);
+    await getRouterFees(assetHubDex, localOptions, false);
 
     expect(getXcmFee).toHaveBeenCalledTimes(1);
     const arg = vi.mocked(getXcmFee).mock.calls[0][0];
@@ -324,7 +320,7 @@ describe('getRouterFees', () => {
       origin: { chain: 'Acala' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    await getRouterFees(assetHubDex, localOptions);
+    await getRouterFees(assetHubDex, localOptions, false);
 
     const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
       a?: string,
@@ -365,7 +361,7 @@ describe('getRouterFees', () => {
       destination: { chain: 'Moonbeam' },
     } as TTransformedOptions<TBuildTransactionsOptions>;
 
-    await getRouterFees(assetHubDex, localOptions);
+    await getRouterFees(assetHubDex, localOptions, false);
 
     const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
       a?: string,
@@ -430,8 +426,8 @@ describe('getRouterFees', () => {
         asset: { symbol: 'DOT', decimals: 10 } as TAssetInfo,
         currency: 'DOT',
       },
-    } as TRouterXcmFeeResult);
+    } as TGetXcmFeeResult);
 
-    await expect(getRouterFees(dex, options)).rejects.toBeInstanceOf(RoutingResolutionError);
+    await expect(getRouterFees(dex, options, false)).rejects.toBeInstanceOf(RoutingResolutionError);
   });
 });

@@ -1,10 +1,9 @@
-import type { TBypassOptions, TChain, TCurrencyCore } from '@paraspell/sdk';
+import type { TBypassOptions, TChain, TCurrencyCore, TDryRunResult } from '@paraspell/sdk';
 import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
 
 import type {
   TBuildTransactionsOptions,
   TRouterBuilderOptions,
-  TRouterDryRunResult,
   TRouterPlan,
   TTransaction,
   TTransformedOptions,
@@ -13,7 +12,7 @@ import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
 const assignIsExchange = (
-  result: TRouterDryRunResult,
+  result: TDryRunResult,
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
   const { origin, exchange, destination } = options;
@@ -26,10 +25,17 @@ const assignIsExchange = (
     result.destination.isExchange = true;
   }
 
-  result.hops = result.hops.map((hop) => ({
-    ...hop,
-    isExchange: hop.chain === exchange.baseChain,
-  }));
+  result.hops = result.hops.map((hop) => {
+    const isExchange = hop.chain === exchange.baseChain;
+    return {
+      ...hop,
+      result: {
+        ...hop.result,
+        isExchange,
+      },
+      isExchange,
+    };
+  });
 
   return result;
 };
@@ -39,7 +45,7 @@ const dryRunTransaction = async (
   transaction: TTransaction,
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
-): Promise<TRouterDryRunResult> => {
+): Promise<TDryRunResult> => {
   const {
     exchange,
     senderAddress,
@@ -77,12 +83,12 @@ const dryRunTransaction = async (
 
 const mergeDryRunResults = (
   options: TTransformedOptions<TBuildTransactionsOptions>,
-  originResult: TRouterDryRunResult,
-  exchangeResult: TRouterDryRunResult,
-): TRouterDryRunResult => {
+  originResult: TDryRunResult,
+  exchangeResult: TDryRunResult,
+): TDryRunResult => {
   const { exchange, destination } = options;
 
-  const result: TRouterDryRunResult = {
+  const result: TDryRunResult = {
     origin: originResult.origin,
     destination: destination ? exchangeResult.destination : exchangeResult.origin,
     hops: [
@@ -101,7 +107,7 @@ const mergeDryRunResults = (
 const dryRun2Transactions = async (
   options: TTransformedOptions<TBuildTransactionsOptions>,
   transactions: TRouterPlan,
-): Promise<TRouterDryRunResult> => {
+): Promise<TDryRunResult> => {
   const { exchange } = options;
 
   const [firstTx, secondTx] = transactions;
@@ -140,7 +146,7 @@ const dryRunTransactions = (
 export const dryRunRouter = async (
   initialOptions: TBuildTransactionsOptions,
   builderOptions?: TRouterBuilderOptions,
-): Promise<TRouterDryRunResult> => {
+): Promise<TDryRunResult> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions);
   const routerPlan = await buildTransactions(dex, options);
