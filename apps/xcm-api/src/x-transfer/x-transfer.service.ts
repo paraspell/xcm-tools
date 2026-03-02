@@ -4,10 +4,12 @@ import {
   CHAINS,
   GeneralBuilder,
   getBridgeStatus,
+  getChainProviders,
   getParaEthTransferFees,
   isExternalChain,
   SUBSTRATE_CHAINS,
   TChain,
+  TPapiApi,
   TPapiSigner,
   TPapiTransaction,
   TSendBaseOptionsWithSenderAddress,
@@ -16,6 +18,7 @@ import {
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
+import { validateExchange } from '../utils/validateExchange.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
@@ -31,7 +34,11 @@ export class XTransferService {
     transfer: XTransferDtoWSenderAddress,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSenderAddress<TPapiTransaction, TPapiSigner>
+        TSendBaseOptionsWithSenderAddress<
+          TPapiApi,
+          TPapiTransaction,
+          TPapiSigner
+        >
       >,
     ) => Promise<T>,
   ): Promise<T> {
@@ -119,6 +126,7 @@ export class XTransferService {
       senderAddress,
       ahAddress,
       transactOptions,
+      swapOptions,
     } = transfer;
 
     let finalBuilder = builder
@@ -148,6 +156,14 @@ export class XTransferService {
     if (transactOptions) {
       const { call, originKind, maxWeight } = transactOptions;
       finalBuilder = finalBuilder.transact(call, originKind, maxWeight);
+    }
+
+    if (swapOptions) {
+      const { exchange, ...rest } = swapOptions;
+      finalBuilder = finalBuilder.swap({
+        ...rest,
+        exchange: validateExchange(exchange),
+      });
     }
 
     return finalBuilder;
@@ -194,6 +210,30 @@ export class XTransferService {
         const tx = await finalBuilder.build();
         const encoded = await tx.getEncodedData();
         return encoded.asHex();
+      },
+    );
+  }
+
+  generateXcmCalls(transfer: XTransferDto) {
+    return this.executeWithBuilderOptionalSender(
+      transfer,
+      async (finalBuilder) => {
+        const txContexts = await finalBuilder.buildAll();
+
+        const response = await Promise.all(
+          txContexts.map(async (txContext) => {
+            const txData = await txContext.tx.getEncodedData();
+            const txHash = txData.asHex();
+
+            return {
+              chain: txContext.chain,
+              tx: txHash,
+              wsProviders: getChainProviders(txContext.chain),
+            };
+          }),
+        );
+
+        return response;
       },
     );
   }

@@ -1,4 +1,4 @@
-import type { TLocation } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk';
 import {
   Foreign,
   ForeignAbstract,
@@ -11,12 +11,16 @@ import {
   type TUrl,
   type WithComplexAmount,
 } from '@paraspell/sdk';
+import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 
 import type {
-  TCurrencyEntryTransformed,
+  TAdvancedOptions,
+  TCurrencyEntryBase,
+  TCurrencyEntryBaseTransformed,
   TFormValuesTransformed,
-} from '../components/XcmTransfer/XcmTransferForm';
-import type { TAdvancedOptions } from '../types';
+} from '../types';
+import { resolveExchange } from './routerUtils';
 
 // Transforms apiOverrides array used by URL params to Record used by the SDK
 export const transformApiOverrides = (
@@ -40,13 +44,29 @@ export const createBuilderOptions = ({
   xcmFormatCheck,
 });
 
-export const determineCurrency = ({
+/**
+ * Resolves a currency entry's `currencyOptionId` to its full `TAssetInfo`
+ * from the provided lookup map, returning a new entry with the `currency` field set.
+ */
+export const resolveCurrencyAsset = <T extends TCurrencyEntryBase>(
+  entry: T,
+  currencyMap: Record<string, TAssetInfo>,
+): T & { currency?: TAssetInfo } => {
+  if (entry.isCustomCurrency) {
+    return { ...entry };
+  }
+
+  const currency = currencyMap[entry.currencyOptionId];
+  return currency ? { ...entry, currency } : { ...entry };
+};
+
+export const determineCurrencyCore = ({
   isCustomCurrency,
   customCurrency,
   customCurrencyType,
   customCurrencySymbolSpecifier,
   currency,
-}: TCurrencyEntryTransformed): TCurrencyInput => {
+}: TCurrencyEntryBaseTransformed): TCurrencyCore => {
   if (isCustomCurrency) {
     if (customCurrencyType === 'id') {
       return {
@@ -74,10 +94,6 @@ export const determineCurrency = ({
       return {
         symbol: customCurrency,
       };
-    } else if (customCurrencyType === 'overridenLocation') {
-      return {
-        location: Override(JSON.parse(customCurrency) as TLocation),
-      };
     } else {
       return {
         location: JSON.parse(customCurrency) as TLocation,
@@ -92,8 +108,22 @@ export const determineCurrency = ({
   }
 };
 
+export const determineCurrency = (
+  entry: TCurrencyEntryBaseTransformed,
+): TCurrencyInput => {
+  if (
+    entry.isCustomCurrency &&
+    entry.customCurrencyType === 'overridenLocation'
+  ) {
+    return {
+      location: Override(JSON.parse(entry.customCurrency) as TLocation),
+    };
+  }
+  return determineCurrencyCore(entry);
+};
+
 export const determineFeeAsset = (
-  transformedFeeAsset?: TCurrencyEntryTransformed,
+  transformedFeeAsset?: TCurrencyEntryBaseTransformed,
 ): TCurrencyInput | undefined => {
   if (!transformedFeeAsset) return undefined;
 
@@ -110,6 +140,7 @@ export const setupBaseBuilder = (
   builder: GeneralBuilder,
   formValues: TFormValuesTransformed,
   senderAddress: string,
+  signer: PolkadotSigner | Signer,
 ) => {
   const {
     from,
@@ -164,6 +195,23 @@ export const setupBaseBuilder = (
           }
         : undefined;
     finalBuilder = finalBuilder.transact(call, originKind, weight);
+  }
+
+  if (
+    formValues.transformedCurrencyTo?.isCustomCurrency ||
+    formValues.transformedCurrencyTo?.currency
+  ) {
+    const { exchange, slippage, evmSigner, evmInjectorAddress } =
+      formValues.swapOptions;
+
+    // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
+    finalBuilder = finalBuilder.senderAddress(signer as PolkadotSigner).swap({
+      currencyTo: determineCurrencyCore(formValues.transformedCurrencyTo),
+      exchange: resolveExchange(exchange),
+      slippage: Number(slippage),
+      evmSigner,
+      evmSenderAddress: evmInjectorAddress || undefined,
+    });
   }
 
   return finalBuilder;

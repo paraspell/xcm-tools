@@ -12,12 +12,12 @@ vi.mock('../transfer')
 const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
-  overrides: Partial<TSendBaseOptions<unknown, unknown>> = {}
-): TSendBaseOptions<unknown, unknown> => ({
-  from: 'Acala' as TSendBaseOptions<unknown, unknown>['from'],
-  to: 'Hydration' as TSendBaseOptions<unknown, unknown>['to'],
+  overrides: Partial<TSendBaseOptions<unknown, unknown, unknown>> = {}
+): TSendBaseOptions<unknown, unknown, unknown> => ({
+  from: 'Acala',
+  to: 'Hydration',
   address: 'address',
-  currency: { symbol: 'ACA', amount: 100n } as TSendBaseOptions<unknown, unknown>['currency'],
+  currency: { symbol: 'ACA', amount: 100n },
   senderAddress: 'sender',
   ...overrides
 })
@@ -34,7 +34,12 @@ describe('normalizeAmountAll', () => {
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown, unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptions<unknown, unknown, unknown>
+    >
 
     const options = createOptions()
 
@@ -67,7 +72,7 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown>
+            TSendBaseOptions<unknown, unknown, unknown>
           >
       )
       .mockImplementationOnce(
@@ -75,21 +80,23 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown>
+            TSendBaseOptions<unknown, unknown, unknown>
           >
       )
 
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, unknown, TSendBaseOptions<unknown, unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptions<unknown, unknown, unknown>
+    >
 
     const options = createOptions({
-      currency: { symbol: 'ACA', amount: AMOUNT_ALL } as TSendBaseOptions<
-        unknown,
-        unknown
-      >['currency'],
-      feeAsset: { symbol: 'DOT' } as TSendBaseOptions<unknown, unknown>['feeAsset']
+      currency: { symbol: 'ACA', amount: AMOUNT_ALL },
+      feeAsset: { symbol: 'DOT' }
     })
 
     const result = await normalizeAmountAll(mockApi, builder, options)

@@ -11,7 +11,7 @@ import type { TBypassOptions, TSendBaseOptionsWithSenderAddress } from '../types
 export const buildDryRun = <TApi, TRes, TSigner>(
   api: IPolkadotApi<TApi, TRes, TSigner>,
   tx: TRes,
-  options: TSendBaseOptionsWithSenderAddress<TRes, TSigner>,
+  options: TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>,
   bypassOptions?: TBypassOptions
 ) => {
   const { to, address, senderAddress, feeAsset, from, currency, version } = options

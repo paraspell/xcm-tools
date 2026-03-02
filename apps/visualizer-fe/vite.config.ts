@@ -6,10 +6,7 @@ import wasm from 'vite-plugin-wasm';
 export default defineConfig({
   plugins: [react(), svgr(), wasm()],
   build: {
-    target: 'esnext',
-    rollupOptions: {
-      external: ['@paraspell/xcm-router']
-    }
+    target: 'esnext'
   },
   optimizeDeps: {
     esbuildOptions: {

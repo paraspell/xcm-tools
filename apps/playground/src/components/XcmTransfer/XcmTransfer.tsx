@@ -21,10 +21,12 @@ import {
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
-import type { TSubmitType } from '../../types';
+import type { TFormValuesTransformed, TSubmitType } from '../../types';
 import {
   createBuilderOptions,
   determineCurrency,
@@ -44,7 +46,6 @@ import { BatchTypeSelectModal } from '../BatchTypeSelectModal/BatchTypeSelectMod
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { TFormValuesTransformed } from './XcmTransferForm';
 import { XcmTransferForm } from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -171,7 +172,12 @@ export const XcmTransfer = () => {
           builder: GeneralBuilder,
           item: TFormValuesTransformed,
         ) => {
-          return setupBaseBuilder(builder, item, senderAddress).addToBatch();
+          return setupBaseBuilder(
+            builder,
+            item,
+            senderAddress,
+            signer,
+          ).addToBatch();
         };
 
         const initialBuilder = Builder(builderOptions);
@@ -226,6 +232,7 @@ export const XcmTransfer = () => {
   const performDryRun = async (
     formValues: TFormValuesTransformed,
     senderAddress: string,
+    signer: PolkadotSigner | Signer,
     submitType: 'dryRun' | 'dryRunPreview',
     notifId: string | undefined,
   ) => {
@@ -278,7 +285,12 @@ export const XcmTransfer = () => {
       );
     } else {
       const builder = Builder(builderOptions);
-      const finalBuilder = setupBaseBuilder(builder, formValues, senderAddress);
+      const finalBuilder = setupBaseBuilder(
+        builder,
+        formValues,
+        senderAddress,
+        signer,
+      );
 
       result =
         submitType === 'dryRun'
@@ -298,7 +310,7 @@ export const XcmTransfer = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const { from, currencies, localAccount, useApi } = formValues;
+    const { from, currencies, localAccount, swapOptions, useApi } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -381,7 +393,13 @@ export const XcmTransfer = () => {
     let api;
     try {
       if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
-        await performDryRun(formValues, senderAddress, submitType, notifId);
+        await performDryRun(
+          formValues,
+          senderAddress,
+          signer,
+          submitType,
+          notifId,
+        );
         return;
       }
 
@@ -429,10 +447,14 @@ export const XcmTransfer = () => {
           builder,
           formValues,
           senderAddress,
+          signer,
         );
 
-        if (localAccount) hash = await finalBuilder.signAndSubmit();
-        else tx = await finalBuilder.build();
+        if (localAccount || swapOptions.currencyTo) {
+          hash = await finalBuilder.signAndSubmit();
+        } else {
+          tx = await finalBuilder.build();
+        }
 
         api = finalBuilder.getApi();
       }
@@ -454,7 +476,7 @@ export const XcmTransfer = () => {
           'Success',
           'Transaction was successful',
         );
-      } else if (hash) {
+      } else if (hash !== undefined) {
         setOutput(`'Transaction was submitted. Hash: ${hash}'`);
         openOutputAlert();
         showSuccessNotification(

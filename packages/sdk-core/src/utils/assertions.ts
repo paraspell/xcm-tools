@@ -53,7 +53,9 @@ export const isSenderSigner = <TSigner>(sender: TSender<TSigner>): sender is TSi
   return typeof sender !== 'string'
 }
 
-export const assertSwapSupport = <TSigner>(options: TSwapOptions<TSigner> | undefined) => {
+export const assertSwapSupport = <TApi, TRes, TSigner>(
+  options: TSwapOptions<TApi, TRes, TSigner> | undefined
+) => {
   if (options) {
     throw new UnsupportedOperationError(
       'Swap options are not supported by this operation. Please open an issue if you would like to see this supported.'

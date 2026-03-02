@@ -65,7 +65,7 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
-export type TSendBaseOptions<TRes, TSigner> = {
+export type TSendBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain
    */
@@ -121,14 +121,14 @@ export type TSendBaseOptions<TRes, TSigner> = {
   /**
    * The optional swap options
    */
-  swapOptions?: TSwapOptions<TSigner>
+  swapOptions?: TSwapOptions<TApi, TRes, TSigner>
 }
 
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
 export type TSendOptions<TApi, TRes, TSigner> = WithApi<
-  TSendBaseOptions<TRes, TSigner>,
+  TSendBaseOptions<TApi, TRes, TSigner>,
   TApi,
   TRes,
   TSigner
@@ -143,26 +143,30 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   senderAddress: string
 }
 
-export type WithRequiredSwapOptions<TBase, TSigner> = Omit<TBase, 'swapOptions'> & {
-  swapOptions: TSwapOptions<TSigner>
+export type WithRequiredSwapOptions<TBase, TApi, TRes, TSigner> = Omit<TBase, 'swapOptions'> & {
+  swapOptions: TSwapOptions<TApi, TRes, TSigner>
 }
 
 export type TSendOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
   Omit<TSendOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
+  TApi,
+  TRes,
   TSigner
 >
 
-export type TSendBaseOptionsWithSwap<TRes, TSigner> = WithRequiredSwapOptions<
-  TSendBaseOptions<TRes, TSigner>,
+export type TSendBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  TSendBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
   TSigner
 >
 
-export type TSendBaseOptionsWithSenderAddress<TRes, TSigner> = WithRequiredSenderAddress<
-  TSendBaseOptions<TRes, TSigner>
+export type TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner> = WithRequiredSenderAddress<
+  TSendBaseOptions<TApi, TRes, TSigner>
 >
 
 export type TSendInternalOptions<TApi, TRes, TSigner> = Omit<
-  TSendBaseOptions<TRes, TSigner>,
+  TSendBaseOptions<TApi, TRes, TSigner>,
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes, TSigner>

@@ -106,14 +106,14 @@ export type TBatchedSendOptions<TApi, TRes, TSigner> = Omit<
   TSendOptions<TApi, TRes, TSigner>,
   'isAmountAll'
 > & {
-  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TRes, TSigner>>
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
 }
 
 export type TBuildInternalResBase<
   TApi,
   TRes,
   TSigner,
-  TOptions extends TSendBaseOptions<TRes, TSigner> = TSendBaseOptions<TRes, TSigner>
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
 > = {
   options: TSendOptions<TApi, TRes, TSigner> & TOptions
 }
@@ -122,7 +122,7 @@ export type TBuildInternalRes<
   TApi,
   TRes,
   TSigner,
-  TOptions extends TSendBaseOptions<TRes, TSigner> = TSendBaseOptions<TRes, TSigner>
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
 > = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
   tx: TRes
 }
@@ -131,7 +131,7 @@ export type TBuildAllInternalRes<
   TApi,
   TRes,
   TSigner,
-  TOptions extends TSendBaseOptions<TRes, TSigner> = TSendBaseOptions<TRes, TSigner>
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
 > = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
   txContexts: TTransactionContext<TApi, TRes>[]
 }

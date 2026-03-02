@@ -51,7 +51,7 @@ describe('getMinTransferableAmountInternal', () => {
     unknown,
     unknown,
     unknown,
-    TSendBaseOptionsWithSenderAddress<unknown, unknown>
+    TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
   >
 
   const baseOptions = {

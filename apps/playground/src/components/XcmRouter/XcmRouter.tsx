@@ -573,11 +573,7 @@ export const XcmRouter = () => {
 
     closeOutputAlert();
 
-    const exchange = (
-      formValues.exchange && formValues.exchange?.length > 1
-        ? formValues.exchange
-        : formValues.exchange?.[0]
-    ) as TExchangeInput;
+    const exchange = formValues.exchange;
 
     if (submitType === 'getBestAmountOut') {
       await submitGetBestAmountOut(formValues, exchange, builderOptions);

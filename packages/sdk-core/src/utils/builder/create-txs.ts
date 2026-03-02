@@ -38,7 +38,7 @@ export const computeOverridenAmount = <TApi, TRes, TSigner>(
 
 export const overrideTxAmount = async <TApi, TRes, TSigner>(
   options: TCreateTxsOptions<TApi, TRes, TSigner>,
-  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TRes, TSigner>>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>,
   amount: string,
   relative?: boolean
 ) => {
@@ -53,7 +53,7 @@ export const overrideTxAmount = async <TApi, TRes, TSigner>(
 
 export const createTxOverrideAmount = async <TApi, TRes, TSigner>(
   options: TCreateTxsOptions<TApi, TRes, TSigner>,
-  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TRes, TSigner>>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>,
   amount?: string,
   relative?: boolean
 ): Promise<TRes> => {
@@ -89,11 +89,11 @@ export const createTransferOrSwap = async <TApi, TRes, TSigner>(
 ): Promise<TRes> => {
   const res = await createTransferOrSwapAll(options)
 
-  if (Array.isArray(res)) {
+  if (res.length > 1) {
     throw new UnsupportedOperationError(
       'This operation produces multiple transactions, but .build() only supports a single transaction. Use .buildAll() instead.'
     )
   }
 
-  return res
+  return res[0].tx
 }

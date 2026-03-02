@@ -3,6 +3,7 @@ import type {
   TChain,
   TCurrencyInput,
   TDryRunResult,
+  TExchangeInput,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
   TSubstrateChain,

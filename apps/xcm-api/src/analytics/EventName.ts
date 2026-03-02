@@ -40,6 +40,7 @@ export enum EventName {
   GET_ORIGIN_XCM_FEE_ESTIMATE = 'Get Origin XCM Fee Estimate',
   VERIFY_ED_ON_DESTINATION = 'Verify ED on Destination',
   GENERATE_XCM_CALL = 'Generate XCM Call',
+  GENERATE_XCM_CALLS = 'Generate XCM Calls',
   GENERATE_XCM_CALL_BATCH = 'Generate XCM Call Batch',
   GENERATE_ETH_CALL = 'Generate ETH Call',
   GENERATE_API_KEY = 'Generate API Key',

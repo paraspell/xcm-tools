@@ -7,15 +7,14 @@ import {
   TSubstrateChain,
 } from '@paraspell/sdk';
 import {
-  EXCHANGE_CHAINS,
   getExchangePairs,
   RouterBuilder,
-  TExchangeChain,
-  TExchangeInput,
+  type TExchangeInput,
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
+import { validateExchange } from '../utils/validateExchange.js';
 import {
   ExchangePairsDto,
   RouterBestAmountOutDto,
@@ -32,22 +31,12 @@ const validateChainsAndExchange = (
   toChain?: TChain;
 } => {
   const fromChain = from as TSubstrateChain;
-  const exchangeChain = exchange as TExchangeInput;
+  const exchangeChain = validateExchange(exchange);
   const toChain = to as TChain;
 
   if (fromChain && !SUBSTRATE_CHAINS.includes(fromChain)) {
     throw new BadRequestException(
       `Chain ${from} is not valid. Check docs for valid chains.`,
-    );
-  }
-
-  const exchanges = exchangeChain
-    ? ([] as TExchangeChain[]).concat(exchangeChain)
-    : undefined;
-
-  if (exchanges?.some((x) => !EXCHANGE_CHAINS.includes(x))) {
-    throw new BadRequestException(
-      `Exchange ${exchanges.toString()} is not valid. Check docs for valid exchanges.`,
     );
   }
 
@@ -156,11 +145,11 @@ export class RouterService {
       options,
     } = input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -197,11 +186,11 @@ export class RouterService {
     const { from, exchange, to, currencyFrom, currencyTo, amount, options } =
       input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     try {
       return await RouterBuilder(options)
@@ -233,11 +222,11 @@ export class RouterService {
       options,
     } = input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -286,11 +275,11 @@ export class RouterService {
       options,
     } = input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -339,11 +328,11 @@ export class RouterService {
       options,
     } = input;
 
-    const fromChain = from as TSubstrateChain;
-    const exchangeChain = exchange as TExchangeChain;
-    const toChain = to as TChain;
-
-    validateChainsAndExchange(from, exchange, to);
+    const { fromChain, exchangeChain, toChain } = validateChainsAndExchange(
+      from,
+      exchange,
+      to,
+    );
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -377,6 +366,6 @@ export class RouterService {
   }
 
   getExchangePairs(exchange: ExchangePairsDto['exchange']) {
-    return getExchangePairs(exchange as TExchangeInput);
+    return getExchangePairs(validateExchange(exchange));
   }
 }

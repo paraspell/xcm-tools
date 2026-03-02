@@ -1,7 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TGetXcmFeeResult, TLocation } from '@paraspell/sdk';
-import type { TRouterDryRunResult } from '@paraspell/xcm-router';
+import type {
+  TDryRunResult,
+  TGetXcmFeeResult,
+  TLocation,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -216,7 +219,7 @@ describe('RouterController', () => {
         recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       };
 
-      const mockResult = {} as TRouterDryRunResult;
+      const mockResult = {} as TDryRunResult;
 
       const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
 

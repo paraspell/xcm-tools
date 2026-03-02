@@ -72,6 +72,25 @@ describe('XTransferController', () => {
     });
   });
 
+  describe('generateXcmCalls', () => {
+    it('should call generateXcmCalls service method with correct parameters and return result', async () => {
+      const mockResult: Awaited<ReturnType<typeof service.generateXcmCalls>> = [
+        { chain: 'Acala', tx: '0x123', wsProviders: [] },
+      ];
+      const spy = vi
+        .spyOn(service, 'generateXcmCalls')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.generateXcmCalls(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
   describe('generateXcmCallBatch', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
       const bodyParams: BatchXTransferDto = {
