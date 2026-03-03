@@ -218,7 +218,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   async getXcmFees<TDisableFallback extends boolean = false>(
     this: RouterBuilderCore<TBuildTransactionsOptions>,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback },
-  ): Promise<TGetXcmFeeResult> {
+  ): Promise<TGetXcmFeeResult<TDisableFallback>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback;
     return getXcmFees(this._options, disableFallback, this._builderOptions);
   }
