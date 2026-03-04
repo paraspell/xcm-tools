@@ -44,10 +44,6 @@ export const createBuilderOptions = ({
   xcmFormatCheck,
 });
 
-/**
- * Resolves a currency entry's `currencyOptionId` to its full `TAssetInfo`
- * from the provided lookup map, returning a new entry with the `currency` field set.
- */
 export const resolveCurrencyAsset = <T extends TCurrencyEntryBase>(
   entry: T,
   currencyMap: Record<string, TAssetInfo>,

@@ -23,6 +23,8 @@ type Props = {
   size?: MantineSize;
   required?: boolean;
   disabled?: boolean;
+  label?: string;
+  description?: string;
 };
 
 export const CurrencySelection: FC<Props> = ({
@@ -34,6 +36,8 @@ export const CurrencySelection: FC<Props> = ({
   size = 'sm',
   required = false,
   disabled,
+  label = 'Currency',
+  description,
 }) => {
   const { from, to } = form.getValues();
 
@@ -100,7 +104,8 @@ export const CurrencySelection: FC<Props> = ({
         <Select
           key={from + to}
           size={size}
-          label="Currency"
+          label={label}
+          description={description}
           placeholder="Pick value"
           data={currencyOptions}
           allowDeselect={false}

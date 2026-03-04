@@ -283,7 +283,3 @@ export type TBuildFromExchangeTxOptions = {
   senderAddress: string;
   builderOptions?: TRouterBuilderOptions;
 };
-
-export type TWithExchange<T> = T & {
-  isExchange?: boolean;
-};

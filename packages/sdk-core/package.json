@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-core",
-  "version": "12.8.1",
+  "version": "12.8.3",
   "description": "SDK core for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -45,6 +45,11 @@
   },
   "peerDependencies": {
     "@paraspell/xcm-router": "12.8.3"
+  },
+  "peerDependenciesMeta": {
+    "@paraspell/xcm-router": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",

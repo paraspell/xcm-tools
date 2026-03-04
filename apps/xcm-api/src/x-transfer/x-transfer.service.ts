@@ -13,6 +13,7 @@ import {
   TPapiSigner,
   TPapiTransaction,
   TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSwap,
   TSubstrateChain,
 } from '@paraspell/sdk';
 
@@ -30,6 +31,30 @@ import {
 
 @Injectable()
 export class XTransferService {
+  private async executeWithSwapBuilder<T>(
+    transfer: XTransferDtoWSenderAddress,
+    executor: (
+      finalBuilder: GeneralBuilder<
+        TSendBaseOptionsWithSwap<TPapiApi, TPapiTransaction, TPapiSigner>
+      >,
+    ) => Promise<T>,
+  ): Promise<T> {
+    const { swapOptions } = transfer;
+    return this.executeWithBuilderOptionalSender(transfer, (finalBuilder) => {
+      if (!swapOptions) {
+        throw new BadRequestException(
+          'SwapOptions are required for this operation.',
+        );
+      }
+      return executor(
+        finalBuilder.swap({
+          ...swapOptions,
+          exchange: validateExchange(swapOptions.exchange),
+        }),
+      );
+    });
+  }
+
   private async executeWithBuilder<T>(
     transfer: XTransferDtoWSenderAddress,
     executor: (
@@ -271,6 +296,12 @@ export class XTransferService {
   getReceivableAmount(transfer: XTransferDtoWSenderAddress) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getReceivableAmount(),
+    );
+  }
+
+  getBestAmountOut(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithSwapBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getBestAmountOut(),
     );
   }
 

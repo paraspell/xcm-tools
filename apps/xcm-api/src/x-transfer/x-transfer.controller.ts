@@ -207,6 +207,16 @@ export class XTransferController {
     return this.xTransferService.getReceivableAmount(bodyParams);
   }
 
+  @Post('best-amount-out')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getBestAmountOut(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, bodyParams);
+    return this.xTransferService.getBestAmountOut(bodyParams);
+  }
+
   @Get('x-transfer/para-eth-fees')
   getParaEthFees() {
     return this.xTransferService.getParaEthFees();

@@ -16,7 +16,7 @@ import { IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
-import { useEvmWallet, useRouterCurrencyOptions, useWallet } from '../../hooks';
+import { useEvmWallet, useRouterCurrencyOptions } from '../../hooks';
 import type { TFormValues } from '../../types';
 import { resolveExchange } from '../../utils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
@@ -28,8 +28,6 @@ type Props = {
 };
 
 export const Swap = ({ form }: Props) => {
-  const { apiType } = useWallet();
-
   const { colorScheme } = useMantineColorScheme();
 
   const [opened, { open, close }] = useDisclosure(
@@ -98,8 +96,6 @@ export const Swap = ({ form }: Props) => {
       <IconInfoCircle size={16} />
     </Tooltip>
   );
-
-  if (apiType !== 'PAPI') return null;
 
   return (
     <Stack gap="md" py="sm">

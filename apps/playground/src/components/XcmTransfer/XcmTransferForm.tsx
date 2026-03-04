@@ -35,7 +35,12 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
 
-import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
+import {
+  DEFAULT_ADDRESS,
+  DEFAULT_CURRENCY_ENTRY,
+  DEFAULT_CURRENCY_ENTRY_BASE,
+  MAIN_FORM_NAME,
+} from '../../constants';
 import {
   useCurrencyOptions,
   useFeeCurrencyOptions,
@@ -103,24 +108,10 @@ export const XcmTransferForm: FC<Props> = ({
     to: parseAsChain.withDefault('Hydration'),
     currencies: parseAsNativeArrayOf(
       parseAsJson(CurrencyEntrySchema),
-    ).withDefault([
-      {
-        currencyOptionId: '',
-        customCurrency: '',
-        amount: '10',
-        isCustomCurrency: false,
-        isMax: false,
-        customCurrencyType: 'id',
-        customCurrencySymbolSpecifier: 'auto',
-      },
-    ]),
-    feeAsset: parseAsJson(FeeAssetSchema).withDefault({
-      currencyOptionId: '',
-      customCurrency: '',
-      isCustomCurrency: false,
-      customCurrencyType: 'symbol',
-      customCurrencySymbolSpecifier: 'auto',
-    }),
+    ).withDefault([DEFAULT_CURRENCY_ENTRY]),
+    feeAsset: parseAsJson(FeeAssetSchema).withDefault(
+      DEFAULT_CURRENCY_ENTRY_BASE,
+    ),
     address: parseAsRecipientAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
@@ -443,14 +434,7 @@ export const XcmTransferForm: FC<Props> = ({
               size="compact-xs"
               leftSection={<IconPlus size={16} />}
               onClick={() =>
-                form.insertListItem('currencies', {
-                  currencyOptionId: '',
-                  customCurrency: '',
-                  amount: '10000000000000000000',
-                  isCustomCurrency: false,
-                  isMax: false,
-                  customCurrencyType: 'id',
-                })
+                form.insertListItem('currencies', DEFAULT_CURRENCY_ENTRY)
               }
             >
               Add another asset
@@ -460,6 +444,8 @@ export const XcmTransferForm: FC<Props> = ({
           <CurrencySelection
             form={form}
             fieldPath="feeAsset"
+            label="Fee asset"
+            description="This asset will be used to pay fees"
             fieldValue={feeAsset}
             currencyOptions={feeCurrencyOptions}
             disabled={feeAssetDisabled}

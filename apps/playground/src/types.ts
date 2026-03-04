@@ -138,11 +138,6 @@ export type TSwapFields = {
   swapOptions: TSwapOptions;
 };
 
-export type TSwapFormFields = TSwapFields & {
-  from: TSubstrateChain;
-  to: TChain;
-};
-
 export type TFormValues = {
   from: TSubstrateChain;
   to: TChain;

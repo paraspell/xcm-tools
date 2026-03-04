@@ -8,7 +8,13 @@ import {
 } from '@tabler/icons-react';
 
 import { PageRoute } from '../components/PageRoute';
-import type { TNavItem, TSwapFields, TTransactFields } from '../types';
+import type {
+  TCurrencyEntry,
+  TCurrencyEntryBase,
+  TNavItem,
+  TSwapFields,
+  TTransactFields,
+} from '../types';
 
 export const NAVIGATION_ITEMS: TNavItem[] = [
   {
@@ -66,14 +72,22 @@ export const DEFAULT_TRANSACT_OPTIONS: TTransactFields['transactOptions'] = {
 
 export const DEFAULT_SLIPPAGE = 1;
 
+export const DEFAULT_CURRENCY_ENTRY_BASE: TCurrencyEntryBase = {
+  currencyOptionId: '',
+  customCurrency: '',
+  isCustomCurrency: false,
+  customCurrencyType: 'id',
+  customCurrencySymbolSpecifier: 'auto',
+};
+
+export const DEFAULT_CURRENCY_ENTRY: TCurrencyEntry = {
+  ...DEFAULT_CURRENCY_ENTRY_BASE,
+  amount: '10',
+  isMax: false,
+};
+
 export const DEFAULT_SWAP_OPTIONS: TSwapFields['swapOptions'] = {
-  currencyTo: {
-    currencyOptionId: '',
-    customCurrency: '',
-    isCustomCurrency: false,
-    customCurrencyType: 'id',
-    customCurrencySymbolSpecifier: 'auto',
-  },
+  currencyTo: DEFAULT_CURRENCY_ENTRY_BASE,
   exchange: [],
   slippage: DEFAULT_SLIPPAGE.toString(),
   evmInjectorAddress: '',
