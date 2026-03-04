@@ -1,16 +1,11 @@
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo, TDryRunResult } from '@paraspell/sdk';
 import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type {
-  TBuildTransactionsOptions,
-  TRouterDryRunResult,
-  TTransaction,
-  TTransformedOptions,
-} from '../types';
+import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { dryRunRouter } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
@@ -88,13 +83,13 @@ const createTransaction = (chain: string): TTransaction =>
     type: 'TRANSFER',
   }) as TTransaction;
 
-const createDryRunResult = (overrides: Partial<TRouterDryRunResult> = {}): TRouterDryRunResult =>
+const createDryRunResult = (overrides: Partial<TDryRunResult> = {}): TDryRunResult =>
   ({
     origin: { chain: 'Acala' },
     destination: { chain: 'Acala' },
     hops: [],
     ...overrides,
-  }) as TRouterDryRunResult;
+  }) as TDryRunResult;
 
 const resolvePrepareOptions = (
   options: TTransformedOptions<TBuildTransactionsOptions>,
@@ -130,7 +125,7 @@ describe('dryRunRouter', () => {
         { chain: 'Acala', result: {} },
         { chain: 'Moonbeam', result: {} },
       ],
-    } as TRouterDryRunResult);
+    } as TDryRunResult);
 
     resolvePrepareOptions(transformedOptions, 'Acala');
     vi.mocked(buildTransactions).mockResolvedValue(routerPlan);
@@ -191,13 +186,13 @@ describe('dryRunRouter', () => {
       origin: {},
       destination: {},
       hops: [{ chain: 'BifrostPolkadot' }],
-    } as TRouterDryRunResult);
+    } as TDryRunResult);
 
     const secondResult = createDryRunResult({
       origin: {},
       destination: {},
       hops: [{ chain: 'Hydration' }],
-    } as TRouterDryRunResult);
+    } as TDryRunResult);
 
     vi.mocked(dryRun).mockResolvedValueOnce(firstResult).mockResolvedValueOnce(secondResult);
 

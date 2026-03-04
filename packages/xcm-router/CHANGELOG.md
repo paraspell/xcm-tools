@@ -1,5 +1,19 @@
 # Changelog
 
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.8.2...xcm-router-v12.8.3) (2026-03-03)
+
+
+### Bug Fixes
+
+* **xcm-router:** Add missing generic param 🔧 ([501b60a](https://github.com/paraspell/xcm-tools/commit/501b60abce1f3b5e51bad19a4641b63c3d9534a4))
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.8.1...xcm-router-v12.8.2) (2026-03-02)
+
+
+### Code Refactoring
+
+* **xcm-router:** Use SDK dry-run & xcm-fee types ⚙️ ([9f0a273](https://github.com/paraspell/xcm-tools/commit/9f0a273c3f24063f5d71ff9f0a64157d5ce45e43))
+
 ## [12.8.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.8.0...xcm-router-v12.8.1) (2026-02-27)
 
 

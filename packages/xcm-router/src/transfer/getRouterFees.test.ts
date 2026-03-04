@@ -247,9 +247,7 @@ describe('getRouterFees', () => {
     expect(result.destination.isExchange).toBeUndefined();
 
     expect(
-      result.hops.some(
-        (h) => h.chain === localOptions.exchange.baseChain && (h as TXcmFeeHopInfo).isExchange,
-      ),
+      result.hops.some((h) => h.chain === localOptions.exchange.baseChain && h.isExchange),
     ).toBe(true);
   });
 
