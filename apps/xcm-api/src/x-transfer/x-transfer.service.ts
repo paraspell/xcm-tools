@@ -49,6 +49,7 @@ export class XTransferService {
       return executor(
         finalBuilder.swap({
           ...swapOptions,
+          slippage: Number(swapOptions.slippage),
           exchange: validateExchange(swapOptions.exchange),
         }),
       );
@@ -187,6 +188,7 @@ export class XTransferService {
       const { exchange, ...rest } = swapOptions;
       finalBuilder = finalBuilder.swap({
         ...rest,
+        slippage: Number(rest.slippage),
         exchange: validateExchange(exchange),
       });
     }
@@ -251,6 +253,7 @@ export class XTransferService {
             const txHash = txData.asHex();
 
             return {
+              type: txContext.type,
               chain: txContext.chain,
               tx: txHash,
               wsProviders: getChainProviders(txContext.chain),

@@ -17,5 +17,6 @@ export {
   handleSwapExecuteTransfer
 } from './transfer'
 export * from './types'
+export type { TSwapEvent } from './types'
 export { createChainClient } from './utils'
 export * from './PapiXcmTransformer'

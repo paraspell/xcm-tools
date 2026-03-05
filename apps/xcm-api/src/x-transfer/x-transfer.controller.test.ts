@@ -76,7 +76,7 @@ describe('XTransferController', () => {
   describe('generateXcmCalls', () => {
     it('should call generateXcmCalls service method with correct parameters and return result', async () => {
       const mockResult: Awaited<ReturnType<typeof service.generateXcmCalls>> = [
-        { chain: 'Acala', tx: '0x123', wsProviders: [] },
+        { type: 'TRANSFER', chain: 'Acala', tx: '0x123', wsProviders: [] },
       ];
       const spy = vi
         .spyOn(service, 'generateXcmCalls')

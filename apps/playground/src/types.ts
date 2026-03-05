@@ -2,7 +2,11 @@ import type {
   TAssetInfo,
   TChain,
   TExchangeChain,
+  TPapiApi,
+  TPapiTransaction,
   TSubstrateChain,
+  TSwapEventType,
+  TTransactionContext,
   TTransactOptions,
   Version,
 } from '@paraspell/sdk';
@@ -12,6 +16,20 @@ import type { FC } from 'react';
 import type { Web3 } from 'web3';
 
 import type { ASSET_QUERIES, PALLETS_QUERIES } from './constants';
+
+export type TApiTransaction = Omit<
+  TTransactionContext<TPapiApi, TPapiTransaction>,
+  'tx'
+> & {
+  tx: string;
+  wsProviders: string[];
+};
+
+export type TProgressSwapEvent = {
+  type: TSwapEventType;
+  routerPlan: Pick<TApiTransaction, 'type'>[];
+  currentStep: number;
+};
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 
@@ -62,6 +80,7 @@ export type TSubmitType =
   | 'getTransferableAmount'
   | 'getMinTransferableAmount'
   | 'getReceivableAmount'
+  | 'getBestAmountOut'
   | 'verifyEdOnDestination'
   | 'getTransferInfo'
   | 'addToBatch';

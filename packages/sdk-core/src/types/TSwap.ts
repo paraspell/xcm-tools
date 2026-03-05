@@ -17,6 +17,7 @@ export type TSwapOptions<TApi, TRes, TSigner> = {
 }
 
 export type TTransactionContext<TApi, TRes> = {
+  type: TTransactionType
   api: TApi
   chain: TSubstrateChain
   tx: TRes

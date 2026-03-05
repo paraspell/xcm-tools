@@ -18,6 +18,7 @@ import {
   SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
 import {
+  Icon123,
   IconArrowBarDown,
   IconArrowBarToRight,
   IconArrowBarUp,
@@ -310,6 +311,13 @@ export const XcmUtilsForm: FC<Props> = ({
     }
   };
 
+  const onSubmitGetBestAmountOut = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getTransformedValues(), 'getBestAmountOut');
+    }
+  };
+
   useEffect(() => {
     if (isNotParaToPara && Object.keys(currencyMap).length === 1) {
       form.setFieldValue(
@@ -581,6 +589,12 @@ export const XcmUtilsForm: FC<Props> = ({
                   onClick={onSubmitGetReceivableAmount}
                 >
                   Get Receivable Amount
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<Icon123 size={16} />}
+                  onClick={onSubmitGetBestAmountOut}
+                >
+                  Get Best Amount Out
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>

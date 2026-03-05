@@ -1,17 +1,22 @@
+import { parseUnits } from '@paraspell/sdk';
+
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { isPjsExtrinsic } from '../utils';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
+const FEE_ESTIMATION_UNITS = '100';
+
 export const calculateFromExchangeFee = async (
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
-  const { exchange, destination, amount, feeCalcAddress, senderAddress, builderOptions } = options;
+  const { exchange, destination, feeCalcAddress, senderAddress, builderOptions } = options;
   if (!destination || destination.chain === exchange.baseChain) return 0n;
+  const dummyAmount = parseUnits(FEE_ESTIMATION_UNITS, exchange.assetTo.decimals);
   const tx = await buildFromExchangeExtrinsic({
     exchange,
     destination,
-    amount,
+    amount: dummyAmount,
     senderAddress,
     builderOptions,
   });

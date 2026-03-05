@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import { useWallet } from '../../hooks';
 import type { TFormValuesTransformed, TSubmitType } from '../../types';
 import {
+  addSwapToBuilder,
   createBuilderOptions,
   determineCurrency,
   determineFeeAsset,
@@ -215,7 +216,17 @@ export const XcmUtils = () => {
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
       feeAsset: determineFeeAsset(transformedFeeAsset),
+      ...(formValues.transformedCurrencyTo
+        ? {
+            swapOptions: {
+              ...formValues.swapOptions,
+              currencyTo: determineCurrency(formValues.transformedCurrencyTo),
+            },
+          }
+        : {}),
     };
+
+    console.log(body);
 
     let result;
     let apiEndpoint = '';
@@ -249,6 +260,10 @@ export const XcmUtils = () => {
       case 'getTransferInfo':
         apiEndpoint = '/transfer-info';
         successMessage = 'Transfer info retrieved';
+        break;
+      case 'getBestAmountOut':
+        apiEndpoint = '/best-amount-out';
+        successMessage = 'Best amount out retrieved';
         break;
       default:
         showErrorNotification(
@@ -295,6 +310,21 @@ export const XcmUtils = () => {
           case 'getTransferInfo':
             result = await finalBuilder.getTransferInfo();
             break;
+          case 'getBestAmountOut': {
+            if (!formValues.transformedCurrencyTo) {
+              throw new Error(
+                'Swap configuration is required for getBestAmountOut.',
+              );
+            }
+            const swapBuilder = addSwapToBuilder(
+              finalBuilder,
+              formValues.transformedCurrencyTo,
+              formValues.swapOptions,
+              signer,
+            );
+            result = await swapBuilder.getBestAmountOut();
+            break;
+          }
         }
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -330,6 +360,7 @@ export const XcmUtils = () => {
       getTransferableAmount: 'Getting transferable amount...',
       verifyEdOnDestination: 'Verifying ED on destination...',
       getReceivableAmount: 'Getting receivable amount...',
+      getBestAmountOut: 'Getting best amount out...',
       getTransferInfo: 'Getting transfer info...',
     };
     const loadingMessage = opTextMap[submitType] ?? 'Processing request...';
@@ -350,6 +381,7 @@ export const XcmUtils = () => {
         submitType === 'getTransferableAmount' ||
         submitType === 'getMinTransferableAmount' ||
         submitType === 'getReceivableAmount' ||
+        submitType === 'getBestAmountOut' ||
         submitType === 'verifyEdOnDestination' ||
         submitType === 'getTransferInfo'
       ) {

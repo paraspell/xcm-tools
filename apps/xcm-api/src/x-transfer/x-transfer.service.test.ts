@@ -105,7 +105,9 @@ const builderMock = {
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
   getTransferInfo: vi.fn().mockResolvedValue({}),
   getReceivableAmount: vi.fn().mockResolvedValue(amountResult),
-  getBestAmountOut: vi.fn().mockResolvedValue({ exchange: 'HydrationDex', amountOut: 500n }),
+  getBestAmountOut: vi
+    .fn()
+    .mockResolvedValue({ exchange: 'HydrationDex', amountOut: 500n }),
   signAndSubmit: vi.fn().mockResolvedValue(txHash),
   disconnect: vi.fn(),
 };
@@ -573,7 +575,13 @@ describe('XTransferService', () => {
 
   describe('getBestAmountOut', () => {
     it('delegates to builder.getBestAmountOut', async () => {
-      const res = await service.getBestAmountOut(xTransferDto);
+      const res = await service.getBestAmountOut({
+        ...xTransferDto,
+        swapOptions: {
+          slippage: 1,
+          currencyTo: { symbol: 'GLMR' },
+        },
+      });
       expect(res).toEqual({ exchange: 'HydrationDex', amountOut: 500n });
       expect(builderMock.getBestAmountOut).toHaveBeenCalled();
     });

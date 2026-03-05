@@ -81,7 +81,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
     return transactions as unknown as TTransactionContext<TApi, TRes>[]
   }
 
-  return [{ api: api.getApi(), chain: from, tx: await createTransfer(options) }]
+  return [{ type: 'TRANSFER', api: api.getApi(), chain: from, tx: await createTransfer(options) }]
 }
 
 export const createTransferOrSwap = async <TApi, TRes, TSigner>(

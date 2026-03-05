@@ -1,4 +1,4 @@
-import type { TApiOrUrl } from '@paraspell/sdk-core'
+import type { TApiOrUrl, TSwapEvent as TSwapEventBase } from '@paraspell/sdk-core'
 import type { TEvmChainFrom } from '@paraspell/sdk-core'
 import type { PolkadotClient, PolkadotSigner, UnsafeTransaction } from 'polkadot-api'
 
@@ -10,3 +10,5 @@ export type TPapiSigner = PolkadotSigner
 export type TPapiTransaction = UnsafeTransaction<any, string, string, any>
 
 export type TEvmChainFromPapi = Extract<TEvmChainFrom, 'Moonbeam' | 'Moonriver' | 'Darwinia'>
+
+export type TSwapEvent = TSwapEventBase<TPapiApi, TPapiTransaction>

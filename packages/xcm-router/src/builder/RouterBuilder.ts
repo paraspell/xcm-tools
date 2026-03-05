@@ -30,6 +30,7 @@ import type {
 /**
  * Builder class for constructing and executing cross-chain transfers using the XCM Router.
  *
+ * @deprecated Use `@paraspell/sdk` with the "swap" extension installed instead.
  */
 export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   protected readonly _options: T;
@@ -260,6 +261,8 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
 
 /**
  * Creates a new `RouterBuilder` instance for constructing and executing cross-chain transfers using the XCM Router.
+ *
+ * @deprecated Use `@paraspell/sdk` with the "swap" extension installed instead.
  *
  * **Example usage:**
  * ```typescript

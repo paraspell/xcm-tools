@@ -32,6 +32,7 @@ describe('createSwapTx', () => {
       feeCalcAddress: 'someFeeCalcAddress',
       exchange: {
         api: swapApi,
+        assetTo: { decimals: 10 },
       },
       origin: {
         chain: 'Acala',
@@ -66,17 +67,22 @@ describe('createSwapTx', () => {
     const result = await createSwapTx(exchangeChain, options);
 
     expect(buildFromExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith({
-      exchange: options.exchange,
-      destination: options.destination,
-      amount: options.amount,
-    });
+    expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith(
+      expect.objectContaining({
+        exchange: options.exchange,
+        destination: options.destination,
+      }),
+    );
 
     expect(dummyTxPapi.getEstimatedFees).toHaveBeenCalledTimes(1);
     expect(dummyTxPapi.getEstimatedFees).toHaveBeenNthCalledWith(1, 'someFeeCalcAddress');
 
     expect(spy).toHaveBeenCalledOnce();
-    expect(spy).toHaveBeenCalledWith(swapApi, { ...options, isForFeeEstimation: false }, 10n);
+    expect(spy).toHaveBeenCalledWith(
+      swapApi,
+      expect.objectContaining({ ...options, isForFeeEstimation: false }),
+      10n,
+    );
 
     expect(result).toEqual({
       amountOut: 900n,

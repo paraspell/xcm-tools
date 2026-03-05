@@ -60,9 +60,9 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
   }
 
-  const router = await import('@paraspell/xcm-router')
+  const { RouterBuilder } = await import('@paraspell/xcm-router')
 
-  if (!router) {
+  if (!RouterBuilder) {
     throw new ExtensionNotInstalledError(
       'XCM Router package is required for swaps. Please install @paraspell/xcm-router.'
     )
@@ -72,12 +72,10 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     from,
     to,
     currency,
-    swapOptions: { currencyTo, evmSenderAddress, exchange, slippage },
+    swapOptions: { currencyTo, evmSenderAddress, exchange, slippage, onStatusChange },
     senderAddress,
     address
   } = options
-
-  const { RouterBuilder } = router
 
   assertToIsString(to)
   assertAddressIsString(address)
@@ -91,7 +89,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
 
   const routerConfig = convertBuilderConfig(config)
 
-  return RouterBuilder(routerConfig)
+  let builder = RouterBuilder(routerConfig)
     .from(from)
     .exchange(exchange)
     .to(to)
@@ -102,6 +100,15 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     .evmSenderAddress(evmSenderAddress)
     .recipientAddress(address)
     .slippagePct(slippage.toString() ?? '1')
+
+  if (onStatusChange) {
+    // We cast because router types are bind to specific PAPI types
+    // Will be resolved when we make RouterBuilder generic
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+    builder = builder.onStatusChange(onStatusChange as any)
+  }
+
+  return builder
 }
 
 export const executeWithRouter = async <TApi, TRes, TSigner, T>(

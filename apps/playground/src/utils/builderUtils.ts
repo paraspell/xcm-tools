@@ -1,4 +1,11 @@
-import type { TAssetInfo, TLocation } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TLocation,
+  TPapiApi,
+  TPapiSigner,
+  TPapiTransaction,
+  TSendBaseOptionsWithSenderAddress,
+} from '@paraspell/sdk';
 import {
   Foreign,
   ForeignAbstract,
@@ -19,6 +26,7 @@ import type {
   TCurrencyEntryBase,
   TCurrencyEntryBaseTransformed,
   TFormValuesTransformed,
+  TSwapOptions,
 } from '../types';
 import { resolveExchange } from './routerUtils';
 
@@ -132,6 +140,28 @@ export const determineFeeAsset = (
   return undefined;
 };
 
+export const addSwapToBuilder = <
+  T extends Partial<
+    TSendBaseOptionsWithSenderAddress<TPapiApi, TPapiTransaction, TPapiSigner>
+  >,
+>(
+  builder: GeneralBuilder<T>,
+  transformedCurrencyTo: TCurrencyEntryBaseTransformed,
+  swapOptions: TSwapOptions,
+  signer: PolkadotSigner | Signer,
+) => {
+  const { exchange, slippage, evmSigner, evmInjectorAddress } = swapOptions;
+
+  // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
+  return builder.senderAddress(signer as PolkadotSigner).swap({
+    currencyTo: determineCurrencyCore(transformedCurrencyTo),
+    exchange: resolveExchange(exchange),
+    slippage: Number(slippage),
+    evmSigner,
+    evmSenderAddress: evmInjectorAddress || undefined,
+  });
+};
+
 export const setupBaseBuilder = (
   builder: GeneralBuilder,
   formValues: TFormValuesTransformed,
@@ -197,17 +227,12 @@ export const setupBaseBuilder = (
     formValues.transformedCurrencyTo?.isCustomCurrency ||
     formValues.transformedCurrencyTo?.currency
   ) {
-    const { exchange, slippage, evmSigner, evmInjectorAddress } =
-      formValues.swapOptions;
-
-    // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
-    finalBuilder = finalBuilder.senderAddress(signer as PolkadotSigner).swap({
-      currencyTo: determineCurrencyCore(formValues.transformedCurrencyTo),
-      exchange: resolveExchange(exchange),
-      slippage: Number(slippage),
-      evmSigner,
-      evmSenderAddress: evmInjectorAddress || undefined,
-    });
+    finalBuilder = addSwapToBuilder(
+      finalBuilder,
+      formValues.transformedCurrencyTo,
+      formValues.swapOptions,
+      signer,
+    );
   }
 
   return finalBuilder;

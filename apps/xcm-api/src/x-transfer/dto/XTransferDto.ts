@@ -102,14 +102,14 @@ export const ExchangeSchema = z
     z.string(),
     z
       .array(z.string())
-      .min(2, { message: 'Exchange array must contain at least 2 strings' }),
+      .min(1, { message: 'Exchange array must contain at least 1 element' }),
   ])
   .optional();
 
 export const SwapOptionsSchema = z.object({
   currencyTo: CurrencyCoreSchema,
   exchange: ExchangeSchema,
-  slippage: z.number(),
+  slippage: z.number().or(z.string()),
   evmSenderAddress: z.string().min(1).optional(),
 });
 
