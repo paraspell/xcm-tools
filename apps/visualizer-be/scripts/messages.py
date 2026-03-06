@@ -171,13 +171,10 @@ def post_json(url, payload, api_key=None, timeout=60):
 # DB helpers
 def db_connect():
     load_dotenv()
-    return psycopg2.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", "5432")),
-        user=os.getenv("DB_USER") or "",
-        password=os.getenv("DB_PASS") or "",
-        dbname=os.getenv("DB_NAME") or "",
-    )
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set in environment")
+    return psycopg2.connect(database_url)
 
 
 def ensure_table(conn):
