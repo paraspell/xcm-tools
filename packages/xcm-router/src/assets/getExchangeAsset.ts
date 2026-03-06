@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInput } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput, TExchangeChain } from '@paraspell/sdk';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -10,7 +10,7 @@ import {
   UnsupportedOperationError,
 } from '@paraspell/sdk';
 
-import type { TExchangeChain, TRouterAsset } from '../types';
+import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAsset = (

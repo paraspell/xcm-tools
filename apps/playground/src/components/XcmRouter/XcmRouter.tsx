@@ -3,27 +3,18 @@ import {
   Box,
   Center,
   Container,
-  Group,
   Image,
-  Loader,
   Stack,
   Text,
-  Title,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { TBuilderConfig, TUrl } from '@paraspell/sdk';
 import { replaceBigInt } from '@paraspell/sdk';
-import type {
-  TExchangeInput,
-  TRouterEvent,
-  TTransaction,
-} from '@paraspell/xcm-router';
+import type { TExchangeInput } from '@paraspell/xcm-router';
 import { RouterBuilder } from '@paraspell/xcm-router';
 import axios, { AxiosError } from 'axios';
-import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
-import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
-import { getWsProvider } from 'polkadot-api/ws-provider';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 
@@ -31,11 +22,16 @@ import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/Xc
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../constants';
 import { useWallet } from '../../hooks';
-import type { TRouterSubmitType } from '../../types';
+import type {
+  TApiTransaction,
+  TProgressSwapEvent,
+  TRouterSubmitType,
+} from '../../types';
 import {
   createBuilderOptions,
   fetchFromApi,
-  submitTransactionPapi,
+  submitApiTransactions,
+  submitSdkTransactions,
 } from '../../utils';
 import {
   showErrorNotification,
@@ -44,8 +40,8 @@ import {
 } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
+import { TransferStepper } from '../common/TransferStepper';
 import { VersionBadge } from '../common/VersionBadge';
-import { TransferStepper } from './TransferStepper';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -66,7 +62,7 @@ export const XcmRouter = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [progressInfo, setProgressInfo] = useState<TRouterEvent>();
+  const [progressInfo, setProgressInfo] = useState<TProgressSwapEvent>();
 
   const [showStepper, setShowStepper] = useState(false);
 
@@ -88,7 +84,7 @@ export const XcmRouter = () => {
     }
   }, [showStepper, scrollIntoView]);
 
-  const onStatusChange = (status: TRouterEvent) => {
+  const onStatusChange = (status: TProgressSwapEvent) => {
     setProgressInfo(status);
   };
 
@@ -112,7 +108,7 @@ export const XcmRouter = () => {
       evmSigner,
     } = formValues;
 
-    await RouterBuilder(builderOptions)
+    const txContexts = await RouterBuilder(builderOptions)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -123,11 +119,15 @@ export const XcmRouter = () => {
       .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .evmSenderAddress(evmSenderAddress)
-      .signer(signer)
-      .evmSigner(evmSigner)
       .slippagePct(slippagePct)
-      .onStatusChange(onStatusChange)
-      .build();
+      .buildTransactions();
+
+    await submitSdkTransactions({
+      txContexts,
+      signer,
+      evmSigner,
+      onStatusChange,
+    });
   };
 
   const submitUsingApi = async (
@@ -140,7 +140,7 @@ export const XcmRouter = () => {
     const { currencyFrom, currencyTo, feeAsset } = formValues;
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<TApiTransaction[]>(
         `${API_URL}/router`,
         {
           ...formValues,
@@ -156,40 +156,13 @@ export const XcmRouter = () => {
         },
       );
 
-      const transactions = (await response.data) as (TTransaction & {
-        wsProviders: string[];
-        tx: string;
-      })[];
+      const transactions = response.data;
 
-      for (const [
-        index,
-        { chain, type, wsProviders, tx },
-      ] of transactions.entries()) {
-        onStatusChange({
-          chain,
-          type,
-          currentStep: index,
-          routerPlan: transactions,
-        });
-
-        const api = createClient(
-          withPolkadotSdkCompat(getWsProvider(wsProviders)),
-        );
-
-        await submitTransactionPapi(
-          await api.getUnsafeApi().txFromCallData(Binary.fromHex(tx)),
-          // When submitting to exchange, prioritize the evmSigner if available
-          type === 'TRANSFER' && index === 0
-            ? signer
-            : (formValues.evmSigner ?? signer),
-        );
-      }
-
-      onStatusChange({
-        type: 'COMPLETED',
-        chain: transactions[transactions.length - 1].chain,
-        currentStep: transactions.length - 1,
-        routerPlan: transactions,
+      await submitApiTransactions({
+        transactions,
+        signer,
+        evmSigner: formValues.evmSigner,
+        onStatusChange,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -267,7 +240,6 @@ export const XcmRouter = () => {
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
           .slippagePct(slippagePct)
-          .onStatusChange(onStatusChange)
           .getXcmFees();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -488,7 +460,6 @@ export const XcmRouter = () => {
           .recipientAddress(recipientAddress)
           .evmSenderAddress(evmSenderAddress)
           .slippagePct(slippagePct)
-          .onStatusChange(onStatusChange)
           .dryRun();
       }
 
@@ -573,11 +544,7 @@ export const XcmRouter = () => {
 
     closeOutputAlert();
 
-    const exchange = (
-      formValues.exchange && formValues.exchange?.length > 1
-        ? formValues.exchange
-        : formValues.exchange?.[0]
-    ) as TExchangeInput;
+    const exchange = formValues.exchange;
 
     if (submitType === 'getBestAmountOut') {
       await submitGetBestAmountOut(formValues, exchange, builderOptions);
@@ -738,16 +705,12 @@ export const XcmRouter = () => {
           <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (
-            <Center>
-              <Group mt="md">
-                <Loader />
-                <Title order={4}>Searching for best exchange rate</Title>
-              </Group>
-            </Center>
-          )}
-          {showStepper && progressInfo?.type !== 'SELECTING_EXCHANGE' && (
-            <Center mt="md">
+          {showStepper && (
+            <Center
+              mt={
+                progressInfo?.type === 'SELECTING_EXCHANGE' ? undefined : 'md'
+              }
+            >
               <TransferStepper progressInfo={progressInfo} />
             </Center>
           )}

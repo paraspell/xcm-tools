@@ -33,3 +33,5 @@ export type ClientCache<T> = {
   remainingTtl: (k: TClientKey) => number | undefined
   revive: (k: TClientKey, ttl: number) => void
 }
+
+export type TApiType = 'PAPI' | 'PJS'

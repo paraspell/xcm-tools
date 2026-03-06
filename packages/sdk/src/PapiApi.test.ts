@@ -227,6 +227,12 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('getType', () => {
+    it('should return PAPI', () => {
+      expect(papiApi.getType()).toBe('PAPI')
+    })
+  })
+
   it('should set config and get the api', async () => {
     papiApi = new PapiApi(mockPolkadotClient)
     expect(papiApi.getConfig()).toBe(mockPolkadotClient)

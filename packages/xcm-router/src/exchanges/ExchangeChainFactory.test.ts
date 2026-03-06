@@ -1,8 +1,8 @@
 // Unit tests for ExchangeChainFactory
 
+import type { TExchangeChain } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
-import { type TExchangeChain } from '../types';
 import AcalaExchange from './Acala/AcalaExchange';
 import BifrostExchange from './Bifrost/BifrostExchange';
 import type ExchangeChain from './ExchangeChain';

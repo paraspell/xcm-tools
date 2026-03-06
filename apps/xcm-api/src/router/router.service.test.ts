@@ -4,12 +4,13 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TChain, TLocation } from '@paraspell/sdk';
-import { InvalidCurrencyError } from '@paraspell/sdk';
 import type {
-  TRouterDryRunResult,
-  TRouterXcmFeeResult,
-} from '@paraspell/xcm-router';
+  TChain,
+  TDryRunResult,
+  TGetXcmFeeResult,
+  TLocation,
+} from '@paraspell/sdk';
+import { InvalidCurrencyError } from '@paraspell/sdk';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -52,7 +53,7 @@ const serializedExtrinsics = [
 const dryRunResponse = {
   origin: { chain: 'Astar' },
   hops: [],
-} as unknown as TRouterDryRunResult;
+} as unknown as TDryRunResult;
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -68,7 +69,7 @@ const builderMock = {
   slippagePct: vi.fn().mockReturnThis(),
   buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
   getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
-  getXcmFees: vi.fn().mockResolvedValue({} as TRouterXcmFeeResult),
+  getXcmFees: vi.fn().mockResolvedValue({} as TGetXcmFeeResult),
   getTransferableAmount: vi.fn().mockResolvedValue(123n),
   getMinTransferableAmount: vi.fn().mockResolvedValue(0n),
   dryRun: vi.fn().mockResolvedValue(dryRunResponse),
@@ -349,7 +350,7 @@ describe('RouterService', () => {
 
       const result = await service.getXcmFees(options);
 
-      expect(result).toEqual({} as TRouterXcmFeeResult);
+      expect(result).toEqual({} as TGetXcmFeeResult);
       expect(builderMock.from).toHaveBeenCalledWith('Astar');
       expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
       expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');

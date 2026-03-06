@@ -21,10 +21,17 @@ import {
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
-import type { TSubmitType } from '../../types';
+import type {
+  TApiTransaction,
+  TFormValuesTransformed,
+  TProgressSwapEvent,
+  TSubmitType,
+} from '../../types';
 import {
   createBuilderOptions,
   determineCurrency,
@@ -33,6 +40,8 @@ import {
   getTxFromApi,
   resolveSenderAddress,
   setupBaseBuilder,
+  submitApiTransactions,
+  submitSdkTransactions,
   submitTx,
 } from '../../utils';
 import {
@@ -43,8 +52,8 @@ import {
 import { BatchTypeSelectModal } from '../BatchTypeSelectModal/BatchTypeSelectModal';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
+import { TransferStepper } from '../common/TransferStepper';
 import { VersionBadge } from '../common/VersionBadge';
-import type { TFormValuesTransformed } from './XcmTransferForm';
 import { XcmTransferForm } from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -76,6 +85,9 @@ export const XcmTransfer = () => {
     useState<TFormValuesTransformed>();
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [progressInfo, setProgressInfo] = useState<TProgressSwapEvent>();
+  const [showStepper, setShowStepper] = useState(false);
+
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
   });
@@ -85,6 +97,16 @@ export const XcmTransfer = () => {
       scrollIntoView();
     }
   }, [error, scrollIntoView]);
+
+  useEffect(() => {
+    if (showStepper) {
+      scrollIntoView();
+    }
+  }, [showStepper, scrollIntoView]);
+
+  const onStatusChange = (status: TProgressSwapEvent) => {
+    setProgressInfo(status);
+  };
 
   const submitBatch = async (
     items: TFormValuesTransformed[],
@@ -146,6 +168,16 @@ export const XcmTransfer = () => {
                   currencyInputs.length === 1
                     ? currencyInputs[0]
                     : (currencyInputs as TCurrencyCore[]),
+                ...(item.transformedCurrencyTo
+                  ? {
+                      swapOptions: {
+                        ...item.swapOptions,
+                        currencyTo: determineCurrency(
+                          item.transformedCurrencyTo,
+                        ),
+                      },
+                    }
+                  : {}),
               };
             }),
             options: {
@@ -171,7 +203,12 @@ export const XcmTransfer = () => {
           builder: GeneralBuilder,
           item: TFormValuesTransformed,
         ) => {
-          return setupBaseBuilder(builder, item, senderAddress).addToBatch();
+          return setupBaseBuilder(
+            builder,
+            item,
+            senderAddress,
+            signer,
+          ).addToBatch();
         };
 
         const initialBuilder = Builder(builderOptions);
@@ -226,6 +263,7 @@ export const XcmTransfer = () => {
   const performDryRun = async (
     formValues: TFormValuesTransformed,
     senderAddress: string,
+    signer: PolkadotSigner | Signer,
     submitType: 'dryRun' | 'dryRunPreview',
     notifId: string | undefined,
   ) => {
@@ -271,6 +309,16 @@ export const XcmTransfer = () => {
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(transformedFeeAsset),
+          ...(formValues.transformedCurrencyTo
+            ? {
+                swapOptions: {
+                  ...formValues.swapOptions,
+                  currencyTo: determineCurrency(
+                    formValues.transformedCurrencyTo,
+                  ),
+                },
+              }
+            : {}),
         },
         submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
         'POST',
@@ -278,7 +326,12 @@ export const XcmTransfer = () => {
       );
     } else {
       const builder = Builder(builderOptions);
-      const finalBuilder = setupBaseBuilder(builder, formValues, senderAddress);
+      const finalBuilder = setupBaseBuilder(
+        builder,
+        formValues,
+        senderAddress,
+        signer,
+      );
 
       result =
         submitType === 'dryRun'
@@ -298,7 +351,7 @@ export const XcmTransfer = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const { from, currencies, localAccount, useApi } = formValues;
+    const { from, currencies, localAccount, swapOptions, useApi } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -381,7 +434,13 @@ export const XcmTransfer = () => {
     let api;
     try {
       if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
-        await performDryRun(formValues, senderAddress, submitType, notifId);
+        await performDryRun(
+          formValues,
+          senderAddress,
+          signer,
+          submitType,
+          notifId,
+        );
         return;
       }
 
@@ -396,7 +455,6 @@ export const XcmTransfer = () => {
       let hash: string | undefined;
 
       if (useApi) {
-        api = await Sdk.createChainClient(from);
         const {
           useApi,
           currencies,
@@ -408,40 +466,102 @@ export const XcmTransfer = () => {
           ...safeFormValues
         } = formValues;
 
-        tx = await getTxFromApi(
-          {
-            ...safeFormValues,
-            options: builderOptions,
-            feeAsset: determineFeeAsset(transformedFeeAsset),
-            currency:
-              currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-          },
-          api,
-          '/x-transfer',
+        const apiPayload = {
+          ...safeFormValues,
+          options: builderOptions,
+          feeAsset: determineFeeAsset(transformedFeeAsset),
           senderAddress,
-          apiType,
-          'POST',
-          true,
-        );
+          currency:
+            currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
+          ...(formValues.transformedCurrencyTo
+            ? {
+                swapOptions: {
+                  ...formValues.swapOptions,
+                  currencyTo: determineCurrency(
+                    formValues.transformedCurrencyTo,
+                  ),
+                },
+              }
+            : {}),
+        };
+
+        if (swapOptions.currencyTo) {
+          const transactions = await fetchFromApi<
+            typeof apiPayload,
+            TApiTransaction[]
+          >(apiPayload, '/x-transfers', 'POST', true);
+
+          if (transactions.length > 1) {
+            setShowStepper(true);
+          }
+
+          await submitApiTransactions({
+            transactions,
+            signer: signer as PolkadotSigner,
+            evmSigner: formValues.swapOptions.evmSigner,
+            onStatusChange:
+              transactions.length > 1 ? onStatusChange : undefined,
+          });
+
+          showSuccessNotification(
+            notifId ?? '',
+            'Success',
+            'Transaction was successful',
+          );
+        } else {
+          api = await Sdk.createChainClient(from);
+          tx = await getTxFromApi(
+            apiPayload,
+            api,
+            '/x-transfer',
+            senderAddress,
+            apiType,
+            'POST',
+            true,
+          );
+        }
       } else {
         const builder = Builder(builderOptions);
         const finalBuilder = setupBaseBuilder(
           builder,
           formValues,
           senderAddress,
+          signer,
         );
 
-        if (localAccount) hash = await finalBuilder.signAndSubmit();
-        else tx = await finalBuilder.build();
+        if (swapOptions.currencyTo) {
+          const txContexts = await finalBuilder.buildAll();
+
+          if (txContexts.length > 1) {
+            setShowStepper(true);
+          }
+
+          await submitSdkTransactions({
+            txContexts,
+            signer: signer as PolkadotSigner,
+            evmSigner: formValues.swapOptions.evmSigner,
+            onStatusChange: txContexts.length > 1 ? onStatusChange : undefined,
+          });
+
+          showSuccessNotification(
+            notifId ?? '',
+            'Success',
+            'Transaction was successful',
+          );
+        } else if (localAccount) {
+          hash = await finalBuilder.signAndSubmit();
+        } else {
+          tx = await finalBuilder.build();
+        }
 
         api = finalBuilder.getApi();
       }
 
-      if (!api) {
-        throw Error('API is undefined');
-      }
-
       if (tx) {
+        if (!api) {
+          throw Error('API is undefined');
+        }
+
         await submitTx(apiType, api, tx, signer, senderAddress, () => {
           notifId = showLoadingNotification(
             'Processing',
@@ -454,7 +574,7 @@ export const XcmTransfer = () => {
           'Success',
           'Transaction was successful',
         );
-      } else if (hash) {
+      } else if (hash !== undefined) {
         setOutput(`'Transaction was submitted. Hash: ${hash}'`);
         openOutputAlert();
         showSuccessNotification(
@@ -462,8 +582,6 @@ export const XcmTransfer = () => {
           'Success',
           `Transaction was submitted`,
         );
-      } else {
-        throw Error('No transaction or hash to submit');
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -476,6 +594,7 @@ export const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
+      setShowStepper(false);
     }
   };
 
@@ -549,6 +668,11 @@ export const XcmTransfer = () => {
           />
         </Stack>
         <Center ref={targetRef}>
+          {showStepper && progressInfo?.type !== 'SELECTING_EXCHANGE' && (
+            <TransferStepper progressInfo={progressInfo} />
+          )}
+        </Center>
+        <Center>
           {errorAlertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
               {error?.message}

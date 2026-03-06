@@ -12,6 +12,7 @@ import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@p
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
+import type { TSwapOptions } from './TSwap'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
   api: IPolkadotApi<TApi, TRes, TSigner>
@@ -64,7 +65,7 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
-export type TSendBaseOptions<TRes> = {
+export type TSendBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain
    */
@@ -117,13 +118,17 @@ export type TSendBaseOptions<TRes> = {
    * Hex of the encoded transaction call to apply on the destination chain
    */
   transactOptions?: TTransactOptions<TRes>
+  /**
+   * The optional swap options
+   */
+  swapOptions?: TSwapOptions<TApi, TRes, TSigner>
 }
 
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
 export type TSendOptions<TApi, TRes, TSigner> = WithApi<
-  TSendBaseOptions<TRes>,
+  TSendBaseOptions<TApi, TRes, TSigner>,
   TApi,
   TRes,
   TSigner
@@ -138,12 +143,30 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   senderAddress: string
 }
 
-export type TSendBaseOptionsWithSenderAddress<TRes> = WithRequiredSenderAddress<
-  TSendBaseOptions<TRes>
+export type WithRequiredSwapOptions<TBase, TApi, TRes, TSigner> = Omit<TBase, 'swapOptions'> & {
+  swapOptions: TSwapOptions<TApi, TRes, TSigner>
+}
+
+export type TSendOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  Omit<TSendOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
+  TApi,
+  TRes,
+  TSigner
+>
+
+export type TSendBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  TSendBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>
+
+export type TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner> = WithRequiredSenderAddress<
+  TSendBaseOptions<TApi, TRes, TSigner>
 >
 
 export type TSendInternalOptions<TApi, TRes, TSigner> = Omit<
-  TSendBaseOptions<TRes>,
+  TSendBaseOptions<TApi, TRes, TSigner>,
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes, TSigner>

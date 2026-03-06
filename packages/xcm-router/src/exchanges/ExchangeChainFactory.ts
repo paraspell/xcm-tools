@@ -1,4 +1,5 @@
-import { type TExchangeChain } from '../types';
+import type { TExchangeChain } from '@paraspell/sdk';
+
 import AcalaExchange from './Acala/AcalaExchange';
 import AssetHubExchange from './AssetHub/AssetHubExchange';
 import BifrostExchange from './Bifrost/BifrostExchange';

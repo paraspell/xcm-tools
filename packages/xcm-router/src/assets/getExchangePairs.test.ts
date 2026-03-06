@@ -1,45 +1,45 @@
-import type { TAssetInfo, TLocation } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangePairs } from './getExchangePairs';
 
-const assetABC: TAssetInfo = {
+const assetA: TAssetInfo = {
   symbol: 'ABC',
   decimals: 12,
   assetId: '1',
-  location: { foo: 'bar' } as unknown as TLocation,
+  location: { parents: 1, interior: 'Here' },
 };
-const assetXYZ: TAssetInfo = {
+
+const assetB: TAssetInfo = {
   symbol: 'XYZ',
   decimals: 12,
   assetId: '2',
-  location: { foo: 'baz' } as unknown as TLocation,
+  location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
 };
-const altLocation = { foo: 'BAR' };
 
-vi.mock('@paraspell/sdk', () => ({
+const altLocation = { parents: 1, interior: { X1: [{ Parachain: 2000 }] } };
+
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
   reverseTransformLocation: vi.fn((loc: unknown) =>
-    JSON.stringify(loc) === JSON.stringify(altLocation) ? assetABC.location : loc,
+    JSON.stringify(loc) === JSON.stringify(altLocation) ? assetA.location : loc,
   ),
-}));
-
-vi.mock('../consts', () => ({
-  EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
 }));
 
 const mockConfigs = {
   HydrationDex: {
     isOmni: true,
-    assets: [assetABC, assetXYZ],
+    assets: [assetA, assetB],
     pairs: [
       ['ABC', '2'],
-      [assetABC.location, 'XYZ'],
+      [assetA.location, 'XYZ'],
     ],
   },
   AssetHubPolkadotDex: {
     isOmni: false,
-    assets: [assetABC, assetXYZ],
+    assets: [assetA, assetB],
     pairs: [[altLocation, '2']],
   },
 };
@@ -53,16 +53,16 @@ describe('getExchangePairs', () => {
     const pairs = getExchangePairs('HydrationDex');
 
     expect(pairs).toHaveLength(1);
-    expect(pairs[0][0]).toBe(assetABC);
-    expect(pairs[0][1]).toBe(assetXYZ);
+    expect(pairs[0][0]).toBe(assetA);
+    expect(pairs[0][1]).toBe(assetB);
   });
 
   it('resolves location keys using reverseTransform on Asset-Hub exchanges', () => {
     const pairs = getExchangePairs('AssetHubPolkadotDex');
 
     expect(pairs).toHaveLength(1);
-    expect(pairs[0][0]).toBe(assetABC);
-    expect(pairs[0][1]).toBe(assetXYZ);
+    expect(pairs[0][0]).toBe(assetA);
+    expect(pairs[0][1]).toBe(assetB);
   });
 
   it('aggregates pairs when an array of exchanges is supplied', () => {

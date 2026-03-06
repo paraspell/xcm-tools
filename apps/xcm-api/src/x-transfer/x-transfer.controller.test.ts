@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import type {
   TBridgeStatus,
   TDryRunResult,
+  TExchangeChain,
   TGetXcmFeeEstimateDetail,
   TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
@@ -63,6 +64,25 @@ describe('XTransferController', () => {
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCall(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('generateXcmCalls', () => {
+    it('should call generateXcmCalls service method with correct parameters and return result', async () => {
+      const mockResult: Awaited<ReturnType<typeof service.generateXcmCalls>> = [
+        { type: 'TRANSFER', chain: 'Acala', tx: '0x123', wsProviders: [] },
+      ];
+      const spy = vi
+        .spyOn(service, 'generateXcmCalls')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.generateXcmCalls(
         bodyParams,
         mockRequestObject,
       );
@@ -299,6 +319,24 @@ describe('XTransferController', () => {
       );
 
       expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('getBestAmountOut', () => {
+    it('should call service.getBestAmountOut and returns its value', async () => {
+      const exchange: TExchangeChain = 'HydrationDex';
+      const mockResult = { exchange, amountOut: 500n };
+      const spy = vi
+        .spyOn(service, 'getBestAmountOut')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getBestAmountOut(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toEqual(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
     });
   });

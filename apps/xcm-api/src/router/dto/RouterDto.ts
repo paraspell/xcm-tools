@@ -4,18 +4,12 @@ import { validateAmount } from '../../utils/validateAmount.js';
 import {
   BuilderOptionsSchema,
   CurrencyCoreSchema,
+  ExchangeSchema,
 } from '../../x-transfer/dto/XTransferDto.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string().nullable().optional(),
-  exchange: z
-    .union([
-      z.string(),
-      z
-        .array(z.string())
-        .min(2, { message: 'Exchange array must contain at least 2 strings' }),
-    ])
-    .optional(),
+  exchange: ExchangeSchema,
   to: z.string().nullable().optional(),
   currencyFrom: CurrencyCoreSchema,
   currencyTo: CurrencyCoreSchema,

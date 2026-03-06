@@ -8,14 +8,14 @@ import { Binary } from 'polkadot-api';
 import { API_URL } from '../constants';
 import type { TApiType } from '../types';
 
-export const fetchFromApi = async <T>(
+export const fetchFromApi = async <T, TResponse = unknown>(
   params: T,
   endpoint: string,
   method = 'GET',
   useBody: boolean = false,
-): Promise<unknown> => {
+): Promise<TResponse> => {
   try {
-    const response = await axios(`${API_URL}${endpoint}`, {
+    const response = await axios<TResponse>(`${API_URL}${endpoint}`, {
       method,
       params: useBody ? undefined : params,
       data: useBody ? params : undefined,
@@ -42,6 +42,7 @@ export const fetchFromApi = async <T>(
     } else if (error instanceof Error) {
       throw new Error(error.message);
     }
+    throw new Error('An unknown error occurred while fetching data.');
   }
 };
 

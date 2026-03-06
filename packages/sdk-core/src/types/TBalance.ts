@@ -82,7 +82,12 @@ export type TGetTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
 export type TGetMinTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
     address: string
-    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSenderAddress<TRes>>
+    builder: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
+    >
   },
   TApi,
   TRes,

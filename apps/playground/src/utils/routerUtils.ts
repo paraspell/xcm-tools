@@ -1,15 +1,15 @@
-import type { TExchangeChain } from '@paraspell/xcm-router';
+import type { TExchangeChain, TExchangeInput } from '@paraspell/sdk';
 
-export const getExchange = (exchange: TExchangeChain[] | undefined) => {
-  if (Array.isArray(exchange)) {
-    if (exchange.length === 1) {
-      return exchange[0];
-    }
-
-    if (exchange.length === 0) {
-      return undefined;
-    }
+export const resolveExchange = (
+  exchange: TExchangeChain[] | undefined,
+): TExchangeInput => {
+  if (!exchange || exchange.length === 0) {
+    return undefined;
   }
 
-  return exchange;
+  if (exchange.length === 1) {
+    return exchange[0];
+  }
+
+  return exchange as [TExchangeChain, ...TExchangeChain[]];
 };

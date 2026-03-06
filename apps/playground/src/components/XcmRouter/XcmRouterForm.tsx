@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
 import {
   CHAINS,
   SUBSTRATE_CHAINS,
@@ -21,7 +20,7 @@ import {
   type TChain,
   type TSubstrateChain,
 } from '@paraspell/sdk';
-import type { TExchangeChain, TExchangeInput } from '@paraspell/xcm-router';
+import type { TExchangeChain } from '@paraspell/xcm-router';
 import { EXCHANGE_CHAINS } from '@paraspell/xcm-router';
 import {
   Icon123,
@@ -32,7 +31,6 @@ import {
   IconInfoCircle,
   IconLocationCheck,
 } from '@tabler/icons-react';
-import { ethers } from 'ethers';
 import {
   parseAsBoolean,
   parseAsNativeArrayOf,
@@ -40,31 +38,21 @@ import {
   useQueryStates,
 } from 'nuqs';
 import type { PolkadotSigner } from 'polkadot-api';
-import {
-  connectInjectedExtension,
-  getInjectedExtensions,
-  type InjectedExtension,
-} from 'polkadot-api/pjs-signer';
 import type { FC, FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
-import { useRouterCurrencyOptions, useWallet } from '../../hooks';
+import { useEvmWallet, useRouterCurrencyOptions, useWallet } from '../../hooks';
 import { advancedOptionsParsers } from '../../parsers';
-import type {
-  TAdvancedOptions,
-  TRouterSubmitType,
-  TWalletAccount,
-} from '../../types';
+import type { TAdvancedOptions, TRouterSubmitType } from '../../types';
 import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
-import { showErrorNotification } from '../../utils/notifications';
+import { resolveExchange } from '../../utils';
 import {
   parseAsChain,
   parseAsExchangeChain,
   parseAsRecipientAddress,
   parseAsSubstrateChain,
 } from '../../utils/parsers';
-import { getExchange } from '../../utils/routerUtils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
@@ -113,26 +101,20 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     isLoadingExtensions,
   } = useWallet();
 
-  const [
+  const {
+    extensions,
+    injectedExtension,
+    accounts,
+    selectedAccount,
     walletSelectModalOpened,
-    { open: openWalletSelectModal, close: closeWalletSelectModal },
-  ] = useDisclosure(false);
-  const [
     accountsModalOpened,
-    { open: openAccountsModal, close: closeAccountsModal },
-  ] = useDisclosure(false);
-
-  const [extensions, setExtensions] = useState<string[]>([]);
-  const [injectedExtension, setInjectedExtension] =
-    useState<InjectedExtension>();
-
-  const [accounts, setAccounts] = useState<TWalletAccount[]>([]);
-  const [selectedAccount, setSelectedAccount] = useState<TWalletAccount>();
-
-  const onAccountSelect = (account: TWalletAccount) => {
-    setSelectedAccount(account);
-    closeAccountsModal();
-  };
+    closeWalletSelectModal,
+    closeAccountsModal,
+    onConnectEvmWallet,
+    onProviderSelect,
+    onAccountSelect,
+    onAccountDisconnect: onEvmAccountDisconnect,
+  } = useEvmWallet();
 
   useEffect(() => {
     if (!selectedAccount || !injectedExtension) return;
@@ -198,68 +180,15 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const { from, to, exchange } = form.getValues();
   const isFeeAssetDisabled =
-    from === 'Hydration' || (!from && getExchange(exchange) === 'HydrationDex');
-
-  const initEvmExtensions = () => {
-    const ext = getInjectedExtensions();
-    if (!ext.length) {
-      showErrorNotification('No wallet extension found, install it to connect');
-      return;
-    }
-    setExtensions(ext);
-    openWalletSelectModal();
-  };
-
-  const onConnectEvmWallet = () => {
-    try {
-      initEvmExtensions();
-    } catch (_e) {
-      showErrorNotification('Failed to connect EVM wallet');
-    }
-  };
+    from === 'Hydration' ||
+    (!from && resolveExchange(exchange) === 'HydrationDex');
 
   const onConnectWalletClick = () => void connectWallet();
 
   const onAccountDisconnect = () => {
-    setSelectedAccount(undefined);
+    onEvmAccountDisconnect();
     form.setFieldValue('evmSigner', undefined);
     form.setFieldValue('evmInjectorAddress', undefined);
-    closeAccountsModal();
-  };
-
-  const selectProvider = async (walletName: string) => {
-    try {
-      const extension = await connectInjectedExtension(walletName);
-      setInjectedExtension(extension);
-
-      const allAccounts = extension.getAccounts();
-      const evmAccounts = allAccounts.filter((acc) =>
-        ethers.isAddress(acc.address),
-      );
-      if (!evmAccounts.length) {
-        showErrorNotification('No EVM accounts found in the selected wallet');
-        return;
-      }
-
-      setAccounts(
-        evmAccounts.map((acc) => ({
-          address: acc.address,
-          meta: {
-            name: acc.name,
-            source: extension.name,
-          },
-        })),
-      );
-
-      closeWalletSelectModal();
-      openAccountsModal();
-    } catch (_e) {
-      showErrorNotification('Failed to connect to wallet');
-    }
-  };
-
-  const onProviderSelect = (walletName: string) => {
-    void selectProvider(walletName);
   };
 
   const { currencyFromOptionId, currencyToOptionId } = form.values;
@@ -276,7 +205,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     adjacency,
   } = useRouterCurrencyOptions(
     from,
-    getExchange(exchange) as TExchangeInput,
+    resolveExchange(exchange),
     to,
     currencyFromOptionId,
     currencyToOptionId,
@@ -344,7 +273,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
     const transformedValues = {
       ...values,
-      exchange: getExchange(values.exchange) as TExchangeChain,
+      exchange: resolveExchange(values.exchange) as TExchangeChain,
       currencyFrom,
       currencyTo: currencyTo,
       feeAsset,

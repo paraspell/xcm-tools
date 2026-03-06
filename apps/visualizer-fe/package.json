@@ -48,7 +48,8 @@
     "react-router": "^7.13.1",
     "rxjs": "^7.8.2",
     "socket.io-client": "^4.8.3",
-    "three": "^0.183.1"
+    "three": "^0.183.1",
+    "vite-plugin-wasm": "^3.5.0"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.15.2",

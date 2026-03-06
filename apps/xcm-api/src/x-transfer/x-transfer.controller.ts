@@ -124,6 +124,13 @@ export class XTransferController {
     return this.xTransferService.generateXcmCall(bodyParams);
   }
 
+  @Post('x-transfers')
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
+  generateXcmCalls(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_XCM_CALLS, req, bodyParams);
+    return this.xTransferService.generateXcmCalls(bodyParams);
+  }
+
   @Post('x-transfer-batch')
   @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
   generateXcmCallBatch(
@@ -198,6 +205,16 @@ export class XTransferController {
   ) {
     this.trackAnalytics(EventName.GET_RECEIVABLE_AMOUNT, req, bodyParams);
     return this.xTransferService.getReceivableAmount(bodyParams);
+  }
+
+  @Post('best-amount-out')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getBestAmountOut(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, bodyParams);
+    return this.xTransferService.getBestAmountOut(bodyParams);
   }
 
   @Get('x-transfer/para-eth-fees')

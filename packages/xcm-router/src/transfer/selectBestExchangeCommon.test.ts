@@ -1,4 +1,4 @@
-import type { TParachain } from '@paraspell/sdk';
+import type { TExchangeChain, TParachain } from '@paraspell/sdk';
 import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -6,10 +6,11 @@ import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TCommonRouterOptions, TExchangeChain, TRouterAsset } from '../types';
+import type { TCommonRouterOptions, TRouterAsset } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
   findAssetInfo: vi.fn(),
   hasSupportForAsset: vi.fn(),
   getRelayChainOf: vi.fn(),

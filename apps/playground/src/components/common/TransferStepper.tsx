@@ -1,9 +1,11 @@
-import { Stepper, Title } from '@mantine/core';
-import type { TRouterEvent, TTransactionType } from '@paraspell/xcm-router';
+import { Group, Loader, Stepper, Title } from '@mantine/core';
+import type { TTransactionType } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
+import type { TProgressSwapEvent } from '../../types';
+
 type Props = {
-  progressInfo?: TRouterEvent;
+  progressInfo?: TProgressSwapEvent;
 };
 
 const getStepInfo = (type: TTransactionType) => {
@@ -41,6 +43,15 @@ export const TransferStepper = ({ progressInfo }: Props) => {
 
     setSteps(newSteps);
   }, [progressInfo?.routerPlan]);
+
+  if (progressInfo?.type === 'SELECTING_EXCHANGE') {
+    return (
+      <Group mt="md">
+        <Loader />
+        <Title order={4}>Searching for best exchange rate</Title>
+      </Group>
+    );
+  }
 
   const currentStep = progressInfo?.currentStep ?? 0;
   const totalSteps = steps.length;

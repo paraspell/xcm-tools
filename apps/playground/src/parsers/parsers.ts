@@ -1,4 +1,5 @@
 import { TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS } from '@paraspell/sdk';
 import {
   parseAsBoolean,
   parseAsJson,
@@ -8,8 +9,27 @@ import {
 } from 'nuqs';
 import z from 'zod';
 
-import { DEFAULT_TRANSACT_OPTIONS } from '../constants';
+import { DEFAULT_SWAP_OPTIONS, DEFAULT_TRANSACT_OPTIONS } from '../constants';
 import { CustomEndpointSchema } from '../utils';
+
+export const CurrencyEntrySchema = z.object({
+  currencyOptionId: z.string(),
+  customCurrency: z.string(),
+  amount: z.string(),
+  isCustomCurrency: z.boolean(),
+  isMax: z.boolean().optional(),
+  customCurrencyType: z
+    .enum(['id', 'symbol', 'location', 'overridenLocation'])
+    .optional(),
+  customCurrencySymbolSpecifier: z
+    .enum(['auto', 'native', 'foreign', 'foreignAbstract'])
+    .optional(),
+});
+
+export const FeeAssetSchema = CurrencyEntrySchema.omit({
+  amount: true,
+  isMax: true,
+});
 
 export const advancedOptionsParsers = {
   apiOverrides: parseAsNativeArrayOf(
@@ -41,4 +61,15 @@ export const transactOptionsParsers = {
   transactOptions: parseAsJson(TransactOptionsSchema).withDefault(
     DEFAULT_TRANSACT_OPTIONS,
   ),
+};
+
+const SwapOptionsSchema = z.object({
+  currencyTo: FeeAssetSchema,
+  exchange: z.array(z.enum(EXCHANGE_CHAINS)),
+  slippage: z.string(),
+  evmInjectorAddress: z.string().optional(),
+});
+
+export const swapOptionsParsers = {
+  swapOptions: parseAsJson(SwapOptionsSchema).withDefault(DEFAULT_SWAP_OPTIONS),
 };

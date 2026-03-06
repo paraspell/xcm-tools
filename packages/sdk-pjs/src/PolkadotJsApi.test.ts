@@ -215,6 +215,12 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('getType', () => {
+    it('should return PJS', () => {
+      expect(polkadotApi.getType()).toBe('PJS')
+    })
+  })
+
   it('should set and get the api', async () => {
     const newApi = {
       call: {},

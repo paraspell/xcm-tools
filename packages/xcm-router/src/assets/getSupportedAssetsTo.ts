@@ -1,4 +1,6 @@
+import type { TExchangeInput } from '@paraspell/sdk';
 import {
+  EXCHANGE_CHAINS,
   getAssets,
   isAssetEqual,
   isExternalChain,
@@ -6,8 +8,7 @@ import {
   type TChain,
 } from '@paraspell/sdk';
 
-import { EXCHANGE_CHAINS } from '../consts';
-import type { TExchangeInput, TRouterAsset } from '../types';
+import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 /**
