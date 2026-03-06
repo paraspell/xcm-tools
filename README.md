@@ -7,16 +7,14 @@ ParaSpell✨ monorepo for XCM-Tool set
 </p>
 
 **Monorepo contains the following XCM tools:**
-- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **two** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) & [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) as the `first` and `only` XCM SDK in the ecosystem.
+- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **two** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) (With Swap package available (Formerly XCM Router)) & [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) as the `first` and `only` XCM SDK in the ecosystem.
 - [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) ⚡️ (<img width="50" alt="Lightspell logo" src="https://user-images.githubusercontent.com/55763425/251588168-4855abc3-445a-4207-9a65-e891975be62c.png">): An API that provides the ability to integrate XCM interoperability into your decentralized application in a package-less way, offloading heavy computing tasks from your decentralized application, and reducing associated costs.
-- [XCM ROUTER](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router) ☄️ (<img width="50" alt="Spellrouter logo" src="https://raw.githubusercontent.com/paraspell/presskit/refs/heads/main/logos_spellrouter/Full%20name.png">): A tool aiming to provide the capability of cross-chain swaps where you receive different assets than those you send (e.g. send DOT from Polkadot and receive ASTR on Astar) — all within a single command.
 - [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) 🔎 - Analyser package to convert XCM Multilocations into a human-readable format.
 - [XCM Visualizer](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-fe) 🖼️ - An application developed to visualize XCM within the Polkadot ecosystem.
 
 **Other:**
 - [XCM Tools playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground) 🛝: Playground for testing/trying all three mentioned XCM tools.
 - [XCM Tools landing page](https://github.com/paraspell/xcm-tools/tree/main/apps/site) 🛬: XCM Tools Professional landing page.
-- [XCM API landing page](https://github.com/paraspell/xcm-tools/tree/main/apps/lightspell-site) 🛬: XCM API Professional landing page.
 
 **Documentation:**
 - [XCM Tools documentation](https://paraspell.github.io/docs/) 📚: Comprehensive documentation for XCM tools mentioned above.
@@ -28,7 +26,6 @@ ParaSpell✨ monorepo for XCM-Tool set
 
 - [XCM SDK (React + Vite) starter template](https://github.com/paraspell/xcm-sdk-template) 🛫: Advanced cross-chain dApp starter template using XCM SDK 
 - [XCM API (React + Vite) starter template](https://github.com/paraspell/xcm-api-template) 🛫: Advanced cross-chain dApp starter template using XCM API
-- [XCM Router (React + Vite) starter template](https://github.com/paraspell/xcm-router-template) 🛫: Advanced cross-chain dApp starter template using XCM Router
 
 </details>
 
@@ -37,7 +34,6 @@ ParaSpell✨ monorepo for XCM-Tool set
 ```
 apps | - XCM Playground
      | - XCM API
-     | - XCM API Landing page
      | - XCM Tools Landing page
      | - XCM Visualizer FE
      | - XCM Visualizer BE
@@ -46,7 +42,7 @@ packages | - XCM SDK
          | - XCM SDK-PJS
          | - XCM SDK-Core
          | - XCM SDK-Common
-         | - XCM Router
+         | - Swap
          | - XCM Analyser
          | - Assets
          | - Pallets
