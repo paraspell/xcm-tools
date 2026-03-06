@@ -6,7 +6,6 @@ import { useLocation } from "react-router";
 import { Footer } from "../Footer/Footer";
 import { Routes } from "../Routes";
 import { ScrollToTop } from "../ScrollToTop";
-import { StickyBar } from "../StickyBar";
 import { Header } from "./Header";
 import { Navbar } from "./Navbar";
 
@@ -14,8 +13,6 @@ export const AppShell = () => {
   const [pinned, setPinned] = useState(true);
 
   const [opened, { toggle, close }] = useDisclosure();
-
-  const [showStickyBar, setShowStickyBar] = useState(true);
 
   const { pathname, hash } = useLocation();
 
@@ -36,16 +33,12 @@ export const AppShell = () => {
     };
   }, []);
 
-  const onCloseClick = () => {
-    setShowStickyBar(false);
-  };
-
   return (
     <MantineAppShell
       header={{
         height: {
-          base: 70 + (showStickyBar ? 54 : 0),
-          sm: 70 + (showStickyBar ? 28 : 0),
+          base: 70,
+          sm: 70,
         },
         offset: false,
       }}
@@ -67,7 +60,6 @@ export const AppShell = () => {
           transition: "background-color 100ms ease, backdrop-filter 100ms ease",
         }}
       >
-        {showStickyBar && <StickyBar onCloseClick={onCloseClick} />}
         <Header menuOpened={opened} toggleMenu={toggle} pinned={pinned} />
       </MantineAppShell.Header>
 
@@ -75,8 +67,8 @@ export const AppShell = () => {
         py="sm"
         px="sm"
         mt={{
-          base: 70 + (showStickyBar ? 54 : 0),
-          sm: 70 + (showStickyBar ? 28 : 0),
+          base: 70,
+          sm: 70,
         }}
       >
         <Navbar />

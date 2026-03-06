@@ -109,14 +109,14 @@ export const XcmApi = () => {
         <div className={classes.controls}>
           <Button
             component="a"
-            href="https://lightspell.xyz/"
+            href="https://paraspell.github.io/docs/api/g-started.html"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
             mr="md"
           >
-            Read more
+            Get started
           </Button>
           <Button
             variant="outline"
