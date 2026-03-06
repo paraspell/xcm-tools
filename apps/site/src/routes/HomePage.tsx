@@ -9,7 +9,6 @@ import { Sponsors } from "../components/Sponsors/Sponsors";
 import { TryIt } from "../components/TryIt/TryIt";
 import { XcmAnalyser } from "../components/XcmAnalyser/XcmAnalyser";
 import { XcmApi } from "../components/XcmApi/XcmApi";
-import { XcmRouter } from "../components/XcmRouter/XcmRouter";
 import { XcmSdk } from "../components/XcmSdk/XcmSdk";
 import { XcmVisualizer } from "../components/XcmVisualizer/XcmVisualizer";
 
@@ -25,9 +24,8 @@ export const HomePage = () => {
           <Sponsors />
           <XcmSdk />
           <XcmApi />
-          <XcmVisualizer />
-          <XcmRouter />
           <XcmAnalyser />
+          <XcmVisualizer />
           <TryIt />
           <Research />
           <ContactUs />

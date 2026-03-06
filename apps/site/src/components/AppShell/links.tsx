@@ -4,10 +4,9 @@ export const links = [
     label: "XCM Tools",
     links: [
       { link: "/#xcm-sdk", label: "XCM SDK 🪄" },
-      { link: "/#xcm-visualizer", label: "XCM Visualizer" },
       { link: "/#xcm-api", label: "XCM API ⚡️" },
-      { link: "/#xcm-router", label: "XCM Router ☄️" },
       { link: "/#xcm-analyser", label: "XCM Analyser 🔎" },
+      { link: "/#xcm-visualizer", label: "XCM Visualizer" },
     ],
   },
   { link: "/#features", label: "Features" },
