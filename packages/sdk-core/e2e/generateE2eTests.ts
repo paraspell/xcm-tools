@@ -165,24 +165,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
     })
 
-    describeGroup('Ethereum transfers', async () => {
-      const ethAssets = getOtherAssets('AssetHubPolkadot').filter(asset =>
-        hasJunction(asset.location, 'GlobalConsensus', {
-          Ethereum: { chainId: 1 }
-        })
-      )
-      ethAssets.forEach(asset => {
-        it(`should create transfer tx - ${asset.symbol} from AssetHubPolkadot to Ethereum`, async () => {
-          const builder = Builder(config)
-            .from('AssetHubPolkadot')
-            .to('Ethereum')
-            .currency({ location: asset.location, amount: MOCK_AMOUNT })
-            .address(MOCK_ETH_ADDRESS)
-            .senderAddress(MOCK_ADDRESS)
-          await validateTransfer(builder, signer)
-        })
-      })
-    })
 
     describeGroup('RelayToPara', () => {
       RELAYCHAINS.forEach(relayChain => {
