@@ -46,21 +46,17 @@ pnpm | npm install || yarn add @paraspell/sdk-pjs
 
 ### Importing package to your project
 
-Builder pattern:
+Named import:
 ```ts
 import { Builder } from '@paraspell/sdk-pjs'
 ```
 
-Other patterns:
+Default import:
 ```ts
 // ESM
 import * as paraspell from '@paraspell/sdk-pjs'
 ```
 
-Interaction with further asset symbol abstraction:
-```ts 
-import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk-pjs'; //Only needed when advanced asset symbol selection is used. PJS version.
-```
 
 ## Implementation
 
