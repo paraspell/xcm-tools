@@ -76,12 +76,7 @@ export const Swap = ({ form }: Props) => {
 
   const { from, to, swapOptions } = form.values;
   const { exchange, currencyTo } = swapOptions;
-  const { currencyOptionId, customCurrencyType } = currencyTo;
-
-  useEffect(() => {
-    if (!customCurrencyType) return;
-    form.setFieldValue('swapOptions.currencyTo.customCurrency', '');
-  }, [customCurrencyType]);
+  const { currencyOptionId } = currencyTo;
 
   const { currencyToOptions } = useRouterCurrencyOptions(
     from,
