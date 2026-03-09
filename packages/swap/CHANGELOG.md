@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/swap-v12.8.5...swap-v12.8.6) (2026-03-09)
+
+
+### Bug Fixes
+
+* Fix playground errors & Update sdk-core peer deps 🔧 ([#1734](https://github.com/paraspell/xcm-tools/issues/1734)) ([c70077a](https://github.com/paraspell/xcm-tools/commit/c70077acbe5356005706f18881867dba237c08eb))
+
 ## [12.8.5](https://github.com/paraspell/xcm-tools/compare/swap-v12.8.4...swap-v12.8.5) (2026-03-09)
 
 

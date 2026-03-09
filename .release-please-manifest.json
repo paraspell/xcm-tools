@@ -1,11 +1,11 @@
 {
   "packages/xcm-analyser": "3.0.4",
-  "packages/swap": "12.8.5",
-  "packages/sdk": "12.8.5",
-  "packages/sdk-core": "12.8.5",
-  "packages/sdk-pjs": "12.8.5",
-  "packages/sdk-common": "12.8.5",
-  "packages/assets": "12.8.5",
-  "packages/pallets": "12.8.5",
-  "apps/xcm-api": "12.8.5"
+  "packages/swap": "12.8.6",
+  "packages/sdk": "12.8.6",
+  "packages/sdk-core": "12.8.6",
+  "packages/sdk-pjs": "12.8.6",
+  "packages/sdk-common": "12.8.6",
+  "packages/assets": "12.8.6",
+  "packages/pallets": "12.8.6",
+  "apps/xcm-api": "12.8.6"
 }
