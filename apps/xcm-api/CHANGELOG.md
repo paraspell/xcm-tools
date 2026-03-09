@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.3...xcm-api-v12.8.4) (2026-03-09)
+
+
+### Documentation
+
+* Add documentation for new swap feature ([#1727](https://github.com/paraspell/xcm-tools/issues/1727)) ([3abe749](https://github.com/paraspell/xcm-tools/commit/3abe749c6ed5e44e156799db1872cd38d4f8bced))
+
 ## [12.8.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.2...xcm-api-v12.8.3) (2026-03-03)
 
 
