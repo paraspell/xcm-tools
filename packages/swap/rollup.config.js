@@ -23,7 +23,7 @@ export default [
       }),
       codecovRollupPlugin({
         enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-        bundleName: 'xcm-router',
+        bundleName: 'swap',
         uploadToken: process.env.CODECOV_TOKEN,
         uploadOverrides: {
           sha: process.env.GH_COMMIT_SHA,

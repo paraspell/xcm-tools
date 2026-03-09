@@ -24,7 +24,7 @@ const mockBuilderInstance = {
   onStatusChange: vi.fn().mockReturnThis()
 }
 
-vi.mock('@paraspell/xcm-router', () => ({
+vi.mock('@paraspell/swap', () => ({
   RouterBuilder: vi.fn(() => mockBuilderInstance)
 }))
 
@@ -66,6 +66,17 @@ describe('routerUtils', () => {
   })
 
   describe('createRouterBuilder', () => {
+    it('should throw UnsupportedOperationError when transactOptions.call is set', async () => {
+      const options = createBaseOptions({
+        transactOptions: { call: '0x1234' }
+      } as Partial<TSendOptionsWithSwap<Api, Res, Signer>>)
+
+      await expect(createRouterBuilder(options)).rejects.toThrow(UnsupportedOperationError)
+      await expect(createRouterBuilder(options)).rejects.toThrow(
+        'Cannot use transact options together with swap options.'
+      )
+    })
+
     it('should throw UnsupportedOperationError when api type is not PAPI', async () => {
       const options = createBaseOptions({ api: createMockApi('PJS') })
 
@@ -155,7 +166,7 @@ describe('routerUtils', () => {
 
     describe('convertBuilderConfig', () => {
       it('should pass undefined config to RouterBuilder when api config is undefined', async () => {
-        const { RouterBuilder } = await import('@paraspell/xcm-router')
+        const { RouterBuilder } = await import('@paraspell/swap')
         const options = createBaseOptions({
           api: createMockApi('PAPI', undefined)
         })
@@ -166,7 +177,7 @@ describe('routerUtils', () => {
       })
 
       it('should strip xcmFormatCheck and pass rest when config is a plain config object', async () => {
-        const { RouterBuilder } = await import('@paraspell/xcm-router')
+        const { RouterBuilder } = await import('@paraspell/swap')
         vi.mocked(builder.isConfig).mockReturnValue(true)
 
         const config = { development: true, xcmFormatCheck: true }
@@ -182,7 +193,7 @@ describe('routerUtils', () => {
       })
 
       it('should pass config with filtered string apiOverrides', async () => {
-        const { RouterBuilder } = await import('@paraspell/xcm-router')
+        const { RouterBuilder } = await import('@paraspell/swap')
         vi.mocked(builder.isConfig).mockReturnValue(true)
 
         const config = {
@@ -233,7 +244,7 @@ describe('routerUtils', () => {
       })
 
       it('should return rest without apiOverrides when apiOverrides is undefined in config', async () => {
-        const { RouterBuilder } = await import('@paraspell/xcm-router')
+        const { RouterBuilder } = await import('@paraspell/swap')
         vi.mocked(builder.isConfig).mockReturnValue(true)
 
         const config = { development: true }
@@ -248,7 +259,7 @@ describe('routerUtils', () => {
     })
 
     it('should throw ExtensionNotInstalledError when RouterBuilder is not available', async () => {
-      const routerModule = await import('@paraspell/xcm-router')
+      const routerModule = await import('@paraspell/swap')
       const originalRouterBuilder = routerModule.RouterBuilder
 
       // @ts-expect-error - temporarily set to undefined for testing
@@ -258,7 +269,7 @@ describe('routerUtils', () => {
 
       await expect(createRouterBuilder(options)).rejects.toThrow(ExtensionNotInstalledError)
       await expect(createRouterBuilder(options)).rejects.toThrow(
-        'XCM Router package is required for swaps. Please install @paraspell/xcm-router.'
+        'XCM Router package is required for swaps. Please install @paraspell/swap.'
       )
 
       routerModule.RouterBuilder = originalRouterBuilder
