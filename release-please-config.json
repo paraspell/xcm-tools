@@ -36,8 +36,8 @@
     "packages/pallets": {
       "component": "pallets"
     },
-    "packages/xcm-router": {
-      "component": "xcm-router"
+    "packages/swap": {
+      "component": "swap"
     },
     "packages/xcm-analyser": {},
     "apps/xcm-api": {
@@ -56,7 +56,7 @@
         "sdk-common",
         "assets",
         "pallets",
-        "xcm-router",
+        "swap",
         "xcm-api"
       ]
     }

@@ -175,12 +175,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/xcm-analyser
           flags: xcm-analyser
-      - name: Upload XCM Router coverage report to Codecov
+      - name: Upload Swap coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/xcm-router
-          flags: xcm-router
+          directory: packages/swap
+          flags: swap
       - name: Upload Visualizer BE coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:

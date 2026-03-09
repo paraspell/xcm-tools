@@ -18,8 +18,8 @@ import {
   type TUrl,
   type WithComplexAmount,
 } from '@paraspell/sdk';
-import type { TRouterBuilderOptions } from '@paraspell/xcm-router';
-import { RouterBuilder } from '@paraspell/xcm-router';
+import type { TRouterBuilderOptions } from '@paraspell/swap';
+import { RouterBuilder } from '@paraspell/swap';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 
