@@ -1,12 +1,12 @@
 import type { TLocation } from '@paraspell/sdk';
 import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
-import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
-import { getExchangePairs } from '@paraspell/xcm-router';
+import type { TExchangeInput, TRouterAsset } from '@paraspell/swap';
+import { getExchangePairs } from '@paraspell/swap';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
   getSupportedFeeAssets,
-} from '@paraspell/xcm-router';
+} from '@paraspell/swap';
 import { useMemo } from 'react';
 
 const getAssetKey = (asset: TAssetInfo) =>

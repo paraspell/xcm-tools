@@ -11,7 +11,7 @@ import type {
   TLocation,
 } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
+import { getExchangePairs, RouterBuilder } from '@paraspell/swap';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { RouterDto } from './dto/RouterDto.js';
@@ -75,8 +75,8 @@ const builderMock = {
   dryRun: vi.fn().mockResolvedValue(dryRunResponse),
 };
 
-vi.mock('@paraspell/xcm-router', async () => {
-  const actual = await vi.importActual('@paraspell/xcm-router');
+vi.mock('@paraspell/swap', async () => {
+  const actual = await vi.importActual('@paraspell/swap');
   return {
     ...actual,
     RouterBuilder: vi.fn().mockImplementation(() => builderMock),

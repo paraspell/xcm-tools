@@ -46,7 +46,7 @@
     "run:api": "pnpm --filter xcm-api start:dev",
     "run:paraspell-site": "pnpm --filter site dev",
     "run:updateAssets": "pnpm --filter assets updateAssets",
-    "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
+    "run:updateRouterAssets": "pnpm --filter swap updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
   "packageManager": "pnpm@10.30.3"

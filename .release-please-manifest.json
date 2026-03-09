@@ -1,6 +1,6 @@
 {
   "packages/xcm-analyser": "3.0.4",
-  "packages/xcm-router": "12.8.4",
+  "packages/swap": "12.8.4",
   "packages/sdk": "12.8.4",
   "packages/sdk-core": "12.8.4",
   "packages/sdk-pjs": "12.8.4",

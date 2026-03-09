@@ -3,7 +3,7 @@ import {
   EXCHANGE_CHAINS,
   type TExchangeChain,
   type TExchangeInput,
-} from '@paraspell/xcm-router';
+} from '@paraspell/swap';
 
 export const validateExchange = (
   exchange?: string | string[],

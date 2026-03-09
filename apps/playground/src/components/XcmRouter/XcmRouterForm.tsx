@@ -19,8 +19,8 @@ import {
   type TChain,
   type TSubstrateChain,
 } from '@paraspell/sdk';
-import type { TExchangeChain } from '@paraspell/xcm-router';
-import { EXCHANGE_CHAINS } from '@paraspell/xcm-router';
+import type { TExchangeChain } from '@paraspell/swap';
+import { EXCHANGE_CHAINS } from '@paraspell/swap';
 import {
   Icon123,
   IconArrowBarDown,

@@ -10,7 +10,7 @@ import {
   getExchangePairs,
   RouterBuilder,
   type TExchangeInput,
-} from '@paraspell/xcm-router';
+} from '@paraspell/swap';
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
