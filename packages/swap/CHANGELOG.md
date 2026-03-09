@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/swap-v12.8.4...swap-v12.8.5) (2026-03-09)
+
+
+### Documentation
+
+* Swap readme relocation ([#1733](https://github.com/paraspell/xcm-tools/issues/1733)) ([a93a69c](https://github.com/paraspell/xcm-tools/commit/a93a69cc6161a050694f4964816c4d3aa5fde7c2))
+
+
+### Build System
+
+* Rename xcm-router package to swap 📦 ([#1728](https://github.com/paraspell/xcm-tools/issues/1728)) ([97e41ed](https://github.com/paraspell/xcm-tools/commit/97e41edd9cc1f46d5a4756fc271b2d020b16ef18))
+
 ## [12.8.4](https://github.com/paraspell/xcm-tools/compare/xcm-router-v12.8.3...xcm-router-v12.8.4) (2026-03-09)
 
 
