@@ -5,6 +5,7 @@ import {
   getRelayChainOf,
   hasSupportForAsset,
   RoutingResolutionError,
+  type TAssetInfo,
   type TChain,
   UnsupportedOperationError,
 } from '@paraspell/sdk';
@@ -17,7 +18,6 @@ import Logger from '../Logger/Logger';
 import type {
   TCommonRouterOptions,
   TGetBestAmountOutOptions,
-  TRouterAsset,
   TRouterBuilderOptions,
 } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
@@ -29,8 +29,8 @@ export const selectBestExchangeCommon = async <
   originApi: PolkadotClient | undefined,
   computeAmountOut: (
     dex: ExchangeChain,
-    assetFromExchange: TRouterAsset,
-    assetTo: TRouterAsset,
+    assetFromExchange: TAssetInfo,
+    assetTo: TAssetInfo,
     options: T,
   ) => Promise<bigint>,
   builderOptions?: TRouterBuilderOptions,

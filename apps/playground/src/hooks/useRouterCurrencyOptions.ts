@@ -1,6 +1,6 @@
 import type { TLocation } from '@paraspell/sdk';
 import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
-import type { TExchangeInput, TRouterAsset } from '@paraspell/swap';
+import type { TExchangeInput } from '@paraspell/swap';
 import { getExchangePairs } from '@paraspell/swap';
 import {
   getSupportedAssetsFrom,
@@ -51,7 +51,7 @@ export const useRouterCurrencyOptions = (
 
   const currencyToMap = useMemo(
     () =>
-      supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
+      supportedAssetsTo.reduce((map: Record<string, TAssetInfo>, asset) => {
         const key = getAssetKey(asset);
         map[key] = asset;
         return map;

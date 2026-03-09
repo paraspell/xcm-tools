@@ -25,7 +25,7 @@ export const getSupportedAssetsFrom = (
     : getExchangeAssets(exchange);
 
   if (!from || (!Array.isArray(exchange) && from === createExchangeInstance(exchange).chain)) {
-    return exchangeAssets as TAssetInfo[];
+    return exchangeAssets;
   }
 
   const fromAssets = getAssets(from);

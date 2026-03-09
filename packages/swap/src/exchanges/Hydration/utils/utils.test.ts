@@ -2,7 +2,6 @@ import { type Asset, type TradeRouter } from '@galacticcouncil/sdk';
 import type { TAssetInfo, TChain } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TRouterAsset } from '../../../types';
 import { getAssetInfo } from './utils';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
@@ -45,7 +44,7 @@ describe('getAssetInfo', () => {
   it('should return asset by id if found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TRouterAsset = {
+    const currency: TAssetInfo = {
       symbol: 'HDX',
       decimals: 12,
       assetId: '2',

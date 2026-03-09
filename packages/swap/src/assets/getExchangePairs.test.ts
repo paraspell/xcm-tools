@@ -1,30 +1,32 @@
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangePairs } from './getExchangePairs';
+
+const locA: TLocation = { parents: 1, interior: 'Here' };
+const locB: TLocation = { parents: 1, interior: { X1: [{ Parachain: 1000 }] } };
+const altLocation: TLocation = { parents: 1, interior: { X1: [{ Parachain: 2000 }] } };
 
 const assetA: TAssetInfo = {
   symbol: 'ABC',
   decimals: 12,
   assetId: '1',
-  location: { parents: 1, interior: 'Here' },
+  location: locA,
 };
 
 const assetB: TAssetInfo = {
   symbol: 'XYZ',
   decimals: 12,
   assetId: '2',
-  location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
+  location: locB,
 };
-
-const altLocation = { parents: 1, interior: { X1: [{ Parachain: 2000 }] } };
 
 vi.mock('@paraspell/sdk', async (importActual) => ({
   ...(await importActual()),
   EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
   reverseTransformLocation: vi.fn((loc: unknown) =>
-    JSON.stringify(loc) === JSON.stringify(altLocation) ? assetA.location : loc,
+    JSON.stringify(loc) === JSON.stringify(altLocation) ? locA : loc,
   ),
 }));
 
@@ -32,15 +34,12 @@ const mockConfigs = {
   HydrationDex: {
     isOmni: true,
     assets: [assetA, assetB],
-    pairs: [
-      ['ABC', '2'],
-      [assetA.location, 'XYZ'],
-    ],
+    pairs: [],
   },
   AssetHubPolkadotDex: {
     isOmni: false,
     assets: [assetA, assetB],
-    pairs: [[altLocation, '2']],
+    pairs: [[altLocation, locB]],
   },
 };
 

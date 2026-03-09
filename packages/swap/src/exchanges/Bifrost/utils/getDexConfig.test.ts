@@ -9,7 +9,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getBestTrade, getFilteredPairs } from './bifrostUtils';
 import { getDexConfig } from './getDexConfig';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
   getParaId: vi.fn().mockReturnValue(2001),
   getAssets: vi.fn(),
 }));
@@ -17,7 +18,7 @@ vi.mock('@paraspell/sdk', () => ({
 vi.mock('./bifrostUtils', () => {
   const getBestTrade = vi.fn();
   const getFilteredPairs = vi.fn();
-  const findToken = vi.fn((map: any, symbol: string) => map[symbol]);
+  const findToken = vi.fn((map: any, symbol: string) => map[symbol.toUpperCase()]?.wrapped);
   const getTokenMap = vi.fn().mockReturnValue({
     BTC: {
       wrapped: {
@@ -95,7 +96,13 @@ describe('getDexConfig', () => {
     const cfg = await getDexConfig(api, 'BifrostPolkadot');
 
     expect(cfg.isOmni).toBe(false);
-    expect(cfg.assets.map((a) => a.symbol).sort()).toEqual(['BTC', 'ETH']);
+    expect(cfg.assets).toEqual(
+      expect.arrayContaining([
+        { parents: 1, interior: 'Here' },
+        { parents: 2, interior: 'Here' },
+      ]),
+    );
+    expect(cfg.assets).toHaveLength(2);
     expect(cfg.pairs).toHaveLength(0);
   });
 

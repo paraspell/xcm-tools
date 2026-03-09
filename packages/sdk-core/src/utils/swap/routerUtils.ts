@@ -1,3 +1,4 @@
+import { DEFAULT_SWAP_SLIPPAGE } from '../../constants'
 import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
 import type {
   TApiOrUrl,
@@ -103,7 +104,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     .senderAddress(senderAddress)
     .evmSenderAddress(evmSenderAddress)
     .recipientAddress(address)
-    .slippagePct(slippage.toString() ?? '1')
+    .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())
 
   if (onStatusChange) {
     // We cast because router types are bind to specific PAPI types

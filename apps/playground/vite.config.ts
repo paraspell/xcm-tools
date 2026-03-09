@@ -1,13 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import wasm from 'vite-plugin-wasm';
 import packageJsonSdk from '../../packages/sdk-core/package.json';
 import packageJsonSwap from '../../packages/swap/package.json';
 import packageJsonAnalyser from '../../packages/xcm-analyser/package.json';
 
 export default defineConfig({
-  plugins: [react(), nodePolyfills(), wasm()],
+  plugins: [react(), wasm()],
   build: {
     target: 'esnext',
   },

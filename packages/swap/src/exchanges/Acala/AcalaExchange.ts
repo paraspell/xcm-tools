@@ -16,7 +16,7 @@ import { firstValueFrom } from 'rxjs';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
-  TDexConfig,
+  TDexConfigStored,
   TGetAmountOutOptions,
   TSingleSwapResult,
   TSwapOptions,
@@ -154,7 +154,7 @@ class AcalaExchange extends ExchangeChain {
     return createAcalaClient(this.chain);
   }
 
-  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
+  async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
     return getDexConfig(api, this.chain);
   }
 }

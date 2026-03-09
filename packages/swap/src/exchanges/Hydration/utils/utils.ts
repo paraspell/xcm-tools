@@ -1,10 +1,9 @@
 import { type Asset, type TradeRouter } from '@galacticcouncil/sdk';
-
-import type { TRouterAsset } from '../../../types';
+import type { TAssetInfo } from '@paraspell/sdk';
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  asset: Pick<TRouterAsset, 'symbol' | 'assetId'>,
+  asset: Pick<TAssetInfo, 'symbol' | 'assetId'>,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
   return asset.assetId

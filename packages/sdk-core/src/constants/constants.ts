@@ -59,3 +59,5 @@ export const EXCHANGE_CHAINS = [
   'BifrostKusamaDex',
   'BifrostPolkadotDex'
 ] as const
+
+export const DEFAULT_SWAP_SLIPPAGE = 1

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
+import type { TGetBestAmountOutOptions } from '../types';
 import { getBestAmountOut } from './getBestAmountOut';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { resolveAssets } from './utils/resolveAssets';
@@ -39,8 +39,8 @@ describe('getBestAmountOut', () => {
 
     const fakeAssets = {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
-      assetFromExchange: { symbol: 'BTC_EXCHANGE' } as TRouterAsset,
-      assetTo: { symbol: 'ETH_EXCHANGE' } as TRouterAsset,
+      assetFromExchange: { symbol: 'BTC_EXCHANGE' } as TAssetInfo,
+      assetTo: { symbol: 'ETH_EXCHANGE' } as TAssetInfo,
       feeAssetFromOrigin: undefined,
       feeAssetFromExchange: undefined,
     };
@@ -89,8 +89,8 @@ describe('getBestAmountOut', () => {
 
     const fakeAssets = {
       assetFromOrigin: { symbol: 'BTC' } as TAssetInfo,
-      assetFromExchange: { symbol: 'USD_EXCHANGE' } as TRouterAsset,
-      assetTo: { symbol: 'EUR_EXCHANGE' } as TRouterAsset,
+      assetFromExchange: { symbol: 'USD_EXCHANGE' } as TAssetInfo,
+      assetTo: { symbol: 'EUR_EXCHANGE' } as TAssetInfo,
       feeAssetFromOrigin: undefined,
       feeAssetFromExchange: undefined,
     };

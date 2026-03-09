@@ -10,12 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
-import type {
-  TExchangeInfo,
-  TOriginInfo,
-  TRouterAsset,
-  TTransformedOptions,
-} from '../types/TRouter';
+import type { TExchangeInfo, TOriginInfo, TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import { getMinTransferableAmount } from './getMinTransferableAmount';
 import {
@@ -28,7 +23,7 @@ vi.mock('./utils');
 vi.mock('./fees');
 vi.mock('@paraspell/sdk');
 
-const createRouterAsset = (symbol: string, decimals = 12): TRouterAsset => ({
+const createRouterAsset = (symbol: string, decimals = 12): TAssetInfo => ({
   symbol,
   decimals,
   assetId: `${symbol}-ID`,

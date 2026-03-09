@@ -5,7 +5,7 @@ import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
 import type {
-  TDexConfig,
+  TDexConfigStored,
   TGetAmountOutOptions,
   TMultiSwapResult,
   TSingleSwapResult,
@@ -49,7 +49,7 @@ abstract class ExchangeChain {
 
   abstract getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint>;
 
-  abstract getDexConfig(api: ApiPromise): Promise<TDexConfig>;
+  abstract getDexConfig(api: ApiPromise): Promise<TDexConfigStored>;
 
   async createApiInstance(builderOptions?: TBuilderOptions<TPjsApiOrUrl>): Promise<ApiPromise> {
     return createChainClient(this.chain, builderOptions);

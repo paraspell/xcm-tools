@@ -18,8 +18,8 @@ import type { TRouterBuilderOptions } from './TRouterBuilder';
 
 export type TSwapOptions = {
   papiApi: TPapiApi;
-  assetFrom: TRouterAsset;
-  assetTo: TRouterAsset;
+  assetFrom: TAssetInfo;
+  assetTo: TAssetInfo;
   amount: bigint;
   slippagePct: string;
   senderAddress: string;
@@ -31,8 +31,8 @@ export type TSwapOptions = {
 export type TGetAmountOutOptions = {
   papiApi: TPapiApi;
   origin?: TOriginInfo;
-  assetFrom: TRouterAsset;
-  assetTo: TRouterAsset;
+  assetFrom: TAssetInfo;
+  assetTo: TAssetInfo;
   amount: bigint;
   slippagePct?: string;
 };
@@ -184,8 +184,8 @@ export type TExchangeInfo = {
   apiPapi: TPapiApi;
   baseChain: TParachain;
   exchangeChain: TExchangeChain;
-  assetFrom: TRouterAsset;
-  assetTo: TRouterAsset;
+  assetFrom: TAssetInfo;
+  assetTo: TAssetInfo;
   feeAssetInfo?: TAssetInfo;
 };
 
@@ -203,25 +203,22 @@ export type TAdditionalTransferOptions = {
   builderOptions?: TRouterBuilderOptions;
 };
 
-export type TRouterAsset = {
-  symbol: string;
-  decimals: number;
-  assetId?: string;
-  location: TLocation;
-  alias?: string;
-};
+export type TPairs = TLocation[][];
 
-export type TPairKey = string | object;
-
-export type TPairs = TPairKey[][];
-
-export type TDexConfig = {
-  assets: TRouterAsset[];
+export type TDexConfigBase = {
   isOmni: boolean;
   pairs: TPairs;
 };
 
-export type TAssetsRecord = Record<TExchangeChain, TDexConfig>;
+export type TDexConfig = {
+  assets: TAssetInfo[];
+} & TDexConfigBase;
+
+export type TDexConfigStored = {
+  assets: TLocation[];
+} & TDexConfigBase;
+
+export type TAssetsRecord = Record<TExchangeChain, TDexConfigStored>;
 
 /** @deprecated Will be removed in v13 */
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';

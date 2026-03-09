@@ -2,7 +2,6 @@ import type { TAssetInfo } from '@paraspell/sdk';
 import { deepEqual } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TRouterAsset } from '../types';
 import { getExchangeAssetByOriginAsset } from './getExchangeAssetByOriginAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
@@ -17,13 +16,13 @@ describe('getExchangeAssetByOriginAsset', () => {
     location: { parents: 1, interior: 'Here' },
   };
 
-  const routerAssetA: TRouterAsset = {
+  const routerAssetA: TAssetInfo = {
     symbol: 'AAA',
     decimals: 12,
     location: { parents: 0, interior: 'Here' },
   };
 
-  const routerAssetB: TRouterAsset = {
+  const routerAssetB: TAssetInfo = {
     symbol: 'BBB',
     decimals: 12,
     location: { parents: 1, interior: 'Here' },
@@ -50,7 +49,7 @@ describe('getExchangeAssetByOriginAsset', () => {
   });
 
   it('returns the first matching asset when multiple match', () => {
-    const routerAssetC: TRouterAsset = {
+    const routerAssetC: TAssetInfo = {
       symbol: 'CCC',
       decimals: 12,
       location: { parents: 1, interior: 'Here' },

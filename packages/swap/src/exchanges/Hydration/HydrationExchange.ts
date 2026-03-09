@@ -16,7 +16,7 @@ import { parseUnits } from 'ethers-v6';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
-  TDexConfig,
+  TDexConfigStored,
   TGetAmountOutOptions,
   TSingleSwapResult,
   TSwapOptions,
@@ -165,7 +165,7 @@ class HydrationExchange extends ExchangeChain {
     return padValueBy(amountOut, -slippageMultiplier);
   }
 
-  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
+  async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
     const {
       api: { router: tradeRouter },
     } = createSdkContext(api);
@@ -175,25 +175,20 @@ class HydrationExchange extends ExchangeChain {
     const sdkAssets = getAssets(this.chain);
 
     const transformedAssets: TAssetInfo[] = assets
-      .map(({ symbol, id, decimals }) => {
+      .map(({ symbol, id }) => {
         const asset =
           sdkAssets.find((a) => !a.isNative && a.assetId === id) ??
           sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
 
-        if (!asset?.location) return null;
+        if (!asset) return null;
 
-        return {
-          symbol,
-          decimals,
-          assetId: asset.isNative ? undefined : asset.assetId,
-          location: asset.location,
-        };
+        return asset;
       })
       .filter((asset) => asset !== null);
 
     return {
       isOmni: true,
-      assets: transformedAssets,
+      assets: transformedAssets.map((asset) => asset.location),
       pairs: [],
     };
   }
