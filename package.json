@@ -44,7 +44,6 @@
     "build:apps": "pnpm --filter \"./apps/*\" build",
     "run:playground": "pnpm --filter playground dev",
     "run:api": "pnpm --filter xcm-api start:dev",
-    "run:lightspell-site": "pnpm --filter lightspell-site dev",
     "run:paraspell-site": "pnpm --filter site dev",
     "run:updateAssets": "pnpm --filter assets updateAssets",
     "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
