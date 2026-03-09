@@ -82,9 +82,6 @@ jobs:
       - name: Publish ParaSpell Website
         run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
 
-      - name: Publish LightSpell Website
-        run: pnpm exec netlify deploy --no-build --prod --site lightspell-site --filter @paraspell/lightspell-site
-
   deploy_xcm_api_and_visualizer_be:
     needs: release-please
     if: needs.release-please.outputs.sdk_core_released == 'true'
