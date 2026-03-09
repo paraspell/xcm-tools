@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/swap",
-  "version": "12.8.4",
+  "version": "12.8.5",
   "description": "Tool for XCM cross-chain asset exchanging across Polkadot and Kusama ecosystems",
   "type": "module",
   "exports": {

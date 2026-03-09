@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.4...xcm-api-v12.8.5) (2026-03-09)
+
+
+### Build System
+
+* Rename xcm-router package to swap 📦 ([#1728](https://github.com/paraspell/xcm-tools/issues/1728)) ([97e41ed](https://github.com/paraspell/xcm-tools/commit/97e41edd9cc1f46d5a4756fc271b2d020b16ef18))
+
 ## [12.8.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.3...xcm-api-v12.8.4) (2026-03-09)
 
 
