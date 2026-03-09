@@ -836,8 +836,8 @@ export class GeneralBuilder<
 
       await executeWithRouter({ ...this._options, swapOptions, api: this.api }, builder =>
         // We need to cast this sender because RouterBuilder expects a PAPI signer but this part of sdk-core is generic
-        // Will be removed in the future when we gradually move parts of xcm-router to sdk-core
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+        // Will be removed in the future when we gradually move parts of swap package to sdk-core
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
         builder.signer(sender as any).build()
       )
 

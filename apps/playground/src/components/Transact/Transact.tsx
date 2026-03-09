@@ -70,6 +70,7 @@ export const Transact = <T extends TTransactFields>({ form }: Props<T>) => {
                 description="Hex-encoded call data"
                 placeholder="Enter hex"
                 data-testid="transact-call-input"
+                required
                 {...form.getInputProps('transactOptions.call')}
               />
               <Select

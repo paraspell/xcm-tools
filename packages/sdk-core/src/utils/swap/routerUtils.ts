@@ -56,15 +56,19 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
 ) => {
   const { api } = options
 
+  if (options.transactOptions?.call) {
+    throw new UnsupportedOperationError('Cannot use transact options together with swap options.')
+  }
+
   if (api.getType() !== 'PAPI') {
     throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
   }
 
-  const { RouterBuilder } = await import('@paraspell/xcm-router')
+  const { RouterBuilder } = await import('@paraspell/swap')
 
   if (!RouterBuilder) {
     throw new ExtensionNotInstalledError(
-      'XCM Router package is required for swaps. Please install @paraspell/xcm-router.'
+      'XCM Router package is required for swaps. Please install @paraspell/swap.'
     )
   }
 
