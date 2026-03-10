@@ -96,17 +96,17 @@ export const useReactiveDotWallet = ({
   useEffect(() => {
     if (!selectedWallet) return;
     if (isLedgerSelected && !ledgerChainSpec) {
-      if (shouldOpenAccountsModal.current) {
-        showErrorNotification(
-          'Select source chain first to see Ledger accounts',
-        );
+      if (shouldOpenAccountsModal.current)
         shouldOpenAccountsModal.current = false;
-      }
       return;
     }
     if (!accounts.length) {
       if (shouldOpenAccountsModal.current) {
-        showErrorNotification('Selected wallet has no accounts');
+        if (isLedgerSelected && ledgerChainSpec) {
+          showErrorNotification('Ledger accounts could not be loaded');
+        } else if (!isLedgerSelected) {
+          showErrorNotification('Selected wallet has no accounts');
+        }
         shouldOpenAccountsModal.current = false;
       }
       return;
