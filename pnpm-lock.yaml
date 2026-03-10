@@ -161,14 +161,14 @@ importers:
         specifier: ^14.0.1
         version: 14.0.1(@polkadot/util@14.0.1)
       '@reactive-dot/core':
-        specifier: ^0.70.0
-        version: 0.70.0(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
+        specifier: ^0.71.1
+        version: 0.71.1(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
       '@reactive-dot/react':
-        specifier: ^0.70.0
-        version: 0.70.0(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(react@19.2.4)(typescript@5.9.3)(zod@4.3.6)
+        specifier: ^0.71.1
+        version: 0.71.3(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(react@19.2.4)(typescript@5.9.3)(zod@4.3.6)
       '@reactive-dot/wallet-ledger':
-        specifier: ^0.19.1
-        version: 0.19.1(@ledgerhq/hw-transport@6.32.0)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
+        specifier: ^0.19.3
+        version: 0.19.3(@ledgerhq/hw-transport@6.32.0)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
       '@reactive-dot/wallet-mimir':
         specifier: ^0.2.5
         version: 0.2.5(@polkadot-api/polkadot-signer@0.1.6)(@polkadot-api/substrate-bindings@0.17.0)(@polkadot-api/utils@0.2.0)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
@@ -5344,21 +5344,21 @@ packages:
     peerDependencies:
       polkadot-api: '>=1.23.2'
 
-  '@reactive-dot/core@0.70.0':
-    resolution: {integrity: sha512-bYOflBLHhNqgGs1icv9bgxL4/r48H+dWWfsV7Abze4snIOtCHx5BrsnQuzBppTIsd0h9YTT4PnzAhVLA41VD5g==}
+  '@reactive-dot/core@0.71.1':
+    resolution: {integrity: sha512-q4Ak2Ymk/B9ugArcxdzmpI8HF9nYWcZp97qHA+kpspGwJkFAGP3mqNrmEwnZjntvXLbQ/zrOuguzDO5bEgg7Yg==}
     peerDependencies:
       polkadot-api: '>=1.23.2'
 
-  '@reactive-dot/react@0.70.0':
-    resolution: {integrity: sha512-YsUpy+Xl/VOB9Nj6JA3yQf8owSPr1N53XEcA2R0U6V+BAI0NuBXL7c4my02Z0Gk6rI4JNy7jyf0CaALDs2Ye1g==}
+  '@reactive-dot/react@0.71.3':
+    resolution: {integrity: sha512-xyofkgHOBrlFqyUwdQVKQcuAzCDMC9u954EeCg6wuOsM6PGA6BuxVfM0Cm9Vr89tgkk247zPOw+0eMVI67pIUg==}
     peerDependencies:
       react: '>= 19.2.x'
 
   '@reactive-dot/utils@0.10.3':
     resolution: {integrity: sha512-mQxAwSXlkO43MJeHDWwm5/1uCkZvMDpQ3LeXf0U7jdN2qj9djX4bfvxeh97biGMhpcoOAHooNnNMOMkheJ5Fjw==}
 
-  '@reactive-dot/wallet-ledger@0.19.1':
-    resolution: {integrity: sha512-Clq+fGhdXQVXJNBxIb1344NvV4Ndw5FLsnwn+58wLFLY9bqYCw7/B97PJUjx9AK5kGRqpL2f3ebUMxElOQsl4g==}
+  '@reactive-dot/wallet-ledger@0.19.3':
+    resolution: {integrity: sha512-4b6tSJHr9xXY1CEKqaNDzGPKMApcB0BhwDO3vwWpbtNFE0bhGqRYCcQjiNsxmbCvHK+YpCFDIvXcsje0D5H+Pg==}
 
   '@reactive-dot/wallet-mimir@0.2.5':
     resolution: {integrity: sha512-8fUxovZYYwTAtUVPYjILNx49iiJThxz75ZgwG9Grdw7e7B1BaGLPzuLLiYRfx5M1SoLZMKeiEsAyYQiyZK8GwQ==}
@@ -8968,14 +8968,14 @@ packages:
     peerDependencies:
       jotai: '>=2.16.0'
 
-  jotai-suspense@0.4.2:
-    resolution: {integrity: sha512-w1eDb8ebW07L2EINIM4adI4eXAMlr5NMEuXdn7IPzW0v3YT9RTqv/vUQ5Nv4Fp1L3QdjKH1R+pxOCiRJqIh1kQ==}
+  jotai-suspense@0.5.0:
+    resolution: {integrity: sha512-Y5lkedNz3jREwT+nidTNp8MIU9Ma/H5BmjtciLcyXcJHZDiCgwrO1wHkyMmnd0ismg4leHPtBc/O+C7m0udE4g==}
     peerDependencies:
-      jotai: '>=2.12.2'
+      jotai: '>=2.18.0'
       react: '>=18.0.0'
 
-  jotai@2.17.1:
-    resolution: {integrity: sha512-TFNZZDa/0ewCLQyRC/Sq9crtixNj/Xdf/wmj9631xxMuKToVJZDbqcHIYN0OboH+7kh6P6tpIK7uKWClj86PKw==}
+  jotai@2.18.1:
+    resolution: {integrity: sha512-e0NOzK+yRFwHo7DOp0DS0Ycq74KMEAObDWFGmfEL28PD9nLqBTt3/Ug7jf9ca72x0gC9LQZG9zH+0ISICmy3iA==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@babel/core': '>=7.0.0'
@@ -18298,7 +18298,7 @@ snapshots:
       - typescript
       - zod
 
-  '@reactive-dot/core@0.70.0(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)':
+  '@reactive-dot/core@0.71.1(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)':
     dependencies:
       '@noble/hashes': 2.0.1
       '@reactive-dot/utils': 0.10.3
@@ -18309,13 +18309,13 @@ snapshots:
       - typescript
       - zod
 
-  '@reactive-dot/react@0.70.0(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(react@19.2.4)(typescript@5.9.3)(zod@4.3.6)':
+  '@reactive-dot/react@0.71.3(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(react@19.2.4)(typescript@5.9.3)(zod@4.3.6)':
     dependencies:
-      '@reactive-dot/core': 0.70.0(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
-      jotai: 2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
-      jotai-eager: 0.2.4(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))
-      jotai-effect: 2.2.3(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))
-      jotai-suspense: 0.4.2(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))(react@19.2.4)
+      '@reactive-dot/core': 0.71.1(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
+      jotai: 2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
+      jotai-eager: 0.2.4(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))
+      jotai-effect: 2.2.3(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))
+      jotai-suspense: 0.5.0(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))(react@19.2.4)
       react: 19.2.4
     transitivePeerDependencies:
       - '@babel/core'
@@ -18327,11 +18327,11 @@ snapshots:
 
   '@reactive-dot/utils@0.10.3': {}
 
-  '@reactive-dot/wallet-ledger@0.19.1(@ledgerhq/hw-transport@6.32.0)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)':
+  '@reactive-dot/wallet-ledger@0.19.3(@ledgerhq/hw-transport@6.32.0)(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)':
     dependencies:
       '@ledgerhq/hw-transport-webusb': 6.30.0
       '@polkadot-api/ledger-signer': 0.2.15(@ledgerhq/hw-transport@6.32.0)
-      '@reactive-dot/core': 0.70.0(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
+      '@reactive-dot/core': 0.71.1(polkadot-api@1.23.3(@swc/core@1.15.11(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.6)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.9.3)(zod@4.3.6)
       buffer: 6.0.3
     transitivePeerDependencies:
       - '@ledgerhq/hw-transport'
@@ -22645,22 +22645,22 @@ snapshots:
 
   jju@1.4.0: {}
 
-  jotai-eager@0.2.4(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)):
+  jotai-eager@0.2.4(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)):
     dependencies:
-      jotai: 2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
+      jotai: 2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
 
-  jotai-effect@2.2.3(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)):
+  jotai-effect@2.2.3(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)):
     dependencies:
-      jotai: 2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
+      jotai: 2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
 
-  jotai-suspense@0.4.2(jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))(react@19.2.4):
+  jotai-suspense@0.5.0(jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4))(react@19.2.4):
     dependencies:
-      jotai: 2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
+      jotai: 2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4)
       react: 19.2.4
 
-  jotai@2.17.1(@babel/core@7.28.5)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4):
+  jotai@2.18.1(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.2.10)(react@19.2.4):
     optionalDependencies:
-      '@babel/core': 7.28.5
+      '@babel/core': 7.28.6
       '@babel/template': 7.28.6
       '@types/react': 19.2.10
       react: 19.2.4

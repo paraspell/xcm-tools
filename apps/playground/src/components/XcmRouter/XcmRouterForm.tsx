@@ -108,6 +108,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     selectedAccount: selectedAccountPolkadot,
     isInitialized,
     isLoadingExtensions,
+    setSourceChainForLedger,
   } = useWallet();
 
   const [
@@ -191,6 +192,10 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
+
+  useEffect(() => {
+    setSourceChainForLedger(form.values.from);
+  }, [form.values.from, setSourceChainForLedger]);
 
   const { from, to, exchange } = form.getValues();
 

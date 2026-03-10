@@ -1,5 +1,6 @@
 import { createFormActions } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import type { TSubstrateChain } from '@paraspell/sdk';
 import {
   web3Accounts,
   web3Enable,
@@ -16,6 +17,7 @@ import AccountSelectModal from '../components/AccountSelectModal/AccountSelectMo
 import { PageRoute } from '../components/PageRoute';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
 import { DAPP_NAME, MAIN_FORM_NAME } from '../constants';
+import { useLedgerChainSpec } from '../hooks/useLedgerChainSpec';
 import { useReactiveDotWallet } from '../hooks/useReactiveDotWallet';
 import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
@@ -92,6 +94,9 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   const [isInitialized, setIsInitialized] = useState(false);
 
   const [isUseXcmApiSelected, setIsUseXcmApiSelected] = useState(false);
+  const [sourceChainForLedger, setSourceChainForLedger] = useState<
+    TSubstrateChain | undefined
+  >(undefined);
 
   useEffect(() => {
     if (apiType) {
@@ -115,6 +120,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
 
   const savedAddressRef = useRef<string | undefined>(undefined);
   const shouldOpenAccountsModal = useRef<boolean>(false);
+  const ledgerChainSpecData = useLedgerChainSpec(sourceChainForLedger);
   const {
     walletNames,
     connectWalletByName,
@@ -129,6 +135,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     selectedAccount,
     setSelectedAccount,
     setAccounts,
+    ledgerChainSpec: ledgerChainSpecData,
   });
 
   useEffect(() => {
@@ -379,6 +386,8 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
           isUseXcmApiSelected,
           isLoadingExtensions,
           isInitialized,
+          sourceChainForLedger,
+          setSourceChainForLedger,
         }}
       >
         {children}

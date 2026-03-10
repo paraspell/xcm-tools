@@ -32,6 +32,12 @@ export type TWalletAccount = {
   };
 };
 
+export type TDotAccount = {
+  address: string;
+  name: string;
+  wallet: { name: string };
+};
+
 export type TExtension = {
   id: string;
   name: string;

@@ -141,6 +141,7 @@ const XcmTransferForm: FC<Props> = ({
     isInitialized,
     isLoadingExtensions,
     setIsUseXcmApiSelected,
+    setSourceChainForLedger,
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
@@ -179,6 +180,7 @@ const XcmTransferForm: FC<Props> = ({
     name: MAIN_FORM_NAME,
     initialValues: initialValues ?? queryState,
     transformValues: (values) => values,
+
     validate: {
       address: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
@@ -225,6 +227,10 @@ const XcmTransferForm: FC<Props> = ({
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
+
+  useEffect(() => {
+    setSourceChainForLedger(form.values.from);
+  }, [form.values.from, setSourceChainForLedger]);
 
   const { from, to, currencies, useApi } = form.getValues();
 
