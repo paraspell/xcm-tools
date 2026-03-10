@@ -107,7 +107,7 @@ describe('RouterController', () => {
         slippagePct: '1',
       };
 
-      const mockResult = {} as TGetXcmFeeResult;
+      const mockResult = {} as TGetXcmFeeResult<false>;
 
       const spy = vi.spyOn(service, 'getXcmFees').mockResolvedValue(mockResult);
       const result = await controller.getXcmFees(
