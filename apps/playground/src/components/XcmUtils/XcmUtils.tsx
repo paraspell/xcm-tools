@@ -102,8 +102,8 @@ export const XcmUtils = () => {
     };
 
     let result;
-    let apiEndpoint = '';
-    let successMessage = '';
+    let apiEndpoint;
+    let successMessage;
     let currentNotifId = notifId;
 
     if (!currentNotifId) {
@@ -229,8 +229,8 @@ export const XcmUtils = () => {
     console.log(body);
 
     let result;
-    let apiEndpoint = '';
-    let successMessage = '';
+    let apiEndpoint;
+    let successMessage;
     let currentNotifId = notifId;
 
     if (!currentNotifId) {
