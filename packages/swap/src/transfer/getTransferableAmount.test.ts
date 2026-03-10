@@ -15,7 +15,6 @@ import type {
   TAdditionalTransferOptions,
   TExchangeInfo,
   TOriginInfo,
-  TRouterAsset,
   TTransformedOptions,
 } from '../types/TRouter';
 import { getSwapFee } from './fees';
@@ -41,7 +40,7 @@ const sdkAsset: TAssetInfo = {
   },
 };
 
-const routerAsset: TRouterAsset = {
+const routerAsset: TAssetInfo = {
   symbol: 'ASTR',
   assetId: 'ASTR-ID',
   decimals: 18,

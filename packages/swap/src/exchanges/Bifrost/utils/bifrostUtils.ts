@@ -18,7 +18,7 @@ import {
   type TokenList,
   WrappedTokenInfo,
 } from '@crypto-dex-sdk/token-lists';
-import { RoutingResolutionError, type TChain } from '@paraspell/sdk';
+import { isSymbolMatch, RoutingResolutionError, type TChain } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import { type QueryableStorageEntry } from '@polkadot/api/types';
 import { type OrmlTokensAccountData } from '@zenlink-types/bifrost/interfaces';
@@ -215,4 +215,6 @@ export const getBestTrade = (
 };
 
 export const findToken = (tokenMap: SdkTokenMap, symbol: string): Token | undefined =>
-  Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
+  Object.values(tokenMap).find(
+    (item) => item.wrapped.symbol != null && isSymbolMatch(item.wrapped.symbol, symbol),
+  )?.wrapped;

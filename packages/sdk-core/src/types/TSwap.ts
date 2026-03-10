@@ -9,8 +9,8 @@ export type TExchangeInput = TExchangeChain | [TExchangeChain, ...TExchangeChain
 
 export type TSwapOptions<TApi, TRes, TSigner> = {
   currencyTo: TCurrencyCore
-  exchange: TExchangeInput
-  slippage: number
+  exchange?: TExchangeInput
+  slippage?: number
   evmSenderAddress?: string
   evmSigner?: TSigner
   onStatusChange?: TStatusChangeCallback<TApi, TRes>

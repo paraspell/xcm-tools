@@ -1,28 +1,23 @@
 import { writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
-import { EXCHANGE_CHAINS } from '../src/consts';
 import { createExchangeInstance } from '../src/exchanges/ExchangeChainFactory';
-import type { TDexConfig, TAssetsRecord, TExchangeChain } from '../src/types';
+import type { TDexConfigStored, TAssetsRecord } from '../src/types';
 import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
-import { addAliasesToDuplicateSymbols } from './addAliases';
+import { EXCHANGE_CHAINS, TExchangeChain } from '@paraspell/sdk';
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
 const fetchWithTimeout = async (
   exchangeChain: TExchangeChain,
   timeoutMs: number = 60000,
-): Promise<TDexConfig> => {
+): Promise<TDexConfigStored> => {
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs);
   });
 
-  const fetchPromise = (async (): Promise<TDexConfig> => {
+  const fetchPromise = (async (): Promise<TDexConfigStored> => {
     const dex = createExchangeInstance(exchangeChain);
     const api = await dex.createApiInstance();
-    const config = await dex.getDexConfig(api);
-    return {
-      ...config,
-      assets: config.assets.filter((asset) => asset.location !== undefined),
-    };
+    return await dex.getDexConfig(api);
   })();
 
   try {
@@ -39,7 +34,7 @@ const fetchWithTimeout = async (
 };
 
 void (async () => {
-  const record: Record<string, TDexConfig> = {};
+  const record: Partial<Record<TExchangeChain, TDexConfigStored>> = {};
 
   for (const exchangeChain of EXCHANGE_CHAINS) {
     console.log(`Fetching ${exchangeChain} assets...`);
@@ -62,8 +57,6 @@ void (async () => {
     ...assetsMap,
     ...record,
   };
-
-  addAliasesToDuplicateSymbols(merged);
 
   writeJsonSync('./src/consts/assets.json', merged);
   console.log('Assets update complete!');

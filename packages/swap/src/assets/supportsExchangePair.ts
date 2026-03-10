@@ -1,7 +1,6 @@
-import type { TExchangeInput } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk';
 import { EXCHANGE_CHAINS, isAssetEqual } from '@paraspell/sdk';
 
-import type { TRouterAsset } from '../types';
 import { getExchangeConfig } from './getExchangeConfig';
 import { getExchangePairs } from './getExchangePairs';
 
@@ -10,8 +9,8 @@ const asArray = (ex: TExchangeInput) =>
 
 export const supportsExchangePair = (
   exchange: TExchangeInput,
-  assetA: TRouterAsset,
-  assetB: TRouterAsset,
+  assetA: TAssetInfo,
+  assetB: TAssetInfo,
 ): boolean => {
   for (const ex of asArray(exchange)) {
     const cfg = getExchangeConfig(ex);

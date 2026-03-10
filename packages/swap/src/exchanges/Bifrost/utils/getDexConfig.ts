@@ -3,34 +3,33 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
-import { getAssets, getParaId, type TParachain } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk';
+import { getAssets, getParaId, isSymbolMatch, type TParachain } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
-import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
+import type { TDexConfigStored, TPairs } from '../../../types';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
 
-export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<TDexConfig> => {
+export const getDexConfig = async (
+  api: ApiPromise,
+  chain: TParachain,
+): Promise<TDexConfigStored> => {
   const chainId = getParaId(chain);
 
   const tokenMap = getTokenMap(chain, chainId);
   const sdkAssets = getAssets(chain);
 
-  const assetsMap = new Map<string, TRouterAsset>();
+  const assetsMap = new Map<string, TAssetInfo>();
 
   Object.values(tokenMap).forEach((wrapped) => {
     const symbol = wrapped.wrapped.symbol;
     if (!symbol) return;
 
-    const sdkAsset = sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
+    const sdkAsset = sdkAssets.find((a) => isSymbolMatch(a.symbol, symbol));
 
     if (!sdkAsset) return;
 
-    assetsMap.set(symbol, {
-      symbol,
-      assetId: sdkAsset.isNative ? undefined : sdkAsset.assetId,
-      location: sdkAsset.location,
-      decimals: sdkAsset.decimals,
-    });
+    assetsMap.set(symbol, sdkAsset);
   });
 
   const assets = Array.from(assetsMap.values());
@@ -69,7 +68,10 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
       const raB = assetsMap.get(symB);
       if (!raA || !raB) return;
 
-      const dedup = [symA, symB].sort().join('-');
+      const dedup = [symA, symB]
+        .map((s) => s.toLowerCase())
+        .sort()
+        .join('-');
       if (seen.has(dedup)) return;
       seen.add(dedup);
 
@@ -84,7 +86,10 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
       const a = assets[i];
       const b = assets[j];
 
-      const dedup = [a.symbol, b.symbol].sort().join('-');
+      const dedup = [a.symbol, b.symbol]
+        .map((s) => s.toLowerCase())
+        .sort()
+        .join('-');
       if (seen.has(dedup)) continue;
 
       const wrapA = findToken(tokenMap, a.symbol);
@@ -111,7 +116,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
   return {
     isOmni: false,
-    assets,
+    assets: assets.map((a) => a.location),
     pairs: [...pairs, ...syntheticPairs],
   };
 };

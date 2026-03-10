@@ -11,7 +11,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { getExchangeAsset } from '../../assets';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import type {
-  TDexConfig,
+  TDexConfigStored,
   TGetAmountOutOptions,
   TMultiSwapResult,
   TSingleSwapResult,
@@ -48,7 +48,7 @@ class AssetHubExchange extends ExchangeChain {
       amount_in: amountWithoutFee,
       amount_out_min: minAmountOut,
       send_to: senderAddress,
-      keep_alive: assetFrom.assetId === undefined,
+      keep_alive: !!assetFrom.isNative,
     });
 
     const toDestFeeCurrencyTo =
@@ -213,7 +213,7 @@ class AssetHubExchange extends ExchangeChain {
     }
   }
 
-  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
+  async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
     return getDexConfig(api, this.chain);
   }
 }

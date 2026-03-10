@@ -1,7 +1,7 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import type { TParachain } from '@paraspell/sdk';
+import type { TAssetInfo, TParachain } from '@paraspell/sdk';
 import {
   findAssetInfoById,
   getNativeAssets,
@@ -11,14 +11,17 @@ import {
 import type { ApiPromise } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
 
-import type { TDexConfig, TPairs, TRouterAsset } from '../../../types';
+import type { TDexConfigStored, TPairs } from '../../../types';
 
-export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<TDexConfig> => {
+export const getDexConfig = async (
+  api: ApiPromise,
+  chain: TParachain,
+): Promise<TDexConfigStored> => {
   const wallet = new Wallet(api);
   await wallet.isReady;
 
   const pools = Object.values(await wallet.liquidity.getAllEnabledPoolDetails());
-  const assetsMap = new Map<string, TRouterAsset>();
+  const assetsMap = new Map<string, TAssetInfo>();
 
   pools.forEach((pool) => {
     pool.info.pair.forEach((currency) => {
@@ -30,26 +33,19 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
       const idVal = idObj[key] as string | Record<string, unknown>;
       if (Array.isArray(idVal)) return;
 
-      let routerAsset: TRouterAsset | undefined;
+      let sdkAsset: TAssetInfo | undefined;
 
       if (key.toLowerCase() === 'token') {
-        const sdkAsset = getNativeAssets(chain).find((a) => a.symbol === symbol);
+        sdkAsset = getNativeAssets(chain).find((a) => a.symbol === symbol);
         if (!sdkAsset) throw new RoutingResolutionError(`Native asset not found: ${symbol}`);
-        routerAsset = { symbol, location: sdkAsset.location, decimals: sdkAsset.decimals };
       } else {
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
-          const sdkAsset = findAssetInfoById(getOtherAssets(chain), formatted);
+          sdkAsset = findAssetInfoById(getOtherAssets(chain), formatted);
           if (!sdkAsset) throw new RoutingResolutionError(`Asset not found: ${formatted}`);
-          routerAsset = {
-            symbol,
-            decimals: sdkAsset.decimals,
-            assetId: sdkAsset.assetId,
-            location: sdkAsset.location,
-          };
         }
       }
-      if (routerAsset) assetsMap.set(symbol, routerAsset);
+      if (sdkAsset) assetsMap.set(symbol, sdkAsset);
     });
   });
 
@@ -107,7 +103,7 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
 
   return {
     isOmni: false,
-    assets,
+    assets: assets.map((a) => a.location),
     pairs: [...directPairs, ...syntheticPairs],
   };
 };

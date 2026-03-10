@@ -3,10 +3,13 @@
 import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 
-import type { TDexConfig, TRouterAsset } from '../../../types';
+import type { TDexConfigStored } from '../../../types';
 import { capitalizeLocation } from './capitalizeLocation';
 
-export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<TDexConfig> => {
+export const getDexConfig = async (
+  api: ApiPromise,
+  chain: TParachain,
+): Promise<TDexConfigStored> => {
   const assets = getAssets(chain);
 
   const response = await api.query.assetConversion.pools.entries();
@@ -37,16 +40,11 @@ export const getDexConfig = async (api: ApiPromise, chain: TParachain): Promise<
       poolLocations.has(JSON.stringify(localizeLocation('AssetHubPolkadot', asset.location))),
   );
 
-  const transformedAssets: TRouterAsset[] = filteredAssets.map((asset) => ({
-    symbol: asset.symbol,
-    decimals: asset.decimals,
-    assetId: asset.isNative ? undefined : asset.assetId,
-    location: asset.location,
-  }));
+  const locations = filteredAssets.map((asset) => asset.location);
 
-  return Promise.resolve({
+  return {
     isOmni: true,
-    assets: transformedAssets,
+    assets: locations,
     pairs: [],
-  });
+  };
 };

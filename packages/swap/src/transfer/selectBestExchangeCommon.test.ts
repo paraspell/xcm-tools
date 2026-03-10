@@ -1,4 +1,4 @@
-import type { TExchangeChain, TParachain } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk';
 import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -6,7 +6,7 @@ import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type { TCommonRouterOptions, TRouterAsset } from '../types';
+import type { TCommonRouterOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 vi.mock('@paraspell/sdk', async (importActual) => ({
@@ -36,7 +36,7 @@ const baseOptions = {
 } as unknown as TCommonRouterOptions;
 
 describe('selectBestExchangeCommon', () => {
-  const asset1: TRouterAsset = {
+  const asset1: TAssetInfo = {
     symbol: 'AAA',
     decimals: 8,
     location: {
@@ -45,7 +45,7 @@ describe('selectBestExchangeCommon', () => {
     },
   };
 
-  const asset2: TRouterAsset = {
+  const asset2: TAssetInfo = {
     symbol: 'BBB',
     decimals: 8,
     location: {

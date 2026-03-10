@@ -1,17 +1,16 @@
-import type { TLocation } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TRouterAsset } from '../types';
 import { supportsExchangePair } from './supportsExchangePair';
 
 const mlA = { foo: 'bar' } as unknown as TLocation;
 const mlB = { baz: 'qux' } as unknown as TLocation;
 const mlc = { quux: 'corge' } as unknown as TLocation;
 
-const assetA: TRouterAsset = { symbol: 'ABC', assetId: '1', location: mlA, decimals: 12 };
-const assetA_alt: TRouterAsset = { symbol: 'abc', assetId: '1', location: mlA, decimals: 12 };
-const assetB: TRouterAsset = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
-const assetC: TRouterAsset = { symbol: 'ZZZ', assetId: '9', decimals: 12, location: mlc };
+const assetA: TAssetInfo = { symbol: 'ABC', assetId: '1', location: mlA, decimals: 12 };
+const assetA_alt: TAssetInfo = { symbol: 'abc', assetId: '1', location: mlA, decimals: 12 };
+const assetB: TAssetInfo = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
+const assetC: TAssetInfo = { symbol: 'ZZZ', assetId: '9', decimals: 12, location: mlc };
 
 vi.mock('@paraspell/sdk', async (importActual) => ({
   ...(await importActual()),

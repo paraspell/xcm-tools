@@ -340,20 +340,12 @@ describe('HydrationExchange', () => {
         isOmni: true,
         assets: [
           {
-            symbol: 'ABC',
-            assetId: '1',
-            location: {
-              parents: 0,
-              interior: 'Here',
-            },
+            parents: 0,
+            interior: 'Here',
           },
           {
-            symbol: 'XYZ',
-            assetId: '2',
-            location: {
-              parents: 1,
-              interior: 'Here',
-            },
+            parents: 1,
+            interior: 'Here',
           },
         ],
         pairs: [],

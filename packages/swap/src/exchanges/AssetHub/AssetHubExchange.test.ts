@@ -53,7 +53,7 @@ describe('AssetHubExchange', () => {
 
     baseSwapOptions = {
       papiApi: papiApi,
-      assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
+      assetFrom: { symbol: 'ASSET1', decimals: 10, isNative: true, location: assetFromML },
       assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
       amount: 1000n,
       senderAddress: 'sender',

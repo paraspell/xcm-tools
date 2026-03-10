@@ -38,6 +38,11 @@ export const resolveAssets = (
       : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
   if (!assetFromExchange) {
+    if (!originSpecified && findAssetInfo(dex.chain, currencyFrom, null)) {
+      throw new RoutingResolutionError(
+        `Currency from ${JSON.stringify(currencyFrom)} exists in ${dex.chain} but is not swappable on ${dex.exchangeChain}.`,
+      );
+    }
     throw new RoutingResolutionError(
       `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.exchangeChain}.`,
     );

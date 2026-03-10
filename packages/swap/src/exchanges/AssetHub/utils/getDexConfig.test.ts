@@ -49,12 +49,7 @@ describe('getDexConfig', () => {
 
     const cfg = await getDexConfig(apiMock, 'Acala');
 
-    expect(cfg.assets).toEqual(
-      expect.arrayContaining([
-        { symbol: 'DOT', decimals: 12, assetId: '1', location: DOT_ML },
-        { symbol: 'ACA', decimals: 12, assetId: '2', location: ACA_ML },
-      ]),
-    );
+    expect(cfg.assets).toEqual(expect.arrayContaining([DOT_ML, ACA_ML]));
     expect(cfg.assets.length).toBe(2);
 
     expect(cfg.pairs).toEqual([]);
@@ -104,11 +99,7 @@ describe('getDexConfig', () => {
 
     expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', assetOriginalMl);
     expect(cfg.assets.length).toBe(1);
-    expect(cfg.assets).toEqual(
-      expect.arrayContaining([
-        { symbol: 'SPECIAL', decimals: 12, assetId: 'sp_id', location: assetOriginalMl },
-      ]),
-    );
+    expect(cfg.assets).toEqual(expect.arrayContaining([assetOriginalMl]));
 
     expect(cfg.pairs).toEqual([]);
     expect(cfg.isOmni).toBe(true);
@@ -123,7 +114,7 @@ describe('getDexConfig', () => {
     const cfg = await getDexConfig(apiMock, 'Acala');
 
     expect(cfg.assets.length).toBe(1);
-    expect(cfg.assets[0].symbol).toBe('DOT');
+    expect(cfg.assets[0]).toEqual(DOT_ML);
     expect(cfg.isOmni).toBe(true);
     expect(cfg.pairs).toEqual([]);
   });

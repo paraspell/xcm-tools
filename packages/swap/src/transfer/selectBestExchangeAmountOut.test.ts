@@ -1,7 +1,8 @@
+import type { TAssetInfo } from '@paraspell/sdk';
 import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
+import type { TGetBestAmountOutOptions } from '../types';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
@@ -29,8 +30,8 @@ describe('selectBestExchangeAmountOut', () => {
       async (options, _originApi, computeAmountOut) => {
         const result = await computeAmountOut(
           fakeDex,
-          'assetFrom' as unknown as TRouterAsset,
-          'assetTo' as unknown as TRouterAsset,
+          'assetFrom' as unknown as TAssetInfo,
+          'assetTo' as unknown as TAssetInfo,
           options,
         );
         expect(result).toBe(300n);

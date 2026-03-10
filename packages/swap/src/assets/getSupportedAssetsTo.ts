@@ -1,4 +1,4 @@
-import type { TExchangeInput } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk';
 import {
   EXCHANGE_CHAINS,
   getAssets,
@@ -8,7 +8,6 @@ import {
   type TChain,
 } from '@paraspell/sdk';
 
-import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 /**
@@ -22,7 +21,7 @@ import { getExchangeAssets } from './getExchangeConfig';
 export const getSupportedAssetsTo = (
   exchange: TExchangeInput,
   to: TChain | undefined,
-): TRouterAsset[] => {
+): TAssetInfo[] => {
   if (exchange === undefined) {
     const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
       getExchangeAssets(exchangeChain),

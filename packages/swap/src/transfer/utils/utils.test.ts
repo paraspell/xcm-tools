@@ -1,6 +1,6 @@
 // Unit tests for transfer utils
 
-import type { TPapiApi, TPapiTransaction, TSubstrateChain } from '@paraspell/sdk';
+import type { TAssetInfo, TPapiApi, TPapiTransaction, TSubstrateChain } from '@paraspell/sdk';
 import { createChainClient } from '@paraspell/sdk';
 import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -11,7 +11,6 @@ import type {
   TBuildFromExchangeTxOptions,
   TBuildToExchangeTxOptions,
   TExchangeInfo,
-  TRouterAsset,
 } from '../../types';
 import {
   buildFromExchangeExtrinsic,
@@ -56,14 +55,14 @@ describe('transfer utils', () => {
   let parachainApi: ApiPromise;
   let relaychainApi: TPapiApi;
 
-  const astrAsset: TRouterAsset = {
+  const astrAsset: TAssetInfo = {
     symbol: 'ASTR',
     decimals: 12,
     assetId: '0x1234567890abcdef',
     location: { parents: 1, interior: 'Here' },
   };
 
-  const glmrAsset: TRouterAsset = {
+  const glmrAsset: TAssetInfo = {
     symbol: 'GLMR',
     decimals: 12,
     assetId: '0xabcdef1234567890',

@@ -10,14 +10,13 @@ import {
   UnsupportedOperationError,
 } from '@paraspell/sdk';
 
-import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAsset = (
   exchange: TExchangeChain,
   currency: TCurrencyInput,
   throwOnDuplicateSymbol = false,
-): TRouterAsset | null => {
+): TAssetInfo | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
     Array.isArray(currency)
@@ -29,10 +28,10 @@ export const getExchangeAsset = (
 
   const assets = getExchangeAssets(exchange);
 
-  const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TAssetInfo[];
-  const otherAssets = assets.filter((asset) => !('isNative' in asset)) as TAssetInfo[];
+  const nativeAssets = assets.filter((asset) => asset.isNative);
+  const otherAssets = assets.filter((asset) => !asset.isNative);
 
-  let asset: TRouterAsset | undefined;
+  let asset: TAssetInfo | undefined;
   if ('symbol' in currency) {
     if (!isSymbolSpecifier(currency.symbol)) {
       const matches = findBestMatches(assets, currency.symbol);

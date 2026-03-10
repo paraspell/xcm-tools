@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/sdk';
 import * as sdkPapi from '@paraspell/sdk';
 import { findAssetInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -5,7 +6,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import * as assets from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
-import type { TRouterAsset, TTransferOptions } from '../../types';
+import type { TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import { determineFeeCalcAddress } from './utils';
@@ -24,7 +25,7 @@ vi.mock('@paraspell/sdk', async (importActual) => ({
 }));
 
 describe('prepareTransformedOptions', () => {
-  const acaAsset: TRouterAsset = {
+  const acaAsset: TAssetInfo = {
     symbol: 'ACA',
     decimals: 8,
     location: {
@@ -33,7 +34,7 @@ describe('prepareTransformedOptions', () => {
     },
   };
 
-  const astrAsset: TRouterAsset = {
+  const astrAsset: TAssetInfo = {
     symbol: 'ASTR',
     decimals: 8,
     location: {
@@ -107,7 +108,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeChain;
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAssetInfo);
+    vi.mocked(findAssetInfo).mockReturnValue(null);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(undefined);
     vi.mocked(assets.supportsExchangePair).mockReturnValue(true);
 

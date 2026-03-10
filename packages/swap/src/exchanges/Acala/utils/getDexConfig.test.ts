@@ -91,7 +91,13 @@ describe('getDexConfig', () => {
   it('returns assets, direct pairs, and synthetic pairs', async () => {
     const cfg = await getDexConfig({} as ApiPromise, 'Acala');
 
-    expect(cfg.assets.map((a) => a.symbol).sort()).toEqual(['ACA', 'ASTR', 'DOT']);
+    expect(cfg.assets.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))).toEqual(
+      [
+        { Here: '' },
+        { parents: 1, interior: 'Here' },
+        { parents: 1, interior: { X1: { Parachain: 2006 } } },
+      ].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
+    );
 
     const ACA_KEY = { Here: '' };
     const DOT_KEY = { parents: 1, interior: 'Here' };
