@@ -1,9 +1,9 @@
+import { bridgeInfoFor } from '@snowbridge/registry'
 import type { TAssetInfo, TChainAssetsInfo } from '../src'
-import { assetRegistryFor } from '@snowbridge/registry'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { Parents } from '@paraspell/sdk-common'
 
-type SnowbridgeNetwork = Parameters<typeof assetRegistryFor>[0]
+type SnowbridgeNetwork = Parameters<typeof bridgeInfoFor>[0]
 
 const GC_JUNCTION = (chainId: number) => ({
   GlobalConsensus: { Ethereum: { chainId } }
@@ -15,10 +15,10 @@ const DEFAULT_ED = '1'
 export const fetchEthereumAssetsForNetwork = async (
   network: SnowbridgeNetwork
 ): Promise<TAssetInfo[]> => {
-  const registry = assetRegistryFor(network)
+  const { registry } = bridgeInfoFor(network)
 
   const ethereumChainId = registry.ethChainId
-  const snowbridgeAssets = registry.ethereumChains[ethereumChainId].assets
+  const snowbridgeAssets = registry.ethereumChains[`ethereum_${ethereumChainId}`].assets
 
   return Object.values(snowbridgeAssets).map(asset => ({
     symbol: asset.symbol,

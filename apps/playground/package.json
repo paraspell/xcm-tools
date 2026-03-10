@@ -40,7 +40,7 @@
     "@tabler/icons-react": "^3.37.1",
     "axios": "^1.13.5",
     "clsx": "^2.1.1",
-    "ethers": "6.15.0",
+    "ethers": "^6.16.0",
     "highlight.js": "^11.11.1",
     "nuqs": "^2.8.8",
     "polkadot-api": "^1.23.3",
@@ -48,7 +48,7 @@
     "react-confetti": "^6.4.0",
     "react-dom": "^19.2.4",
     "react-router": "^7.13.1",
-    "viem": "2.46.3",
+    "viem": "^2.47.1",
     "web3": "^4.16.0",
     "web3-validator": "^2.0.6",
     "zod": "^4.3.6"

@@ -9,7 +9,7 @@ import {
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
 import { toPolkadotV2 } from '@snowbridge/api'
-import { assetRegistryFor, environmentFor } from '@snowbridge/registry'
+import { bridgeInfoFor } from '@snowbridge/registry'
 
 import type { TPjsEvmBuilderOptions } from '../types'
 import { isEthersSigner } from '../utils'
@@ -56,14 +56,12 @@ export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
 
   const amount = abstractDecimals(currency.amount, ethAsset.decimals, api)
 
-  const env = environmentFor('polkadot_mainnet')
-  const context = createContext(provider, env)
+  const { environment, registry } = bridgeInfoFor('polkadot_mainnet')
+  const context = createContext(provider, environment)
 
   const destParaId = getParaId(to)
 
   assertHasId(ethAsset)
-
-  const registry = assetRegistryFor('polkadot_mainnet')
 
   const fee = await toPolkadotV2.getDeliveryFee(
     {

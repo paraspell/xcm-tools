@@ -1,10 +1,12 @@
 import { assertHasId, findAssetInfoOrThrow } from '@paraspell/sdk-core'
 import { WETH9__factory } from '@snowbridge/contract-types'
-import { environmentFor } from '@snowbridge/registry'
+import { bridgeInfoFor } from '@snowbridge/registry'
 import type { Signer } from 'ethers'
 
 export const approveToken = async (signer: Signer, amount: bigint, symbol: string) => {
-  const { gatewayContract } = environmentFor('polkadot_mainnet')
+  const {
+    environment: { gatewayContract }
+  } = bridgeInfoFor('polkadot_mainnet')
 
   const asset = findAssetInfoOrThrow('Ethereum', { symbol }, null)
 

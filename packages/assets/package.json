@@ -46,12 +46,12 @@
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@snowbridge/registry": "^0.3.2",
+    "@snowbridge/registry": "^0.4.4",
     "@vitest/coverage-v8": "^4.0.18",
     "dotenv": "^17.3.1",
     "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.3.0",
     "ts-node": "^10.9.2",
-    "viem": "2.46.3"
+    "viem": "^2.47.1"
   }
 }

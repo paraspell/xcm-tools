@@ -37,12 +37,12 @@
   },
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "^0.3.2",
-    "@snowbridge/base-types": "^0.3.2",
-    "@snowbridge/contract-types": "^0.3.2",
-    "@snowbridge/registry": "^0.3.2",
-    "ethers": "6.15.0",
-    "viem": "2.46.3"
+    "@snowbridge/api": "^0.4.4",
+    "@snowbridge/base-types": "^0.4.4",
+    "@snowbridge/contract-types": "^0.4.4",
+    "@snowbridge/registry": "^0.4.4",
+    "ethers": "^6.16.0",
+    "viem": "^2.47.1"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",
