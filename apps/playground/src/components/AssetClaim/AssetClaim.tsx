@@ -39,7 +39,8 @@ import AssetClaimForm from './AssetClaimForm';
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const AssetClaim = () => {
-  const { selectedAccount, apiType, getSigner } = useWallet();
+  const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
+    useWallet();
 
   const [
     outputAlertOpened,
@@ -76,6 +77,13 @@ const AssetClaim = () => {
       method,
       localAccount,
     } = formValues;
+
+    if (!selectedAccount) {
+      if (accounts.length > 0) {
+        await changeAccount();
+        return;
+      }
+    }
 
     const senderAddress = resolveSenderAddress(localAccount, selectedAccount);
 

@@ -56,7 +56,7 @@ import { TransferStepper } from './TransferStepper';
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
 export const XcmRouter = () => {
-  const { selectedAccount, getSigner } = useWallet();
+  const { selectedAccount, accounts, changeAccount, getSigner } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
@@ -673,6 +673,10 @@ export const XcmRouter = () => {
   ) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
+      if (accounts.length > 0) {
+        await changeAccount();
+        return;
+      }
       showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
