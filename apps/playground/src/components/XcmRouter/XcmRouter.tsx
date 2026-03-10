@@ -155,10 +155,10 @@ export const XcmRouter = () => {
               : '';
           errorMessage += serverMessage;
         }
-        throw new Error(errorMessage);
+        throw new Error(errorMessage, { cause: error });
       } else if (error instanceof Error) {
         console.error(error);
-        throw new Error(error.message);
+        throw new Error(error.message, { cause: error });
       }
     }
   };

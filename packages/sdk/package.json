@@ -42,7 +42,7 @@
     "@paraspell/sdk-core": "workspace:*",
     "@polkadot-labs/hdkd": "^0.0.26",
     "@polkadot-labs/hdkd-helpers": "^0.0.27",
-    "viem": "2.46.3"
+    "viem": "^2.47.1"
   },
   "peerDependencies": {
     "polkadot-api": ">= 1.23.3 < 2"

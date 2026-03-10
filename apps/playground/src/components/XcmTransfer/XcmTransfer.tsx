@@ -359,7 +359,7 @@ export const XcmTransfer = () => {
         newBatch.splice(currentPage - 1, 1);
 
         // Decide which page to show next
-        let nextPage = 1;
+        let nextPage;
         if (currentPage > 1) {
           nextPage = currentPage - 1;
         } else if (newBatch.length > 0) {

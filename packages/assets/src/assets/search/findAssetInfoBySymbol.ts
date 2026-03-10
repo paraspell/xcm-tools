@@ -77,7 +77,7 @@ export const findAssetInfoBySymbol = (
     } else if (type === 'Foreign') {
       const lowerSymbol = value.toLowerCase()
 
-      let otherAssetsMatches: TAssetInfo[] = []
+      let otherAssetsMatches: TAssetInfo[]
 
       if (destination && isExternalChain(destination)) {
         return findEthMatch(value, otherAssets)
@@ -126,8 +126,8 @@ export const findAssetInfoBySymbol = (
   } else {
     const lowerSymbol = symbol.toLowerCase()
 
-    let otherAssetsMatches: TAssetInfo[] = []
-    let nativeAssetsMatches: TAssetInfo[] = []
+    let otherAssetsMatches: TAssetInfo[]
+    let nativeAssetsMatches: TAssetInfo[]
 
     if (destination && isExternalChain(destination)) {
       return findEthMatch(symbol, otherAssets)

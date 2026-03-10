@@ -1,9 +1,9 @@
 import type { TAssetInfo } from '@paraspell/sdk-core'
 import { findAssetInfoOrThrow } from '@paraspell/sdk-core'
-import type { Environment } from '@snowbridge/base-types'
+import type { BridgeInfo } from '@snowbridge/base-types'
 import type { WETH9 } from '@snowbridge/contract-types'
 import { WETH9__factory } from '@snowbridge/contract-types'
-import { environmentFor } from '@snowbridge/registry'
+import { bridgeInfoFor } from '@snowbridge/registry'
 import type { Signer } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -19,12 +19,14 @@ describe('approveToken', () => {
   const amount = 1000n
 
   const fakeEnv = {
-    gatewayContract: gatewayAddress
-  } as Environment
+    environment: {
+      gatewayContract: gatewayAddress
+    }
+  } as BridgeInfo
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(environmentFor).mockReturnValue(fakeEnv)
+    vi.mocked(bridgeInfoFor).mockReturnValue(fakeEnv)
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: tokenSymbol,
       assetId: tokenAddress

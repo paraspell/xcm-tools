@@ -41,7 +41,7 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^2.0.0",
-    "viem": "2.46.3"
+    "viem": "^2.47.1"
   },
   "peerDependencies": {
     "@paraspell/swap": "^12.0.0"

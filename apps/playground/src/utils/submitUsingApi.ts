@@ -38,11 +38,13 @@ export const fetchFromApi = async <T, TResponse = unknown>(
             : '';
         errorMessage += serverMessage;
       }
-      throw new Error(errorMessage);
+      throw new Error(errorMessage, { cause: error });
     } else if (error instanceof Error) {
-      throw new Error(error.message);
+      throw new Error(error.message, { cause: error });
     }
-    throw new Error('An unknown error occurred while fetching data.');
+    throw new Error('An unknown error occurred while fetching data.', {
+      cause: error,
+    });
   }
 };
 
