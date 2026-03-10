@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.6...sdk-core-v12.8.7) (2026-03-10)
+
+
+### Code Refactoring
+
+* **swap:** Store only location references in swap assets map 🔑 ([#1737](https://github.com/paraspell/xcm-tools/issues/1737)) ([c50c83b](https://github.com/paraspell/xcm-tools/commit/c50c83bb8293be87c66fa69d199c416befd601e2))
+
 ## [12.8.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.5...sdk-core-v12.8.6) (2026-03-09)
 
 
