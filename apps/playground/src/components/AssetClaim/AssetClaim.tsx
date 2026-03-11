@@ -38,7 +38,7 @@ import { AssetClaimForm } from './AssetClaimForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const AssetClaim = () => {
+export const AssetClaim = () => {
   const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
     useWallet();
 

@@ -42,8 +42,9 @@ import { XcmUtilsForm } from './XcmUtilsForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const XcmUtils = () => {
-  const { selectedAccount, accounts, changeAccount, apiType } = useWallet();
+export const XcmUtils = () => {
+  const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
+    useWallet();
 
   const [
     outputAlertOpened,

@@ -39,17 +39,17 @@ type UseReactiveDotWalletResult = {
   ) => PolkadotSigner;
 };
 
-function toWalletAccounts(
+const toWalletAccounts = (
   dotAccounts: TDotAccount[],
   walletName: string,
-): TWalletAccount[] {
+): TWalletAccount[] => {
   return dotAccounts
     .filter((a) => a.wallet.name === walletName)
     .map((a) => ({
       address: a.address,
       meta: { name: a.name, source: walletName },
     }));
-}
+};
 
 export const useReactiveDotWallet = ({
   shouldOpenAccountsModal,

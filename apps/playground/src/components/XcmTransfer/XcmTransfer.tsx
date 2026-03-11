@@ -58,7 +58,7 @@ import { XcmTransferForm } from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const XcmTransfer = () => {
+export const XcmTransfer = () => {
   const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
     useWallet();
 

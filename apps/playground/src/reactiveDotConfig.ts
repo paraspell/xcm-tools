@@ -1,5 +1,8 @@
 import { defineConfig } from '@reactive-dot/core';
-import { InjectedWalletProvider } from '@reactive-dot/core/wallets.js';
+import {
+  InjectedWalletProvider,
+  type WalletProvider,
+} from '@reactive-dot/core/wallets.js';
 import { LedgerWallet } from '@reactive-dot/wallet-ledger';
 import { MimirWalletProvider } from '@reactive-dot/wallet-mimir';
 
@@ -9,6 +12,6 @@ export const config = defineConfig({
   wallets: [
     new InjectedWalletProvider(),
     new LedgerWallet(),
-    new MimirWalletProvider(),
+    new MimirWalletProvider() as unknown as WalletProvider,
   ],
 });

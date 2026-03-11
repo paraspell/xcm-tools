@@ -7,9 +7,9 @@ export type ChainSpecData = {
   properties: unknown;
 };
 
-export function useLedgerChainSpec(
+export const useLedgerChainSpec = (
   sourceChain?: TSubstrateChain,
-): ChainSpecData | undefined {
+): ChainSpecData | undefined => {
   const [spec, setSpec] = useState<ChainSpecData | undefined>(undefined);
 
   useEffect(() => {
@@ -44,4 +44,4 @@ export function useLedgerChainSpec(
   }, [sourceChain]);
 
   return spec;
-}
+};
