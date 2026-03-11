@@ -1,20 +1,16 @@
-import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TLocation } from '@paraspell/sdk-core'
+import { getNativeAssetSymbol, type TSubstrateChain } from '@paraspell/sdk-core'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { computeFeeFromDryRunPjs } from './computeFeeFromDryRunPjs'
-import { getLocationTokenIdPjs } from './getLocationTokenIdPjs'
+import { computeOriginFee } from './computeOriginFee'
+import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core')
 
-vi.mock('./getLocationTokenIdPjs', () => ({
-  getLocationTokenIdPjs: vi.fn()
-}))
+vi.mock('./getLocationTokenId')
 
-describe('computeFeeFromDryRunPjs', () => {
-  const mockChain = {} as TSubstrateChain
+describe('computeOriginFee', () => {
+  const mockChain: TSubstrateChain = 'Acala'
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -48,16 +44,16 @@ describe('computeFeeFromDryRunPjs', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getLocationTokenIdPjs).mockImplementation((id: TLocation) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: TLocation) =>
       Object.keys(id.interior)[0] === 'X1' ? 'nativeSymbol' : null
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(700n) // 500 (delivery fee) + 200 (execution fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
-    expect(getLocationTokenIdPjs).toHaveBeenCalledTimes(2)
+    expect(getLocationTokenId).toHaveBeenCalledTimes(2)
   })
 
   it('should return only the execution fee if there are no matching delivery fees', () => {
@@ -81,13 +77,13 @@ describe('computeFeeFromDryRunPjs', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getLocationTokenIdPjs).mockReturnValue(null)
+    vi.mocked(getLocationTokenId).mockReturnValue(null)
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(200n) // Only execution fee
-    expect(getLocationTokenIdPjs).toHaveBeenCalledWith(
+    expect(getLocationTokenId).toHaveBeenCalledWith(
       { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
       mockChain
     )
@@ -120,12 +116,12 @@ describe('computeFeeFromDryRunPjs', () => {
     }
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
-    vi.mocked(getLocationTokenIdPjs).mockImplementation((id: TLocation) =>
+    vi.mocked(getLocationTokenId).mockImplementation((id: TLocation) =>
       Object.keys(id.interior)[0] === 'X2' ? 'nativeSymbol' : null
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(500n) // 300 (delivery fee) + 200 (execution fee)
   })
@@ -146,11 +142,11 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 0n
-    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(0n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
-    expect(getLocationTokenIdPjs).not.toHaveBeenCalled()
+    expect(getLocationTokenId).not.toHaveBeenCalled()
   })
 
   it('should return only execution fee if no delivery fees are found', () => {
@@ -163,7 +159,7 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 300n
-    const result = computeFeeFromDryRunPjs(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(300n) // Only execution fee
   })

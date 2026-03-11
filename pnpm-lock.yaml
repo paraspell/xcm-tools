@@ -84,6 +84,9 @@ importers:
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      '@paraspell/sdk-dedot':
+        specifier: workspace:*
+        version: link:../../packages/sdk-dedot
       '@paraspell/sdk-pjs':
         specifier: workspace:*
         version: link:../../packages/sdk-pjs
@@ -123,6 +126,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dedot:
+        specifier: ^1.1.1
+        version: 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
       ethers:
         specifier: ^6.16.0
         version: 6.16.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -362,7 +368,7 @@ importers:
         version: 9.5.4(typescript@5.9.3)(webpack@5.104.1(@swc/core@1.15.17(@swc/helpers@0.5.17)))
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -676,7 +682,7 @@ importers:
         version: 9.5.4(typescript@5.9.3)(webpack@5.104.1(@swc/core@1.15.17(@swc/helpers@0.5.17)))
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -731,7 +737,7 @@ importers:
         version: 6.3.0(rollup@4.59.0)(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
       viem:
         specifier: ^2.47.1
         version: 2.47.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
@@ -783,7 +789,7 @@ importers:
         version: 6.3.0(rollup@4.59.0)(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
 
   packages/sdk:
     dependencies:
@@ -965,7 +971,53 @@ importers:
         version: 27.0.2
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+
+  packages/sdk-dedot:
+    dependencies:
+      '@paraspell/sdk-core':
+        specifier: workspace:*
+        version: link:../sdk-core
+      '@polkadot/keyring':
+        specifier: '>= 13'
+        version: 14.0.1(@polkadot/util-crypto@14.0.1(@polkadot/util@14.0.1))(@polkadot/util@14.0.1)
+      dedot:
+        specifier: '>= 1.1.1'
+        version: 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+    devDependencies:
+      '@babel/plugin-syntax-import-attributes':
+        specifier: ^7.28.6
+        version: 7.28.6(@babel/core@7.29.0)
+      '@babel/preset-env':
+        specifier: ^7.29.0
+        version: 7.29.0(@babel/core@7.29.0)
+      '@codecov/rollup-plugin':
+        specifier: ^1.9.1
+        version: 1.9.1(rollup@4.59.0)
+      '@rollup/plugin-babel':
+        specifier: ^6.1.0
+        version: 6.1.0(@babel/core@7.29.0)(@types/babel__core@7.20.5)(rollup@4.59.0)
+      '@rollup/plugin-json':
+        specifier: ^6.1.0
+        version: 6.1.0(rollup@4.59.0)
+      '@rollup/plugin-typescript':
+        specifier: ^12.3.0
+        version: 12.3.0(rollup@4.59.0)(tslib@2.8.1)(typescript@5.9.3)
+      '@vitest/coverage-v8':
+        specifier: ^4.0.18
+        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.4.0)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(sugarss@5.0.0(postcss@8.5.6))(terser@5.40.0)(yaml@2.8.0))
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+      rollup:
+        specifier: ^4.59.0
+        version: 4.59.0
+      rollup-plugin-dts:
+        specifier: ^6.3.0
+        version: 6.3.0(rollup@4.59.0)(typescript@5.9.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -1186,7 +1238,7 @@ importers:
         version: 6.3.0(rollup@4.59.0)(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -1223,7 +1275,7 @@ importers:
         version: 6.3.0(rollup@4.59.0)(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
 
 packages:
 
@@ -1607,11 +1659,6 @@ packages:
   '@babel/helpers@7.28.6':
     resolution: {integrity: sha512-xOBvwq86HHdB7WUDTfKfT/Vuxh7gElQ+Sfti2Cy6yIWNW05P8iUslOVcZ4/sKbE+/jQaukQAdz/gf3724kYdqw==}
     engines: {node: '>=6.9.0'}
-
-  '@babel/parser@7.28.5':
-    resolution: {integrity: sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
 
   '@babel/parser@7.29.0':
     resolution: {integrity: sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==}
@@ -2013,16 +2060,8 @@ packages:
     resolution: {integrity: sha512-YA6Ma2KsCdGb+WC6UpBVFJGXL58MDA6oyONbjyF/+5sBgxY/dwkhLogbMT2GXXyU84/IhRw/2D1Os1B/giz+BQ==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/traverse@7.28.6':
-    resolution: {integrity: sha512-fgWX62k02qtjqdSNTAGxmKYY/7FSL9WAS1o2Hu5+I5m9T0yxZzr4cnrfXQ/MX0rIifthCSs6FKTlzYbJcPtMNg==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/traverse@7.29.0':
     resolution: {integrity: sha512-4HPiQr0X7+waHfyXPZpWPfWL/J7dcN1mx9gL6WdQVMbPnF3+ZhSMs8tCxN7oHddJE9fhNE7+lxdnlyemKfJRuA==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/types@7.28.5':
-    resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@7.29.0':
@@ -2227,6 +2266,62 @@ packages:
 
   '@darwinia/types@2.8.10':
     resolution: {integrity: sha512-Iz1Bz06doQ8WXSiVmGIANBxYOh8s3pMUfL97rnxq55MH2Qf6291GzYv9Or18GQ3A0j7yhkBbqnFN6Q8BDwzLYQ==}
+
+  '@dedot/api@1.1.1':
+    resolution: {integrity: sha512-5j0TnskwT+Fup1ri+hn2lDu0dZoBrEVVxkn5XbfsLlueJExq2Qz+s0ytFviGUSvLGtwwRvMNVxA3PoY6gwD8sg==}
+    engines: {node: '>=18'}
+
+  '@dedot/cli@1.1.1':
+    resolution: {integrity: sha512-tPrP61rxFf+6WhomI/95u/0dVhc+oQH8Qa5wQfVP9E/TsJNrQd+oExiQLlipPAJvwzSo5+xQTNUBKvrAza6D2Q==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@dedot/codecs@1.1.1':
+    resolution: {integrity: sha512-Io2Yq905dZ4qXBnoZd/YdwTAJzQGIaEPEaIuLRsXDLnL2kKh/luzj9n8c1uR7/N+Msg688pyoofnrWJONJcHgQ==}
+    engines: {node: '>=18'}
+
+  '@dedot/codegen@1.1.1':
+    resolution: {integrity: sha512-IpbPdvLAWVo/Ox19MZCP3mP9xUCHd44p7wgjhIhrB0XcjR6VkUii/wq0/YoIkaU6ibBgMkurTWJK+8cwHr0yew==}
+    engines: {node: '>=18'}
+
+  '@dedot/contracts@1.1.1':
+    resolution: {integrity: sha512-3rGtDDXtg4UbHjLycITUoYbT6nNyxYJWNvgGcUbkNpJ5vwnIkLb25u/cCxv3lDvKA0XCyDYzrUVrIQR7Lb8Wfg==}
+    engines: {node: '>=18'}
+
+  '@dedot/merkleized-metadata@1.1.1':
+    resolution: {integrity: sha512-fY1viJZEkKMVCB7tXhcenM27fvbyJqOy1FbKYXDDMKTpm53V9Nm9ay1MCFF0gcRZm5Mw3Zv4To6cbXOEXiD5Zw==}
+    engines: {node: '>=18'}
+
+  '@dedot/providers@1.1.1':
+    resolution: {integrity: sha512-jpPJHvQjmCGWLr0ApD1vbaxC5cxweoVesjKvHyc67Dhow/dt22Om5PRMJIjoyYfIn/7PaHGuT28vqv1eAVXBWg==}
+    engines: {node: '>=18'}
+
+  '@dedot/runtime-specs@1.1.1':
+    resolution: {integrity: sha512-fhuH0R3UWlBK2HMzf+MbYyFYxggH1fI8yCq0SJAtoC7Mhz+5kY9q1000iFjNTgmrl3AD7dSvrH/sF23TCfn/zQ==}
+    engines: {node: '>=18'}
+
+  '@dedot/shape@1.1.1':
+    resolution: {integrity: sha512-bYwpMKnGfPtyIlJjbAO8637YovDb4xTFl3XwQ9hQHJvhUfPaIYSkEBIISmLy+vBXq8PrI3ZlGRff2/ChbAs2Pw==}
+    engines: {node: '>=18'}
+
+  '@dedot/smoldot@1.1.1':
+    resolution: {integrity: sha512-HQyCoLZ7KCjwKBBySLfESkvSPkAajGbsraWuByxfH0iky6olgLjLhNiMlomlN8AKuxuuNbiZ+xWknQkNxMIExQ==}
+    engines: {node: '>=18'}
+
+  '@dedot/storage@1.1.1':
+    resolution: {integrity: sha512-aQvvz22RLYFA+6w9528LPBA47PmxtkJ7GQo5Vk9n5dphd0HTkXvSrCK7RduBqG5kSbVbGMmZ5MH8OCPV5vna6A==}
+    engines: {node: '>=18'}
+
+  '@dedot/types@1.1.1':
+    resolution: {integrity: sha512-yXedpbPcNOejaWZu0FDhGbDnjHSXfyFJvOO2dELYIkKNVjBA5h/C0u4xrYFeo470HivCRKOQHrVqVJSiggS/Hg==}
+    engines: {node: '>=18'}
+
+  '@dedot/utils@1.1.1':
+    resolution: {integrity: sha512-lwGWBPt7GVlqcSkRTQglxRQkyc51xz40edf/VxzIQqHtXtxEosXSQIbARGX+yXl2uLwKT01htqTCbRxEc1S4nA==}
+    engines: {node: '>=18'}
+
+  '@dedot/wasm@0.1.0':
+    resolution: {integrity: sha512-IdsH+ZaV0YS8tpmlYiPtwPfKj3qv5CbUv/wftdRuTdcmOosylphSMU06rdvjspehWIJ9dgOBIYS1ocatPHmm4Q==}
 
   '@dependents/detective-less@5.0.1':
     resolution: {integrity: sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ==}
@@ -5802,10 +5897,6 @@ packages:
     resolution: {integrity: sha512-cGZWo7K5eRRQCRl2LrcyCYsrc3lRbTlixZh3AzgU8uX4wASVGRlNWi/Hf4TtHNe1ExCDmxabJzdIsABIfrr7xw==}
     engines: {node: '>=18'}
 
-  '@polkadot/x-ws@13.5.7':
-    resolution: {integrity: sha512-ZdmFhL3gDMRxJXqN7a88BIU1sm2IgAFnn+jMcjjJXwP5qEuP9ejwPHQL0EFOw6sqtylfQUFuWvahvIZT7MbQ5g==}
-    engines: {node: '>=18'}
-
   '@polkadot/x-ws@13.5.9':
     resolution: {integrity: sha512-NKVgvACTIvKT8CjaQu9d0dERkZsWIZngX/4NVSjc01WHmln4F4y/zyBdYn/Z2V0Zw28cISx+lB4qxRmqTe7gbg==}
     engines: {node: '>=18'}
@@ -8679,6 +8770,11 @@ packages:
       babel-plugin-macros:
         optional: true
 
+  dedot@1.1.1:
+    resolution: {integrity: sha512-p3mz9U55XpBoUEEOIMUw/bZOXTXrxhZxX3hY0KlirX0KlS1nnXxXDukkGyBKL60l5EAP0VOknrMdwMzf9Q3++A==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   deep-extend@0.6.0:
     resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}
     engines: {node: '>=4.0.0'}
@@ -8753,6 +8849,9 @@ packages:
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
+
+  deshape@0.1.0:
+    resolution: {integrity: sha512-6Z941WJcKPE2nMz2lqq5H3OlOAgxECQqOj/OtHluaqgM8ajKESt/vcexMkUw7JGzeuLVKXkGe7+vsCC71NC9SQ==}
 
   destr@2.0.5:
     resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
@@ -9623,10 +9722,6 @@ packages:
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
-
-  get-east-asian-width@1.3.0:
-    resolution: {integrity: sha512-vpeMIQKxczTD/0s2CdEWHcb0eeJe6TFjxb+J5xgX7hScxqrGuyjmv4c1D4A/gelKfyox0gJJwIHF+fLjeaM8kQ==}
-    engines: {node: '>=18'}
 
   get-east-asian-width@1.4.0:
     resolution: {integrity: sha512-QZjmEOC+IT1uk6Rx0sX22V6uHWVwbdbxf1faPqJ1QhLdGgsRGCZoyaQBm/piRdJy/D2um6hM1UP7ZEeQ4EkP+Q==}
@@ -15147,10 +15242,6 @@ snapshots:
       '@babel/template': 7.28.6
       '@babel/types': 7.29.0
 
-  '@babel/parser@7.28.5':
-    dependencies:
-      '@babel/types': 7.29.0
-
   '@babel/parser@7.29.0':
     dependencies:
       '@babel/types': 7.29.0
@@ -15159,7 +15250,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.0
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15186,7 +15277,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.0
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15267,7 +15358,7 @@ snapshots:
       '@babel/helper-globals': 7.28.0
       '@babel/helper-plugin-utils': 7.28.6
       '@babel/helper-replace-supers': 7.28.6(@babel/core@7.29.0)
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15281,7 +15372,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.0
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15338,7 +15429,7 @@ snapshots:
       '@babel/core': 7.29.0
       '@babel/helper-compilation-targets': 7.28.6
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15424,7 +15515,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.28.6
       '@babel/plugin-transform-destructuring': 7.28.5(@babel/core@7.29.0)
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.29.0)
-      '@babel/traverse': 7.28.6
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15646,18 +15737,6 @@ snapshots:
       '@babel/parser': 7.29.0
       '@babel/types': 7.29.0
 
-  '@babel/traverse@7.28.6':
-    dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/generator': 7.29.1
-      '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.29.0
-      '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
-      debug: 4.4.3(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/traverse@7.29.0':
     dependencies:
       '@babel/code-frame': 7.29.0
@@ -15669,11 +15748,6 @@ snapshots:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/types@7.28.5':
-    dependencies:
-      '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
 
   '@babel/types@7.29.0':
     dependencies:
@@ -15918,6 +15992,118 @@ snapshots:
   '@darwinia/types-known@2.8.10': {}
 
   '@darwinia/types@2.8.10': {}
+
+  '@dedot/api@1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@dedot/codecs': 1.1.1
+      '@dedot/providers': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/runtime-specs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/storage': 1.1.1
+      '@dedot/types': 1.1.1
+      '@dedot/utils': 1.1.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@dedot/cli@1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)':
+    dependencies:
+      '@dedot/api': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/codecs': 1.1.1
+      '@dedot/codegen': 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@dedot/wasm': 0.1.0
+      '@polkadot/types-support': 16.5.4
+      ora: 9.1.0
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@dedot/codecs@1.1.1':
+    dependencies:
+      '@dedot/shape': 1.1.1
+      '@dedot/utils': 1.1.1
+
+  '@dedot/codegen@1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)':
+    dependencies:
+      '@dedot/api': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/codecs': 1.1.1
+      '@dedot/contracts': 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@dedot/providers': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/runtime-specs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/types': 1.1.1
+      '@dedot/utils': 1.1.1
+      handlebars: 4.7.8
+      prettier: 3.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@dedot/contracts@1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)':
+    dependencies:
+      '@dedot/api': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/codecs': 1.1.1
+      '@dedot/types': 1.1.1
+      '@dedot/utils': 1.1.1
+      viem: 2.47.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@dedot/merkleized-metadata@1.1.1':
+    dependencies:
+      '@dedot/codecs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/utils': 1.1.1
+
+  '@dedot/providers@1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@dedot/utils': 1.1.1
+      '@polkadot/x-ws': 14.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@dedot/runtime-specs@1.1.1':
+    dependencies:
+      '@dedot/codecs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/types': 1.1.1
+
+  '@dedot/shape@1.1.1':
+    dependencies:
+      '@dedot/utils': 1.1.1
+      deshape: 0.1.0
+
+  '@dedot/smoldot@1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      smoldot: 2.0.40(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@dedot/storage@1.1.1': {}
+
+  '@dedot/types@1.1.1':
+    dependencies:
+      '@dedot/codecs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/utils': 1.1.1
+
+  '@dedot/utils@1.1.1':
+    dependencies:
+      '@noble/hashes': 1.8.0
+      '@scure/base': 1.2.6
+      eventemitter3: 5.0.1
+
+  '@dedot/wasm@0.1.0': {}
 
   '@dependents/detective-less@5.0.1':
     dependencies:
@@ -18512,7 +18698,7 @@ snapshots:
       string-width: 7.2.0
       supports-color: 10.2.2
       terminal-link: 4.0.0
-      ts-node: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
       typescript: 5.9.3
       uuid: 11.1.0
       yaml: 2.8.0
@@ -20493,7 +20679,7 @@ snapshots:
       '@polkadot/util-crypto': 13.5.9(@polkadot/util@13.5.9)
       '@polkadot/x-fetch': 13.5.7
       '@polkadot/x-global': 13.5.9
-      '@polkadot/x-ws': 13.5.7(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/x-ws': 13.5.9(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       eventemitter3: 5.0.1
       mock-socket: 9.3.1
       nock: 13.5.6
@@ -21364,15 +21550,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@polkadot/x-ws@13.5.7(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@polkadot/x-global': 13.5.7
-      tslib: 2.8.1
-      ws: 8.19.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@polkadot/x-ws@13.5.9(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/x-global': 13.5.9
@@ -21668,7 +21845,7 @@ snapshots:
   '@rollup/plugin-typescript@12.3.0(rollup@4.59.0)(tslib@2.8.1)(typescript@5.9.3)':
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.59.0)
-      resolve: 1.22.10
+      resolve: 1.22.11
       typescript: 5.9.3
     optionalDependencies:
       rollup: 4.59.0
@@ -24661,6 +24838,26 @@ snapshots:
 
   dedent@1.7.1: {}
 
+  dedot@1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6):
+    dependencies:
+      '@dedot/api': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/cli': 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@dedot/codecs': 1.1.1
+      '@dedot/contracts': 1.1.1(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@dedot/merkleized-metadata': 1.1.1
+      '@dedot/providers': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/runtime-specs': 1.1.1
+      '@dedot/shape': 1.1.1
+      '@dedot/smoldot': 1.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dedot/types': 1.1.1
+      '@dedot/utils': 1.1.1
+      smoldot: 2.0.40(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
   deep-extend@0.6.0: {}
 
   deep-is@0.1.4: {}
@@ -24714,6 +24911,8 @@ snapshots:
   deprecation@2.3.1: {}
 
   dequal@2.0.3: {}
+
+  deshape@0.1.0: {}
 
   destr@2.0.5: {}
 
@@ -25945,8 +26144,6 @@ snapshots:
       node-source-walk: 7.0.1
 
   get-caller-file@2.0.5: {}
-
-  get-east-asian-width@1.3.0: {}
 
   get-east-asian-width@1.4.0: {}
 
@@ -27283,8 +27480,8 @@ snapshots:
 
   magicast@0.5.1:
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
       source-map-js: 1.2.1
 
   make-dir@4.0.0:
@@ -28983,7 +29180,7 @@ snapshots:
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       module-details-from-path: 1.0.4
-      resolve: 1.22.10
+      resolve: 1.22.11
     transitivePeerDependencies:
       - supports-color
 
@@ -29066,7 +29263,7 @@ snapshots:
       rollup: 4.59.0
       typescript: 5.9.3
     optionalDependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.0
 
   rollup@4.54.0:
     dependencies:
@@ -29649,7 +29846,7 @@ snapshots:
 
   string-width@8.1.0:
     dependencies:
-      get-east-asian-width: 1.3.0
+      get-east-asian-width: 1.4.0
       strip-ansi: 7.1.2
 
   string.prototype.matchall@4.0.12:
@@ -30127,7 +30324,7 @@ snapshots:
       '@ts-morph/common': 0.28.1
       code-block-writer: 13.0.3
 
-  ts-node@10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -30339,7 +30536,7 @@ snapshots:
       mysql2: 3.15.3
       pg: 8.19.0
       sqlite3: 5.1.7
-      ts-node: 10.9.2(@swc/core@1.15.17)(@types/node@25.4.0)(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.15.17(@swc/helpers@0.5.17))(@types/node@25.4.0)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color

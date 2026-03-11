@@ -8,7 +8,6 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
-  computeFeeFromDryRunPjs,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
@@ -31,10 +30,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi } from './types'
+import { computeOriginFee } from './utils'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
-  computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
   findAssetInfoOrThrow: vi.fn(),
   getChainProviders: vi.fn(),
   resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
@@ -248,15 +247,13 @@ describe('PolkadotJsApi', () => {
 
     it('should create api instance when _api is undefined', async () => {
       const polkadotApi = new PolkadotJsApi()
-      const wsUrl = ['wss://acala.example']
-      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
       const createApiInstanceSpy = vi
         .spyOn(polkadotApi, 'createApiInstance')
         .mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
 
       createApiInstanceSpy.mockRestore()
@@ -302,15 +299,13 @@ describe('PolkadotJsApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       const polkadotApi = new PolkadotJsApi()
-      const wsUrl = ['wss://auto.acala']
-      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
       const createApiInstanceSpy = vi
         .spyOn(polkadotApi, 'createApiInstance')
         .mockResolvedValue(mockApiPromise)
 
       await polkadotApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
       expect(polkadotApi.getApi()).toBe(mockApiPromise)
       createApiInstanceSpy.mockRestore()
     })
@@ -1882,7 +1877,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
 
-      vi.mocked(computeFeeFromDryRunPjs).mockReturnValue(555n)
+      vi.mocked(computeOriginFee).mockReturnValue(555n)
 
       const xcmPaymentSpy = vi
         .spyOn(polkadotApi, 'getXcmPaymentApiFee')

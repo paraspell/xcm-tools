@@ -1,11 +1,15 @@
-import type { TAssetInfo } from '@paraspell/assets'
-import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TAssetInfo } from '@paraspell/sdk-core'
+import {
+  getNativeAssetSymbol,
+  getOtherAssets,
+  type TLocation,
+  type TSubstrateChain
+} from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/assets')
+vi.mock('@paraspell/sdk-core')
 
 describe('getLocationTokenId', () => {
   const mockChain: TSubstrateChain = 'Acala'

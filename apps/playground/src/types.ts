@@ -54,8 +54,6 @@ export type EIP6963ProviderDetail = ValueType<
   Awaited<ReturnType<typeof Web3.requestEIP6963Providers>>
 >;
 
-export type TApiType = 'PJS' | 'PAPI';
-
 export type TWalletAccount = {
   address: string;
   meta: {

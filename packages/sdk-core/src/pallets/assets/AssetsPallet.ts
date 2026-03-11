@@ -75,7 +75,12 @@ export class AssetsPallet extends BaseAssetsPallet {
     try {
       balance = await fetchBalance()
     } catch (e) {
-      if (e instanceof Error && e.message.includes('Incompatible runtime entry')) {
+      if (
+        e instanceof Error &&
+        (e.message.includes('Incompatible runtime entry') ||
+          e.message.includes('API Compatibility Error') ||
+          e.message.includes('Number needs to be an integer'))
+      ) {
         balance = await fetchBalance(true)
       } else {
         throw e

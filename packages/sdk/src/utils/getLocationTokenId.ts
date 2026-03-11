@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getNativeAssetSymbol, getOtherAssets, type TSubstrateChain } from '@paraspell/sdk-core'
 
 export const getLocationTokenId = (location: any, chain: TSubstrateChain): string | null => {
   if (location.interior.type === 'Here') {

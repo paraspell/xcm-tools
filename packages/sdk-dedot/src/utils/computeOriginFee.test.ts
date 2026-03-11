@@ -1,19 +1,15 @@
-import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-core'
+import { getNativeAssetSymbol } from '@paraspell/sdk-core'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { computeFeeFromDryRun } from './computeFeeFromDryRun'
+import { computeOriginFee } from './computeOriginFee'
 import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core')
 
-vi.mock('./getLocationTokenId', () => ({
-  getLocationTokenId: vi.fn()
-}))
+vi.mock('./getLocationTokenId')
 
-describe('computeFeeFromDryRun', () => {
+describe('computeOriginFee', () => {
   const mockChain = {} as TSubstrateChain
 
   beforeEach(() => {
@@ -46,7 +42,7 @@ describe('computeFeeFromDryRun', () => {
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(700n) // 500 (delivery fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
@@ -74,7 +70,7 @@ describe('computeFeeFromDryRun', () => {
     vi.mocked(getLocationTokenId).mockReturnValue(null)
 
     const executionFee = 200n
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(200n)
     expect(getLocationTokenId).toHaveBeenCalledWith('tokenId1', mockChain)
@@ -106,7 +102,7 @@ describe('computeFeeFromDryRun', () => {
     )
 
     const executionFee = 200n
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(500n) // 300 (delivery fee)
   })
@@ -126,7 +122,7 @@ describe('computeFeeFromDryRun', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 0n
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(0n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
@@ -143,7 +139,7 @@ describe('computeFeeFromDryRun', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
     const executionFee = 300n
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee)
+    const result = computeOriginFee(dryRun, mockChain, executionFee)
 
     expect(result).toBe(300n)
   })
@@ -183,7 +179,7 @@ describe('computeFeeFromDryRun', () => {
 
     vi.mocked(getLocationTokenId).mockReturnValue('someRelevantSymbolOrNull')
 
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
+    const result = computeOriginFee(dryRun, mockChain, executionFee, isFeeAsset)
 
     expect(result).toBe(1000n)
 
@@ -230,7 +226,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const isFeeAsset = true
 
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
+    const result = computeOriginFee(dryRun, mockChain, executionFee, isFeeAsset)
 
     expect(result).toBe(1500n)
     expect(getNativeAssetSymbol).not.toHaveBeenCalled()
@@ -280,7 +276,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const isFeeAsset = true
 
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
+    const result = computeOriginFee(dryRun, mockChain, executionFee, isFeeAsset)
 
     expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
@@ -322,7 +318,7 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 200n
     const isFeeAsset = false
 
-    const result = computeFeeFromDryRun(dryRun, mockChain, executionFee, isFeeAsset)
+    const result = computeOriginFee(dryRun, mockChain, executionFee, isFeeAsset)
 
     expect(result).toBe(700n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
