@@ -13,22 +13,20 @@ const socket = io(URL, {
 let currentHandler: ((data: LiveXcmMsg) => void) | null = null;
 const EVENT = 'liveXcmData';
 
-export function setSocketHandler(handler: (data: LiveXcmMsg) => void) {
+export const setSocketHandler = (handler: (data: LiveXcmMsg) => void) => {
   if (currentHandler) socket.off(EVENT, currentHandler);
   currentHandler = handler;
   socket.on(EVENT, currentHandler);
-}
+};
 
-export function connectSocket() {
+export const connectSocket = () => {
   if (!socket.connected) socket.connect();
-}
+};
 
-export function disconnectSocket() {
+export const disconnectSocket = () => {
   if (socket.connected) socket.disconnect();
-}
+};
 
-export function isSocketConnected() {
+export const isSocketConnected = () => {
   return socket.connected;
-}
-
-export { socket as _liveSocket };
+};

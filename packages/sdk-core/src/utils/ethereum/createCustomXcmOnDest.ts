@@ -4,9 +4,9 @@ import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sdk-common'
 
 import { MissingParameterError, UnsupportedOperationError } from '../../errors'
-import type { TAddress } from '../../types'
+import type { TAddress, TCreateEthBridgeInstructionsOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasId, assertHasLocation, assertSenderAddress } from '../assertions'
+import { assertHasId, assertSenderAddress } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 import { getEthereumJunction } from '../location/getEthereumJunction'
 
@@ -18,7 +18,6 @@ const createMainInstruction = (
   messageId: string
 ) => {
   assertHasId(ethAsset)
-  assertHasLocation(asset)
 
   const interiorSb: TLocation['interior'] =
     ethAsset.symbol === 'ETH'
@@ -121,7 +120,7 @@ const createMainInstruction = (
   }
 }
 
-export const createCustomXcmOnDest = <TApi, TRes>(
+export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
   {
     api,
     address,
@@ -129,40 +128,58 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     senderAddress,
     ahAddress,
     version
-  }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  }: TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   messageId: string,
   ethAsset: TAssetInfo
-) => {
+): unknown[] => {
   assertSenderAddress(senderAddress)
 
   if (isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress')
   }
 
-  return {
-    [version]: [
-      {
-        SetAppendix:
-          origin === 'Mythos'
-            ? []
-            : [
-                {
-                  DepositAsset: {
-                    assets: { Wild: 'All' },
-                    beneficiary: createBeneficiaryLocation({
-                      api,
-                      address: isChainEvm(origin) ? (ahAddress as string) : senderAddress,
-                      version
-                    })
-                  }
+  return [
+    {
+      SetAppendix:
+        origin === 'Mythos'
+          ? []
+          : [
+              {
+                DepositAsset: {
+                  assets: { Wild: 'All' },
+                  beneficiary: createBeneficiaryLocation({
+                    api,
+                    address: isChainEvm(origin) ? (ahAddress as string) : senderAddress,
+                    version
+                  })
                 }
-              ]
-      },
-      createMainInstruction(origin, assetInfo, ethAsset, address, messageId),
-      {
-        SetTopic: messageId
-      }
-    ]
+              }
+            ]
+    },
+    createMainInstruction(origin, assetInfo, ethAsset, address, messageId),
+    {
+      SetTopic: messageId
+    }
+  ]
+}
+
+export const createCustomXcmOnDest = <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+  origin: TSubstrateChain,
+  messageId: string,
+  ethAsset: TAssetInfo
+) => {
+  const { api, address, assetInfo, senderAddress, ahAddress, version } = options
+
+  const instructions = createEthereumBridgeInstructions(
+    { api, address, assetInfo, senderAddress: senderAddress!, ahAddress, version },
+    origin,
+    messageId,
+    ethAsset
+  )
+
+  return {
+    [version]: instructions
   }
 }

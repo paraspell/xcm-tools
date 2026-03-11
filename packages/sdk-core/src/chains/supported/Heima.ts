@@ -9,7 +9,10 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class Heima<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Heima<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Heima',
     info: string = 'heima',
@@ -19,7 +22,7 @@ class Heima<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario, assetInfo: asset } = input
 
     if (scenario !== 'ParaToPara') {

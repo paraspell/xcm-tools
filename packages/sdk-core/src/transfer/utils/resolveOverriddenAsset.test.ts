@@ -6,7 +6,6 @@ import type {
 } from '@paraspell/assets'
 import {
   findAssetInfo,
-  InvalidCurrencyError,
   isAssetEqual,
   isOverrideLocationSpecifier,
   isTAsset
@@ -40,11 +39,11 @@ describe('resolveOverriddenAsset', () => {
   const mockDestination = {} as TLocation
 
   const defaultOptions = {
-    api: {} as unknown as IPolkadotApi<unknown, unknown>,
+    api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
     currency: { symbol: 'TEST', amount: '1000' },
     from: mockOrigin,
     to: mockDestination
-  } as TSendOptions<unknown, unknown>
+  } as TSendOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -68,7 +67,7 @@ describe('resolveOverriddenAsset', () => {
         } as TLocationValueWithOverride,
         amount: '1000'
       }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
 
@@ -93,7 +92,7 @@ describe('resolveOverriddenAsset', () => {
       ...defaultOptions,
       currency: assets,
       feeAsset: { location: {} }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
@@ -131,26 +130,11 @@ describe('resolveOverriddenAsset', () => {
     ])
   })
 
-  it('throws an InvalidCurrencyError if fetched asset has no location', () => {
-    const assets = [{ symbol: 'ASSET_NO_LOCATION', amount: 500n }]
-    const options = {
-      ...defaultOptions,
-      currency: assets
-    }
-
-    vi.mocked(isTAsset).mockImplementationOnce(() => false)
-    vi.mocked(findAssetInfo).mockReturnValue({} as TAssetInfo)
-
-    expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
-      InvalidCurrencyError
-    )
-  })
-
   it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset is provided', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}]
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
@@ -164,7 +148,7 @@ describe('resolveOverriddenAsset', () => {
       ...defaultOptions,
       currency: [{}, {}],
       feeAsset: { symbol: 'ASSET' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTAsset).mockReturnValue(true)
@@ -184,7 +168,7 @@ describe('resolveOverriddenAsset', () => {
           value: {}
         }
       }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     vi.mocked(isTAsset).mockReturnValue(true)
@@ -198,7 +182,7 @@ describe('resolveOverriddenAsset', () => {
     const options = {
       ...defaultOptions,
       currency: { symbol: 'NO_OVERRIDE' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const result = resolveOverriddenAsset(options, false, false, {} as TAssetInfo)
     expect(result).toBeUndefined()

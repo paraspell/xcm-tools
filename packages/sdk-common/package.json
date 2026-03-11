@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-common",
-  "version": "12.5.1",
+  "version": "12.8.8",
   "description": "SDK common code for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-env": "^7.29.0",
     "@codecov/rollup-plugin": "^1.9.1",
     "@polkadot/api": "^16.5.4",
     "@polkadot/types": "^16.5.4",
@@ -44,8 +44,8 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@vitest/coverage-v8": "^4.0.18",
-    "dotenv": "^17.2.3",
-    "rollup": "^4.57.0",
+    "dotenv": "^17.3.1",
+    "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.3.0"
   }
 }

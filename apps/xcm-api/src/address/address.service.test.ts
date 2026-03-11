@@ -1,7 +1,12 @@
+import { BadRequestException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TSubstrateChain } from '@paraspell/sdk';
-import { convertSs58, SUBSTRATE_CHAINS } from '@paraspell/sdk';
+import {
+  convertSs58,
+  InvalidAddressError,
+  SUBSTRATE_CHAINS,
+} from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -49,6 +54,19 @@ describe('AddressService', () => {
       );
       expect(convertSs58).toHaveBeenCalledWith(mockAddress, mockChain);
       expect(result).toEqual(mockOutputAddress);
+    });
+
+    it('should throw BadRequestException for InvalidAddressError', () => {
+      const mockAddress = 'INVALID_ADDRESS_FORMAT';
+      const mockChain: TSubstrateChain = 'Acala';
+
+      vi.mocked(convertSs58).mockImplementation(() => {
+        throw new InvalidAddressError('Invalid address');
+      });
+
+      expect(() => service.convertSs58(mockAddress, mockChain)).toThrow(
+        BadRequestException,
+      );
     });
   });
 });

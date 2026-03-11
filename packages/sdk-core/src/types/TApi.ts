@@ -1,7 +1,7 @@
 import type { IPolkadotApi } from '../api'
 
-export type WithApi<TBase, TApi, TRes> = TBase & {
-  api: IPolkadotApi<TApi, TRes>
+export type WithApi<TBase, TApi, TRes, TSigner> = TBase & {
+  api: IPolkadotApi<TApi, TRes, TSigner>
 }
 
 export type TUrl = string | string[]
@@ -33,3 +33,5 @@ export type ClientCache<T> = {
   remainingTtl: (k: TClientKey) => number | undefined
   revive: (k: TClientKey, ttl: number) => void
 }
+
+export type TApiType = 'PAPI' | 'PJS'

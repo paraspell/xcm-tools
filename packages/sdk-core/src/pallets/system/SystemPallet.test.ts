@@ -32,7 +32,7 @@ describe('SystemPallet.setBalance', () => {
     const asset = { assetId: '123', amount: 321n } as WithAmount<TAssetInfo>
     const api = {
       getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:0:32`
     const expectedAmount = `pad:hex:321:32`
@@ -52,5 +52,22 @@ describe('SystemPallet.setBalance', () => {
     expect(res.balanceTx.module).toBe('System')
     expect(res.balanceTx.method).toBe('set_storage')
     expect(res.balanceTx.params.items).toEqual([['0xSTORAGEKEY', expectedAmount]])
+  })
+
+  it('uses wormhole balance slot when asset id starts with 0x', async () => {
+    const pallet = new SystemPallet('System')
+    const address = '0xAlice'
+    const chain: TSubstrateChain = 'Moonbeam'
+    const asset = { assetId: '0x1234', amount: 1n } as WithAmount<TAssetInfo>
+    const api = {
+      getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+
+    const spy = vi.spyOn(api, 'getEvmStorage')
+
+    await pallet.mint(address, asset, 0n, chain, api)
+
+    const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:5:32`
+    expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)
   })
 })

@@ -1,5 +1,110 @@
 # Changelog
 
+## [12.8.8](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.7...pallets-v12.8.8) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.6...pallets-v12.8.7) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.5...pallets-v12.8.6) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.4...pallets-v12.8.5) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.3...pallets-v12.8.4) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.2...pallets-v12.8.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.1...pallets-v12.8.2) (2026-03-02)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/pallets-v12.8.0...pallets-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/pallets-v12.7.1...pallets-v12.8.0) (2026-02-20)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/pallets-v12.7.0...pallets-v12.7.1) (2026-02-18)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/pallets-v12.6.3...pallets-v12.7.0) (2026-02-13)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/pallets-v12.6.2...pallets-v12.6.3) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/pallets-v12.6.1...pallets-v12.6.2) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/pallets-v12.6.0...pallets-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/pallets-v12.5.1...pallets-v12.6.0) (2026-02-05)
+
+
+### Miscellaneous Chores
+
+* **pallets:** Synchronize main versions
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/pallets-v12.5.0...pallets-v12.5.1) (2026-01-30)
 
 

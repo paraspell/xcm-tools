@@ -10,7 +10,7 @@ import type AssetHubKusama from './AssetHubKusama'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('transferPolkadotXCM', () => {
-  let chain: AssetHubKusama<unknown, unknown>
+  let chain: AssetHubKusama<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: {
@@ -18,11 +18,11 @@ describe('transferPolkadotXCM', () => {
       assetId: '123'
     },
     scenario: 'ParaToPara'
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    chain = getChain<unknown, unknown, 'AssetHubKusama'>('AssetHubKusama')
+    chain = getChain<unknown, unknown, unknown, 'AssetHubKusama'>('AssetHubKusama')
   })
 
   it('should initialize with correct values', () => {
@@ -41,7 +41,7 @@ describe('transferPolkadotXCM', () => {
     const input = {
       ...mockInput,
       assetInfo: { symbol: 'DOT' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 })

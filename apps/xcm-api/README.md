@@ -3,20 +3,23 @@
 <div align="center">
   <h1 align="center">XCM-API</h1>
   <h4 align="center">The 🥇 XCM-API for Polkadot, Kusama, Paseo & Westend ecosystems.</h4>
-  <h4 align="center"> Enhance the cross-chain experience of your decentralized application. Package-lessly.</h4>
+  <h4 align="center">Enhance the cross-chain experience of your decentralized application. Package-lessly.</h4>
+
   <p align="center">
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
+    <a href="https://status.lightspell.xyz/">
+      <img alt="XCM API Status" src="https://status.paraspell.xyz/api/badge/3/status" />
+    </a>
   </p>
-  <p align="center"> Now live at https://api.lightspell.xyz/v5</p>
-  <p>XCM API downtime monitoring <a href = "https://status.lightspell.xyz/" \>[here]</p>
-  <p>XCM API documentation <a href = "https://paraspell.github.io/docs/api/g-started.html" \>[here]</p>	  
-    <p>XCM API starter template project <a href = "https://github.com/paraspell/xcm-api-template
-    " \>[here]</p>
-</div>
 
-<br /><br />
+  <p align="center">Now live at https://api.lightspell.xyz/v5</p>
+
+  <p>XCM API downtime monitoring <a href="https://status.paraspell.xyz/">[here]</a></p>
+  <p>XCM API documentation <a href="https://paraspell.github.io/docs/api/g-started.html">[here]</a></p>
+  <p>XCM API starter template project <a href="https://github.com/paraspell/xcm-api-template">[here]</a></p>
+</div>
 <br /><br />
 
 ## Implementation
@@ -62,57 +65,51 @@ const response = await fetch('http://localhost:3001/v5/x-transfer', {
   },
   body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-    to: 'TChain' // Replace "TChain" with same parameter as "from" parameter
+    to: 'TChain', // Replace "TChain" with same parameter as "from" parameter
     currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
   }),
 });
 
-//Construct custom location XCM call from Substrate to Substrate
-//locations can be customized for Destination, Address and Currency.
+//Transact call
 const response = await fetch('http://localhost:3001/v5/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    currency: {
-      location: {
-        parents: 0,
-        interior: {
-          X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
-        },
-      },
-      amount: amount /*Use "ALL" to transfer everything*/
+    from: 'Chain', // Replace "Chain" with sender Chain, e.g., "Acala"
+    to: 'Chain', // Replace Chain with same parameter as "from" parameter
+    currency: { currencySpec }, // Refer to currency spec options above
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
+    senderAddress: 'SenderAddress', //Replace "SenderAddress" with sender wallet address (In AccountID32 or AccountKey20 Format)
+    transact: {
+      hex: Destination call hex //Function that should execute on destination
+    /*originKind: "SovereignAccount" || "XCM" || "Native" || "SuperUser" - Optional, "SovereignAccount" by default
+      maxWeight: { proofSize: string, refTime: string } - Optional, autofilled by default (Utilized in V3 and V4 as maxFallbackWeight parameter)*/
+    }
+  }),
+});
+
+//Swap call
+const response = await fetch('http://localhost:3001/v5/x-transfers', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Chain', // Replace "Chain" with sender Chain, e.g., "Acala"
+    to: 'Chain', // Replace Chain with same parameter as "from" parameter
+    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
+    senderAddress: 'SenderAddress', //Replace "SenderAddress" with sender wallet address (In AccountID32 or AccountKey20 Format)
+    swapOptions: {
+      currencyTo: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+      // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+      // slippage: 1, - Optional - 1 by default
+      // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
     },
-    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-  }),
-});
-
-//Construct custom batch of XCM Calls
-const response = await fetch('http://localhost:3001/v5/x-transfer-batch', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    transfers, // Replace "transfers" with array of XCM transfers
-  }),
-});
-
-//Construct asset claim call
-const response = await fetch('http://localhost:3001/v5/asset-claim', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    from: 'TChain', // Replace "TChain" with chain you wish to claim assets on
-    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    currency: 'Asset location array', //Replace "Asset location array" with specific asset location array along with the amount (example in docs)
   }),
 });
 
@@ -147,6 +144,30 @@ const response = await fetch('http://localhost:3001/v5/dry-run-preview', {
     senderAddress: 'Address' //Replace "Address" with sender address from origin chain
   }),
 });
+
+//Construct custom batch of XCM Calls
+const response = await fetch('http://localhost:3001/v5/x-transfer-batch', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    transfers, // Replace "transfers" with array of XCM transfers
+  }),
+});
+
+//Construct asset claim call
+const response = await fetch('http://localhost:3001/v5/asset-claim', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'TChain', // Replace "TChain" with chain you wish to claim assets on
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
+    currency: 'Asset location array', //Replace "Asset location array" with specific asset location array along with the amount (example in docs)
+  }),
+});
 ```
 
 ### Localhost testing setup
@@ -173,8 +194,8 @@ const response = await fetch("http://localhost:3001/v5/x-transfer", {
         },
         options: {
           development: true, // Optional: Enforces overrides for all chains used
-          decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
-          xcmFormatCheck: true // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
+          decimalAbstraction: true, // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          xcmFormatCheck: true, // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
           apiOverrides: {
             Hydration: "wss://hydration.ibp.network",
             AssetHubPolkadot: "wss://dot-rpc.stakeworld.io/assethub"
@@ -209,8 +230,8 @@ const response = await fetch("http://localhost:3001/v5/sign-and-submit", {
         },
         options: {
           development: true, // Optional: Enforces overrides for all chains used
-          decimalAbstraction: true // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
-          xcmFormatCheck: true // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
+          decimalAbstraction: true, // Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          xcmFormatCheck: true, // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
           apiOverrides: {
             Hydration: "ws://127.0.0.1:8000", //Only works with locally launched chains (Eg. chopsticks)
             Moonbeam: "ws://127.0.0.1:8001" //Only works with locally launched chains (Eg. chopsticks)
@@ -234,6 +255,40 @@ Possible parameters:
 - `senderAddress`: (required): Specifies the address of the sender.
 
 ```ts
+//XCM Fee (Origin & Destination)
+const response = await fetch("http://localhost:3001/v5/xcm-fee", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
+	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
+        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
+        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
+    })
+});
+
+//XCM Fee (Origin)
+const response = await fetch("http://localhost:3001/v5/origin-xcm-fee", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
+	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
+        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
+        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
+    })
+});
+
 //Perform comprehensive transfer info query that will retrieve all details regarding fees and balances that will be changed by performing selected XCM call
 const response = await fetch(
   'http://localhost:3001/v5/transfer-info' , {
@@ -309,70 +364,6 @@ const response = await fetch(
     senderAddress: 'Address' //Replace "Address" with sender address from origin chain
   }),
 
-//XCM Fee (Origin & Destination) - More accurate (Using DryRun)
-const response = await fetch("http://localhost:3001/v5/xcm-fee", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
-    })
-});
-
-//XCM Fee (Origin & Destination) - Less accurate (Using payment info)
-const response = await fetch("http://localhost:3001/v5/xcm-fee-estimate", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-    })
-});
-
-//XCM Fee (Origin) - More accurate (Using DryRun)
-const response = await fetch("http://localhost:3001/v5/origin-xcm-fee", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
-    })
-});
-
-//XCM Fee (Origin) - Less accurate (Using payment info)
-const response = await fetch("http://localhost:3001/v5/origin-xcm-fee-estimate", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-    })
-});
-
 // Retrieve specific asset balance for specific chain
 const response = await fetch("http://localhost:3001/v5/balance/:chain", {
     method: 'POST',
@@ -380,10 +371,30 @@ const response = await fetch("http://localhost:3001/v5/balance/:chain", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
         currency: {currencySpec}, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {location: AssetLocationString} | {location: AssetLocationJson} | {location: "type": "Override","value": "CustomAssetLocationJson"}
     })
 });
+
+// Get best amount out
+const response = await fetch(
+  'http://localhost:3001/v5/best-amount-out' , {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },  
+    from: 'Chain', // Replace "Chain" with sender Chain or Relay chain, e.g., "Acala"
+    to: 'Chain', // Replace "Chain" with destination Chain or Relay chain, e.g., "Moonbeam" or custom Location
+    currency: { currencySpec }, // Refer to currency spec options above
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
+    senderAddress: 'Address', //Replace "Address" with sender address from origin chain
+    swapOptions: {
+      currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
+      // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+      // slippage: 1, - Optional - 1 by default
+      // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+    },
+}),
 
 // Retrieve existential deposit for specific assets on selected chain
 const response = await fetch("http://localhost:3001/v5/balance/:chain/existential-deposit", {
@@ -473,6 +484,17 @@ const response = await fetch("http://localhost:3001/v5/assets/:chain/location", 
     })
 });
 
+// Retrieve reserve chain for specific asset on specific chain
+const response = await fetch("http://localhost:3001/v5/assets/:chain/reserve-chain", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+    })
+});
+
 // Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
 const response = await fetch("http://localhost:3001/v5/assets/:chain/asset-info", {
     method: 'POST',
@@ -523,49 +545,6 @@ const response = await fetch('http://localhost:3001/v5/pallets/:chain/native-ass
 
 //Returns all pallets for local transfers of foreign assets for specific chain.
 const response = await fetch('http://localhost:3001/v5/pallets/:chain/other-assets');
-```
-
-### XCM Router
-
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
-
-```
-NOTICE:
-The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
-It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
-```
-
-Possible parameters:
-
-- `from`: (optional): Represents the Chain from which the assets will be transferred.
-- `exchange`: (optional): Represents the Chain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
-- `to`: (optional): Represents the Chain to which the assets will be transferred.
-- `currencyFrom`: (required): Represents the asset being sent.
-- `currencyTo`: (required): Represents the received asset.
-- `amount`: (required): Specifies the amount of assets to transfer.
-- `slippagePct`: (required): Specifies the slippage percentage.
-- `recipientAddress`: (required): Specifies the recipient's address.
-- `senderAddress`: (required): Specifies the sender's address.
-- `options`: (optional): Configuration options for the API (Find out more in docs)
-
-```ts
-const response = await fetch('http://localhost:3001/v5/router', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    from: 'Chain', //Origin Chain - OPTIONAL PARAMETER
-    exchange: 'Dex', //Exchange Chain //Optional parameter, if not specified exchange will be auto-selected
-    to: 'Chain', //Destination Chain - OPTIONAL PARAMETER
-    currencyFrom: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-    currencyTo: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {location: AssetLocationString, amount: amount | AssetLocationJson, amount: amount}
-    amount: 'Amount', // Amount to send
-    slippagePct: 'Pct', // Max slipppage percentage
-    recipientAddress: 'Address', //Recipient address
-    senderAddress: 'InjectorAddress', //Address of sender
-  }),
-});
 ```
 
 ### XCM Analyser

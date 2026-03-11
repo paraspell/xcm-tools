@@ -1,4 +1,4 @@
-const Lights = () => (
+export const Lights = () => (
   <>
     <ambientLight color="white" intensity={1.2} />
     <pointLight
@@ -15,5 +15,3 @@ const Lights = () => (
     />
   </>
 );
-
-export default Lights;

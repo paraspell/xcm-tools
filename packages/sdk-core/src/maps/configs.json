@@ -14,7 +14,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/asset-hub-polkadot"
+        "endpoint": "wss://asset-hub-polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -39,10 +39,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://statemint.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/assethub"
       }
     ]
   },
@@ -157,7 +153,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/bridgehub-polkadot"
+        "endpoint": "wss://bridge-hub-polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -178,10 +174,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://bridgehub-polkadot.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/bridgehub"
       }
     ]
   },
@@ -332,7 +324,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/coretime-polkadot"
+        "endpoint": "wss://coretime-polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -349,10 +341,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-coretime-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/coretime"
       }
     ]
   },
@@ -371,7 +359,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/collectives-polkadot"
+        "endpoint": "wss://collectives-polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -392,10 +380,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://collectives.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/collectives"
       }
     ]
   },
@@ -466,47 +450,6 @@
       }
     ]
   },
-  "Phala": {
-    "name": "Phala Network",
-    "info": "phala",
-    "paraId": 2035,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://phala-rpc.n.dwellir.com"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://phala.public.curie.radiumblock.co/ws"
-      }
-    ]
-  },
-  "KiltSpiritnet": {
-    "name": "KILT Spiritnet",
-    "info": "kilt",
-    "paraId": 2086,
-    "providers": [
-      {
-        "name": "IBP1",
-        "endpoint": "wss://kilt.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://kilt.dotters.network"
-      }
-    ]
-  },
-  "Curio": {
-    "name": "Curio",
-    "info": "curio",
-    "paraId": 3339,
-    "providers": [
-      {
-        "name": "Curio",
-        "endpoint": "wss://parachain.curioinvest.com/"
-      }
-    ]
-  },
   "Mythos": {
     "name": "Mythos",
     "info": "mythos",
@@ -529,17 +472,6 @@
       }
     ]
   },
-  "RobonomicsPolkadot": {
-    "name": "Robonomics",
-    "info": "robonomics",
-    "paraId": 3388,
-    "providers": [
-      {
-        "name": "Airalab",
-        "endpoint": "wss://polkadot.rpc.robonomics.network/"
-      }
-    ]
-  },
   "PeoplePolkadot": {
     "name": "People",
     "info": "polkadotPeople",
@@ -551,7 +483,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-polkadot"
+        "endpoint": "wss://people-polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -568,10 +500,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-people-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io/people"
       }
     ]
   },
@@ -624,7 +552,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/asset-hub-kusama"
+        "endpoint": "wss://asset-hub-kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -645,10 +573,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://statemine.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/assethub"
       }
     ]
   },
@@ -667,7 +591,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/bridgehub-kusama"
+        "endpoint": "wss://bridge-hub-kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -688,10 +612,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://bridgehub-kusama.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/bridgehub"
       }
     ]
   },
@@ -775,7 +695,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/coretime-kusama"
+        "endpoint": "wss://coretime-kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -792,10 +712,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-coretime-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/coretime"
       }
     ]
   },
@@ -814,7 +730,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/encointer-kusama"
+        "endpoint": "wss://encointer-kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -938,7 +854,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-kusama"
+        "endpoint": "wss://people-kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -955,10 +871,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-people-rpc.polkadot.io"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io/people"
       }
     ]
   },
@@ -1116,15 +1028,11 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/asset-hub-paseo"
+        "endpoint": "wss://asset-hub-paseo.ibp.network"
       },
       {
         "name": "IBP2",
         "endpoint": "wss://asset-hub-paseo.dotters.network"
-      },
-      {
-        "name": "StakeWorld",
-        "endpoint": "wss://pas-rpc.stakeworld.io/assethub"
       },
       {
         "name": "TurboFlakes",
@@ -1154,7 +1062,7 @@
     "providers": [
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/bridgehub-paseo"
+        "endpoint": "wss://bridge-hub-paseo.ibp.network"
       },
       {
         "name": "IBP2",
@@ -1169,7 +1077,7 @@
     "providers": [
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/coretime-paseo"
+        "endpoint": "wss://coretime-paseo.ibp.network"
       },
       {
         "name": "IBP2",
@@ -1210,17 +1118,6 @@
       }
     ]
   },
-  "KiltPaseo": {
-    "name": "KILT Peregrine",
-    "info": "kilt",
-    "paraId": 2086,
-    "providers": [
-      {
-        "name": "KILT Foundation",
-        "endpoint": "wss://peregrine.kilt.io/"
-      }
-    ]
-  },
   "LaosPaseo": {
     "name": "Laos Sigma",
     "info": "laos-sigma",
@@ -1243,25 +1140,6 @@
       }
     ]
   },
-  "PAssetHub": {
-    "name": "PAssetHub - Contracts",
-    "info": "PAssetHub - Contracts",
-    "paraId": 1111,
-    "providers": [
-      {
-        "name": "IBP1",
-        "endpoint": "wss://passet-hub-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://passet-hub-paseo.dotters.network"
-      },
-      {
-        "name": "Parity",
-        "endpoint": "wss://testnet-passet-hub.polkadot.io"
-      }
-    ]
-  },
   "PeoplePaseo": {
     "name": "People",
     "info": "PaseoPeopleChain",
@@ -1273,7 +1151,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/people-paseo"
+        "endpoint": "wss://people-paseo.ibp.network"
       },
       {
         "name": "IBP2",
@@ -1302,10 +1180,6 @@
         "endpoint": "wss://polkadot-rpc.publicnode.com"
       },
       {
-        "name": "Blockops",
-        "endpoint": "wss://polkadot-public-rpc.blockops.network/ws"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://polkadot-rpc.n.dwellir.com"
       },
@@ -1319,7 +1193,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://rpc.ibp.network/polkadot"
+        "endpoint": "wss://polkadot.ibp.network"
       },
       {
         "name": "IBP2",
@@ -1343,7 +1217,7 @@
       },
       {
         "name": "Stakeworld",
-        "endpoint": "wss://dot-rpc.stakeworld.io"
+        "endpoint": "wss://rpc-polkadot.stakeworld.io"
       },
       {
         "name": "SubQuery",
@@ -1361,10 +1235,6 @@
         "endpoint": "wss://kusama-rpc.publicnode.com"
       },
       {
-        "name": "Blockops",
-        "endpoint": "wss://kusama-public-rpc.blockops.network/ws"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://kusama-rpc.n.dwellir.com"
       },
@@ -1378,7 +1248,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://rpc.ibp.network/kusama"
+        "endpoint": "wss://kusama.ibp.network"
       },
       {
         "name": "IBP2",
@@ -1398,7 +1268,7 @@
       },
       {
         "name": "Stakeworld",
-        "endpoint": "wss://ksm-rpc.stakeworld.io"
+        "endpoint": "wss://rpc-kusama.stakeworld.io"
       }
     ]
   },
@@ -1444,15 +1314,11 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://rpc.ibp.network/paseo"
+        "endpoint": "wss://paseo.ibp.network"
       },
       {
         "name": "IBP2",
         "endpoint": "wss://paseo.dotters.network"
-      },
-      {
-        "name": "StakeWorld",
-        "endpoint": "wss://pas-rpc.stakeworld.io"
       }
     ]
   }

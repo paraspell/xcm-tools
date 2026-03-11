@@ -11,7 +11,7 @@ type Props = {
   onDisconnect?: () => void;
 };
 
-const EthWalletSelectModal: FC<Props> = ({
+export const EthWalletSelectModal: FC<Props> = ({
   isOpen,
   onClose,
   providers,
@@ -48,5 +48,3 @@ const EthWalletSelectModal: FC<Props> = ({
     </Stack>
   </Modal>
 );
-
-export default EthWalletSelectModal;

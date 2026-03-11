@@ -24,12 +24,8 @@ export const PARACHAINS = [
   'Nodle',
   'NeuroWeb',
   'Pendulum',
-  'Phala',
-  'KiltSpiritnet',
-  'Curio',
   'Mythos',
   'Peaq',
-  'RobonomicsPolkadot',
   'PeoplePolkadot',
   'Unique',
   'Xode',
@@ -67,10 +63,8 @@ export const PARACHAINS = [
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
-  'KiltPaseo',
   'LaosPaseo',
   'NeuroWebPaseo',
-  'PAssetHub',
   'PeoplePaseo',
   'ZeitgeistPaseo'
 ] as const

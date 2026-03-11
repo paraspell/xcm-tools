@@ -9,14 +9,13 @@ import type Westend from './Westend'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Westend', () => {
-  let chain: Westend<unknown, unknown>
+  let chain: Westend<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { isNative: true, symbol: 'WND', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Westend'>('Westend')
+    chain = getChain<unknown, unknown, unknown, 'Westend'>('Westend')
   })
 
   it('should initialize with correct values', () => {

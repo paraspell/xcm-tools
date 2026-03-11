@@ -4,15 +4,9 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type {
-  TPolkadotXCMTransferOptions,
-  TSerializedExtrinsics,
-  TTransferLocalOptions
-} from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
-import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import type Hydration from './Hydration'
 
@@ -34,18 +28,18 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
 
-type WithTransferToEthereum = Hydration<unknown, unknown> & {
-  transferToEthereum: Hydration<unknown, unknown>['transferToEthereum']
+type WithTransferToEthereum = Hydration<unknown, unknown, unknown> & {
+  transferToEthereum: Hydration<unknown, unknown, unknown>['transferToEthereum']
 }
 
 describe('Hydration', () => {
-  let hydration: Hydration<unknown, unknown>
+  let hydration: Hydration<unknown, unknown, unknown>
 
   const mockExtrinsic = {} as unknown
 
   beforeEach(() => {
     vi.clearAllMocks()
-    hydration = getChain<unknown, unknown, 'Hydration'>('Hydration')
+    hydration = getChain<unknown, unknown, unknown, 'Hydration'>('Hydration')
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
 
@@ -57,8 +51,8 @@ describe('Hydration', () => {
   })
 
   describe('transferPolkadotXCM', () => {
-    let mockApi: IPolkadotApi<unknown, unknown>
-    let mockInput: TPolkadotXCMTransferOptions<unknown, unknown>
+    let mockApi: IPolkadotApi<unknown, unknown, unknown>
+    let mockInput: TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     beforeEach(() => {
       mockApi = {
@@ -73,7 +67,7 @@ describe('Hydration', () => {
         hexToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
         blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000'),
         clone: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
       mockInput = {
         api: mockApi,
@@ -105,7 +99,7 @@ describe('Hydration', () => {
         },
         scenario: 'RelayToPara',
         destination: 'Ethereum'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     })
@@ -118,7 +112,11 @@ describe('Hydration', () => {
       vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
         symbol: 'WETH',
-        decimals: 18
+        decimals: 18,
+        location: {
+          parents: 2,
+          interior: 'Here'
+        }
       })
 
       await hydration.transferPolkadotXCM({
@@ -144,7 +142,7 @@ describe('Hydration', () => {
         },
         destination: 'Moonbeam',
         version: hydration.version
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       vi.mocked(hasJunction).mockReturnValueOnce(true).mockReturnValueOnce(true)
 
@@ -175,7 +173,7 @@ describe('Hydration', () => {
 
       const mockInput = {
         assetInfo: mockAsset
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       await hydration.transferMoonbeamWhAsset(mockInput)
 
@@ -185,45 +183,11 @@ describe('Hydration', () => {
         })
       )
     })
-
-    it('should call handleExecuteTransfer for non-native asset/feeAsset', async () => {
-      const mockTx = {} as TSerializedExtrinsics
-
-      const mockApi = {
-        deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown>
-
-      vi.mocked(handleExecuteTransfer).mockResolvedValue(mockTx)
-
-      const input = {
-        ...mockInput,
-        api: mockApi,
-        senderAddress: '0xPolkadotSender',
-        assetInfo: {
-          symbol: 'USDC',
-          assetId: '123',
-          amount: 1000n,
-          location: DOT_LOCATION
-        },
-        feeAssetInfo: {
-          symbol: 'USDT',
-          assetId: '456',
-          location: DOT_LOCATION
-        },
-        destination: 'Hydration'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
-
-      await hydration.transferPolkadotXCM(input)
-
-      expect(spy).toHaveBeenCalledWith(mockTx)
-    })
   })
 
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   describe('transferLocalNativeAsset', () => {
     it('should call api.deserializeExtrinsics with correct parameters', async () => {
@@ -231,8 +195,9 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef',
-        balance: 2000n
-      } as TTransferLocalOptions<unknown, unknown>
+        balance: 2000n,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -240,7 +205,7 @@ describe('Hydration', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: 'transfer_allow_death',
         params: {
           dest: mockInput.address,
           value: BigInt(mockInput.assetInfo.amount)
@@ -255,8 +220,9 @@ describe('Hydration', () => {
         address: '0x1234567890abcdef',
         balance: 2000n,
         senderAddress: 'sender',
-        isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+        isAmountAll: true,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -279,7 +245,7 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
     })
@@ -289,7 +255,7 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
     })
@@ -299,7 +265,7 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -321,8 +287,9 @@ describe('Hydration', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
         address: '0x1234567890abcdef',
-        isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+        isAmountAll: true,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

@@ -4,6 +4,7 @@ import {
   findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
+  isBridgedSystemAsset,
   isStableCoinAsset,
   type TAssetInfo
 } from '@paraspell/assets'
@@ -36,15 +37,16 @@ const validateBridgeAsset = (
 
   const nativeAsset = findNativeAssetInfoOrThrow(origin)
   const isNativeAsset = isAssetEqual(asset, nativeAsset)
-  const ecosystem = getRelayChainOf(destination).toLowerCase()
-
-  const isBridgedSystemAsset =
-    asset.location?.parents === Parents.TWO &&
-    deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), { [ecosystem]: null })
 
   const isBridgedStablecoin = isStableCoinAsset(asset)
 
-  if (!(isNativeAsset || isBridgedSystemAsset || isBridgedStablecoin)) {
+  if (
+    !(
+      isNativeAsset ||
+      isBridgedSystemAsset(asset, [getRelayChainOf(destination)]) ||
+      isBridgedStablecoin
+    )
+  ) {
     throw new InvalidCurrencyError(
       `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
@@ -95,7 +97,7 @@ export const validateEthereumAsset = (
   ]
 
   const isEthCompatibleAsset =
-    (asset.location?.parents === Parents.TWO &&
+    (asset.location.parents === Parents.TWO &&
       deepEqual(
         getJunctionValue(asset.location, 'GlobalConsensus'),
         getEthereumJunction(origin, false).GlobalConsensus
@@ -109,8 +111,8 @@ export const validateEthereumAsset = (
   }
 }
 
-export const validateAssetSupport = <TApi, TRes>(
-  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
+export const validateAssetSupport = <TApi, TRes, TSigner>(
+  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes, TSigner>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAssetInfo | null

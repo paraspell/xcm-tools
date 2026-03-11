@@ -1,5 +1,116 @@
 # Changelog
 
+## [12.8.8](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.7...sdk-v12.8.8) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.6...sdk-v12.8.7) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.5...sdk-v12.8.6) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.4...sdk-v12.8.5) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.3...sdk-v12.8.4) (2026-03-09)
+
+
+### Documentation
+
+* Add documentation for new swap feature ([#1727](https://github.com/paraspell/xcm-tools/issues/1727)) ([3abe749](https://github.com/paraspell/xcm-tools/commit/3abe749c6ed5e44e156799db1872cd38d4f8bced))
+
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.2...sdk-v12.8.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.1...sdk-v12.8.2) (2026-03-02)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.8.0...sdk-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.7.1...sdk-v12.8.0) (2026-02-20)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.7.0...sdk-v12.7.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **xcm-router:** Add support for snowbridge transfer to execute swaps 🔧 ([04b9f07](https://github.com/paraspell/xcm-tools/commit/04b9f07595ce6bf2fca68bb099ef6df231ae1364))
+
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.3...sdk-v12.7.0) (2026-02-13)
+
+
+### Features
+
+* **xcm-api,playground:** Expose getAssetReserveChain ✨ ([81ecaa9](https://github.com/paraspell/xcm-tools/commit/81ecaa90adc333aae4ed374a0301ffd4c749961c))
+
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.2...sdk-v12.6.3) (2026-02-11)
+
+
+### Documentation
+
+* Add chopsticks ([bf92346](https://github.com/paraspell/xcm-tools/commit/bf9234612e2946ba9351a5a1765a57e8e27d7c6e))
+
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.1...sdk-v12.6.2) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.6.0...sdk-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v12.5.1...sdk-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Documentation
+
+* Upload readmes & update snapshots ([d515a8b](https://github.com/paraspell/xcm-tools/commit/d515a8b990a531e7ecb172aadcec666757940c3e))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.5.0...sdk-v12.5.1) (2026-01-30)
 
 

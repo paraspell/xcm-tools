@@ -12,18 +12,23 @@ import { useForm } from '@mantine/form';
 import type { TAssetInfo, TChain, TEvmChainFrom } from '@paraspell/sdk';
 import { CHAINS, getTokenBalance } from '@paraspell/sdk-pjs';
 import { type BrowserProvider, ethers, formatEther } from 'ethers';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import {
+  parseAsBoolean,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
-import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
+import {
+  DEFAULT_ADDRESS,
+  EVM_ORIGIN_CHAINS,
+  MAIN_FORM_NAME,
+} from '../../constants';
 import { useCurrencyOptions, useWallet } from '../../hooks';
+import { parseAsWalletAddress } from '../../parsers';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
-import {
-  parseAsChain,
-  parseAsEvmChain,
-  parseAsRecipientAddress,
-} from '../../utils/parsers';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AmountTooltip } from '../Tooltip';
 
@@ -47,15 +52,15 @@ type Props = {
   provider: BrowserProvider | null;
 };
 
-const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
+export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
   const { apiType, selectedAccount } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
-    from: parseAsEvmChain.withDefault('Ethereum'),
-    to: parseAsChain.withDefault('AssetHubPolkadot'),
+    from: parseAsStringLiteral(EVM_ORIGIN_CHAINS).withDefault('Ethereum'),
+    to: parseAsStringLiteral(CHAINS).withDefault('AssetHubPolkadot'),
     currencyOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
-    address: parseAsRecipientAddress.withDefault(
+    address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     ahAddress: parseAsString.withDefault(''),
@@ -166,7 +171,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           <ParachainSelect
             label="From"
             placeholder="Pick value"
-            data={['Ethereum', 'Moonbeam', 'Moonriver', 'Darwinia']}
+            data={EVM_ORIGIN_CHAINS}
             data-testid="select-source"
             {...form.getInputProps('from')}
           />
@@ -252,5 +257,3 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     </Paper>
   );
 };
-
-export default EvmTransferForm;

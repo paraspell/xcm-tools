@@ -2,10 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CHAINS,
   findAssetInfo,
+  findAssetInfoOrThrow,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
   getAssetLocation,
+  getAssetReserveChain,
   getAssetsObject,
   getFeeAssets,
   getNativeAssets,
@@ -14,7 +16,9 @@ import {
   getSupportedAssets,
   getSupportedDestinations,
   hasSupportForAsset,
+  SUBSTRATE_CHAINS,
   TChain,
+  TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { validateChain } from '../utils.js';
@@ -42,6 +46,18 @@ export class AssetsService {
   getAssetLocation(chain: string, { currency }: AssetLocationDto) {
     validateChain(chain, CHAINS);
     return JSON.stringify(getAssetLocation(chain as TChain, currency));
+  }
+
+  getAssetReserveChain(chain: string, { currency }: AssetLocationDto) {
+    validateChain(chain, SUBSTRATE_CHAINS);
+    const resolvedChain = chain as TSubstrateChain;
+
+    try {
+      const { location } = findAssetInfoOrThrow(resolvedChain, currency, null);
+      return getAssetReserveChain(resolvedChain, location);
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   getAssetInfo(chain: string, { currency, destination }: FindAssetDto) {

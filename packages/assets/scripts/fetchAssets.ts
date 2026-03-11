@@ -24,7 +24,7 @@ import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
-import { fetchKiltForeignAssets } from './fetchKiltAssets'
+import { fetchPenpalForeignAssets } from './fetchPenpalAssets'
 import { TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
 import { getRelayChainSymbolOf, isChainEvm } from './utils'
@@ -32,19 +32,22 @@ import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
 import { fetchHydrationAssets } from './fetchHydrationAssets'
-import { fetchPhalaAssets } from './fetchPhalaAssets'
 import { fetchAstarAssets } from './fetchAstarAssets'
 import { fetchDarwiniaAssets } from './fetchDarwiniaAssets'
-import { fetchInterlayAssets, fetchInterlayNativeAssets } from './fetchInterlayAssets'
+import {
+  fetchInterlayAssets,
+  fetchInterlayNativeAssets,
+  fetchKintsugiNativeAssets
+} from './fetchInterlayAssets'
 import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
 import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
-import { fetchNativeAssetsCurio, fetchOtherAssetsCurio } from './fetchCurioAssets'
 import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
+import { TAssetInfoNoLoc } from './types'
 
-const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> => {
+const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfoNoLoc[]> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
@@ -60,7 +63,7 @@ const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TAssetInfo[]> 
 const resolveNativeAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   if (chain === 'Penpal') {
     return [
       {
@@ -91,19 +94,15 @@ const fetchNativeAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
-  let nativeAssets: TAssetInfo[] = []
-
-  if (chain === 'Curio') {
-    nativeAssets = await fetchNativeAssetsCurio(api, query)
-  }
+): Promise<TAssetInfoNoLoc[]> => {
+  let nativeAssets: TAssetInfoNoLoc[] = []
 
   if (chain.startsWith('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
   if (chain === 'Jamton') {
-    nativeAssets = await fetchZeitgeistNativeAssets(api, query, 'Native')
+    nativeAssets = await fetchZeitgeistNativeAssets(api, chain, query)
   }
 
   if (chain === 'Acala' || chain === 'Karura') {
@@ -118,6 +117,10 @@ const fetchNativeAssets = async (
 
   if (chain === 'Interlay') {
     nativeAssets = await fetchInterlayNativeAssets(defaultNativeAssets)
+  }
+
+  if (chain === 'Kintsugi') {
+    nativeAssets = await fetchKintsugiNativeAssets(defaultNativeAssets)
   }
 
   const transformed = nativeAssets.length > 0 ? nativeAssets : defaultNativeAssets
@@ -183,7 +186,7 @@ const fetchNativeAssets = async (
     return interior ? { parents: 1, interior } : null
   }
 
-  const cleanAsset = (asset: TAssetInfo): TAssetInfo => {
+  const cleanAsset = (asset: TAssetInfoNoLoc): TAssetInfoNoLoc => {
     const generatedLoc = getNativeLocation(asset.symbol)
 
     const location = asset.location ?? (generatedLoc ? capitalizeLocation(generatedLoc) : null)
@@ -199,7 +202,10 @@ const fetchNativeAssets = async (
   return reordered.map(cleanAsset)
 }
 
-const fetchOtherAssetsDefault = async (api: ApiPromise, query: string): Promise<TAssetInfo[]> => {
+const fetchOtherAssetsDefault = async (
+  api: ApiPromise,
+  query: string
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
 
   const res = await api.query[module][method].entries()
@@ -224,7 +230,12 @@ const fetchOtherAssetsDefault = async (api: ApiPromise, query: string): Promise<
           decimals: +valueHuman.decimals,
           location:
             valueHuman.symbol === 'DOT'
-              ? ({ parents: 1, interior: 'Here' } as TLocation)
+              ? {
+                  parents: 1,
+                  interior: {
+                    Here: null
+                  }
+                }
               : undefined,
           existentialDeposit:
             valueHuman.existentialDeposit ??
@@ -256,27 +267,19 @@ const fetchOtherAssets = async (
   chain: TSubstrateChain,
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
-  let otherAssets: TAssetInfo[] = []
+): Promise<TAssetInfoNoLoc[]> => {
+  let otherAssets: TAssetInfoNoLoc[] = []
 
   if (chain.includes('AssetHub')) {
     otherAssets = await fetchAssetHubAssets(chain, api, query)
   }
 
   if (chain.startsWith('Zeitgeist') || chain === 'Jamton') {
-    otherAssets = await fetchZeitgeistForeignAssets(
-      api,
-      query,
-      chain === 'Jamton' ? 'Native' : undefined
-    )
+    otherAssets = await fetchZeitgeistForeignAssets(api, chain, query)
   }
 
   if (chain === 'Acala' || chain === 'Karura') {
     otherAssets = await fetchAcalaForeignAssets(api, query)
-  }
-
-  if (chain === 'Curio') {
-    otherAssets = await fetchOtherAssetsCurio(api, query)
   }
 
   if (chain.startsWith('Bifrost')) {
@@ -299,20 +302,16 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (chain.startsWith('Kilt') || chain === 'Penpal') {
-    otherAssets = await fetchKiltForeignAssets(api, query)
+  if (chain === 'Penpal' || chain.startsWith('NeuroWeb')) {
+    otherAssets = await fetchPenpalForeignAssets(api, query)
   }
 
-  if (chain.startsWith('Ajuna') || chain.startsWith('Integritee')) {
-    otherAssets = await fetchAjunaOtherAssets(api, query)
+  if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq') {
+    otherAssets = await fetchAjunaOtherAssets(api, chain, query)
   }
 
   if (chain === 'Manta') {
     otherAssets = await fetchMantaOtherAssets(api, query)
-  }
-
-  if (chain === 'Phala') {
-    otherAssets = await fetchPhalaAssets(api, query)
   }
 
   if (chain === 'Astar' || chain === 'Shiden') {
@@ -367,7 +366,7 @@ const fetchChainAssets = async (
 
   const queryPath = query[0]
 
-  let otherAssets: TAssetInfo[] = []
+  let otherAssets: TAssetInfoNoLoc[] = []
 
   if (queryPath) {
     otherAssets = await fetchOtherAssets(chain, api, queryPath)
@@ -406,8 +405,10 @@ const fetchChainAssets = async (
 
   await api.disconnect()
 
+  const joinedAssets = [...nativeAssets, ...otherAssets]
+
   return {
-    assets: [...nativeAssets, ...otherAssets],
+    assets: joinedAssets.filter((asset): asset is TAssetInfo => asset.location !== undefined),
     nativeAssetSymbol,
     ss58Prefix,
     isEVM: isChainEvm(api),

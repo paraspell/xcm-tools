@@ -10,9 +10,9 @@ import {
 } from "@mantine/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import HeroCards from "../HeroCards/HeroCards";
-import ParticlesNetwork from "../ParticlesNetwork";
-import Sparkle from "../Sparkle/Sparkle";
+import { HeroCards } from "../HeroCards/HeroCards";
+import { ParticlesNetwork } from "../ParticlesNetwork";
+import { Sparkle } from "../Sparkle/Sparkle";
 import classes from "./Hero.module.css";
 
 export const Hero = () => {
@@ -21,52 +21,55 @@ export const Hero = () => {
   const [sparkleLeft, setSparkleLeft] = useState(0);
   const [sparkleTop, setSparkleTop] = useState(0);
   const [isSparkleVisible, setIsSparkleVisible] = useState(false);
-  const [logoDimensions, setLogoDimensions] = useState({ width: 0, height: 0 });
   const [sparkleKey, setSparkleKey] = useState(0);
+
   const logoRef = useRef<HTMLImageElement | null>(null);
+  const logoWrapperRef = useRef<HTMLDivElement | null>(null);
 
-  // Get logo dimensions after it loads
-  useEffect(() => {
-    if (logoRef.current) {
-      const rect = logoRef.current.getBoundingClientRect();
-      setLogoDimensions({ width: rect.width, height: rect.height });
-    }
-  }, []);
-
-  // Trigger sparkles at random intervals
   useEffect(() => {
     let timeoutId: number;
 
     const triggerSparkle = () => {
-      if (logoDimensions.width && logoDimensions.height) {
-        const left = Math.random() * logoDimensions.width + 250;
-        const top = Math.random() * logoDimensions.height - 50;
+      if (!logoRef.current || !logoWrapperRef.current) return;
 
-        setSparkleLeft(left);
-        setSparkleTop(top);
-        setIsSparkleVisible(true);
-        setSparkleKey((prevKey) => prevKey + 1);
+      const logoRect = logoRef.current.getBoundingClientRect();
+      const wrapperRect = logoWrapperRef.current.getBoundingClientRect();
 
-        // Hide sparkle after animation duration
-        setTimeout(() => {
-          setIsSparkleVisible(false);
-        }, 2500); // Sparkle animation duration in ms
+      const sparkleSize = 40; // Adjust to actual sparkle size
 
-        // Schedule next sparkle
-        const nextInterval = Math.random() * (5000 - 2000) + 2000; // Random between 2s and 5s
-        timeoutId = window.setTimeout(triggerSparkle, nextInterval);
-      }
+      // Convert viewport coordinates to wrapper-relative coordinates
+      const logoLeft = logoRect.left - wrapperRect.left;
+      const logoTop = logoRect.top - wrapperRect.top;
+
+      const left = logoLeft + Math.random() * (logoRect.width - sparkleSize);
+
+      const top = logoTop + Math.random() * (logoRect.height - sparkleSize);
+
+      setSparkleLeft(left);
+      setSparkleTop(top);
+      setIsSparkleVisible(true);
+      setSparkleKey((prev) => prev + 1);
+
+      // Hide sparkle after animation duration
+      setTimeout(() => {
+        setIsSparkleVisible(false);
+      }, 2500);
+
+      // Schedule next sparkle
+      const nextInterval = Math.random() * (5000 - 2000) + 2000;
+
+      timeoutId = window.setTimeout(triggerSparkle, nextInterval);
     };
 
-    // Start the sparkle sequence
-    timeoutId = window.setTimeout(triggerSparkle, 1000); // Initial delay of 1s
+    timeoutId = window.setTimeout(triggerSparkle, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [logoDimensions]);
+  }, []);
 
   return (
     <div className={classes.wrapper}>
       {memoizedParticles}
+
       <Container
         size="lg"
         className={classes.inner}
@@ -87,25 +90,25 @@ export const Hero = () => {
         </Title>
 
         <Flex pos="relative" mt={45} mb={95} justify="center">
-          <Box pos="relative">
+          <Box ref={logoWrapperRef} pos="relative">
             <Image
               ref={logoRef}
               src="/logo.png"
               alt="ParaSpell logo"
               fit="contain"
               mx="auto"
-              w={{ base: "70%", md: "50%", sm: "80%" }}
+              w={{ base: "70%", sm: "80%", md: "50%" }}
               pos="relative"
               left={{ base: undefined, sm: 30 }}
-              onLoad={() => {
-                if (logoRef.current) {
-                  const rect = logoRef.current.getBoundingClientRect();
-                  setLogoDimensions({ width: rect.width, height: rect.height });
-                }
-              }}
             />
+
             {isSparkleVisible && (
-              <Box pos="absolute" left={sparkleLeft} top={sparkleTop}>
+              <Box
+                pos="absolute"
+                left={sparkleLeft}
+                top={sparkleTop}
+                style={{ pointerEvents: "none" }}
+              >
                 <Sparkle key={sparkleKey} />
               </Box>
             )}

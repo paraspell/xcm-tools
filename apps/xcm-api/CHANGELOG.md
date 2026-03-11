@@ -1,5 +1,135 @@
 # Changelog
 
+## [12.8.8](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.7...xcm-api-v12.8.8) (2026-03-10)
+
+
+### Build System
+
+* **sdk-core:** Update swap pkg to v12.8.7 📦 ([97c5a92](https://github.com/paraspell/xcm-tools/commit/97c5a920bb5b2c491fc3ae048fd430f25290a1d1))
+
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.6...xcm-api-v12.8.7) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.5...xcm-api-v12.8.6) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.4...xcm-api-v12.8.5) (2026-03-09)
+
+
+### Build System
+
+* Rename xcm-router package to swap 📦 ([#1728](https://github.com/paraspell/xcm-tools/issues/1728)) ([97e41ed](https://github.com/paraspell/xcm-tools/commit/97e41edd9cc1f46d5a4756fc271b2d020b16ef18))
+
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.3...xcm-api-v12.8.4) (2026-03-09)
+
+
+### Documentation
+
+* Add documentation for new swap feature ([#1727](https://github.com/paraspell/xcm-tools/issues/1727)) ([3abe749](https://github.com/paraspell/xcm-tools/commit/3abe749c6ed5e44e156799db1872cd38d4f8bced))
+
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.2...xcm-api-v12.8.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.1...xcm-api-v12.8.2) (2026-03-02)
+
+
+### Code Refactoring
+
+* **xcm-router:** Use SDK dry-run & xcm-fee types ⚙️ ([9f0a273](https://github.com/paraspell/xcm-tools/commit/9f0a273c3f24063f5d71ff9f0a64157d5ce45e43))
+
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.0...xcm-api-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.7.1...xcm-api-v12.8.0) (2026-02-20)
+
+
+### Features
+
+* **xcm-router:** Add feeAsset method to router builder ✨ ([489b040](https://github.com/paraspell/xcm-tools/commit/489b0405691e00b5306d8ec031cce1eac392d922))
+
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.7.0...xcm-api-v12.7.1) (2026-02-18)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.3...xcm-api-v12.7.0) (2026-02-13)
+
+
+### Features
+
+* **xcm-api,playground:** Expose getAssetReserveChain ✨ ([81ecaa9](https://github.com/paraspell/xcm-tools/commit/81ecaa90adc333aae4ed374a0301ffd4c749961c))
+
+
+### Bug Fixes
+
+* **xcm-api:** validate router best-amount-out and add regression test ([93f77d8](https://github.com/paraspell/xcm-tools/commit/93f77d8be2bd1fae31fed49e4aa0d2cc3f103353))
+
+
+### Documentation
+
+* Add UP/DOWN badge ([3af74c3](https://github.com/paraspell/xcm-tools/commit/3af74c395b4feafb401af24dcd2d01da0b27feaf))
+* Fix API readme ([916505a](https://github.com/paraspell/xcm-tools/commit/916505a98763b10e722d85fb7b7a9c917475674a))
+
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.2...xcm-api-v12.6.3) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.1...xcm-api-v12.6.2) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.6.0...xcm-api-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.1...xcm-api-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add keepAlive flag for local transfers 🪄 ([fcf32ac](https://github.com/paraspell/xcm-tools/commit/fcf32ac00baea19b6304d59a8593c1e0b6f55f17))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Bug Fixes
+
+* add error handling to existentialDeposit and convertSs58 endpoints ([bef7acd](https://github.com/paraspell/xcm-tools/commit/bef7acd34f4ffbd44d35b79fa3faa44b8ba17938))
+* correct import order in address.service.test.ts ([6618a61](https://github.com/paraspell/xcm-tools/commit/6618a618e133d4c5da051864f20657b907f9274f))
+* **sdk-core:** Fix xcm version resolving ⚙️ ([5951bc3](https://github.com/paraspell/xcm-tools/commit/5951bc31a89679a2c1fab7dcaffd293ce56b46e7))
+
+
+### Documentation
+
+* Upload readmes & update snapshots ([d515a8b](https://github.com/paraspell/xcm-tools/commit/d515a8b990a531e7ecb172aadcec666757940c3e))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.5.0...xcm-api-v12.5.1) (2026-01-30)
 
 

@@ -10,15 +10,15 @@ import type Crab from './Crab'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Crab', () => {
-  let chain: Crab<unknown, unknown>
+  let chain: Crab<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'ParaToPara',
     assetInfo: { symbol: 'KSM', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Crab'>('Crab')
+    chain = getChain<unknown, unknown, unknown, 'Crab'>('Crab')
   })
 
   it('should initialize with correct values', () => {
@@ -30,6 +30,7 @@ describe('Crab', () => {
 
   it('should throw ScenarioNotSupportedError for ParaToRelay scenario', () => {
     const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+      unknown,
       unknown,
       unknown
     >

@@ -1,12 +1,12 @@
 import type { ApiPromise } from '@polkadot/api'
-import type { TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { TLocation } from '@paraspell/sdk-common'
+import { TAssetInfoNoLoc } from './types'
 
 export const fetchInterlayAssets = async (
   api: ApiPromise,
   query: string
-): Promise<TAssetInfo[]> => {
+): Promise<TAssetInfoNoLoc[]> => {
   const [module, method] = query.split('.')
   const assets = await api.query[module][method].entries()
 
@@ -38,8 +38,8 @@ export const fetchInterlayAssets = async (
 }
 
 export const fetchInterlayNativeAssets = async (
-  nativeAssets: TAssetInfo[]
-): Promise<TAssetInfo[]> => {
+  nativeAssets: TAssetInfoNoLoc[]
+): Promise<TAssetInfoNoLoc[]> => {
   const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
     IBTC: {
       parents: 1,
@@ -96,6 +96,37 @@ export const fetchInterlayNativeAssets = async (
           {
             GlobalConsensus: {
               kusama: null
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  return nativeAssets.map(asset => {
+    const customLoc = CUSTOM_NATIVE_JUNCTIONS[asset.symbol]
+    return {
+      ...asset,
+      location: customLoc
+    }
+  })
+}
+
+export const fetchKintsugiNativeAssets = async (
+  nativeAssets: TAssetInfoNoLoc[]
+): Promise<TAssetInfoNoLoc[]> => {
+  const CUSTOM_NATIVE_JUNCTIONS: Record<string, TLocation> = {
+    KBTC: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2092
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x000b000000000000000000000000000000000000000000000000000000000000'
             }
           }
         ]

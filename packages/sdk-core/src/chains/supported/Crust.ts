@@ -13,7 +13,10 @@ import {
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Crust<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Crust<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Crust', 'crustParachain', 'Polkadot', Version.V3)
   }
@@ -24,14 +27,14 @@ class Crust<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
     return { OtherReserve: BigInt(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -45,14 +48,14 @@ class Crust<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
         params: {
           id: assetId,
           dest,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Assets',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
         target: dest,

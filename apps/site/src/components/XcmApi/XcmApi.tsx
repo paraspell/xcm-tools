@@ -39,7 +39,7 @@ const data = [
   },
 ];
 
-const XcmApi = () => {
+export const XcmApi = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -109,14 +109,14 @@ const XcmApi = () => {
         <div className={classes.controls}>
           <Button
             component="a"
-            href="https://lightspell.xyz/"
+            href="https://paraspell.github.io/docs/api/g-started.html"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
             mr="md"
           >
-            Read more
+            Get started
           </Button>
           <Button
             variant="outline"
@@ -148,5 +148,3 @@ const XcmApi = () => {
     </div>
   );
 };
-
-export default XcmApi;

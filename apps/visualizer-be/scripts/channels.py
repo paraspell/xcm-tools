@@ -249,13 +249,9 @@ def get_parachain_stats(base_url, api_key=None):
 
 def main(min_rows=10):
     load_dotenv()
-    db_params = dict(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", "5432")),
-        user=os.getenv("DB_USER") or "",
-        password=os.getenv("DB_PASS") or "",
-        dbname=os.getenv("DB_NAME") or "",
-    )
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set in environment")
 
     api_key = os.getenv("SUBSCAN_API_KEY")
 
@@ -279,7 +275,7 @@ def main(min_rows=10):
             f"Only {len(combined)} rows fetched (<{min_rows}); aborting without touching DB."
         )
 
-    with psycopg2.connect(**db_params) as conn:
+    with psycopg2.connect(database_url) as conn:
         recreate_and_load(conn, combined)
 
     print(f"Channels table refreshed successfully. Total: {len(combined)}")

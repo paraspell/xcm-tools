@@ -2,16 +2,17 @@ import { Button, Paper, Select, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TSubstrateChain } from '@paraspell/sdk';
 import { PALLETS, SUBSTRATE_CHAINS } from '@paraspell/sdk';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import {
+  parseAsBoolean,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { type FC, useEffect } from 'react';
 
-import { PALLETS_QUERIES } from '../../consts';
+import { PALLETS_QUERIES } from '../../constants';
 import { useWallet } from '../../hooks';
 import type { TPalletsQuery } from '../../types';
-import {
-  parseAsPalletsQuery,
-  parseAsSubstrateChain,
-} from '../../utils/parsers';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
@@ -27,10 +28,10 @@ type Props = {
   loading: boolean;
 };
 
-const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
+export const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const [queryState, setQueryState] = useQueryStates({
-    func: parseAsPalletsQuery.withDefault('ALL_PALLETS'),
-    chain: parseAsSubstrateChain.withDefault('Acala'),
+    func: parseAsStringLiteral(PALLETS_QUERIES).withDefault('ALL_PALLETS'),
+    chain: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Acala'),
     pallet: parseAsString.withDefault('XTokens'),
     useApi: parseAsBoolean.withDefault(false),
   });
@@ -99,5 +100,3 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     </Paper>
   );
 };
-
-export default PalletsQueriesForm;

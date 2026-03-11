@@ -1,10 +1,10 @@
 import { Grid, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
-import GeneralOptions from './GeneralOptions';
-import SkyboxUploadForm from './SkyboxUploadForm';
+import { GeneralOptions } from './GeneralOptions';
+import { SkyboxUploadForm } from './SkyboxUploadForm';
 
-const Options = () => {
+export const Options = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'settings'
   });
@@ -41,5 +41,3 @@ const Options = () => {
     </Grid>
   );
 };
-
-export default Options;

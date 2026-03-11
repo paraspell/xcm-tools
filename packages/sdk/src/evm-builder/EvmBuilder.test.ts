@@ -15,7 +15,7 @@ vi.mock('@paraspell/sdk-core')
 const mockApi = {
   init: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 describe('EvmBuilderClass', () => {
   let signer: WalletClient

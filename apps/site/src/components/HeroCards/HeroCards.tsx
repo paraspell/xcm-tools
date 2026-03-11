@@ -34,19 +34,6 @@ const codeForSdk = `
       .build()   
     `;
 
-const codeForRouter = `
-await RouterBuilder()
-    .from('Hydration')
-    .to('AssetHubPolkadot')
-    .currencyFrom(CURRENCY_SPEC)
-    .currencyTo(CURRENCY_SPEC)
-    .amount('10000000000')
-    .slippagePct('1')
-    .injectorAddress(address)    
-    .recipientAddress(address)    
-    .signer(signer)
-    .buildAndSend()`;
-
 const codeForLightSpell = `HTTP GET 
 api.lightspell.xyz/v5/chains/
 Acala/para-id
@@ -54,7 +41,7 @@ Acala/para-id
   "paraId": 2000
 } `;
 
-const HeroCards = () => {
+export const HeroCards = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${em(992)})`);
   const isVerySmallScreen = useMediaQuery(`(max-width: ${em(831)})`);
 
@@ -158,7 +145,7 @@ const HeroCards = () => {
     </Box>
   );
 
-  const router = (
+  const analyser = (
     <Box
       style={{
         gridColumn: isSmallScreen ? "auto" : "2 / 3",
@@ -168,41 +155,10 @@ const HeroCards = () => {
       <Paper
         shadow="xl"
         p="xl"
-        radius="lg"
-        h={{ base: undefined, md: 420 }}
-        mt={{ base: 20, md: -230 }}
-        style={{
-          backdropFilter: "blur(2px)",
-          backgroundColor: "rgba(240, 230, 255, 0.5)",
-        }}
-      >
-        <Title fw={800} order={2} c="black">
-          SpellRouter<span style={{ paddingLeft: "14px" }}>☄️</span>
-        </Title>
-        <Text size="lg" mt="sm" c="black">
-          Cross-chain swaps made simple.
-        </Text>
-        <CodeHighlight
-          style={{
-            borderRadius: 16,
-          }}
-          language="ts"
-          mt="lg"
-          code={codeForRouter}
-        />
-      </Paper>
-    </Box>
-  );
-
-  const analyser = (
-    <Box mt={25} style={{ gridColumn: isSmallScreen ? "auto" : "3 / 4" }}>
-      <Paper
-        shadow="xl"
-        p="xl"
         pt={21}
         radius="lg"
         h={{ base: undefined, md: 330 }}
-        mt={{ base: undefined, md: -180 }}
+        mt={{ base: undefined, md: -230 }}
         style={{
           backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
@@ -240,7 +196,6 @@ const HeroCards = () => {
         {sdk}
         {api}
         {visualizer}
-        {router}
         {analyser}
       </Stack>
     </Group>
@@ -256,12 +211,10 @@ const HeroCards = () => {
     >
       <Stack flex={1} gap="xl">
         {visualizer}
-        {router}
       </Stack>
       <Stack flex={1} gap="xl">
         {sdk}
         {api}
-        {router}
         {analyser}
       </Stack>
     </Group>
@@ -280,10 +233,7 @@ const HeroCards = () => {
       {visualizer}
       {sdk}
       {api}
-      {router}
       {analyser}
     </Group>
   );
 };
-
-export default HeroCards;

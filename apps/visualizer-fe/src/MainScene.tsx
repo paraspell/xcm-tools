@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 import { Vector3 } from 'three';
 
-import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
+import { ParachainsGraphContainer } from './components/ParachainsGraph/ParachainsGraph.container';
 import { useDeviceType } from './context/DeviceType/useDeviceType';
 import { useSelectedEcosystem } from './context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
@@ -23,7 +23,7 @@ interface AngleMap {
 const CAMERA_POSITION = new Vector3(48, 10, 0);
 const CAMERA_POSITION_MOBILE = new Vector3(58, 10, 0);
 
-const MainScene = () => {
+export const MainScene = () => {
   const { activeEditParachain } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
   const { isMobile } = useDeviceType();
@@ -89,5 +89,3 @@ const MainScene = () => {
     </>
   );
 };
-
-export default MainScene;

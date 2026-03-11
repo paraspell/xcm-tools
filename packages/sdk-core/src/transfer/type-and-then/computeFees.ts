@@ -16,9 +16,9 @@ import { getXcmFeeInternal } from '../fees'
 
 export const FEE_PADDING = 30
 
-const sumHopFees = <TApi, TRes>(
+const sumHopFees = <TApi, TRes, TSigner>(
   result: TGetXcmFeeResult<false>,
-  { assetInfo, isRelayAsset, systemAsset }: TTypeAndThenCallContext<TApi, TRes>
+  { assetInfo, isRelayAsset, systemAsset }: TTypeAndThenCallContext<TApi, TRes, TSigner>
 ): bigint => {
   return result.hops.reduce((acc, hop) => {
     // only add if asset is equal
@@ -28,8 +28,8 @@ const sumHopFees = <TApi, TRes>(
   }, 0n)
 }
 
-export const computeAllFees = async <TApi, TRes>(
-  context: TTypeAndThenCallContext<TApi, TRes>,
+export const computeAllFees = async <TApi, TRes, TSigner>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   buildTx: TTxFactory<TRes>
 ): Promise<TTypeAndThenFees | null> => {
   const {

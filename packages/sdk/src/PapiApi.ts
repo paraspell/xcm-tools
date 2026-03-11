@@ -10,6 +10,7 @@ import { blake2b } from '@noble/hashes/blake2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import type {
   IPolkadotApi,
+  TApiType,
   TAssetInfo,
   TBuilderOptions,
   TChain,
@@ -20,6 +21,7 @@ import type {
   TLocation,
   TPallet,
   TPaymentInfo,
+  TSender,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
@@ -29,7 +31,6 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
-  assertHasLocation,
   BatchMode,
   computeFeeFromDryRun,
   createClientCache,
@@ -46,6 +47,7 @@ import {
   isConfig,
   isExternalChain,
   isRelayChain,
+  isSenderSigner,
   localizeLocation,
   MissingChainApiError,
   padValueBy,
@@ -64,7 +66,7 @@ import { isAddress, isHex } from 'viem'
 import { DEFAULT_TTL_MS, EXTENSION_MS, LEGACY_CHAINS, MAX_CLIENTS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
 import { createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
 const clientPool = createClientCache<TPapiApi>(
@@ -109,7 +111,7 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
 }
 
-class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
+class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   private _config?: TBuilderOptions<TPapiApiOrUrl>
   private api: TPapiApi
   private _ttlMs = DEFAULT_TTL_MS
@@ -119,6 +121,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   constructor(config?: TBuilderOptions<TPapiApiOrUrl>) {
     this._config = config
+  }
+
+  getType(): TApiType {
+    return 'PAPI'
   }
 
   getConfig() {
@@ -357,8 +363,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TPapiTransaction>) {
-    const { chain, address } = options
-    if (!chain.startsWith('Hydration'))
+    const { chain, address, feeAsset } = options
+
+    if (!chain.startsWith('Hydration') || feeAsset)
       return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
 
     const assetId = await this.api
@@ -527,14 +534,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    const hasLocation = resolvedFeeAsset.asset.location
-
     const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ['Astar']
 
     if (
       (hasXcmPaymentApiSupport(chain) &&
         result.value.local_xcm &&
-        hasLocation &&
         (feeAsset ||
           USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
           (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
@@ -635,8 +639,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return deliveryFeeResolved
     } else {
       try {
-        assertHasLocation(nativeAsset)
-
         const res = await this.quoteAhPrice(
           localizeLocation(chain, nativeAsset.location),
           assetLocalizedLoc,
@@ -676,8 +678,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const weight = overridenWeight
       ? { proof_size: overridenWeight?.proofSize, ref_time: overridenWeight?.refTime }
       : await queryWeight()
-
-    assertHasLocation(asset)
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
@@ -738,7 +738,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     await ahApi.init(assetHubChain)
 
-    assertHasLocation(asset)
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
     const convertedExecFee = await ahApi.quoteAhPrice(
@@ -946,12 +945,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve()
   }
 
-  deriveAddress(path: string): string {
-    return deriveAddress(path)
+  deriveAddress(sender: TSender<TPapiSigner>): string {
+    return deriveAddress(sender)
   }
 
-  async signAndSubmit(tx: TPapiTransaction, path: string): Promise<string> {
-    const signer = createDevSigner(path)
+  async signAndSubmit(tx: TPapiTransaction, sender: TSender<TPapiSigner>): Promise<string> {
+    const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
     const { txHash } = await tx.signAndSubmit(signer)
     return txHash
   }

@@ -12,7 +12,7 @@ vi.mock('./validateAddress')
 vi.mock('@paraspell/sdk-common')
 
 describe('validateDestinationAddress', () => {
-  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   afterEach(() => {
     vi.clearAllMocks()

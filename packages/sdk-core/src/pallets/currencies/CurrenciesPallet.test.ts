@@ -52,7 +52,7 @@ describe('CurrenciesPallet.setBalance', () => {
     const mockCustomCurrencyId = vi.fn().mockReturnValue('KAR_ID')
     vi.mocked(getChain).mockReturnValue({
       getCustomCurrencyId: mockCustomCurrencyId
-    } as unknown as BifrostPolkadot<unknown, unknown>)
+    } as unknown as BifrostPolkadot<unknown, unknown, unknown>)
 
     const res = await pallet.mint(address, asset, 10n, 'Karura')
 
@@ -71,7 +71,7 @@ describe('CurrenciesPallet.setBalance', () => {
     const mockGetCustomCurrencyId = vi.fn().mockReturnValue('ACA_ID')
     vi.mocked(getChain).mockReturnValue({
       getCustomCurrencyId: mockGetCustomCurrencyId
-    } as unknown as BifrostPolkadot<unknown, unknown>)
+    } as unknown as BifrostPolkadot<unknown, unknown, unknown>)
 
     const res = await pallet.mint(address, asset, 2n, 'Acala')
 

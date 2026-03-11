@@ -27,7 +27,7 @@ const data = [
   },
 ];
 
-const XcmAnalyser = () => {
+export const XcmAnalyser = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -119,5 +119,3 @@ const XcmAnalyser = () => {
     </div>
   );
 };
-
-export default XcmAnalyser;

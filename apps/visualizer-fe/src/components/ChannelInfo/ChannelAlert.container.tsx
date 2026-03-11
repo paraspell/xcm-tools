@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { channelQueryDocument } from '../../api/channels';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelsQuery } from '../../gql/graphql';
-import ChannelAlert from './ChannelAlert';
+import { ChannelAlert } from './ChannelAlert';
 
 type Props = {
   selectedChannel: ChannelsQuery['channels'][number];
 };
 
-const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
+export const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
   const { t } = useTranslation();
   const { setSelectedChannel, channelAlertOpen, setChannelAlertOpen } = useSelectedParachain();
 
@@ -60,5 +60,3 @@ const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
     />
   ) : null;
 };
-
-export default ChannelAlertContainer;

@@ -27,9 +27,9 @@ vi.mock('../../../errors', () => ({
 }))
 
 describe('buildHopInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
-  let mockHopApi: IPolkadotApi<unknown, unknown>
-  let baseOptions: BuildHopInfoOptions<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockHopApi: IPolkadotApi<unknown, unknown, unknown>
+  let baseOptions: BuildHopInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_HOP_FEE = 100000000n
   const DEFAULT_ED = 100000000n
@@ -41,11 +41,11 @@ describe('buildHopInfo', () => {
       init: vi.fn().mockResolvedValue(undefined),
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
       clone: vi.fn().mockReturnValue(mockHopApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     baseOptions = {
       api: mockApi,
@@ -161,20 +161,22 @@ describe('buildHopInfo', () => {
   })
 
   it('should handle hop asset without location correctly', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    const asset: TAssetInfo = {
       symbol: 'OTHER',
       assetId: 'otherId',
-      decimals: 12
-    } as TAssetInfo)
+      decimals: 12,
+      location: {
+        parents: 1,
+        interior: 'Here'
+      }
+    }
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
     const options = { ...baseOptions }
     await buildHopInfo(options)
 
-    const expectedCurrencyPayload = { symbol: 'OTHER' }
-
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(
-      options.chain,
-      expectedCurrencyPayload
-    )
+    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.chain, {
+      location: asset.location
+    })
   })
 
   it('should call finally block (disconnect) even if an earlier call fails', async () => {

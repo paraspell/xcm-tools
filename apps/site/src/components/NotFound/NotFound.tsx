@@ -1,10 +1,10 @@
 import { Button, Container, Group, Text, Title } from "@mantine/core";
 import { Link } from "react-router";
 
-import Illustration from "./Illustration";
+import { Illustration } from "./Illustration";
 import classes from "./NotFound.module.css";
 
-const NotFound = () => (
+export const NotFound = () => (
   <Container className={classes.root}>
     <div className={classes.inner}>
       <Illustration className={classes.image} />
@@ -24,5 +24,3 @@ const NotFound = () => (
     </div>
   </Container>
 );
-
-export default NotFound;

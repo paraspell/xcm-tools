@@ -3,15 +3,14 @@ import { findAssetInfoOrThrow, isTAsset, type TAsset } from '@paraspell/assets'
 import type { Version } from '@paraspell/sdk-common'
 
 import type { TAssetClaimOptions } from '../../types'
-import { abstractDecimals, assertHasLocation, createAsset, localizeLocation } from '../../utils'
+import { abstractDecimals, createAsset, localizeLocation } from '../../utils'
 
-export const resolveAssets = <TApi, TRes>(
-  { api, chain, currency }: TAssetClaimOptions<TApi, TRes>,
+export const resolveAssets = <TApi, TRes, TSigner>(
+  { api, chain, currency }: TAssetClaimOptions<TApi, TRes, TSigner>,
   version: Version
 ): TAsset<bigint>[] => {
   const normalizeAsset = (amount: TAmount, currency: TCurrencyCore) => {
     const asset = findAssetInfoOrThrow(chain, currency, null)
-    assertHasLocation(asset)
     const abstracted = abstractDecimals(amount, asset.decimals, api)
     return createAsset(version, abstracted, localizeLocation(chain, asset.location))
   }

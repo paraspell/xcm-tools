@@ -17,7 +17,7 @@ vi.mock('../fees')
 describe('computeAllFees', () => {
   let buildTx: TTxFactory<unknown>
 
-  const api = {} as IPolkadotApi<unknown, unknown>
+  const api = {} as IPolkadotApi<unknown, unknown, unknown>
 
   const context = {
     origin: { api, chain: 'Polkadot' },
@@ -38,7 +38,7 @@ describe('computeAllFees', () => {
       currency: { amount: '1', location: RELAY_LOCATION },
       feeCurrency: undefined
     }
-  } as TTypeAndThenCallContext<unknown, unknown>
+  } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()

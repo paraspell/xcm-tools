@@ -1,6 +1,15 @@
-import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
-import { type TLocation } from '@paraspell/sdk-common'
+import {
+  findNativeAssetInfoOrThrow,
+  hasXcmPaymentApiSupport,
+  isAssetEqual,
+  type TCurrencyCore
+} from '@paraspell/assets'
+import {
+  isExternalChain,
+  type TChain,
+  type TParachain,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
@@ -14,8 +23,10 @@ import type {
   TSwapFeeEstimates,
   TWeight
 } from '../../../types'
-import { getChainVersion } from '../../chain'
+import { getRelayChainOf } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
+import { parseUnits } from '../../unit'
+import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
@@ -32,7 +43,7 @@ const validateAmount = (amount: bigint, requiredFee: bigint): void => {
 const calculateTotalFees = (chain: TSubstrateChain | undefined, fees: TSwapFeeEstimates): bigint =>
   chain ? fees.originReserveFee + fees.exchangeFee : 0n
 
-const executeDryRun = async <TApi, TRes>(params: TDryRunOptions<TApi, TRes>) => {
+const executeDryRun = async <TApi, TRes, TSigner>(params: TDryRunOptions<TApi, TRes, TSigner>) => {
   const result = await dryRunInternal(params)
 
   if (!result.origin.success) {
@@ -75,6 +86,7 @@ const extractFeesFromDryRun = (
   requireHopsSuccess: boolean = false
 ): TSwapFeeEstimates => {
   const fees: TSwapFeeEstimates = {
+    originFee: 0n,
     originReserveFee: 0n,
     exchangeFee: 0n,
     destReserveFee: 0n
@@ -159,8 +171,8 @@ const extractFeesFromDryRun = (
   return fees
 }
 
-const createXcmAndCall = async <TApi, TRes>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes>,
+const createXcmAndCall = async <TApi, TRes, TSigner>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>,
   dryRunWeight?: TWeight
 ) => {
   const xcm = await createSwapExecuteXcm(options)
@@ -175,8 +187,8 @@ const createXcmAndCall = async <TApi, TRes>(
   return { xcm, weight, call }
 }
 
-export const handleSwapExecuteTransfer = async <TApi, TRes>(
-  options: TCreateSwapXcmOptions<TApi, TRes>
+export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
+  options: TCreateSwapXcmOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const {
     api,
@@ -186,6 +198,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     assetInfoFrom: assetFrom,
     assetInfoTo: assetTo,
     currencyTo,
+    feeAssetInfo,
     senderAddress,
     recipientAddress,
     calculateMinAmountOut
@@ -195,7 +208,15 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
   validateAmount(assetFrom.amount, MIN_FEE)
 
-  const version = getChainVersion(chain ?? exchangeChain)
+  const version = pickRouterCompatibleXcmVersion(chain, exchangeChain, destChain)
+
+  const isEthereumDest = destChain !== undefined && isExternalChain(destChain)
+
+  // When main asset is DOT and dest is Ethereum, fees come from the same asset
+  // (no separate fee asset needed). Only skip fee validation when currencies differ.
+  const hasSeparateFeeAsset =
+    isEthereumDest &&
+    !isAssetEqual(assetFrom, findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain)))
 
   const internalOptions = {
     ...options,
@@ -211,9 +232,10 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     address: recipientAddress,
     version,
     currency: {
-      location: assetFrom.location as TLocation,
+      location: assetFrom.location,
       amount: assetFrom.amount
     },
+    feeAsset: feeAssetInfo ? { location: feeAssetInfo.location } : undefined,
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
       exchangeChain,
@@ -222,14 +244,24 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     useRootOrigin: true
   }
 
+  const FEE_ASSET_AMOUNT = 100
+
+  const dummyOriginFee = feeAssetInfo
+    ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
+    : 0n
+
   const fees: TSwapFeeEstimates = {
+    originFee: dummyOriginFee,
     originReserveFee: MIN_FEE,
     exchangeFee: 0n,
     destReserveFee: MIN_FEE
   }
 
   const totalFeesPre = calculateTotalFees(chain, fees)
-  validateAmount(assetFrom.amount, totalFeesPre)
+
+  if (!hasSeparateFeeAsset) {
+    validateAmount(assetFrom.amount, totalFeesPre)
+  }
 
   // First dry run with dummy fees to extract actual fees
   const { call: initialCall } = await createXcmAndCall({
@@ -263,19 +295,30 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     false
   )
 
+  // Set originFee from dry run origin fee (padded), same as handleExecuteTransfer
+  extractedFees.originFee =
+    feeAssetInfo && firstDryRunResult.origin.success
+      ? padValueBy(firstDryRunResult.origin.fee, FEE_PADDING_PERCENTAGE)
+      : 0n
+
   if (extractedFees.exchangeFee === 0n) {
     // We set the exchange fee to non-zero value to prevent creating dummy tx
     extractedFees.exchangeFee = MIN_FEE
   }
-
   const totalFees = calculateTotalFees(chain, extractedFees)
 
-  validateAmount(assetFrom.amount, totalFees)
+  if (!hasSeparateFeeAsset) {
+    validateAmount(assetFrom.amount, totalFees)
+  }
 
   let updatedAssetTo = assetTo
 
   if (chain) {
-    const amountAvailableForSwap = assetFrom.amount - totalFees
+    // When fees are paid from a separate asset (e.g. DOT for Ethereum),
+    // the full main asset amount is available for the swap
+    const amountAvailableForSwap = hasSeparateFeeAsset
+      ? assetFrom.amount
+      : assetFrom.amount - totalFees
 
     const recalculatedMinAmountOut = await calculateMinAmountOut(amountAvailableForSwap)
 

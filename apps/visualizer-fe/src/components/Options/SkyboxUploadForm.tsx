@@ -17,7 +17,7 @@ type FormValues = {
   back: File | null;
 };
 
-const SkyboxUploadForm = () => {
+export const SkyboxUploadForm = () => {
   const { t } = useTranslation();
 
   const form = useForm<FormValues>({
@@ -156,5 +156,3 @@ const SkyboxUploadForm = () => {
     </form>
   );
 };
-
-export default SkyboxUploadForm;

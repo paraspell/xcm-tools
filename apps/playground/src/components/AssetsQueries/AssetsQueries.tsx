@@ -7,19 +7,12 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import {
-  Foreign,
-  ForeignAbstract,
-  Native,
-  replaceBigInt,
-  type TCurrencyCore,
-  type TLocation,
-} from '@paraspell/sdk';
+import { replaceBigInt } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
-import { fetchFromApi } from '../../utils';
+import { fetchFromApi, resolveCustomCurrencyCore } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';
@@ -58,52 +51,32 @@ export const AssetsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
-    const { currencyType, currency, customCurrencySymbolSpecifier } =
-      formValues;
-
-    if (currencyType === 'symbol') {
-      if (customCurrencySymbolSpecifier === 'native') {
-        return {
-          symbol: Native(currency),
-        };
-      }
-
-      if (customCurrencySymbolSpecifier === 'foreign') {
-        return {
-          symbol: Foreign(currency),
-        };
-      }
-
-      if (customCurrencySymbolSpecifier === 'foreignAbstract') {
-        return {
-          symbol: ForeignAbstract(currency),
-        };
-      }
-    }
-
-    if (currencyType === 'location') {
-      return {
-        location: JSON.parse(currency) as TLocation,
-      };
-    } else if (currencyType === 'id') {
-      return { id: currency };
-    } else {
-      return { symbol: currency };
-    }
-  };
-
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi, chain, destination, func, address } = formValues;
+    const {
+      useApi,
+      chain,
+      destination,
+      func,
+      address,
+      currency,
+      currencyType,
+      currencySymbolSpecifier,
+    } = formValues;
 
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
       'ASSET_LOCATION',
       'ASSET_INFO',
+      'ASSET_RESERVE_CHAIN',
       'EXISTENTIAL_DEPOSIT',
     ]);
 
-    const resolvedCurrency = resolveCurrency(formValues);
+    const resolvedCurrency = resolveCustomCurrencyCore(
+      currency,
+      currencyType,
+      currencySymbolSpecifier,
+    );
+
     if (useApi) {
       const endpoint = getApiEndpoint(func, formValues.chain);
       const shouldUsePost = postCalls.has(func);

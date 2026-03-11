@@ -15,9 +15,13 @@ import type {
 } from '../../types'
 import { type TForeignOrTokenAsset } from '../../types'
 import { assertSenderAddress } from '../../utils'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import Chain from '../Chain'
 
-class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Acala<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'Acala',
     info: string = 'acala',
@@ -27,7 +31,7 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -35,8 +39,10 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return false
   }
 
-  async transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
-    const { api, assetInfo: asset, address, balance, senderAddress, isAmountAll } = options
+  async transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner>
+  ): Promise<TRes> {
+    const { api, address, senderAddress, isAmountAll, keepAlive } = options
 
     const createTx = (amount: bigint) =>
       api.deserializeExtrinsics({
@@ -48,27 +54,26 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
         }
       })
 
-    let amount: bigint
-
-    if (isAmountAll) {
+    let fee = 0n
+    if (isAmountAll || keepAlive) {
       assertSenderAddress(senderAddress)
-      const { partialFee: fee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), senderAddress)
-      amount = balance - fee
-    } else {
-      amount = asset.amount
+      const { partialFee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), senderAddress)
+      fee = BigInt(partialFee)
     }
+
+    const amount = getLocalTransferAmount(options, fee)
 
     return createTx(amount)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
       throw new InvalidCurrencyError('LcDOT local transfers are not supported')
     }
 
-    const amount = isAmountAll ? balance : asset.amount
+    const amount = getLocalTransferAmount(options)
 
     return api.deserializeExtrinsics({
       module: 'Currencies',
@@ -86,7 +91,11 @@ class Acala<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfe
     return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
-  getBalance(api: IPolkadotApi<TApi, TRes>, address: string, asset: TAssetInfo): Promise<bigint> {
+  getBalance(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
     if (asset.symbol.toLowerCase() === 'lcdot') {
       throw new InvalidCurrencyError('LcDOT balance is not supported')
     }

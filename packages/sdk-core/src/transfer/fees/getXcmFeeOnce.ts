@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
-import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
@@ -57,7 +57,7 @@ const getFailureInfo = (
   return {}
 }
 
-export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean>({
+export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extends boolean>({
   api,
   tx,
   origin,
@@ -71,7 +71,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   swapConfig,
   useRootOrigin,
   skipReverseFeeCalculation
-}: TGetXcmFeeInternalOptions<TApi, TRes, TDisableFallback>): Promise<
+}: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
   const asset = findAssetInfoOrThrow(origin, currency, destination)
@@ -174,7 +174,9 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
     }
   }
 
-  const processHop = async (params: HopProcessParams<TApi, TRes>): Promise<TXcmFeeHopResult> => {
+  const processHop = async (
+    params: HopProcessParams<TApi, TRes, TSigner>
+  ): Promise<TXcmFeeHopResult> => {
     const {
       api: hopApi,
       currentChain,
@@ -239,14 +241,12 @@ export const getXcmFeeOnce = async <TApi, TRes, TDisableFallback extends boolean
   })
 
   // Handle case where we failed before reaching destination
-  let destFee: bigint | undefined = 0n
+  let destFee: bigint | undefined
   let destAsset: TAssetInfo | undefined
-  let destFeeType: TFeeType | undefined = isExternalChain(destination)
-    ? 'noFeeRequired'
-    : 'paymentInfo'
+  let destFeeType: TFeeType | undefined
   let destDryRunError: string | undefined
   let destDryRunSubError: string | undefined
-  let destSufficient: boolean | undefined = undefined
+  let destSufficient: boolean | undefined
 
   if (traversalResult.destination) {
     const destResult = traversalResult.destination

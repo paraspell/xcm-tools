@@ -4,20 +4,25 @@ import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TSendBaseOptions } from '../types'
+import { executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 vi.mock('../transfer')
+vi.mock('../utils/swap/routerUtils', async importOriginal => ({
+  ...(await importOriginal()),
+  executeWithRouter: vi.fn()
+}))
 
-const mockApi = {} as IPolkadotApi<unknown, unknown>
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
-  overrides: Partial<TSendBaseOptions<unknown>> = {}
-): TSendBaseOptions<unknown> => ({
-  from: 'Acala' as TSendBaseOptions<unknown>['from'],
-  to: 'Hydration' as TSendBaseOptions<unknown>['to'],
+  overrides: Partial<TSendBaseOptions<unknown, unknown, unknown>> = {}
+): TSendBaseOptions<unknown, unknown, unknown> => ({
+  from: 'Acala',
+  to: 'Hydration',
   address: 'address',
-  currency: { symbol: 'ACA', amount: 100n } as TSendBaseOptions<unknown>['currency'],
+  currency: { symbol: 'ACA', amount: 100n },
   senderAddress: 'sender',
   ...overrides
 })
@@ -34,7 +39,12 @@ describe('normalizeAmountAll', () => {
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptions<unknown, unknown, unknown>
+    >
 
     const options = createOptions()
 
@@ -67,7 +77,7 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown>
+            TSendBaseOptions<unknown, unknown, unknown>
           >
       )
       .mockImplementationOnce(
@@ -75,18 +85,23 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown>
+            TSendBaseOptions<unknown, unknown, unknown>
           >
       )
 
     const builder = {
       currency: currencyMock,
       createTxFactory
-    } as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions<unknown>>
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptions<unknown, unknown, unknown>
+    >
 
     const options = createOptions({
-      currency: { symbol: 'ACA', amount: AMOUNT_ALL } as TSendBaseOptions<unknown>['currency'],
-      feeAsset: { symbol: 'DOT' } as TSendBaseOptions<unknown>['feeAsset']
+      currency: { symbol: 'ACA', amount: AMOUNT_ALL },
+      feeAsset: { symbol: 'DOT' }
     })
 
     const result = await normalizeAmountAll(mockApi, builder, options)
@@ -118,5 +133,74 @@ describe('normalizeAmountAll', () => {
     if (Array.isArray(result.options.currency)) throw new Error('Expected single asset currency')
     expect(result.options.currency.amount).toBe(transferable)
     expect(result.options.currency).not.toBe(options.currency)
+  })
+
+  it('uses executeWithRouter when swapOptions is provided and amount is AMOUNT_ALL', async () => {
+    const transferable = 456n
+    const initialBuildTx = vi.fn()
+    const finalBuildTx = vi.fn()
+
+    const swapOptions = {
+      currencyTo: { symbol: 'DOT' },
+      exchange: undefined,
+      slippage: 1
+    }
+
+    vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
+      const routerBuilder = {
+        getTransferableAmount: vi.fn<() => Promise<bigint>>().mockResolvedValue(transferable)
+      }
+      return executor(routerBuilder as never)
+    })
+
+    const createTxFactory = vi.fn()
+    const currencyMock = vi
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
+            unknown,
+            unknown,
+            unknown,
+            TSendBaseOptions<unknown, unknown, unknown>
+          >
+      )
+      .mockImplementationOnce(
+        () =>
+          ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
+            unknown,
+            unknown,
+            unknown,
+            TSendBaseOptions<unknown, unknown, unknown>
+          >
+      )
+
+    const builder = {
+      currency: currencyMock,
+      createTxFactory
+    } as unknown as GeneralBuilder<
+      unknown,
+      unknown,
+      unknown,
+      TSendBaseOptions<unknown, unknown, unknown>
+    >
+
+    const options = createOptions({
+      currency: { symbol: 'ACA', amount: AMOUNT_ALL },
+      swapOptions
+    })
+
+    const result = await normalizeAmountAll(mockApi, builder, options)
+
+    expect(executeWithRouter).toHaveBeenCalledWith(
+      expect.objectContaining({ api: mockApi, swapOptions }),
+      expect.any(Function)
+    )
+    expect(getTransferableAmountInternal).not.toHaveBeenCalled()
+    expect(result.buildTx).toBe(finalBuildTx)
+    expect(result.options.isAmountAll).toBe(true)
+    expect(Array.isArray(result.options.currency)).toBe(false)
+    if (Array.isArray(result.options.currency)) throw new Error('Expected single asset currency')
+    expect(result.options.currency.amount).toBe(transferable)
   })
 })

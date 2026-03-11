@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-import type { IPolkadotApi } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core'
 import {
   findAssetInfoOrThrow,
   getParaId,
@@ -12,7 +12,7 @@ import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions } from '../types'
+import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from '../types'
 import { isEthersSigner } from '../utils'
 import { createContext } from './createContext'
 import { transferEthToPolkadot } from './ethTransfer'
@@ -64,12 +64,15 @@ vi.mock('@snowbridge/api', async () => {
 })
 
 describe('transferEthToPolkadot', () => {
+  const ethAsset: TAssetInfo = {
+    symbol: 'ETH',
+    decimals: 18,
+    assetId: 'eth-asset-id',
+    location: { parents: 0, interior: 'Here' }
+  }
+
   it('successfully returns tx response and message receipt', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -90,8 +93,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -112,8 +115,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if provider is not provided', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
@@ -127,8 +130,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if signer is not an ethers signer', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -147,8 +150,8 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws an error if currency is multiasset', async () => {
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: [],
       from: 'Ethereum',
@@ -166,8 +169,8 @@ describe('transferEthToPolkadot', () => {
 
   it('throws an error if trying to override location', async () => {
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: {
         location: {
@@ -193,11 +196,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if message receipt is missing', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -224,8 +223,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -240,11 +239,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if transaction receipt is missing', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(createContext).mockReturnValue({
       config: {},
@@ -269,8 +264,8 @@ describe('transferEthToPolkadot', () => {
       })
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
@@ -285,11 +280,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if validation fails', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
-      symbol: 'Ethereum',
-      decimals: 10,
-      assetId: 'eth-asset-id'
-    })
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
     vi.mocked(createContext).mockReturnValue({
@@ -312,8 +303,8 @@ describe('transferEthToPolkadot', () => {
       sendTransaction: vi.fn()
     } as unknown as Signer
 
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic> = {
-      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
       provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',

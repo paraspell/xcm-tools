@@ -12,9 +12,10 @@ import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@p
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
+import type { TSwapOptions } from './TSwap'
 
-export type TPolkadotXCMTransferOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   chain: TSubstrateChain
   beneficiaryLocation: TLocation
   address: TAddress
@@ -36,8 +37,8 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   transactOptions?: TTransactOptions<TRes>
 }
 
-export type TXTokensTransferOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TXTokensTransferOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   asset: WithAmount<TAssetInfo>
   address: TAddress
   scenario: TScenario
@@ -51,28 +52,12 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   useMultiAssetTransfer?: boolean
 }
 
-export type TXTransferTransferOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
-  asset: WithAmount<TAssetInfo>
-  recipientAddress: TAddress
-  origin: TSubstrateChain
-  paraIdTo?: number
-  destination: TDestination
-  overriddenAsset?: TLocation | TAsset[]
-  pallet?: string
-  method?: string
+export interface IPolkadotXCMTransfer<TApi, TRes, TSigner> {
+  transferPolkadotXCM: (input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>) => Promise<TRes>
 }
 
-export interface IPolkadotXCMTransfer {
-  transferPolkadotXCM: <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) => Promise<TRes>
-}
-
-export interface IXTokensTransfer {
-  transferXTokens: <TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) => TRes
-}
-
-export interface IXTransferTransfer {
-  transferXTransfer: <TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>) => TRes
+export interface IXTokensTransfer<TApi, TRes, TSigner> {
+  transferXTokens: (input: TXTokensTransferOptions<TApi, TRes, TSigner>) => TRes
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -80,7 +65,7 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
-export type TSendBaseOptions<TRes> = {
+export type TSendBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain
    */
@@ -122,6 +107,10 @@ export type TSendBaseOptions<TRes> = {
    */
   pallet?: string
   /**
+   * Whether to keep the account alive after the transfer.
+   */
+  keepAlive?: boolean
+  /**
    * The optional pallet method override
    */
   method?: string
@@ -129,12 +118,21 @@ export type TSendBaseOptions<TRes> = {
    * Hex of the encoded transaction call to apply on the destination chain
    */
   transactOptions?: TTransactOptions<TRes>
+  /**
+   * The optional swap options
+   */
+  swapOptions?: TSwapOptions<TApi, TRes, TSigner>
 }
 
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TRes>, TApi, TRes> & {
+export type TSendOptions<TApi, TRes, TSigner> = WithApi<
+  TSendBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+> & {
   isAmountAll: boolean
 }
 
@@ -145,15 +143,33 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   senderAddress: string
 }
 
-export type TSendBaseOptionsWithSenderAddress<TRes> = WithRequiredSenderAddress<
-  TSendBaseOptions<TRes>
+export type WithRequiredSwapOptions<TBase, TApi, TRes, TSigner> = Omit<TBase, 'swapOptions'> & {
+  swapOptions: TSwapOptions<TApi, TRes, TSigner>
+}
+
+export type TSendOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  Omit<TSendOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
+  TApi,
+  TRes,
+  TSigner
 >
 
-export type TSendInternalOptions<TApi, TRes> = Omit<
-  TSendBaseOptions<TRes>,
+export type TSendBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  TSendBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>
+
+export type TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner> = WithRequiredSenderAddress<
+  TSendBaseOptions<TApi, TRes, TSigner>
+>
+
+export type TSendInternalOptions<TApi, TRes, TSigner> = Omit<
+  TSendBaseOptions<TApi, TRes, TSigner>,
   'from' | 'feeAsset' | 'version'
 > & {
-  api: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes, TSigner>
   assetInfo: WithAmount<TAssetInfo>
   feeAsset?: TAssetInfo
   feeCurrency?: TCurrencyInput
@@ -193,8 +209,6 @@ export type TDestWeight = {
   proof_size: bigint
 }
 
-export type TXTransferMethod = 'transfer'
-
 export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
 
 export type TPolkadotXcmMethod =
@@ -215,14 +229,14 @@ export type TWeight<TWeightType = bigint> = {
   proofSize: TWeightType
 }
 
-export type TCreateBeneficiaryOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TCreateBeneficiaryOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   address: TAddress
   version: Version
 }
 
-export type TCreateBeneficiaryXTokensOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
+export type TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TDestination
   address: TAddress
@@ -232,8 +246,8 @@ export type TCreateBeneficiaryXTokensOptions<TApi, TRes> = {
 
 export type TBridgeStatus = 'Normal' | 'Halted'
 
-export type TTransferLocalOptions<TApi, TRes> = Omit<
-  TSendInternalOptions<TApi, TRes>,
+export type TTransferLocalOptions<TApi, TRes, TSigner> = Omit<
+  TSendInternalOptions<TApi, TRes, TSigner>,
   'address'
 > & {
   address: string
@@ -252,16 +266,20 @@ export type TCreateBaseTransferXcmOptions<TRes> = {
   feeAssetInfo?: TAssetInfo
   fees: TTransferFeeEstimates
   recipientAddress: string
+  senderAddress?: string
   version: Version
+  useJitWithdraw?: boolean
+  useFeeAssetOnHops?: boolean
   // refactor this
   paraIdTo?: number
   transactOptions?: TTransactOptions<TRes>
 }
 
-export type TCreateTransferXcmOptions<TApi, TRes> = WithApi<
+export type TCreateTransferXcmOptions<TApi, TRes, TSigner> = WithApi<
   TCreateBaseTransferXcmOptions<TRes>,
   TApi,
-  TRes
+  TRes,
+  TSigner
 >
 
 export type TCreateBaseSwapXcmOptions = {
@@ -271,26 +289,43 @@ export type TCreateBaseSwapXcmOptions = {
   assetInfoFrom: WithAmount<TAssetInfo>
   assetInfoTo: WithAmount<TAssetInfo>
   currencyTo: TCurrencyInput
+  feeAssetInfo?: TAssetInfo
   senderAddress: string
   recipientAddress: string
   calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>
 }
 
-export type TCreateSwapXcmOptions<TApi, TRes> = WithApi<TCreateBaseSwapXcmOptions, TApi, TRes>
+export type TCreateSwapXcmOptions<TApi, TRes, TSigner> = WithApi<
+  TCreateBaseSwapXcmOptions,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TSwapFeeEstimates = {
+  originFee: bigint
   originReserveFee: bigint
   exchangeFee: bigint
   destReserveFee: bigint
 }
 
-export type TCreateSwapXcmInternalOptions<TApi, TRes> = WithApi<
+export type TCreateSwapXcmInternalOptions<TApi, TRes, TSigner> = WithApi<
   TCreateBaseSwapXcmOptions,
   TApi,
-  TRes
+  TRes,
+  TSigner
 > & {
   version: Version
   fees: TSwapFeeEstimates
   // refactor this
   paraIdTo?: number
+}
+
+export type TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner> = {
+  api: IPolkadotApi<TApi, TRes, TSigner>
+  address: TAddress
+  assetInfo: TAssetInfo
+  senderAddress: string
+  ahAddress?: string
+  version: Version
 }

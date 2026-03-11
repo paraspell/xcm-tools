@@ -3,13 +3,11 @@ import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
 vi.mock('../../createBeneficiary')
 vi.mock('../../location')
-vi.mock('../../assertions')
 
 describe('createExecuteExchangeXcm', () => {
   const mockOrigin = 'Hydration'
@@ -40,7 +38,7 @@ describe('createExecuteExchangeXcm', () => {
       destination: 'dest',
       paraIdTo: 200,
       address: 'address'
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     const weight = {
       refTime: 123n,
       proofSize: 456n
@@ -49,8 +47,6 @@ describe('createExecuteExchangeXcm', () => {
     const destFee = 75n
 
     const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
-
-    expect(assertHasLocation).toHaveBeenCalledOnce()
 
     expect(result).toBe('result')
     expect(fakeApi.deserializeExtrinsics).toHaveBeenCalledTimes(1)
@@ -131,7 +127,7 @@ describe('createExecuteExchangeXcm', () => {
       paraIdTo: 300,
       address: 'address-default',
       version: Version.V4
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     const weight = {
       refTime: 500n,
       proofSize: 600n
@@ -141,7 +137,6 @@ describe('createExecuteExchangeXcm', () => {
 
     const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
     expect(result).toBe('defaultResult')
-    expect(assertHasLocation).toHaveBeenCalledOnce()
     expect(createDestination).toHaveBeenCalledWith(
       Version.V4,
       mockOrigin,

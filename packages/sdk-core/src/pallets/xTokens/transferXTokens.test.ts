@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -22,25 +23,30 @@ vi.mock('./utils/buildXTokensCall', () => ({
 describe('transferXTokens', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,
     origin: 'Acala',
     scenario: 'ParaToPara'
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
+
+  const acaAsset: TAssetInfo = {
+    symbol: 'ACA',
+    decimals: 12,
+    assetId: '123',
+    location: { parents: 0, interior: 'Here' }
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('executes transfer transaction with default fee', () => {
-    const input: TXTokensTransferOptions<unknown, unknown> = {
+    const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
-        symbol: 'ACA',
-        decimals: 12,
-        assetId: '123',
+        ...acaAsset,
         amount: 3000n
       },
       destination: 'Hydration'
@@ -65,12 +71,10 @@ describe('transferXTokens', () => {
   })
 
   it('executes transfer transaction with provided fee', () => {
-    const input: TXTokensTransferOptions<unknown, unknown> = {
+    const input: TXTokensTransferOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       asset: {
-        symbol: 'ACA',
-        decimals: 12,
-        assetId: '123',
+        ...acaAsset,
         amount: 3000n
       },
       destination: 'Hydration'

@@ -13,7 +13,10 @@ import {
 import { assertHasId, getChain } from '../../utils'
 import Chain from '../Chain'
 
-class CrustShadow<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class CrustShadow<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('CrustShadow', 'shadow', 'Kusama', Version.V3)
   }
@@ -28,14 +31,14 @@ class CrustShadow<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTrans
     return { OtherReserve: BigInt(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return getChain<TApi, TRes, 'Crust'>('Crust').transferLocalNonNativeAsset(options)
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    return getChain<TApi, TRes, TSigner, 'Crust'>('Crust').transferLocalNonNativeAsset(options)
   }
 }
 

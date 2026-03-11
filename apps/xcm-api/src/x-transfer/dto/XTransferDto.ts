@@ -97,6 +97,22 @@ export const CurrencyCoreSchema = z.union([
   }),
 ]);
 
+export const ExchangeSchema = z
+  .union([
+    z.string(),
+    z
+      .array(z.string())
+      .min(1, { message: 'Exchange array must contain at least 1 element' }),
+  ])
+  .optional();
+
+export const SwapOptionsSchema = z.object({
+  currencyTo: CurrencyCoreSchema,
+  exchange: ExchangeSchema,
+  slippage: z.number().or(z.string()),
+  evmSenderAddress: z.string().min(1).optional(),
+});
+
 export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
   z.object({
     amount: AmountSchema,
@@ -138,11 +154,13 @@ export const XTransferDtoSchema = z
     currency: CurrencySchema,
     feeAsset: CurrencyCoreSchema.optional(),
     xcmVersion: z.enum(versionValues).optional().nullable(),
+    keepAlive: z.boolean().optional(),
     pallet: z.string().optional(),
     method: z.string().optional(),
     senderAddress: z.string().optional(),
     ahAddress: z.string().optional(),
     transactOptions: TransactOptionsSchema.optional(),
+    swapOptions: SwapOptionsSchema.optional(),
     options: BuilderOptionsSchema.optional(),
   })
   .strip();
@@ -169,6 +187,7 @@ export const SignAndSubmitSchema = XTransferDtoSchema.extend({
   }),
 });
 
+export type SwapOptions = z.infer<typeof SwapOptionsSchema>;
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
 export type XTransferDtoWSenderAddress = z.infer<
   typeof XTransferDtoWSenderAddressSchema

@@ -1,10 +1,10 @@
-import type { TAssetInfoWithId, TAssetWithLocation } from '@paraspell/assets'
+import type { TAssetInfoWithId } from '@paraspell/assets'
 import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 
-import { InvalidAddressError, MissingParameterError } from '../errors'
-import type { TAddress, TDestination } from '../types'
+import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
+import type { TAddress, TDestination, TSender, TSwapOptions } from '../types'
 
 export const assertToIsString: (
   to: TDestination,
@@ -33,26 +33,32 @@ export const assertSenderAddress: (
   }
 }
 
-export const assertHasLocation: (
-  asset: TAssetInfo
-) => asserts asset is TAssetWithLocation = asset => {
-  if (!asset.location) {
-    throw new InvalidCurrencyError(
-      `Asset ${JSON.stringify(asset, replaceBigInt)} is missing location`
-    )
-  }
-}
-
 export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWithId = asset => {
   if (asset.assetId === undefined) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
   }
 }
 
-export const assertDerivationPath: (path: string | undefined) => asserts path is string = path => {
-  if (!path) {
+export const assertSender: <TSigner>(
+  sender?: TSender<TSigner>
+) => asserts sender is TSender<TSigner> = <TSigner>(sender?: TSender<TSigner>) => {
+  if (sender === undefined) {
     throw new InvalidAddressError(
-      'Sender address needs to be a derivation path to sign and submit transaction using this method.'
+      'Sender address needs to be a derivation path or signer to sign and submit transaction using this method.'
+    )
+  }
+}
+
+export const isSenderSigner = <TSigner>(sender: TSender<TSigner>): sender is TSigner => {
+  return typeof sender !== 'string'
+}
+
+export const assertSwapSupport = <TApi, TRes, TSigner>(
+  options: TSwapOptions<TApi, TRes, TSigner> | undefined
+) => {
+  if (options) {
+    throw new UnsupportedOperationError(
+      'Swap options are not supported by this operation. Please open an issue if you would like to see this supported.'
     )
   }
 }

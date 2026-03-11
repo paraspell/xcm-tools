@@ -7,7 +7,7 @@ import classes from './LogoLoader.module.css';
 
 const AnimatedDiv = animated('div');
 
-const LogoLoader = () => {
+export const LogoLoader = () => {
   const springs = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
@@ -27,5 +27,3 @@ const LogoLoader = () => {
     </AnimatedDiv>
   );
 };
-
-export default LogoLoader;

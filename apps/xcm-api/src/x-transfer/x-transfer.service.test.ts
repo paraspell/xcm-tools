@@ -69,9 +69,11 @@ const builderMock = {
   senderAddress: vi.fn().mockReturnThis(),
   ahAddress: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
+  keepAlive: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),
   customPallet: vi.fn().mockReturnThis(),
   transact: vi.fn().mockReturnThis(),
+  swap: vi.fn().mockReturnThis(),
   buildBatch: vi.fn().mockReturnValue({
     getEncodedData: vi.fn().mockResolvedValue({
       asHex: vi.fn().mockReturnValue(txHashBatch),
@@ -82,6 +84,16 @@ const builderMock = {
       asHex: vi.fn().mockReturnValue(txHash),
     }),
   }),
+  buildAll: vi.fn().mockResolvedValue([
+    {
+      chain: 'Acala',
+      tx: {
+        getEncodedData: vi.fn().mockResolvedValue({
+          asHex: vi.fn().mockReturnValue(txHash),
+        }),
+      },
+    },
+  ]),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
   dryRunPreview: vi.fn().mockResolvedValue(dryRunResult),
   getXcmFee: vi.fn().mockResolvedValue(feeResult),
@@ -93,6 +105,9 @@ const builderMock = {
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
   getTransferInfo: vi.fn().mockResolvedValue({}),
   getReceivableAmount: vi.fn().mockResolvedValue(amountResult),
+  getBestAmountOut: vi
+    .fn()
+    .mockResolvedValue({ exchange: 'HydrationDex', amountOut: 500n }),
   signAndSubmit: vi.fn().mockResolvedValue(txHash),
   disconnect: vi.fn(),
 };
@@ -358,6 +373,63 @@ describe('XTransferService', () => {
         undefined,
       );
     });
+
+    it('should succeed when keepAlive is set to true', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        keepAlive: true,
+      };
+
+      const result = await service.generateXcmCall(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.keepAlive).toHaveBeenCalledWith(true);
+    });
+
+    it('should succeed when swapOptions are provided', async () => {
+      const swapOptions = {
+        currencyTo: { symbol: 'GLMR' },
+        exchange: 'HydrationDex' as const,
+        slippage: 1,
+      };
+      const options: XTransferDto = {
+        ...xTransferDto,
+        swapOptions,
+      };
+
+      const result = await service.generateXcmCall(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.swap).toHaveBeenCalledWith(swapOptions);
+    });
+
+    it('should not call swap when swapOptions are not provided', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+      };
+
+      await service.generateXcmCall(options);
+
+      expect(builderMock.swap).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('generateXcmCalls', () => {
+    it('should generate multiple XCM calls and return array of transaction contexts', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        senderAddress: undefined,
+      };
+
+      const result = await service.generateXcmCalls(options);
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('chain', 'Acala');
+      expect(result[0]).toHaveProperty('tx', txHash);
+      expect(result[0]).toHaveProperty('wsProviders');
+      expect(builderMock.buildAll).toHaveBeenCalled();
+    });
   });
 
   describe('signAndSubmit', () => {
@@ -498,6 +570,20 @@ describe('XTransferService', () => {
       const res = await service.getReceivableAmount(xTransferDto);
       expect(res).toBe(amountResult);
       expect(builderMock.getReceivableAmount).toHaveBeenCalled();
+    });
+  });
+
+  describe('getBestAmountOut', () => {
+    it('delegates to builder.getBestAmountOut', async () => {
+      const res = await service.getBestAmountOut({
+        ...xTransferDto,
+        swapOptions: {
+          slippage: 1,
+          currencyTo: { symbol: 'GLMR' },
+        },
+      });
+      expect(res).toEqual({ exchange: 'HydrationDex', amountOut: 500n });
+      expect(builderMock.getBestAmountOut).toHaveBeenCalled();
     });
   });
 

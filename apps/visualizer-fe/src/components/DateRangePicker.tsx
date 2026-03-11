@@ -9,7 +9,7 @@ type Props = {
   setValue: (value: [Date | null, Date | null]) => void;
 };
 
-const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
+export const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
   const { t } = useTranslation();
   const icon = <IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />;
 
@@ -31,5 +31,3 @@ const DateRangePicker: FC<Props> = ({ value, setValue, ...props }) => {
     />
   );
 };
-
-export default DateRangePicker;

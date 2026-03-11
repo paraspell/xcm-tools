@@ -1,7 +1,7 @@
 import type { IPolkadotApi } from '../../api'
 
-export const compareAddresses = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+export const compareAddresses = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   addr1: string,
   addr2: string
 ): boolean => {

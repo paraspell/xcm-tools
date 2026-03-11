@@ -40,13 +40,13 @@ jobs:
         run: pnpm --filter assets updateAssets
 
       - name: Run router assets update script
-        run: pnpm --filter xcm-router updateAssets
+        run: pnpm --filter swap updateAssets
 
       - name: Fix files formating
         run: pnpm format:write
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "ci: Update assets map 📋"
           title: "Update assets map 📋"
@@ -55,4 +55,4 @@ jobs:
           delete-branch: true
           add-paths: |
             packages/assets/src/maps/assets.json
-            packages/xcm-router/src/consts/assets.json
+            packages/swap/src/consts/assets.json

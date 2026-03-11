@@ -1,5 +1,137 @@
 # Changelog
 
+## [12.8.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.7...sdk-core-v12.8.8) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.6...sdk-core-v12.8.7) (2026-03-10)
+
+
+### Code Refactoring
+
+* **swap:** Store only location references in swap assets map 🔑 ([#1737](https://github.com/paraspell/xcm-tools/issues/1737)) ([c50c83b](https://github.com/paraspell/xcm-tools/commit/c50c83bb8293be87c66fa69d199c416befd601e2))
+
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.5...sdk-core-v12.8.6) (2026-03-09)
+
+
+### Bug Fixes
+
+* Fix playground errors & Update sdk-core peer deps 🔧 ([#1734](https://github.com/paraspell/xcm-tools/issues/1734)) ([c70077a](https://github.com/paraspell/xcm-tools/commit/c70077acbe5356005706f18881867dba237c08eb))
+
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.4...sdk-core-v12.8.5) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.3...sdk-core-v12.8.4) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.2...sdk-core-v12.8.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.1...sdk-core-v12.8.2) (2026-03-02)
+
+
+### Code Refactoring
+
+* **xcm-router:** Use SDK dry-run & xcm-fee types ⚙️ ([9f0a273](https://github.com/paraspell/xcm-tools/commit/9f0a273c3f24063f5d71ff9f0a64157d5ce45e43))
+
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.0...sdk-core-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.7.1...sdk-core-v12.8.0) (2026-02-20)
+
+
+### Features
+
+* **xcm-router:** Add feeAsset method to router builder ✨ ([489b040](https://github.com/paraspell/xcm-tools/commit/489b0405691e00b5306d8ec031cce1eac392d922))
+
+
+### Bug Fixes
+
+* **sdk-core:** Add support for Moonbeam local transfers 🔧 ([be26f7e](https://github.com/paraspell/xcm-tools/commit/be26f7e8bdb4ba657bcf9ffeb50ec1981e8105b9))
+
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.7.0...sdk-core-v12.7.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix bridge system asset selection 🔧 ([3305d89](https://github.com/paraspell/xcm-tools/commit/3305d892146a662ef993bab65607074ac3008e2c))
+* **sdk-core:** Fix wh assets minting on Moonbeam 🔧 ([3173743](https://github.com/paraspell/xcm-tools/commit/3173743f0c249d1f3cbfb358af0c1e4201ac819a))
+* **xcm-router:** Add support for snowbridge transfer to execute swaps 🔧 ([04b9f07](https://github.com/paraspell/xcm-tools/commit/04b9f07595ce6bf2fca68bb099ef6df231ae1364))
+
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.3...sdk-core-v12.7.0) (2026-02-13)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.2...sdk-core-v12.6.3) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **sdk-core:** Synchronize main versions
+
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.1...sdk-core-v12.6.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect type in PJS Assets pallet implementation 🔧 ([719aa05](https://github.com/paraspell/xcm-tools/commit/719aa0592bb05e68ca8bfd598fdbb7f6862962bf))
+
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.6.0...sdk-core-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
+
+### Tests
+
+* **sdk-core:** Update e2e test case generation 🧪 ([f4c591e](https://github.com/paraspell/xcm-tools/commit/f4c591ee79ced97596e4669636afbc4c2fb090e5))
+
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.5.1...sdk-core-v12.6.0) (2026-02-05)
+
+
+### Features
+
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* **sdk-core:** Add keepAlive flag for local transfers 🪄 ([fcf32ac](https://github.com/paraspell/xcm-tools/commit/fcf32ac00baea19b6304d59a8593c1e0b6f55f17))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix execute small amount check edgecase ⚙️ ([585fdc8](https://github.com/paraspell/xcm-tools/commit/585fdc872a30793d6a2f9564605bec11afb490b8))
+* **sdk-core:** Fix xcm version resolving ⚙️ ([5951bc3](https://github.com/paraspell/xcm-tools/commit/5951bc31a89679a2c1fab7dcaffd293ce56b46e7))
+
+
+### Continuous Integration
+
+* Fix codecov upload creating multiple jobs 🔧 ([00d0032](https://github.com/paraspell/xcm-tools/commit/00d0032ce3cfe93abe2f2e32ffa40613621f93c3))
+* Update lint check command ([edd03f1](https://github.com/paraspell/xcm-tools/commit/edd03f1066bae73bb50476554492ca728252b7dc))
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.5.0...sdk-core-v12.5.1) (2026-01-30)
 
 

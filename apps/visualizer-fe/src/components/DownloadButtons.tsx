@@ -9,7 +9,11 @@ type Props = {
   disabled?: boolean;
 };
 
-const DownloadButtons: FC<Props> = ({ onDownloadZipClick, onDownloadSvgClick, disabled }) => {
+export const DownloadButtons: FC<Props> = ({
+  onDownloadZipClick,
+  onDownloadSvgClick,
+  disabled
+}) => {
   const { t } = useTranslation();
   return (
     <Group gap="xs">
@@ -30,5 +34,3 @@ const DownloadButtons: FC<Props> = ({ onDownloadZipClick, onDownloadSvgClick, di
     </Group>
   );
 };
-
-export default DownloadButtons;

@@ -3,15 +3,15 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { BatchValidationError } from '../errors'
-import { send } from '../transfer'
 import type { TBatchedSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
+import { createTransferOrSwap } from '../utils'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
-class BatchTransactionManager<TApi, TRes> {
-  transactionOptions: TBatchedSendOptions<TApi, TRes>[] = []
+class BatchTransactionManager<TApi, TRes, TSigner> {
+  transactionOptions: TBatchedSendOptions<TApi, TRes, TSigner>[] = []
 
-  addTransaction(options: TBatchedSendOptions<TApi, TRes>) {
+  addTransaction(options: TBatchedSendOptions<TApi, TRes, TSigner>) {
     this.transactionOptions.push(options)
   }
 
@@ -20,7 +20,7 @@ class BatchTransactionManager<TApi, TRes> {
   }
 
   async buildBatch(
-    api: IPolkadotApi<TApi, TRes>,
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     from: TSubstrateChain,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {
@@ -44,7 +44,7 @@ class BatchTransactionManager<TApi, TRes> {
       })
     )
 
-    const txs = await Promise.all(normalized.map(({ options }) => send(options)))
+    const txs = await Promise.all(normalized.map(({ options }) => createTransferOrSwap(options)))
 
     return api.callBatchMethod(txs, mode)
   }

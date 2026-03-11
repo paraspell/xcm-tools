@@ -12,12 +12,7 @@ import {
   type TSerializedExtrinsics
 } from '../../types'
 import { createVersionedDestination } from '../../utils'
-import {
-  assertAddressIsString,
-  assertHasId,
-  assertHasLocation,
-  assertSenderAddress
-} from '../../utils/assertions'
+import { assertAddressIsString, assertHasId, assertSenderAddress } from '../../utils/assertions'
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
@@ -26,8 +21,8 @@ import { handleToAhTeleport } from '../../utils/transfer'
 import Chain from '../Chain'
 import { getParaId } from '../config'
 
-export const createTypeAndThenTransfer = async <TApi, TRes>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes>,
+export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   chain: TSubstrateChain,
   version: Version
 ): Promise<TSerializedExtrinsics> => {
@@ -35,7 +30,6 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
 
   const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
 
-  assertHasLocation(ethAsset)
   assertHasId(ethAsset)
   assertAddressIsString(address)
   assertSenderAddress(senderAddress)
@@ -81,13 +75,16 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   }
 }
 
-class Mythos<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Mythos<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Mythos', 'mythos', 'Polkadot', Version.V5)
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  async transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, destination, scenario } = input
 

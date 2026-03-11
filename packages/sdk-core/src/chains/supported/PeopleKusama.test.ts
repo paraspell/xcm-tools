@@ -10,10 +10,10 @@ import PeopleKusama from './PeopleKusama'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('PeopleKusama', () => {
-  let chain: PeopleKusama<unknown, unknown>
+  let chain: PeopleKusama<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'PeopleKusama'>('PeopleKusama')
+    chain = getChain<unknown, unknown, unknown, 'PeopleKusama'>('PeopleKusama')
   })
 
   it('should initialize with correct values', () => {
@@ -25,12 +25,20 @@ describe('PeopleKusama', () => {
   })
 
   it('should throw an error when scenario is ParaToPara', () => {
-    const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown,
+      unknown
+    >
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should use typeAndThen when scenario is not ParaToPara', async () => {
-    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown,
+      unknown
+    >
     await chain.transferPolkadotXCM(input)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })

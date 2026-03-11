@@ -14,14 +14,12 @@ vi.mock('../location', () => ({
   createBeneficiaryLocation: vi.fn(() => 'mockedBeneficiary')
 }))
 
-vi.mock('../assertions')
-
 vi.mock('../../pallets/xcmPallet/utils', () => ({
   createDestination: vi.fn(() => ({}))
 }))
 
 describe('createCustomXcmOnDest', () => {
-  const api = {} as unknown as IPolkadotApi<unknown, unknown>
+  const api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockChain: TChain = 'Acala'
   const version = Version.V4
@@ -55,7 +53,7 @@ describe('createCustomXcmOnDest', () => {
     destination: defaultDestination,
     version,
     ahAddress: '0xAh'
-  } as Partial<TPolkadotXCMTransferOptions<unknown, unknown>>
+  } as Partial<TPolkadotXCMTransferOptions<unknown, unknown, unknown>>
 
   const ethLocation: TLocation = {
     parents: Parents.TWO,
@@ -94,7 +92,7 @@ describe('createCustomXcmOnDest', () => {
     const options = {
       ...baseOptions,
       ahAddress: undefined
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isChainEvm).mockReturnValue(true)
 
@@ -107,7 +105,7 @@ describe('createCustomXcmOnDest', () => {
 
   it('should return a valid XCM message structure', () => {
     const result = createCustomXcmOnDest(
-      baseOptions as TPolkadotXCMTransferOptions<unknown, unknown>,
+      baseOptions as TPolkadotXCMTransferOptions<unknown, unknown, unknown>,
       mockChain,
       messageId,
       ethAsset

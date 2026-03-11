@@ -3,7 +3,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect, useState } from "react";
 
-const ParticlesNetwork = () => {
+export const ParticlesNetwork = () => {
   const [init, setInit] = useState(false);
 
   useEffect(() => {
@@ -71,5 +71,3 @@ const ParticlesNetwork = () => {
     )
   );
 };
-
-export default ParticlesNetwork;

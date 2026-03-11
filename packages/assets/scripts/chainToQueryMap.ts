@@ -37,7 +37,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Crab: ['assets.metadata'],
   Crust: ['assets.metadata'],
   CrustShadow: ['assets.metadata'],
-  Curio: ['assetRegistry.metadata'],
   Darwinia: ['assets.metadata'],
   Encointer: [], // No assets metadata query
   EnergyWebX: ['assets.metadata'],
@@ -49,8 +48,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Interlay: ['assetRegistry.metadata'],
   Jamton: ['assetRegistry.metadata'],
   Karura: ['assetRegistry.assetMetadatas'],
-  KiltPaseo: ['fungibles.metadata'],
-  KiltSpiritnet: ['fungibles.metadata'],
   Kintsugi: ['assetRegistry.metadata'],
   Laos: [], // No assets metadata query
   LaosPaseo: [], // No assets metadata query
@@ -58,10 +55,9 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Moonbeam: ['evmForeignAssets.assetsById'],
   Moonriver: ['evmForeignAssets.assetsById'],
   Mythos: [], // No assets metadata query
-  NeuroWeb: ['assets.metadata'],
-  NeuroWebPaseo: ['assets.metadata'],
+  NeuroWeb: ['foreignAssets.metadata'],
+  NeuroWebPaseo: ['foreignAssets.metadata'],
   Nodle: [],
-  PAssetHub: ['assets.metadata'],
   Peaq: ['assets.metadata'],
   Pendulum: ['assetRegistry.metadata'],
   Penpal: ['foreignAssets.metadata'],
@@ -69,9 +65,7 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   PeoplePaseo: [], // No assets metadata query
   PeoplePolkadot: [], // No assets metadata query
   PeopleWestend: [], // No assets metadata query
-  Phala: ['assets.metadata'],
   Quartz: ['foreignAssets.collectionToForeignAsset'],
-  RobonomicsPolkadot: ['assets.metadata'],
   Shiden: ['assets.metadata'],
   Unique: ['foreignAssets.collectionToForeignAsset'],
   Xode: ['assets.metadata'],

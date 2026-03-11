@@ -7,12 +7,15 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class Encointer<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Encointer<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Encointer', 'encointer', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { destChain } = input
 
     if (input.scenario === 'ParaToRelay' || (destChain && isTrustedChain(destChain))) {

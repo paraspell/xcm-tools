@@ -5,10 +5,10 @@ import { getChain } from '../../utils'
 import type BifrostKusama from './BifrostKusama'
 
 describe('BifrostKusama', () => {
-  let bifrostKusama: BifrostKusama<unknown, unknown>
+  let bifrostKusama: BifrostKusama<unknown, unknown, unknown>
 
   beforeEach(() => {
-    bifrostKusama = getChain<unknown, unknown, 'BifrostKusama'>('BifrostKusama')
+    bifrostKusama = getChain<unknown, unknown, unknown, 'BifrostKusama'>('BifrostKusama')
   })
 
   it('should initialize with correct values', () => {

@@ -5,7 +5,7 @@ export type TAssetInfo = {
   symbol: string
   isNative?: boolean
   assetId?: string
-  location?: TLocation
+  location: TLocation
   existentialDeposit?: string
   isFeeAsset?: boolean
   alias?: string
@@ -13,10 +13,6 @@ export type TAssetInfo = {
 
 export type TAssetInfoWithId = TAssetInfo & {
   assetId: string
-}
-
-export type TAssetWithLocation = TAssetInfo & {
-  location: TLocation
 }
 
 export type TChainAssetsInfo = {

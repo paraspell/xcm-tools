@@ -16,11 +16,14 @@ import type {
 import { replaceBigInt } from '@paraspell/sdk';
 import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
-import type { TSubmitType } from '../../types';
+import type { TFormValuesTransformed, TSubmitType } from '../../types';
 import {
+  addSwapToBuilder,
   createBuilderOptions,
   determineCurrency,
   determineFeeAsset,
@@ -35,8 +38,7 @@ import {
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { FormValuesTransformed } from './XcmUtilsForm';
-import XcmTransferForm from './XcmUtilsForm';
+import { XcmUtilsForm } from './XcmUtilsForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -66,8 +68,9 @@ const XcmUtils = () => {
   }, [error, scrollIntoView]);
 
   const performFeeOperation = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     selectedAccountAddress: string,
+    signer: PolkadotSigner | Signer,
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
@@ -86,7 +89,7 @@ const XcmUtils = () => {
     const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
+      ...determineCurrency(c),
       amount: c.isMax ? 'ALL' : c.amount,
     }));
 
@@ -95,12 +98,12 @@ const XcmUtils = () => {
       senderAddress: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+      feeAsset: determineFeeAsset(transformedFeeAsset),
     };
 
     let result;
-    let apiEndpoint = '';
-    let successMessage = '';
+    let apiEndpoint;
+    let successMessage;
     let currentNotifId = notifId;
 
     if (!currentNotifId) {
@@ -154,6 +157,7 @@ const XcmUtils = () => {
           builder,
           formValues,
           selectedAccountAddress,
+          signer,
         );
 
         switch (submitType) {
@@ -181,8 +185,9 @@ const XcmUtils = () => {
   };
 
   const performInfoOperation = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     selectedAccountAddress: string,
+    signer: PolkadotSigner | Signer,
     notifId: string | undefined,
     submitType: TSubmitType,
   ) => {
@@ -201,7 +206,7 @@ const XcmUtils = () => {
     const { currencies, transformedFeeAsset, useApi } = formValues;
 
     const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
+      ...determineCurrency(c),
       amount: c.isMax ? 'ALL' : c.amount,
     }));
 
@@ -210,12 +215,22 @@ const XcmUtils = () => {
       senderAddress: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+      feeAsset: determineFeeAsset(transformedFeeAsset),
+      ...(formValues.transformedCurrencyTo
+        ? {
+            swapOptions: {
+              ...formValues.swapOptions,
+              currencyTo: determineCurrency(formValues.transformedCurrencyTo),
+            },
+          }
+        : {}),
     };
 
+    console.log(body);
+
     let result;
-    let apiEndpoint = '';
-    let successMessage = '';
+    let apiEndpoint;
+    let successMessage;
     let currentNotifId = notifId;
 
     if (!currentNotifId) {
@@ -246,6 +261,10 @@ const XcmUtils = () => {
         apiEndpoint = '/transfer-info';
         successMessage = 'Transfer info retrieved';
         break;
+      case 'getBestAmountOut':
+        apiEndpoint = '/best-amount-out';
+        successMessage = 'Best amount out retrieved';
+        break;
       default:
         showErrorNotification(
           `Unsupported info operation type: ${submitType}`,
@@ -272,6 +291,7 @@ const XcmUtils = () => {
           builder,
           formValues,
           selectedAccountAddress,
+          signer,
         );
 
         switch (submitType) {
@@ -290,6 +310,21 @@ const XcmUtils = () => {
           case 'getTransferInfo':
             result = await finalBuilder.getTransferInfo();
             break;
+          case 'getBestAmountOut': {
+            if (!formValues.transformedCurrencyTo) {
+              throw new Error(
+                'Swap configuration is required for getBestAmountOut.',
+              );
+            }
+            const swapBuilder = addSwapToBuilder(
+              finalBuilder,
+              formValues.transformedCurrencyTo,
+              formValues.swapOptions,
+              signer,
+            );
+            result = await swapBuilder.getBestAmountOut();
+            break;
+          }
         }
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -308,7 +343,7 @@ const XcmUtils = () => {
   };
 
   const submit = async (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => {
     if (!selectedAccount) {
@@ -329,16 +364,20 @@ const XcmUtils = () => {
       getTransferableAmount: 'Getting transferable amount...',
       verifyEdOnDestination: 'Verifying ED on destination...',
       getReceivableAmount: 'Getting receivable amount...',
+      getBestAmountOut: 'Getting best amount out...',
       getTransferInfo: 'Getting transfer info...',
     };
     const loadingMessage = opTextMap[submitType] ?? 'Processing request...';
     const notifId = showLoadingNotification('Processing', loadingMessage);
+
+    const signer = await getSigner();
 
     try {
       if (submitType === 'getXcmFee' || submitType === 'getOriginXcmFee') {
         await performFeeOperation(
           formValues,
           selectedAccount.address,
+          signer,
           notifId,
           submitType,
         );
@@ -346,12 +385,14 @@ const XcmUtils = () => {
         submitType === 'getTransferableAmount' ||
         submitType === 'getMinTransferableAmount' ||
         submitType === 'getReceivableAmount' ||
+        submitType === 'getBestAmountOut' ||
         submitType === 'verifyEdOnDestination' ||
         submitType === 'getTransferInfo'
       ) {
         await performInfoOperation(
           formValues,
           selectedAccount.address,
+          signer,
           notifId,
           submitType,
         );
@@ -378,7 +419,7 @@ const XcmUtils = () => {
   };
 
   const onSubmit = (
-    formValues: FormValuesTransformed,
+    formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => void submit(formValues, submitType);
 
@@ -407,7 +448,7 @@ const XcmUtils = () => {
               Query XCM information and fees.
             </Text>
           </Box>
-          <XcmTransferForm onSubmit={onSubmit} loading={loading} />
+          <XcmUtilsForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Center ref={targetRef}>
           {errorAlertOpened && error && (
@@ -425,5 +466,3 @@ const XcmUtils = () => {
     </>
   );
 };
-
-export default XcmUtils;

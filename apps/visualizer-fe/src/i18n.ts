@@ -43,4 +43,4 @@ i18n.on('languageChanged', lng => {
   persistHtmlLangDir(lng);
 });
 
-export default i18n;
+export { i18n };

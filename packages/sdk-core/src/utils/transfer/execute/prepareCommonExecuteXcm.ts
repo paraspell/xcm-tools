@@ -7,11 +7,11 @@ import { createBeneficiaryLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-export const prepareCommonExecuteXcm = <TApi, TRes>(
-  options: TCreateTransferXcmOptions<TApi, TRes>,
+export const prepareCommonExecuteXcm = <TApi, TRes, TSigner>(
+  options: TCreateTransferXcmOptions<TApi, TRes, TSigner>,
   assetToDeposit?: TAsset
 ) => {
-  const { api, feeAssetInfo: feeAsset, recipientAddress, version } = options
+  const { api, feeAssetInfo: feeAsset, useJitWithdraw, recipientAddress, version } = options
 
   const context = prepareExecuteContext(options)
 
@@ -27,7 +27,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes>(
     WithdrawAsset: withdrawAssets
   })
 
-  if (feeAsset) {
+  if (feeAsset && !useJitWithdraw) {
     prefix.push(
       ...createPayFees(version, feeAssetLocalized ?? assetLocalized, {
         refTime: 450n,

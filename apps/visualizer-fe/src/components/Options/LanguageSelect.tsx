@@ -17,7 +17,7 @@ const NAMES: Record<string, string> = {
   sk: 'Slovenčina'
 };
 
-export default function LanguageSelect() {
+export const LanguageSelect = () => {
   const { i18n, t } = useTranslation();
 
   const supported = useMemo(
@@ -53,4 +53,4 @@ export default function LanguageSelect() {
       aria-label={t('settings.localisation.language')}
     />
   );
-}
+};

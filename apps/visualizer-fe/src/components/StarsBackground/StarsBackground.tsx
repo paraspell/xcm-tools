@@ -1,6 +1,6 @@
 import classes from './StarsBackground.module.css';
 
-const StarsBackground = () => (
+export const StarsBackground = () => (
   <>
     <div className={classes.background} />
     <div className={classes.stars1} />
@@ -8,5 +8,3 @@ const StarsBackground = () => (
     <div className={classes.stars3} />
   </>
 );
-
-export default StarsBackground;

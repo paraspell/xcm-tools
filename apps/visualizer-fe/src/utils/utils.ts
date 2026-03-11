@@ -16,10 +16,6 @@ import {
 import { BASE_CHAIN_SCALE, RELAYCHAIN_ID } from '../consts/consts';
 import { CountOption } from '../gql/graphql';
 
-export const getParachainId = (parachain: TSubstrateChain): number => {
-  return getParaId(parachain);
-};
-
 export const getParachainById = (id: number, ecosystem: TRelaychain): TSubstrateChain | null => {
   const chain = getTChain(id, ecosystem);
   if (!chain || isExternalChain(chain)) return null;

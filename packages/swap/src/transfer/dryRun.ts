@@ -1,0 +1,157 @@
+import type { TBypassOptions, TChain, TCurrencyCore, TDryRunResult } from '@paraspell/sdk';
+import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
+
+import type {
+  TBuildTransactionsOptions,
+  TRouterBuilderOptions,
+  TRouterPlan,
+  TTransaction,
+  TTransformedOptions,
+} from '../types';
+import { buildTransactions } from './buildTransactions';
+import { prepareTransformedOptions, validateTransferOptions } from './utils';
+
+const assignIsExchange = (
+  result: TDryRunResult,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+) => {
+  const { origin, exchange, destination } = options;
+
+  if (!origin) {
+    result.origin.isExchange = true;
+  }
+
+  if (!destination && result.destination) {
+    result.destination.isExchange = true;
+  }
+
+  result.hops = result.hops.map((hop) => {
+    const isExchange = hop.chain === exchange.baseChain;
+    return {
+      ...hop,
+      result: {
+        ...hop.result,
+        isExchange,
+      },
+      isExchange,
+    };
+  });
+
+  return result;
+};
+
+const dryRunTransaction = async (
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+  transaction: TTransaction,
+  destChain?: TChain,
+  bypassOptions?: TBypassOptions,
+): Promise<TDryRunResult> => {
+  const {
+    exchange,
+    senderAddress,
+    evmSenderAddress,
+    recipientAddress,
+    destination,
+    currencyFrom,
+    currencyTo,
+    amount,
+  } = options;
+  const { api, tx, chain } = transaction;
+
+  const address = recipientAddress ?? senderAddress;
+  const senderAddressResolved = evmSenderAddress ?? senderAddress;
+  const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
+
+  return dryRun({
+    api,
+    tx,
+    origin: chain,
+    destination: resolvedDest,
+    senderAddress: senderAddressResolved,
+    address,
+    swapConfig: {
+      currencyTo: currencyTo as TCurrencyCore,
+      exchangeChain: exchange.baseChain,
+    },
+    currency: {
+      ...currencyFrom,
+      amount: BigInt(amount),
+    },
+    bypassOptions,
+  });
+};
+
+const mergeDryRunResults = (
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+  originResult: TDryRunResult,
+  exchangeResult: TDryRunResult,
+): TDryRunResult => {
+  const { exchange, destination } = options;
+
+  const result: TDryRunResult = {
+    origin: originResult.origin,
+    destination: destination ? exchangeResult.destination : exchangeResult.origin,
+    hops: [
+      ...originResult.hops,
+      ...(destination ? [{ chain: exchange.baseChain, result: exchangeResult.origin }] : []),
+      ...exchangeResult.hops,
+    ],
+  };
+
+  return {
+    ...getFailureInfo(result),
+    ...result,
+  };
+};
+
+const dryRun2Transactions = async (
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+  transactions: TRouterPlan,
+): Promise<TDryRunResult> => {
+  const { exchange } = options;
+
+  const [firstTx, secondTx] = transactions;
+
+  const firstRes = await dryRunTransaction(options, firstTx, exchange.baseChain);
+
+  const { failureReason } = getFailureInfo(firstRes);
+
+  const bypassOptions: TBypassOptions | undefined = !failureReason
+    ? {
+        sentAssetMintMode: 'preview',
+        mintFeeAssets: false,
+      }
+    : undefined;
+
+  const secondRes = await dryRunTransaction(options, secondTx, undefined, bypassOptions);
+
+  return mergeDryRunResults(options, firstRes, secondRes);
+};
+
+const dryRunTransactions = (
+  transactions: TRouterPlan,
+  options: TTransformedOptions<TBuildTransactionsOptions>,
+) => {
+  if (transactions.length === 1) {
+    return dryRunTransaction(options, transactions[0]);
+  }
+
+  if (transactions.length === 2) {
+    return dryRun2Transactions(options, transactions);
+  }
+
+  throw new UnsupportedOperationError('Router dry run supports up to two transactions per flow.');
+};
+
+export const dryRunRouter = async (
+  initialOptions: TBuildTransactionsOptions,
+  builderOptions?: TRouterBuilderOptions,
+): Promise<TDryRunResult> => {
+  validateTransferOptions(initialOptions);
+  const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const routerPlan = await buildTransactions(dex, options);
+
+  const result = await dryRunTransactions(routerPlan, options);
+
+  return assignIsExchange(result, options);
+};

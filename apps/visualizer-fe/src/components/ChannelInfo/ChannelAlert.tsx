@@ -32,7 +32,7 @@ type Props = {
   onClose?: () => void;
 };
 
-const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
+export const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
   const { t } = useTranslation();
   const { dateRange } = useSelectedParachain();
   const { isMobile } = useDeviceType();
@@ -146,5 +146,3 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
     </Box>
   );
 };
-
-export default ChannelAlert;

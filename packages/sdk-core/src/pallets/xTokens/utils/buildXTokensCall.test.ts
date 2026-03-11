@@ -24,7 +24,7 @@ vi.mock('../../../utils')
 describe('buildXTokensCall', () => {
   const version = Version.V4
   const mockDestLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
   const baseInput = {
     api: mockApi,
@@ -35,7 +35,7 @@ describe('buildXTokensCall', () => {
     address: '0x123',
     paraIdTo: 2000,
     version
-  } as TXTokensTransferOptions<unknown, unknown>
+  } as TXTokensTransferOptions<unknown, unknown, unknown>
 
   let currencySelection: TXTokensCurrencySelection
 
@@ -58,7 +58,7 @@ describe('buildXTokensCall', () => {
       origin: 'Acala',
       destination: 'Astar',
       scenario: 'ParaToPara'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -101,7 +101,7 @@ describe('buildXTokensCall', () => {
       origin: 'Astar',
       destination: 'Polkadot',
       scenario: 'ParaToRelay'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, 123)
 
@@ -137,7 +137,7 @@ describe('buildXTokensCall', () => {
       origin: 'Acala',
       destination: 'AssetHubPolkadot',
       scenario: 'ParaToPara'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -164,7 +164,7 @@ describe('buildXTokensCall', () => {
       origin: 'Shiden',
       destination: 'Polkadot',
       scenario: 'ParaToRelay'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -190,7 +190,7 @@ describe('buildXTokensCall', () => {
       origin: 'Acala',
       destination: 'Kusama',
       scenario: 'ParaToPara'
-    } as TXTokensTransferOptions<unknown, unknown>
+    } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, DEFAULT_FEE)
 
@@ -214,7 +214,7 @@ describe('buildXTokensCall', () => {
         destination: 'Polkadot',
         scenario: 'ParaToRelay',
         useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown>
+      } as TXTokensTransferOptions<unknown, unknown, unknown>
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -228,7 +228,7 @@ describe('buildXTokensCall', () => {
         destination: 'Kusama',
         scenario: 'ParaToRelay',
         useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown>
+      } as TXTokensTransferOptions<unknown, unknown, unknown>
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -242,7 +242,7 @@ describe('buildXTokensCall', () => {
         destination: 'AssetHubPolkadot',
         scenario: 'ParaToPara',
         useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown>
+      } as TXTokensTransferOptions<unknown, unknown, unknown>
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 
@@ -256,7 +256,7 @@ describe('buildXTokensCall', () => {
         destination: 'AssetHubPolkadot',
         scenario: 'ParaToPara',
         useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown>
+      } as TXTokensTransferOptions<unknown, unknown, unknown>
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 

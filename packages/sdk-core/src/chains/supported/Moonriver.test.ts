@@ -10,11 +10,11 @@ import type Moonriver from './Moonriver'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Moonriver', () => {
-  let chain: Moonriver<unknown, unknown>
+  let chain: Moonriver<unknown, unknown, unknown>
 
   const api = {
     createAccountId: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockInput = {
     api,
@@ -23,10 +23,10 @@ describe('Moonriver', () => {
       symbol: 'MOVR',
       amount: 100n
     }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Moonriver'>('Moonriver')
+    chain = getChain<unknown, unknown, unknown, 'Moonriver'>('Moonriver')
   })
 
   it('should initialize with correct values', () => {

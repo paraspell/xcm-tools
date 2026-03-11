@@ -1,5 +1,121 @@
 # Changelog
 
+## [12.8.8](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.7...assets-v12.8.8) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.7](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.6...assets-v12.8.7) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.6](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.5...assets-v12.8.6) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.5](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.4...assets-v12.8.5) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.4](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.3...assets-v12.8.4) (2026-03-09)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.3](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.2...assets-v12.8.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.2](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.1...assets-v12.8.2) (2026-03-02)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.8.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.8.0...assets-v12.8.1) (2026-02-27)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+
+## [12.8.0](https://github.com/paraspell/xcm-tools/compare/assets-v12.7.1...assets-v12.8.0) (2026-02-20)
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([0a7f2c7](https://github.com/paraspell/xcm-tools/commit/0a7f2c750ebbdea87098f1270f9882437c9a1a31))
+
+## [12.7.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.7.0...assets-v12.7.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix bridge system asset selection 🔧 ([3305d89](https://github.com/paraspell/xcm-tools/commit/3305d892146a662ef993bab65607074ac3008e2c))
+
+## [12.7.0](https://github.com/paraspell/xcm-tools/compare/assets-v12.6.3...assets-v12.7.0) (2026-02-13)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.6.3](https://github.com/paraspell/xcm-tools/compare/assets-v12.6.2...assets-v12.6.3) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.6.2](https://github.com/paraspell/xcm-tools/compare/assets-v12.6.1...assets-v12.6.2) (2026-02-11)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
+## [12.6.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.6.0...assets-v12.6.1) (2026-02-10)
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+
+
+### Tests
+
+* **sdk-core:** Update e2e test case generation 🧪 ([f4c591e](https://github.com/paraspell/xcm-tools/commit/f4c591ee79ced97596e4669636afbc4c2fb090e5))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([946fc78](https://github.com/paraspell/xcm-tools/commit/946fc788da4af56ce6c199d2e300f5f853730972))
+
+## [12.6.0](https://github.com/paraspell/xcm-tools/compare/assets-v12.5.1...assets-v12.6.0) (2026-02-05)
+
+
+### Miscellaneous Chores
+
+* **assets:** Synchronize main versions
+
 ## [12.5.1](https://github.com/paraspell/xcm-tools/compare/assets-v12.5.0...assets-v12.5.1) (2026-01-30)
 
 

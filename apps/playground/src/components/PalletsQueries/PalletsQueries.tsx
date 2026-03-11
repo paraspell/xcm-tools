@@ -23,11 +23,11 @@ import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 import type { FormValues } from './PalletsQueriesForm';
-import PalletsQueriesForm from './PalletsQueriesForm';
+import { PalletsQueriesForm } from './PalletsQueriesForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
-const PalletsQueries = () => {
+export const PalletsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
   const [
@@ -162,5 +162,3 @@ const PalletsQueries = () => {
     </Stack>
   );
 };
-
-export default PalletsQueries;

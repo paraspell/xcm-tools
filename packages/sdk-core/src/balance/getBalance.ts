@@ -6,12 +6,12 @@ import type { TGetAssetBalanceOptions, TGetBalanceOptions } from '../types'
 import { getChain, validateAddress } from '../utils'
 import { getEthErc20Balance } from './getEthErc20Balance'
 
-export const getAssetBalanceInternal = async <TApi, TRes>({
+export const getAssetBalanceInternal = async <TApi, TRes, TSigner>({
   api,
   address,
   chain,
   asset
-}: TGetAssetBalanceOptions<TApi, TRes>): Promise<bigint> => {
+}: TGetAssetBalanceOptions<TApi, TRes, TSigner>): Promise<bigint> => {
   validateAddress(api, address, chain, false)
 
   await api.init(chain)
@@ -29,8 +29,8 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
   return chainInstance.getBalance(api, address, asset)
 }
 
-export const getBalanceInternal = async <TApi, TRes>(
-  options: TGetBalanceOptions<TApi, TRes>
+export const getBalanceInternal = async <TApi, TRes, TSigner>(
+  options: TGetBalanceOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { chain, currency } = options
   const asset = currency
@@ -39,8 +39,8 @@ export const getBalanceInternal = async <TApi, TRes>(
   return getAssetBalanceInternal({ ...options, asset })
 }
 
-export const getBalance = async <TApi, TRes>(
-  options: TGetBalanceOptions<TApi, TRes>
+export const getBalance = async <TApi, TRes, TSigner>(
+  options: TGetBalanceOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { api } = options
   try {

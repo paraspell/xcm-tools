@@ -1,29 +1,27 @@
 import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TSubstrateChain } from '@paraspell/sdk';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import {
+  parseAsBoolean,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { type FC, useEffect } from 'react';
 
-import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
+import {
+  ASSET_CLAIM_CHAINS,
+  DEFAULT_ADDRESS,
+  MAIN_FORM_NAME,
+} from '../../constants';
 import { useWallet } from '../../hooks';
-import { advancedOptionsParsers } from '../../parsers';
+import { advancedOptionsParsers, parseAsWalletAddress } from '../../parsers';
 import type { TAdvancedOptions } from '../../types';
 import { isValidWalletAddress, validateCustomEndpoint } from '../../utils';
-import {
-  parseAsAssetClaimChain,
-  parseAsRecipientAddress,
-} from '../../utils/parsers';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AddressTooltip, AmountTooltip } from '../Tooltip';
-
-export const ASSET_CLAIM_SUPPORTED_CHAINS: TSubstrateChain[] = [
-  'Polkadot',
-  'Kusama',
-  'AssetHubPolkadot',
-  'AssetHubKusama',
-];
 
 export type TAssetClaimFormValues = {
   from: TSubstrateChain;
@@ -37,7 +35,7 @@ type Props = {
   loading: boolean;
 };
 
-const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
+export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   const {
     connectWallet,
     selectedAccount,
@@ -48,9 +46,9 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
-    from: parseAsAssetClaimChain.withDefault('Polkadot'),
+    from: parseAsStringLiteral(ASSET_CLAIM_CHAINS).withDefault('Polkadot'),
     amount: parseAsString.withDefault(''),
-    address: parseAsRecipientAddress.withDefault(
+    address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     useApi: parseAsBoolean.withDefault(false),
@@ -93,7 +91,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           <ParachainSelect
             label="Chain"
             placeholder="Pick value"
-            data={ASSET_CLAIM_SUPPORTED_CHAINS}
+            data={ASSET_CLAIM_CHAINS}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />
@@ -141,5 +139,3 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     </Paper>
   );
 };
-
-export default AssetClaimForm;

@@ -9,7 +9,7 @@ type Props = {
   onDisconnect?: () => void;
 };
 
-const EthAccountsSelectModal: FC<Props> = ({
+export const EthAccountsSelectModal: FC<Props> = ({
   isOpen,
   onClose,
   accounts,
@@ -41,5 +41,3 @@ const EthAccountsSelectModal: FC<Props> = ({
     </Stack>
   </Modal>
 );
-
-export default EthAccountsSelectModal;

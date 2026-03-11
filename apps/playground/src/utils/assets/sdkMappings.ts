@@ -1,10 +1,12 @@
 import type { TCurrencyCore } from '@paraspell/sdk';
 import * as Sdk from '@paraspell/sdk';
 import {
+  findAssetInfoOrThrow,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
   getAssetLocation,
+  getAssetReserveChain,
   getAssetsObject,
   getFeeAssets,
   getNativeAssets,
@@ -32,6 +34,10 @@ export const callSdkFunc = (
     ASSET_ID: () => Promise.resolve(getAssetId(chain, currency)),
     ASSET_LOCATION: () =>
       Promise.resolve(getAssetLocation(chain, resolvedCurrency)),
+    ASSET_RESERVE_CHAIN: () => {
+      const { location } = findAssetInfoOrThrow(chain, resolvedCurrency, null);
+      return Promise.resolve(getAssetReserveChain(chain, location));
+    },
     ASSET_INFO: () =>
       Promise.resolve(
         chosenSdk.findAssetInfo(chain, resolvedCurrency, destination),

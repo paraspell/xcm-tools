@@ -7,7 +7,10 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class Polkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Polkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TSubstrateChain = 'Polkadot',
     info: string = 'polkadot',
@@ -17,7 +20,7 @@ class Polkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 }

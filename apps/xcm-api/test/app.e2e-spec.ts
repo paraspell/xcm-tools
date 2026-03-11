@@ -461,7 +461,7 @@ describe('XCM API (e2e)', () => {
       const from: TChain = 'AssetHubKusama';
       const to1: TChain = 'Basilisk';
       const to2: TChain = 'Moonriver';
-      const currency = { id: 11, amount };
+      const currency = { id: 1984, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
@@ -689,7 +689,7 @@ describe('XCM API (e2e)', () => {
       const from: TChain = 'AssetHubKusama';
       const to1: TChain = 'Basilisk';
       const to2: TChain = 'Moonriver';
-      const currency = { id: 11, amount };
+      const currency = { id: 1984, amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
@@ -739,7 +739,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
-      const currency = { id: 11, amount };
+      const currency = { id: 1984, amount };
 
       const builder = Builder()
         .from(from)
@@ -774,7 +774,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
-      const currency = { id: 11, amount };
+      const currency = { id: 1984, amount };
       const xcmVersion = Version.V3;
 
       const builder = Builder()
@@ -888,7 +888,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
-      const currency = { id: 11, amount };
+      const currency = { id: 1984, amount };
 
       const tx = await Builder()
         .from(from)
@@ -1252,6 +1252,21 @@ describe('XCM API (e2e)', () => {
           const data = JSON.parse(res.text);
           expect(Array.isArray(data)).not.toBeTruthy();
         });
+    });
+
+    it(`Router best-amount-out - invalid legacy body returns 400 - ${routerUrl}`, async () => {
+      const invalidBody = {
+        fromAsset: 'DOT',
+        toAsset: 'USDT',
+        amount: 1000000000,
+        fromChain: 'polkadot',
+        toChain: 'statemint',
+      };
+
+      return request(app.getHttpServer())
+        .post(`${routerUrl}/best-amount-out`)
+        .send(invalidBody)
+        .expect(400);
     });
   });
 

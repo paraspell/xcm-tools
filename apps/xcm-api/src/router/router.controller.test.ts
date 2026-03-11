@@ -1,10 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TLocation } from '@paraspell/sdk';
 import type {
-  TRouterDryRunResult,
-  TRouterXcmFeeResult,
-} from '@paraspell/xcm-router';
+  TDryRunResult,
+  TGetXcmFeeResult,
+  TLocation,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -107,7 +107,7 @@ describe('RouterController', () => {
         slippagePct: '1',
       };
 
-      const mockResult = {} as TRouterXcmFeeResult;
+      const mockResult = {} as TGetXcmFeeResult<false>;
 
       const spy = vi.spyOn(service, 'getXcmFees').mockResolvedValue(mockResult);
       const result = await controller.getXcmFees(
@@ -219,7 +219,7 @@ describe('RouterController', () => {
         recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       };
 
-      const mockResult = {} as TRouterDryRunResult;
+      const mockResult = {} as TDryRunResult;
 
       const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
 

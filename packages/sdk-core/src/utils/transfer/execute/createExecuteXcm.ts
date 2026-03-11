@@ -4,8 +4,8 @@ import { addXcmVersionHeader } from '../../xcm-version'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
-export const createDirectExecuteXcm = async <TApi, TRes>(
-  options: TCreateTransferXcmOptions<TApi, TRes>
+export const createDirectExecuteXcm = async <TApi, TRes, TSigner>(
+  options: TCreateTransferXcmOptions<TApi, TRes, TSigner>
 ) => {
   const { api, version, transactOptions, destChain, recipientAddress } = options
 

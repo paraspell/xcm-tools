@@ -6,14 +6,14 @@ import {
 
 import type { BuildHopInfoOptions, THopTransferInfo } from '../../types'
 
-export const buildHopInfo = async <TApi, TRes>({
+export const buildHopInfo = async <TApi, TRes, TSigner>({
   api,
   chain,
   fee,
   originChain,
   asset,
   currency
-}: BuildHopInfoOptions<TApi, TRes>) => {
+}: BuildHopInfoOptions<TApi, TRes, TSigner>) => {
   const hopApi = api.clone()
   await hopApi.init(chain)
   hopApi.setDisconnectAllowed(false)
@@ -35,11 +35,7 @@ export const buildHopInfo = async <TApi, TRes>({
     } else {
       const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
 
-      const hopCurrencyPayload = hopAsset.location
-        ? { location: hopAsset.location }
-        : { symbol: hopAsset.symbol }
-
-      const ed = getExistentialDepositOrThrow(chain, hopCurrencyPayload)
+      const ed = getExistentialDepositOrThrow(chain, { location: hopAsset.location })
 
       return {
         asset: hopAsset,

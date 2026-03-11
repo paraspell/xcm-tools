@@ -15,7 +15,7 @@ type Props = {
   onDisconnect?: () => void;
 };
 
-const AccountSelectModal: FC<Props> = ({
+export const AccountSelectModal: FC<Props> = ({
   isOpen,
   onClose,
   accounts,
@@ -64,5 +64,3 @@ const AccountSelectModal: FC<Props> = ({
     </Modal>
   );
 };
-
-export default AccountSelectModal;

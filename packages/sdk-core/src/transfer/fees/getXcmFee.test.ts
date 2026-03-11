@@ -14,7 +14,7 @@ vi.mock('./getBypassResult')
 describe('getXcmFee', () => {
   const mockApi = {
     disconnect: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const realTx = { kind: 'real' } as const
 
@@ -23,7 +23,7 @@ describe('getXcmFee', () => {
       api: mockApi,
       // eslint-disable-next-line @typescript-eslint/require-await
       buildTx: vi.fn(async () => realTx)
-    }) as unknown as TGetXcmFeeOptions<unknown, unknown, boolean>
+    }) as unknown as TGetXcmFeeOptions<unknown, unknown, unknown, boolean>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -130,7 +130,7 @@ describe('getXcmFee', () => {
       buildTx: vi.fn(async () => {
         throw new AmountTooLowError()
       })
-    } as unknown as TGetXcmFeeOptions<unknown, unknown, boolean>
+    } as unknown as TGetXcmFeeOptions<unknown, unknown, unknown, boolean>
 
     const dotAsset = {
       symbol: 'DOT'

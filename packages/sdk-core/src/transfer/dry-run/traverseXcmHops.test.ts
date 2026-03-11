@@ -20,13 +20,13 @@ vi.mock('../../constants', async importOriginal => ({
 }))
 
 describe('traverseXcmHops', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
 
   const baseConfig = {
     processHop: vi.fn(),
     shouldContinue: vi.fn().mockReturnValue(true),
     extractNextHopData: vi.fn()
-  } as unknown as HopTraversalConfig<unknown, unknown, unknown>
+  } as unknown as HopTraversalConfig<unknown, unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -36,7 +36,7 @@ describe('traverseXcmHops', () => {
       clone: vi.fn(),
       init: vi.fn(),
       disconnect: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -48,7 +48,7 @@ describe('traverseXcmHops', () => {
     const forwardedXcms = [[], [{ value: ['some-data'] }]]
     const destParaId = 1000
 
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -98,7 +98,7 @@ describe('traverseXcmHops', () => {
     const forwardedXcms2 = [[], [{ value: ['data2'] }]]
     const forwardedXcms3 = [[], [{ value: ['data3'] }]]
 
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -153,7 +153,7 @@ describe('traverseXcmHops', () => {
 
     vi.mocked(getTChain).mockReturnValue(null)
 
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -171,7 +171,7 @@ describe('traverseXcmHops', () => {
   it('should stop processing when shouldContinue returns false', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -195,7 +195,7 @@ describe('traverseXcmHops', () => {
   })
 
   it('should handle empty forwardedXcms', async () => {
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -219,7 +219,7 @@ describe('traverseXcmHops', () => {
   it('should always disconnect api after processing', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
+    const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
       api: mockApi,
       origin: 'Polkadot',
@@ -240,7 +240,7 @@ describe('traverseXcmHops', () => {
 })
 
 describe('addEthereumBridgeFees', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -248,7 +248,7 @@ describe('addEthereumBridgeFees', () => {
     mockApi = {
       clone: vi.fn(),
       init: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
 

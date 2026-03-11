@@ -90,7 +90,7 @@ describe('AssetsPallet.getBalance', () => {
       .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
       .mockResolvedValueOnce({ balance: 123n })
 
-    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown>
+    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const balance = await pallet.getBalance(api, address, asset)
 

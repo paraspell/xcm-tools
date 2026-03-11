@@ -45,7 +45,7 @@ describe('createCustomXcm', () => {
     { BuyExecution: unknown }
   > => typeof step === 'object' && step !== null && 'BuyExecution' in step
 
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const mockAddress = '0x123'
   const mockVersion = Version.V5
 
@@ -60,7 +60,7 @@ describe('createCustomXcm', () => {
       version: mockVersion,
       address: mockAddress
     }
-  } as TTypeAndThenCallContext<unknown, unknown>
+  } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
   const mockDestination: TLocation = {
     parents: 1,
@@ -167,7 +167,7 @@ describe('createCustomXcm', () => {
     })
 
     it('uses destination api for beneficiary when bridge between AssetHubPolkadot and AssetHubKusama is in use', async () => {
-      const destApi = {} as IPolkadotApi<unknown, unknown>
+      const destApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
       await createCustomXcm(
         {

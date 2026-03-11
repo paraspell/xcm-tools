@@ -35,9 +35,9 @@ flag_management:
       paths:
         - packages/xcm-analyser
       carryforward: true
-    - name: xcm-router
+    - name: swap
       paths:
-        - packages/xcm-router
+        - packages/swap
       carryforward: true
     - name: xcm-api
       paths:

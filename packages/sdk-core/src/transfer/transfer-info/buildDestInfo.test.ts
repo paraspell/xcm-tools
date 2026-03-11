@@ -20,9 +20,9 @@ vi.mock('../../balance')
 vi.mock('../../pallets/assets/balance')
 
 describe('buildDestInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
-  let mockClonedApi: IPolkadotApi<unknown, unknown>
-  let baseOptions: TBuildDestInfoOptions<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockClonedApi: IPolkadotApi<unknown, unknown, unknown>
+  let baseOptions: TBuildDestInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_ED = '1000000000'
   const DEFAULT_BALANCE = 50000000000n
@@ -44,11 +44,11 @@ describe('buildDestInfo', () => {
     mockClonedApi = {
       init: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
       clone: vi.fn().mockReturnValue(mockClonedApi)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(glmrAsset)
 
@@ -147,7 +147,7 @@ describe('buildDestInfo', () => {
       api: mockApi,
       origin: 'AssetHubPolkadot',
       destination: 'AssetHubKusama'
-    } as TBuildDestInfoOptions<unknown, unknown>
+    } as TBuildDestInfoOptions<unknown, unknown, unknown>
 
     it('calculates receivedAmount for native asset transfer with bridgeFee', async () => {
       vi.mocked(findAssetOnDestOrThrow).mockReturnValue({

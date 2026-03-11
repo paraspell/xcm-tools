@@ -5,15 +5,15 @@ import { createContext } from 'react';
 import type { TDeviceInfo } from '../../types';
 import { DeviceType } from '../../types';
 
-interface DeviceTypeContextType {
+type DeviceTypeContextType = {
   deviceInfo: TDeviceInfo;
   isMobile: boolean;
   isTouch: boolean;
-}
+};
 
 export const DeviceTypeContext = createContext<DeviceTypeContextType | null>(null);
 
-export default function DeviceTypeProvider({ children }: { children: ReactNode }) {
+export const DeviceTypeProvider = ({ children }: { children: ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 1024px)', false, { getInitialValueInEffect: false });
   const os = useOs();
 
@@ -27,4 +27,4 @@ export default function DeviceTypeProvider({ children }: { children: ReactNode }
       {children}
     </DeviceTypeContext.Provider>
   );
-}
+};

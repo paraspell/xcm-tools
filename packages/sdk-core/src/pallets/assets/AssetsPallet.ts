@@ -56,8 +56,8 @@ export class AssetsPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  async getBalance<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
@@ -82,6 +82,8 @@ export class AssetsPallet extends BaseAssetsPallet {
       }
     }
 
-    return balance?.balance ?? 0n
+    const value = balance?.balance
+
+    return value !== undefined ? BigInt(value) : 0n
   }
 }

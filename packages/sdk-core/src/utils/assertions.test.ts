@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { InvalidAddressError, MissingParameterError } from '../errors'
-import { assertDerivationPath, assertSenderAddress } from './assertions'
+import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
+import { assertSender, assertSenderAddress, assertSwapSupport } from './assertions'
 
 describe('assertions', () => {
   describe('assertSenderAddress', () => {
@@ -15,7 +15,18 @@ describe('assertions', () => {
 
   describe('assertDerivationPath', () => {
     it('should throw if path is undefined', () => {
-      expect(() => assertDerivationPath(undefined)).toThrow(InvalidAddressError)
+      expect(() => assertSender(undefined)).toThrow(InvalidAddressError)
+    })
+  })
+
+  describe('assertSwapSupport', () => {
+    it('throws UnsupportedOperationError when swapOptions are provided', () => {
+      const swapOptions = { currencyTo: { symbol: 'GLMR' }, exchange: undefined, slippage: 1 }
+      expect(() => assertSwapSupport(swapOptions)).toThrow(UnsupportedOperationError)
+    })
+
+    it('does not throw when swapOptions is undefined', () => {
+      expect(() => assertSwapSupport(undefined)).not.toThrow()
     })
   })
 })

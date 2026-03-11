@@ -9,14 +9,14 @@ import type Paseo from './Paseo'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Paseo', () => {
-  let chain: Paseo<unknown, unknown>
+  let chain: Paseo<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { isNative: true, symbol: 'PAS', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Paseo'>('Paseo')
+    chain = getChain<unknown, unknown, unknown, 'Paseo'>('Paseo')
   })
 
   it('should initialize with correct values', () => {

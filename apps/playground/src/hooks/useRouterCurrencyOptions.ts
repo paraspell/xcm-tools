@@ -1,22 +1,24 @@
-import { type TAssetInfo, type TChain } from '@paraspell/sdk';
-import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
-import { getExchangePairs } from '@paraspell/xcm-router';
+import type { TLocation } from '@paraspell/sdk';
+import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
+import type { TExchangeInput } from '@paraspell/swap';
+import { getExchangePairs } from '@paraspell/swap';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
-} from '@paraspell/xcm-router';
+  getSupportedFeeAssets,
+} from '@paraspell/swap';
 import { useMemo } from 'react';
 
-const pairKey = (
-  asset: Pick<TRouterAsset | TAssetInfo, 'symbol' | 'location'>,
-) => (asset.location ? JSON.stringify(asset.location) : asset.symbol);
+const getAssetKey = (asset: TAssetInfo) =>
+  `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? (asset.assetId ?? 'NO-ID') : 'NO_ID'}`;
 
-const assetKeys = (
-  asset: Pick<TRouterAsset | TAssetInfo, 'symbol' | 'location'>,
-): string[] => {
+const getLabel = (asset: TAssetInfo) => {
+  return `${asset.symbol} - ${'assetId' in asset ? asset.assetId : 'Location'}`;
+};
+
+const assetKeys = (asset: { location: TLocation }): string[] => {
   const keys: string[] = [];
-  if (asset.location) keys.push(JSON.stringify(asset.location));
-  if (asset.symbol) keys.push(asset.symbol);
+  keys.push(JSON.stringify(asset.location));
   return keys;
 };
 
@@ -40,7 +42,7 @@ export const useRouterCurrencyOptions = (
   const currencyFromMap = useMemo(
     () =>
       supportedAssetsFrom.reduce((map: Record<string, TAssetInfo>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+        const key = getAssetKey(asset);
         map[key] = asset;
         return map;
       }, {}),
@@ -49,8 +51,8 @@ export const useRouterCurrencyOptions = (
 
   const currencyToMap = useMemo(
     () =>
-      supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
+      supportedAssetsTo.reduce((map: Record<string, TAssetInfo>, asset) => {
+        const key = getAssetKey(asset);
         map[key] = asset;
         return map;
       }, {}),
@@ -81,23 +83,19 @@ export const useRouterCurrencyOptions = (
   const currencyFromOptions = useMemo(() => {
     return Object.keys(currencyFromMap).flatMap((key) => {
       const asset = currencyFromMap[key];
-      const currentKey = pairKey(asset);
+      const currentKey = JSON.stringify(asset.location);
 
       if (selectedTo && key !== selectedFrom) {
-        const toKey = pairKey(currencyToMap[selectedTo] ?? {});
+        const toAsset = currencyToMap[selectedTo];
+        if (!toAsset) return [];
+        const toKey = JSON.stringify(toAsset.location ?? {});
         if (!adjacency.get(currentKey)?.has(toKey)) return [];
       }
 
       return [
         {
           value: key,
-          label: `${asset.symbol} - ${
-            'assetId' in asset || 'location' in asset
-              ? 'assetId' in asset
-                ? asset.assetId
-                : 'Location'
-              : 'Native'
-          }`,
+          label: getLabel(asset),
         },
       ];
     });
@@ -106,36 +104,58 @@ export const useRouterCurrencyOptions = (
   const currencyToOptions = useMemo(() => {
     return Object.keys(currencyToMap).flatMap((key) => {
       const asset = currencyToMap[key];
-      const currentKey = pairKey(asset);
+      const currentKey = JSON.stringify(asset.location);
 
       if (selectedFrom && key !== selectedTo) {
-        const fromKey = pairKey(currencyFromMap[selectedFrom] ?? {});
+        const fromAsset = currencyFromMap[selectedFrom];
+        if (!fromAsset) return [];
+        const fromKey = JSON.stringify(fromAsset.location ?? {});
         if (!adjacency.get(fromKey)?.has(currentKey)) return [];
       }
 
       return [
         {
           value: key,
-          label: `${asset.symbol} - ${
-            'assetId' in asset || 'location' in asset
-              ? 'assetId' in asset
-                ? asset.assetId
-                : 'Location'
-              : 'Native'
-          }`,
+          label: getLabel(asset),
         },
       ];
     });
   }, [currencyToMap, selectedFrom, selectedTo, adjacency]);
 
-  const isFromNotParaToPara = from === 'Polkadot' || from === 'Kusama';
-  const isToNotParaToPara = to === 'Polkadot' || to === 'Kusama';
+  const supportedFeeAssets = useMemo(
+    () => getSupportedFeeAssets(from, exchangeChain),
+    [from, exchangeChain],
+  );
+
+  const feeCurrencyMap = useMemo(
+    () =>
+      supportedFeeAssets.reduce((map: Record<string, TAssetInfo>, asset) => {
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
+        map[key] = asset;
+        return map;
+      }, {}),
+    [supportedFeeAssets],
+  );
+
+  const feeCurrencyOptions = useMemo(
+    () =>
+      Object.keys(feeCurrencyMap).map((key) => ({
+        value: key,
+        label: `${feeCurrencyMap[key].symbol} - ${!feeCurrencyMap[key].isNative ? (feeCurrencyMap[key].assetId ?? 'Location') : 'Native'}`,
+      })),
+    [feeCurrencyMap],
+  );
+
+  const isFromNotParaToPara = from && isRelayChain(from);
+  const isToNotParaToPara = to && isRelayChain(to);
 
   return {
     currencyFromOptions,
     currencyToOptions,
     currencyFromMap,
     currencyToMap,
+    feeCurrencyOptions,
+    feeCurrencyMap,
     isFromNotParaToPara,
     isToNotParaToPara,
     adjacency,

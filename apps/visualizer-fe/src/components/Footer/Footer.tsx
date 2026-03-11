@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import DateRangePicker from '../DateRangePicker';
-import OptionsModal from '../Options/OptionsModal';
-import ParachainSelector from '../ParachainSelector';
+import { DateRangePicker } from '../DateRangePicker';
+import { OptionsModal } from '../Options/OptionsModal';
+import { ParachainSelector } from '../ParachainSelector';
 
-const Footer = () => {
+export const Footer = () => {
   const { t } = useTranslation();
   const { selectedParachains, setSelectedParachains, dateRange, setDateRange } =
     useSelectedParachain();
@@ -64,5 +64,3 @@ const Footer = () => {
     </Box>
   );
 };
-
-export default Footer;

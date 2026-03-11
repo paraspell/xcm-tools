@@ -6,14 +6,14 @@ import type {
   UseApolloNetworkStatusOptions
 } from 'react-apollo-network-status/dist/src/useApolloNetworkStatus';
 
-import LogoLoader from '../LogoLoader/LogoLoader';
-import StarsBackground from '../StarsBackground/StarsBackground';
+import { LogoLoader } from '../LogoLoader/LogoLoader';
+import { StarsBackground } from '../StarsBackground/StarsBackground';
 
 type Props = {
   useApolloNetworkStatus: (options?: UseApolloNetworkStatusOptions) => NetworkStatus;
 };
 
-const LoadingScreen: FC<Props> = ({ useApolloNetworkStatus }) => {
+export const LoadingScreen: FC<Props> = ({ useApolloNetworkStatus }) => {
   const status = useApolloNetworkStatus();
   const [initialLoad, setInitialLoad] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -58,5 +58,3 @@ const LoadingScreen: FC<Props> = ({ useApolloNetworkStatus }) => {
     />
   );
 };
-
-export default LoadingScreen;

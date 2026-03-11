@@ -8,7 +8,10 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import Chain from '../Chain'
 
-class PeoplePolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class PeoplePolkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'PeoplePolkadot',
     info: string = 'polkadotPeople',
@@ -18,7 +21,7 @@ class PeoplePolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotX
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { scenario, destChain } = input
 
     if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {

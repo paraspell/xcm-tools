@@ -4,6 +4,7 @@ import type { WalletClient } from 'viem'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
+import type { TTransactionContext } from './TSwap'
 import type { TSendBaseOptions, TSendOptions } from './TTransfer'
 
 export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
@@ -38,7 +39,12 @@ export type TEvmBuilderOptionsBase = {
   signer: WalletClient
 }
 
-export type TEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes>
+export type TEvmBuilderOptions<TApi, TRes, TSigner> = WithApi<
+  TEvmBuilderOptionsBase,
+  TApi,
+  TRes,
+  TSigner
+>
 
 export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptionsBase, 'signer'> & {
   destAddress: string
@@ -91,24 +97,48 @@ export type TBuilderConfig<TApi> = Partial<{
   xcmFormatCheck: boolean
 }>
 
-export type TCreateTxsOptions<TApi, TRes> = Pick<
-  TSendOptions<TApi, TRes>,
+export type TCreateTxsOptions<TApi, TRes, TSigner> = Pick<
+  TSendOptions<TApi, TRes, TSigner>,
   'api' | 'from' | 'to' | 'currency'
 >
 
-export type TBatchedSendOptions<TApi, TRes> = Omit<TSendOptions<TApi, TRes>, 'isAmountAll'> & {
-  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions<TRes>>
+export type TBatchedSendOptions<TApi, TRes, TSigner> = Omit<
+  TSendOptions<TApi, TRes, TSigner>,
+  'isAmountAll'
+> & {
+  builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+}
+
+export type TBuildInternalResBase<
+  TApi,
+  TRes,
+  TSigner,
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
+> = {
+  options: TSendOptions<TApi, TRes, TSigner> & TOptions
 }
 
 export type TBuildInternalRes<
   TApi,
   TRes,
-  TOptions extends TSendBaseOptions<TRes> = TSendBaseOptions<TRes>
-> = {
+  TSigner,
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
+> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
   tx: TRes
-  options: TSendOptions<TApi, TRes> & TOptions
 }
 
-export type TBuilderInternalOptions = {
-  path?: string
+export type TBuildAllInternalRes<
+  TApi,
+  TRes,
+  TSigner,
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner> = TSendBaseOptions<TApi, TRes, TSigner>
+> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
+  txContexts: TTransactionContext<TApi, TRes>[]
+}
+
+// Sender can be either address, derivation path or signer
+export type TSender<TSigner> = string | TSigner
+
+export type TBuilderInternalOptions<TSigner> = {
+  sender?: TSender<TSigner>
 }

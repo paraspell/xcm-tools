@@ -2,8 +2,8 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TDryRunCallOptions, TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'
 
-export const dryRunOrigin = async <TApi, TRes>(
-  options: TDryRunCallOptions<TApi, TRes>
+export const dryRunOrigin = async <TApi, TRes, TSigner>(
+  options: TDryRunCallOptions<TApi, TRes, TSigner>
 ): Promise<TDryRunChainResult> => {
   const { api, chain, address } = options
 

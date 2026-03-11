@@ -18,7 +18,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 }))
 
 describe('buildTypeAndThenCall', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown>
+  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const mockVersion = Version.V5
   const mockDestination: TLocation = {
     parents: 1,
@@ -37,7 +37,7 @@ describe('buildTypeAndThenCall', () => {
     options: {
       version: mockVersion
     }
-  } as TTypeAndThenCallContext<unknown, unknown>
+  } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
   const mockAssets: TAsset[] = [
     {
@@ -83,7 +83,7 @@ describe('buildTypeAndThenCall', () => {
   })
 
   it('should build correct call when chain does not equal reserveChain and asset location equals RELAY_LOCATION', () => {
-    const differentReserve: TChainWithApi<unknown, unknown> = {
+    const differentReserve: TChainWithApi<unknown, unknown, unknown> = {
       chain: 'Kusama',
       api: mockApi
     }
@@ -122,8 +122,14 @@ describe('buildTypeAndThenCall', () => {
   })
 
   it('should use LocalReserve when chain equals reserveChain', () => {
-    const mockOrigin: TChainWithApi<unknown, unknown> = { chain: 'AssetHubPolkadot', api: mockApi }
-    const mockReserve: TChainWithApi<unknown, unknown> = { chain: 'AssetHubPolkadot', api: mockApi }
+    const mockOrigin: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
+    const mockReserve: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
 
     const result = buildTypeAndThenCall(
       {
@@ -142,8 +148,8 @@ describe('buildTypeAndThenCall', () => {
 
   it('should use DestinationReserve when origin chain does not equal reserveChain', () => {
     vi.mocked(isTrustedChain).mockReturnValue(false)
-    const mockOrigin: TChainWithApi<unknown, unknown> = { chain: 'Polkadot', api: mockApi }
-    const mockReserve: TChainWithApi<unknown, unknown> = { chain: 'Kusama', api: mockApi }
+    const mockOrigin: TChainWithApi<unknown, unknown, unknown> = { chain: 'Polkadot', api: mockApi }
+    const mockReserve: TChainWithApi<unknown, unknown, unknown> = { chain: 'Kusama', api: mockApi }
 
     const result = buildTypeAndThenCall(
       {
@@ -199,7 +205,7 @@ describe('buildTypeAndThenCall', () => {
           ...mockContext.options,
           overriddenAsset: overriddenAssets
         }
-      } as TTypeAndThenCallContext<unknown, unknown>,
+      } as TTypeAndThenCallContext<unknown, unknown, unknown>,
       false,
       mockCustomXcm,
       mockAssets

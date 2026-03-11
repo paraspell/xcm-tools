@@ -11,7 +11,6 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TAssetInfo, TChain, TSubstrateChain } from '@paraspell/sdk';
 import {
   CHAINS,
   isChainEvm,
@@ -31,104 +30,62 @@ import {
   parseAsJson,
   parseAsNativeArrayOf,
   parseAsString,
+  parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
 import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
-import { z } from 'zod';
 
-import { DEFAULT_ADDRESS, MAIN_FORM_NAME } from '../../constants';
+import {
+  DEFAULT_ADDRESS,
+  DEFAULT_CURRENCY_ENTRY,
+  DEFAULT_CURRENCY_ENTRY_BASE,
+  MAIN_FORM_NAME,
+} from '../../constants';
 import {
   useCurrencyOptions,
   useFeeCurrencyOptions,
+  useRouterCurrencyOptions,
   useWallet,
 } from '../../hooks';
-import { advancedOptionsParsers, transactOptionsParsers } from '../../parsers';
+import {
+  advancedOptionsParsers,
+  CurrencyEntrySchema,
+  FeeAssetSchema,
+  parseAsWalletAddress,
+  swapOptionsParsers,
+  transactOptionsParsers,
+} from '../../parsers';
 import type {
-  TAdvancedOptions,
+  TFormValues,
+  TFormValuesTransformed,
   TSubmitType,
-  TTransactFields,
 } from '../../types';
 import {
   isValidPolkadotAddress,
+  resolveCurrencyAsset,
+  resolveExchange,
   validateCustomEndpoint,
   validateTransferAddress,
 } from '../../utils';
-import {
-  parseAsChain,
-  parseAsRecipientAddress,
-  parseAsSubstrateChain,
-} from '../../utils/parsers';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
-import { FeeAssetSelection } from '../common/FeeAssetSelection';
+import { KeepAliveCheckbox } from '../common/KeepAliveCheckbox';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
 import { Transact } from '../Transact/Transact';
-
-export type TCurrencyEntry = {
-  currencyOptionId: string;
-  customCurrency: string;
-  amount: string;
-  isCustomCurrency: boolean;
-  isMax?: boolean;
-  customCurrencyType?: 'id' | 'symbol' | 'location' | 'overridenLocation';
-  customCurrencySymbolSpecifier?:
-    | 'auto'
-    | 'native'
-    | 'foreign'
-    | 'foreignAbstract';
-};
-
-export type FormValues = {
-  from: TSubstrateChain;
-  to: TChain;
-  currencies: TCurrencyEntry[];
-  feeAsset: Omit<TCurrencyEntry, 'amount' | 'isMax'>;
-  address: string;
-  ahAddress: string;
-  useApi: boolean;
-} & TAdvancedOptions &
-  TTransactFields;
-
-export type TCurrencyEntryTransformed = TCurrencyEntry & {
-  currency?: TAssetInfo;
-};
-
-export type TFormValuesTransformed = Omit<FormValues, 'currencies'> & {
-  currencies: TCurrencyEntryTransformed[];
-  transformedFeeAsset?: TCurrencyEntryTransformed;
-};
 
 type Props = {
   onSubmit: (values: TFormValuesTransformed, submitType: TSubmitType) => void;
   loading: boolean;
   isBatchMode: boolean;
-  initialValues?: FormValues;
+  initialValues?: TFormValues;
   isVisible?: boolean;
 };
 
-const CurrencyEntrySchema = z.object({
-  currencyOptionId: z.string(),
-  customCurrency: z.string(),
-  amount: z.string(),
-  isCustomCurrency: z.boolean(),
-  isMax: z.boolean().optional(),
-  customCurrencyType: z
-    .enum(['id', 'symbol', 'location', 'overridenLocation'])
-    .optional(),
-  customCurrencySymbolSpecifier: z
-    .enum(['auto', 'native', 'foreign', 'foreignAbstract'])
-    .optional(),
-});
-
-export const FeeAssetSchema = CurrencyEntrySchema.omit({
-  amount: true,
-  isMax: true,
-});
-
-const XcmTransferForm: FC<Props> = ({
+export const XcmTransferForm: FC<Props> = ({
   onSubmit,
   loading,
   isBatchMode,
@@ -145,42 +102,36 @@ const XcmTransferForm: FC<Props> = ({
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
-    from: parseAsSubstrateChain.withDefault('Astar'),
-    to: parseAsChain.withDefault('Hydration'),
+    from: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Astar'),
+    to: parseAsStringLiteral(CHAINS).withDefault('Hydration'),
     currencies: parseAsNativeArrayOf(
       parseAsJson(CurrencyEntrySchema),
-    ).withDefault([
-      {
-        currencyOptionId: '',
-        customCurrency: '',
-        amount: '10',
-        isCustomCurrency: false,
-        isMax: false,
-        customCurrencyType: 'id',
-        customCurrencySymbolSpecifier: 'auto',
-      },
-    ]),
-    feeAsset: parseAsJson(FeeAssetSchema).withDefault({
-      currencyOptionId: '',
-      customCurrency: '',
-      isCustomCurrency: false,
-      customCurrencyType: 'symbol',
-      customCurrencySymbolSpecifier: 'auto',
-    }),
-    address: parseAsRecipientAddress.withDefault(
+    ).withDefault([DEFAULT_CURRENCY_ENTRY]),
+    feeAsset: parseAsJson(FeeAssetSchema).withDefault(
+      DEFAULT_CURRENCY_ENTRY_BASE,
+    ),
+    address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     ahAddress: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
+    keepAlive: parseAsBoolean.withDefault(true),
     ...transactOptionsParsers,
+    ...swapOptionsParsers,
     ...advancedOptionsParsers,
   });
 
-  const form = useForm<FormValues, (values: FormValues) => FormValues>({
+  const form = useForm<TFormValues>({
     name: MAIN_FORM_NAME,
     initialValues: initialValues ?? queryState,
-    transformValues: (values) => values,
-
+    transformValues: (values) => {
+      const { from, to, keepAlive, swapOptions } = values;
+      return {
+        ...values,
+        // Use keepAlive only for local transfers
+        keepAlive: from === to && !swapOptions.currencyTo ? keepAlive : false,
+      };
+    },
     validate: {
       address: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
@@ -232,7 +183,7 @@ const XcmTransferForm: FC<Props> = ({
     setSourceChainForLedger(form.values.from);
   }, [form.values.from, setSourceChainForLedger]);
 
-  const { from, to, currencies, useApi } = form.getValues();
+  const { from, to, currencies, feeAsset, useApi } = form.getValues();
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     from,
@@ -242,31 +193,19 @@ const XcmTransferForm: FC<Props> = ({
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
 
-  const transformCurrency = (
-    entry: TCurrencyEntry,
-    currencyMap: Record<string, TAssetInfo>,
-  ) => {
-    if (entry.isCustomCurrency) {
-      // Custom currency doesn't map to currencyMap
-      return { ...entry };
-    }
-
-    const currency = currencyMap[entry.currencyOptionId];
-
-    if (!currency) {
-      return { ...entry };
-    }
-
-    return { ...entry, currency };
-  };
+  const { currencyToMap: swapCurrencyToMap } = useRouterCurrencyOptions(
+    from,
+    resolveExchange(form.values.swapOptions.exchange),
+    to,
+  );
 
   const onSubmitInternal = (
-    values: FormValues,
+    values: TFormValues,
     _event: FormEvent<HTMLFormElement> | undefined,
     submitType: TSubmitType = 'default',
   ) => {
     // If MAX is selected for a local transfer, convert amount to 'ALL'
-    const normalizedValues: FormValues = {
+    const normalizedValues = {
       ...values,
       currencies: values.currencies.map((c) =>
         c.isMax ? { ...c, amount: 'ALL' } : c,
@@ -275,22 +214,26 @@ const XcmTransferForm: FC<Props> = ({
 
     // Transform each currency entry
     const transformedCurrencies = normalizedValues.currencies.map((entry) =>
-      transformCurrency(entry, currencyMap),
+      resolveCurrencyAsset(entry, currencyMap),
     );
 
     const transformedFeeAsset =
       normalizedValues.feeAsset.currencyOptionId ||
       normalizedValues.feeAsset.isCustomCurrency
-        ? transformCurrency(
-            normalizedValues.feeAsset as TCurrencyEntry,
-            feeCurrencyMap,
-          )
+        ? resolveCurrencyAsset(normalizedValues.feeAsset, feeCurrencyMap)
+        : undefined;
+
+    const { currencyTo } = normalizedValues.swapOptions;
+    const transformedCurrencyTo =
+      currencyTo.currencyOptionId || currencyTo.isCustomCurrency
+        ? resolveCurrencyAsset(currencyTo, swapCurrencyToMap)
         : undefined;
 
     const transformedValues: TFormValuesTransformed = {
       ...normalizedValues,
       currencies: transformedCurrencies,
       transformedFeeAsset,
+      transformedCurrencyTo,
     };
 
     if (
@@ -308,21 +251,21 @@ const XcmTransferForm: FC<Props> = ({
   const onSubmitInternalDryRun = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'dryRun');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'dryRun');
     }
   };
 
   const onSubmitInternalDryRunPreview = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'dryRunPreview');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'dryRunPreview');
     }
   };
 
   const onSubmitInternalAddToBatch = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'addToBatch');
+      onSubmitInternal(form.getTransformedValues(), undefined, 'addToBatch');
     }
   };
 
@@ -373,11 +316,11 @@ const XcmTransferForm: FC<Props> = ({
   const colorScheme = useComputedColorScheme();
 
   const feeAssetDisabled =
-    form.values.currencies.length <= 1 &&
-    from !== 'AssetHubPolkadot' &&
-    from !== 'Hydration';
+    form.values.currencies.length <= 1 && from !== 'AssetHubPolkadot';
 
   const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
+
+  const isLocalTransfer = from === to;
 
   if (!isVisible) {
     return null;
@@ -428,8 +371,12 @@ const XcmTransferForm: FC<Props> = ({
                 <Group>
                   <Stack gap="xs" flex={1}>
                     <CurrencySelection
+                      key={from + to + index}
                       form={form}
-                      index={index}
+                      fieldPath={`currencies.${index}`}
+                      fieldValue={currencies[index]}
+                      showOverrideLocation={currencies.length === 1}
+                      size={currencies.length > 1 ? 'xs' : 'sm'}
                       currencyOptions={currencyOptions}
                     />
                     <Group gap="xs" wrap="nowrap">
@@ -490,24 +437,22 @@ const XcmTransferForm: FC<Props> = ({
               size="compact-xs"
               leftSection={<IconPlus size={16} />}
               onClick={() =>
-                form.insertListItem('currencies', {
-                  currencyOptionId: '',
-                  customCurrency: '',
-                  amount: '10000000000000000000',
-                  isCustomCurrency: false,
-                  isMax: false,
-                  customCurrencyType: 'id',
-                })
+                form.insertListItem('currencies', DEFAULT_CURRENCY_ENTRY)
               }
             >
               Add another asset
             </Button>
           </Stack>
 
-          <FeeAssetSelection
-            disabled={feeAssetDisabled}
+          <CurrencySelection
             form={form}
+            fieldPath="feeAsset"
+            label="Fee asset"
+            description="This asset will be used to pay fees"
+            fieldValue={feeAsset}
             currencyOptions={feeCurrencyOptions}
+            disabled={feeAssetDisabled}
+            required={false}
           />
 
           <TextInput
@@ -531,11 +476,20 @@ const XcmTransferForm: FC<Props> = ({
             />
           )}
 
-          <Transact form={form} />
+          <Stack gap="xs">
+            <Swap form={form} />
+            <Transact form={form} />
+          </Stack>
 
-          <XcmApiCheckbox
-            {...form.getInputProps('useApi', { type: 'checkbox' })}
-          />
+          <Group gap="lg">
+            <XcmApiCheckbox
+              {...form.getInputProps('useApi', { type: 'checkbox' })}
+            />
+            <KeepAliveCheckbox
+              display={isLocalTransfer ? 'block' : 'none'}
+              {...form.getInputProps('keepAlive', { type: 'checkbox' })}
+            />
+          </Group>
 
           <AdvancedOptions form={form} />
 
@@ -589,7 +543,11 @@ const XcmTransferForm: FC<Props> = ({
                     <Menu.Item
                       leftSection={<IconTrash size={16} />}
                       onClick={() =>
-                        onSubmitInternal(form.getValues(), undefined, 'delete')
+                        onSubmitInternal(
+                          form.getTransformedValues(),
+                          undefined,
+                          'delete',
+                        )
                       }
                     >
                       Delete from batch
@@ -612,5 +570,3 @@ const XcmTransferForm: FC<Props> = ({
     </Paper>
   );
 };
-
-export default XcmTransferForm;

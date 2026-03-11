@@ -25,10 +25,10 @@ vi.mock('./createTransact', () => ({
 }))
 
 describe('handleTransactUsingSend', () => {
-  let api: IPolkadotApi<unknown, unknown>
+  let api: IPolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    api = {} as unknown as IPolkadotApi<unknown, unknown>
+    api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
     vi.clearAllMocks()
     vi.mocked(addXcmVersionHeader).mockImplementation(obj => obj)
     vi.mocked(createBeneficiaryLocation).mockReturnValue({
@@ -38,7 +38,7 @@ describe('handleTransactUsingSend', () => {
   })
 
   const createMockOptions = (
-    overrides: Partial<TPolkadotXCMTransferOptions<unknown, unknown>> = {}
+    overrides: Partial<TPolkadotXCMTransferOptions<unknown, unknown, unknown>> = {}
   ) =>
     ({
       api,
@@ -53,7 +53,7 @@ describe('handleTransactUsingSend', () => {
         call: '0x1234'
       },
       ...overrides
-    }) as TPolkadotXCMTransferOptions<unknown, unknown>
+    }) as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   describe('Error handling', () => {
     it('should throw UnsupportedOperationError when transactOptions.call is not defined', async () => {

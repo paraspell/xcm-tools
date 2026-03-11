@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import BifrostPolkadot from './BifrostPolkadot'
 
-class BifrostKusama<TApi, TRes> extends BifrostPolkadot<TApi, TRes> {
+class BifrostKusama<TApi, TRes, TSigner> extends BifrostPolkadot<TApi, TRes, TSigner> {
   constructor() {
     super('BifrostKusama', 'bifrost', 'Kusama', Version.V5)
   }

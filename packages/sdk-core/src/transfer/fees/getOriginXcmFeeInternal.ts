@@ -13,7 +13,7 @@ import { padFee } from '../../utils/fees'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { isSufficientOrigin } from './isSufficient'
 
-export const getOriginXcmFeeInternal = async <TApi, TRes>({
+export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
   api,
   tx,
   origin,
@@ -24,7 +24,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes>({
   currency,
   version,
   useRootOrigin = false
-}: TGetOriginXcmFeeInternalOptions<TApi, TRes>): Promise<
+}: TGetOriginXcmFeeInternalOptions<TApi, TRes, TSigner>): Promise<
   TXcmFeeDetail & {
     forwardedXcms?: any
     destParaId?: number

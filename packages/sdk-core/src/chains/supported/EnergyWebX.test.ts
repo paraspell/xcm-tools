@@ -13,10 +13,10 @@ vi.mock('../../pallets')
 vi.mock('../../pallets/polkadotXcm')
 
 describe('EnergyWebX', () => {
-  let chain: EnergyWebX<unknown, unknown>
+  let chain: EnergyWebX<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'EnergyWebX'>('EnergyWebX')
+    chain = getChain<unknown, unknown, unknown, 'EnergyWebX'>('EnergyWebX')
     vi.clearAllMocks()
   })
 
@@ -31,7 +31,7 @@ describe('EnergyWebX', () => {
     const input = {
       scenario: 'ParaToPara',
       assetInfo: { symbol: 'DOT', amount: 100n }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(input)
 
@@ -45,7 +45,7 @@ describe('EnergyWebX', () => {
       const input = {
         scenario,
         assetInfo: { symbol: 'DOT', amount: 100n }
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -58,7 +58,7 @@ describe('EnergyWebX', () => {
   it('should query balance foreign with asset location and address', async () => {
     const queryState = vi.fn().mockResolvedValue({ balance: 321n })
 
-    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown>
+    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown, unknown>
     const asset = { location: { parents: 0, interior: 'Here' } } as TAssetInfo
     const address = '5FbalanceAddr'
 

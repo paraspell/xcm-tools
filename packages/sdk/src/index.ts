@@ -11,12 +11,12 @@ export {
   dryRun,
   dryRunOrigin,
   getParaEthTransferFees,
-  send,
   getBridgeStatus,
   getOriginXcmFee,
   getXcmFee,
   handleSwapExecuteTransfer
 } from './transfer'
 export * from './types'
+export type { TSwapEvent } from './types'
 export { createChainClient } from './utils'
 export * from './PapiXcmTransformer'

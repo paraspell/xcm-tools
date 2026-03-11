@@ -27,9 +27,9 @@ vi.mock('../../utils')
 describe('resolveHopAsset', () => {
   const mockApi = {
     getTypeThenAssetCount: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
-  const baseParams: Omit<TResolveHopParams<unknown, unknown>, 'asset'> = {
+  const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'asset'> = {
     api: mockApi,
     tx: {} as unknown,
     originChain: 'Acala',

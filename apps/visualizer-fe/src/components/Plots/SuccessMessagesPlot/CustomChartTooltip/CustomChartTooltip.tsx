@@ -16,18 +16,17 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
+import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
 import { useSelectedParachain } from '../../../../context/SelectedParachain/useSelectedParachain';
 import { getChainDisplayName } from '../../../../utils';
-import { getParachainId } from '../../../../utils/utils';
 import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
 
-export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesLabels {
+export const getSeriesLabels = (series: ChartSeries[] | undefined): ChartSeriesLabels => {
   if (!series) {
     return {};
   }
@@ -42,9 +41,9 @@ export function getSeriesLabels(series: ChartSeries[] | undefined): ChartSeriesL
     acc[item.name] = item.label;
     return acc;
   }, {});
-}
+};
 
-function updateChartTooltipPayload(payload: Record<string, any>[]): Record<string, any>[] {
+const updateChartTooltipPayload = (payload: Record<string, any>[]): Record<string, any>[] => {
   return payload.map(item => {
     const matchFound = item.name.search(/\./);
     if (matchFound >= 0) {
@@ -66,9 +65,12 @@ function updateChartTooltipPayload(payload: Record<string, any>[]): Record<strin
     }
     return item;
   });
-}
+};
 
-export function getFilteredChartTooltipPayload(payload: Record<string, any>[], segmentId?: string) {
+export const getFilteredChartTooltipPayload = (
+  payload: Record<string, any>[],
+  segmentId?: string
+) => {
   const duplicatesFilter = updateChartTooltipPayload(
     payload.filter(item => item.fill !== 'none' || !item.color)
   );
@@ -78,10 +80,10 @@ export function getFilteredChartTooltipPayload(payload: Record<string, any>[], s
   }
 
   return duplicatesFilter.filter(item => item.name === segmentId);
-}
+};
 
 // IMPORTANT: read by dataKey (series key), fall back to name
-function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter') {
+const getData = (item: Record<string, any>, type: 'area' | 'radial' | 'scatter') => {
   if (type === 'radial' || type === 'scatter') {
     if (Array.isArray(item.value)) return item.value[1] - item.value[0];
     return item.value;
@@ -89,7 +91,7 @@ function getData(item: Record<string, any>, type: 'area' | 'radial' | 'scatter')
   const key = (item.dataKey ?? item.name) as string;
   if (Array.isArray(item.payload[key])) return item.payload[key][1] - item.payload[key][0];
   return item.payload[key];
-}
+};
 
 export type ChartTooltipStylesNames =
   | 'tooltip'
@@ -113,9 +115,9 @@ const defaultProps: Partial<ChartTooltipProps & { withTotal?: boolean }> = {
   withTotal: false
 };
 
-const getParaId = (label?: string, total?: string): number | undefined => {
+const resolveParaId = (label?: string, total?: string): number | undefined => {
   if (!label || (total && label.includes(total))) return undefined;
-  return getParachainId(label as TSubstrateChain);
+  return getParaId(label as TSubstrateChain);
 };
 
 const getLinkByEcosystem = (ecosystem: TRelaychain): string => {
@@ -136,7 +138,7 @@ const generateExplorerLink = (
   return `${baseUrl}${timeDimension}${fromChain}${start}${end}`;
 };
 
-const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
@@ -239,7 +241,7 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
     );
   });
 
-  const paraId = getParaId(label as string, t('charts.common.total'));
+  const paraId = resolveParaId(label as string, t('charts.common.total'));
   const ecosystem = filteredPayload[0]?.payload.ecosystem;
   const [startDate, endDate] = dateRange;
   const explorerLink = generateExplorerLink(ecosystem, paraId, startDate, endDate);
@@ -265,6 +267,4 @@ const ChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
   );
 });
 
-ChartTooltip.displayName = '@mantine/charts/ChartTooltip';
-
-export default ChartTooltip;
+CustomChartTooltip.displayName = '@mantine/charts/ChartTooltip';

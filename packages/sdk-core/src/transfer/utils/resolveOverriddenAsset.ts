@@ -13,11 +13,11 @@ import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
 
 import { AMOUNT_ALL } from '../../constants'
 import type { TSendOptions } from '../../types'
-import { abstractDecimals, assertHasLocation, createAsset, getChainVersion } from '../../utils'
+import { abstractDecimals, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
-export const resolveOverriddenAsset = <TApi, TRes>(
-  options: TSendOptions<TApi, TRes>,
+export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
+  options: TSendOptions<TApi, TRes, TSigner>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
   resolvedFeeAsset: TAssetInfo | undefined
@@ -72,8 +72,6 @@ export const resolveOverriddenAsset = <TApi, TRes>(
           `Origin chain ${origin} does not support currency ${JSON.stringify(currency)}`
         )
       }
-
-      assertHasLocation(asset)
 
       if (!resolvedFeeAsset) {
         throw new InvalidCurrencyError('Fee asset not found')

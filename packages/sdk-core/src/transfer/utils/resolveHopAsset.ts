@@ -9,7 +9,7 @@ import { isExternalChain } from '@paraspell/sdk-common'
 import type { TResolveHopParams } from '../../types'
 import { getRelayChainOf } from '../../utils'
 
-export const resolveHopAsset = <TApi, TRes>({
+export const resolveHopAsset = <TApi, TRes, TSigner>({
   api,
   tx,
   originChain,
@@ -19,7 +19,7 @@ export const resolveHopAsset = <TApi, TRes>({
   asset,
   hasPassedExchange,
   currency
-}: TResolveHopParams<TApi, TRes>): TAssetInfo => {
+}: TResolveHopParams<TApi, TRes, TSigner>): TAssetInfo => {
   const isRelayAssetIncluded = api.getTypeThenAssetCount(tx) === 2
   const useRelayAssetAsFee =
     (typeof destination === 'string' && isExternalChain(destination)) || isRelayAssetIncluded

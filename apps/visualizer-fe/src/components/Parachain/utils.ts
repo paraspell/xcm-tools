@@ -9,7 +9,6 @@ import centrifugePng from '../../logos/centrifuge.png';
 import collectivesPng from '../../logos/collectives.png';
 import crabPng from '../../logos/crab.png';
 import crustPng from '../../logos/crust.png';
-import curioPng from '../../logos/curio.png';
 import darwiniaPng from '../../logos/darwinia.png';
 import hydrationPng from '../../logos/hydration.png';
 import interlayPng from '../../logos/interlay.png';
@@ -20,7 +19,6 @@ import mythosPng from '../../logos/mythos.png';
 import neuroWebPng from '../../logos/neuroWeb.png';
 import nodlePng from '../../logos/nodle.png';
 import pendulumPng from '../../logos/pendulum.png';
-import phalaPng from '../../logos/phala.png';
 import uniquePng from '../../logos/unique.png';
 import zeitgeistPng from '../../logos/zeitgeist.png';
 import { getParachainLogo } from '../../utils/utils';
@@ -55,8 +53,6 @@ export const getChainLogo = (chain: TSubstrateChain) => {
       return astarPng;
     case 'NeuroWeb':
       return neuroWebPng;
-    case 'Phala':
-      return phalaPng;
     case 'Crust':
       return crustPng;
     case 'Nodle':
@@ -69,8 +65,6 @@ export const getChainLogo = (chain: TSubstrateChain) => {
       return laosPng;
     case 'Mythos':
       return mythosPng;
-    case 'Curio':
-      return curioPng;
     case 'Crab':
       return crabPng;
     default:

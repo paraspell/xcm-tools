@@ -42,7 +42,11 @@ describe('isStableCoinAsset', () => {
   it('returns false when location is missing', () => {
     const asset: TAssetInfo = {
       symbol: 'TEST',
-      decimals: 12
+      decimals: 12,
+      location: {
+        parents: 1,
+        interior: 'Here'
+      }
     }
 
     expect(isStableCoinAsset(asset)).toBe(false)

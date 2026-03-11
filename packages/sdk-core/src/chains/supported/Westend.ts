@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import Polkadot from './Polkadot'
 
-class Westend<TApi, TRes> extends Polkadot<TApi, TRes> {
+class Westend<TApi, TRes, TSigner> extends Polkadot<TApi, TRes, TSigner> {
   constructor() {
     super('Westend', 'westend', 'Westend', Version.V5)
   }

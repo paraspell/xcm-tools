@@ -39,7 +39,7 @@ vi.mock('../../transfer')
 vi.mock('../../utils/transfer')
 
 describe('AssetHubPolkadot', () => {
-  let chain: AssetHubPolkadot<unknown, unknown>
+  let chain: AssetHubPolkadot<unknown, unknown, unknown>
 
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
@@ -49,7 +49,7 @@ describe('AssetHubPolkadot', () => {
     }),
     createAccountId: vi.fn().mockReturnValue('0x0000000000000000'),
     clone: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   const mockExtrinsic = {} as unknown
 
@@ -63,11 +63,11 @@ describe('AssetHubPolkadot', () => {
     address: 'address',
     destination: 'Polkadot',
     senderAddress: '0x1234567890abcdef'
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
+    chain = getChain<unknown, unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
     vi.mocked(normalizeSymbol).mockImplementation(sym => (sym ?? '').toUpperCase())
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
@@ -81,12 +81,22 @@ describe('AssetHubPolkadot', () => {
 
   describe('transferPolkadotXcm', () => {
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', decimals: 10, assetId: '' }])
+      vi.mocked(getOtherAssets).mockReturnValue([
+        {
+          symbol: 'DOT',
+          decimals: 10,
+          assetId: '',
+          location: {
+            parents: 1,
+            interior: 'Here'
+          }
+        }
+      ])
 
       const input = {
         ...mockInput,
         scenario: 'RelayToPara'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
       const result = await chain.transferPolkadotXCM(input)
       expect(result).toStrictEqual(mockExtrinsic)
@@ -113,7 +123,7 @@ describe('AssetHubPolkadot', () => {
           ...mockInput,
           assetInfo: { symbol: assetSymbol, amount: 100n },
           feeAssetInfo: { symbol: feeAssetSymbol }
-        } as TPolkadotXCMTransferOptions<unknown, unknown>
+        } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
         const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
         await chain.transferPolkadotXCM(input)
         expect(handleExecuteTransfer).toHaveBeenCalledWith(input)
@@ -126,7 +136,7 @@ describe('AssetHubPolkadot', () => {
           destination: 'Acala',
           assetInfo: { symbol: 'DOT', amount: 100n },
           feeAssetInfo: { symbol: 'DOT' }
-        } as TPolkadotXCMTransferOptions<unknown, unknown>
+        } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
         await chain.transferPolkadotXCM(input)
         expect(handleExecuteTransfer).not.toHaveBeenCalled()
         expect(transferPolkadotXcm).toHaveBeenCalled()
@@ -140,7 +150,7 @@ describe('AssetHubPolkadot', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
         address: '0x1234567890abcdef'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -162,8 +172,9 @@ describe('AssetHubPolkadot', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
         address: '0x1234567890abcdef',
-        isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+        isAmountAll: true,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -185,7 +196,7 @@ describe('AssetHubPolkadot', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 1000n, location: {} },
         address: '0x1234567890abcdef'
-      } as TTransferLocalOptions<unknown, unknown>
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
@@ -207,8 +218,9 @@ describe('AssetHubPolkadot', () => {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 100n, location: {} },
         address: '0x1234567890abcdef',
-        isAmountAll: true
-      } as TTransferLocalOptions<unknown, unknown>
+        isAmountAll: true,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 

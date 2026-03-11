@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "12.5.1",
+  "version": "12.8.8",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -42,15 +42,15 @@
     "@paraspell/sdk-core": "workspace:*",
     "@polkadot-labs/hdkd": "^0.0.26",
     "@polkadot-labs/hdkd-helpers": "^0.0.27",
-    "viem": "2.45.0"
+    "viem": "^2.47.1"
   },
   "peerDependencies": {
     "polkadot-api": ">= 1.23.3 < 2"
   },
   "devDependencies": {
-    "@acala-network/chopsticks": "^1.2.5",
+    "@acala-network/chopsticks": "^1.2.7",
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-env": "^7.29.0",
     "@codecov/rollup-plugin": "^1.9.1",
     "@noble/curves": "^2.0.1",
     "@rollup/plugin-babel": "^6.1.0",
@@ -59,9 +59,9 @@
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
     "@vitest/coverage-v8": "^4.0.18",
-    "axios": "^1.13.4",
-    "dotenv": "^17.2.3",
-    "rollup": "^4.57.0",
+    "axios": "^1.13.5",
+    "dotenv": "^17.3.1",
+    "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.3.0",
     "tslib": "^2.8.1"
   }

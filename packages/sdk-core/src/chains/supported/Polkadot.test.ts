@@ -9,14 +9,13 @@ import type Polkadot from './Polkadot'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Polkadot', () => {
-  let chain: Polkadot<unknown, unknown>
+  let chain: Polkadot<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { isNative: true, symbol: 'DOT', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Polkadot'>('Polkadot')
+    chain = getChain<unknown, unknown, unknown, 'Polkadot'>('Polkadot')
   })
 
   it('should initialize with correct values', () => {

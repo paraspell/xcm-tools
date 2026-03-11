@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type LaosPaseo from './LaosPaseo'
 
 describe('LaosPaseo', () => {
-  let chain: LaosPaseo<unknown, unknown>
+  let chain: LaosPaseo<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'LaosPaseo'>('LaosPaseo')
+    chain = getChain<unknown, unknown, unknown, 'LaosPaseo'>('LaosPaseo')
   })
 
   it('should initialize with correct values', () => {

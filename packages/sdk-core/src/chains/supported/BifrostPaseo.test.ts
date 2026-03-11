@@ -5,11 +5,11 @@ import { getChain } from '../../utils'
 import type BifrostPaseo from './BifrostPaseo'
 
 describe('BifrostPaseo', () => {
-  let chain: BifrostPaseo<unknown, unknown>
+  let chain: BifrostPaseo<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'BifrostPaseo'>('BifrostPaseo')
+    chain = getChain<unknown, unknown, unknown, 'BifrostPaseo'>('BifrostPaseo')
   })
 
   it('should initialize with correct values', () => {

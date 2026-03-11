@@ -10,10 +10,10 @@ import CoretimePolkadot from './CoretimePolkadot'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('CoretimePolkadot', () => {
-  let chain: CoretimePolkadot<unknown, unknown>
+  let chain: CoretimePolkadot<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'CoretimePolkadot'>('CoretimePolkadot')
+    chain = getChain<unknown, unknown, unknown, 'CoretimePolkadot'>('CoretimePolkadot')
   })
 
   it('should initialize with correct values', () => {
@@ -25,7 +25,11 @@ describe('CoretimePolkadot', () => {
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
-    const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    const input = { scenario: 'ParaToPara' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown,
+      unknown
+    >
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
@@ -35,7 +39,11 @@ describe('CoretimePolkadot', () => {
   })
 
   it('should use typeAndThen when scenario is not ParaToPara', async () => {
-    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+    const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+      unknown,
+      unknown,
+      unknown
+    >
 
     await chain.transferPolkadotXCM(input)
 

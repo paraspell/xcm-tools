@@ -2,7 +2,7 @@ import { PolkadotSigner } from 'polkadot-api/signer'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE } from '@polkadot-labs/hdkd-helpers'
-import { TPallet, TPapiApi, TPapiTransaction } from '../src'
+import { TPallet, TPapiApi, TPapiSigner, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
 import {
   GeneralBuilder,
@@ -41,7 +41,8 @@ export const validateTransfer = async (
   builder: GeneralBuilder<
     TPapiApi,
     TPapiTransaction,
-    TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+    TPapiSigner,
+    TSendBaseOptionsWithSenderAddress<TPapiApi, TPapiTransaction, TPapiSigner>
   >,
   signer: PolkadotSigner
 ) => {

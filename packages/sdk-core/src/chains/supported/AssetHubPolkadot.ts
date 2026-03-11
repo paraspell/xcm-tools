@@ -11,7 +11,7 @@ import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { addXcmVersionHeader, assertHasLocation, assertSenderAddress } from '../../utils'
+import { addXcmVersionHeader, assertSenderAddress } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, createVersionedDestination } from '../../utils/location'
@@ -20,7 +20,10 @@ import { handleExecuteTransfer } from '../../utils/transfer'
 import Chain from '../Chain'
 import { getParaId } from '../config'
 
-class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class AssetHubPolkadot<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'AssetHubPolkadot',
     info: string = 'PolkadotAssetHub',
@@ -30,14 +33,12 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
     super(chain, info, ecosystem, version)
   }
 
-  public async handleEthBridgeNativeTransfer<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  public async handleEthBridgeNativeTransfer<TApi, TRes, TSigner>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, version, destination, senderAddress, address, paraIdTo, assetInfo: asset } = input
 
     assertSenderAddress(senderAddress)
-
-    assertHasLocation(asset)
 
     const messageId = await generateMessageId(
       api,
@@ -91,8 +92,8 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
     return api.deserializeExtrinsics(call)
   }
 
-  async transferPolkadotXCM<TApi, TRes>(
-    options: TPolkadotXCMTransferOptions<TApi, TRes>
+  async transferPolkadotXCM(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
 
@@ -116,8 +117,8 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     if (asset.assetId !== undefined) {
       const assetId = Number(asset.assetId)
@@ -129,14 +130,14 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
           params: {
             id: assetId,
             dest,
-            keep_alive: false
+            keep_alive: keepAlive
           }
         })
       }
 
       return api.deserializeExtrinsics({
         module: 'Assets',
-        method: 'transfer',
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer',
         params: {
           id: assetId,
           target: dest,
@@ -152,14 +153,14 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
         params: {
           id: asset.location,
           dest: { Id: address },
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'ForeignAssets',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: asset.location,
         target: { Id: address },
@@ -168,20 +169,19 @@ class AssetHubPolkadot<TApi, TRes> extends Chain<TApi, TRes> implements IPolkado
     })
   }
 
-  getBalanceForeign<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
+  getBalanceForeign<TApi, TRes, TSigner>(
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
     const ASSETS_PALLET_ID = 50
 
     const hasRequiredJunctions =
-      asset.location &&
       hasJunction(asset.location, 'PalletInstance', ASSETS_PALLET_ID) &&
       hasJunction(asset.location, 'GeneralIndex') &&
       !hasJunction(asset.location, 'GlobalConsensus')
 
-    if (!asset.location || hasRequiredJunctions) {
+    if (hasRequiredJunctions) {
       return getPalletInstance('Assets').getBalance(api, address, asset)
     }
 

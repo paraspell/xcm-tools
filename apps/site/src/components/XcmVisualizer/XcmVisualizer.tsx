@@ -15,13 +15,34 @@ import visualizerLogoImg from "../../assets/visualizer_logo.png";
 import visualizerMockupImg from "../../assets/visualizer-mockup-2-h.png";
 import classes from "./XcmVisualizer.module.css";
 
-const XcmVisualizer = () => (
+export const XcmVisualizer = () => (
   <div className={classes.wrapper} id="xcm-visualizer">
-    <div className={classes.body}>
+    <Box
+      visibleFrom="sm"
+      style={{
+        flex: 1,
+      }}
+    >
+      <Image
+        visibleFrom="sm"
+        src={visualizerMockupImg}
+        alt="Playground"
+        fit="contain"
+        pr={80}
+      />
+    </Box>
+
+    <div
+      className={classes.body}
+      style={{
+        flex: 0.8,
+      }}
+    >
       <Group align="center" gap="sm" mb="md">
         <Title className={classes.title}>XCM Visualizer</Title>
         <Image src={visualizerLogoImg} w={32} h={32} />
       </Group>
+
       <Text c="dimmed" maw={550}>
         Experience the Polkadot, Kusama, Paseo and Westend ecosystems like never
         before with our XCM Visualizer — the first and only XCM-oriented
@@ -93,21 +114,5 @@ const XcmVisualizer = () => (
         </Button>
       </div>
     </div>
-    <Box
-      visibleFrom="sm"
-      style={{
-        flex: 0.8,
-      }}
-    >
-      <Image
-        visibleFrom="sm"
-        src={visualizerMockupImg}
-        alt="Playground"
-        fit="contain"
-        ml={80}
-      />
-    </Box>
   </div>
 );
-
-export default XcmVisualizer;

@@ -1,9 +1,41 @@
-import type { TChain, TTransactOptions, Version } from '@paraspell/sdk';
+import type {
+  TAssetInfo,
+  TChain,
+  TExchangeChain,
+  TPapiApi,
+  TPapiTransaction,
+  TSubstrateChain,
+  TSwapEventType,
+  TTransactionContext,
+  TTransactOptions,
+  Version,
+} from '@paraspell/sdk';
 import type { IconProps } from '@tabler/icons-react';
+import type { PolkadotSigner } from 'polkadot-api';
 import type { FC } from 'react';
 import type { Web3 } from 'web3';
 
-import type { ASSET_QUERIES, PALLETS_QUERIES } from './consts';
+import type {
+  ASSET_QUERIES,
+  CURRENCY_TYPES,
+  PALLETS_QUERIES,
+  SYMBOL_TYPES,
+  TRANSFER_CURRENCY_TYPES,
+} from './constants';
+
+export type TApiTransaction = Omit<
+  TTransactionContext<TPapiApi, TPapiTransaction>,
+  'tx'
+> & {
+  tx: string;
+  wsProviders: string[];
+};
+
+export type TProgressSwapEvent = {
+  type: TSwapEventType;
+  routerPlan: Pick<TApiTransaction, 'type'>[];
+  currentStep: number;
+};
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 
@@ -60,6 +92,7 @@ export type TSubmitType =
   | 'getTransferableAmount'
   | 'getMinTransferableAmount'
   | 'getReceivableAmount'
+  | 'getBestAmountOut'
   | 'verifyEdOnDestination'
   | 'getTransferInfo'
   | 'addToBatch';
@@ -97,4 +130,62 @@ export type TAdvancedOptions = {
 
 export type TTransactFields = {
   transactOptions: TTransactOptions<string, string | number>;
+};
+
+export type TCurrencyType = (typeof CURRENCY_TYPES)[number];
+
+export type TTransferCurrencyType = (typeof TRANSFER_CURRENCY_TYPES)[number];
+
+export type TSymbolType = (typeof SYMBOL_TYPES)[number];
+
+export type TCurrencyEntryBase = {
+  currencyOptionId: string;
+  customCurrency: string;
+  isCustomCurrency: boolean;
+  customCurrencyType?: TTransferCurrencyType;
+  customCurrencySymbolSpecifier?: TSymbolType;
+};
+
+export type TCurrencyEntry = TCurrencyEntryBase & {
+  amount: string;
+  isMax?: boolean;
+};
+
+export type TCurrencyEntryBaseTransformed = TCurrencyEntryBase & {
+  currency?: TAssetInfo;
+};
+
+export type TCurrencyEntryTransformed = TCurrencyEntry & {
+  currency?: TAssetInfo;
+};
+
+export type TSwapOptions = {
+  currencyTo: TCurrencyEntryBase;
+  exchange: TExchangeChain[];
+  slippage: string;
+  evmSigner?: PolkadotSigner;
+  evmInjectorAddress?: string;
+};
+
+export type TSwapFields = {
+  swapOptions: TSwapOptions;
+};
+
+export type TFormValues = {
+  from: TSubstrateChain;
+  to: TChain;
+  currencies: TCurrencyEntry[];
+  feeAsset: TCurrencyEntryBase;
+  address: string;
+  ahAddress: string;
+  useApi: boolean;
+  keepAlive: boolean;
+} & TAdvancedOptions &
+  TTransactFields &
+  TSwapFields;
+
+export type TFormValuesTransformed = Omit<TFormValues, 'currencies'> & {
+  currencies: TCurrencyEntryTransformed[];
+  transformedFeeAsset?: TCurrencyEntryBaseTransformed;
+  transformedCurrencyTo?: TCurrencyEntryBaseTransformed;
 };

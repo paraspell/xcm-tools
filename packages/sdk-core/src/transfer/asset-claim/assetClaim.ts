@@ -7,8 +7,8 @@ import { getChainVersion, validateAddress } from '../../utils'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 import { resolveAssets } from './resolveAssets'
 
-export const claimAssets = async <TApi, TRes>(
-  options: TAssetClaimOptions<TApi, TRes>
+export const claimAssets = async <TApi, TRes, TSigner>(
+  options: TAssetClaimOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const { api, chain, address } = options
 
@@ -28,7 +28,7 @@ export const claimAssets = async <TApi, TRes>(
 
   const assets = resolveAssets(options, version)
 
-  const params = buildClaimAssetsParams<TApi, TRes>({
+  const params = buildClaimAssetsParams({
     ...options,
     version,
     assets

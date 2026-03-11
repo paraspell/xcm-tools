@@ -39,7 +39,7 @@ vi.mock('./padFee')
 
 const mockApi = {
   getPaymentInfo: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 describe('getReverseTxFee', () => {
   const mockTxObject = { type: 'mockTransaction' }
@@ -57,7 +57,7 @@ describe('getReverseTxFee', () => {
     senderAddress: 'senderAlice',
     address: '0x1234567890123456789012345678901234567890',
     currency: { symbol: 'DOT', amount: mockAmount }
-  } as TGetReverseTxFeeOptions<unknown, unknown>
+  } as TGetReverseTxFeeOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

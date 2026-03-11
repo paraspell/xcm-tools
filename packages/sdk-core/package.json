@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-core",
-  "version": "12.5.1",
+  "version": "12.8.8",
   "description": "SDK core for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/configs/fetchChainConfigs.ts",
+    "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/fetchChainConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
@@ -41,11 +41,19 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^2.0.0",
-    "viem": "2.45.0"
+    "viem": "^2.47.1"
+  },
+  "peerDependencies": {
+    "@paraspell/swap": "^12.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@paraspell/swap": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-env": "^7.29.0",
     "@codecov/rollup-plugin": "^1.9.1",
     "@polkadot/api": "^16.5.4",
     "@polkadot/types": "^16.5.4",
@@ -53,9 +61,9 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@vitest/coverage-v8": "^4.0.18",
-    "axios": "^1.13.4",
-    "dotenv": "^17.2.3",
-    "rollup": "^4.57.0",
+    "axios": "^1.13.5",
+    "dotenv": "^17.3.1",
+    "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.3.0",
     "ts-morph": "^27.0.2",
     "ts-node": "^10.9.2",

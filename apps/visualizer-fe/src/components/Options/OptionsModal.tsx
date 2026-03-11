@@ -2,14 +2,14 @@ import { Modal, Title } from '@mantine/core';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Options from './Options';
+import { Options } from './Options';
 
 type Props = {
   opened: boolean;
   close: () => void;
 };
 
-const OptionsModal: FC<Props> = ({ opened, close }) => {
+export const OptionsModal: FC<Props> = ({ opened, close }) => {
   const { t } = useTranslation();
   return (
     <Modal.Root opened={opened} onClose={close} size="xl">
@@ -26,5 +26,3 @@ const OptionsModal: FC<Props> = ({ opened, close }) => {
     </Modal.Root>
   );
 };
-
-export default OptionsModal;

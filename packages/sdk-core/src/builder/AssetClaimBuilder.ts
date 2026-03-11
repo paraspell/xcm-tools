@@ -2,10 +2,10 @@ import type { Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api'
 import { claimAssets } from '../transfer'
-import type { TBuilderInternalOptions } from '../types'
+import type { TBuilderInternalOptions, TSender } from '../types'
 import { type TAddress } from '../types'
 import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
-import { assertDerivationPath } from '../utils'
+import { assertSender, isSenderSigner } from '../utils'
 
 /**
  * Builder class for constructing asset claim transactions.
@@ -13,12 +13,13 @@ import { assertDerivationPath } from '../utils'
 export class AssetClaimBuilder<
   TApi,
   TRes,
-  T extends Partial<TAssetClaimOptionsBase & TBuilderInternalOptions> = object
+  TSigner,
+  T extends Partial<TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>> = object
 > {
-  readonly api: IPolkadotApi<TApi, TRes>
+  readonly api: IPolkadotApi<TApi, TRes, TSigner>
   readonly _options: T
 
-  constructor(api: IPolkadotApi<TApi, TRes>, options?: T) {
+  constructor(api: IPolkadotApi<TApi, TRes, TSigner>, options?: T) {
     this.api = api
     this._options = options ?? ({} as T)
   }
@@ -31,7 +32,7 @@ export class AssetClaimBuilder<
    */
   currency(
     currency: TAssetClaimOptionsBase['currency']
-  ): AssetClaimBuilder<TApi, TRes, T & { currency: TAssetClaimOptionsBase['currency'] }> {
+  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { currency: TAssetClaimOptionsBase['currency'] }> {
     return new AssetClaimBuilder(this.api, { ...this._options, currency })
   }
 
@@ -42,14 +43,15 @@ export class AssetClaimBuilder<
    * @returns
    */
   senderAddress(
-    addressOrPath: string
-  ): AssetClaimBuilder<TApi, TRes, T & { senderAddress: string }> {
-    const isPath = addressOrPath.startsWith('//')
-    const address = isPath ? this.api.deriveAddress(addressOrPath) : addressOrPath
+    sender: TSender<TSigner>
+  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { senderAddress: string }> {
+    const isPath = typeof sender === 'string' && sender.startsWith('//')
+    const isPathOrSigner = isPath || isSenderSigner(sender)
+    const address = isPathOrSigner ? this.api.deriveAddress(sender) : sender
     return new AssetClaimBuilder(this.api, {
       ...this._options,
       senderAddress: address,
-      path: isPath ? addressOrPath : undefined
+      sender: isPathOrSigner ? sender : undefined
     })
   }
 
@@ -59,7 +61,7 @@ export class AssetClaimBuilder<
    * @param address - The destination account address.
    * @returns An instance of Builder
    */
-  address(address: TAddress): AssetClaimBuilder<TApi, TRes, T & { address: TAddress }> {
+  address(address: TAddress): AssetClaimBuilder<TApi, TRes, TSigner, T & { address: TAddress }> {
     const isPath = typeof address === 'string' && address.startsWith('//')
     const resolvedAddress = isPath ? this.api.deriveAddress(address) : address
     return new AssetClaimBuilder(this.api, { ...this._options, address: resolvedAddress })
@@ -71,7 +73,7 @@ export class AssetClaimBuilder<
    * @param version - The XCM version.
    * @returns An instance of Builder
    */
-  xcmVersion(version: Version): AssetClaimBuilder<TApi, TRes, T & { version: Version }> {
+  xcmVersion(version: Version): AssetClaimBuilder<TApi, TRes, TSigner, T & { version: Version }> {
     return new AssetClaimBuilder(this.api, { ...this._options, version })
   }
 
@@ -80,17 +82,22 @@ export class AssetClaimBuilder<
    *
    * @returns A Promise that resolves to the asset claim extrinsic.
    */
-  build(this: AssetClaimBuilder<TApi, TRes, TAssetClaimOptionsBase>) {
+  build(this: AssetClaimBuilder<TApi, TRes, TSigner, TAssetClaimOptionsBase>) {
     return claimAssets({ api: this.api, ...this._options })
   }
 
   async signAndSubmit(
-    this: AssetClaimBuilder<TApi, TRes, TAssetClaimOptionsBase & TBuilderInternalOptions>
+    this: AssetClaimBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>
+    >
   ) {
-    const { path } = this._options
-    assertDerivationPath(path)
+    const { sender } = this._options
+    assertSender(sender)
     const tx = await claimAssets({ api: this.api, ...this._options })
-    return this.api.signAndSubmit(tx, path)
+    return this.api.signAndSubmit(tx, sender)
   }
 
   /**

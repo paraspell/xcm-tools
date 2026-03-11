@@ -11,9 +11,9 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconBoxAlignBottomRight,
-  IconBuildingBridge2,
   IconCheck,
   IconCoins,
+  IconExchange,
   IconSend,
 } from "@tabler/icons-react";
 
@@ -22,27 +22,28 @@ import classes from "./XcmSdk.module.css";
 const data = [
   {
     icon: IconSend,
-    title: "XCM transfer",
+    title: "XCM Transfer",
     description: "Experiment with XCM to securely transfer assets",
+  },
+  {
+    icon: IconExchange,
+    title: "Swap",
+    description: "Perform one or two click cross-chain swaps with ease",
+  },
+  {
+    icon: IconBoxAlignBottomRight,
+    title: "Transact",
+    description:
+      "Execute cross-chain calls that trigger execution on destination chain",
   },
   {
     icon: IconCoins,
     title: "Assets",
     description: "Explore retrieving various details about assets",
   },
-  {
-    icon: IconBoxAlignBottomRight,
-    title: "Pallets",
-    description: "Query the XCM pallets that parachains currently support",
-  },
-  {
-    icon: IconBuildingBridge2,
-    title: "Polkadot bridges",
-    description: "Transfer assets between ecosystems with ease",
-  },
 ];
 
-const XcmSdk = () => {
+export const XcmSdk = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -72,8 +73,9 @@ const XcmSdk = () => {
         <Text c="dimmed" maw={550}>
           Explore our XCM SDK — a complete toolkit for building secure and
           efficient cross-chain dapps within the Polkadot, Kusama, Paseo and
-          Westend ecosystems. Experiment with XCM transfers, asset queries, and
-          cross-chain bridges with no setup required.
+          Westend ecosystems. Experiment with XCM transfers, transact calls,
+          swap calls, asset queries, and cross-chain bridges with no setup
+          required.
         </Text>
 
         <SimpleGrid
@@ -100,8 +102,8 @@ const XcmSdk = () => {
         >
           <List.Item>
             <b>Multi-chain compatibility</b> - Seamlessly interact with every
-            XCM compatible Parachain or Relay chain across the Polkadot and
-            Kusama ecosystems.
+            XCM compatible Parachain or Relay chain across the Polkadot, Kusama,
+            Paseo and Westend ecosystems.
           </List.Item>
           <List.Item>
             <b>Extensive asset support</b> - Manage both native and foreign
@@ -156,5 +158,3 @@ const XcmSdk = () => {
     </div>
   );
 };
-
-export default XcmSdk;

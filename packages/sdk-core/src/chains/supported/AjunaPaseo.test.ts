@@ -7,11 +7,11 @@ import type AjunaPaseo from './AjunaPaseo'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('AjunaPaseo', () => {
-  let chain: AjunaPaseo<unknown, unknown>
+  let chain: AjunaPaseo<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    chain = getChain<unknown, unknown, 'AjunaPaseo'>('AjunaPaseo')
+    chain = getChain<unknown, unknown, unknown, 'AjunaPaseo'>('AjunaPaseo')
   })
 
   it('should initialize with correct values', () => {

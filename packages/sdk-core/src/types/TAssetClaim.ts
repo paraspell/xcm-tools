@@ -14,9 +14,18 @@ export type TAssetClaimOptionsBase = {
   version?: Version
 }
 
-export type TAssetClaimOptions<TApi, TRes> = WithApi<TAssetClaimOptionsBase, TApi, TRes>
+export type TAssetClaimOptions<TApi, TRes, TSigner> = WithApi<
+  TAssetClaimOptionsBase,
+  TApi,
+  TRes,
+  TSigner
+>
 
-export type TAssetClaimInternalOptions<TApi, TRes> = TAssetClaimOptions<TApi, TRes> & {
+export type TAssetClaimInternalOptions<TApi, TRes, TSigner> = TAssetClaimOptions<
+  TApi,
+  TRes,
+  TSigner
+> & {
   version: Version
   assets: TAsset<bigint>[]
 }

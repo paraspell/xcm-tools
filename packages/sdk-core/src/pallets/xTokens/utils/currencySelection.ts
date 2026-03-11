@@ -5,8 +5,8 @@ import { addXcmVersionHeader } from '../../../utils'
 import { createAsset, maybeOverrideAssets } from '../../../utils/asset'
 import { buildLocation } from './locationResolvers'
 
-export const createDefaultCurrencySelection = <TApi, TRes>(
-  input: TXTokensTransferOptions<TApi, TRes>
+export const createDefaultCurrencySelection = <TApi, TRes, TSigner>(
+  input: TXTokensTransferOptions<TApi, TRes, TSigner>
 ) => {
   const { asset, version } = input
   const location = buildLocation(input)
@@ -14,8 +14,8 @@ export const createDefaultCurrencySelection = <TApi, TRes>(
   return addXcmVersionHeader(multiAsset, version)
 }
 
-export const getModifiedCurrencySelection = <TApi, TRes>(
-  input: TXTokensTransferOptions<TApi, TRes>
+export const getModifiedCurrencySelection = <TApi, TRes, TSigner>(
+  input: TXTokensTransferOptions<TApi, TRes, TSigner>
 ): TXcmVersioned<TAsset | TAsset[]> => {
   const { version, asset, overriddenAsset } = input
 

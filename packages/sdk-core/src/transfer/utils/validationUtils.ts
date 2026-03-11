@@ -105,14 +105,14 @@ export const validateAssetSpecifiers = (assetCheckEnabled: boolean, currency: TC
   }
 }
 
-export const validateTransact = <TApi, TRes>({
+export const validateTransact = <TApi, TRes, TSigner>({
   api,
   from,
   to,
   senderAddress,
   address,
   transactOptions
-}: TSendOptions<TApi, TRes>) => {
+}: TSendOptions<TApi, TRes, TSigner>) => {
   const call = transactOptions?.call
 
   if (!call) return

@@ -30,8 +30,8 @@ export const createOriginLocation = (origin: TSubstrateChain, destination: TChai
   }
 }
 
-export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
-  options: TGetFeeForDestChainOptions<TApi, TRes>
+export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TGetFeeForDestChainOptions<TApi, TRes, TSigner>
 ): Promise<TDestXcmFeeDetail<TDisableFallback>> => {
   const {
     api,
@@ -62,27 +62,20 @@ export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean
     const attempt = async (chain: TChain, curr: TCurrencyCore, amt: bigint) => {
       const assetInfo = findAssetInfoOrThrow(chain, curr, destination)
 
-      if (assetInfo.location) {
-        try {
+      try {
+        return await getReverseTxFee(
+          { ...options, destination },
+          { location: assetInfo.location, amount: amt }
+        )
+      } catch (err: unknown) {
+        if (err instanceof InvalidCurrencyError) {
           return await getReverseTxFee(
             { ...options, destination },
-            { location: assetInfo.location, amount: amt }
+            { symbol: assetInfo.symbol, amount: amt }
           )
-        } catch (err: unknown) {
-          if (err instanceof InvalidCurrencyError) {
-            return await getReverseTxFee(
-              { ...options, destination },
-              { symbol: assetInfo.symbol, amount: amt }
-            )
-          }
-          throw err
         }
+        throw err
       }
-
-      return await getReverseTxFee(
-        { ...options, destination },
-        { symbol: assetInfo.symbol, amount: amt }
-      )
     }
 
     try {

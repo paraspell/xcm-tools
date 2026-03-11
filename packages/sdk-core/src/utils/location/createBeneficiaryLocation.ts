@@ -7,22 +7,22 @@ import type { TCreateBeneficiaryOptions, TCreateBeneficiaryXTokensOptions } from
 import { resolveScenario } from '../transfer/resolveScenario'
 import { createX1Payload } from './createX1Payload'
 
-const createAccountPayload = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+const createAccountPayload = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   address: string
 ): TJunction =>
   isAddress(address)
     ? { AccountKey20: { key: address } }
     : { AccountId32: { id: api.accountToHex(address) } }
 
-export const createBeneficiaryLocXTokens = <TApi, TRes>({
+export const createBeneficiaryLocXTokens = <TApi, TRes, TSigner>({
   api,
   address: recipientAddress,
   origin,
   destination,
   version,
   paraId
-}: TCreateBeneficiaryXTokensOptions<TApi, TRes>): TLocation => {
+}: TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner>): TLocation => {
   if (isTLocation(recipientAddress)) {
     return recipientAddress
   }
@@ -55,11 +55,11 @@ export const createBeneficiaryLocXTokens = <TApi, TRes>({
   }
 }
 
-export const createBeneficiaryLocation = <TApi, TRes>({
+export const createBeneficiaryLocation = <TApi, TRes, TSigner>({
   api,
   address,
   version
-}: TCreateBeneficiaryOptions<TApi, TRes>): TLocation => {
+}: TCreateBeneficiaryOptions<TApi, TRes, TSigner>): TLocation => {
   if (isTLocation(address)) return address
 
   const accountPayload = createAccountPayload(api, address)

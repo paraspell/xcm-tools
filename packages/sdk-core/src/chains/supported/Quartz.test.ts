@@ -9,14 +9,13 @@ import type Quartz from './Quartz'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Quartz', () => {
-  let chain: Quartz<unknown, unknown>
+  let chain: Quartz<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'USDt', assetId: '123', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
-
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Quartz'>('Quartz')
+    chain = getChain<unknown, unknown, unknown, 'Quartz'>('Quartz')
   })
 
   it('should initialize with correct values', () => {

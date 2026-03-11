@@ -46,9 +46,9 @@ vi.mock('./buildDestInfo')
 vi.mock('./buildHopInfo')
 
 describe('getTransferInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown>
+  let mockApi: IPolkadotApi<unknown, unknown, unknown>
   let mockTx: unknown
-  let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown>, 'api' | 'tx'>
+  let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown, unknown>, 'api' | 'tx'>
 
   const buildTx = vi.fn(async () => Promise.resolve(mockTx))
 
@@ -65,7 +65,7 @@ describe('getTransferInfo', () => {
       init: vi.fn().mockResolvedValue(undefined),
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
     mockTx = {}
 
     baseOptions = {
@@ -266,7 +266,7 @@ describe('getTransferInfo', () => {
 
   it('should throw MissingParameterError if origin is EVM and ahAddress is not provided', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
-    const options: TGetTransferInfoOptions<unknown, unknown> = {
+    const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
       ahAddress: undefined,
@@ -323,14 +323,18 @@ describe('getTransferInfo', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
-      decimals: 6
+      decimals: 6,
+      location: {
+        parents: 1,
+        interior: { X1: [{ Parachain: 1000 }] }
+      }
     })
     vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
     vi.mocked(getAssetBalanceInternal)
       .mockResolvedValueOnce(100000000n)
       .mockResolvedValueOnce(100000000n)
 
-    const options: TGetTransferInfoOptions<unknown, unknown> = {
+    const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
       origin: ahOrigin,
@@ -356,7 +360,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should correctly determine hop chains if origin is Polkadot based', async () => {
-    const options: TGetTransferInfoOptions<unknown, unknown> = {
+    const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
       origin: 'Karura'
@@ -408,7 +412,7 @@ describe('getTransferInfo', () => {
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
-    const options: TGetTransferInfoOptions<unknown, unknown> = {
+    const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
       origin: 'Moonbeam',

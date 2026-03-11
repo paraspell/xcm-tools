@@ -15,32 +15,27 @@ import {
   getRelayChainSymbol,
   isRelayChain,
   PARACHAINS,
+  SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import {
+  parseAsBoolean,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { type FC, useEffect, useRef } from 'react';
 
-import { DEFAULT_ADDRESS } from '../../constants';
-import { ASSET_QUERIES } from '../../consts';
-import { useWallet } from '../../hooks';
-import type { TAssetsQuery } from '../../types';
 import {
-  parseAsAssetQuery,
-  parseAsChain,
-  parseAsCurrencyType,
-  parseAsCustomCurrencySymbolSpecifier,
-  parseAsRecipientAddress,
-  parseAsSubstrateChain,
-} from '../../utils/parsers';
+  ASSET_QUERIES,
+  CURRENCY_TYPES,
+  DEFAULT_ADDRESS,
+  SYMBOL_TYPES,
+} from '../../constants';
+import { useWallet } from '../../hooks';
+import { parseAsWalletAddress } from '../../parsers';
+import type { TAssetsQuery, TCurrencyType, TSymbolType } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
-
-export type TCustomCurrencySymbolSpecifier =
-  | 'auto'
-  | 'native'
-  | 'foreign'
-  | 'foreignAbstract';
-
-export type TCurrencyType = 'id' | 'symbol' | 'location';
 
 export type FormValues = {
   func: TAssetsQuery;
@@ -51,7 +46,7 @@ export type FormValues = {
   address: string;
   useApi: boolean;
   currencyType?: TCurrencyType;
-  customCurrencySymbolSpecifier?: TCustomCurrencySymbolSpecifier;
+  currencySymbolSpecifier?: TSymbolType;
 };
 
 type Props = {
@@ -63,18 +58,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const { setIsUseXcmApiSelected, selectedAccount } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
-    func: parseAsAssetQuery.withDefault('ASSETS_OBJECT'),
-    chain: parseAsSubstrateChain.withDefault('Acala'),
-    destination: parseAsChain.withDefault('Astar'),
+    func: parseAsStringLiteral(ASSET_QUERIES).withDefault('ASSETS_OBJECT'),
+    chain: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Acala'),
+    destination: parseAsStringLiteral(CHAINS).withDefault('Astar'),
     currency: parseAsString.withDefault(''),
-    address: parseAsRecipientAddress.withDefault(
+    address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     amount: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
-    currencyType: parseAsCurrencyType.withDefault('symbol' as TCurrencyType),
-    customCurrencySymbolSpecifier:
-      parseAsCustomCurrencySymbolSpecifier.withDefault('auto'),
+    currencyType: parseAsStringLiteral(CURRENCY_TYPES).withDefault('symbol'),
+    currencySymbolSpecifier:
+      parseAsStringLiteral(SYMBOL_TYPES).withDefault('auto'),
   });
 
   const form = useForm<FormValues>({
@@ -90,6 +85,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const showSymbolInput =
     func === 'ASSET_ID' ||
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
@@ -99,6 +95,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const supportsCurrencyType =
     func === 'ASSET_LOCATION' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
@@ -122,6 +119,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ASSET_BALANCE' ||
     func === 'ASSET_INFO' ||
+    func === 'ASSET_RESERVE_CHAIN' ||
     func === 'HAS_DRY_RUN_SUPPORT' ||
     func === 'ALL_SYMBOLS';
 

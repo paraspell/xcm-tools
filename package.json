@@ -3,19 +3,20 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^25.1.0",
-    "eslint": "^9.39.2",
+    "@types/node": "^25.4.0",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-tsdoc": "^0.5.0",
-    "globals": "^17.2.0",
+    "eslint-plugin-tsdoc": "^0.5.2",
+    "globals": "^17.4.0",
+    "netlify-cli": "^24.0.1",
     "prettier": "^3.8.1",
-    "turbo": "^2.8.0",
+    "turbo": "^2.8.15",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0",
+    "typescript-eslint": "^8.57.0",
     "vitest": "^4.0.18"
   },
   "engines": {
@@ -32,7 +33,7 @@
     "compile": "turbo run compile",
     "format:check": "turbo run format:check",
     "format:write": "turbo run format:write",
-    "lint:check": "turbo run lint:check --concurrency=1",
+    "lint:check": "turbo run lint:check",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",
@@ -43,11 +44,10 @@
     "build:apps": "pnpm --filter \"./apps/*\" build",
     "run:playground": "pnpm --filter playground dev",
     "run:api": "pnpm --filter xcm-api start:dev",
-    "run:lightspell-site": "pnpm --filter lightspell-site dev",
     "run:paraspell-site": "pnpm --filter site dev",
     "run:updateAssets": "pnpm --filter assets updateAssets",
-    "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
+    "run:updateRouterAssets": "pnpm --filter swap updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.30.3"
 }

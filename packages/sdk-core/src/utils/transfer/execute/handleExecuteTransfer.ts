@@ -1,5 +1,3 @@
-import { isAssetEqual } from '@paraspell/assets'
-
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
@@ -20,8 +18,8 @@ const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
 
 const FEE_PADDING_PERCENTAGE = 40
 
-export const handleExecuteTransfer = async <TApi, TRes>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes>
+export const handleExecuteTransfer = async <TApi, TRes, TSigner>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 ): Promise<TSerializedExtrinsics> => {
   const {
     api,
@@ -109,9 +107,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
   const reserveFee = padValueBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
 
-  checkAmount(
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo) ? reserveFee : originFee + reserveFee
-  )
+  checkAmount(reserveFee)
 
   const xcm = await createDirectExecuteXcm({
     ...internalOptions,

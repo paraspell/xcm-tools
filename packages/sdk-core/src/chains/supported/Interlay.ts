@@ -13,7 +13,10 @@ import {
 } from '../../types'
 import Chain from '../Chain'
 
-class Interlay<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Interlay<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }
@@ -22,18 +25,18 @@ class Interlay<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer
     return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return Promise.resolve(this.transferLocalNonNativeAsset(options))
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     const currencyId = this.getCustomCurrencyId(asset)
 
@@ -44,14 +47,14 @@ class Interlay<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer
         params: {
           dest: address,
           currency_id: currencyId,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Tokens',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         dest: address,
         currency_id: currencyId,
@@ -61,7 +64,7 @@ class Interlay<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer
   }
 
   getBalanceNative(
-    api: IPolkadotApi<TApi, TRes>,
+    api: IPolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

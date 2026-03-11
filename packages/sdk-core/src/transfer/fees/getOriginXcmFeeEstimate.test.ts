@@ -18,13 +18,18 @@ vi.mock('./isSufficient')
 describe('getOriginXcmFeeEstimate', () => {
   const mockApi = {
     getPaymentInfo: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
   const mockTx = {} as unknown
   const mockSenderAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
   const mockOriginChain = 'origin' as TSubstrateChain
   const mockDestinationChain = 'destination' as TChain
   const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
-  const mockAsset: TAssetInfo = { symbol: 'DOT', decimals: 10, isNative: true }
+  const mockAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    isNative: true,
+    location: { parents: 1, interior: 'Here' }
+  }
 
   const MOCK_RAW_FEE = 100000000000n
   const MOCK_PADDED_FEE = 120000000000n
@@ -43,7 +48,7 @@ describe('getOriginXcmFeeEstimate', () => {
       .spyOn(mockApi, 'getPaymentInfo')
       .mockResolvedValue({ partialFee: MOCK_RAW_FEE, weight: { refTime: 0n, proofSize: 0n } })
 
-    const options: TGetOriginXcmFeeEstimateOptions<unknown, unknown> = {
+    const options: TGetOriginXcmFeeEstimateOptions<unknown, unknown, unknown> = {
       api: mockApi,
       tx: mockTx,
       origin: mockOriginChain,

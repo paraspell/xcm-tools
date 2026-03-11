@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
+  TApiType,
   TAssetInfo,
   TBridgeStatus,
   TBuilderOptions,
@@ -17,6 +18,7 @@ import type {
   TModuleError,
   TPallet,
   TPaymentInfo,
+  TSender,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   TSubstrateChain,
@@ -26,7 +28,6 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
-  assertHasLocation,
   BatchMode,
   createClientCache,
   createClientPoolHelpers,
@@ -38,6 +39,7 @@ import {
   isAssetXcEqual,
   isConfig,
   isExternalChain,
+  isSenderSigner,
   localizeLocation,
   RELAY_LOCATION,
   RuntimeApiUnavailableError,
@@ -57,7 +59,7 @@ import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
 import { DEFAULT_TTL_MS, EXTENSION_MS, MAX_CLIENTS } from './consts'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
 import { createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
 
 const clientPool = createClientCache<TPjsApi>(
@@ -78,7 +80,7 @@ const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
 
 const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
-class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
+class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   private _config?: TBuilderOptions<TPjsApiOrUrl>
   private api: TPjsApi
   private _ttlMs = DEFAULT_TTL_MS
@@ -88,6 +90,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   constructor(config?: TBuilderOptions<TPjsApiOrUrl>) {
     this._config = config
+  }
+
+  getType(): TApiType {
+    return 'PJS'
   }
 
   getConfig() {
@@ -442,10 +448,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         }
       : undefined
 
-    const nativeAsset = findNativeAssetInfoOrThrow(chain)
-
-    const hasLocation = feeAsset ? Boolean(feeAsset.location) : Boolean(nativeAsset?.location)
-
     const destParaId =
       forwardedXcms.length === 0
         ? undefined
@@ -456,7 +458,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     if (
       (hasXcmPaymentApiSupport(chain) &&
         resultJson.ok.local_xcm &&
-        hasLocation &&
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
@@ -511,8 +512,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     overridenWeight?: TWeight
   ): Promise<bigint> {
     const weight = overridenWeight ?? (await this.getXcmWeight(localXcm))
-
-    assertHasLocation(asset)
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
@@ -593,8 +592,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
 
     try {
-      assertHasLocation(nativeAsset)
-
       const res = await this.quoteAhPrice(
         localizeLocation(chain, nativeAsset.location),
         assetLocalizedLoc,
@@ -636,7 +633,6 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     await ahApi.init(assetHubChain)
 
-    assertHasLocation(asset)
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
     const convertedExecFee = await ahApi.quoteAhPrice(
@@ -807,14 +803,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     }
   }
 
-  deriveAddress(path: string): string {
-    const { address } = createKeyringPair(path)
+  deriveAddress(sender: TSender<TPjsSigner>): string {
+    if (isSenderSigner(sender)) return sender.address
+    const { address } = createKeyringPair(sender)
     return address
   }
 
-  async signAndSubmit(tx: Extrinsic, path: string): Promise<string> {
-    const pair = createKeyringPair(path)
-    const hash = await tx.signAndSend(pair)
+  async signAndSubmit(tx: Extrinsic, sender: TSender<TPjsSigner>): Promise<string> {
+    const hash = isSenderSigner(sender)
+      ? await tx.signAndSend(sender.address, { signer: sender.signer })
+      : await tx.signAndSend(createKeyringPair(sender))
+
     return hash.toHex()
   }
 }

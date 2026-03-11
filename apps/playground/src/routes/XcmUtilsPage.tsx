@@ -1,3 +1,3 @@
-import XcmUtils from '../components/XcmUtils/XcmUtils';
+import { XcmUtils } from '../components/XcmUtils/XcmUtils';
 
-export const XcmUtilsPage = () => <XcmUtils />;
+export const XcmUtilsPage = XcmUtils;

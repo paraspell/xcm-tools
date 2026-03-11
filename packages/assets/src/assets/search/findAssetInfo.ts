@@ -28,9 +28,7 @@ export const findAssetInfo = (
   if ('symbol' in currency) {
     asset = findAssetInfoBySymbol(destination, otherAssets, nativeAssets, currency.symbol)
   } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
-    asset =
-      findAssetInfoByLoc(otherAssets, currency.location) ??
-      findAssetInfoByLoc(nativeAssets, currency.location)
+    asset = findAssetInfoByLoc(assets, currency.location)
   } else if ('id' in currency) {
     asset = findAssetInfoById(assets, currency.id)
   }

@@ -14,14 +14,12 @@ const findEthAssetBySymbol = (
   symbol: string,
   otherAssets: TAssetInfo[]
 ): TAssetInfo | undefined => {
-  const ethCompatibleAssets = otherAssets.filter(
-    asset =>
-      asset.location &&
-      deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
-        Ethereum: {
-          chainId: 1
-        }
-      })
+  const ethCompatibleAssets = otherAssets.filter(asset =>
+    deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
+      Ethereum: {
+        chainId: 1
+      }
+    })
   )
   return findBestMatches(ethCompatibleAssets, symbol)[0]
 }
@@ -79,7 +77,7 @@ export const findAssetInfoBySymbol = (
     } else if (type === 'Foreign') {
       const lowerSymbol = value.toLowerCase()
 
-      let otherAssetsMatches: TAssetInfo[] = []
+      let otherAssetsMatches: TAssetInfo[]
 
       if (destination && isExternalChain(destination)) {
         return findEthMatch(value, otherAssets)
@@ -128,8 +126,8 @@ export const findAssetInfoBySymbol = (
   } else {
     const lowerSymbol = symbol.toLowerCase()
 
-    let otherAssetsMatches: TAssetInfo[] = []
-    let nativeAssetsMatches: TAssetInfo[] = []
+    let otherAssetsMatches: TAssetInfo[]
+    let nativeAssetsMatches: TAssetInfo[]
 
     if (destination && isExternalChain(destination)) {
       return findEthMatch(symbol, otherAssets)

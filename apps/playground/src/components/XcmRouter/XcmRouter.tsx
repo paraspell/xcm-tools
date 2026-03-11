@@ -3,45 +3,34 @@ import {
   Box,
   Center,
   Container,
-  Group,
   Image,
-  Loader,
   Stack,
   Text,
-  Title,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TBuilderConfig, TSubstrateChain, TUrl } from '@paraspell/sdk';
-import {
-  getOtherAssets,
-  replaceBigInt,
-  type TAssetInfo,
-  type TCurrencyInput,
-} from '@paraspell/sdk';
-import type {
-  TExchangeInput,
-  TRouterEvent,
-  TTransaction,
-} from '@paraspell/xcm-router';
-import { createExchangeInstance, RouterBuilder } from '@paraspell/xcm-router';
+import type { TBuilderConfig, TUrl } from '@paraspell/sdk';
+import { replaceBigInt } from '@paraspell/sdk';
 import axios, { AxiosError } from 'axios';
-import { ethers } from 'ethers';
-import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
-import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
-import { getWsProvider } from 'polkadot-api/ws-provider';
+import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 
 import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
-import { API_URL } from '../../consts';
+import { API_URL } from '../../constants';
 import { useWallet } from '../../hooks';
-import type { TRouterSubmitType } from '../../types';
+import type {
+  TApiTransaction,
+  TProgressSwapEvent,
+  TRouterSubmitType,
+} from '../../types';
 import {
   createBuilderOptions,
   fetchFromApi,
-  submitTransactionPapi,
+  setupBaseRouterBuilder,
+  submitApiTransactions,
+  submitSdkTransactions,
 } from '../../utils';
 import {
   showErrorNotification,
@@ -50,8 +39,8 @@ import {
 } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
+import { TransferStepper } from '../common/TransferStepper';
 import { VersionBadge } from '../common/VersionBadge';
-import { TransferStepper } from './TransferStepper';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -72,7 +61,7 @@ export const XcmRouter = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [progressInfo, setProgressInfo] = useState<TRouterEvent>();
+  const [progressInfo, setProgressInfo] = useState<TProgressSwapEvent>();
 
   const [showStepper, setShowStepper] = useState(false);
 
@@ -94,145 +83,45 @@ export const XcmRouter = () => {
     }
   }, [showStepper, scrollIntoView]);
 
-  const onStatusChange = (status: TRouterEvent) => {
+  const onStatusChange = (status: TProgressSwapEvent) => {
     setProgressInfo(status);
-  };
-
-  const determineCurrency = (
-    chain: TSubstrateChain | undefined,
-    asset: TAssetInfo,
-    isAutoExchange = false,
-  ): TCurrencyInput => {
-    if (asset.location) return { location: asset.location };
-
-    if (asset.isNative) {
-      return { symbol: asset.symbol };
-    }
-
-    if (asset.assetId === undefined && asset.location === undefined) {
-      return { symbol: asset.symbol };
-    }
-
-    if (ethers.isAddress(asset.assetId)) {
-      return { symbol: asset.symbol };
-    }
-
-    if (isAutoExchange) {
-      return asset.location
-        ? { location: asset.location }
-        : { symbol: asset.symbol };
-    }
-
-    const hasDuplicateIds =
-      chain &&
-      getOtherAssets(chain).filter(
-        (other) =>
-          other.assetId !== undefined && other.assetId === asset.assetId,
-      ).length > 1;
-
-    if (hasDuplicateIds) {
-      return { symbol: asset.symbol };
-    }
-
-    if (asset.assetId) return { id: asset.assetId };
-
-    throw new Error('Invalid currency input');
-  };
-
-  const resolveCurrencyInputs = (params: {
-    from?: TSubstrateChain;
-    exchange: TExchangeInput;
-    currencyFrom: TAssetInfo;
-    currencyTo: TAssetInfo;
-  }) => {
-    const { from, exchange, currencyFrom, currencyTo } = params;
-
-    const exchangeChain =
-      exchange && !Array.isArray(exchange)
-        ? createExchangeInstance(exchange).chain
-        : undefined;
-
-    const fromChain = from ?? exchangeChain;
-
-    const isAutoExchange = exchange === undefined || Array.isArray(exchange);
-
-    return {
-      currencyFromInput: determineCurrency(fromChain, currencyFrom),
-      currencyToInput: determineCurrency(
-        exchangeChain,
-        currencyTo,
-        isAutoExchange,
-      ),
-    };
   };
 
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
+    const { evmSigner } = formValues;
+
+    const builder = setupBaseRouterBuilder(
+      builderOptions,
+      formValues,
+      senderAddress,
+    );
+
+    const txContexts = await builder.buildTransactions();
+
+    await submitSdkTransactions({
+      txContexts,
+      signer,
       evmSigner,
-    } = formValues;
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
+      onStatusChange,
     });
-
-    await RouterBuilder(builderOptions)
-      .from(from)
-      .exchange(exchange)
-      .to(to)
-      .currencyFrom(currencyFromInput)
-      .currencyTo(currencyToInput)
-      .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
-      .evmSenderAddress(evmSenderAddress)
-      .signer(signer)
-      .evmSigner(evmSigner)
-      .slippagePct(slippagePct)
-      .onStatusChange(onStatusChange)
-      .build();
   };
 
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     signer: PolkadotSigner,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const { currencyFrom, currencyTo, from } = formValues;
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
-
     try {
-      const response = await axios.post(
+      const response = await axios.post<TApiTransaction[]>(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: currencyFromInput,
-          currencyTo: currencyToInput,
-          exchange,
           senderAddress,
           options: builderOptions,
         },
@@ -241,40 +130,13 @@ export const XcmRouter = () => {
         },
       );
 
-      const transactions = (await response.data) as (TTransaction & {
-        wsProviders: string[];
-        tx: string;
-      })[];
+      const transactions = response.data;
 
-      for (const [
-        index,
-        { chain, type, wsProviders, tx },
-      ] of transactions.entries()) {
-        onStatusChange({
-          chain,
-          type,
-          currentStep: index,
-          routerPlan: transactions,
-        });
-
-        const api = createClient(
-          withPolkadotSdkCompat(getWsProvider(wsProviders)),
-        );
-
-        await submitTransactionPapi(
-          await api.getUnsafeApi().txFromCallData(Binary.fromHex(tx)),
-          // When submitting to exchange, prioritize the evmSigner if available
-          type === 'TRANSFER' && index === 0
-            ? signer
-            : (formValues.evmSigner ?? signer),
-        );
-      }
-
-      onStatusChange({
-        type: 'COMPLETED',
-        chain: transactions[transactions.length - 1].chain,
-        currentStep: transactions.length - 1,
-        routerPlan: transactions,
+      await submitApiTransactions({
+        transactions,
+        signer,
+        evmSigner: formValues.evmSigner,
+        onStatusChange,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -293,40 +155,22 @@ export const XcmRouter = () => {
               : '';
           errorMessage += serverMessage;
         }
-        throw new Error(errorMessage);
+        throw new Error(errorMessage, { cause: error });
       } else if (error instanceof Error) {
         console.error(error);
-        throw new Error(error.message);
+        throw new Error(error.message, { cause: error });
       }
     }
   };
 
   const submitGetXcmFee = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
 
     try {
       let result;
@@ -334,10 +178,7 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
-            exchange,
-            senderAddress: selectedAccount?.address,
+            senderAddress,
             options: builderOptions,
           },
           '/router/xcm-fees',
@@ -345,19 +186,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .onStatusChange(onStatusChange)
-          .getXcmFees();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getXcmFees();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
       openOutputAlert();
@@ -378,30 +212,12 @@ export const XcmRouter = () => {
 
   const submitGetTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
 
     try {
       let result;
@@ -409,9 +225,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -420,18 +233,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .getTransferableAmount();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getTransferableAmount();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -457,30 +264,12 @@ export const XcmRouter = () => {
 
   const submitGetMinTransferableAmount = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
 
     try {
       let result;
@@ -488,9 +277,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -499,18 +285,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .getMinTransferableAmount();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.getMinTransferableAmount();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -536,30 +316,12 @@ export const XcmRouter = () => {
 
   const submitDryRun = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     senderAddress: string,
     builderOptions: TBuilderConfig<TUrl>,
   ) => {
-    const {
-      useApi,
-      from,
-      to,
-      currencyFrom,
-      currencyTo,
-      amount,
-      recipientAddress,
-      evmInjectorAddress: evmSenderAddress,
-      slippagePct,
-    } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
 
     try {
       let result;
@@ -567,9 +329,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
-            exchange,
             senderAddress,
             options: builderOptions,
           },
@@ -578,19 +337,12 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
-          .amount(amount)
-          .senderAddress(senderAddress)
-          .recipientAddress(recipientAddress)
-          .evmSenderAddress(evmSenderAddress)
-          .slippagePct(slippagePct)
-          .onStatusChange(onStatusChange)
-          .dryRun();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+        result = await builder.dryRun();
       }
 
       setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -612,19 +364,12 @@ export const XcmRouter = () => {
 
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeInput,
     builderOptions: TBuilderConfig<TUrl>,
+    senderAddress: string,
   ) => {
-    const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+    const { useApi } = formValues;
 
     setLoading(true);
-
-    const { currencyFromInput, currencyToInput } = resolveCurrencyInputs({
-      from,
-      exchange,
-      currencyFrom,
-      currencyTo,
-    });
 
     try {
       let result;
@@ -632,8 +377,6 @@ export const XcmRouter = () => {
         result = await fetchFromApi(
           {
             ...formValues,
-            currencyFrom: currencyFromInput,
-            currencyTo: currencyToInput,
             options: builderOptions,
           },
           '/router/best-amount-out',
@@ -641,14 +384,13 @@ export const XcmRouter = () => {
           true,
         );
       } else {
-        result = await RouterBuilder(builderOptions)
-          .from(from)
-          .exchange(exchange)
-          .to(to)
-          .currencyFrom(currencyFromInput)
-          .currencyTo(currencyToInput)
-          .amount(formValues.amount)
-          .getBestAmountOut();
+        const builder = setupBaseRouterBuilder(
+          builderOptions,
+          formValues,
+          senderAddress,
+        );
+
+        result = await builder.getBestAmountOut();
       }
       setOutput(JSON.stringify(result, replaceBigInt, 2));
       openOutputAlert();
@@ -685,21 +427,18 @@ export const XcmRouter = () => {
 
     closeOutputAlert();
 
-    const exchange = (
-      formValues.exchange && formValues.exchange?.length > 1
-        ? formValues.exchange
-        : formValues.exchange?.[0]
-    ) as TExchangeInput;
-
     if (submitType === 'getBestAmountOut') {
-      await submitGetBestAmountOut(formValues, exchange, builderOptions);
+      await submitGetBestAmountOut(
+        formValues,
+        builderOptions,
+        selectedAccount.address,
+      );
       return;
     }
 
     if (submitType === 'getMinTransferableAmount') {
       await submitGetMinTransferableAmount(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -709,7 +448,6 @@ export const XcmRouter = () => {
     if (submitType === 'getTransferableAmount') {
       await submitGetTransferableAmount(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -719,7 +457,6 @@ export const XcmRouter = () => {
     if (submitType === 'getXcmFee') {
       await submitGetXcmFee(
         formValues,
-        exchange,
         selectedAccount.address,
         builderOptions,
       );
@@ -727,12 +464,7 @@ export const XcmRouter = () => {
     }
 
     if (submitType === 'dryRun') {
-      await submitDryRun(
-        formValues,
-        exchange,
-        selectedAccount.address,
-        builderOptions,
-      );
+      await submitDryRun(formValues, selectedAccount.address, builderOptions);
       return;
     }
 
@@ -769,7 +501,6 @@ export const XcmRouter = () => {
       if (useApi) {
         await submitUsingApi(
           formValues,
-          exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
           builderOptions,
@@ -777,7 +508,6 @@ export const XcmRouter = () => {
       } else {
         await submitUsingRouterModule(
           formValues,
-          exchange,
           selectedAccount.address,
           signer as PolkadotSigner,
           builderOptions,
@@ -850,16 +580,12 @@ export const XcmRouter = () => {
           <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (
-            <Center>
-              <Group mt="md">
-                <Loader />
-                <Title order={4}>Searching for best exchange rate</Title>
-              </Group>
-            </Center>
-          )}
-          {showStepper && progressInfo?.type !== 'SELECTING_EXCHANGE' && (
-            <Center mt="md">
+          {showStepper && (
+            <Center
+              mt={
+                progressInfo?.type === 'SELECTING_EXCHANGE' ? undefined : 'md'
+              }
+            >
               <TransferStepper progressInfo={progressInfo} />
             </Center>
           )}

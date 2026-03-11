@@ -9,7 +9,10 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class NeuroWeb<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor(
     chain: TParachain = 'NeuroWeb',
     info: string = 'neuroweb',
@@ -19,12 +22,12 @@ class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): Promise<TRes> {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     if (isAmountAll) {
       return Promise.resolve(
@@ -33,7 +36,7 @@ class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
           method: 'transfer_all',
           params: {
             dest: address,
-            keep_alive: false
+            keep_alive: keepAlive
           }
         })
       )
@@ -42,7 +45,7 @@ class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     return Promise.resolve(
       api.deserializeExtrinsics({
         module: 'Balances',
-        method: 'transfer_keep_alive',
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer_allow_death',
         params: {
           dest: address,
           value: asset.amount
@@ -51,8 +54,8 @@ class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address, balance, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -62,7 +65,7 @@ class NeuroWeb<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTran
 
     return api.deserializeExtrinsics({
       module: 'Assets',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
         target: address,

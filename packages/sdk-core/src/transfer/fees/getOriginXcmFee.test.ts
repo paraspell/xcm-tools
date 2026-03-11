@@ -16,7 +16,7 @@ describe('getOriginXcmFee', () => {
     ({
       // eslint-disable-next-line @typescript-eslint/require-await
       buildTx: vi.fn(async () => realTx)
-    }) as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
+    }) as unknown as TGetOriginXcmFeeOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -100,7 +100,7 @@ describe('getOriginXcmFee', () => {
       buildTx: vi.fn(async () => {
         throw new AmountTooLowError()
       })
-    } as unknown as TGetOriginXcmFeeOptions<unknown, unknown>
+    } as unknown as TGetOriginXcmFeeOptions<unknown, unknown, unknown>
 
     const forced = {
       fee: 5n,

@@ -4,15 +4,23 @@ import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
-import { assertSenderAddress, assertToIsString } from '../utils'
+import { assertSenderAddress, assertToIsString, executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
-export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseOptions<TRes>>(
-  api: IPolkadotApi<TApi, TRes>,
-  builder: GeneralBuilder<TApi, TRes, TOptions>,
+export const normalizeAmountAll = async <
+  TApi,
+  TRes,
+  TSigner,
+  TOptions extends TSendBaseOptions<TApi, TRes, TSigner>
+>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
   options: TOptions
-): Promise<{ options: TSendOptions<TApi, TRes> & TOptions; buildTx: TTxFactory<TRes> }> => {
-  const { currency } = options
+): Promise<{
+  options: TSendOptions<TApi, TRes, TSigner> & TOptions
+  buildTx: TTxFactory<TRes>
+}> => {
+  const { currency, swapOptions } = options
 
   const isAmountAll = !Array.isArray(currency) && currency.amount === AMOUNT_ALL
 
@@ -28,16 +36,20 @@ export const normalizeAmountAll = async <TApi, TRes, TOptions extends TSendBaseO
   assertToIsString(options.to)
   assertSenderAddress(options.senderAddress)
 
-  const transferable = await getTransferableAmountInternal({
-    api,
-    buildTx,
-    origin: options.from,
-    destination: options.to,
-    senderAddress: options.senderAddress,
-    feeAsset: options.feeAsset,
-    version: options.version,
-    currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
-  })
+  const transferable = swapOptions
+    ? await executeWithRouter({ ...options, api, swapOptions }, builder =>
+        builder.getTransferableAmount()
+      )
+    : await getTransferableAmountInternal({
+        api,
+        buildTx,
+        origin: options.from,
+        destination: options.to,
+        senderAddress: options.senderAddress,
+        feeAsset: options.feeAsset,
+        version: options.version,
+        currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
+      })
 
   const finalBuildTx = builder
     .currency({

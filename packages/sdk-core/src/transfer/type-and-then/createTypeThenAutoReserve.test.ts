@@ -12,11 +12,10 @@ vi.mock('@paraspell/assets')
 vi.mock('../../utils/chain/getRelayChainOf')
 vi.mock('./createTypeAndThenCall')
 vi.mock('../dry-run/dryRunInternal')
-vi.mock('../../utils/assertions')
 
 const mkApi = () => {
   const deserializeExtrinsics = vi.fn((_s: TSerializedExtrinsics) => ({ tx: 'ok' }))
-  return { deserializeExtrinsics } as unknown as IPolkadotApi<unknown, unknown>
+  return { deserializeExtrinsics } as unknown as IPolkadotApi<unknown, unknown, unknown>
 }
 
 describe('createTypeThenAutoReserve', () => {
@@ -28,7 +27,7 @@ describe('createTypeThenAutoReserve', () => {
     address: 'Alice',
     senderAddress: 'Bob',
     currency: { symbol: 'DOT' }
-  } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   const ahCall: TSerializedExtrinsics = {
     module: 'XcmPallet',

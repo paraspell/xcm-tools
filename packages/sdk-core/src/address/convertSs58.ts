@@ -58,8 +58,8 @@ export const encodeSs58 = (payload: Uint8Array, network: number): string => {
   return base58.encode(addressBytes)
 }
 
-export const convertSs58 = <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+export const convertSs58 = <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   address: string,
   chain: TSubstrateChain
 ) => {

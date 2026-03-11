@@ -19,8 +19,8 @@ const BRIDGE_FEE_KSM = 12_016_807_000n // 0.012016807 KSM
  * For more details, see the documentation:
  * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
  */
-export const getXcmFeeEstimate = async <TApi, TRes>(
-  options: TGetXcmFeeEstimateOptions<TApi, TRes>
+export const getXcmFeeEstimate = async <TApi, TRes, TSigner>(
+  options: TGetXcmFeeEstimateOptions<TApi, TRes, TSigner>
 ): Promise<TGetXcmFeeEstimateResult> => {
   const { api, origin, destination, currency, feeAsset, address, senderAddress } = options
 
@@ -86,13 +86,12 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
 
   const originFeeDetails = await getOriginXcmFeeEstimate(options)
 
-  const currencyInput = originAsset.location
-    ? { location: originAsset.location, amount }
-    : { symbol: originAsset.symbol, amount }
-
   const destinationFee = isExternalChain(destination)
     ? 0n
-    : await getReverseTxFee({ ...options, api: destApi, destination }, currencyInput)
+    : await getReverseTxFee(
+        { ...options, api: destApi, destination },
+        { location: originAsset.location, amount }
+      )
 
   const destinationSufficient = await isSufficientDestination(
     destApi,

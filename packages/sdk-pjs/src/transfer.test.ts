@@ -5,30 +5,27 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import { getBridgeStatus, getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions } from './types'
+import { getBridgeStatus, getParaEthTransferFees, transferEthToPolkadot } from './transfer'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 
 vi.mock('./PolkadotJsApi')
 
-vi.mock('./ethTransfer', () => ({
-  transferEthToPolkadot: vi.fn()
-}))
+vi.mock('./ethTransfer')
 
 vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
     ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-    send: vi.fn(),
     getBridgeStatus: vi.fn(),
     getParaEthTransferFees: vi.fn()
   }
 })
 
-describe('Send Function using PolkadotJsAPI', () => {
+describe('Transfer function using PolkadotJsAPI', () => {
   const mockApi = {} as TPjsApi
 
   const options = {
     api: mockApi
-  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api'> & {
+  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'> & {
     api: TPjsApiOrUrl
   }
 
@@ -36,17 +33,6 @@ describe('Send Function using PolkadotJsAPI', () => {
 
   beforeEach(() => {
     pjsApiInitSpy = vi.spyOn(PolkadotJsApi.prototype, 'init')
-  })
-
-  describe('send', () => {
-    it('should call setApi on pjsApi and destPjsApi, and call send in transferImpl with correct arguments', async () => {
-      await send(options)
-
-      expect(sdkCore.send).toHaveBeenCalledWith({
-        ...options,
-        api: expect.any(PolkadotJsApi)
-      })
-    })
   })
 
   describe('getBridgeStatus', () => {
@@ -67,7 +53,7 @@ describe('Send Function using PolkadotJsAPI', () => {
         currency: {
           symbol: 'ETH'
         }
-      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic>
+      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>
 
       await transferEthToPolkadot(options)
 

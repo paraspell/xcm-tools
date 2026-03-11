@@ -12,7 +12,7 @@ type Props = {
   containImage?: boolean;
 };
 
-const ArticleCard: FC<Props> = ({
+export const ArticleCard: FC<Props> = ({
   title,
   category,
   image,
@@ -68,5 +68,3 @@ const ArticleCard: FC<Props> = ({
     </Flex>
   </Card>
 );
-
-export default ArticleCard;

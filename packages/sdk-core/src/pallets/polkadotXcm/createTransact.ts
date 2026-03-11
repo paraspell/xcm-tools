@@ -1,20 +1,19 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import type { TWeight } from '../../../dist'
 import type { IPolkadotApi } from '../../api'
-import type { TTransactOptions } from '../../types'
+import type { TTransactOptions, TWeight } from '../../types'
 
-const resolveTx = async <TApi, TRes>(
-  destApi: IPolkadotApi<TApi, TRes>,
+const resolveTx = async <TApi, TRes, TSigner>(
+  destApi: IPolkadotApi<TApi, TRes, TSigner>,
   { call }: TTransactOptions<TRes>
 ) => {
   if (typeof call !== 'string') return call
   return destApi.txFromHex(call)
 }
 
-const resolveMaxWeight = async <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+const resolveMaxWeight = async <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   version: Version,
   destChain: TChain,
   address: string,
@@ -46,8 +45,8 @@ const convertWeight = (weight: TWeight | undefined) => {
   return undefined
 }
 
-export const createTransactInstructions = async <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
+export const createTransactInstructions = async <TApi, TRes, TSigner>(
+  api: IPolkadotApi<TApi, TRes, TSigner>,
   options: TTransactOptions<TRes>,
   version: Version,
   destChain: TChain,

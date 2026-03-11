@@ -8,7 +8,10 @@ import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../..
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Pendulum<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Pendulum<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }
@@ -19,7 +22,7 @@ class Pendulum<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer
     return { XCM: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
 
     const currencySelection = this.getCustomCurrencyId(asset)

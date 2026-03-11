@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useLiveData } from '../../context/LiveData/useLiveData';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
-import LanguageSelect from './LanguageSelect';
+import { LanguageSelect } from './LanguageSelect';
 
-const Options = () => {
+export const GeneralOptions = () => {
   const { t } = useTranslation();
   const {
     primaryChannelColor,
@@ -86,5 +86,3 @@ const Options = () => {
     </Stack>
   );
 };
-
-export default Options;

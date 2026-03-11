@@ -11,14 +11,14 @@ import type Unique from './Unique'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Unique', () => {
-  let chain: Unique<unknown, unknown>
+  let chain: Unique<unknown, unknown, unknown>
 
   const mockInput = {
     assetInfo: { symbol: 'GLMR', assetId: '123', amount: 100n }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Unique'>('Unique')
+    chain = getChain<unknown, unknown, unknown, 'Unique'>('Unique')
   })
 
   it('should initialize with correct values', () => {
@@ -35,13 +35,13 @@ describe('Unique', () => {
 
   it('should throw an error when trying to create a local foreign asset transfer', () => {
     const input = {
-      api: {} as unknown as IPolkadotApi<unknown, unknown>,
+      api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
       assetInfo: {
         symbol: 'GLMR',
         assetId: '123'
       },
       to: 'Unique'
-    } as TTransferLocalOptions<unknown, unknown>
+    } as TTransferLocalOptions<unknown, unknown, unknown>
 
     expect(() => chain.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
   })

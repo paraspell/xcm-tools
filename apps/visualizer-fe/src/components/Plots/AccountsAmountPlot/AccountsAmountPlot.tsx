@@ -16,7 +16,7 @@ type Props = {
   ref: RefObject<HighchartsReactRefObject | null>;
 };
 
-const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
+export const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
   const { t } = useTranslation();
   const handlePointClick = (point: CustomPoint) => {
     void navigator.clipboard.writeText(point.name);
@@ -46,6 +46,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
       style: {
         pointerEvents: 'auto'
       },
+      // eslint-disable-next-line no-restricted-syntax
       formatter: function () {
         const point = this as CustomPoint;
         const { name } = point;
@@ -67,6 +68,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
         maxSize: 150,
         dataLabels: {
           enabled: true,
+          // eslint-disable-next-line no-restricted-syntax
           formatter: function () {
             const point = this as CustomPoint;
             return point.value > 1000 ? `${point.name.substring(0, 10)}...` : '';
@@ -74,6 +76,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
         },
         point: {
           events: {
+            // eslint-disable-next-line no-restricted-syntax
             click: function () {
               handlePointClick(this as CustomPoint);
             }
@@ -92,7 +95,3 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
     />
   );
 };
-
-AccountsAmountPlot.displayName = 'AccountsAmountPlot';
-
-export default AccountsAmountPlot;

@@ -14,7 +14,7 @@ vi.mock('@paraspell/assets')
 describe('validateAddress', () => {
   const mockApi = {
     validateSubstrateAddress: vi.fn().mockReturnValue(true)
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -114,7 +114,7 @@ describe('validateAddress', () => {
     const chain: TChain = 'Polkadot'
     const mockApi = {
       validateSubstrateAddress: vi.fn().mockReturnValue(true)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(mockApi, 'validateSubstrateAddress')
 
@@ -130,7 +130,7 @@ describe('validateAddress', () => {
     const chain: TChain = 'Polkadot'
     const invalidApi = {
       validateSubstrateAddress: vi.fn().mockReturnValue(false)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 
@@ -149,7 +149,7 @@ describe('validateAddress', () => {
     const chain: TChain = 'Polkadot'
     const invalidApi = {
       validateSubstrateAddress: vi.fn().mockReturnValue(false)
-    } as unknown as IPolkadotApi<unknown, unknown>
+    } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 

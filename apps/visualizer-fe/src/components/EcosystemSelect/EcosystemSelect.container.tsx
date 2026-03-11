@@ -2,9 +2,9 @@ import { Box } from '@mantine/core';
 
 import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useFilterSync } from '../../hooks/useFilterSync';
-import EcosystemSelect from './EcosystemSelect';
+import { EcosystemSelect } from './EcosystemSelect';
 
-const EcosystemSelectContainer = () => {
+export const EcosystemSelectContainer = () => {
   const { selectedEcosystem, setSelectedEcosystem } = useSelectedEcosystem();
   useFilterSync();
 
@@ -22,5 +22,3 @@ const EcosystemSelectContainer = () => {
     </Box>
   );
 };
-
-export default EcosystemSelectContainer;

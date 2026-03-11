@@ -9,12 +9,15 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { getChain } from '../../utils'
 import Chain from '../Chain'
 
-class Crab<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer {
+class Crab<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Crab', 'crab', 'Kusama', Version.V4)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     if (input.scenario === 'ParaToPara') return transferPolkadotXcm(input)
     throw new ScenarioNotSupportedError({ chain: this.chain, scenario: input.scenario })
   }
@@ -23,8 +26,10 @@ class Crab<TApi, TRes> extends Chain<TApi, TRes> implements IPolkadotXCMTransfer
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    return getChain<TApi, TRes, 'Darwinia'>('Darwinia').transferLocalNonNativeAsset(options)
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    return getChain<TApi, TRes, TSigner, 'Darwinia'>('Darwinia').transferLocalNonNativeAsset(
+      options
+    )
   }
 }
 

@@ -1,3 +1,3 @@
-import AssetClaim from '../components/AssetClaim/AssetClaim';
+import { AssetClaim } from '../components/AssetClaim/AssetClaim';
 
-export const AssetClaimPage = () => <AssetClaim />;
+export const AssetClaimPage = AssetClaim;

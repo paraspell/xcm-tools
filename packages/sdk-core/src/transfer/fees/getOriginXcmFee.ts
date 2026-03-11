@@ -3,8 +3,8 @@ import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
-export const getOriginXcmFee = async <TApi, TRes>(
-  options: TGetOriginXcmFeeOptions<TApi, TRes>
+export const getOriginXcmFee = async <TApi, TRes, TSigner>(
+  options: TGetOriginXcmFeeOptions<TApi, TRes, TSigner>
 ): Promise<
   TXcmFeeDetail & {
     forwardedXcms?: unknown

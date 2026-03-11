@@ -1,18 +1,17 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { HttpLink } from '@apollo/client/link/http';
 import { ApolloProvider } from '@apollo/client/react';
-import { Box, Flex, MantineProvider } from '@mantine/core';
+import { Box, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
 import { BrowserRouter } from 'react-router';
 
-import LeftPanel from './components/LeftPanel';
-import LoadingScreen from './components/LoadingScreen/LoadingScreen';
-import RightPanel from './components/RightPanel';
-import DeviceTypeProvider from './context/DeviceType/DeviceTypeContext';
-import LiveDataProvider from './context/LiveData/LiveDataContext';
-import SelectedEcosystemProvider from './context/SelectedEcosystem/SelectedEcosystemContext';
-import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
+import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
+import { MainContentPanel } from './components/MainContentPanel';
+import { DeviceTypeProvider } from './context/DeviceType/DeviceTypeContext';
+import { LiveDataProvider } from './context/LiveData/LiveDataContext';
+import { SelectedEcosystemProvider } from './context/SelectedEcosystem/SelectedEcosystemContext';
+import { SelectedParachainProvider } from './context/SelectedParachain/SelectedParachainContext';
 
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 
@@ -31,7 +30,7 @@ export const client = new ApolloClient({
   )
 });
 
-const App = () => (
+export const App = () => (
   <ApolloProvider client={client}>
     <BrowserRouter>
       <DeviceTypeProvider>
@@ -42,10 +41,7 @@ const App = () => (
                 <Box pos="relative" h="100%">
                   <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
                   <Notifications />
-                  <Flex h="100%" w="100%" pos="relative" style={{ overflow: 'hidden' }}>
-                    <LeftPanel />
-                    <RightPanel />
-                  </Flex>
+                  <MainContentPanel />
                 </Box>
               </MantineProvider>
             </LiveDataProvider>
@@ -55,5 +51,3 @@ const App = () => (
     </BrowserRouter>
   </ApolloProvider>
 );
-
-export default App;

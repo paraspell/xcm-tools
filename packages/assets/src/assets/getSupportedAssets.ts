@@ -1,8 +1,9 @@
-import { isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
+import { isSnowbridge, isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
 
 import type { TAssetInfo } from '../types'
-import { getAssets } from './assets'
+import { getAssets, getNativeAssetSymbol } from './assets'
 import { isAssetXcEqual } from './isAssetXcEqual'
+import { isSystemAsset } from './isSystemAsset'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
 /**
@@ -16,17 +17,27 @@ export const getSupportedAssets = (origin: TChain, destination: TChain): TAssetI
   const originAssets = getAssets(origin)
   const destinationAssets = getAssets(destination)
 
-  const isSubBridge = isSubstrateBridge(origin, destination)
-
-  if (isSubBridge) {
-    const systemAssets = originAssets.filter(asset => ['DOT', 'KSM'].includes(asset.symbol))
-    const stablecoinAssets = findStablecoinAssets(origin)
-    return [...systemAssets, ...stablecoinAssets]
-  }
-
   const supportedAssets = originAssets.filter(asset =>
     destinationAssets.some(a => isAssetXcEqual(a, asset))
   )
+
+  const isSubBridge = isSubstrateBridge(origin, destination)
+  const isSb = isSnowbridge(origin, destination)
+
+  if (isSubBridge || isSb) {
+    const systemAssets = originAssets.filter(asset => isSystemAsset(asset))
+
+    if (isSubBridge) {
+      const nativeSymbols = [origin, destination].map(getNativeAssetSymbol)
+      const filteredSystemAssets = systemAssets.filter(({ symbol }) =>
+        nativeSymbols.includes(symbol)
+      )
+      const stablecoinAssets = findStablecoinAssets(origin)
+      return [...filteredSystemAssets, ...stablecoinAssets]
+    } else {
+      return [...systemAssets, ...supportedAssets]
+    }
+  }
 
   return supportedAssets
 }

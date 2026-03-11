@@ -6,7 +6,7 @@ import { compareAddresses } from './compareAddresses'
 describe('compareAddresses', () => {
   const mockApi = {
     accountToHex: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

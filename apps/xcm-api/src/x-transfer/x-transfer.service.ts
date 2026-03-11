@@ -4,18 +4,22 @@ import {
   CHAINS,
   GeneralBuilder,
   getBridgeStatus,
+  getChainProviders,
   getParaEthTransferFees,
   isExternalChain,
   SUBSTRATE_CHAINS,
   TChain,
+  TPapiApi,
+  TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSwap,
   TSubstrateChain,
 } from '@paraspell/sdk';
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
+import { validateExchange } from '../utils/validateExchange.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
@@ -27,11 +31,40 @@ import {
 
 @Injectable()
 export class XTransferService {
+  private async executeWithSwapBuilder<T>(
+    transfer: XTransferDtoWSenderAddress,
+    executor: (
+      finalBuilder: GeneralBuilder<
+        TSendBaseOptionsWithSwap<TPapiApi, TPapiTransaction, TPapiSigner>
+      >,
+    ) => Promise<T>,
+  ): Promise<T> {
+    const { swapOptions } = transfer;
+    return this.executeWithBuilderOptionalSender(transfer, (finalBuilder) => {
+      if (!swapOptions) {
+        throw new BadRequestException(
+          'SwapOptions are required for this operation.',
+        );
+      }
+      return executor(
+        finalBuilder.swap({
+          ...swapOptions,
+          slippage: Number(swapOptions.slippage),
+          exchange: validateExchange(swapOptions.exchange),
+        }),
+      );
+    });
+  }
+
   private async executeWithBuilder<T>(
     transfer: XTransferDtoWSenderAddress,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSenderAddress<TPapiTransaction>
+        TSendBaseOptionsWithSenderAddress<
+          TPapiApi,
+          TPapiTransaction,
+          TPapiSigner
+        >
       >,
     ) => Promise<T>,
   ): Promise<T> {
@@ -113,11 +146,13 @@ export class XTransferService {
       feeAsset,
       address,
       xcmVersion,
+      keepAlive,
       pallet,
       method,
       senderAddress,
       ahAddress,
       transactOptions,
+      swapOptions,
     } = transfer;
 
     let finalBuilder = builder
@@ -136,6 +171,10 @@ export class XTransferService {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
     }
 
+    if (keepAlive) {
+      finalBuilder = finalBuilder.keepAlive(keepAlive);
+    }
+
     if (pallet && method) {
       finalBuilder = finalBuilder.customPallet(pallet, method);
     }
@@ -143,6 +182,15 @@ export class XTransferService {
     if (transactOptions) {
       const { call, originKind, maxWeight } = transactOptions;
       finalBuilder = finalBuilder.transact(call, originKind, maxWeight);
+    }
+
+    if (swapOptions) {
+      const { exchange, ...rest } = swapOptions;
+      finalBuilder = finalBuilder.swap({
+        ...rest,
+        slippage: Number(rest.slippage),
+        exchange: validateExchange(exchange),
+      });
     }
 
     return finalBuilder;
@@ -193,6 +241,31 @@ export class XTransferService {
     );
   }
 
+  generateXcmCalls(transfer: XTransferDto) {
+    return this.executeWithBuilderOptionalSender(
+      transfer,
+      async (finalBuilder) => {
+        const txContexts = await finalBuilder.buildAll();
+
+        const response = await Promise.all(
+          txContexts.map(async (txContext) => {
+            const txData = await txContext.tx.getEncodedData();
+            const txHash = txData.asHex();
+
+            return {
+              type: txContext.type,
+              chain: txContext.chain,
+              tx: txHash,
+              wsProviders: getChainProviders(txContext.chain),
+            };
+          }),
+        );
+
+        return response;
+      },
+    );
+  }
+
   signAndSubmit(transfer: SignAndSubmitDto) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.signAndSubmit(),
@@ -226,6 +299,12 @@ export class XTransferService {
   getReceivableAmount(transfer: XTransferDtoWSenderAddress) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getReceivableAmount(),
+    );
+  }
+
+  getBestAmountOut(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithSwapBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getBestAmountOut(),
     );
   }
 
@@ -263,7 +342,7 @@ export class XTransferService {
 
     let builder = Builder(
       hasOptions ? optionsWithoutMode : undefined,
-    ) as GeneralBuilder<TSendBaseOptions<TPapiTransaction>>;
+    ) as ReturnType<typeof this.buildXTransfer>;
 
     for (const transfer of transfers) {
       this.validateTransfer(transfer);

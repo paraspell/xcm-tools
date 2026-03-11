@@ -9,7 +9,10 @@ import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
 
-class Centrifuge<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransfer {
+class Centrifuge<TApi, TRes, TSigner>
+  extends Chain<TApi, TRes, TSigner>
+  implements IXTokensTransfer<TApi, TRes, TSigner>
+{
   constructor() {
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
@@ -20,14 +23,14 @@ class Centrifuge<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransf
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
     const { asset } = input
     const currencySelection = this.getCustomCurrencyId(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll } = options
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
 
     const dest = { Id: address }
     const currencyId = this.getCustomCurrencyId(asset)
@@ -39,14 +42,14 @@ class Centrifuge<TApi, TRes> extends Chain<TApi, TRes> implements IXTokensTransf
         params: {
           dest,
           currency_id: currencyId,
-          keep_alive: false
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Tokens',
-      method: 'transfer',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         dest,
         currency_id: currencyId,

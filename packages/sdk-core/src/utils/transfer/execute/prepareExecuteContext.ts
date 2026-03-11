@@ -2,7 +2,6 @@ import { isAssetEqual, type TAsset } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
-import { assertHasLocation } from '../../assertions'
 import { createAsset } from '../../asset'
 import { getAssetReserveChain } from '../../chain'
 import { localizeLocation } from '../../location'
@@ -15,6 +14,8 @@ export type TExecuteContext = {
   assetLocalizedToReserve: TAsset
   feeAsset?: TAsset
   feeAssetLocalized?: TAsset
+  feeAssetLocalizedToDest?: TAsset
+  feeAssetLocalizedToReserve?: TAsset
   reserveChain: TSubstrateChain
 }
 
@@ -26,9 +27,6 @@ export const prepareExecuteContext = <TRes>({
   fees: { originFee },
   version
 }: TCreateBaseTransferXcmOptions<TRes>): TExecuteContext => {
-  assertHasLocation(assetInfo)
-  if (feeAssetInfo) assertHasLocation(feeAssetInfo)
-
   const amount = assetInfo.amount
   const reserveChain = getAssetReserveChain(chain, assetInfo.location)
 
@@ -56,6 +54,20 @@ export const prepareExecuteContext = <TRes>({
       ? createAsset(version, originFee, localizeLocation(chain, feeAssetInfo.location))
       : undefined
 
+  const feeAssetLocalizedToDest =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(version, originFee, localizeLocation(destChain, feeAssetInfo.location))
+      : undefined
+
+  const feeAssetLocalizedToReserve =
+    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
+      ? createAsset(
+          version,
+          originFee,
+          localizeLocation(reserveChain ?? chain, feeAssetInfo.location)
+        )
+      : undefined
+
   return {
     amount,
     asset,
@@ -64,6 +76,8 @@ export const prepareExecuteContext = <TRes>({
     assetLocalizedToReserve,
     feeAsset,
     feeAssetLocalized,
+    feeAssetLocalizedToDest,
+    feeAssetLocalizedToReserve,
     reserveChain
   }
 }

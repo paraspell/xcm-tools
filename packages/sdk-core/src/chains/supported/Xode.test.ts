@@ -10,16 +10,16 @@ import type Xode from './Xode'
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Xode', () => {
-  let chain: Xode<unknown, unknown>
+  let chain: Xode<unknown, unknown, unknown>
 
   const mockInput = {
     scenario: 'ParaToPara',
     destChain: 'AssetHubPolkadot',
     assetInfo: { symbol: 'XYZ', location: {} }
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    chain = getChain<unknown, unknown, 'Xode'>('Xode')
+    chain = getChain<unknown, unknown, unknown, 'Xode'>('Xode')
   })
 
   it('should initialize with correct values', () => {

@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { Center, Flex, Group, Loader, Stack } from '@mantine/core';
+import { getParaId } from '@paraspell/sdk';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,17 +9,14 @@ import { accountXcmCountsQueryDocument } from '../../../api/messages';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { AccountCountsQuery } from '../../../gql/graphql';
-import convertToCsv from '../../../utils/convertToCsv';
-import downloadSvg from '../../../utils/downloadSvg';
-import { downloadZip } from '../../../utils/downloadZip';
-import { getParachainId } from '../../../utils/utils';
-import DownloadButtons from '../../DownloadButtons';
-import SliderInput from '../../SliderInput';
-import AccountsAmountPlot from './AccountsAmountPlot';
+import { convertToCsv, downloadSvg, downloadZip } from '../../../utils';
+import { DownloadButtons } from '../../DownloadButtons';
+import { SliderInput } from '../../SliderInput';
+import { AccountsAmountPlot } from './AccountsAmountPlot';
 
 const now = Date.now();
 
-const AccountsAmountPlotContainer = () => {
+export const AccountsAmountPlotContainer = () => {
   const { t } = useTranslation();
 
   const ref = useRef<HighchartsReactRefObject>(null);
@@ -34,7 +32,7 @@ const AccountsAmountPlotContainer = () => {
     variables: {
       ecosystem: selectedEcosystem.toString().toLowerCase(),
       threshold,
-      paraIds: selectedParachains.map(parachain => getParachainId(parachain)),
+      paraIds: selectedParachains.map(parachain => getParaId(parachain)),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }
@@ -93,5 +91,3 @@ const AccountsAmountPlotContainer = () => {
     </Stack>
   );
 };
-
-export default AccountsAmountPlotContainer;

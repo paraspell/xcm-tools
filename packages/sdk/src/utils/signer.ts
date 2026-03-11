@@ -1,11 +1,14 @@
 import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
-import { getEvmPrivateKeyHex } from '@paraspell/sdk-core'
+import type { TSender } from '@paraspell/sdk-core'
+import { getEvmPrivateKeyHex, isSenderSigner } from '@paraspell/sdk-core'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { AccountId } from 'polkadot-api'
 import { getPolkadotSigner } from 'polkadot-api/signer'
+
+import type { TPapiSigner } from '../types'
 
 export const signEcdsa = (input: Uint8Array, privateKey: Uint8Array) => {
   const signature = secp256k1.sign(keccak_256(input), privateKey, {
@@ -46,12 +49,13 @@ export const createDevSigner = (path: string) => {
   return createSr25519Signer(path)
 }
 
-export const deriveAddress = (path: string): string => {
-  const evmPrivateKey = getEvmPrivateKey(path)
+export const deriveAddress = (sender: TSender<TPapiSigner>): string => {
+  if (isSenderSigner(sender)) return AccountId().dec(sender.publicKey)
+  const evmPrivateKey = getEvmPrivateKey(sender)
   if (evmPrivateKey) {
     const address = resolveEcdsaAddress(evmPrivateKey)
     return `0x${bytesToHex(address)}`
   }
-  const keyPair = createSr25519Keypair(path)
+  const keyPair = createSr25519Keypair(sender)
   return AccountId().dec(keyPair.publicKey)
 }

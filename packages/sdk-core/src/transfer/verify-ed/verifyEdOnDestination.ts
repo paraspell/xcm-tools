@@ -1,8 +1,8 @@
 import type { TVerifyEdOnDestinationOptions } from '../../types'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
-export const verifyEdOnDestination = async <TApi, TRes>(
-  options: TVerifyEdOnDestinationOptions<TApi, TRes>
+export const verifyEdOnDestination = async <TApi, TRes, TSigner>(
+  options: TVerifyEdOnDestinationOptions<TApi, TRes, TSigner>
 ) => {
   const { api } = options
   try {

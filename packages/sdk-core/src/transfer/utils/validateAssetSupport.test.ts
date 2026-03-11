@@ -3,6 +3,7 @@ import {
   findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
+  isBridgedSystemAsset,
   type TAssetInfo
 } from '@paraspell/assets'
 import { isExternalChain, isTLocation, Parents } from '@paraspell/sdk-common'
@@ -27,6 +28,7 @@ vi.mock('@paraspell/assets', () => ({
   findAssetInfoOnDest: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isAssetEqual: vi.fn(),
+  isBridgedSystemAsset: vi.fn(),
   isStableCoinAsset: vi.fn()
 }))
 
@@ -40,6 +42,7 @@ describe('validateAssetSupport', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
   })
 
   it('should not throw when bridged asset matches target relay consensus', () => {
@@ -47,7 +50,7 @@ describe('validateAssetSupport', () => {
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'BRIDGED' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = true
@@ -64,6 +67,7 @@ describe('validateAssetSupport', () => {
     vi.mocked(findAssetInfoOnDest).mockReturnValue(asset)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(true)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
     expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
@@ -74,7 +78,7 @@ describe('validateAssetSupport', () => {
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'FOREIGN' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = true
@@ -92,6 +96,7 @@ describe('validateAssetSupport', () => {
 
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       InvalidCurrencyError
@@ -106,7 +111,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -122,7 +127,7 @@ describe('validateAssetSupport', () => {
       from: 'BifrostPolkadot',
       to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -138,7 +143,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNSUPPORTED' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -159,7 +164,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'SUPPORTED' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -175,7 +180,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'ANY' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = false
     const isBridge = false
@@ -189,7 +194,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNKNOWN' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -205,7 +210,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: {} as TDestination,
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -219,7 +224,7 @@ describe('validateAssetSupport', () => {
       from: 'AssetHubPolkadot',
       to: 'Ethereum',
       currency: { symbol: 'DOT' }
-    } as TSendOptions<unknown, unknown>
+    } as TSendOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -339,15 +344,16 @@ describe('validateEthereumAsset', () => {
   })
 
   it('should throw InvalidCurrencyError for asset with wrong GlobalConsensus', () => {
-    const asset = {
+    const asset: TAssetInfo = {
       symbol: 'WRONG',
+      decimals: 18,
       location: {
         parents: Parents.TWO,
         interior: {
           X1: [{ GlobalConsensus: { Polkadot: null } }]
         }
       }
-    } as TAssetInfo
+    }
 
     expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError
@@ -358,9 +364,14 @@ describe('validateEthereumAsset', () => {
   })
 
   it('should throw InvalidCurrencyError for asset without location', () => {
-    const asset = {
-      symbol: 'NOLOC'
-    } as TAssetInfo
+    const asset: TAssetInfo = {
+      symbol: 'NOLOC',
+      decimals: 18,
+      location: {
+        parents: Parents.ZERO,
+        interior: { Here: null }
+      }
+    }
 
     expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError

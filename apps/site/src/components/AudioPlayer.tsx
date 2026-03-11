@@ -15,7 +15,7 @@ type Props = {
   src: string;
 };
 
-const AudioPlayer: FC<Props> = ({ src }) => {
+export const AudioPlayer: FC<Props> = ({ src }) => {
   const audioRef = useRef(new Audio(src));
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -98,5 +98,3 @@ const AudioPlayer: FC<Props> = ({ src }) => {
     </Group>
   );
 };
-
-export default AudioPlayer;

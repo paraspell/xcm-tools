@@ -1,12 +1,6 @@
 import type { TChain } from '@paraspell/sdk-core'
 
-export const LEGACY_CHAINS: TChain[] = [
-  'Interlay',
-  'CrustShadow',
-  'Kintsugi',
-  'RobonomicsPolkadot',
-  'Pendulum'
-]
+export const LEGACY_CHAINS: TChain[] = ['Interlay', 'CrustShadow', 'Kintsugi', 'Pendulum']
 
 // Cache settings
 export const DEFAULT_TTL_MS = 60_000 // 1 minute

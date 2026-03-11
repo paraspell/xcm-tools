@@ -10,8 +10,8 @@ import { Color, TextureLoader } from 'three';
 
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { useAdjustUVs } from '../../hooks/useAdjustUVs';
 import { getChainNameNoEcosystem } from '../../utils';
-import { adjustUVs, adjustUVXAxis } from '../../utils/adjustUVs';
 import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
@@ -31,7 +31,7 @@ type Props = {
   ref: RefCallback<Group | null>;
 };
 
-const ParachainNode: FC<Props> = ({
+export const Parachain: FC<Props> = ({
   ref,
   name,
   index,
@@ -49,7 +49,7 @@ const ParachainNode: FC<Props> = ({
 
   const textRef = useRef<Text>(null);
   const materialRef = useRef<MeshStandardMaterial>(null);
-  const sphereRef = useRef<Mesh>(null);
+  const sphereRef = useRef<Mesh<SphereGeometry>>(null);
   const groupRef = useRef<Group>(null);
 
   useImperativeHandle(ref, () => groupRef.current!);
@@ -57,12 +57,7 @@ const ParachainNode: FC<Props> = ({
   const logo = getChainLogo(name);
   const texture = logo ? useLoader(TextureLoader, logo) : null;
 
-  useEffect(() => {
-    if (sphereRef.current) {
-      adjustUVXAxis(sphereRef.current.geometry as SphereGeometry, SCALE_X_FACTOR);
-      adjustUVs(sphereRef.current.geometry as SphereGeometry, Math.sqrt(scale) * SCALE_FACTOR);
-    }
-  }, [scale]);
+  useAdjustUVs(sphereRef, SCALE_X_FACTOR, Math.sqrt(scale) * SCALE_FACTOR, [scale]);
 
   useEffect(() => {
     if (texture) {
@@ -167,7 +162,3 @@ const ParachainNode: FC<Props> = ({
     </group>
   );
 };
-
-ParachainNode.displayName = 'Parachain';
-
-export default ParachainNode;

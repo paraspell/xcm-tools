@@ -1,0 +1,6675 @@
+{
+  "AssetHubPolkadotDex": {
+    "isOmni": true,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 50000075
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 30
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 23
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "kusama": null
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2039
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x1abaea1f7c830bd89acc67ec4af516284b1bc33c"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3370
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x582d872a1b094fc48f5de31d3b73f2d9be47def1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3369
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2043
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2051
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": []
+  },
+  "AssetHubKusamaDex": {
+    "isOmni": true,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 223
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 19840
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X4": [
+            {
+              "GlobalConsensus": {
+                "polkadot": null
+              }
+            },
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "polkadot": null
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0104000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2123
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X4": [
+            {
+              "GlobalConsensus": {
+                "polkadot": null
+              }
+            },
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2015
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": []
+  },
+  "AssetHubPaseoDex": {
+    "isOmni": true,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 11155111
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 4023
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 4006
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 11155111
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xfff9976782d46cc05630d1f6ebab18b2324d6b14"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3369
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 4547
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2043
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": []
+  },
+  "AssetHubWestendDex": {
+    "isOmni": true,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 6
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 10111
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1114
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 31337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 11155111
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3368
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": []
+  },
+  "HydrationDex": {
+    "isOmni": true,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc64980e4eaf9a1151bd21712b9946b81e41e2b92"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x02759d14d0d4f452b9c76f5a230750e8857d36f2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x02639ec01313c8775fae74f2dad1118c8a8a86da"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x0e13b904f4168f93814216b6874ca8349457f263"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x69003a65189f6ed993d3bd3e2b74f1db39f405ce"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x34d5ffb83d14d82f87aaf2f13be895a3c814c2ad"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x8a598fe3e3a471ce865332e330d303502a0e2f52"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x11a8f7ffbb7e0fbed88bc20179dd45b4bd6874ff"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc09cf2f85367f3c2ab66e094283de3a499cb9108"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x35774c305aaf441a102d47988d35f0f5428471b3"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x1806860d27ee903c1ec7586d4f7d598d7591f124"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x52e1311e26610e6662a1e5b5bd113130b6815213"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x45804880de22913dafe09f4980848ece6ecbaf78"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x00f283c7a97ecb60dd905cdab52febceec04dc0f"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x52b2f622f5676e92dbea3092004eb9ffb85a8d07"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x4c892a298a9c6b4ced988b3d6e9cf93333aadcf7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xf5f744a4d14a5f49ce173e39b8361733a6e55152"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x2b55b6a5751f26c5cfb02429085bfd5236751443"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "GeneralIndex": 0
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2008
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2026
+            },
+            {
+              "PalletInstance": 2
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2037
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3369
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2094
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3370
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 31337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2043
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3345
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2101
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2051
+            },
+            {
+              "GeneralKey": {
+                "length": 4,
+                "data": "0x414a554e00000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2032
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X1": [
+            {
+              "GlobalConsensus": {
+                "kusama": null
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x57e114b691db790c35207b2e685d4a43181e6061"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x5a98fcbea516cf06857215779fd812ca3bef1b32"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x56072c95faa701256059aa122697b133aded9279"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0903000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x514910771af9ca656af840dff83e8264ecf986ca"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x484ecce6775143d3335ed2c7bcb22151c53b9f49"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2006
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x06e605775296e851ff43b4daa541bb0984e9d6fd"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2032
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xe9f9a2e3deae4093c00fbc57b22bb51a4c05ad88"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xda430218862d3db25de9f61458645dde49a9e9c1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x9d39a5de30e57443bff2a8307a4256c8797a3497"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": []
+  },
+  "KaruraDex": {
+    "isOmni": false,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 8
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2095
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2012
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 16
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2092
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 8
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2088
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2092
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": [
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        "TAI",
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        "PHA",
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    ]
+  },
+  "AcalaDex": {
+    "isOmni": false,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 22222012
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 2037
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 50000069
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2032
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 23
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 50000028
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2032
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": [
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 23
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 23
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0002000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    ]
+  },
+  "BifrostKusamaDex": {
+    "isOmni": false,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0207000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2000
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 8
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0104000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2092
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0101000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2023
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2001
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x010a000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": [
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0207000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0207000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0104000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0207000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x010a000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2023
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0104000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0101000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    ]
+  },
+  "BifrostPolkadotDex": {
+    "isOmni": false,
+    "assets": [
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0904000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0901000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "Here": null
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0403000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0804000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pairs": [
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0901000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0901000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0403000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0804000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0904000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    ]
+  }
+}

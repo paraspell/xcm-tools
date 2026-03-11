@@ -23,7 +23,7 @@ hljs.registerLanguage('ts', tsLang);
 
 const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
-const App = () => (
+export const App = () => (
   <BrowserRouter>
     <MantineProvider theme={theme}>
       <NuqsAdapter>
@@ -39,5 +39,3 @@ const App = () => (
     </MantineProvider>
   </BrowserRouter>
 );
-
-export default App;

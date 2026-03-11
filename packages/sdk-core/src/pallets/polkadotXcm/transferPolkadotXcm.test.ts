@@ -11,7 +11,7 @@ vi.mock('../../utils/location')
 
 const mockApi = {
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown>
+} as unknown as IPolkadotApi<unknown, unknown, unknown>
 
 const mockLocation: TLocation = {
   parents: 0,
@@ -48,7 +48,7 @@ describe('transferPolkadotXcm', () => {
     asset: mockAsset,
     assetInfo: { amount: 123n } as WithAmount<TAssetInfo>,
     version: Version.V4
-  } as TPolkadotXCMTransferOptions<unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   it('should call api.tx[module][method] with correct parameters when fees is undefined', async () => {
     const callSpy = vi.spyOn(mockApi, 'deserializeExtrinsics')
