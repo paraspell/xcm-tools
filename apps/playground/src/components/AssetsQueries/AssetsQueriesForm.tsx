@@ -55,7 +55,7 @@ type Props = {
 };
 
 export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
-  const { setIsUseXcmApiSelected, selectedAccount } = useWallet();
+  const { selectedAccount } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
     func: parseAsStringLiteral(ASSET_QUERIES).withDefault('ASSETS_OBJECT'),
@@ -80,7 +80,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { func, chain, currencyType, useApi } = form.getValues();
+  const { func, chain, currencyType } = form.getValues();
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
@@ -174,10 +174,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     { label: 'Foreign', value: 'foreign' },
     { label: 'Foreign abstract', value: 'foreignAbstract' },
   ];
-
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">

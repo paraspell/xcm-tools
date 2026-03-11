@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getLocationTokenIdPjs } from './getLocationTokenIdPjs'
+import { getNativeAssetSymbol, type TSubstrateChain } from '@paraspell/sdk-core'
 
-export const computeFeeFromDryRunPjs = (
+import { getLocationTokenId } from './getLocationTokenId'
+
+export const computeOriginFee = (
   dryRun: any,
   chain: TSubstrateChain,
   executionFee: bigint
@@ -23,7 +23,7 @@ export const computeFeeFromDryRunPjs = (
       for (const feeItem of e.data.fees) {
         if (feeItem.fun.NonFungible) continue
         const plancks = BigInt(feeItem.fun.Fungible.replace(/,/g, ''))
-        const tokenSymbol = getLocationTokenIdPjs(feeItem.id, chain)
+        const tokenSymbol = getLocationTokenId(feeItem.id, chain)
         if (!tokenSymbol || !plancks) continue
         deliveryFees.push({ plancks, tokenSymbol })
       }
@@ -35,6 +35,5 @@ export const computeFeeFromDryRunPjs = (
   const totalDeliveryFees = deliveryFees
     .filter(df => df.tokenSymbol === nativeAssetSymbol)
     .reduce((acc, df) => acc + df.plancks, 0n)
-
   return totalDeliveryFees + executionFee
 }

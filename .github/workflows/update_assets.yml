@@ -17,10 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set alternate npm integrity keys
-        run: |
-          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
-
       - name: Enable corepack
         run: corepack enable
 
@@ -48,6 +44,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
+          token: ${{ secrets.PR_TOKEN }}
           commit-message: "ci: Update assets map 📋"
           title: "Update assets map 📋"
           body: "This PR updates the assets map"

@@ -4,6 +4,7 @@
   "packages/sdk": "12.8.9",
   "packages/sdk-core": "12.8.9",
   "packages/sdk-pjs": "12.8.9",
+  "packages/sdk-dedot": "12.8.9",
   "packages/sdk-common": "12.8.9",
   "packages/assets": "12.8.9",
   "packages/pallets": "12.8.9",

@@ -94,13 +94,8 @@ export const XcmUtilsForm: FC<Props> = ({
   initialValues,
   isVisible = true,
 }) => {
-  const {
-    connectWallet,
-    selectedAccount,
-    isInitialized,
-    isLoadingExtensions,
-    setIsUseXcmApiSelected,
-  } = useWallet();
+  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
+    useWallet();
 
   const [queryState, setQueryState] = useQueryStates(
     {
@@ -182,7 +177,7 @@ export const XcmUtilsForm: FC<Props> = ({
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { from, to, currencies, feeAsset, useApi } = form.getValues();
+  const { from, to, currencies, feeAsset } = form.getValues();
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     from,
@@ -338,10 +333,6 @@ export const XcmUtilsForm: FC<Props> = ({
       }
     }
   }, [from, feeCurrencyOptions, form.values.feeAsset.isCustomCurrency]);
-
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
 
   const onSwap = () => {
     const { from: currentFrom, to: currentTo } = form.getValues();

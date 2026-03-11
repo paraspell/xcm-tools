@@ -1,9 +1,10 @@
+import type { TApiType } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
 import { createContext } from 'react';
 
-import type { TApiType, TWalletAccount } from '../types';
+import type { TWalletAccount } from '../types';
 
 type WalletState = {
   selectedAccount?: TWalletAccount;
@@ -21,8 +22,6 @@ type WalletState = {
   connectWallet: () => Promise<void>;
   changeAccount: () => Promise<void>;
   handleApiSwitch: (value: TApiType) => void;
-  setIsUseXcmApiSelected: (value: boolean) => void;
-  isUseXcmApiSelected: boolean;
   isLoadingExtensions: boolean;
   isInitialized: boolean;
 };
@@ -43,8 +42,6 @@ const defaultWalletState: WalletState = {
   connectWallet: () => Promise.resolve(),
   changeAccount: () => Promise.resolve(),
   handleApiSwitch: (_value: TApiType) => {},
-  setIsUseXcmApiSelected: (_value: boolean) => {},
-  isUseXcmApiSelected: false,
   isLoadingExtensions: false,
   isInitialized: false,
 };

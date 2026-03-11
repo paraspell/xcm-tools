@@ -31,6 +31,8 @@ import {
   BatchMode,
   createClientCache,
   createClientPoolHelpers,
+  DEFAULT_TTL_MS,
+  EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getChainProviders,
@@ -41,26 +43,21 @@ import {
   isExternalChain,
   isSenderSigner,
   localizeLocation,
+  MAX_CLIENTS,
   RELAY_LOCATION,
+  resolveChainApi,
   RuntimeApiUnavailableError,
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import {
-  computeFeeFromDryRunPjs,
-  getAssetsObject,
-  type IPolkadotApi,
-  MissingChainApiError,
-  resolveModuleError
-} from '@paraspell/sdk-core'
+import { getAssetsObject, type IPolkadotApi, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
-import { DEFAULT_TTL_MS, EXTENSION_MS, MAX_CLIENTS } from './consts'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
-import { createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
+import { computeOriginFee, createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
 
 const clientPool = createClientCache<TPjsApi>(
   MAX_CLIENTS,
@@ -112,37 +109,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    const apiConfig = this.getApiConfigForChain(chain)
-
-    if (isConfig(this._config) && this._config.development && !apiConfig) {
-      throw new MissingChainApiError(chain)
-    }
-
-    this.api = await this.resolveApi(apiConfig, chain)
+    this.api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
+      this.createApiInstance(wsUrl, c)
+    )
     this.initialized = true
-  }
-
-  private getApiConfigForChain(chain: TSubstrateChain): TPjsApiOrUrl | undefined {
-    if (isConfig(this._config)) {
-      return this._config.apiOverrides?.[chain]
-    }
-    return this._config
-  }
-
-  private resolveApi(
-    apiConfig: TPjsApiOrUrl | undefined,
-    chain: TSubstrateChain
-  ): Promise<TPjsApi> {
-    if (!apiConfig) {
-      const wsUrl = getChainProviders(chain)
-      return this.createApiInstance(wsUrl, chain)
-    }
-
-    if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
-      return this.createApiInstance(apiConfig, chain)
-    }
-
-    return Promise.resolve(apiConfig)
   }
 
   createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
@@ -490,7 +460,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     }
 
     const { partialFee: executionFee } = await this.getPaymentInfo(tx, address)
-    const fee = computeFeeFromDryRunPjs(resultHuman, chain, executionFee)
+    const fee = computeOriginFee(resultHuman, chain, executionFee)
 
     return {
       success: true,

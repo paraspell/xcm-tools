@@ -34,4 +34,5 @@ export type ClientCache<T> = {
   revive: (k: TClientKey, ttl: number) => void
 }
 
-export type TApiType = 'PAPI' | 'PJS'
+export const API_TYPES = ['PAPI', 'PJS', 'DEDOT'] as const
+export type TApiType = (typeof API_TYPES)[number]

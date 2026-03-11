@@ -8,11 +8,11 @@ import {
   useComputedColorScheme,
   useMatches,
 } from '@mantine/core';
+import type { TApiType } from '@paraspell/sdk';
 import type { FC } from 'react';
 
 import { NAVIGATION_ITEMS } from '../../../constants';
 import { useWallet } from '../../../hooks';
-import type { TApiType } from '../../../types';
 import { getExtensionInfo } from '../../../utils/getExtensionInfo';
 import { ApiTypeSelector } from '../../ApiTypeSelector/ApiTypeSelector';
 import { FloatingTabs } from '../../FloatingTabs/FloatingTabs';
@@ -38,7 +38,7 @@ export const Header: FC<Props> = ({
   onChangeAccountClick,
   onConnectWalletClick,
 }) => {
-  const { apiType, selectedAccount, isUseXcmApiSelected } = useWallet();
+  const { apiType, selectedAccount } = useWallet();
 
   const { icon } = getExtensionInfo(selectedAccount?.meta.source);
 
@@ -108,7 +108,6 @@ export const Header: FC<Props> = ({
             onChange={onApiTypeChange}
             apiTypeInitialized={apiTypeInitialized}
             size={size}
-            isUseApiSelected={isUseXcmApiSelected}
           />
           {selectedAccount ? (
             <Button

@@ -2,12 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { getNativeAssetSymbol, type TSubstrateChain } from '@paraspell/sdk-core'
 
 import { getLocationTokenId } from './getLocationTokenId'
 
-export const computeFeeFromDryRun = (
+export const computeOriginFee = (
   dryRun: any,
   chain: TSubstrateChain,
   executionFee: bigint,
@@ -49,6 +48,7 @@ export const computeFeeFromDryRun = (
     const totalDeliveryFees = deliveryFees
       .filter(df => df.tokenSymbol === nativeAssetSymbol)
       .reduce((acc, df) => acc + df.plancks, 0n)
+
     return totalDeliveryFees + executionFee
   }
 }

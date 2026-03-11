@@ -31,6 +31,11 @@ export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
 export const TX_CLIENT_TIMEOUT_MS = 20 * 60 * 1000 // 20 minutes
 export const DRY_RUN_CLIENT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
 
+// Client cache settings
+export const DEFAULT_TTL_MS = 60_000 // 1 minute
+export const MAX_CLIENTS = 100
+export const EXTENSION_MS = 5 * 60_000 // 5 minutes
+
 export const MAX_U64 = (1n << 64n) - 1n
 
 export const MAX_WEIGHT: TWeight = { proofSize: MAX_U64, refTime: MAX_U64 }

@@ -131,7 +131,7 @@ export const AppShell = () => {
   useEffect(() => {
     if (
       location.pathname === PageRoute.XCM_ROUTER.toString() &&
-      apiType === 'PJS'
+      apiType !== 'PAPI'
     ) {
       handleApiSwitch('PAPI');
     }

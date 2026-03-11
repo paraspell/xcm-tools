@@ -11,7 +11,6 @@ import {
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../constants';
-import { useWallet } from '../../hooks';
 import type { TPalletsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -44,13 +43,7 @@ export const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { useApi, func } = form.getValues();
-
-  const { setIsUseXcmApiSelected } = useWallet();
-
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
+  const { func } = form.getValues();
 
   return (
     <Paper p="xl" shadow="md">
