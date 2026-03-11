@@ -12,7 +12,9 @@ export const config = defineConfig({
   wallets: [
     new InjectedWalletProvider(),
     new LedgerWallet(),
-    //Bug in the reactive-dot library
+    /* Due to bug inside reactive-dot library: MimirWallet’s private #mimir class field makes it incompatible with
+    reactive-dot’s Wallet type, so TypeScript rejects MimirWalletProvider even though it works at runtime.
+    Cast required until the library types are fixed. */
     new MimirWalletProvider() as unknown as WalletProvider
   ],
 });
