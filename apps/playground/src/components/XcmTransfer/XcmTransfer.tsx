@@ -59,7 +59,8 @@ import { XcmTransferForm } from './XcmTransferForm';
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 export const XcmTransfer = () => {
-  const { selectedAccount, apiType, getSigner } = useWallet();
+  const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
+    useWallet();
 
   const [
     outputAlertOpened,
@@ -113,6 +114,10 @@ export const XcmTransfer = () => {
     batchMode: `${BatchMode}`,
   ) => {
     if (!selectedAccount) {
+      if (accounts.length > 0) {
+        await changeAccount();
+        return;
+      }
       showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
@@ -407,6 +412,13 @@ export const XcmTransfer = () => {
       setLastFormValues(formValues);
       openBatchTypeModal();
       return;
+    }
+
+    if (!selectedAccount) {
+      if (accounts.length > 0) {
+        await changeAccount();
+        return;
+      }
     }
 
     const senderAddress = resolveSenderAddress(localAccount, selectedAccount);

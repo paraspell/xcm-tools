@@ -51,6 +51,19 @@ export const Header: FC<Props> = ({
     sm: 'sm',
   });
 
+  const truncateAddress = (
+    address: string,
+    visibleStart = 6,
+    visibleEnd = 4,
+  ) =>
+    address.length > visibleStart + visibleEnd
+      ? `${address.slice(0, visibleStart)}...${address.slice(-visibleEnd)}`
+      : address;
+
+  const accountLabel = selectedAccount
+    ? (selectedAccount.meta.name ?? truncateAddress(selectedAccount.address))
+    : null;
+
   return (
     <>
       <Box
@@ -125,7 +138,9 @@ export const Header: FC<Props> = ({
                   alt={selectedAccount.meta.source}
                 />
               }
-            >{`${selectedAccount.meta.name}`}</Button>
+            >
+              {accountLabel}
+            </Button>
           ) : (
             <Button
               onClick={onConnectWalletClick}

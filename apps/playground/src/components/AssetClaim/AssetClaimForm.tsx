@@ -42,6 +42,7 @@ export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     isInitialized,
     isLoadingExtensions,
     setIsUseXcmApiSelected,
+    setSourceChainForLedger,
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
@@ -70,6 +71,10 @@ export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
+
+  useEffect(() => {
+    setSourceChainForLedger(form.values.from);
+  }, [form.values.from, setSourceChainForLedger]);
 
   const { useApi } = form.getValues();
 

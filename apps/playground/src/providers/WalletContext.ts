@@ -1,3 +1,4 @@
+import type { TSubstrateChain } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
@@ -25,6 +26,8 @@ type WalletState = {
   isUseXcmApiSelected: boolean;
   isLoadingExtensions: boolean;
   isInitialized: boolean;
+  sourceChainForLedger: TSubstrateChain | undefined;
+  setSourceChainForLedger: (chain: TSubstrateChain | undefined) => void;
 };
 
 const defaultWalletState: WalletState = {
@@ -47,6 +50,8 @@ const defaultWalletState: WalletState = {
   isUseXcmApiSelected: false,
   isLoadingExtensions: false,
   isInitialized: false,
+  sourceChainForLedger: undefined,
+  setSourceChainForLedger: () => {},
 };
 
 export const WalletContext = createContext(defaultWalletState);

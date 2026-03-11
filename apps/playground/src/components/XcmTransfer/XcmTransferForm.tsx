@@ -98,6 +98,7 @@ export const XcmTransferForm: FC<Props> = ({
     isInitialized,
     isLoadingExtensions,
     setIsUseXcmApiSelected,
+    setSourceChainForLedger,
   } = useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
@@ -177,6 +178,10 @@ export const XcmTransferForm: FC<Props> = ({
   useEffect(() => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
+
+  useEffect(() => {
+    setSourceChainForLedger(form.values.from);
+  }, [form.values.from, setSourceChainForLedger]);
 
   const { from, to, currencies, feeAsset, useApi } = form.getValues();
 

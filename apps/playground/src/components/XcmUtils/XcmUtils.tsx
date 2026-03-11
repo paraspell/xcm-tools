@@ -43,7 +43,8 @@ import { XcmUtilsForm } from './XcmUtilsForm';
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 export const XcmUtils = () => {
-  const { selectedAccount, apiType, getSigner } = useWallet();
+  const { selectedAccount, accounts, changeAccount, apiType, getSigner } =
+    useWallet();
 
   const [
     outputAlertOpened,
@@ -347,6 +348,10 @@ export const XcmUtils = () => {
     submitType: TSubmitType,
   ) => {
     if (!selectedAccount) {
+      if (accounts.length > 0) {
+        await changeAccount();
+        return;
+      }
       showErrorNotification('No account selected. Please connect your wallet.');
       setError(new Error('No account selected. Please connect your wallet.'));
       openErrorAlert();
