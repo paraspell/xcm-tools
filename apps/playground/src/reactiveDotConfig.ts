@@ -12,6 +12,6 @@ export const config = defineConfig({
   wallets: [
     new InjectedWalletProvider(),
     new LedgerWallet(),
-    new MimirWalletProvider() as unknown as WalletProvider,
+    new MimirWalletProvider()
   ],
 });
