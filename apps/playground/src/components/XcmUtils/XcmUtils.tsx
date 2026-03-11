@@ -8,14 +8,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type {
-  GeneralBuilder,
-  TBuilderOptions,
-  TPapiApiOrUrl,
-} from '@paraspell/sdk';
 import { replaceBigInt } from '@paraspell/sdk';
-import type { TPjsApiOrUrl } from '@paraspell/sdk-pjs';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
@@ -28,6 +21,7 @@ import {
   determineCurrency,
   determineFeeAsset,
   fetchFromApi,
+  importSdk,
   setupBaseBuilder,
 } from '../../utils';
 import {
@@ -76,15 +70,7 @@ export const XcmUtils = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      options?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { Builder } = await importSdk(apiType);
 
     const { currencies, transformedFeeAsset, useApi } = formValues;
 
@@ -193,15 +179,7 @@ export const XcmUtils = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      options?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { Builder } = await importSdk(apiType);
 
     const { currencies, transformedFeeAsset, useApi } = formValues;
 

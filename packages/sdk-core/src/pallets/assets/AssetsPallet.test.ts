@@ -78,7 +78,7 @@ describe('AssetsPallet.getBalance', () => {
     vi.clearAllMocks()
   })
 
-  it('retries with BigInt asset id when runtime entry is incompatible', async () => {
+  const expectBigIntRetry = async (message: string) => {
     const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'
     const asset = { assetId: '77' } as TAssetInfo
@@ -87,7 +87,7 @@ describe('AssetsPallet.getBalance', () => {
 
     const queryState = vi
       .fn()
-      .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
+      .mockRejectedValueOnce(new Error(message))
       .mockResolvedValueOnce({ balance: 123n })
 
     const api = { queryState } as unknown as IPolkadotApi<unknown, unknown, unknown>
@@ -105,5 +105,17 @@ describe('AssetsPallet.getBalance', () => {
       params: [77n, address]
     })
     expect(balance).toBe(123n)
+  }
+
+  it('retries with BigInt asset id when runtime entry is incompatible', async () => {
+    await expectBigIntRetry('Incompatible runtime entry')
+  })
+
+  it('retries with BigInt asset id on API compatibility errors', async () => {
+    await expectBigIntRetry('API Compatibility Error')
+  })
+
+  it('retries with BigInt asset id when the runtime expects an integer', async () => {
+    await expectBigIntRetry('Number needs to be an integer')
   })
 })

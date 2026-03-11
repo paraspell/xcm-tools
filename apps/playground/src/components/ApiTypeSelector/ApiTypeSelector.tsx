@@ -1,9 +1,10 @@
 import type { MantineSize } from '@mantine/core';
 import { Center, SegmentedControl } from '@mantine/core';
+import type { TApiType } from '@paraspell/sdk';
 import type { FC } from 'react';
 
-import type { TApiType } from '../../types';
 import { PageRoute } from '../PageRoute';
+import { DedotLogo } from './assets/DedotLogo';
 import { PapiLogo } from './assets/PapiLogo';
 import { PolkadotJsLogo } from './assets/PolkadotJsLogo';
 
@@ -12,7 +13,6 @@ type Props = {
   onChange: (apiType: TApiType) => void;
   apiTypeInitialized: boolean;
   size: MantineSize;
-  isUseApiSelected?: boolean;
 };
 
 export const ApiTypeSelector: FC<Props> = ({
@@ -20,7 +20,6 @@ export const ApiTypeSelector: FC<Props> = ({
   onChange,
   apiTypeInitialized,
   size,
-  isUseApiSelected = false,
 }) => {
   const onChangeInternal = (value: string) => {
     onChange(value as TApiType);
@@ -42,13 +41,22 @@ export const ApiTypeSelector: FC<Props> = ({
     {
       value: 'PJS',
       disabled:
-        fullyDisabled ||
-        location.pathname === PageRoute.XCM_ROUTER.toString() ||
-        isUseApiSelected,
+        fullyDisabled || location.pathname === PageRoute.XCM_ROUTER.toString(),
       label: (
         <Center style={{ gap: 8 }} data-testid="label-pjs-api">
           <PolkadotJsLogo />
           <span>PJS</span>
+        </Center>
+      ),
+    },
+    {
+      value: 'DEDOT',
+      disabled:
+        fullyDisabled || location.pathname === PageRoute.XCM_ROUTER.toString(),
+      label: (
+        <Center style={{ gap: 8 }} data-testid="label-dedot-api">
+          <DedotLogo />
+          <span>DEDOT</span>
         </Center>
       ),
     },

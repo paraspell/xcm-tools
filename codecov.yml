@@ -19,6 +19,10 @@ flag_management:
       paths:
         - packages/sdk-pjs
       carryforward: true
+    - name: sdk-dedot
+      paths:
+        - packages/sdk-dedot
+      carryforward: true
     - name: sdk-common
       paths:
         - packages/sdk-common

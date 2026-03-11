@@ -1,20 +1,29 @@
-import type { TAssetInfo } from '@paraspell/assets'
-import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
-import { Parents, type TLocation, type TSubstrateChain } from '@paraspell/sdk-common'
+import type { TAssetInfo } from '@paraspell/sdk-core'
+import {
+  getNativeAssetSymbol,
+  getOtherAssets,
+  Parents,
+  type TLocation,
+  type TSubstrateChain
+} from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getLocationTokenIdPjs } from './getLocationTokenIdPjs'
+import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/assets')
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
+  getNativeAssetSymbol: vi.fn(),
+  getOtherAssets: vi.fn()
+}))
 
-describe('getLocationTokenIdPjs', () => {
-  const mockChain = {} as TSubstrateChain
+describe('getLocationTokenId', () => {
+  const mockChain: TSubstrateChain = 'Acala'
 
   it('should return the native asset symbol when location.interior is "Here"', () => {
     const location: TLocation = { parents: Parents.ONE, interior: 'Here' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
-    const result = getLocationTokenIdPjs(location, mockChain)
+    const result = getLocationTokenId(location, mockChain)
 
     expect(result).toBe('DOT')
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockChain)
@@ -35,7 +44,7 @@ describe('getLocationTokenIdPjs', () => {
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenIdPjs(location, mockChain)
+    const result = getLocationTokenId(location, mockChain)
 
     expect(result).toBe('USDT')
     expect(getOtherAssets).toHaveBeenCalledWith(mockChain)
@@ -56,8 +65,7 @@ describe('getLocationTokenIdPjs', () => {
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
 
-    const result = getLocationTokenIdPjs(location, mockChain)
-
+    const result = getLocationTokenId(location, mockChain)
     expect(result).toBeNull()
   })
 
@@ -69,8 +77,7 @@ describe('getLocationTokenIdPjs', () => {
       }
     }
 
-    const result = getLocationTokenIdPjs(location, mockChain)
-
+    const result = getLocationTokenId(location, mockChain)
     expect(result).toBeNull()
   })
 
@@ -82,8 +89,7 @@ describe('getLocationTokenIdPjs', () => {
       }
     }
 
-    const result = getLocationTokenIdPjs(location, mockChain)
-
+    const result = getLocationTokenId(location, mockChain)
     expect(result).toBeNull()
   })
 })

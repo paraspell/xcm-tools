@@ -36,13 +36,8 @@ type Props = {
 };
 
 export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
-  const {
-    connectWallet,
-    selectedAccount,
-    isInitialized,
-    isLoadingExtensions,
-    setIsUseXcmApiSelected,
-  } = useWallet();
+  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
+    useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(ASSET_CLAIM_CHAINS).withDefault('Polkadot'),
@@ -71,13 +66,7 @@ export const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { useApi } = form.getValues();
-
   const onConnectWalletClick = () => void connectWallet();
-
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">

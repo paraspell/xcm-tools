@@ -91,13 +91,8 @@ export const XcmTransferForm: FC<Props> = ({
   initialValues,
   isVisible = true,
 }) => {
-  const {
-    connectWallet,
-    selectedAccount,
-    isInitialized,
-    isLoadingExtensions,
-    setIsUseXcmApiSelected,
-  } = useWallet();
+  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
+    useWallet();
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Astar'),
@@ -177,7 +172,7 @@ export const XcmTransferForm: FC<Props> = ({
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
-  const { from, to, currencies, feeAsset, useApi } = form.getValues();
+  const { from, to, currencies, feeAsset } = form.getValues();
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     from,
@@ -295,10 +290,6 @@ export const XcmTransferForm: FC<Props> = ({
       form.setFieldValue('to', from);
     }
   };
-
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
 
   const onConnectWalletClick = () => void connectWallet();
 

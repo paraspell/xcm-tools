@@ -32,9 +32,10 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
-  computeFeeFromDryRun,
   createClientCache,
   createClientPoolHelpers,
+  DEFAULT_TTL_MS,
+  EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
@@ -49,11 +50,12 @@ import {
   isRelayChain,
   isSenderSigner,
   localizeLocation,
-  MissingChainApiError,
+  MAX_CLIENTS,
   padValueBy,
   Parents,
   RELAY_LOCATION,
   replaceBigInt,
+  resolveChainApi,
   RuntimeApiUnavailableError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -63,11 +65,11 @@ import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { getWsProvider } from 'polkadot-api/ws-provider'
 import { isAddress, isHex } from 'viem'
 
-import { DEFAULT_TTL_MS, EXTENSION_MS, LEGACY_CHAINS, MAX_CLIENTS } from './consts'
+import { LEGACY_CHAINS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
-import { createDevSigner, deriveAddress, findFailingEvent } from './utils'
+import { computeOriginFee, createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
 const clientPool = createClientCache<TPapiApi>(
   MAX_CLIENTS,
@@ -143,39 +145,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    const apiConfig = this.getApiConfigForChain(chain)
-
-    // For development mode, api for each used chain must be provided
-    if (isConfig(this._config) && this._config.development && !apiConfig) {
-      throw new MissingChainApiError(chain)
-    }
-
-    this.api = await this.resolveApi(apiConfig, chain)
+    this.api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
+      this.createApiInstance(wsUrl, c)
+    )
 
     this.initialized = true
-  }
-
-  private getApiConfigForChain(chain: TSubstrateChain): TPapiApiOrUrl | undefined {
-    if (isConfig(this._config)) {
-      return this._config.apiOverrides?.[chain]
-    }
-    return this._config
-  }
-
-  private resolveApi(
-    apiConfig: TPapiApiOrUrl | undefined,
-    chain: TSubstrateChain
-  ): Promise<TPapiApi> {
-    if (!apiConfig) {
-      const wsUrl = getChainProviders(chain)
-      return this.createApiInstance(wsUrl, chain)
-    }
-
-    if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
-      return this.createApiInstance(apiConfig, chain)
-    }
-
-    return Promise.resolve(apiConfig)
   }
 
   createApiInstance(wsUrl: TUrl, chain: TSubstrateChain) {
@@ -227,10 +201,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     const method = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
     return this.api
       .getUnsafeApi()
-      .tx.Utility[method]({ calls: calls.map(call => call.decodedCall) })
+      .tx.Utility[method]({ calls: calls.map(({ decodedCall }) => decodedCall) })
   }
 
-  callDispatchAsMethod(call: TPapiTransaction, address: string) {
+  callDispatchAsMethod({ decodedCall }: TPapiTransaction, address: string) {
     const origin = {
       type: 'system',
       value: {
@@ -238,9 +212,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
         value: address
       }
     }
-    return this.api
-      .getUnsafeApi()
-      .tx.Utility.dispatch_as({ as_origin: origin, call: call.decodedCall })
+    return this.api.getUnsafeApi().tx.Utility.dispatch_as({ as_origin: origin, call: decodedCall })
   }
 
   async objectToHex(obj: unknown, _typeName: string, version: Version) {
@@ -391,7 +363,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       version,
       useRootOrigin = false
     } = options
-    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
+    const { supportsDryRunApi } = getAssetsObject(chain)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
@@ -573,7 +545,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     }
 
     const { partialFee: executionFee } = await this.getPaymentInfo(tx, address)
-    const fee = computeFeeFromDryRun(result, chain, executionFee, !!feeAsset)
+    const fee = computeOriginFee(result, chain, executionFee, !!feeAsset)
 
     return Promise.resolve({
       success: true,
@@ -765,7 +737,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     amount,
     version
   }: TDryRunXcmBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
-    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
+    const { supportsDryRunApi } = getAssetsObject(chain)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
