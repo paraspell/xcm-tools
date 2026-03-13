@@ -10,7 +10,6 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
-  computeFeeFromDryRun,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
@@ -38,7 +37,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
-import { deriveAddress } from './utils'
+import { computeOriginFee, deriveAddress } from './utils'
 
 vi.mock('polkadot-api/ws-provider', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
@@ -63,12 +62,9 @@ vi.mock('./utils', async importActual => ({
   createDevSigner: vi.fn().mockReturnValue({ publicKey: new Uint8Array(32) })
 }))
 
-vi.mock('../utils/dryRun/computeFeeFromDryRun')
-
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   addXcmVersionHeader: vi.fn(),
-  computeFeeFromDryRun: vi.fn(),
   createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient),
   getAssetsObject: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn(),
@@ -250,15 +246,13 @@ describe('PapiApi', () => {
 
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
-      const wsUrl = ['ws://some-chain:9944']
-      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
       const createApiInstanceSpy = vi
         .spyOn(papiApi, 'createApiInstance')
         .mockResolvedValue(mockPolkadotClient)
 
-      await papiApi.init('SomeChain' as TSubstrateChain)
+      await papiApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'SomeChain')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
 
       createApiInstanceSpy.mockRestore()
@@ -311,15 +305,13 @@ describe('PapiApi', () => {
 
     it('should create api automatically when no config and no overrides', async () => {
       papiApi = new PapiApi()
-      const wsUrl = ['ws://auto-chain:9944']
-      vi.mocked(getChainProviders).mockReturnValue(wsUrl)
       const createApiInstanceSpy = vi
         .spyOn(papiApi, 'createApiInstance')
         .mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(wsUrl, 'Acala')
+      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
       createApiInstanceSpy.mockRestore()
     })
@@ -1152,7 +1144,7 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_call = dryRunApiCallMock
 
-      vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
+      vi.mocked(computeOriginFee).mockReturnValue(500n)
     })
 
     afterEach(() => {
@@ -1269,7 +1261,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('skips XcmPaymentApi on system chains (falls back to computeFeeFromDryRun)', async () => {
+    it('skips XcmPaymentApi on system chains (falls back to computeOriginFee)', async () => {
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
       vi.mocked(isSystemChain).mockReturnValue(true)
 

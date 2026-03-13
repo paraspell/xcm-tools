@@ -1,15 +1,13 @@
-import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
 import {
   getJunctionValue,
+  getNativeAssetSymbol,
+  getOtherAssets,
   hasJunction,
   type TLocation,
   type TSubstrateChain
-} from '@paraspell/sdk-common'
+} from '@paraspell/sdk-core'
 
-export const getLocationTokenIdPjs = (
-  location: TLocation,
-  chain: TSubstrateChain
-): string | null => {
+export const getLocationTokenId = (location: TLocation, chain: TSubstrateChain): string | null => {
   if (location.interior === 'Here') {
     // native token
     return getNativeAssetSymbol(chain)

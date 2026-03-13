@@ -1,14 +1,25 @@
-import type { TPapiTransaction } from '@paraspell/sdk';
+import type { TApiType, TPapiTransaction } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import type {
-  PolkadotClient,
-  PolkadotSigner,
-  TxFinalizedPayload,
-} from 'polkadot-api';
+import type { DedotClient, SubmittableExtrinsic } from 'dedot';
+import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
 
-import type { TApiType } from '../types';
+import type { TApi, TTransaction } from './importSdk';
+
+export const submitTransactionDedot = async (
+  _api: DedotClient,
+  tx: SubmittableExtrinsic,
+  signer: Signer,
+  injectorAddress: string,
+  onSign?: () => void,
+): Promise<string> => {
+  const result = await tx
+    .signAndSend(injectorAddress, { signer })
+    .untilFinalized();
+  if (onSign) onSign();
+  return result.txHash;
+};
 
 export const submitTransactionPjs = async (
   api: ApiPromise,
@@ -77,8 +88,8 @@ export const submitTransactionPapi = async (
 
 export const submitTx = async (
   apiType: TApiType,
-  api: ApiPromise | PolkadotClient,
-  tx: Extrinsic | TPapiTransaction,
+  api: TApi,
+  tx: TTransaction,
   signer: PolkadotSigner | Signer,
   address: string,
   onSign?: () => void,
@@ -87,6 +98,14 @@ export const submitTx = async (
     await submitTransactionPapi(
       tx as TPapiTransaction,
       signer as PolkadotSigner,
+      onSign,
+    );
+  } else if (apiType === 'DEDOT') {
+    await submitTransactionDedot(
+      api as DedotClient,
+      tx as SubmittableExtrinsic,
+      signer as Signer,
+      address,
       onSign,
     );
   } else {

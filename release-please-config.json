@@ -27,6 +27,9 @@
     "packages/sdk-pjs": {
       "component": "sdk-pjs"
     },
+    "packages/sdk-dedot": {
+      "component": "sdk-dedot"
+    },
     "packages/sdk-common": {
       "component": "sdk-common"
     },
@@ -53,6 +56,7 @@
         "sdk-core",
         "sdk",
         "sdk-pjs",
+        "sdk-dedot",
         "sdk-common",
         "assets",
         "pallets",

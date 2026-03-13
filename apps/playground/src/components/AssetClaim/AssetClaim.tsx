@@ -7,21 +7,16 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TBuilderOptions, TLocation } from '@paraspell/sdk';
-import {
-  type GeneralBuilder,
-  Parents,
-  type TPapiApiOrUrl,
-  type TPapiTransaction,
-} from '@paraspell/sdk';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { TLocation } from '@paraspell/sdk';
+import { Parents } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
+import type { TTransaction } from '../../utils';
 import {
   createBuilderOptions,
   getTxFromApi,
+  importSdk,
   resolveSenderAddress,
   submitTx,
 } from '../../utils';
@@ -85,15 +80,7 @@ export const AssetClaim = () => {
       'Waiting to sign transaction',
     );
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      api?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((api?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { createChainClient, Builder } = await importSdk(apiType);
 
     const signer = await getSigner();
 
@@ -106,11 +93,11 @@ export const AssetClaim = () => {
 
     let api;
     try {
-      let tx: Extrinsic | TPapiTransaction | undefined;
+      let tx: TTransaction | undefined;
       let hash: string | undefined;
 
       if (useApi) {
-        api = await Sdk.createChainClient(from);
+        api = await createChainClient(from);
         tx = await getTxFromApi(
           {
             from,

@@ -1,5 +1,6 @@
 import { createFormActions } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import { API_TYPES, type TApiType } from '@paraspell/sdk';
 import {
   web3Accounts,
   web3Enable,
@@ -20,7 +21,7 @@ import { AccountSelectModal } from '../components/AccountSelectModal/AccountSele
 import { PageRoute } from '../components/PageRoute';
 import { PolkadotWalletSelectModal } from '../components/WalletSelectModal/WalletSelectModal';
 import { DAPP_NAME, MAIN_FORM_NAME } from '../constants';
-import type { TApiType, TWalletAccount } from '../types';
+import type { TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
 import { WalletContext } from './WalletContext';
 
@@ -38,8 +39,11 @@ const getAddressFromLocalStorage = (): string | undefined => {
 };
 
 const getApiTypeFromLocalStorage = (): TApiType | undefined => {
-  const apiType = localStorage.getItem(STORAGE_API_TYPE_KEY);
-  return apiType === 'PJS' || apiType === 'PAPI' ? apiType : undefined;
+  const isApiType = (value: string): value is TApiType =>
+    API_TYPES.some((type) => type === value);
+
+  const value = localStorage.getItem(STORAGE_API_TYPE_KEY);
+  return value && isApiType(value) ? value : undefined;
 };
 
 const getExtensionFromLocalStorage = (): string | undefined => {
@@ -71,7 +75,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   const [isLoadingExtensions, setIsLoadingExtensions] = useState(false);
   const [queryApiType, setQueryApiType] = useQueryState(
     'apiType',
-    parseAsStringLiteral(['PAPI', 'PJS'])
+    parseAsStringLiteral(API_TYPES)
       .withDefault('PAPI')
       .withOptions({ shallow: false }),
   );
@@ -127,7 +131,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       }
 
       if (savedApiType && savedAddress) {
-        if (savedApiType === 'PJS') {
+        if (savedApiType === 'PJS' || savedApiType === 'DEDOT') {
           const allInjected = await web3Enable('Paraspell');
 
           if (!allInjected.length) {
@@ -209,7 +213,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   }, []);
 
   useEffect(() => {
-    if (apiType === 'PJS' && selectedAccount) {
+    if ((apiType === 'PJS' || apiType === 'DEDOT') && selectedAccount) {
       void web3Enable(DAPP_NAME);
     }
   }, [selectedAccount, apiType]);
@@ -219,7 +223,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       throw new Error('No selected account');
     }
 
-    if (apiType === 'PJS') {
+    if (apiType === 'PJS' || apiType === 'DEDOT') {
       const injector = await web3FromAddress(selectedAccount.address);
       return injector.signer;
     } else {
@@ -258,7 +262,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
   };
 
   const initExtensions = async () => {
-    if (apiType === 'PJS') {
+    if (apiType === 'PJS' || apiType === 'DEDOT') {
       await initPjsExtensions();
     } else {
       initPapiExtensions();

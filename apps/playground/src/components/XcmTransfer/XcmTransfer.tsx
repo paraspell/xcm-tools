@@ -8,19 +8,8 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type {
-  GeneralBuilder,
-  TBuilderOptions,
-  TCurrencyCore,
-  TPapiApiOrUrl,
-} from '@paraspell/sdk';
-import {
-  BatchMode,
-  replaceBigInt,
-  type TPapiTransaction,
-} from '@paraspell/sdk';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { GeneralBuilder, TCurrencyCore } from '@paraspell/sdk';
+import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
@@ -32,12 +21,14 @@ import type {
   TProgressSwapEvent,
   TSubmitType,
 } from '../../types';
+import type { TTransaction } from '../../utils';
 import {
   createBuilderOptions,
   determineCurrency,
   determineFeeAsset,
   fetchFromApi,
   getTxFromApi,
+  importSdk,
   resolveSenderAddress,
   setupBaseBuilder,
   submitApiTransactions,
@@ -130,28 +121,22 @@ export const XcmTransfer = () => {
       'Waiting to sign transaction',
     );
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      options?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { createChainClient, Builder } = await importSdk(apiType);
 
     const firstItem = items[0];
 
     const builderOptions = createBuilderOptions(firstItem);
 
-    const senderAddress = firstItem.localAccount ?? selectedAccount.address;
+    const senderAddress = firstItem.localAccount || selectedAccount.address;
 
     let api;
 
+    const signer = await getSigner();
+
     try {
-      let tx: Extrinsic | TPapiTransaction;
+      let tx: TTransaction;
       if (firstItem.useApi) {
-        api = await Sdk.createChainClient(firstItem.from);
+        api = await createChainClient(firstItem.from);
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
@@ -168,7 +153,8 @@ export const XcmTransfer = () => {
                   currencyInputs.length === 1
                     ? currencyInputs[0]
                     : (currencyInputs as TCurrencyCore[]),
-                ...(item.transformedCurrencyTo
+                ...(item.transformedCurrencyTo?.currencyOptionId ||
+                item.transformedCurrencyTo?.isCustomCurrency
                   ? {
                       swapOptions: {
                         ...item.swapOptions,
@@ -222,8 +208,6 @@ export const XcmTransfer = () => {
         api = builder.getApi();
       }
 
-      const signer = await getSigner();
-
       await submitTx(apiType, api, tx, signer, selectedAccount.address, () => {
         notifId = showLoadingNotification(
           'Processing',
@@ -269,15 +253,7 @@ export const XcmTransfer = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      options?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { Builder } = await importSdk(apiType);
 
     const { currencies, useApi } = formValues;
 
@@ -294,6 +270,7 @@ export const XcmTransfer = () => {
         feeAsset,
         transformedFeeAsset,
         abstractDecimals,
+        swapOptions,
         ...safeFormValues
       } = formValues;
       result = await fetchFromApi(
@@ -309,7 +286,8 @@ export const XcmTransfer = () => {
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(transformedFeeAsset),
-          ...(formValues.transformedCurrencyTo
+          ...(formValues.transformedCurrencyTo?.currencyOptionId ||
+          formValues.transformedCurrencyTo?.isCustomCurrency
             ? {
                 swapOptions: {
                   ...formValues.swapOptions,
@@ -421,15 +399,7 @@ export const XcmTransfer = () => {
 
     const signer = await getSigner();
 
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((
-      options?: TBuilderOptions<TPjsApiOrUrl>,
-    ) => GeneralBuilder) &
-      ((options?: TBuilderOptions<TPapiApiOrUrl>) => GeneralBuilderPjs);
+    const { createChainClient, Builder } = await importSdk(apiType);
 
     let api;
     try {
@@ -451,7 +421,7 @@ export const XcmTransfer = () => {
         };
       });
 
-      let tx: Extrinsic | TPapiTransaction | undefined;
+      let tx: TTransaction | undefined;
       let hash: string | undefined;
 
       if (useApi) {
@@ -463,6 +433,7 @@ export const XcmTransfer = () => {
           feeAsset,
           transformedFeeAsset,
           abstractDecimals,
+          swapOptions,
           ...safeFormValues
         } = formValues;
 
@@ -473,7 +444,8 @@ export const XcmTransfer = () => {
           senderAddress,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-          ...(formValues.transformedCurrencyTo
+          ...(formValues.transformedCurrencyTo?.currencyOptionId ||
+          formValues.transformedCurrencyTo?.isCustomCurrency
             ? {
                 swapOptions: {
                   ...formValues.swapOptions,
@@ -485,7 +457,10 @@ export const XcmTransfer = () => {
             : {}),
         };
 
-        if (swapOptions.currencyTo) {
+        if (
+          swapOptions.currencyTo.currencyOptionId ||
+          swapOptions.currencyTo.isCustomCurrency
+        ) {
           const transactions = await fetchFromApi<
             typeof apiPayload,
             TApiTransaction[]
@@ -509,7 +484,7 @@ export const XcmTransfer = () => {
             'Transaction was successful',
           );
         } else {
-          api = await Sdk.createChainClient(from);
+          api = await createChainClient(from);
           tx = await getTxFromApi(
             apiPayload,
             api,
@@ -529,7 +504,10 @@ export const XcmTransfer = () => {
           signer,
         );
 
-        if (swapOptions.currencyTo) {
+        if (
+          swapOptions.currencyTo.currencyOptionId ||
+          swapOptions.currencyTo.isCustomCurrency
+        ) {
           const txContexts = await finalBuilder.buildAll();
 
           if (txContexts.length > 1) {

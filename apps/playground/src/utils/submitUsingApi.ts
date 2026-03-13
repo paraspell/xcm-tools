@@ -1,12 +1,12 @@
-import type { TPapiTransaction } from '@paraspell/sdk';
-import { type Extrinsic } from '@paraspell/sdk-pjs';
+import type { TApiType } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import axios, { AxiosError } from 'axios';
+import type { DedotClient } from 'dedot';
 import type { PolkadotClient } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
 
 import { API_URL } from '../constants';
-import type { TApiType } from '../types';
+import type { TApi, TTransaction } from './importSdk';
 
 export const fetchFromApi = async <T, TResponse = unknown>(
   params: T,
@@ -50,13 +50,13 @@ export const fetchFromApi = async <T, TResponse = unknown>(
 
 export const getTxFromApi = async <T>(
   params: T,
-  api: ApiPromise | PolkadotClient,
+  api: TApi,
   endpoint: string,
   senderAddress: string,
   apiType: TApiType,
   method: string = 'GET',
   useBody = false,
-): Promise<Extrinsic | TPapiTransaction> => {
+): Promise<TTransaction> => {
   const txHash = await fetchFromApi(
     {
       ...params,
@@ -69,6 +69,9 @@ export const getTxFromApi = async <T>(
 
   if (apiType === 'PJS') {
     return (api as ApiPromise).tx(txHash as string);
+  } else if (apiType === 'DEDOT') {
+    const tx = (api as DedotClient).registry.$Extrinsic.tryDecode(txHash);
+    return (api as DedotClient).toTx(tx);
   } else {
     const callData = Binary.fromHex(txHash as string);
     return (api as PolkadotClient).getUnsafeApi().txFromCallData(callData);

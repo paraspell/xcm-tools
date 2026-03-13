@@ -1,4 +1,4 @@
-import type { TCurrencyCore } from '@paraspell/sdk';
+import type { TApiType, TCurrencyCore } from '@paraspell/sdk';
 import * as Sdk from '@paraspell/sdk';
 import {
   findAssetInfoOrThrow,
@@ -19,7 +19,7 @@ import {
 import * as SdkPjs from '@paraspell/sdk-pjs';
 
 import type { FormValues } from '../../components/AssetsQueries/AssetsQueriesForm';
-import type { TApiType, TAssetsQuery } from '../../types';
+import type { TAssetsQuery } from '../../types';
 
 export const callSdkFunc = (
   formValues: FormValues,
