@@ -4,7 +4,13 @@ import {
   getNativeAssetSymbol,
   getRelayChainSymbol
 } from '@paraspell/assets'
-import { SUBSTRATE_CHAINS, TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  CHAINS,
+  isExternalChain,
+  SUBSTRATE_CHAINS,
+  TChain,
+  TSubstrateChain
+} from '@paraspell/sdk-common'
 import { getChain } from '../src'
 
 const supportsOnlyNativeAsset: TChain[] = ['Nodle']
@@ -19,6 +25,14 @@ export const doesNotSupportParaToRelay: TChain[] = [
   'EnergyWebXPaseo'
 ]
 
+const isParaToRelayDisabled = (chain: TChain) => {
+  if (!isExternalChain(chain)) {
+    const chainInstance = getChain(chain)
+    return chainInstance.isReceivingTempDisabled('ParaToRelay')
+  }
+  return false
+}
+
 export const generateTransferScenarios = (originChain: TSubstrateChain, includeAll = false) => {
   const scenarios = []
   const allAssets = getAssets(originChain)
@@ -26,10 +40,8 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
   const isNativeOnly = supportsOnlyNativeAsset.includes(originChain)
   const isAssetIdRequired = assetIdRequired.includes(originChain)
 
-  for (const destChain of SUBSTRATE_CHAINS) {
-    if (destChain === originChain) continue
-    const chainInstance = getChain(destChain)
-    if (chainInstance.isReceivingTempDisabled('RelayToPara')) continue
+  for (const destChain of CHAINS) {
+    if (isParaToRelayDisabled(destChain)) continue
     if (getRelayChainSymbol(originChain) !== getRelayChainSymbol(destChain)) continue
 
     // Loop through assets to find the first compatible one
