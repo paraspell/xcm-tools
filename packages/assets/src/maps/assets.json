@@ -7779,6 +7779,24 @@
         "existentialDeposit": "1"
       },
       {
+        "symbol": "PEN",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2094
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000"
+      },
+      {
         "symbol": "TRAC",
         "decimals": 18,
         "location": {
@@ -11359,7 +11377,8 @@
             ]
           }
         },
-        "existentialDeposit": "4200000000"
+        "existentialDeposit": "4200000000",
+        "alias": "XRT1"
       },
       {
         "assetId": "16",
@@ -11900,6 +11919,22 @@
           }
         },
         "existentialDeposit": "1"
+      },
+      {
+        "symbol": "XRT",
+        "decimals": 9,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2048
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000",
+        "alias": "XRT2"
       },
       {
         "symbol": "USDC",
