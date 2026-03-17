@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.5](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.4...xcm-analyser-v3.0.5) (2026-03-17)
+
+
+### Documentation
+
+* Add dedot documentation ([9605794](https://github.com/paraspell/xcm-tools/commit/9605794a00943454c153eb852c05455c80a2a0ba))
+
 ## [3.0.4](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.3...xcm-analyser-v3.0.4) (2026-02-27)
 
 
