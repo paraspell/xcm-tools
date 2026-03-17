@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.9...sdk-core-v12.9.0) (2026-03-17)
+
+
+### Features
+
+* **sdk-dedot:** Add support for Dedot 🪄✨ ([928c691](https://github.com/paraspell/xcm-tools/commit/928c691e92c413ddffc7bc3aa67496967939024c))
+
+
+### Bug Fixes
+
+* **swap:** Add support for exchange empty array ✨ ([#1750](https://github.com/paraspell/xcm-tools/issues/1750)) ([e071e79](https://github.com/paraspell/xcm-tools/commit/e071e7994aef9397db4e8fab89a90fb354b92275))
+
 ## [12.8.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.8...sdk-core-v12.8.9) (2026-03-17)
 
 
