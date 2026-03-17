@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.0...sdk-core-v12.9.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update swap module logic 🛠️ ([6ce9f92](https://github.com/paraspell/xcm-tools/commit/6ce9f924901f3548b9e0f854dc018cbb07e7b7fa))
+
 ## [12.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.9...sdk-core-v12.9.0) (2026-03-17)
 
 
