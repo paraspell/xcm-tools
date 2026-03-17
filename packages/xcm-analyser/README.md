@@ -27,7 +27,7 @@
 #### Install SDK 
 
 ```bash
-pnpm | npm install || yarn add @paraspell/xcm-analyser 
+npm install | pnpm add | yarn add @paraspell/xcm-analyser 
 ```
 ## Implementation
 
