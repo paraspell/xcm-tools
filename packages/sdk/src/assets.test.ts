@@ -1,7 +1,7 @@
-import { claimAssets as claimAssetsImpl, getBalance as getBalanceImpl } from '@paraspell/sdk-core'
+import { getBalance as getBalanceImpl } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
-import { claimAssets, getBalance } from './assets'
+import { getBalance } from './assets'
 import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
@@ -14,17 +14,6 @@ describe('API Call Wrappers', () => {
     await getBalance({ chain: 'Acala', address: '0x123' })
     expect(createPapiApiCall).toHaveBeenCalledWith(
       getBalanceImpl<TPapiApi, TPapiTransaction, TPapiSigner>
-    )
-  })
-
-  it('should call createPapiApiCall with claimAssetsImpl for claimAssets', async () => {
-    await claimAssets({
-      chain: 'Acala',
-      address: '0x123',
-      currency: { symbol: 'DOT', amount: 100n }
-    })
-    expect(createPapiApiCall).toHaveBeenCalledWith(
-      claimAssetsImpl<TPapiApi, TPapiTransaction, TPapiSigner>
     )
   })
 })
