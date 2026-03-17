@@ -8,6 +8,7 @@ import type {
   TGetXcmFeeResult,
   TSubstrateChain,
 } from '@paraspell/sdk';
+import { normalizeExchange } from '@paraspell/sdk';
 import type { PolkadotSigner } from 'polkadot-api';
 
 import {
@@ -60,7 +61,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   exchange(chain: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, exchange: chain });
+    return new RouterBuilderCore(this._builderOptions, {
+      ...this._options,
+      exchange: normalizeExchange(chain),
+    });
   }
 
   /**

@@ -14,7 +14,6 @@ import {
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
-import { validateExchange } from '../utils/validateExchange.js';
 import {
   ExchangePairsDto,
   RouterBestAmountOutDto,
@@ -27,11 +26,10 @@ const validateChainsAndExchange = (
   to: RouterDto['to'],
 ): {
   fromChain?: TSubstrateChain;
-  exchangeChain?: TExchangeInput;
+  exchangeChain: TExchangeInput;
   toChain?: TChain;
 } => {
   const fromChain = from as TSubstrateChain;
-  const exchangeChain = validateExchange(exchange);
   const toChain = to as TChain;
 
   if (fromChain && !SUBSTRATE_CHAINS.includes(fromChain)) {
@@ -48,7 +46,7 @@ const validateChainsAndExchange = (
 
   return {
     fromChain: fromChain,
-    exchangeChain: exchangeChain,
+    exchangeChain: exchange,
     toChain: toChain,
   };
 };
@@ -366,6 +364,6 @@ export class RouterService {
   }
 
   getExchangePairs(exchange: ExchangePairsDto['exchange']) {
-    return getExchangePairs(validateExchange(exchange));
+    return getExchangePairs(exchange);
   }
 }

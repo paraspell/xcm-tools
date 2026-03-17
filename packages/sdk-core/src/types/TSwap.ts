@@ -5,7 +5,7 @@ import type { EXCHANGE_CHAINS } from '../constants'
 
 export type TExchangeChain = (typeof EXCHANGE_CHAINS)[number]
 
-export type TExchangeInput = TExchangeChain | [TExchangeChain, ...TExchangeChain[]] | undefined
+export type TExchangeInput = TExchangeChain | TExchangeChain[] | undefined
 
 export type TSwapOptions<TApi, TRes, TSigner> = {
   currencyTo: TCurrencyCore

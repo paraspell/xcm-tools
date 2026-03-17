@@ -69,7 +69,6 @@ import type {
 import {
   isValidPolkadotAddress,
   resolveCurrencyAsset,
-  resolveExchange,
   validateCustomEndpoint,
   validateTransferAddress,
 } from '../../utils';
@@ -195,7 +194,7 @@ export const XcmUtilsForm: FC<Props> = ({
 
   const { currencyToMap: swapCurrencyToMap } = useRouterCurrencyOptions(
     from,
-    resolveExchange(form.values.swapOptions.exchange),
+    form.values.swapOptions.exchange,
     to,
   );
 

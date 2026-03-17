@@ -2,6 +2,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
   TDryRunResult,
+  TExchangeChain,
   TGetXcmFeeResult,
   TLocation,
 } from '@paraspell/sdk';
@@ -235,7 +236,8 @@ describe('RouterController', () => {
 
   describe('getExchangePairs', () => {
     it('should call getExchangePairs service method with correct parameters and return result', () => {
-      const params = { exchange: 'AcalaDex' };
+      const exchange: TExchangeChain = 'AcalaDex';
+      const params = { exchange };
 
       const mockResult: Awaited<ReturnType<typeof service.getExchangePairs>> = [
         [
