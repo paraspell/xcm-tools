@@ -98,8 +98,6 @@ const builderMock = {
   dryRunPreview: vi.fn().mockResolvedValue(dryRunResult),
   getXcmFee: vi.fn().mockResolvedValue(feeResult),
   getOriginXcmFee: vi.fn().mockResolvedValue(feeResult),
-  getXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
-  getOriginXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
   getTransferableAmount: vi.fn().mockResolvedValue(amountResult),
   getMinTransferableAmount: vi.fn().mockResolvedValue(amountResult),
   verifyEdOnDestination: vi.fn().mockResolvedValue(true),
@@ -514,22 +512,6 @@ describe('XTransferService', () => {
       const res = await service.getOriginXcmFee(xTransferDto);
       expect(res).toBe(feeResult);
       expect(builderMock.getOriginXcmFee).toHaveBeenCalled();
-    });
-  });
-
-  describe('getXcmFeeEstimate', () => {
-    it('delegates to builder.getXcmFeeEstimate', async () => {
-      const res = await service.getXcmFeeEstimate(xTransferDto);
-      expect(res).toBe(feeResult);
-      expect(builderMock.getXcmFeeEstimate).toHaveBeenCalled();
-    });
-  });
-
-  describe('getOriginXcmFeeEstimate', () => {
-    it('delegates to builder.getOriginXcmFeeEstimate', async () => {
-      const res = await service.getOriginXcmFeeEstimate(xTransferDto);
-      expect(res).toBe(feeResult);
-      expect(builderMock.getOriginXcmFeeEstimate).toHaveBeenCalled();
     });
   });
 

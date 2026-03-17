@@ -54,16 +54,6 @@ export type TGetXcmFeeInternalOptions<
   useRootOrigin: boolean
 }
 
-export type TGetXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
-  'disableFallback' | 'useRootOrigin' | 'buildTx' | 'version'
->
-
-export type TGetOriginXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
-  'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx' | 'version'
->
-
 export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
@@ -200,17 +190,6 @@ export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
   hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]
-}
-
-export type TGetXcmFeeEstimateDetail = {
-  fee: bigint
-  asset: TAssetInfo
-  sufficient?: boolean
-}
-
-export type TGetXcmFeeEstimateResult = {
-  origin: TGetXcmFeeEstimateDetail
-  destination: TGetXcmFeeEstimateDetail
 }
 
 export type TPaymentInfo = {
