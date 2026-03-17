@@ -33,7 +33,6 @@ import type {
   TSymbolType,
   TTransferCurrencyType,
 } from '../types';
-import { resolveExchange } from './routerUtils';
 
 // Transforms apiOverrides array used by URL params to Record used by the SDK
 export const transformApiOverrides = (
@@ -164,7 +163,7 @@ export const addSwapToBuilder = <
   // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
   return builder.senderAddress(signer as PolkadotSigner).swap({
     currencyTo: determineCurrencyCore(transformedCurrencyTo),
-    exchange: resolveExchange(exchange),
+    exchange,
     slippage: Number(slippage),
     evmSigner,
     evmSenderAddress: evmInjectorAddress || undefined,

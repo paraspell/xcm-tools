@@ -5,7 +5,7 @@ import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../err
 import type { TApiOrUrl, TBuilderOptions, TSendOptionsWithSwap, TSwapOptions } from '../../types'
 import * as assertions from '../assertions'
 import * as builder from '../builder'
-import { createRouterBuilder, executeWithRouter } from './routerUtils'
+import { createRouterBuilder, executeWithRouter, normalizeExchange } from './routerUtils'
 
 vi.mock('../assertions')
 vi.mock('../builder')
@@ -288,6 +288,16 @@ describe('routerUtils', () => {
 
       expect(executor).toHaveBeenCalledWith(mockBuilderInstance)
       expect(result).toBe(expectedResult)
+    })
+  })
+
+  describe('normalizeExchange', () => {
+    it('should return undefined when exchange is an empty array', () => {
+      expect(normalizeExchange([])).toBeUndefined()
+    })
+
+    it('should return the same exchange in an array when exchange is a single-element array', () => {
+      expect(normalizeExchange(['AcalaDex'])).toEqual(['AcalaDex'])
     })
   })
 })

@@ -18,7 +18,6 @@ import { useEffect } from 'react';
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
 import { useEvmWallet, useRouterCurrencyOptions } from '../../hooks';
 import type { TFormValues } from '../../types';
-import { resolveExchange } from '../../utils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { PolkadotWalletSelectModal } from '../WalletSelectModal/WalletSelectModal';
@@ -80,7 +79,7 @@ export const Swap = ({ form }: Props) => {
 
   const { currencyToOptions } = useRouterCurrencyOptions(
     from,
-    resolveExchange(exchange),
+    exchange,
     to,
     undefined,
     currencyOptionId || undefined,

@@ -19,7 +19,6 @@ import {
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
-import { validateExchange } from '../utils/validateExchange.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
@@ -50,7 +49,7 @@ export class XTransferService {
         finalBuilder.swap({
           ...swapOptions,
           slippage: Number(swapOptions.slippage),
-          exchange: validateExchange(swapOptions.exchange),
+          exchange: swapOptions.exchange,
         }),
       );
     });
@@ -189,7 +188,7 @@ export class XTransferService {
       finalBuilder = finalBuilder.swap({
         ...rest,
         slippage: Number(rest.slippage),
-        exchange: validateExchange(exchange),
+        exchange,
       });
     }
 

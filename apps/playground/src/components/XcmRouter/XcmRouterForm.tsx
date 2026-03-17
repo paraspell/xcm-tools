@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TCurrencyInput, TExchangeInput } from '@paraspell/sdk';
+import type { TCurrencyInput } from '@paraspell/sdk';
 import {
   CHAINS,
   SUBSTRATE_CHAINS,
@@ -65,7 +65,6 @@ import {
   resolveCurrencyAsset,
   validateCustomEndpoint,
 } from '../../utils';
-import { resolveExchange } from '../../utils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
@@ -91,9 +90,8 @@ export type TRouterFormValues = {
 
 export type TRouterFormValuesTransformed = Omit<
   TRouterFormValues,
-  'exchange' | 'currencyFrom' | 'currencyTo' | 'feeAsset'
+  'currencyFrom' | 'currencyTo' | 'feeAsset'
 > & {
-  exchange: TExchangeInput;
   currencyFrom: TCurrencyInput;
   currencyTo: TCurrencyInput;
   feeAsset?: TCurrencyInput;
@@ -241,7 +239,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     adjacency,
   } = useRouterCurrencyOptions(
     from,
-    resolveExchange(exchange),
+    exchange,
     to,
     currencyFrom.currencyOptionId,
     currencyTo.currencyOptionId,
@@ -320,7 +318,6 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
     const transformedValues: TRouterFormValuesTransformed = {
       ...values,
-      exchange: resolveExchange(values.exchange),
       currencyFrom: determineCurrency(resolvedFrom),
       currencyTo: determineCurrency(resolvedTo),
       feeAsset: determineFeeAsset(resolvedFeeAsset),

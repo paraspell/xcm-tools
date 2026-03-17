@@ -269,18 +269,6 @@ describe('RouterService', () => {
       expect(builderMock.from).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid exchange chain', async () => {
-      const modifiedOptions: RouterDto = {
-        ...options,
-        exchange: invalidChain as TChain,
-      };
-
-      await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
-        BadRequestException,
-      );
-      expect(builderMock.from).not.toHaveBeenCalled();
-    });
-
     it('should throw BadRequestException for invalid injector address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
@@ -373,18 +361,6 @@ describe('RouterService', () => {
       const modifiedOptions: RouterDto = {
         ...options,
         to: invalidChain as TChain,
-      };
-
-      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
-        BadRequestException,
-      );
-      expect(builderMock.from).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException for invalid exchange chain', async () => {
-      const modifiedOptions: RouterDto = {
-        ...options,
-        exchange: invalidChain as TChain,
       };
 
       await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(

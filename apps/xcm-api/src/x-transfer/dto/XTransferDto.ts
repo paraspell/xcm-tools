@@ -1,4 +1,4 @@
-import { TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS, TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
 import { LocationSchema } from '@paraspell/xcm-analyser';
 import { z } from 'zod';
 
@@ -98,12 +98,7 @@ export const CurrencyCoreSchema = z.union([
 ]);
 
 export const ExchangeSchema = z
-  .union([
-    z.string(),
-    z
-      .array(z.string())
-      .min(1, { message: 'Exchange array must contain at least 1 element' }),
-  ])
+  .union([z.enum(EXCHANGE_CHAINS), z.array(z.enum(EXCHANGE_CHAINS))])
   .optional();
 
 export const SwapOptionsSchema = z.object({

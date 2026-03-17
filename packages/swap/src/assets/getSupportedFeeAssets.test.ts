@@ -104,7 +104,7 @@ describe('getSupportedFeeAssets', () => {
   });
 
   it('should gather assets from multiple exchanges when exchange is array and from undefined', () => {
-    const exchanges: [TExchangeChain, ...TExchangeChain[]] = ['HydrationDex', 'AcalaDex'];
+    const exchanges: TExchangeChain[] = ['HydrationDex', 'AcalaDex'];
 
     vi.mocked(createExchangeInstance).mockImplementation(
       (ex) => ({ chain: ex === 'HydrationDex' ? 'Hydration' : 'Acala' }) as never,

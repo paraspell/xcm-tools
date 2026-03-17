@@ -54,7 +54,8 @@ import {
   createTxOverrideAmount,
   executeWithRouter,
   isConfig,
-  isSenderSigner
+  isSenderSigner,
+  normalizeExchange
 } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
@@ -253,7 +254,10 @@ export class GeneralBuilder<
   ): GeneralBuilder<TApi, TRes, TSigner, T & { swapOptions: TSwapOptions<TApi, TRes, TSigner> }> {
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      swapOptions: options
+      swapOptions: {
+        ...options,
+        exchange: normalizeExchange(options.exchange)
+      }
     })
   }
 

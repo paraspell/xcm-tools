@@ -6,6 +6,7 @@ import type {
   TApiOrUrl,
   TBuilderConfig,
   TBuilderOptions,
+  TExchangeInput,
   TSendOptionsWithSwap,
   TUrl
 } from '../../types'
@@ -106,7 +107,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
 
   let builder = RouterBuilder(routerConfig)
     .from(from)
-    .exchange(exchange)
+    .exchange(exchange as SwapModule.TExchangeInput)
     .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)
@@ -133,3 +134,6 @@ export const executeWithRouter = async <TApi, TRes, TSigner, T>(
   const routerBuilder = await createRouterBuilder(options)
   return executor(routerBuilder)
 }
+
+export const normalizeExchange = (exchange: TExchangeInput): TExchangeInput =>
+  Array.isArray(exchange) && exchange.length === 0 ? undefined : exchange
