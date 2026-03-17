@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.9...xcm-api-v12.9.0) (2026-03-17)
+
+
+### Bug Fixes
+
+* **swap:** Add support for exchange empty array ✨ ([#1750](https://github.com/paraspell/xcm-tools/issues/1750)) ([e071e79](https://github.com/paraspell/xcm-tools/commit/e071e7994aef9397db4e8fab89a90fb354b92275))
+
 ## [12.8.9](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.8.8...xcm-api-v12.8.9) (2026-03-17)
 
 
