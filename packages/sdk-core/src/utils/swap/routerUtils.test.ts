@@ -225,7 +225,7 @@ describe('routerUtils', () => {
 
         await expect(createRouterBuilder(options)).rejects.toThrow(UnsupportedOperationError)
         await expect(createRouterBuilder(options)).rejects.toThrow(
-          'XCM Router does not support API client override with non-string values'
+          'Swap module does not support API client override with non-string values'
         )
       })
 
@@ -239,7 +239,7 @@ describe('routerUtils', () => {
 
         await expect(createRouterBuilder(options)).rejects.toThrow(UnsupportedOperationError)
         await expect(createRouterBuilder(options)).rejects.toThrow(
-          'XCM Router does not support API client override'
+          'Swap module does not support API client override'
         )
       })
 
@@ -259,20 +259,22 @@ describe('routerUtils', () => {
     })
 
     it('should throw ExtensionNotInstalledError when RouterBuilder is not available', async () => {
-      const routerModule = await import('@paraspell/swap')
-      const originalRouterBuilder = routerModule.RouterBuilder
+      vi.doMock('@paraspell/swap', () => {
+        throw new Error('Cannot find module')
+      })
 
-      // @ts-expect-error - temporarily set to undefined for testing
-      routerModule.RouterBuilder = undefined
+      const { createRouterBuilder: createRouterBuilderFresh } = await import('./routerUtils')
 
       const options = createBaseOptions()
 
-      await expect(createRouterBuilder(options)).rejects.toThrow(ExtensionNotInstalledError)
-      await expect(createRouterBuilder(options)).rejects.toThrow(
-        'XCM Router package is required for swaps. Please install @paraspell/swap.'
+      await expect(createRouterBuilderFresh(options)).rejects.toThrow(ExtensionNotInstalledError)
+      await expect(createRouterBuilderFresh(options)).rejects.toThrow(
+        'The swap package is required to use swaps. Please install @paraspell/swap.'
       )
 
-      routerModule.RouterBuilder = originalRouterBuilder
+      vi.doMock('@paraspell/swap', () => ({
+        RouterBuilder: vi.fn(() => mockBuilderInstance)
+      }))
     })
   })
 

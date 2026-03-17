@@ -1,3 +1,5 @@
+import type * as SwapModule from '@paraspell/swap'
+
 import { DEFAULT_SWAP_SLIPPAGE } from '../../constants'
 import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
 import type {
@@ -32,7 +34,7 @@ const convertBuilderConfig = <TApi>(
       Object.values(config.apiOverrides).some(url => typeof url === 'object')
     ) {
       throw new UnsupportedOperationError(
-        'XCM Router does not support API client override with non-string values'
+        'Swap module does not support API client override with non-string values'
       )
     }
 
@@ -48,7 +50,21 @@ const convertBuilderConfig = <TApi>(
 
   const isWsUrl = typeof config === 'string' && Array.isArray(config)
   if (!isWsUrl) {
-    throw new UnsupportedOperationError('XCM Router does not support API client override')
+    throw new UnsupportedOperationError('Swap module does not support API client override')
+  }
+}
+
+const importSwapModuleOrThrow = async () => {
+  const MODULE_NAME = '@paraspell/swap'
+
+  try {
+    // We separate the types from the actual import to avoid issues
+    // with webpack during build
+    return (await import(MODULE_NAME)) as typeof SwapModule
+  } catch {
+    throw new ExtensionNotInstalledError(
+      `The swap package is required to use swaps. Please install ${MODULE_NAME}.`
+    )
   }
 }
 
@@ -65,13 +81,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
   }
 
-  const { RouterBuilder } = await import('@paraspell/swap')
-
-  if (!RouterBuilder) {
-    throw new ExtensionNotInstalledError(
-      'XCM Router package is required for swaps. Please install @paraspell/swap.'
-    )
-  }
+  const { RouterBuilder } = await importSwapModuleOrThrow()
 
   const {
     from,
