@@ -107,7 +107,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
 
   let builder = RouterBuilder(routerConfig)
     .from(from)
-    .exchange(exchange as SwapModule.TExchangeInput)
+    .exchange(exchange)
     .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)

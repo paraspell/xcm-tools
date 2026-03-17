@@ -5,7 +5,7 @@ import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../err
 import type { TApiOrUrl, TBuilderOptions, TSendOptionsWithSwap, TSwapOptions } from '../../types'
 import * as assertions from '../assertions'
 import * as builder from '../builder'
-import { createRouterBuilder, executeWithRouter, normalizeExchange } from './routerUtils'
+import { createRouterBuilder, executeWithRouter, normalizeExchange } from './swapUtils'
 
 vi.mock('../assertions')
 vi.mock('../builder')
@@ -60,7 +60,7 @@ const createBaseOptions = (
   ...overrides
 })
 
-describe('routerUtils', () => {
+describe('swapUtils', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -263,7 +263,7 @@ describe('routerUtils', () => {
         throw new Error('Cannot find module')
       })
 
-      const { createRouterBuilder: createRouterBuilderFresh } = await import('./routerUtils')
+      const { createRouterBuilder: createRouterBuilderFresh } = await import('./swapUtils')
 
       const options = createBaseOptions()
 

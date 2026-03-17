@@ -9,7 +9,7 @@ import type { GeneralBuilder } from './Builder'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 vi.mock('../transfer')
-vi.mock('../utils/swap/routerUtils', async importOriginal => ({
+vi.mock('../utils/swap', async importOriginal => ({
   ...(await importOriginal()),
   executeWithRouter: vi.fn()
 }))
