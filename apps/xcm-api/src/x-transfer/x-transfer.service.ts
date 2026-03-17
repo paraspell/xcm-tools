@@ -217,18 +217,6 @@ export class XTransferService {
     );
   }
 
-  getXcmFeeEstimate(transfer: XTransferDtoWSenderAddress) {
-    return this.executeWithBuilder(transfer, (builder) =>
-      builder.getXcmFeeEstimate(),
-    );
-  }
-
-  getOriginXcmFeeEstimate(transfer: XTransferDtoWSenderAddress) {
-    return this.executeWithBuilder(transfer, (builder) =>
-      builder.getOriginXcmFeeEstimate(),
-    );
-  }
-
   generateXcmCall(transfer: XTransferDto) {
     return this.executeWithBuilderOptionalSender(
       transfer,

@@ -14,11 +14,9 @@ import {
 import {
   getMinTransferableAmount,
   getOriginXcmFee,
-  getOriginXcmFeeEstimate,
   getTransferableAmount,
   getTransferInfo,
   getXcmFee,
-  getXcmFeeEstimate,
   verifyEdOnDestination
 } from '../transfer'
 import type {
@@ -531,92 +529,6 @@ export class GeneralBuilder<
         currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
-      })
-    } finally {
-      await this.api.disconnect()
-    }
-  }
-
-  /**
-   * Estimates the origin and destination XCM fee using the `paymentInfo` function.
-   *
-   * @deprecated This function is deprecated and will be removed in a future version.
-   * Please use `builder.getXcmFee()` instead, where `builder` is an instance of `Builder()`.
-   * Will be removed in v13.
-   * For more details, see the documentation:
-   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
-   *
-   * @returns An origin and destination fee estimate.
-   */
-  async getXcmFeeEstimate(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
-  ) {
-    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
-
-    const { api, from, to, address, senderAddress, currency, swapOptions } = normalizedOptions
-
-    assertToIsString(to)
-    assertAddressIsString(address)
-    assertSwapSupport(swapOptions)
-
-    const tx = await buildTx()
-
-    try {
-      return await getXcmFeeEstimate({
-        api,
-        tx,
-        origin: from,
-        destination: to,
-        address,
-        senderAddress,
-        currency: currency as WithAmount<TCurrencyCore>
-      })
-    } finally {
-      await this.api.disconnect()
-    }
-  }
-
-  /**
-   * Estimates the origin XCM fee using paymentInfo function.
-   *
-   * @deprecated This function is deprecated and will be removed in a future version.
-   * Please use `builder.getOriginXcmFee()` instead, where `builder` is an instance of `Builder()`.
-   * Will be removed in v13.
-   * For more details, see the documentation:
-   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
-   *
-   * @returns An origin fee estimate.
-   */
-  async getOriginXcmFeeEstimate(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
-  ) {
-    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
-
-    const { api, from, to, senderAddress, currency, swapOptions } = normalizedOptions
-
-    assertToIsString(to)
-    assertSwapSupport(swapOptions)
-
-    const tx = await buildTx()
-
-    try {
-      return await getOriginXcmFeeEstimate({
-        api,
-        tx,
-        origin: from,
-        destination: to,
-        currency: currency as WithAmount<TCurrencyCore>,
-        senderAddress
       })
     } finally {
       await this.api.disconnect()

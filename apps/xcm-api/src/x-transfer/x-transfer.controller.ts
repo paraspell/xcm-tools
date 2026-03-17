@@ -97,26 +97,6 @@ export class XTransferController {
     return this.xTransferService.getOriginXcmFee(params);
   }
 
-  @Post('xcm-fee-estimate')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
-  getXcmFeeEstimate(
-    @Body() params: XTransferDtoWSenderAddress,
-    @Req() req: Request,
-  ) {
-    this.trackAnalytics(EventName.GET_XCM_FEE_ESTIMATE, req, params);
-    return this.xTransferService.getXcmFeeEstimate(params);
-  }
-
-  @Post('origin-xcm-fee-estimate')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
-  getOriginXcmFeeEstimate(
-    @Body() params: XTransferDtoWSenderAddress,
-    @Req() req: Request,
-  ) {
-    this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE_ESTIMATE, req, params);
-    return this.xTransferService.getOriginXcmFeeEstimate(params);
-  }
-
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {

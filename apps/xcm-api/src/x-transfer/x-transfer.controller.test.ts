@@ -4,8 +4,6 @@ import type {
   TBridgeStatus,
   TDryRunResult,
   TExchangeChain,
-  TGetXcmFeeEstimateDetail,
-  TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
   TTransferInfo,
   TXcmFeeDetail,
@@ -178,43 +176,6 @@ describe('XTransferController', () => {
         bodyParams,
         mockRequestObject,
       );
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
-    });
-  });
-
-  describe('getXcmFeeEstimate', () => {
-    it('should call service.getXcmFeeEstimate and returns its value', async () => {
-      const mockResult = {
-        origin: {},
-        destination: {},
-      } as TGetXcmFeeEstimateResult;
-      const spy = vi
-        .spyOn(service, 'getXcmFeeEstimate')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.getXcmFeeEstimate(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
-    });
-  });
-
-  describe('getOriginXcmFeeEstimate', () => {
-    it('should call service.getOriginXcmFeeEstimate and returns its value', async () => {
-      const mockResult = {} as TGetXcmFeeEstimateDetail;
-      const spy = vi
-        .spyOn(service, 'getOriginXcmFeeEstimate')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.getOriginXcmFeeEstimate(
-        bodyParams,
-        mockRequestObject,
-      );
-
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
     });
