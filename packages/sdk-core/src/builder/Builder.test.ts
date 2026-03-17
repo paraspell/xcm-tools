@@ -12,18 +12,14 @@ import {
   claimAssets,
   getMinTransferableAmount,
   getOriginXcmFee,
-  getOriginXcmFeeEstimate,
   getTransferableAmount,
   getTransferableAmountInternal,
   getTransferInfo,
   getXcmFee,
-  getXcmFeeEstimate,
   verifyEdOnDestination
 } from '../transfer'
 import type {
   TDryRunResult,
-  TGetXcmFeeEstimateDetail,
-  TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
   TTransactionContext,
   TTransferInfo,
@@ -985,49 +981,6 @@ describe('Builder', () => {
       expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
-    it('should fetch XCM fee estimate', async () => {
-      vi.mocked(getXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateResult)
-
-      const SENDER = 'sender-address'
-
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-      const result = await Builder(mockApi)
-        .from(CHAIN)
-        .to(CHAIN_2)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
-        .getXcmFeeEstimate()
-
-      expect(result).toEqual({})
-      expect(getXcmFeeEstimate).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
-      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    })
-
-    it('should fetch origin XCM fee estimate', async () => {
-      vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateDetail)
-
-      const SENDER = 'sender-address'
-
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-      const result = await Builder(mockApi)
-        .from(CHAIN)
-        .to(CHAIN_2)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
-        .getOriginXcmFeeEstimate()
-
-      expect(result).toEqual({})
-      expect(getOriginXcmFeeEstimate).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
-      expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    })
-
     it('should fetch transferable amount', async () => {
       const amount = 1000n
 
@@ -1181,56 +1134,6 @@ describe('Builder', () => {
           })
         )
         expect(getOriginXcmFee).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
-          })
-        )
-      })
-
-      it('normalizes the amount for getXcmFeeEstimate', async () => {
-        const feeEstimate = {} as TGetXcmFeeEstimateResult
-        vi.mocked(getXcmFeeEstimate).mockResolvedValue(feeEstimate)
-
-        const result = await Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getXcmFeeEstimate()
-
-        expect(result).toBe(feeEstimate)
-        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: MIN_AMOUNT })
-          })
-        )
-        expect(getXcmFeeEstimate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
-          })
-        )
-      })
-
-      it('normalizes the amount for getOriginXcmFeeEstimate', async () => {
-        const originFeeEstimate = {} as TGetXcmFeeEstimateDetail
-        vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue(originFeeEstimate)
-
-        const result = await Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getOriginXcmFeeEstimate()
-
-        expect(result).toBe(originFeeEstimate)
-        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: MIN_AMOUNT })
-          })
-        )
-        expect(getOriginXcmFeeEstimate).toHaveBeenCalledWith(
           expect.objectContaining({
             currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
           })
