@@ -166,6 +166,13 @@ export const transform = (obj: any): any => {
         const v = obj[key];
         const k = snakeToCamel(key);
 
+        if (key === "call") {
+          newObj[k] = {
+            encoded: v,
+          };
+          continue;
+        }
+
         if (key === "fee_item") {
           newObj[k] = Number(v);
           continue;
@@ -202,7 +209,9 @@ export const transform = (obj: any): any => {
           continue;
         }
 
-        if (k === "fun" && typeof v === "string") {
+        const noTypeKeys = ["fun", "originKind"];
+
+        if (noTypeKeys.includes(k) && typeof v === "string") {
           newObj[k] = v;
           continue;
         }

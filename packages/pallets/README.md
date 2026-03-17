@@ -31,7 +31,7 @@ This package serves as a `core` component for both `@paraspell/sdk` and `@parasp
 ### Install package
 
 ```bash
-pnpm | npm install || yarn add @paraspell/pallets
+npm install | pnpm add | yarn add @paraspell/pallets
 ```
 
 ### Import functionality

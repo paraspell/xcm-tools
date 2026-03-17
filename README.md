@@ -7,7 +7,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 </p>
 
 **Monorepo contains the following XCM tools:**
-- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **two** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) (With Swap package available (Formerly XCM Router)) & [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) as the `first` and `only` XCM SDK in the ecosystem.
+- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **three** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) (With Swap package available (Formerly XCM Router)), [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) & [Dedot Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-dedot) as the `first` and `only` XCM SDK in the ecosystem.
 - [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) ⚡️ (<img width="50" alt="Lightspell logo" src="https://user-images.githubusercontent.com/55763425/251588168-4855abc3-445a-4207-9a65-e891975be62c.png">): An API that provides the ability to integrate XCM interoperability into your decentralized application in a package-less way, offloading heavy computing tasks from your decentralized application, and reducing associated costs.
 - [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) 🔎 - Analyser package to convert XCM Multilocations into a human-readable format.
 - [XCM Visualizer](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-fe) 🖼️ - An application developed to visualize XCM within the Polkadot ecosystem.
@@ -40,6 +40,7 @@ apps | - XCM Playground
 
 packages | - XCM SDK
          | - XCM SDK-PJS
+         | - XCM SDK-DEDOT
          | - XCM SDK-Core
          | - XCM SDK-Common
          | - Swap
