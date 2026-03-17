@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.8.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.8...sdk-core-v12.8.9) (2026-03-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix swap module loading 🔧 ([a826f68](https://github.com/paraspell/xcm-tools/commit/a826f68de96854ddcdd3058ff7d8263a255a5222))
+
+
+### Tests
+
+* **sdk:** Add more to Ethereum test cases 🧪 ([#1748](https://github.com/paraspell/xcm-tools/issues/1748)) ([32331fb](https://github.com/paraspell/xcm-tools/commit/32331fb85d7cc4e798529a82b701f36356440a2e))
+
 ## [12.8.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.8.7...sdk-core-v12.8.8) (2026-03-10)
 
 
