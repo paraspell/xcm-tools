@@ -3,7 +3,7 @@ import { WETH9__factory } from '@snowbridge/contract-types'
 import type { Signer } from 'ethers'
 
 export const getTokenBalance = async (signer: Signer, symbol: string) => {
-  const asset = findAssetInfoOrThrow('Ethereum', { symbol }, null)
+  const asset = findAssetInfoOrThrow('Ethereum', { symbol })
 
   assertHasId(asset)
 

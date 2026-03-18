@@ -353,7 +353,7 @@ class DedotApi implements IPolkadotApi<
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId }, null),
+      asset: findAssetInfoOrThrow(chain, { id: assetId }),
     };
   }
 

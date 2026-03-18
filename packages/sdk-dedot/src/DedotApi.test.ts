@@ -613,11 +613,9 @@ describe("DedotApi", () => {
       expect(
         mockApiRaw.query.multiTransactionPayment.accountCurrencyMap,
       ).toHaveBeenCalledWith("addr");
-      expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
-        "Hydration",
-        { id: "1001" },
-        null,
-      );
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith("Hydration", {
+        id: "1001",
+      });
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset });
     });
   });

@@ -347,7 +347,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     if (assetId === undefined)
       return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
 
-    return { isCustomAsset: true, asset: findAssetInfoOrThrow(chain, { id: assetId }, null) }
+    return { isCustomAsset: true, asset: findAssetInfoOrThrow(chain, { id: assetId }) }
   }
 
   async getDryRunCall(

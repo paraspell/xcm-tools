@@ -13,13 +13,13 @@ const findSimilarAsset = (location: TLocation) => {
 
     if (paraId === getParaId('AssetHubPolkadot')) {
       const id = (location.interior.X3[2] as TJunctionGeneralIndex)['GeneralIndex']
-      const asset = findAssetInfo('AssetHubPolkadot', { id }, null)
+      const asset = findAssetInfo('AssetHubPolkadot', { id })
       if (asset) return asset
     }
   }
 
   for (const chain of CHAINS) {
-    const asset = findAssetInfo(chain, { location }, null)
+    const asset = findAssetInfo(chain, { location })
     if (asset) return asset
   }
   return null

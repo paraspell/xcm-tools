@@ -92,7 +92,7 @@ describe('findAssetInfoOrThrow', () => {
 
     const currencyInput: TCurrencyInput = { symbol: 'ACA' }
 
-    expect(() => findAssetInfoOrThrow(chain, currencyInput, null)).toThrow()
+    expect(() => findAssetInfoOrThrow(chain, currencyInput)).toThrow()
   })
 
   it('should throw InvalidCurrencyError with correct message for object currency input', () => {
@@ -101,7 +101,7 @@ describe('findAssetInfoOrThrow', () => {
 
     const currencyInput: TCurrencyInput = { symbol: '0x0001' }
 
-    expect(() => findAssetInfoOrThrow(chain, currencyInput, null)).toThrow(
+    expect(() => findAssetInfoOrThrow(chain, currencyInput)).toThrow(
       `Asset ${JSON.stringify(currencyInput)} not found on ${chain}`
     )
   })

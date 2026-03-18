@@ -4,6 +4,6 @@ import { findAssetInfo } from '../assets/search'
 import type { TCurrencyInput } from '../types/TCurrency'
 
 export const getAssetLocation = (chain: TChain, currency: TCurrencyInput): TLocation | null => {
-  const asset = findAssetInfo(chain, currency, null)
+  const asset = findAssetInfo(chain, currency)
   return asset?.location ?? null
 }

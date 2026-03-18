@@ -10,7 +10,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
   version: Version
 ): TAsset<bigint>[] => {
   const normalizeAsset = (amount: TAmount, currency: TCurrencyCore) => {
-    const asset = findAssetInfoOrThrow(chain, currency, null)
+    const asset = findAssetInfoOrThrow(chain, currency)
     const abstracted = abstractDecimals(amount, asset.decimals, api)
     return createAsset(version, abstracted, localizeLocation(chain, asset.location))
   }
