@@ -157,7 +157,7 @@ export const EvmTransfer = () => {
     to,
     amount,
     currency,
-    address,
+    recipient,
     ahAddress,
     useViem,
   }: FormValuesTransformed) => {
@@ -209,7 +209,7 @@ export const EvmTransfer = () => {
         .from(from)
         .to(to)
         .currency(currencyInput)
-        .address(address)
+        .recipient(recipient)
         .ahAddress(ahAddress)
         .signer(signer as WalletClient)
         .build();
@@ -220,7 +220,7 @@ export const EvmTransfer = () => {
         .from(from)
         .to(to)
         .currency(currencyInput)
-        .address(address)
+        .recipient(recipient)
         .ahAddress(ahAddress)
         .signer(signer)
         .build();

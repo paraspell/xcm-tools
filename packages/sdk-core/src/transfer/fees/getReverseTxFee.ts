@@ -7,15 +7,11 @@ import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions } from '../../types'
 import { padFee } from '../../utils/fees'
 
-const determineAddress = (
-  chain: TSubstrateChain,
-  address: string,
-  senderAddress: string
-): string => {
+const determineAddress = (chain: TSubstrateChain, recipient: string, sender: string): string => {
   if (isChainEvm(chain)) {
-    return isAddress(address) ? address : senderAddress
+    return isAddress(recipient) ? recipient : sender
   }
-  return isAddress(address) ? senderAddress : address
+  return isAddress(recipient) ? sender : recipient
 }
 
 export const getReverseTxFee = async <TApi, TRes, TSigner>(
@@ -23,22 +19,22 @@ export const getReverseTxFee = async <TApi, TRes, TSigner>(
     api,
     origin,
     destination,
-    senderAddress,
-    address,
+    sender,
+    recipient,
     skipReverseFeeCalculation
   }: TGetReverseTxFeeOptions<TApi, TRes, TSigner>,
   currencyInput: WithAmount<TCurrencyInput>
 ) => {
   if (skipReverseFeeCalculation) return 0n
 
-  const toAddress = determineAddress(origin, address, senderAddress)
-  const fromAddress = determineAddress(destination, address, senderAddress)
+  const toAddress = determineAddress(origin, recipient, sender)
+  const fromAddress = determineAddress(destination, recipient, sender)
 
   const { tx } = await Builder(api)
     .from(destination)
     .to(origin)
-    .address(toAddress)
-    .senderAddress(fromAddress)
+    .sender(fromAddress)
+    .recipient(toAddress)
     .currency(currencyInput)
     ['buildInternal']()
 

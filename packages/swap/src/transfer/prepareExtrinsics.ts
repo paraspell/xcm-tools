@@ -41,10 +41,10 @@ export const prepareExtrinsics = async (
             amount: BigInt(amount),
           } as WithAmount<TAssetInfo>,
           assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-          senderAddress: evmSenderAddress ?? senderAddress,
+          sender: evmSenderAddress ?? senderAddress,
+          recipient: recipientAddress ?? senderAddress,
           currencyTo,
           feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
-          recipientAddress: recipientAddress ?? senderAddress,
           calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
             dex.getAmountOut(exchange.api, {
               ...options,

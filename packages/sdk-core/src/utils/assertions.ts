@@ -25,11 +25,9 @@ export const assertAddressIsString: (
   }
 }
 
-export const assertSenderAddress: (
-  address: string | undefined
-) => asserts address is string = address => {
+export const assertSender: (address: string | undefined) => asserts address is string = address => {
   if (!address) {
-    throw new MissingParameterError('senderAddress')
+    throw new MissingParameterError('sender')
   }
 }
 
@@ -39,7 +37,7 @@ export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWith
   }
 }
 
-export const assertSender: <TSigner>(
+export const assertSenderSource: <TSigner>(
   sender?: TSender<TSigner>
 ) => asserts sender is TSender<TSigner> = <TSigner>(sender?: TSender<TSigner>) => {
   if (sender === undefined) {

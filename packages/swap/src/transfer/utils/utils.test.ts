@@ -24,8 +24,8 @@ const builderMock = {
   to: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
-  address: vi.fn().mockReturnThis(),
-  senderAddress: vi.fn().mockReturnThis(),
+  sender: vi.fn().mockReturnThis(),
+  recipient: vi.fn().mockReturnThis(),
   build: vi.fn().mockReturnValue({
     signAsync: vi.fn().mockResolvedValue('signedTx'),
     send: vi.fn().mockResolvedValue('sentTx'),
@@ -144,7 +144,7 @@ describe('transfer utils', () => {
         },
         amount: customAmount,
       });
-      expect(builderMock.address).toHaveBeenCalledWith(customSenderAddress);
+      expect(builderMock.recipient).toHaveBeenCalledWith(customSenderAddress);
     });
 
     it('should still build when currencyFrom is missing and from is not Ethereum', () => {

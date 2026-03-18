@@ -17,7 +17,7 @@ import type {
   TDryRunResult,
   TGetMinTransferableAmountOptions,
   TGetXcmFeeResult,
-  TSendBaseOptionsWithSenderAddress
+  TSendBaseOptionsWithSender
 } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
@@ -51,14 +51,14 @@ describe('getMinTransferableAmountInternal', () => {
     unknown,
     unknown,
     unknown,
-    TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
+    TSendBaseOptionsWithSender<unknown, unknown, unknown>
   >
 
   const baseOptions = {
     api,
     origin: 'Acala',
-    senderAddress: 'SENDER',
-    address: 'DEST_ADDR',
+    sender: 'SENDER',
+    recipient: 'DEST_ADDR',
     destination: 'Astar',
     currency: { symbol: 'ASSET', amount: 1n },
     builder: mockBuilder,

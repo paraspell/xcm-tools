@@ -4,7 +4,7 @@ import type {
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSender,
 } from '@paraspell/sdk';
 import {
   Foreign,
@@ -150,7 +150,7 @@ export const determineFeeAsset = (
 
 export const addSwapToBuilder = <
   T extends Partial<
-    TSendBaseOptionsWithSenderAddress<TPapiApi, TPapiTransaction, TPapiSigner>
+    TSendBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
   >,
 >(
   builder: GeneralBuilder<T>,
@@ -161,7 +161,7 @@ export const addSwapToBuilder = <
   const { exchange, slippage, evmSigner, evmInjectorAddress } = swapOptions;
 
   // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
-  return builder.senderAddress(signer as PolkadotSigner).swap({
+  return builder.sender(signer as PolkadotSigner).swap({
     currencyTo: determineCurrencyCore(transformedCurrencyTo),
     exchange,
     slippage: Number(slippage),
@@ -173,13 +173,13 @@ export const addSwapToBuilder = <
 export const setupBaseBuilder = (
   builder: GeneralBuilder,
   formValues: TFormValuesTransformed,
-  senderAddress: string,
+  sender: string,
   signer: PolkadotSigner | Signer,
 ) => {
   const {
     from,
     to,
-    address,
+    recipient,
     ahAddress,
     xcmVersion,
     keepAlive,
@@ -203,8 +203,8 @@ export const setupBaseBuilder = (
         : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
     )
     .feeAsset(determineFeeAsset(transformedFeeAsset))
-    .address(address)
-    .senderAddress(senderAddress)
+    .sender(sender)
+    .recipient(recipient)
     .ahAddress(ahAddress);
 
   if (xcmVersion) {
@@ -260,7 +260,7 @@ export const setupBaseRouterBuilder = (
     slippagePct,
     evmInjectorAddress,
   }: TRouterFormValuesTransformed,
-  senderAddress: string,
+  sender: string,
 ) => {
   const builder = RouterBuilder(options)
     .from(from)
@@ -270,7 +270,7 @@ export const setupBaseRouterBuilder = (
     .currencyTo(currencyTo)
     .feeAsset(feeAsset)
     .amount(amount)
-    .senderAddress(senderAddress)
+    .senderAddress(sender)
     .recipientAddress(recipientAddress)
     .evmSenderAddress(evmInjectorAddress)
     .slippagePct(slippagePct);

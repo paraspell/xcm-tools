@@ -5,7 +5,7 @@ import { generateMessageId } from './generateMessageId'
 
 describe('generateMessageId', () => {
   it('should generate the correct message id', async () => {
-    const fakeSenderAddress = 'Alice'
+    const fakeSender = 'Alice'
     const fakeSourceParaId = 42
     const fakeTokenAddress = '0xToken'
     const fakeRecipientAddress = 'Bob'
@@ -40,7 +40,7 @@ describe('generateMessageId', () => {
 
     const result = await generateMessageId(
       api,
-      fakeSenderAddress,
+      fakeSender,
       fakeSourceParaId,
       fakeTokenAddress,
       fakeRecipientAddress,
@@ -49,15 +49,15 @@ describe('generateMessageId', () => {
 
     const expectedEntropy = new Uint8Array([
       ...stringToUint8a(fakeSourceParaId.toString()),
-      ...hexToUint8a(accountToHex(fakeSenderAddress)),
+      ...hexToUint8a(accountToHex(fakeSender)),
       ...stringToUint8a(fakeAccountNextId),
       ...hexToUint8a(fakeTokenAddress),
       ...stringToUint8a(fakeRecipientAddress),
       ...stringToUint8a(fakeAmount.toString())
     ])
 
-    expect(getFromRpcSpy).toHaveBeenCalledWith('system', 'accountNextIndex', fakeSenderAddress)
-    expect(accountToHexSpy).toHaveBeenCalledWith(fakeSenderAddress)
+    expect(getFromRpcSpy).toHaveBeenCalledWith('system', 'accountNextIndex', fakeSender)
+    expect(accountToHexSpy).toHaveBeenCalledWith(fakeSender)
     expect(blake2AsHexSpy).toHaveBeenCalledWith(expectedEntropy)
     expect(result).toBe('0xfakehash')
   })

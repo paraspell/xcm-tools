@@ -36,7 +36,7 @@ class Interlay<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     const currencyId = this.getCustomCurrencyId(asset)
 
@@ -45,7 +45,7 @@ class Interlay<TApi, TRes, TSigner>
         module: 'Tokens',
         method: 'transfer_all',
         params: {
-          dest: address,
+          dest: recipient,
           currency_id: currencyId,
           keep_alive: keepAlive
         }
@@ -56,7 +56,7 @@ class Interlay<TApi, TRes, TSigner>
       module: 'Tokens',
       method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
-        dest: address,
+        dest: recipient,
         currency_id: currencyId,
         value: asset.amount
       }

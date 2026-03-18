@@ -47,8 +47,8 @@ const createBaseOptions = (
   api: createMockApi(),
   from: 'Acala',
   to: 'Astar',
-  address: '5F3sa2TJbN...',
-  senderAddress: '5G7abc...',
+  recipient: '5F3sa2TJbN...',
+  sender: '5G7abc...',
   currency: { symbol: 'DOT', amount: '1000000000' },
   swapOptions: {
     currencyTo: { symbol: 'GLMR' },
@@ -92,8 +92,8 @@ describe('swapUtils', () => {
       await createRouterBuilder(options)
 
       expect(assertions.assertToIsString).toHaveBeenCalledWith(options.to)
-      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.address)
-      expect(assertions.assertSenderAddress).toHaveBeenCalledWith(options.senderAddress)
+      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.recipient)
+      expect(assertions.assertSender).toHaveBeenCalledWith(options.sender)
     })
 
     it('should throw UnsupportedOperationError when currency is an array', async () => {

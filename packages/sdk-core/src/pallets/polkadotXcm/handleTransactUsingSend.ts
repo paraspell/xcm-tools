@@ -17,7 +17,7 @@ export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
   chain,
   destination,
   destChain,
-  address,
+  recipient,
   paraIdTo,
   asset,
   transactOptions
@@ -36,14 +36,14 @@ export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
     )
   }
 
-  assertAddressIsString(address)
+  assertAddressIsString(recipient)
 
   const transactInstructions = await createTransactInstructions(
     api,
     transactOptions,
     version,
     destChain,
-    address
+    recipient
   )
 
   const message = [
@@ -60,7 +60,7 @@ export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
         assets: { Wild: { AllCounted: 1 } },
         beneficiary: createBeneficiaryLocation({
           api,
-          address,
+          address: recipient,
           version
         })
       }

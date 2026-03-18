@@ -36,7 +36,7 @@ export type FormValues = {
   from: TEvmChainFrom;
   to: TChain;
   currencyOptionId: string;
-  address: string;
+  recipient: string;
   ahAddress: string;
   amount: string;
   useViem: boolean;
@@ -60,7 +60,7 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     to: parseAsStringLiteral(CHAINS).withDefault('AssetHubPolkadot'),
     currencyOptionId: parseAsString.withDefault(''),
     amount: parseAsString.withDefault('10'),
-    address: parseAsWalletAddress.withDefault(
+    recipient: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     ahAddress: parseAsString.withDefault(''),
@@ -71,7 +71,7 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     name: MAIN_FORM_NAME,
     initialValues: queryState,
     validate: {
-      address: (value) =>
+      recipient: (value) =>
         isValidPolkadotAddress(value) || ethers.isAddress(value)
           ? null
           : 'Invalid address',

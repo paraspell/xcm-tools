@@ -7,12 +7,12 @@ import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 export const createDirectExecuteXcm = async <TApi, TRes, TSigner>(
   options: TCreateTransferXcmOptions<TApi, TRes, TSigner>
 ) => {
-  const { api, version, transactOptions, destChain, recipientAddress } = options
+  const { api, version, transactOptions, destChain, recipient } = options
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(options)
 
   const transact = transactOptions?.call
-    ? await createTransactInstructions(api, transactOptions, version, destChain, recipientAddress)
+    ? await createTransactInstructions(api, transactOptions, version, destChain, recipient)
     : []
 
   const baseXcm = createBaseExecuteXcm({

@@ -10,7 +10,7 @@ import type {
   TSendOptionsWithSwap,
   TUrl
 } from '../../types'
-import { assertAddressIsString, assertSenderAddress, assertToIsString } from '../assertions'
+import { assertAddressIsString, assertSender, assertToIsString } from '../assertions'
 import { isConfig } from '../builder'
 
 type TRouterBuilderOptions = Omit<TBuilderConfig<TUrl>, 'xcmFormatCheck'>
@@ -89,13 +89,13 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     to,
     currency,
     swapOptions: { currencyTo, evmSenderAddress, exchange, slippage, onStatusChange },
-    senderAddress,
-    address
+    sender,
+    recipient: address
   } = options
 
   assertToIsString(to)
   assertAddressIsString(address)
-  assertSenderAddress(senderAddress)
+  assertSender(sender)
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
@@ -112,7 +112,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     .currencyFrom(currency)
     .currencyTo(currencyTo)
     .amount(currency.amount)
-    .senderAddress(senderAddress)
+    .senderAddress(sender)
     .evmSenderAddress(evmSenderAddress)
     .recipientAddress(address)
     .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())

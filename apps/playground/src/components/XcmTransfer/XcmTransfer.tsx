@@ -29,7 +29,7 @@ import {
   fetchFromApi,
   getTxFromApi,
   importSdk,
-  resolveSenderAddress,
+  resolveSender,
   setupBaseBuilder,
   submitApiTransactions,
   submitSdkTransactions,
@@ -129,7 +129,7 @@ export const XcmTransfer = () => {
 
     const builderOptions = createBuilderOptions(firstItem);
 
-    const senderAddress = firstItem.localAccount || selectedAccount.address;
+    const sender = firstItem.localAccount || selectedAccount.address;
 
     let api;
 
@@ -150,7 +150,7 @@ export const XcmTransfer = () => {
               return {
                 ...safeValues,
                 feeAsset: determineFeeAsset(transformedFeeAsset),
-                senderAddress,
+                sender,
                 currency:
                   currencyInputs.length === 1
                     ? currencyInputs[0]
@@ -191,12 +191,7 @@ export const XcmTransfer = () => {
           builder: GeneralBuilder,
           item: TFormValuesTransformed,
         ) => {
-          return setupBaseBuilder(
-            builder,
-            item,
-            senderAddress,
-            signer,
-          ).addToBatch();
+          return setupBaseBuilder(builder, item, sender, signer).addToBatch();
         };
 
         const initialBuilder = Builder(builderOptions);
@@ -248,7 +243,7 @@ export const XcmTransfer = () => {
 
   const performDryRun = async (
     formValues: TFormValuesTransformed,
-    senderAddress: string,
+    sender: string,
     signer: PolkadotSigner | Signer,
     submitType: 'dryRun' | 'dryRunPreview',
     notifId: string | undefined,
@@ -284,7 +279,7 @@ export const XcmTransfer = () => {
               ? { mintFeeAssets: true }
               : undefined),
           },
-          senderAddress,
+          sender,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           feeAsset: determineFeeAsset(transformedFeeAsset),
@@ -309,7 +304,7 @@ export const XcmTransfer = () => {
       const finalBuilder = setupBaseBuilder(
         builder,
         formValues,
-        senderAddress,
+        sender,
         signer,
       );
 
@@ -389,7 +384,7 @@ export const XcmTransfer = () => {
       return;
     }
 
-    const senderAddress = resolveSenderAddress(localAccount, selectedAccount);
+    const sender = resolveSender(localAccount, selectedAccount);
 
     setLoading(true);
     let notifId = showLoadingNotification(
@@ -406,13 +401,7 @@ export const XcmTransfer = () => {
     let api;
     try {
       if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
-        await performDryRun(
-          formValues,
-          senderAddress,
-          signer,
-          submitType,
-          notifId,
-        );
+        await performDryRun(formValues, sender, signer, submitType, notifId);
         return;
       }
 
@@ -443,7 +432,7 @@ export const XcmTransfer = () => {
           ...safeFormValues,
           options: builderOptions,
           feeAsset: determineFeeAsset(transformedFeeAsset),
-          senderAddress,
+          sender,
           currency:
             currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
           ...(formValues.transformedCurrencyTo?.currencyOptionId ||
@@ -491,7 +480,7 @@ export const XcmTransfer = () => {
             apiPayload,
             api,
             '/x-transfer',
-            senderAddress,
+            sender,
             apiType,
             'POST',
             true,
@@ -502,7 +491,7 @@ export const XcmTransfer = () => {
         const finalBuilder = setupBaseBuilder(
           builder,
           formValues,
-          senderAddress,
+          sender,
           signer,
         );
 
@@ -542,7 +531,7 @@ export const XcmTransfer = () => {
           throw Error('API is undefined');
         }
 
-        await submitTx(apiType, api, tx, signer, senderAddress, () => {
+        await submitTx(apiType, api, tx, signer, sender, () => {
           notifId = showLoadingNotification(
             'Processing',
             'Transaction is being processed',

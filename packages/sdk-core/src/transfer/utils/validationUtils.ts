@@ -109,8 +109,8 @@ export const validateTransact = <TApi, TRes, TSigner>({
   api,
   from,
   to,
-  senderAddress,
-  address,
+  sender,
+  recipient: address,
   transactOptions
 }: TSendOptions<TApi, TRes, TSigner>) => {
   const call = transactOptions?.call
@@ -131,11 +131,7 @@ export const validateTransact = <TApi, TRes, TSigner>({
     )
   }
 
-  if (
-    typeof address === 'string' &&
-    senderAddress &&
-    !compareAddresses(api, address, senderAddress)
-  ) {
+  if (typeof address === 'string' && sender && !compareAddresses(api, address, sender)) {
     return new ValidationError(
       'Sender address must match the destination address for transact to work.'
     )

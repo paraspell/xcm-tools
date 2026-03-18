@@ -19,8 +19,8 @@ describe('handleToAhTeleport', () => {
   const mockInput = {
     api: {},
     destination: 'Astar',
-    address: '5FakeAddress',
-    senderAddress: 'FakeSender',
+    recipient: '5FakeAddress',
+    sender: 'FakeSender',
     assetInfo: { symbol: 'DOT', amount: 1000n },
     currency: { symbol: 'DOT' }
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
@@ -67,17 +67,6 @@ describe('handleToAhTeleport', () => {
     const input = {
       ...mockInput,
       destination: { parents: 1, interior: 'Here' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
-    await expect(() => handleToAhTeleport(mockOrigin, input, defaultTx)).rejects.toThrow(
-      InvalidAddressError
-    )
-  })
-
-  it('throws error if address is a location', async () => {
-    const input = {
-      ...mockInput,
-      address: { parents: 1, interior: 'Here' }
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await expect(() => handleToAhTeleport(mockOrigin, input, defaultTx)).rejects.toThrow(

@@ -32,7 +32,7 @@ type TEvmBuilderOptionsBase = {
   /**
    * The Polkadot destination address.
    */
-  address: string
+  recipient: string
   /**
    * The AssetHub address
    */

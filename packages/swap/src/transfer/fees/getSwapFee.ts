@@ -46,7 +46,7 @@ export const getSwapFee = async <TDisableFallback extends boolean = false>(
     buildTx,
     origin: exchange.chain,
     destination: exchange.chain,
-    senderAddress: senderAddress,
+    sender: senderAddress,
     currency: {
       location: assetFrom.location,
       amount,

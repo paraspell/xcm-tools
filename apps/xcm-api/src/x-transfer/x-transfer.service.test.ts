@@ -22,7 +22,7 @@ import type {
   DryRunPreviewDto,
   SignAndSubmitDto,
   XTransferDto,
-  XTransferDtoWSenderAddress,
+  XTransferDtoWSender,
 } from './dto/XTransferDto.js';
 import { XTransferService } from './x-transfer.service.js';
 
@@ -65,8 +65,8 @@ const builderMock = {
   to: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
   feeAsset: vi.fn().mockReturnThis(),
-  address: vi.fn().mockReturnThis(),
-  senderAddress: vi.fn().mockReturnThis(),
+  sender: vi.fn().mockReturnThis(),
+  recipient: vi.fn().mockReturnThis(),
   ahAddress: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
   keepAlive: vi.fn().mockReturnThis(),
@@ -130,16 +130,16 @@ vi.mock('@paraspell/swap', async (importActual) => ({
 describe('XTransferService', () => {
   let service: XTransferService;
 
-  const address = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
-  const senderAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
+  const recipient = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
+  const sender = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const currency = { symbol: 'DOT', amount: 100 };
   const invalidChain = 'InvalidChain';
 
-  const xTransferDto: XTransferDtoWSenderAddress = {
+  const xTransferDto: XTransferDtoWSender = {
     from: 'Acala',
     to: 'Astar',
-    address,
-    senderAddress,
+    sender,
+    recipient,
     currency,
   };
 
@@ -160,7 +160,7 @@ describe('XTransferService', () => {
     it('should generate XCM call for parachain to parachain transfer', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       const result = await service.generateXcmCall(options);
@@ -169,14 +169,14 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
       expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
     it('should generate XCM call for parachain to parachain transfer', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
@@ -189,7 +189,7 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
       expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -197,7 +197,7 @@ describe('XTransferService', () => {
       const options: XTransferDto = {
         ...xTransferDto,
         to: 'Polkadot',
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       const result = await service.generateXcmCall(options);
@@ -205,7 +205,7 @@ describe('XTransferService', () => {
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -214,7 +214,7 @@ describe('XTransferService', () => {
         ...xTransferDto,
         from: 'Polkadot',
         currency: { symbol: 'DOT', amount: 100 },
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       const result = await service.generateXcmCall(options);
@@ -222,7 +222,7 @@ describe('XTransferService', () => {
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -301,7 +301,7 @@ describe('XTransferService', () => {
     it('should throw on invalid wallet address', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        address: 'invalid-address',
+        recipient: 'invalid-address',
       };
 
       await expect(service.generateXcmCall(options)).rejects.toThrow(
@@ -327,7 +327,7 @@ describe('XTransferService', () => {
         ...xTransferDto,
         from: 'Hydration',
         to: 'Ethereum',
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       await expect(service.generateXcmCall(options)).rejects.toThrow(
@@ -423,7 +423,7 @@ describe('XTransferService', () => {
     it('should generate multiple XCM calls and return array of transaction contexts', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        senderAddress: undefined,
+        sender: undefined,
       };
 
       const result = await service.generateXcmCalls(options);
@@ -438,10 +438,10 @@ describe('XTransferService', () => {
   });
 
   describe('signAndSubmit', () => {
-    it('should sign and submit when senderAddress is a derivation path', async () => {
+    it('should sign and submit when sender is a derivation path', async () => {
       const options: SignAndSubmitDto = {
         ...xTransferDto,
-        senderAddress: '//Alice',
+        sender: '//Alice',
       };
 
       const result = await service.signAndSubmit(options);
@@ -450,26 +450,24 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
-      expect(builderMock.senderAddress).toHaveBeenCalledWith(
-        options.senderAddress,
-      );
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
+      expect(builderMock.sender).toHaveBeenCalledWith(options.sender);
       expect(builderMock.signAndSubmit).toHaveBeenCalled();
     });
   });
 
   describe('dryRun', () => {
     it('returns SDK dry-run result', async () => {
-      const dto: XTransferDtoWSenderAddress = {
+      const dto: XTransferDtoWSender = {
         ...xTransferDto,
-        senderAddress: 'alice',
+        sender: 'alice',
       };
 
       const result = await service.dryRun(dto);
 
       expect(result).toBe(dryRunResult);
       expect(builderMock.dryRun).toHaveBeenCalledWith();
-      expect(builderMock.senderAddress).toHaveBeenCalledWith('alice');
+      expect(builderMock.sender).toHaveBeenCalledWith('alice');
     });
 
     it('maps SDK errors inside dryRun to BadRequestException', async () => {
@@ -484,7 +482,7 @@ describe('XTransferService', () => {
       );
 
       await expect(
-        service.dryRun({ ...xTransferDto, senderAddress: 'alice' }),
+        service.dryRun({ ...xTransferDto, sender: 'alice' }),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -493,7 +491,7 @@ describe('XTransferService', () => {
     it('returns SDK dry-run result', async () => {
       const dto: DryRunPreviewDto = {
         ...xTransferDto,
-        senderAddress: 'alice',
+        sender: 'alice',
         options: { mintFeeAssets: false },
       };
 
@@ -587,13 +585,13 @@ describe('XTransferService', () => {
           {
             from,
             to: to1,
-            address,
+            recipient,
             currency,
           },
           {
             from,
             to: to2,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -609,7 +607,7 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to1);
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -624,13 +622,13 @@ describe('XTransferService', () => {
           {
             from,
             to: to1,
-            address,
+            recipient,
             currency,
           },
           {
             from,
             to: to2,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -646,7 +644,7 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to1);
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -658,7 +656,7 @@ describe('XTransferService', () => {
             from: 'Polkadot',
             to: 'Acala',
             currency: { symbol: 'DOT', amount: 100 },
-            address,
+            recipient,
           },
         ],
         options: {
@@ -671,7 +669,7 @@ describe('XTransferService', () => {
       expect(result).toBe(txHashBatch);
       expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.to).toHaveBeenCalledWith('Acala');
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -699,13 +697,13 @@ describe('XTransferService', () => {
           {
             from: from1,
             to,
-            address,
+            recipient,
             currency,
           },
           {
             from: from2,
             to,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -724,7 +722,7 @@ describe('XTransferService', () => {
           {
             from: invalidChain,
             to,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -743,7 +741,7 @@ describe('XTransferService', () => {
           {
             from,
             to: invalidChain,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -763,7 +761,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address: 'invalid-address',
+            recipient: 'invalid-address',
             currency,
           },
         ],
@@ -797,7 +795,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address,
+            recipient,
             currency: invalidCurrency,
           },
         ],
@@ -830,7 +828,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -850,7 +848,7 @@ describe('XTransferService', () => {
           {
             from,
             to: toChain,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -870,13 +868,13 @@ describe('XTransferService', () => {
           {
             from,
             to: 'Acala',
-            address,
+            recipient,
             currency,
           },
           {
             from,
             to: invalidToChain,
-            address,
+            recipient,
             currency,
           },
         ],
@@ -896,7 +894,7 @@ describe('XTransferService', () => {
             from,
             to: 'Polkadot',
             currency: { symbol: 'DOT' },
-            address,
+            recipient,
           },
         ],
         options: undefined,
@@ -907,7 +905,7 @@ describe('XTransferService', () => {
       expect(result).toBe(txHashBatch);
       expect(builderMock.from).toHaveBeenCalledWith(from);
       expect(builderMock.to).toHaveBeenCalledWith('Polkadot');
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -921,7 +919,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address,
+            recipient,
             currency,
             xcmVersion: paraspellSdk.Version.V3,
           },
@@ -945,7 +943,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address,
+            recipient,
             currency,
             pallet: 'Balances',
           },
@@ -966,7 +964,7 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            address,
+            recipient,
             currency,
             pallet: 'Balances',
             method: 'transfer',

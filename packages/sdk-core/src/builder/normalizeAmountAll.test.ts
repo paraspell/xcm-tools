@@ -21,9 +21,9 @@ const createOptions = (
 ): TSendBaseOptions<unknown, unknown, unknown> => ({
   from: 'Acala',
   to: 'Hydration',
-  address: 'address',
+  recipient: 'address',
   currency: { symbol: 'ACA', amount: 100n },
-  senderAddress: 'sender',
+  sender: 'sender',
   ...overrides
 })
 
@@ -120,7 +120,7 @@ describe('normalizeAmountAll', () => {
       buildTx: initialBuildTx,
       origin: options.from,
       destination: options.to,
-      senderAddress: options.senderAddress,
+      sender: options.sender,
       feeAsset: options.feeAsset,
       currency: {
         ...(options.currency as Record<string, unknown>),

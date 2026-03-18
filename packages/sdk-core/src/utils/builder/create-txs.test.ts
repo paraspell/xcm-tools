@@ -10,7 +10,7 @@ import { createTransfer } from '../../transfer'
 import type {
   TBuilderConfig,
   TCreateTxsOptions,
-  TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSender,
   TSendOptions
 } from '../../types'
 import { assertToIsString } from '../assertions'
@@ -41,7 +41,7 @@ const baseOptions = {
   api: makeApi({}),
   from: 'Acala',
   to: 'Hydration',
-  senderAddress: 'SENDER',
+  sender: 'SENDER',
   address: 'DEST',
   currency: { symbol: 'DOT', amount: '123' }
 } as TCreateTxsOptions<unknown, unknown, unknown>
@@ -130,7 +130,7 @@ describe('overrideTxAmount', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
+      TSendBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const out = await overrideTxAmount(options, builder, '50')
@@ -158,7 +158,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
+      TSendBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(baseOptions, builder, undefined)
@@ -180,7 +180,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
+      TSendBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(options, builder, '200')
@@ -203,8 +203,8 @@ const makeSendOptions = (
     },
     from: 'Acala',
     to: 'Hydration',
-    senderAddress: 'SENDER',
-    address: 'DEST',
+    sender: 'SENDER',
+    recipient: 'DEST',
     currency: { symbol: 'DOT', amount: '100' },
     isAmountAll: false,
     ...overrides

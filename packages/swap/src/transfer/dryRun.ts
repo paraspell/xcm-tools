@@ -50,7 +50,6 @@ const dryRunTransaction = async (
     exchange,
     senderAddress,
     evmSenderAddress,
-    recipientAddress,
     destination,
     currencyFrom,
     currencyTo,
@@ -58,7 +57,6 @@ const dryRunTransaction = async (
   } = options;
   const { api, tx, chain } = transaction;
 
-  const address = recipientAddress ?? senderAddress;
   const senderAddressResolved = evmSenderAddress ?? senderAddress;
   const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
 
@@ -67,8 +65,7 @@ const dryRunTransaction = async (
     tx,
     origin: chain,
     destination: resolvedDest,
-    senderAddress: senderAddressResolved,
-    address,
+    sender: senderAddressResolved,
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
       exchangeChain: exchange.baseChain,

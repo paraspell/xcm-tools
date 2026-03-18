@@ -22,7 +22,7 @@ describe('createDirectExecuteXcm', () => {
   const baseOptions = {
     version: Version.V5,
     destChain: 'Polkadot',
-    recipientAddress: '5FRecipient'
+    recipient: '5FRecipient'
   } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
@@ -88,7 +88,7 @@ describe('createDirectExecuteXcm', () => {
       options.transactOptions,
       options.version,
       options.destChain,
-      options.recipientAddress
+      options.recipient
     )
 
     expect(createBaseExecuteXcm).toHaveBeenCalledWith({

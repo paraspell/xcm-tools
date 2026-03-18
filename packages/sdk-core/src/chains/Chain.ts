@@ -61,7 +61,7 @@ import {
   addXcmVersionHeader,
   assertAddressIsString,
   assertHasId,
-  assertSenderAddress,
+  assertSender,
   createBeneficiaryLocation,
   getChain,
   getRelayChainOf,
@@ -131,12 +131,12 @@ abstract class Chain<TApi, TRes, TSigner> {
       currency,
       feeAsset,
       feeCurrency,
-      address,
+      recipient,
       to: destination,
       paraIdTo,
       overriddenAsset,
       version,
-      senderAddress,
+      sender,
       ahAddress,
       pallet,
       method,
@@ -201,10 +201,11 @@ abstract class Chain<TApi, TRes, TSigner> {
         chain: this.chain,
         beneficiaryLocation: createBeneficiaryLocation({
           api,
-          address,
+          address: recipient,
           version
         }),
-        address,
+        sender,
+        recipient,
         asset: this.createAsset(asset, version),
         overriddenAsset,
         assetInfo: asset,
@@ -216,7 +217,6 @@ abstract class Chain<TApi, TRes, TSigner> {
         destChain,
         paraIdTo: paraId,
         version,
-        senderAddress,
         ahAddress,
         pallet,
         method,
@@ -297,7 +297,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       const input: TXTokensTransferOptions<TApi, TRes, TSigner> = {
         api,
         asset,
-        address,
+        recipient,
         origin: this.chain,
         scenario,
         paraIdTo: paraId,
@@ -404,9 +404,9 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   async transferLocal(options: TSendInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { api, assetInfo: asset, feeAsset, address, senderAddress, isAmountAll } = options
+    const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll } = options
 
-    if (isTLocation(address)) {
+    if (isTLocation(recipient)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
     }
 
@@ -414,17 +414,17 @@ abstract class Chain<TApi, TRes, TSigner> {
       throw new UnsupportedOperationError('Fee asset is not supported for local transfers')
     }
 
-    const validatedOptions = { ...options, address }
+    const validatedOptions = { ...options, recipient }
 
     const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && asset.isNative
 
     let balance: bigint
     if (isAmountAll) {
-      assertSenderAddress(senderAddress)
+      assertSender(sender)
       balance = await getAssetBalanceInternal({
         api,
         chain: this.chain,
-        address: senderAddress,
+        address: sender,
         asset
       })
     } else {
@@ -444,9 +444,9 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
-    const dest = isChainEvm(this.chain) ? address : { Id: address }
+    const dest = isChainEvm(this.chain) ? recipient : { Id: recipient }
 
     if (isAmountAll) {
       return Promise.resolve(
@@ -474,11 +474,11 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
-    const dest = { Id: address }
+    const dest = { Id: recipient }
     const currencyId = BigInt(asset.assetId)
 
     if (isAmountAll) {
@@ -508,7 +508,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
-    const { api, assetInfo: asset, version, address, senderAddress, feeAssetInfo: feeAsset } = input
+    const { api, assetInfo: asset, version, sender, recipient, feeAssetInfo: feeAsset } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -516,8 +516,8 @@ abstract class Chain<TApi, TRes, TSigner> {
       throw new BridgeHaltedError()
     }
 
-    assertAddressIsString(address)
-    assertSenderAddress(senderAddress)
+    assertAddressIsString(recipient)
+    assertSender(sender)
 
     const ethAsset = createAsset(version, asset.amount, asset.location)
 
@@ -545,7 +545,7 @@ abstract class Chain<TApi, TRes, TSigner> {
               assets: { Wild: { AllCounted: 2 } },
               beneficiary: createBeneficiaryLocation({
                 api,
-                address,
+                address: recipient,
                 version
               })
             }
@@ -558,10 +558,10 @@ abstract class Chain<TApi, TRes, TSigner> {
 
       const messageId = await generateMessageId(
         api,
-        senderAddress,
+        sender,
         getParaId(this.chain),
         ethAssetInfo.assetId,
-        address,
+        recipient,
         asset.amount
       )
 

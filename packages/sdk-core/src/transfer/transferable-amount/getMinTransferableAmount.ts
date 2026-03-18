@@ -18,8 +18,8 @@ import { resolveFeeAsset } from '../utils'
 export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
   api,
   origin,
-  senderAddress,
-  address,
+  sender,
+  recipient,
   origin: chain,
   destination,
   currency,
@@ -28,7 +28,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
   builder,
   version
 }: TGetMinTransferableAmountOptions<TApi, TRes, TSigner>): Promise<bigint> => {
-  validateAddress(api, senderAddress, chain, false)
+  validateAddress(api, sender, chain, false)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, chain, destination, currency)
@@ -43,7 +43,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
 
   const destBalance = await getAssetBalanceInternal({
     api: destApi,
-    address,
+    address: recipient,
     chain: destination,
     asset: destAsset
   })
@@ -64,8 +64,8 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
     origin,
     destination,
     buildTx,
-    senderAddress,
-    address,
+    sender,
+    recipient,
     currency: {
       ...currency,
       amount
@@ -125,8 +125,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
     tx,
     origin: chain,
     destination,
-    senderAddress,
-    address,
+    sender,
     version,
     currency: {
       ...currency,

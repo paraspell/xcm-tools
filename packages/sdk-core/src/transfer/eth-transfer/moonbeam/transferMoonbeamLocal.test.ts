@@ -28,7 +28,7 @@ describe('transferMoonbeamLocal', () => {
     from: 'Moonbeam',
     to: 'Moonbeam',
     signer: mockSigner,
-    address: mockAddress,
+    recipient: mockAddress,
     currency: { symbol: 'xcDOT', amount: '5000000' }
   } as unknown as TEvmBuilderOptions<unknown, unknown, unknown>
 

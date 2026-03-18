@@ -145,7 +145,7 @@ describe('createExecuteExchangeXcm', () => {
     )
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: input.api,
-      address: input.address,
+      address: input.recipient,
       version: Version.V4
     })
   })

@@ -11,7 +11,7 @@ import type {
   TTypeAndThenCallContext,
   TTypeAndThenFees
 } from '../../types'
-import { assertAddressIsString, assertSenderAddress, padValueBy } from '../../utils'
+import { assertAddressIsString, assertSender, padValueBy } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 
 export const FEE_PADDING = 30
@@ -35,11 +35,11 @@ export const computeAllFees = async <TApi, TRes, TSigner>(
   const {
     origin,
     dest,
-    options: { senderAddress, address, currency, feeCurrency, version }
+    options: { sender, recipient, currency, feeCurrency, version }
   } = context
 
-  assertSenderAddress(senderAddress)
-  assertAddressIsString(address)
+  assertSender(sender)
+  assertAddressIsString(recipient)
 
   if (!hasDryRunSupport(context.origin.chain)) {
     return null
@@ -50,8 +50,8 @@ export const computeAllFees = async <TApi, TRes, TSigner>(
     buildTx,
     origin: origin.chain,
     destination: dest.chain,
-    senderAddress,
-    address,
+    sender,
+    recipient,
     version,
     currency: currency as WithAmount<TCurrencyCore>,
     feeAsset: feeCurrency,

@@ -29,7 +29,7 @@ describe('verifyEdOnDestinationInternal', () => {
   const mockOrigin = 'OriginChain' as TSubstrateChain
   const mockDestination = 'DestinationChain' as TChain
   const mockAddress = 'destinationAddress'
-  const mockSenderAddress = 'senderAddress'
+  const mockSender = 'senderAddress'
   const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }
 
   const realTx = { kind: 'real' }
@@ -41,8 +41,8 @@ describe('verifyEdOnDestinationInternal', () => {
     buildTx,
     origin: mockOrigin,
     destination: mockDestination,
-    address: mockAddress,
-    senderAddress: mockSenderAddress,
+    sender: mockSender,
+    recipient: mockAddress,
     currency: mockCurrency,
     version: Version.V5
   } as TVerifyEdOnDestinationOptions<unknown, unknown, unknown>
@@ -92,8 +92,8 @@ describe('verifyEdOnDestinationInternal', () => {
         buildTx,
         origin: mockOrigin,
         destination: mockDestination,
-        senderAddress: mockSenderAddress,
-        address: mockAddress,
+        sender: mockSender,
+        recipient: mockAddress,
         currency: expect.objectContaining({ amount: expect.any(BigInt) }),
         disableFallback: false
       })

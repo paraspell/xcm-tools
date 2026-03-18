@@ -48,7 +48,7 @@ describe('Ajuna', () => {
       const opts = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'addr'
+        recipient: 'addr'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -70,7 +70,7 @@ describe('Ajuna', () => {
       const opts = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'addr',
+        recipient: 'addr',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>

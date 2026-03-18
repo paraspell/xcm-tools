@@ -12,13 +12,13 @@ export const createExecuteExchangeXcm = <TApi, TRes, TSigner>(
   originExecutionFee: bigint,
   destExecutionFee: bigint
 ): TRes => {
-  const { api, version, assetInfo: asset, destination, paraIdTo, address } = input
+  const { api, version, assetInfo: asset, destination, paraIdTo, recipient } = input
 
   const dest = createDestination(version, origin, destination, paraIdTo)
 
   const beneficiary = createBeneficiaryLocation({
     api,
-    address: address,
+    address: recipient,
     version
   })
 

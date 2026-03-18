@@ -29,7 +29,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     destination,
     currency,
     tx,
-    senderAddress,
+    sender,
     feeAsset,
     swapConfig,
     version,
@@ -55,7 +55,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     tx,
     chain: origin,
     destination,
-    address: senderAddress,
+    address: sender,
     asset: {
       ...asset,
       amount
