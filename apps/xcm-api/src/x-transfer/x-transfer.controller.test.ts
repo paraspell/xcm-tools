@@ -1,6 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
+  TAssetInfo,
   TBridgeStatus,
   TDryRunResult,
   TExchangeChain,
@@ -327,6 +328,24 @@ describe('XTransferController', () => {
 
       expect(result).toEqual(mockResult);
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getExchangePairs', () => {
+    it('should call getExchangePairs service method with correct params and return result', () => {
+      const exchange = 'HydrationDex';
+      const mockResult = [[{}, {}]] as [TAssetInfo, TAssetInfo][];
+      const spy = vi
+        .spyOn(service, 'getExchangePairs')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getExchangePairs(
+        { exchange },
+        mockRequestObject,
+      );
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith(exchange);
     });
   });
 });

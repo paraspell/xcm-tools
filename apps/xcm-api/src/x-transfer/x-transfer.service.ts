@@ -16,12 +16,14 @@ import {
   TSendBaseOptionsWithSwap,
   TSubstrateChain,
 } from '@paraspell/sdk';
+import { getExchangePairs } from '@paraspell/swap';
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
+  ExchangePairsDto,
   GetXcmFeeDto,
   SignAndSubmitDto,
   XTransferDto,
@@ -360,5 +362,9 @@ export class XTransferService {
 
   async getParaEthFees() {
     return getParaEthTransferFees();
+  }
+
+  getExchangePairs(exchange: ExchangePairsDto['exchange']) {
+    return getExchangePairs(exchange);
   }
 }
