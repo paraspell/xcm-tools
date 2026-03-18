@@ -10,7 +10,7 @@ import { findAssetInfoBySymbol } from './findAssetInfoBySymbol'
 export const findAssetInfo = (
   chain: TChain,
   currency: TCurrencyInput,
-  destination: TChain | null
+  destination?: TChain | null
 ): TAssetInfo | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
@@ -26,7 +26,12 @@ export const findAssetInfo = (
 
   let asset: TAssetInfo | undefined
   if ('symbol' in currency) {
-    asset = findAssetInfoBySymbol(destination, otherAssets, nativeAssets, currency.symbol)
+    asset = findAssetInfoBySymbol(
+      otherAssets,
+      nativeAssets,
+      currency.symbol,
+      destination ?? undefined
+    )
   } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
     asset = findAssetInfoByLoc(assets, currency.location)
   } else if ('id' in currency) {

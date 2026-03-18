@@ -37,7 +37,7 @@ export const selectBestExchangeCommon = async <
 ): Promise<ExchangeChain> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
 
-  const assetFromOrigin = from ? findAssetInfo(from, currencyFrom, null) : undefined;
+  const assetFromOrigin = from ? findAssetInfo(from, currencyFrom) : undefined;
 
   if (from && !assetFromOrigin) {
     throw new RoutingResolutionError(

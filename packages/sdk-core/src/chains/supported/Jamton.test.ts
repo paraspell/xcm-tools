@@ -145,7 +145,7 @@ describe('Jamton', () => {
     await chain.transferPolkadotXCM(input)
 
     expect(isSymbolMatch).toHaveBeenCalledWith('WUD', 'WUD')
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' })
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 180_000n, mockUsdtAsset.location)
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.assetInfo.location)
 

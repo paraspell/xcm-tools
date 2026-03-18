@@ -53,7 +53,7 @@ export class AssetsService {
     const resolvedChain = chain as TSubstrateChain;
 
     try {
-      const { location } = findAssetInfoOrThrow(resolvedChain, currency, null);
+      const { location } = findAssetInfoOrThrow(resolvedChain, currency);
       return getAssetReserveChain(resolvedChain, location);
     } catch (e) {
       return handleXcmApiError(e);

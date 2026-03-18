@@ -34,7 +34,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
     ? resolveFeeAsset(feeAsset, chain, destination, currency)
     : undefined
 
-  const asset = findAssetInfoOrThrow(chain, currency, null)
+  const asset = findAssetInfoOrThrow(chain, currency)
 
   const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 

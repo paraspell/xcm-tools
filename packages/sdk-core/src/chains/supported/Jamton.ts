@@ -35,7 +35,7 @@ class Jamton<TApi, TRes, TSigner>
     }
 
     if (isSymbolMatch(assetInfo.symbol, 'WUD')) {
-      const usdt = findAssetInfoOrThrow(this.chain, { symbol: 'USDt' }, null)
+      const usdt = findAssetInfoOrThrow(this.chain, { symbol: 'USDt' })
       const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
       return transferPolkadotXcm({
         ...input,

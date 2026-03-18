@@ -35,8 +35,7 @@ describe('getExistentialDeposit', () => {
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
     expect(findAssetInfo).toHaveBeenCalledWith(
       chain,
-      expect.objectContaining({ symbol: expect.anything() }),
-      null
+      expect.objectContaining({ symbol: expect.anything() })
     )
     expect(result).toBe(ed)
   })
@@ -57,10 +56,9 @@ describe('getExistentialDeposit', () => {
 
     expect(findAssetInfo).toHaveBeenCalledWith(
       chain,
-      expect.objectContaining({ symbol: expect.anything() }),
-      null
+      expect.objectContaining({ symbol: expect.anything() })
     )
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: nativeSymbol }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: nativeSymbol })
     expect(result).toBe(ed)
   })
 
@@ -90,7 +88,7 @@ describe('getExistentialDeposit', () => {
 
     const result = getExistentialDeposit(chain, currency)
 
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, currency, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, currency)
     expect(result).toBe(ed)
   })
 

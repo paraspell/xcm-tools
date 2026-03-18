@@ -68,7 +68,7 @@ const createOptionalMintTxs = <TApi, TRes, TSigner>(
   address: string,
   api: IPolkadotApi<TApi, TRes, TSigner>
 ) => {
-  const asset = findAssetInfo(chain, currency, null)
+  const asset = findAssetInfo(chain, currency)
   if (!asset) return null
   const amount = parseUnits(amountHuman, asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
@@ -139,7 +139,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
   }
 
   const nativeInfo = mintFeeAssets ? findNativeAssetInfo(chain) : null
-  const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency, null) : null
+  const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency) : null
   const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetXcEqual(nativeInfo, relayInfo))
 
   const mintNativeAssetRes = mintFeeAssets

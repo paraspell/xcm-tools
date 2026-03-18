@@ -53,7 +53,7 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
 
   const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: foundAsset.symbol }, null)
+  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: foundAsset.symbol })
 
   const contract = getContract({
     abi,

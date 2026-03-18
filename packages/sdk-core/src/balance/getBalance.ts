@@ -33,9 +33,7 @@ export const getBalanceInternal = async <TApi, TRes, TSigner>(
   options: TGetBalanceOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { chain, currency } = options
-  const asset = currency
-    ? findAssetInfoOrThrow(chain, currency, null)
-    : findNativeAssetInfoOrThrow(chain)
+  const asset = currency ? findAssetInfoOrThrow(chain, currency) : findNativeAssetInfoOrThrow(chain)
   return getAssetBalanceInternal({ ...options, asset })
 }
 
