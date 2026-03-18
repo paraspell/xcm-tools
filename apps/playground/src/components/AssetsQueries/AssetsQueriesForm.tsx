@@ -1,56 +1,49 @@
-import {
-  Button,
-  JsonInput,
-  Paper,
-  SegmentedControl,
-  Select,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { Button, Paper, Select, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TChain, TSubstrateChain } from '@paraspell/sdk';
 import {
   CHAINS,
   EXTERNAL_CHAINS,
-  getRelayChainSymbol,
   isRelayChain,
   PARACHAINS,
   SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
-import {
-  parseAsBoolean,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryStates,
-} from 'nuqs';
-import { type FC, useEffect, useRef } from 'react';
+import { parseAsBoolean, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { type FC, useEffect } from 'react';
 
 import {
   ASSET_QUERIES,
-  CURRENCY_TYPES,
   DEFAULT_ADDRESS,
-  SYMBOL_TYPES,
+  DEFAULT_CURRENCY_ENTRY_BASE,
+  MAIN_FORM_NAME,
 } from '../../constants';
-import { useWallet } from '../../hooks';
+import { useAssetCurrencyOptions, useWallet } from '../../hooks';
 import { parseAsWalletAddress } from '../../parsers';
-import type { TAssetsQuery, TCurrencyType, TSymbolType } from '../../types';
+import type {
+  TAssetsQuery,
+  TCurrencyEntryBase,
+  TCurrencyEntryBaseTransformed,
+} from '../../types';
+import { resolveCurrencyAsset } from '../../utils';
+import { CurrencySelection } from '../common/CurrencySelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
-export type FormValues = {
+type FormValues = {
   func: TAssetsQuery;
   chain: TSubstrateChain;
   destination: TChain;
-  currency: string;
-  amount: string;
+  currency: TCurrencyEntryBase;
   address: string;
   useApi: boolean;
-  currencyType?: TCurrencyType;
-  currencySymbolSpecifier?: TSymbolType;
+};
+
+export type FormValuesResolved = Omit<FormValues, 'currency'> & {
+  currency: TCurrencyEntryBaseTransformed;
 };
 
 type Props = {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: FormValuesResolved) => void;
   loading: boolean;
 };
 
@@ -61,28 +54,31 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func: parseAsStringLiteral(ASSET_QUERIES).withDefault('ASSETS_OBJECT'),
     chain: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Acala'),
     destination: parseAsStringLiteral(CHAINS).withDefault('Astar'),
-    currency: parseAsString.withDefault(''),
     address: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
-    amount: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
-    currencyType: parseAsStringLiteral(CURRENCY_TYPES).withDefault('symbol'),
-    currencySymbolSpecifier:
-      parseAsStringLiteral(SYMBOL_TYPES).withDefault('auto'),
   });
 
   const form = useForm<FormValues>({
-    initialValues: queryState,
+    name: MAIN_FORM_NAME,
+    initialValues: {
+      ...queryState,
+      currency: DEFAULT_CURRENCY_ENTRY_BASE,
+    },
   });
 
   useEffect(() => {
-    void setQueryState(form.values);
+    const { currency: _currency, ...rest } = form.values;
+    void setQueryState(rest);
   }, [form.values, setQueryState]);
 
-  const { func, chain, currencyType } = form.getValues();
+  const { func, chain } = form.getValues();
+  const currency = form.values.currency;
 
-  const showSymbolInput =
+  const { currencyOptions, currencyMap } = useAssetCurrencyOptions(chain);
+
+  const showCurrency =
     func === 'ASSET_ID' ||
     func === 'ASSET_LOCATION' ||
     func === 'ASSET_RESERVE_CHAIN' ||
@@ -92,24 +88,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'SUPPORTED_DESTINATIONS';
 
-  const supportsCurrencyType =
-    func === 'ASSET_LOCATION' ||
-    func === 'ASSET_RESERVE_CHAIN' ||
-    func === 'ASSET_INFO' ||
-    func === 'ASSET_BALANCE' ||
-    func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'SUPPORTED_DESTINATIONS';
-
   const showAddressInput = func === 'ASSET_BALANCE' || func === 'CONVERT_SS58';
-
-  const onSubmitInternal = (formValues: FormValues) => {
-    const { func } = formValues;
-    const usesSymbol = func === 'ASSET_ID' || func === 'DECIMALS';
-    return onSubmit({
-      ...formValues,
-      ...(usesSymbol && { symbol: formValues.currency }),
-    });
-  };
 
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
@@ -136,42 +115,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   }, [chainList, chain]);
 
-  const onSelectCurrencyTypeClick = () => {
-    form.setFieldValue('currency', '');
-  };
-
   const onSelectFunctionClick = () => {
-    if (showSymbolInput) {
-      form.setFieldValue('currency', '');
-      form.setFieldValue('currencyType', 'symbol');
+    if (showCurrency) {
+      form.setFieldValue('currency', DEFAULT_CURRENCY_ENTRY_BASE);
     }
   };
 
   const isRelay = isRelayChain(chain);
 
-  const previousChainRef = useRef<TSubstrateChain>(chain);
-
-  useEffect(() => {
-    const prevChain = previousChainRef.current;
-    const wasRelay = isRelayChain(prevChain);
-
-    const isNowRelay = isRelayChain(chain);
-
-    if (isNowRelay) {
-      form.setFieldValue('currency', getRelayChainSymbol(chain));
-    } else if (wasRelay && !isNowRelay) {
-      form.setFieldValue('currency', '');
-    }
-
-    previousChainRef.current = chain;
-  }, [chain, func]);
-
-  const symbolSpecifierOptions = [
-    { label: 'Auto', value: 'auto' },
-    { label: 'Native', value: 'native' },
-    { label: 'Foreign', value: 'foreign' },
-    { label: 'Foreign abstract', value: 'foreignAbstract' },
-  ];
+  const onSubmitInternal = (values: FormValues) => {
+    const resolved = resolveCurrencyAsset(values.currency, currencyMap);
+    onSubmit({ ...values, currency: resolved });
+  };
 
   return (
     <Paper p="xl" shadow="md">
@@ -212,62 +167,26 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             />
           )}
 
-          {showSymbolInput && (
-            <Stack gap="xs">
-              {(currencyType === 'id' || currencyType === 'symbol') && (
-                <TextInput
-                  flex={1}
-                  label={
-                    supportsCurrencyType
-                      ? `Currency ${optionalCurrency ? '(optional)' : ''}`
-                      : `Symbol ${optionalCurrency ? '(optional)' : ''}`
-                  }
-                  placeholder={
-                    supportsCurrencyType
-                      ? 'GLMR'
-                      : currencyType === 'id'
-                        ? 'Asset ID'
-                        : 'Symbol'
-                  }
-                  required={!optionalCurrency}
-                  disabled={isRelay}
-                  data-testid="input-currency"
-                  {...form.getInputProps('currency')}
-                />
-              )}
-
-              {currencyType === 'location' && (
-                <JsonInput
-                  placeholder="Input JSON location or interior junctions to search for and identify the asset"
-                  formatOnBlur
-                  autosize
-                  minRows={10}
-                  {...form.getInputProps('currency')}
-                />
-              )}
-
-              {supportsCurrencyType && !isRelay && (
-                <SegmentedControl
-                  size="xs"
-                  data={[
-                    { label: 'Asset ID', value: 'id' },
-                    { label: 'Symbol', value: 'symbol' },
-                    { label: 'Location', value: 'location' },
-                  ]}
-                  onClick={onSelectCurrencyTypeClick}
-                  data-testid="currency-type"
-                  {...form.getInputProps('currencyType')}
-                />
-              )}
-              {supportsCurrencyType && !isRelay && currencyType == 'symbol' && (
-                <SegmentedControl
-                  size="xs"
-                  w="100%"
-                  data={symbolSpecifierOptions}
-                  {...form.getInputProps(`customCurrencySymbolSpecifier`)}
-                />
-              )}
-            </Stack>
+          {showCurrency && (
+            <CurrencySelection
+              key={`${func}-${chain}`}
+              form={form}
+              fieldPath="currency"
+              fieldValue={currency}
+              currencyOptions={currencyOptions}
+              required={!optionalCurrency}
+              disabled={isRelay}
+              label={`Currency${optionalCurrency ? ' (optional)' : ''}`}
+              onClear={
+                optionalCurrency
+                  ? () =>
+                      form.setFieldValue(
+                        'currency',
+                        DEFAULT_CURRENCY_ENTRY_BASE,
+                      )
+                  : undefined
+              }
+            />
           )}
 
           {showAddressInput && (

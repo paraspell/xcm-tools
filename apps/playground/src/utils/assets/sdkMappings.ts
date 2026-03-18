@@ -20,29 +20,38 @@ import {
   hasDryRunSupport,
 } from '@paraspell/sdk';
 
-import type { FormValues } from '../../components/AssetsQueries/AssetsQueriesForm';
+import type { FormValuesResolved } from '../../components/AssetsQueries/AssetsQueriesForm';
 import type { TAssetsQuery } from '../../types';
 import { importSdk } from '../importSdk';
 
+const resolveSymbol = (formValues: FormValuesResolved): string => {
+  const { currency } = formValues;
+  if (currency.isCustomCurrency) {
+    return currency.customCurrency;
+  }
+  return currency.currency?.symbol ?? '';
+};
+
 export const callSdkFunc = async (
-  formValues: FormValues,
+  formValues: FormValuesResolved,
   apiType: TApiType,
-  resolvedCurrency: TCurrencyCore,
+  resolvedCurrency: TCurrencyCore | undefined,
 ): Promise<unknown> => {
-  const { func, chain, destination, currency, address } = formValues;
+  const { func, chain, destination, address } = formValues;
   const sdk = await importSdk(apiType);
 
   const sdkActions: Record<TAssetsQuery, () => Promise<unknown>> = {
     ASSETS_OBJECT: () => Promise.resolve(getAssetsObject(chain)),
-    ASSET_ID: () => Promise.resolve(getAssetId(chain, currency)),
+    ASSET_ID: () =>
+      Promise.resolve(getAssetId(chain, resolveSymbol(formValues))),
     ASSET_LOCATION: () =>
-      Promise.resolve(getAssetLocation(chain, resolvedCurrency)),
+      Promise.resolve(getAssetLocation(chain, resolvedCurrency!)),
     ASSET_RESERVE_CHAIN: () => {
-      const { location } = findAssetInfoOrThrow(chain, resolvedCurrency);
+      const { location } = findAssetInfoOrThrow(chain, resolvedCurrency!);
       return Promise.resolve(getAssetReserveChain(chain, location));
     },
     ASSET_INFO: () =>
-      Promise.resolve(findAssetInfo(chain, resolvedCurrency, destination)),
+      Promise.resolve(findAssetInfo(chain, resolvedCurrency!, destination)),
     RELAYCHAIN_SYMBOL: () => Promise.resolve(getRelayChainSymbol(chain)),
     NATIVE_ASSETS: () => Promise.resolve(getNativeAssets(chain)),
     OTHER_ASSETS: () => Promise.resolve(getOtherAssets(chain)),
@@ -50,14 +59,15 @@ export const callSdkFunc = async (
       Promise.resolve(getSupportedAssets(chain, destination)),
     FEE_ASSETS: () => Promise.resolve(getFeeAssets(chain)),
     ALL_SYMBOLS: () => Promise.resolve(getAllAssetsSymbols(chain)),
-    DECIMALS: () => Promise.resolve(getAssetDecimals(chain, currency)),
+    DECIMALS: () =>
+      Promise.resolve(getAssetDecimals(chain, resolveSymbol(formValues))),
     PARA_ID: () => Promise.resolve(getParaId(chain)),
     CONVERT_SS58: () => Promise.resolve(sdk.convertSs58(address, chain)),
     ASSET_BALANCE: () =>
       sdk.getBalance({
         address,
         chain,
-        currency: resolvedCurrency,
+        currency: resolvedCurrency!,
       }),
     EXISTENTIAL_DEPOSIT: () =>
       Promise.resolve(getExistentialDeposit(chain, resolvedCurrency)),
@@ -65,7 +75,7 @@ export const callSdkFunc = async (
     ETHEREUM_BRIDGE_STATUS: () => Promise.resolve(getBridgeStatus()),
     PARA_ETH_FEES: () => Promise.resolve(sdk.getParaEthTransferFees()),
     SUPPORTED_DESTINATIONS: () =>
-      Promise.resolve(getSupportedDestinations(chain, resolvedCurrency)),
+      Promise.resolve(getSupportedDestinations(chain, resolvedCurrency!)),
   };
 
   const action = sdkActions[func];
