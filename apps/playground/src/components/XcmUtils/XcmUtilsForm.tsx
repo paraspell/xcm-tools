@@ -107,7 +107,7 @@ export const XcmUtilsForm: FC<Props> = ({
       feeAsset: parseAsJson(FeeAssetSchema).withDefault(
         DEFAULT_CURRENCY_ENTRY_BASE,
       ),
-      address: parseAsWalletAddress.withDefault(
+      recipient: parseAsWalletAddress.withDefault(
         selectedAccount?.address ?? DEFAULT_ADDRESS,
       ),
       ahAddress: parseAsString.withDefault(''),
@@ -132,7 +132,7 @@ export const XcmUtilsForm: FC<Props> = ({
       };
     },
     validate: {
-      address: (value, values) =>
+      recipient: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
       currencies: {
         currencyOptionId: (value, values, path) => {

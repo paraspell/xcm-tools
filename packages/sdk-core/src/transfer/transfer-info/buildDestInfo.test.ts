@@ -56,7 +56,7 @@ describe('buildDestInfo', () => {
       api: mockApi,
       origin: 'AssetHubPolkadot',
       destination: 'Moonbeam',
-      address: 'receiverAlice',
+      recipient: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT },
       originFee: 50000000n,
       isFeeAssetAh: false,
@@ -97,7 +97,7 @@ describe('buildDestInfo', () => {
 
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockClonedApi,
-      address: options.address,
+      address: options.recipient,
       chain: options.destination,
       asset: glmrAsset
     })

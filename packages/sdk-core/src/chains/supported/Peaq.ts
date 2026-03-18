@@ -33,12 +33,12 @@ class Peaq<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
     const assetId = BigInt(asset.assetId)
-    const dest = { Id: address }
+    const dest = { Id: recipient }
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({

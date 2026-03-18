@@ -47,8 +47,8 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown, u
     builder: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
-    senderAddress: '5Alice',
-    address: '5Bob',
+    sender: '5Alice',
+    recipient: '5Bob',
     currency: 'ACA',
     useRootOrigin: false,
     ...overrides

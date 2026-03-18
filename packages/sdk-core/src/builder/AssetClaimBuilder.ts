@@ -5,7 +5,7 @@ import { claimAssets } from '../transfer'
 import type { TBuilderInternalOptions, TSender } from '../types'
 import { type TAddress } from '../types'
 import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
-import { assertSender, isSenderSigner } from '../utils'
+import { assertSenderSource, isSenderSigner } from '../utils'
 
 /**
  * Builder class for constructing asset claim transactions.
@@ -42,16 +42,14 @@ export class AssetClaimBuilder<
    * @param address - The sender address.
    * @returns
    */
-  senderAddress(
-    sender: TSender<TSigner>
-  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { senderAddress: string }> {
+  sender(sender: TSender<TSigner>): AssetClaimBuilder<TApi, TRes, TSigner, T & { sender: string }> {
     const isPath = typeof sender === 'string' && sender.startsWith('//')
     const isPathOrSigner = isPath || isSenderSigner(sender)
     const address = isPathOrSigner ? this.api.deriveAddress(sender) : sender
     return new AssetClaimBuilder(this.api, {
       ...this._options,
-      senderAddress: address,
-      sender: isPathOrSigner ? sender : undefined
+      sender: address,
+      senderSource: isPathOrSigner ? sender : undefined
     })
   }
 
@@ -94,8 +92,8 @@ export class AssetClaimBuilder<
       TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>
     >
   ) {
-    const { sender } = this._options
-    assertSender(sender)
+    const { senderSource: sender } = this._options
+    assertSenderSource(sender)
     const tx = await claimAssets({ api: this.api, ...this._options })
     return this.api.signAndSubmit(tx, sender)
   }

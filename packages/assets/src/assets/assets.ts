@@ -93,7 +93,7 @@ export const getNativeAssetSymbol = (chain: TChain): string =>
 /**
  * Determines whether a specified chain supports an asset with the given symbol.
  *
- * @deprecated Use `findAssetInfo` instead.
+ * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
  *
  * @param chain - The chain to check for asset support.
  * @param symbol - The symbol of the asset to check.

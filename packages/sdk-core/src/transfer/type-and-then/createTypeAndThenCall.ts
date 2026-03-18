@@ -60,14 +60,12 @@ export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
 ): Promise<TSerializedExtrinsics> => {
   const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
 
-  const { senderAddress, version } = options
+  const { sender, version } = options
 
   const assetCount = isRelayAsset ? 1 : 2
 
   const refundInstruction =
-    senderAddress && !isSubBridge
-      ? createRefundInstruction(origin.api, senderAddress, version, assetCount)
-      : null
+    sender && !isSubBridge ? createRefundInstruction(origin.api, sender, version, assetCount) : null
 
   const resolvedFees = fees ?? {
     hopFees: 0n,

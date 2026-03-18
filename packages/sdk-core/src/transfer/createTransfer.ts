@@ -33,10 +33,10 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
     from: origin,
     currency,
     feeAsset,
-    address,
+    recipient: address,
     to: destination,
     version,
-    senderAddress
+    sender
   } = options
 
   validateCurrency(currency, feeAsset)
@@ -44,7 +44,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
   validateTransact(options)
 
   validateDestinationAddress(address, destination, api)
-  if (senderAddress) validateAddress(api, senderAddress, origin, false)
+  if (sender) validateAddress(api, sender, origin, false)
 
   const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
 
@@ -122,10 +122,10 @@ export const createTransfer = async <TApi, TRes, TSigner>(
     from: origin,
     currency,
     feeAsset,
-    address,
+    recipient,
     to: destination,
     paraIdTo,
-    senderAddress,
+    sender,
     ahAddress,
     pallet,
     method,
@@ -145,12 +145,12 @@ export const createTransfer = async <TApi, TRes, TSigner>(
     currency,
     feeAsset: resolvedFeeAsset,
     feeCurrency: feeAsset,
-    address,
+    recipient,
     to: destination,
     paraIdTo,
     overriddenAsset,
     version: resolvedVersion,
-    senderAddress,
+    sender,
     ahAddress,
     pallet,
     method,

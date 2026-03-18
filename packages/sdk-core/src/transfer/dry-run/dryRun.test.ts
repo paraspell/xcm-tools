@@ -45,9 +45,8 @@ describe('dryRun', () => {
       api: apiMock,
       origin: chain,
       destination: chain,
-      senderAddress: address,
+      sender: address,
       currency: {} as TCurrencyInputWithAmount,
-      address,
       version: Version.V5,
       tx: {}
     })

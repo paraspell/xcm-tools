@@ -69,7 +69,7 @@ describe('BifrostPolkadot', () => {
       const mockOptions = {
         api,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(api, 'deserializeExtrinsics')
@@ -80,7 +80,7 @@ describe('BifrostPolkadot', () => {
         module: 'Tokens',
         method: 'transfer',
         params: {
-          dest: { Id: mockOptions.address },
+          dest: { Id: mockOptions.recipient },
           currency_id: { Token2: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
         }
@@ -91,7 +91,7 @@ describe('BifrostPolkadot', () => {
       const mockOptions = {
         api,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address',
+        recipient: 'address',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -104,7 +104,7 @@ describe('BifrostPolkadot', () => {
         module: 'Tokens',
         method: 'transfer_all',
         params: {
-          dest: { Id: mockOptions.address },
+          dest: { Id: mockOptions.recipient },
           currency_id: { Token2: 1 },
           keep_alive: false
         }

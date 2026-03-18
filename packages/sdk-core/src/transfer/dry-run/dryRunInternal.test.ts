@@ -55,7 +55,7 @@ const createOptions = (
     tx: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
-    senderAddress: '5Alice',
+    sender: '5Alice',
     currency: { symbol: 'ACA', amount: 1_000n },
     ...overrides
   }) as unknown as TDryRunOptions<unknown, unknown, unknown>

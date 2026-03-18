@@ -12,7 +12,7 @@ import {
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSender,
   TSendBaseOptionsWithSwap,
   TSubstrateChain,
 } from '@paraspell/sdk';
@@ -27,13 +27,13 @@ import {
   GetXcmFeeDto,
   SignAndSubmitDto,
   XTransferDto,
-  XTransferDtoWSenderAddress,
+  XTransferDtoWSender,
 } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
   private async executeWithSwapBuilder<T>(
-    transfer: XTransferDtoWSenderAddress,
+    transfer: XTransferDtoWSender,
     executor: (
       finalBuilder: GeneralBuilder<
         TSendBaseOptionsWithSwap<TPapiApi, TPapiTransaction, TPapiSigner>
@@ -58,20 +58,16 @@ export class XTransferService {
   }
 
   private async executeWithBuilder<T>(
-    transfer: XTransferDtoWSenderAddress,
+    transfer: XTransferDtoWSender,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSenderAddress<
-          TPapiApi,
-          TPapiTransaction,
-          TPapiSigner
-        >
+        TSendBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
       >,
     ) => Promise<T>,
   ): Promise<T> {
-    const { senderAddress } = transfer;
+    const { sender } = transfer;
     return this.executeWithBuilderOptionalSender(transfer, (finalBuilder) =>
-      executor(finalBuilder.senderAddress(senderAddress)),
+      executor(finalBuilder.sender(sender)),
     );
   }
 
@@ -100,7 +96,7 @@ export class XTransferService {
   }
 
   private validateTransfer(transfer: XTransferDto) {
-    const { from, to, address, pallet, method, senderAddress } = transfer;
+    const { from, to, sender, recipient, pallet, method } = transfer;
 
     const fromChain = from as TSubstrateChain;
     const toChain = to as TChain;
@@ -117,17 +113,13 @@ export class XTransferService {
       );
     }
 
-    if (typeof address === 'string' && !isValidWalletAddress(address)) {
+    if (typeof recipient === 'string' && !isValidWalletAddress(recipient)) {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    if (
-      fromChain === 'Hydration' &&
-      isExternalChain(toChain) &&
-      !senderAddress
-    ) {
+    if (fromChain === 'Hydration' && isExternalChain(toChain) && !sender) {
       throw new BadRequestException(
-        'Sender address is required when transferring to Ethereum.',
+        'Sender is required when transferring to Ethereum.',
       );
     }
 
@@ -145,12 +137,12 @@ export class XTransferService {
       to,
       currency,
       feeAsset,
-      address,
+      sender,
+      recipient,
       xcmVersion,
       keepAlive,
       pallet,
       method,
-      senderAddress,
       ahAddress,
       transactOptions,
       swapOptions,
@@ -161,11 +153,11 @@ export class XTransferService {
       .to(to as TChain)
       .currency(currency)
       .feeAsset(feeAsset)
-      .address(address)
+      .recipient(recipient)
       .ahAddress(ahAddress);
 
-    if (senderAddress) {
-      finalBuilder = finalBuilder.senderAddress(senderAddress);
+    if (sender) {
+      finalBuilder = finalBuilder.sender(sender);
     }
 
     if (xcmVersion) {
@@ -197,7 +189,7 @@ export class XTransferService {
     return finalBuilder;
   }
 
-  dryRun(transfer: XTransferDtoWSenderAddress) {
+  dryRun(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, (builder) => builder.dryRun());
   }
 
@@ -261,37 +253,37 @@ export class XTransferService {
     );
   }
 
-  getTransferableAmount(transfer: XTransferDtoWSenderAddress) {
+  getTransferableAmount(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getTransferableAmount(),
     );
   }
 
-  getMinTransferableAmount(transfer: XTransferDtoWSenderAddress) {
+  getMinTransferableAmount(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getMinTransferableAmount(),
     );
   }
 
-  verifyEdOnDestination(transfer: XTransferDtoWSenderAddress) {
+  verifyEdOnDestination(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.verifyEdOnDestination(),
     );
   }
 
-  getTransferInfo(transfer: XTransferDtoWSenderAddress) {
+  getTransferInfo(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getTransferInfo(),
     );
   }
 
-  getReceivableAmount(transfer: XTransferDtoWSenderAddress) {
+  getReceivableAmount(transfer: XTransferDtoWSender) {
     return this.executeWithBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getReceivableAmount(),
     );
   }
 
-  getBestAmountOut(transfer: XTransferDtoWSenderAddress) {
+  getBestAmountOut(transfer: XTransferDtoWSender) {
     return this.executeWithSwapBuilder(transfer, async (finalBuilder) =>
       finalBuilder.getBestAmountOut(),
     );

@@ -287,8 +287,8 @@ describe('validateTransact', () => {
     api: mockApi,
     from: 'Polkadot',
     to: 'Kusama',
-    senderAddress: 'addr1',
-    address: 'addr2',
+    sender: 'addr1',
+    recipient: 'addr2',
     transactOptions: { call: '0x123' }
   } as TSendOptions<unknown, unknown, unknown>
 
@@ -345,7 +345,7 @@ describe('validateTransact', () => {
     ).toThrowError(UnsupportedOperationError)
   })
 
-  it('returns ValidationError if senderAddress does not match destination', () => {
+  it('returns ValidationError if sender does not match destination', () => {
     vi.mocked(isHex).mockReturnValue(true)
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(compareAddresses).mockReturnValue(false)
@@ -364,7 +364,7 @@ describe('validateTransact', () => {
 
     const result = validateTransact({
       ...baseOptions,
-      address: 'addr1'
+      recipient: 'addr1'
     })
 
     expect(result).toBeUndefined()

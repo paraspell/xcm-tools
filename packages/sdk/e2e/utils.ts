@@ -6,7 +6,7 @@ import { TPallet, TPapiApi, TPapiSigner, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
 import {
   GeneralBuilder,
-  TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSender,
   TSerializedExtrinsics
 } from '@paraspell/sdk-core'
 import { createEcdsaSigner, createSr25519Signer } from '../src/utils'
@@ -42,7 +42,7 @@ export const validateTransfer = async (
     TPapiApi,
     TPapiTransaction,
     TPapiSigner,
-    TSendBaseOptionsWithSenderAddress<TPapiApi, TPapiTransaction, TPapiSigner>
+    TSendBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
   >,
   signer: PolkadotSigner
 ) => {

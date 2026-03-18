@@ -10,8 +10,8 @@ import { AssetClaimBuilder } from './AssetClaimBuilder'
 vi.mock('../transfer')
 
 const CHAIN: TSubstrateChain = 'Acala'
+const SENDER = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
-const SENDER_ADDRESS = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
 
 describe('AssetClaimBuilder', () => {
   const mockApi = {
@@ -54,18 +54,18 @@ describe('AssetClaimBuilder', () => {
     )
   })
 
-  it('signs and submits transaction when senderAddress is a derivation path', async () => {
+  it('signs and submits transaction when senderSource is a derivation path', async () => {
     const derivationPath = '//Alice'
     const resolvedSender = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
 
-    const assertSpy = vi.spyOn(utils, 'assertSender')
+    const assertSpy = vi.spyOn(utils, 'assertSenderSource')
     const deriveSpy = vi.spyOn(mockApi, 'deriveAddress')
     const submitSpy = vi.spyOn(mockApi, 'signAndSubmit')
 
     const result = await new AssetClaimBuilder(mockApi, { chain: CHAIN })
       .currency(currency)
+      .sender(derivationPath)
       .address(ADDRESS)
-      .senderAddress(derivationPath)
       .signAndSubmit()
 
     expect(assertSpy).toHaveBeenCalledWith(derivationPath)
@@ -77,8 +77,8 @@ describe('AssetClaimBuilder', () => {
         chain: CHAIN,
         currency,
         address: ADDRESS,
-        senderAddress: resolvedSender,
-        sender: derivationPath
+        sender: resolvedSender,
+        senderSource: derivationPath
       })
     )
 
@@ -86,15 +86,15 @@ describe('AssetClaimBuilder', () => {
     expect(result).toBe('0x1234567890abcdef')
   })
 
-  it('throws on signAndSubmit when senderAddress is not a derivation path', async () => {
-    const assertSpy = vi.spyOn(utils, 'assertSender')
+  it('throws on signAndSubmit when senderSource is not a derivation path', async () => {
+    const assertSpy = vi.spyOn(utils, 'assertSenderSource')
     const submitSpy = vi.spyOn(mockApi, 'signAndSubmit')
 
     await expect(
       new AssetClaimBuilder(mockApi, { chain: CHAIN })
         .currency(currency)
+        .sender(SENDER)
         .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
         .signAndSubmit()
     ).rejects.toBeInstanceOf(InvalidAddressError)
 

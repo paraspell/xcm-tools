@@ -14,7 +14,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
   api: IPolkadotApi<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   destination: TChain,
-  senderAddress: string,
+  sender: string,
   feeNative: bigint,
   currency: WithComplexAmount<TCurrencyCore>,
   asset: TAssetInfo,
@@ -27,7 +27,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
   const balanceNative = await getBalanceInternal({
     api,
     chain: origin,
-    address: senderAddress
+    address: sender
   })
 
   const isNativeAssetToOrigin = isSymbolMatch(asset.symbol, getNativeAssetSymbol(origin))
@@ -43,7 +43,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
     const balanceAsset = await getAssetBalanceInternal({
       api,
       chain: origin,
-      address: senderAddress,
+      address: sender,
       asset
     })
 

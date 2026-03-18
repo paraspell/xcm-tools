@@ -5,7 +5,7 @@ import { createBeneficiaryLocation } from '../../utils'
 
 export const createRefundInstruction = <TApi, TRes, TSigner>(
   api: IPolkadotApi<TApi, TRes, TSigner>,
-  senderAddress: string,
+  address: string,
   version: Version,
   assetCount: number
 ) => ({
@@ -15,7 +15,7 @@ export const createRefundInstruction = <TApi, TRes, TSigner>(
         assets: { Wild: { AllCounted: assetCount } },
         beneficiary: createBeneficiaryLocation({
           api,
-          address: senderAddress,
+          address,
           version
         })
       }

@@ -11,7 +11,7 @@ import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { addXcmVersionHeader, assertSenderAddress } from '../../utils'
+import { addXcmVersionHeader, assertSender } from '../../utils'
 import { createAsset } from '../../utils/asset'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createBeneficiaryLocation, createVersionedDestination } from '../../utils/location'
@@ -36,16 +36,16 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
   public async handleEthBridgeNativeTransfer<TApi, TRes, TSigner>(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { api, version, destination, senderAddress, address, paraIdTo, assetInfo: asset } = input
+    const { api, version, destination, sender, recipient, paraIdTo, assetInfo: asset } = input
 
-    assertSenderAddress(senderAddress)
+    assertSender(sender)
 
     const messageId = await generateMessageId(
       api,
-      senderAddress,
+      sender,
       getParaId(this.chain),
       JSON.stringify(asset.location),
-      JSON.stringify(address),
+      JSON.stringify(recipient),
       asset.amount
     )
 
@@ -74,7 +74,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
                 assets: { Wild: { AllCounted: 1 } },
                 beneficiary: createBeneficiaryLocation({
                   api,
-                  address,
+                  address: recipient,
                   version
                 })
               }
@@ -118,11 +118,11 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (asset.assetId !== undefined) {
       const assetId = Number(asset.assetId)
-      const dest = { Id: address }
+      const dest = { Id: recipient }
       if (isAmountAll) {
         return api.deserializeExtrinsics({
           module: 'Assets',
@@ -152,7 +152,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
         method: 'transfer_all',
         params: {
           id: asset.location,
-          dest: { Id: address },
+          dest: { Id: recipient },
           keep_alive: keepAlive
         }
       })
@@ -163,7 +163,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
       method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: asset.location,
-        target: { Id: address },
+        target: { Id: recipient },
         amount: asset.amount
       }
     })

@@ -20,7 +20,7 @@ describe('isSufficientOrigin', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
   const origin = 'Acala'
   const destination = 'Astar'
-  const senderAddress = 'Alice'
+  const sender = 'Alice'
   const feeNative = 100n
   const currency = { amount: 50n } as WithAmount<TCurrencyCore>
   const asset = { symbol: 'ACA' } as TAssetInfo
@@ -47,7 +47,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       asset,
@@ -63,7 +63,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       asset,
@@ -76,7 +76,7 @@ describe('isSufficientOrigin', () => {
     expect(getBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       chain: origin,
-      address: senderAddress
+      address: sender
     })
     expect(result).toBe(true)
   })
@@ -89,7 +89,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       asset,
@@ -110,7 +110,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       nonNativeAsset,
@@ -120,7 +120,7 @@ describe('isSufficientOrigin', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockApi,
       chain: origin,
-      address: senderAddress,
+      address: sender,
       asset: nonNativeAsset
     })
     expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(nonNativeAsset)
@@ -138,7 +138,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       nonNativeAsset,
@@ -159,7 +159,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       nonNativeAsset,
@@ -179,7 +179,7 @@ describe('isSufficientOrigin', () => {
       mockApi,
       origin,
       destination,
-      senderAddress,
+      sender,
       feeNative,
       currency,
       asset,

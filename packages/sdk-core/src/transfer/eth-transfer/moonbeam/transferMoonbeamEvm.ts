@@ -25,7 +25,7 @@ const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
   options: TEvmBuilderOptions<TApi, TRes, TSigner>
 ): Promise<string> => {
-  const { api, from, to, signer, address, currency } = options
+  const { api, from, to, signer, recipient, currency } = options
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
@@ -68,7 +68,7 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
     asset = formatAssetIdToERC20(foundAsset.assetId)
   }
 
-  const destLocation = getDestinationLocation(api, address, to as TSubstrateChain)
+  const destLocation = getDestinationLocation(api, recipient, to as TSubstrateChain)
 
   const weight = U_64_MAX
 

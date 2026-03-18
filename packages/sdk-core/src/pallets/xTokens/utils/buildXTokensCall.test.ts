@@ -32,7 +32,7 @@ describe('buildXTokensCall', () => {
     destination: 'Kusama',
     scenario: 'ParaToPara',
     asset: { amount: 100n },
-    address: '0x123',
+    recipient: '0x123',
     paraIdTo: 2000,
     version
   } as TXTokensTransferOptions<unknown, unknown, unknown>
@@ -66,7 +66,7 @@ describe('buildXTokensCall', () => {
       api: mockApi,
       origin: 'Acala',
       destination: 'Astar',
-      address: '0x123',
+      recipient: '0x123',
       version,
       paraId: 2000
     })
@@ -109,7 +109,7 @@ describe('buildXTokensCall', () => {
       api: mockApi,
       origin: 'Astar',
       destination: 'Polkadot',
-      address: '0x123',
+      recipient: '0x123',
       version,
       paraId: 2000
     })
@@ -145,7 +145,7 @@ describe('buildXTokensCall', () => {
       api: mockApi,
       origin: 'Acala',
       destination: 'AssetHubPolkadot',
-      address: '0x123',
+      recipient: '0x123',
       version,
       paraId: 2000
     })
@@ -172,7 +172,7 @@ describe('buildXTokensCall', () => {
       api: mockApi,
       origin: 'Shiden',
       destination: 'Polkadot',
-      address: '0x123',
+      recipient: '0x123',
       version,
       paraId: 2000
     })
@@ -198,7 +198,7 @@ describe('buildXTokensCall', () => {
       api: mockApi,
       origin: 'Acala',
       destination: 'Kusama',
-      address: '0x123',
+      recipient: '0x123',
       version,
       paraId: 2000
     })

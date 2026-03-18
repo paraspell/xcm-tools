@@ -3,7 +3,7 @@ import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSenderAddress } from './TTransfer'
+import type { TSendBaseOptionsWithSender } from './TTransfer'
 import type { TTxFactory } from './TXcmFee'
 
 export type TGetBalanceCommonOptions = {
@@ -54,7 +54,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The sender address of the account.
    */
-  senderAddress: string
+  sender: string
   /**
    * The chain on which to query the balance.
    */
@@ -81,13 +81,8 @@ export type TGetTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
 
 export type TGetMinTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
-    address: string
-    builder: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    recipient: string
+    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
   },
   TApi,
   TRes,
@@ -106,11 +101,11 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
    * The address of the account.
    */
-  address: string
+  recipient: string
   /**
    * The account of the sender.
    */
-  senderAddress: string
+  sender: string
   /**
    * The currency to query.
    */

@@ -53,7 +53,7 @@ export const buildXTokensCall = <TApi, TRes, TSigner>(
     origin,
     destination,
     overriddenAsset,
-    address,
+    recipient,
     asset,
     pallet,
     version,
@@ -73,7 +73,7 @@ export const buildXTokensCall = <TApi, TRes, TSigner>(
     api,
     origin,
     destination,
-    address: address,
+    recipient,
     version,
     paraId: paraIdTo
   })

@@ -24,7 +24,7 @@ describe('Moonbeam', () => {
   const mockInput = {
     api,
     version: Version.V5,
-    senderAddress: 'senderAddress',
+    sender: 'senderAddress',
     assetInfo: {
       symbol: 'GLMR',
       amount: 100n
