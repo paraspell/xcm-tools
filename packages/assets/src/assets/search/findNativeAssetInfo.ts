@@ -13,8 +13,7 @@ const createSelection = (chain: TChain): TCurrencyInput => {
   }
 }
 
-export const findNativeAssetInfo = (chain: TChain) =>
-  findAssetInfo(chain, createSelection(chain), null)
+export const findNativeAssetInfo = (chain: TChain) => findAssetInfo(chain, createSelection(chain))
 
 export const findNativeAssetInfoOrThrow = (chain: TChain) =>
-  findAssetInfoOrThrow(chain, createSelection(chain), null)
+  findAssetInfoOrThrow(chain, createSelection(chain))

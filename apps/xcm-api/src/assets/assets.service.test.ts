@@ -623,11 +623,7 @@ describe('AssetsService', () => {
       });
 
       expect(result).toBe('AssetHubPolkadot');
-      expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith(
-        chain,
-        { symbol },
-        null,
-      );
+      expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith(chain, { symbol });
       expect(getAssetReserveChainSpy).toHaveBeenCalledWith(chain, location);
     });
 

@@ -11,7 +11,7 @@ export const getExchangeConfig = (exchange: TExchangeChain): TDexConfig => {
   const stored = assetsMap[exchange];
   const chain = record[exchange].chain;
 
-  const assets = stored.assets.map((location) => findAssetInfoOrThrow(chain, { location }, null));
+  const assets = stored.assets.map((location) => findAssetInfoOrThrow(chain, { location }));
 
   return {
     isOmni: stored.isOmni,

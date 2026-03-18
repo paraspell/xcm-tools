@@ -21,10 +21,10 @@ export const getExistentialDeposit = (chain: TChain, currency?: TCurrencyCore): 
   if (!currency) {
     const nativeAssetSymbol = getNativeAssetSymbol(chain)
     asset =
-      findAssetInfo(chain, { symbol: Native(nativeAssetSymbol) }, null) ??
-      findAssetInfoOrThrow(chain, { symbol: nativeAssetSymbol }, null)
+      findAssetInfo(chain, { symbol: Native(nativeAssetSymbol) }) ??
+      findAssetInfoOrThrow(chain, { symbol: nativeAssetSymbol })
   } else {
-    asset = findAssetInfoOrThrow(chain, currency, null)
+    asset = findAssetInfoOrThrow(chain, currency)
   }
 
   return extractEdFromAsset(asset)

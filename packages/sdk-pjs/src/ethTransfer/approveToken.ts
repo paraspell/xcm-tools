@@ -8,7 +8,7 @@ export const approveToken = async (signer: Signer, amount: bigint, symbol: strin
     environment: { gatewayContract }
   } = bridgeInfoFor('polkadot_mainnet')
 
-  const asset = findAssetInfoOrThrow('Ethereum', { symbol }, null)
+  const asset = findAssetInfoOrThrow('Ethereum', { symbol })
 
   assertHasId(asset)
 

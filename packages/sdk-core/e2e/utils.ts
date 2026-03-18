@@ -49,7 +49,7 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
       if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
       if (isAssetIdRequired && asset.isNative) continue
 
-      if (findAssetInfo(destChain, { location: asset.location }, null)) {
+      if (findAssetInfo(destChain, { location: asset.location })) {
         scenarios.push({ originChain, destChain, asset })
         if (!includeAll) break
       }
