@@ -33,12 +33,12 @@ export const calculateTotalXcmFee = (
 export const verifyEdOnDestinationInternal = async <TApi, TRes, TSigner>(
   options: TVerifyEdOnDestinationOptions<TApi, TRes, TSigner>
 ) => {
-  const { api, buildTx, origin, destination, currency, address, senderAddress, feeAsset, version } =
+  const { api, buildTx, origin, destination, currency, sender, recipient, feeAsset, version } =
     options
 
   if (isExternalChain(destination)) return true
 
-  validateAddress(api, address, destination, true)
+  validateAddress(api, recipient, destination, true)
 
   const isSubBridge = isSubstrateBridge(origin, destination)
 
@@ -60,7 +60,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes, TSigner>(
   const ed = getEdFromAssetOrThrow(destAsset)
 
   const balance = await getAssetBalanceInternal({
-    address,
+    address: recipient,
     chain: destination,
     api: destApi,
     asset: destAsset
@@ -71,8 +71,8 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes, TSigner>(
     buildTx,
     origin,
     destination,
-    senderAddress,
-    address,
+    sender,
+    recipient,
     currency: {
       ...currency,
       amount

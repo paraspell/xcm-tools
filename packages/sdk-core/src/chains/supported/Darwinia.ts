@@ -31,7 +31,7 @@ class Darwinia<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -43,7 +43,7 @@ class Darwinia<TApi, TRes, TSigner>
         method: 'transfer_all',
         params: {
           id: assetId,
-          dest: address,
+          dest: recipient,
           keep_alive: keepAlive
         }
       })
@@ -54,7 +54,7 @@ class Darwinia<TApi, TRes, TSigner>
       method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
-        target: address,
+        target: recipient,
         amount: asset.amount
       }
     })

@@ -142,8 +142,8 @@ export const XTransferDtoSchema = z
   .object({
     from: z.string(),
     to: z.union([z.string(), LocationSchema]),
-    address: z.union([
-      z.string().min(1, { message: 'Address is required' }),
+    recipient: z.union([
+      z.string().min(1, { message: 'Recipient is required' }),
       LocationSchema,
     ]),
     currency: CurrencySchema,
@@ -152,7 +152,7 @@ export const XTransferDtoSchema = z
     keepAlive: z.boolean().optional(),
     pallet: z.string().optional(),
     method: z.string().optional(),
-    senderAddress: z.string().optional(),
+    sender: z.string().optional(),
     ahAddress: z.string().optional(),
     transactOptions: TransactOptionsSchema.optional(),
     swapOptions: SwapOptionsSchema.optional(),
@@ -160,15 +160,15 @@ export const XTransferDtoSchema = z
   })
   .strip();
 
-export const XTransferDtoWSenderAddressSchema = XTransferDtoSchema.extend({
-  senderAddress: z.string().min(1, { message: 'Sender address is required' }),
+export const XTransferDtoWSenderSchema = XTransferDtoSchema.extend({
+  sender: z.string().min(1, { message: 'Sender is required' }),
 });
 
-export const GetXcmFeeSchema = XTransferDtoWSenderAddressSchema.extend({
+export const GetXcmFeeSchema = XTransferDtoWSenderSchema.extend({
   disableFallback: z.boolean().default(false).optional(),
 });
 
-export const DryRunPreviewSchema = XTransferDtoWSenderAddressSchema.omit({
+export const DryRunPreviewSchema = XTransferDtoWSenderSchema.omit({
   options: true,
 }).extend({
   options: BuilderOptionsSchema.extend({
@@ -177,8 +177,8 @@ export const DryRunPreviewSchema = XTransferDtoWSenderAddressSchema.omit({
 });
 
 export const SignAndSubmitSchema = XTransferDtoSchema.extend({
-  senderAddress: z.string().startsWith('//', {
-    message: 'Sender address must be a derivation path (e.g., //Alice)',
+  sender: z.string().startsWith('//', {
+    message: 'Sender must be a derivation path (e.g., //Alice)',
   }),
 });
 
@@ -188,9 +188,7 @@ export const ExchangePairsSchema = z.object({
 
 export type SwapOptions = z.infer<typeof SwapOptionsSchema>;
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
-export type XTransferDtoWSenderAddress = z.infer<
-  typeof XTransferDtoWSenderAddressSchema
->;
+export type XTransferDtoWSender = z.infer<typeof XTransferDtoWSenderSchema>;
 export type DryRunPreviewDto = z.infer<typeof DryRunPreviewSchema>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;
 export type SignAndSubmitDto = z.infer<typeof SignAndSubmitSchema>;

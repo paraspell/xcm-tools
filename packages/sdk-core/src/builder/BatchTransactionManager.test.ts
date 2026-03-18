@@ -32,7 +32,7 @@ const createSendOptions = (
   api: mockApi,
   to: 'Hydration',
   currency: { symbol: 'ACA', amount: 100 },
-  address: 'address',
+  recipient: 'address',
   builder: createBuilder(),
   ...overrides
 })

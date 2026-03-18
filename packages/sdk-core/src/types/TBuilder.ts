@@ -28,7 +28,7 @@ export type TEvmBuilderOptionsBase = {
   /**
    * The Polkadot destination address.
    */
-  address: string
+  recipient: string
   /**
    * The AssetHub address
    */
@@ -140,5 +140,5 @@ export type TBuildAllInternalRes<
 export type TSender<TSigner> = string | TSigner
 
 export type TBuilderInternalOptions<TSigner> = {
-  sender?: TSender<TSigner>
+  senderSource?: TSender<TSigner>
 }

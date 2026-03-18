@@ -20,8 +20,7 @@ export type TDryRunBaseOptions<TRes> = {
   tx: TRes
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
-  address: string
+  sender: string
   currency: TCurrencyInputWithAmount
   version?: Version
   feeAsset?: TCurrencyInput
@@ -52,7 +51,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   destination: TDestination
   /**
-   * The address to dry-run with (senderAddress)
+   * The address to dry-run with
    */
   address: string
   /**

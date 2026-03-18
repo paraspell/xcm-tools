@@ -1,7 +1,7 @@
 import type { TWalletAccount } from '../types';
 import { showErrorNotification } from './notifications';
 
-export const resolveSenderAddress = (
+export const resolveSender = (
   localAccount: string | undefined,
   selectedAccount: TWalletAccount | undefined,
 ) => {

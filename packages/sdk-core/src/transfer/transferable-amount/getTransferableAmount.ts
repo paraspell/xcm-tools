@@ -15,7 +15,7 @@ import { resolveFeeAsset } from '../utils'
 
 export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
   api,
-  senderAddress,
+  sender,
   origin: chain,
   destination,
   currency,
@@ -23,7 +23,7 @@ export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
   feeAsset,
   version
 }: TGetTransferableAmountOptions<TApi, TRes, TSigner>): Promise<bigint> => {
-  validateAddress(api, senderAddress, chain, false)
+  validateAddress(api, sender, chain, false)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, chain, destination, currency)
@@ -35,7 +35,7 @@ export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
 
   const balance = await getAssetBalanceInternal({
     api,
-    address: senderAddress,
+    address: sender,
     chain,
     asset
   })
@@ -57,7 +57,7 @@ export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
       buildTx,
       origin: chain,
       destination: chain,
-      senderAddress,
+      sender,
       feeAsset,
       version,
       currency: {

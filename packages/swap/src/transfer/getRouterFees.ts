@@ -58,8 +58,8 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
             assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
             currencyTo,
             feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
-            senderAddress: evmSenderAddress ?? senderAddress,
-            recipientAddress: recipientAddress ?? senderAddress,
+            sender: evmSenderAddress ?? senderAddress,
+            recipient: recipientAddress ?? senderAddress,
             calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
               dex.getAmountOut(exchange.api, {
                 ...options,
@@ -89,8 +89,8 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
           buildTx,
           origin: origin?.chain ?? exchange.baseChain,
           destination: destination?.chain ?? exchange.baseChain,
-          senderAddress: evmSenderAddress ?? senderAddress,
-          address: recipientAddress ?? senderAddress,
+          sender: evmSenderAddress ?? senderAddress,
+          recipient: recipientAddress ?? senderAddress,
           currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
           feeAsset,
           disableFallback,

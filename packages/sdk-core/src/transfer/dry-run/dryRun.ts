@@ -6,9 +6,9 @@ import { dryRunInternal } from './dryRunInternal'
 export const dryRun = async <TApi, TRes, TSigner>(
   options: TDryRunOptions<TApi, TRes, TSigner>
 ): Promise<TDryRunResult> => {
-  const { api, senderAddress, origin } = options
+  const { api, sender, origin } = options
 
-  validateAddress(api, senderAddress, origin, false)
+  validateAddress(api, sender, origin, false)
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
   try {

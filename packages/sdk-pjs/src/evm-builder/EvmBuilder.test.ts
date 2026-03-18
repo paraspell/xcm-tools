@@ -53,7 +53,7 @@ describe('EvmBuilderClass', () => {
       .from('Moonbeam')
       .to('Ethereum')
       .currency(currency)
-      .address(address)
+      .recipient(address)
       .ahAddress(address)
       .signer(signer)
 
@@ -70,7 +70,7 @@ describe('EvmBuilderClass', () => {
       .from('Moonbeam')
       .to('Ethereum')
       .currency(currency)
-      .address(address)
+      .recipient(address)
       .ahAddress(address)
       .signer(signer)
 
@@ -81,7 +81,7 @@ describe('EvmBuilderClass', () => {
       from: 'Moonbeam',
       to: 'Ethereum',
       currency,
-      address,
+      recipient: address,
       ahAddress: address,
       signer
     })
@@ -92,7 +92,7 @@ describe('EvmBuilderClass', () => {
       .from('Moonbeam')
       .to('Polkadot')
       .currency(currency)
-      .address(address)
+      .recipient(address)
       .ahAddress(address)
       .signer(signer)
 
@@ -106,7 +106,7 @@ describe('EvmBuilderClass', () => {
       .from('Ethereum')
       .to('AssetHubPolkadot')
       .currency(currency)
-      .address(address)
+      .recipient(address)
       .ahAddress(address)
       .signer(signer)
 
@@ -118,7 +118,7 @@ describe('EvmBuilderClass', () => {
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
       currency,
-      address,
+      recipient: address,
       ahAddress: address,
       signer
     })

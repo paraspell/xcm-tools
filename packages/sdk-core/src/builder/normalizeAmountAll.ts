@@ -4,7 +4,7 @@ import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TSendBaseOptions, TSendOptions, TTxFactory } from '../types'
-import { assertSenderAddress, assertToIsString, executeWithRouter } from '../utils'
+import { assertSender, assertToIsString, executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <
@@ -34,7 +34,7 @@ export const normalizeAmountAll = async <
   const buildTx = builderWithMinAmount['createTxFactory']()
 
   assertToIsString(options.to)
-  assertSenderAddress(options.senderAddress)
+  assertSender(options.sender)
 
   const transferable = swapOptions
     ? await executeWithRouter({ ...options, api, swapOptions }, builder =>
@@ -45,7 +45,7 @@ export const normalizeAmountAll = async <
         buildTx,
         origin: options.from,
         destination: options.to,
-        senderAddress: options.senderAddress,
+        sender: options.sender,
         feeAsset: options.feeAsset,
         version: options.version,
         currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>

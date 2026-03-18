@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 
 import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
-import { assertSender, assertSenderAddress, assertSwapSupport } from './assertions'
+import { assertSender, assertSenderSource, assertSwapSupport } from './assertions'
 
 describe('assertions', () => {
-  describe('assertSenderAddress', () => {
+  describe('assertSender', () => {
     it('should throw if address is undefined', () => {
-      expect(() => assertSenderAddress(undefined)).toThrow(MissingParameterError)
+      expect(() => assertSender(undefined)).toThrow(MissingParameterError)
     })
     it('should not throw if address is a string', () => {
-      expect(() => assertSenderAddress('some-address')).not.toThrow()
+      expect(() => assertSender('some-address')).not.toThrow()
     })
   })
 
   describe('assertDerivationPath', () => {
     it('should throw if path is undefined', () => {
-      expect(() => assertSender(undefined)).toThrow(InvalidAddressError)
+      expect(() => assertSenderSource(undefined)).toThrow(InvalidAddressError)
     })
   })
 

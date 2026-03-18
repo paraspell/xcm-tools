@@ -17,26 +17,26 @@ const createAccountPayload = <TApi, TRes, TSigner>(
 
 export const createBeneficiaryLocXTokens = <TApi, TRes, TSigner>({
   api,
-  address: recipientAddress,
+  recipient,
   origin,
   destination,
   version,
   paraId
 }: TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner>): TLocation => {
-  if (isTLocation(recipientAddress)) {
-    return recipientAddress
+  if (isTLocation(recipient)) {
+    return recipient
   }
 
   const scenario = resolveScenario(origin, destination)
 
-  const accountPayload = createAccountPayload(api, recipientAddress)
+  const accountPayload = createAccountPayload(api, recipient)
 
   if (scenario === 'ParaToRelay') {
     return {
       parents: Parents.ONE,
       interior: createX1Payload(version, {
         AccountId32: {
-          id: api.accountToHex(recipientAddress)
+          id: api.accountToHex(recipient)
         }
       })
     }

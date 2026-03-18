@@ -11,11 +11,11 @@ export const submitTransactionDedot = async (
   _api: DedotClient,
   tx: SubmittableExtrinsic,
   signer: Signer,
-  injectorAddress: string,
+  senderAddress: string,
   onSign?: () => void,
 ): Promise<string> => {
   const result = await tx
-    .signAndSend(injectorAddress, { signer })
+    .signAndSend(senderAddress, { signer })
     .untilFinalized();
   if (onSign) onSign();
   return result.txHash;
@@ -25,10 +25,10 @@ export const submitTransactionPjs = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
-  injectorAddress: string,
+  senderAddress: string,
   onSign?: () => void,
 ): Promise<string> => {
-  await tx.signAsync(injectorAddress, { signer });
+  await tx.signAsync(senderAddress, { signer });
   if (onSign) onSign();
   return new Promise((resolve, reject) => {
     tx.send(({ status, dispatchError, txHash }) => {
@@ -91,7 +91,7 @@ export const submitTx = async (
   api: TApi,
   tx: TTransaction,
   signer: PolkadotSigner | Signer,
-  address: string,
+  senderAddress: string,
   onSign?: () => void,
 ) => {
   if (apiType === 'PAPI') {
@@ -105,7 +105,7 @@ export const submitTx = async (
       api as DedotClient,
       tx as SubmittableExtrinsic,
       signer as Signer,
-      address,
+      senderAddress,
       onSign,
     );
   } else {
@@ -113,7 +113,7 @@ export const submitTx = async (
       api as ApiPromise,
       tx as Extrinsic,
       signer as Signer,
-      address,
+      senderAddress,
       onSign,
     );
   }

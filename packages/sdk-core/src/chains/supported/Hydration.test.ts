@@ -76,7 +76,7 @@ describe('Hydration', () => {
 
       mockInput = {
         api: mockApi,
-        address: '0xPolkadotAddress',
+        recipient: '0xPolkadotAddress',
         assetInfo: {
           symbol: 'WETH',
           assetId: '0x1234567890abcdef',
@@ -126,7 +126,7 @@ describe('Hydration', () => {
 
       await hydration.transferPolkadotXCM({
         ...mockInput,
-        senderAddress: '5Gw3s7q'
+        sender: '5Gw3s7q'
       })
 
       expect(spy).toHaveBeenCalled()
@@ -255,7 +255,7 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
-        address: '0x1234567890abcdef',
+        recipient: '0x1234567890abcdef',
         balance: 2000n,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -268,7 +268,7 @@ describe('Hydration', () => {
         module: 'Balances',
         method: 'transfer_allow_death',
         params: {
-          dest: mockInput.address,
+          dest: mockInput.recipient,
           value: BigInt(mockInput.assetInfo.amount)
         }
       })
@@ -278,9 +278,9 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 100n },
-        address: '0x1234567890abcdef',
+        recipient: '0x1234567890abcdef',
         balance: 2000n,
-        senderAddress: 'sender',
+        sender: 'sender',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -293,7 +293,7 @@ describe('Hydration', () => {
         module: 'Balances',
         method: 'transfer_all',
         params: {
-          dest: mockInput.address,
+          dest: mockInput.recipient,
           keep_alive: false
         }
       })
@@ -305,7 +305,7 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'DOT', amount: 1000n },
-        address: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
@@ -315,7 +315,7 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 1000n },
-        address: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
@@ -325,7 +325,7 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
-        address: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -336,7 +336,7 @@ describe('Hydration', () => {
         module: 'Tokens',
         method: 'transfer',
         params: {
-          dest: mockInput.address,
+          dest: mockInput.recipient,
           currency_id: 123,
           amount: BigInt(mockInput.assetInfo.amount)
         }
@@ -347,7 +347,7 @@ describe('Hydration', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
-        address: '0x1234567890abcdef',
+        recipient: '0x1234567890abcdef',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -360,7 +360,7 @@ describe('Hydration', () => {
         module: 'Tokens',
         method: 'transfer_all',
         params: {
-          dest: mockInput.address,
+          dest: mockInput.recipient,
           currency_id: 123,
           keep_alive: false
         }

@@ -11,7 +11,7 @@ vi.mock('../../utils', () => ({
 
 describe('createRefundInstruction', () => {
   const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
-  const mockSenderAddress = '0x123'
+  const mockSender = '0x123'
   const mockVersion = 'V3' as Version
   const mockBeneficiaryLocation = {} as TLocation
 
@@ -23,11 +23,11 @@ describe('createRefundInstruction', () => {
   it('should create refund instruction with correct structure', () => {
     const assetCount = 1
 
-    const result = createRefundInstruction(mockApi, mockSenderAddress, mockVersion, assetCount)
+    const result = createRefundInstruction(mockApi, mockSender, mockVersion, assetCount)
 
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
-      address: mockSenderAddress,
+      address: mockSender,
       version: mockVersion
     })
 

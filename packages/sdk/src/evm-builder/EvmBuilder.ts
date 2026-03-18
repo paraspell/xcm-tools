@@ -58,8 +58,8 @@ export class EvmBuilderCore<
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(address: string): EvmBuilderCore<TApi, TRes, TSigner, T & { address: string }> {
-    return new EvmBuilderCore({ ...this._options, address })
+  recipient(address: string): EvmBuilderCore<TApi, TRes, TSigner, T & { recipient: string }> {
+    return new EvmBuilderCore({ ...this._options, recipient: address })
   }
 
   /**
@@ -90,8 +90,8 @@ export class EvmBuilderCore<
   async build(
     this: EvmBuilderCore<TApi, TRes, TSigner, TEvmBuilderOptions<TApi, TRes, TSigner>>
   ): Promise<string> {
-    const { from, to, address, api } = this._options
-    validateAddress(api, address, to)
+    const { from, to, recipient, api } = this._options
+    validateAddress(api, recipient, to)
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
       return transferMoonbeamToEth(from, this._options)

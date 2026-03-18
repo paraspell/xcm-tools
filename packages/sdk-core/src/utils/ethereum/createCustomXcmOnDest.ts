@@ -6,7 +6,7 @@ import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sd
 import { MissingParameterError, UnsupportedOperationError } from '../../errors'
 import type { TAddress, TCreateEthBridgeInstructionsOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasId, assertSenderAddress } from '../assertions'
+import { assertHasId, assertSender } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 import { getEthereumJunction } from '../location/getEthereumJunction'
 
@@ -14,7 +14,7 @@ const createMainInstruction = (
   origin: TSubstrateChain,
   asset: TAssetInfo,
   ethAsset: TAssetInfo,
-  address: TAddress,
+  recipient: TAddress,
   messageId: string
 ) => {
   assertHasId(ethAsset)
@@ -39,7 +39,7 @@ const createMainInstruction = (
         {
           AccountKey20: {
             network: null,
-            key: address
+            key: recipient
           }
         }
       ]
@@ -123,9 +123,9 @@ const createMainInstruction = (
 export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
   {
     api,
-    address,
+    sender,
+    recipient,
     assetInfo,
-    senderAddress,
     ahAddress,
     version
   }: TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner>,
@@ -133,7 +133,7 @@ export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
   messageId: string,
   ethAsset: TAssetInfo
 ): unknown[] => {
-  assertSenderAddress(senderAddress)
+  assertSender(sender)
 
   if (isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress')
@@ -150,14 +150,14 @@ export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
                   assets: { Wild: 'All' },
                   beneficiary: createBeneficiaryLocation({
                     api,
-                    address: isChainEvm(origin) ? (ahAddress as string) : senderAddress,
+                    address: isChainEvm(origin) ? (ahAddress as string) : sender,
                     version
                   })
                 }
               }
             ]
     },
-    createMainInstruction(origin, assetInfo, ethAsset, address, messageId),
+    createMainInstruction(origin, assetInfo, ethAsset, recipient, messageId),
     {
       SetTopic: messageId
     }
@@ -170,10 +170,12 @@ export const createCustomXcmOnDest = <TApi, TRes, TSigner>(
   messageId: string,
   ethAsset: TAssetInfo
 ) => {
-  const { api, address, assetInfo, senderAddress, ahAddress, version } = options
+  const { api, sender, recipient, assetInfo, ahAddress, version } = options
+
+  assertSender(sender)
 
   const instructions = createEthereumBridgeInstructions(
-    { api, address, assetInfo, senderAddress: senderAddress!, ahAddress, version },
+    { api, sender, recipient, assetInfo, ahAddress, version },
     origin,
     messageId,
     ethAsset

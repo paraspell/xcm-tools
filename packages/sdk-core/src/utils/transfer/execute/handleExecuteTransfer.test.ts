@@ -46,9 +46,9 @@ describe('handleExecuteTransfer', () => {
     destChain: 'Hydration' as TParachain,
     beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
-    address: 'address',
+    sender: '0x1234567890abcdef',
+    recipient: 'address',
     destination: 'Polkadot',
-    senderAddress: '0x1234567890abcdef',
     currency: { symbol: 'DOT' },
     version: Version.V4
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
@@ -69,7 +69,7 @@ describe('handleExecuteTransfer', () => {
   it('should throw error when amount is smaller than MIN_FEE', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 999n }
     }
     await expect(handleExecuteTransfer(input)).rejects.toThrow(AmountTooLowError)
@@ -78,7 +78,7 @@ describe('handleExecuteTransfer', () => {
   it('should throw error when amount is smaller than calculated fee (same asset)', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 1500n }
     }
 
@@ -101,7 +101,7 @@ describe('handleExecuteTransfer', () => {
   it('should throw error when unable to determine destination chain', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       destChain: undefined,
       assetInfo: { ...mockInput.assetInfo, amount: 5000n }
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
@@ -114,7 +114,7 @@ describe('handleExecuteTransfer', () => {
   it('should throw error when amount is smaller than calculated fee (different fee asset)', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 1200n },
       feeAssetInfo: { symbol: 'USDT' },
       feeCurrency: { symbol: 'USDT' }
@@ -139,7 +139,7 @@ describe('handleExecuteTransfer', () => {
   it('should throw error if origin dry run fails', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
@@ -159,7 +159,7 @@ describe('handleExecuteTransfer', () => {
   it('should successfully create and return executeXcm transaction with hop', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
@@ -185,13 +185,12 @@ describe('handleExecuteTransfer', () => {
       api: mockApi,
       chain: input.chain,
       destChain: mockDestChain,
-      address: 'address',
+      sender: '0xvalid',
+      recipient: 'address',
       assetInfo: input.assetInfo,
       currency: input.currency,
       feeAssetInfo: undefined,
       feeCurrency: undefined,
-      recipientAddress: 'address',
-      senderAddress: '0xvalid',
       version: Version.V4,
       fees: {
         originFee: 1000n,
@@ -204,13 +203,12 @@ describe('handleExecuteTransfer', () => {
       api: mockApi,
       chain: input.chain,
       destChain: mockDestChain,
-      address: 'address',
       assetInfo: input.assetInfo,
       currency: input.currency,
       feeAssetInfo: undefined,
       feeCurrency: undefined,
-      recipientAddress: 'address',
-      senderAddress: '0xvalid',
+      recipient: 'address',
+      sender: '0xvalid',
       version: Version.V4,
       fees: {
         originFee: 1400n, // 1000 padded by 40%
@@ -231,7 +229,7 @@ describe('handleExecuteTransfer', () => {
   it('should use MIN_FEE for reserveFee when no hops', async () => {
     const input = {
       ...mockInput,
-      senderAddress: '0xvalid',
+      sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 10000n }
     }
 
@@ -255,13 +253,12 @@ describe('handleExecuteTransfer', () => {
       api: mockApi,
       chain: input.chain,
       destChain: mockDestChain,
-      address: 'address',
+      sender: '0xvalid',
+      recipient: 'address',
       assetInfo: input.assetInfo,
       currency: input.currency,
       feeAssetInfo: undefined,
       feeCurrency: undefined,
-      recipientAddress: 'address',
-      senderAddress: '0xvalid',
       version: Version.V4,
       fees: {
         originFee: 2100n,

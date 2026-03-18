@@ -8,13 +8,12 @@ import {
   TSubstrateChain,
   PARACHAINS,
   TBuilderOptions,
-  TSendBaseOptionsWithSenderAddress,
+  TSendBaseOptionsWithSender,
   getChain,
   isRelayChain,
   TSendInternalOptions,
   RELAYCHAINS,
   isSystemChain,
-  hasJunction,
   RuntimeApiUnavailableError,
   TBuilderConfig,
   TUrl,
@@ -27,7 +26,6 @@ import {
   findAssetInfo,
   ForeignAbstract,
   getAssets,
-  getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
   isChainEvm,
@@ -51,12 +49,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   validateTransfer: (
-    builder: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >,
+    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>,
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
@@ -85,8 +78,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             },
             amount: MOCK_AMOUNT
           })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
         await validateTransfer(builder, signer)
       })
 
@@ -101,8 +94,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             },
             amount: MOCK_AMOUNT
           })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
         await validateTransfer(builder, signer)
       })
 
@@ -117,8 +110,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             },
             amount: MOCK_AMOUNT
           })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
         await validateTransfer(builder, signer)
       })
     })
@@ -176,8 +169,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .from(relayChain)
                 .to(chain)
                 .currency({ symbol, amount: MOCK_AMOUNT })
-                .senderAddress(MOCK_ADDRESS)
-                .address(MOCK_ADDRESS)
+                .sender(MOCK_ADDRESS)
+                .recipient(MOCK_ADDRESS)
               await validateTransfer(builder, signer)
             } catch (error) {
               if (error instanceof RuntimeApiUnavailableError) {
@@ -195,8 +188,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .from('Hydration')
           .to('AssetHubPolkadot')
           .currency({ symbol: ForeignAbstract('USDT1'), amount: MOCK_AMOUNT })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
         expect(builder).toBeDefined()
       })
 
@@ -215,8 +208,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             }
           ])
           .feeAsset({ symbol: 'USDC' })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
           .build()
         validateTx(tx, signer)
       })
@@ -247,8 +240,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
               interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
             }
           })
-          .senderAddress(MOCK_ADDRESS)
-          .address(MOCK_ADDRESS)
+          .sender(MOCK_ADDRESS)
+          .recipient(MOCK_ADDRESS)
           .build()
         validateTx(tx, signer)
       })
@@ -262,8 +255,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .from('Acala')
             .to('Astar')
             .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
-            .senderAddress(MOCK_ADDRESS)
-            .address(MOCK_ADDRESS)
+            .sender(MOCK_ADDRESS)
+            .recipient(MOCK_ADDRESS)
           await validateTransfer(builder, signer)
         })
 
@@ -273,8 +266,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .from('Acala')
             .to('Astar')
             .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
-            .senderAddress(MOCK_ADDRESS)
-            .address(MOCK_ADDRESS)
+            .sender(MOCK_ADDRESS)
+            .recipient(MOCK_ADDRESS)
           await validateTransfer(builder, signer)
         })
 
@@ -284,8 +277,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .from('Acala')
             .to('Astar')
             .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
-            .senderAddress(MOCK_ADDRESS)
-            .address(MOCK_ADDRESS)
+            .sender(MOCK_ADDRESS)
+            .recipient(MOCK_ADDRESS)
           await validateTransfer(builder, signer)
         })
       })
@@ -318,8 +311,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         describeGroup('ParaToPara', () => {
           scenarios.forEach(({ destChain, asset }) => {
             it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
-              const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-              const address = isChainEvm(destChain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+              const sender = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+              const recipient = isChainEvm(destChain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
               try {
                 const builder = Builder(config)
                   .from(chain)
@@ -328,8 +321,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     location: asset.location,
                     amount: MOCK_AMOUNT
                   })
-                  .address(address)
-                  .senderAddress(senderAddress)
+                  .recipient(recipient)
+                  .sender(sender)
 
                 await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
               } catch (error) {
@@ -368,14 +361,14 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             const relaySymbol = getRelayChainSymbol(chain)
             const symbol = isSystemChain(chain) ? Native(relaySymbol) : relaySymbol
             const relayChain = getRelayChainOf(chain)
-            const senderAddress = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+            const sender = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
             try {
               const builder = Builder(config)
                 .from(chain)
                 .to(relayChain)
                 .currency({ symbol, amount: MOCK_AMOUNT })
-                .senderAddress(senderAddress)
-                .address(MOCK_ADDRESS)
+                .sender(sender)
+                .recipient(MOCK_ADDRESS)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
               const allowedErrorNames = ['TypeAndThenUnavailableError']
@@ -404,8 +397,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .from(chain)
                 .to(chain)
                 .currency({ location: asset.location, amount: MOCK_AMOUNT })
-                .senderAddress(address)
-                .address(address)
+                .sender(address)
+                .recipient(address)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
               if (error instanceof RuntimeApiUnavailableError) {

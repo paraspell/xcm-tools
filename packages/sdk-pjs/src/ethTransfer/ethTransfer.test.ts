@@ -99,7 +99,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: fakeSigner
     }
 
@@ -120,7 +120,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: {
         provider: {}
       } as Signer
@@ -136,7 +136,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: {
         otherProvider: {}
       } as unknown as WalletClient
@@ -156,7 +156,7 @@ describe('transferEthToPolkadot', () => {
       currency: [],
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: {
         provider: {}
       } as Signer
@@ -184,7 +184,7 @@ describe('transferEthToPolkadot', () => {
       },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: {
         provider: {}
       } as Signer
@@ -229,7 +229,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: fakeSigner
     }
 
@@ -270,7 +270,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: fakeSigner
     }
 
@@ -309,7 +309,7 @@ describe('transferEthToPolkadot', () => {
       currency: { symbol: 'ETH', amount: '1000000' },
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
-      address: '0xSenderAddress',
+      recipient: '0xSenderAddress',
       signer: fakeSigner
     }
 

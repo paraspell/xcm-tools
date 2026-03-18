@@ -53,7 +53,7 @@ describe('getSwapFee', () => {
         buildTx: expect.any(Function),
         origin: 'TEST_CHAIN',
         destination: 'TEST_CHAIN',
-        senderAddress: '0xSender',
+        sender: '0xSender',
         disableFallback: false,
         currency: { location: dotAsset.location, amount: '100' },
       }),

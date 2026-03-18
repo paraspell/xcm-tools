@@ -72,9 +72,9 @@ describe('getTransferInfo', () => {
       buildTx,
       origin: 'Polkadot' as TSubstrateChain,
       destination: 'AssetHubPolkadot' as TChain,
-      senderAddress: 'senderAlice',
+      sender: 'senderAlice',
       ahAddress: 'ahBob',
-      address: 'receiverCharlie',
+      recipient: 'receiverCharlie',
       version: Version.V5,
       currency: {
         symbol: 'DOT',
@@ -161,8 +161,8 @@ describe('getTransferInfo', () => {
       buildTx,
       origin: options.origin,
       destination: options.destination,
-      senderAddress: options.senderAddress,
-      address: options.address,
+      sender: options.sender,
+      recipient: options.recipient,
       currency: options.currency,
       feeAsset: options.feeAsset,
       version: options.version,
@@ -300,13 +300,13 @@ describe('getTransferInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
     expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(1, {
       api: mockApi,
-      address: options.senderAddress,
+      address: options.sender,
       chain: options.origin,
       asset: dotAsset
     })
     expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(2, {
       api: mockApi,
-      address: options.senderAddress,
+      address: options.sender,
       chain: options.origin,
       asset: feeAssetFromFee
     })

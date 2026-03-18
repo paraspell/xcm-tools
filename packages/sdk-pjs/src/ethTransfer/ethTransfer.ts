@@ -29,7 +29,7 @@ export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
   api,
   provider,
   signer,
-  address,
+  recipient,
   to,
   currency
 }: TPjsEvmBuilderOptions<TApi, TRes, TSigner>) => {
@@ -79,7 +79,7 @@ export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
   const transfer = await toPolkadotV2.createTransfer(
     registry,
     sourceAddress,
-    address,
+    recipient,
     ethAsset.assetId,
     destParaId,
     amount,
