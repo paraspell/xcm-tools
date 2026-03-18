@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Request,
   UsePipes,
@@ -19,6 +20,8 @@ import {
 import {
   DryRunPreviewDto,
   DryRunPreviewSchema,
+  ExchangePairsDto,
+  ExchangePairsSchema,
   GetXcmFeeDto,
   GetXcmFeeSchema,
   SignAndSubmitDto,
@@ -33,7 +36,7 @@ import { XTransferService } from './x-transfer.service.js';
 @Controller()
 export class XTransferController {
   constructor(
-    private xTransferService: XTransferService,
+    private service: XTransferService,
     private analyticsService: AnalyticsService,
   ) {}
 
@@ -70,21 +73,21 @@ export class XTransferController {
   @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
   dryRun(@Body() params: XTransferDtoWSenderAddress, @Req() req: Request) {
     this.trackAnalytics(EventName.DRY_RUN, req, params);
-    return this.xTransferService.dryRun(params);
+    return this.service.dryRun(params);
   }
 
   @Post('dry-run-preview')
   @UsePipes(new ZodValidationPipe(DryRunPreviewSchema))
   dryRunPreview(@Body() params: DryRunPreviewDto, @Req() req: Request) {
     this.trackAnalytics(EventName.DRY_RUN_PREVIEW, req, params);
-    return this.xTransferService.dryRunPreview(params);
+    return this.service.dryRunPreview(params);
   }
 
   @Post('xcm-fee')
   @UsePipes(new ZodValidationPipe(GetXcmFeeSchema))
   getXcmFee(@Body() params: GetXcmFeeDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_XCM_FEE, req, params as XTransferDto);
-    return this.xTransferService.getXcmFee(params);
+    return this.service.getXcmFee(params);
   }
 
   @Post('origin-xcm-fee')
@@ -94,21 +97,21 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE, req, params);
-    return this.xTransferService.getOriginXcmFee(params);
+    return this.service.getOriginXcmFee(params);
   }
 
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCall(bodyParams);
+    return this.service.generateXcmCall(bodyParams);
   }
 
   @Post('x-transfers')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCalls(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALLS, req, bodyParams);
-    return this.xTransferService.generateXcmCalls(bodyParams);
+    return this.service.generateXcmCalls(bodyParams);
   }
 
   @Post('x-transfer-batch')
@@ -122,19 +125,19 @@ export class XTransferController {
       req,
       bodyParams,
     );
-    return this.xTransferService.generateBatchXcmCall(bodyParams);
+    return this.service.generateBatchXcmCall(bodyParams);
   }
 
   @Post('sign-and-submit')
   @UsePipes(new ZodValidationPipe(SignAndSubmitSchema))
   signAndSubmit(@Body() params: SignAndSubmitDto, @Req() req: Request) {
     this.trackAnalytics(EventName.SIGN_AND_SUBMIT, req, params);
-    return this.xTransferService.signAndSubmit(params);
+    return this.service.signAndSubmit(params);
   }
 
   @Get('x-transfer/eth-bridge-status')
   getBridgeStatus() {
-    return this.xTransferService.getBridgeStatus();
+    return this.service.getBridgeStatus();
   }
 
   @Post('transferable-amount')
@@ -144,7 +147,7 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_TRANSFERABLE_AMOUNT, req, bodyParams);
-    return this.xTransferService.getTransferableAmount(bodyParams);
+    return this.service.getTransferableAmount(bodyParams);
   }
 
   @Post('min-transferable-amount')
@@ -154,7 +157,7 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_MIN_TRANSFERABLE_AMOUNT, req, bodyParams);
-    return this.xTransferService.getMinTransferableAmount(bodyParams);
+    return this.service.getMinTransferableAmount(bodyParams);
   }
 
   @Post('verify-ed-on-destination')
@@ -164,7 +167,7 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.VERIFY_ED_ON_DESTINATION, req, bodyParams);
-    return this.xTransferService.verifyEdOnDestination(bodyParams);
+    return this.service.verifyEdOnDestination(bodyParams);
   }
 
   @Post('transfer-info')
@@ -174,7 +177,7 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, bodyParams);
-    return this.xTransferService.getTransferInfo(bodyParams);
+    return this.service.getTransferInfo(bodyParams);
   }
 
   @Post('receivable-amount')
@@ -184,7 +187,7 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_RECEIVABLE_AMOUNT, req, bodyParams);
-    return this.xTransferService.getReceivableAmount(bodyParams);
+    return this.service.getReceivableAmount(bodyParams);
   }
 
   @Post('best-amount-out')
@@ -194,11 +197,23 @@ export class XTransferController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, bodyParams);
-    return this.xTransferService.getBestAmountOut(bodyParams);
+    return this.service.getBestAmountOut(bodyParams);
   }
 
   @Get('x-transfer/para-eth-fees')
   getParaEthFees() {
-    return this.xTransferService.getParaEthFees();
+    return this.service.getParaEthFees();
+  }
+
+  @Get('swap/pairs')
+  @UsePipes(new ZodValidationPipe(ExchangePairsSchema))
+  getExchangePairs(
+    @Query() { exchange }: ExchangePairsDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_EXCHANGE_PAIRS, req, {
+      exchange: exchange as string,
+    });
+    return this.service.getExchangePairs(exchange);
   }
 }

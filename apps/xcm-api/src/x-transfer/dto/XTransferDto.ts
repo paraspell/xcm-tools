@@ -182,6 +182,10 @@ export const SignAndSubmitSchema = XTransferDtoSchema.extend({
   }),
 });
 
+export const ExchangePairsSchema = z.object({
+  exchange: ExchangeSchema,
+});
+
 export type SwapOptions = z.infer<typeof SwapOptionsSchema>;
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
 export type XTransferDtoWSenderAddress = z.infer<
@@ -190,3 +194,4 @@ export type XTransferDtoWSenderAddress = z.infer<
 export type DryRunPreviewDto = z.infer<typeof DryRunPreviewSchema>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;
 export type SignAndSubmitDto = z.infer<typeof SignAndSubmitSchema>;
+export type ExchangePairsDto = z.infer<typeof ExchangePairsSchema>;
