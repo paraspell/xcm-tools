@@ -21,7 +21,6 @@ import { throttlerConfig } from './config/throttler.config.js';
 import { HealthModule } from './health/health.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
-import { RouterModule } from './router/router.module.js';
 import { UsersService } from './users/users.service.js';
 import { XTransferModule } from './x-transfer/x-transfer.module.js';
 import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
@@ -35,7 +34,6 @@ const __dirname = path.dirname(__filename);
     XTransferModule,
     AssetClaimModule,
     XcmAnalyserModule,
-    RouterModule,
     AssetsModule,
     PalletsModule,
     BalanceModule,
