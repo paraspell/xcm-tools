@@ -47,7 +47,7 @@ describe('NeuroWeb', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'NEURO', amount: 123n },
-        address: '5F3sa2TYSF9Kxxxxx',
+        recipient: '5F3sa2TYSF9Kxxxxx',
         balance: 999n,
         isAmountAll: false,
         keepAlive: true
@@ -59,7 +59,7 @@ describe('NeuroWeb', () => {
         module: 'Balances',
         method: 'transfer_keep_alive',
         params: {
-          dest: mockOptions.address,
+          dest: mockOptions.recipient,
           value: mockOptions.assetInfo.amount
         }
       })
@@ -69,7 +69,7 @@ describe('NeuroWeb', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'NEURO', amount: 123n },
-        address: '5F3sa2TYSF9Kxxxxx',
+        recipient: '5F3sa2TYSF9Kxxxxx',
         balance: 456n,
         isAmountAll: true,
         keepAlive: false
@@ -81,7 +81,7 @@ describe('NeuroWeb', () => {
         module: 'Balances',
         method: 'transfer_all',
         params: {
-          dest: mockOptions.address,
+          dest: mockOptions.recipient,
           keep_alive: false
         }
       })
@@ -103,7 +103,7 @@ describe('NeuroWeb', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'USDT', assetId: '42', amount: 321n },
-        address: '5CLocalDest',
+        recipient: '5CLocalDest',
         balance: 999n,
         isAmountAll: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -115,7 +115,7 @@ describe('NeuroWeb', () => {
         method: 'transfer',
         params: {
           id: 42n,
-          target: mockOptions.address,
+          target: mockOptions.recipient,
           amount: mockOptions.assetInfo.amount
         }
       })
@@ -129,7 +129,7 @@ describe('NeuroWeb', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'USDT', assetId: '7', amount: 321n },
-        address: '5CLocalDest',
+        recipient: '5CLocalDest',
         balance: 777n,
         isAmountAll: true
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -141,7 +141,7 @@ describe('NeuroWeb', () => {
         method: 'transfer',
         params: {
           id: 7n,
-          target: mockOptions.address,
+          target: mockOptions.recipient,
           amount: mockOptions.balance
         }
       })

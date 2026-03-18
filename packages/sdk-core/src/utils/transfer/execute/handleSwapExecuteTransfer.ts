@@ -199,8 +199,8 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     assetInfoTo: assetTo,
     currencyTo,
     feeAssetInfo,
-    senderAddress,
-    recipientAddress,
+    sender,
+    recipient,
     calculateMinAmountOut
   } = options
 
@@ -228,8 +228,8 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     api,
     origin: chain ?? exchangeChain,
     destination: destChain ?? exchangeChain,
-    senderAddress,
-    address: recipientAddress,
+    sender,
+    recipient,
     version,
     currency: {
       location: assetFrom.location,

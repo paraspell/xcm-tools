@@ -17,7 +17,7 @@ import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
   SignAndSubmitDto,
-  XTransferDtoWSenderAddress,
+  XTransferDtoWSender,
 } from './dto/XTransferDto.js';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
@@ -43,11 +43,11 @@ describe('XTransferController', () => {
     service = module.get<XTransferService>(XTransferService);
   });
 
-  const bodyParams: XTransferDtoWSenderAddress = {
+  const bodyParams: XTransferDtoWSender = {
     from: 'Acala',
     to: 'Basilisk',
-    address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-    senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    sender: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
     currency: { symbol: 'DOT', amount: 100 },
   };
 
@@ -98,13 +98,13 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+            recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+            recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
         ],
@@ -237,7 +237,7 @@ describe('XTransferController', () => {
     it('should call service.signAndSubmit and track analytics', async () => {
       const params: SignAndSubmitDto = {
         ...bodyParams,
-        senderAddress: '//Alice',
+        sender: '//Alice',
       };
 
       const mockResult = '0x1234567890abcdef';

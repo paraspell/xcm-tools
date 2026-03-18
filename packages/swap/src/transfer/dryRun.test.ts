@@ -139,8 +139,7 @@ describe('dryRunRouter', () => {
     expect(dryRun).toHaveBeenCalledWith(
       expect.objectContaining({
         destination: 'Acala',
-        senderAddress: '0xSender',
-        address: 'recipient',
+        sender: '0xSender',
         currency: expect.objectContaining({ amount: 1000n }),
       }),
     );

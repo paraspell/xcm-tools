@@ -44,9 +44,9 @@ describe('createCustomXcmOnDest', () => {
   const defaultDestination = { parents: Parents.ONE, interior: { Here: null } }
   const baseOptions = {
     api,
-    address: '0xRecipient',
     scenario: 'ParaToPara',
-    senderAddress: '0xSender',
+    sender: '0xSender',
+    recipient: '0xRecipient',
     beneficiaryLocation: mockBeneficiary,
     asset: mockAsset,
     assetInfo: { location: mockLocation },
@@ -174,7 +174,7 @@ describe('createCustomXcmOnDest', () => {
                         {
                           AccountKey20: {
                             network: null,
-                            key: baseOptions.address
+                            key: baseOptions.recipient
                           }
                         }
                       ]

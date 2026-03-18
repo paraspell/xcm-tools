@@ -19,8 +19,8 @@ export const createToExchangeBuilder = ({
       location: assetFrom.location,
       amount,
     })
-    .address(senderAddress)
-    .senderAddress(isChainEvm(from) ? (evmSenderAddress as string) : senderAddress);
+    .sender(isChainEvm(from) ? (evmSenderAddress as string) : senderAddress)
+    .recipient(senderAddress);
 
 export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
   createToExchangeBuilder(options).build();
@@ -50,8 +50,8 @@ export const createFromExchangeBuilder = ({
       location: assetTo.location,
       amount,
     })
-    .address(address)
-    .senderAddress(senderAddress);
+    .sender(senderAddress)
+    .recipient(address);
 
 export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
   createFromExchangeBuilder(options).build();

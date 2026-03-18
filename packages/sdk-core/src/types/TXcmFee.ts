@@ -26,8 +26,8 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   /**
    * The sender address
    */
-  senderAddress: string
-  address: string
+  sender: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   version?: Version
   feeAsset?: TCurrencyInput
@@ -62,7 +62,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
+  sender: string
   currency: WithAmount<TCurrencyCore>
   version?: Version
   feeAsset?: TCurrencyInput
@@ -88,8 +88,8 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   prevChain: TSubstrateChain
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
-  address: string
+  sender: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
   tx: TRes

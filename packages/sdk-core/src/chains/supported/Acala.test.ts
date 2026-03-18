@@ -43,7 +43,7 @@ describe('Acala', () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n },
-      address: 'address',
+      recipient: 'address',
       balance: 1000n
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
@@ -72,9 +72,9 @@ describe('Acala', () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n },
-      address: 'address',
+      sender: 'sender',
+      recipient: 'address',
       balance: 1000n,
-      senderAddress: 'sender',
       isAmountAll: true
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
@@ -98,7 +98,7 @@ describe('Acala', () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-      address: 'address',
+      recipient: 'address',
       balance: 1000n
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
@@ -123,7 +123,7 @@ describe('Acala', () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-      address: 'address',
+      recipient: 'address',
       balance: 500n,
       isAmountAll: true
     } as TTransferLocalOptions<unknown, unknown, unknown>

@@ -28,8 +28,8 @@ import {
   SignAndSubmitSchema,
   XTransferDto,
   XTransferDtoSchema,
-  XTransferDtoWSenderAddress,
-  XTransferDtoWSenderAddressSchema,
+  XTransferDtoWSender,
+  XTransferDtoWSenderSchema,
 } from './dto/XTransferDto.js';
 import { XTransferService } from './x-transfer.service.js';
 
@@ -70,8 +70,8 @@ export class XTransferController {
   }
 
   @Post('dry-run')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
-  dryRun(@Body() params: XTransferDtoWSenderAddress, @Req() req: Request) {
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
+  dryRun(@Body() params: XTransferDtoWSender, @Req() req: Request) {
     this.trackAnalytics(EventName.DRY_RUN, req, params);
     return this.service.dryRun(params);
   }
@@ -91,11 +91,8 @@ export class XTransferController {
   }
 
   @Post('origin-xcm-fee')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
-  getOriginXcmFee(
-    @Body() params: XTransferDtoWSenderAddress,
-    @Req() req: Request,
-  ) {
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
+  getOriginXcmFee(@Body() params: XTransferDtoWSender, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE, req, params);
     return this.service.getOriginXcmFee(params);
   }
@@ -141,9 +138,9 @@ export class XTransferController {
   }
 
   @Post('transferable-amount')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   getTransferableAmount(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_TRANSFERABLE_AMOUNT, req, bodyParams);
@@ -151,9 +148,9 @@ export class XTransferController {
   }
 
   @Post('min-transferable-amount')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   getMinTransferableAmount(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_MIN_TRANSFERABLE_AMOUNT, req, bodyParams);
@@ -161,9 +158,9 @@ export class XTransferController {
   }
 
   @Post('verify-ed-on-destination')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   verifyEdOnDestination(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.VERIFY_ED_ON_DESTINATION, req, bodyParams);
@@ -171,9 +168,9 @@ export class XTransferController {
   }
 
   @Post('transfer-info')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   getTransferInfo(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, bodyParams);
@@ -181,9 +178,9 @@ export class XTransferController {
   }
 
   @Post('receivable-amount')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   getReceivableAmount(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_RECEIVABLE_AMOUNT, req, bodyParams);
@@ -191,9 +188,9 @@ export class XTransferController {
   }
 
   @Post('best-amount-out')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
   getBestAmountOut(
-    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Body() bodyParams: XTransferDtoWSender,
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, bodyParams);

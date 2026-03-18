@@ -80,7 +80,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: { symbol: 'TEST', amount: '100' },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
@@ -90,7 +90,7 @@ describe('send', () => {
 
     expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.feeAsset)
     expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
-    expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.to, apiMock)
+    expect(validateDestinationAddress).toHaveBeenCalledWith(options.recipient, options.to, apiMock)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
 
@@ -104,12 +104,12 @@ describe('send', () => {
       feeCurrency: undefined,
       isAmountAll: undefined,
       keepAlive: undefined,
-      address: options.address,
       to: options.to,
       paraIdTo: options.paraIdTo,
       overriddenAsset: undefined,
       version: Version.V4,
-      senderAddress: undefined,
+      sender: undefined,
+      recipient: options.recipient,
       ahAddress: undefined,
       pallet: undefined,
       method: undefined,
@@ -126,7 +126,7 @@ describe('send', () => {
       to: 'Astar',
       currency: { symbol: 'DOT', amount: '100' },
       feeAsset: { symbol: 'USDT' },
-      address: 'some-address'
+      recipient: 'some-address'
     } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
@@ -155,7 +155,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
 
@@ -177,7 +177,7 @@ describe('send', () => {
       currency: {
         amount: 100
       },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
 
@@ -195,7 +195,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: currency,
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
 
@@ -220,7 +220,7 @@ describe('send', () => {
       from: 'Acala',
       currency: [] as TCurrencyInput,
       feeAsset: { location: {} },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown, unknown>
 
@@ -237,14 +237,14 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
-  it('should validate senderAddress if provided', async () => {
+  it('should validate sender if provided', async () => {
     const options = {
       api: apiMock,
       from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar',
-      senderAddress: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+      sender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
     } as TSendOptions<unknown, unknown, unknown>
 
     await createTransfer(options)
@@ -262,11 +262,11 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
-      address: 'some-address',
+      recipient: 'some-address',
       to: 'Astar',
       paraIdTo: undefined,
       version: undefined,
-      senderAddress: undefined
+      sender: undefined
     } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
@@ -277,7 +277,7 @@ describe('send', () => {
       expect.objectContaining({
         paraIdTo: undefined,
         version: Version.V4,
-        senderAddress: undefined
+        sender: undefined
       })
     )
 
@@ -290,7 +290,7 @@ describe('send', () => {
       from: 'Acala',
       to: 'Astar',
       currency: [] as TCurrencyInput,
-      address: 'some-address'
+      recipient: 'some-address'
     } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
@@ -320,7 +320,7 @@ describe('send', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'DOT', amount: '1' },
-      address: 'some-address'
+      recipient: 'some-address'
     } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
@@ -346,7 +346,7 @@ describe('send', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'TEST', amount: '100' },
-      address: 'some-address'
+      recipient: 'some-address'
     } as TSendOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')

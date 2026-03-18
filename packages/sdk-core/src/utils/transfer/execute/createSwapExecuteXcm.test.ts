@@ -159,8 +159,8 @@ describe('createSwapExecuteXcm', () => {
       } as any,
       assetInfoTo: { amount: 3000n, location: {}, symbol: 'WETH', assetId: '0x123' } as any,
       fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 5n, destReserveFee: 20n },
-      senderAddress: 'sender1',
-      recipientAddress: 'ethAddr',
+      sender: 'sender1',
+      recipient: 'ethAddr',
       version: 3,
       paraIdTo: 1000,
       calculateMinAmountOut: vi.fn().mockResolvedValue(100n)

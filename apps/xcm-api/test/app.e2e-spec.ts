@@ -326,8 +326,8 @@ describe('XCM API (e2e)', () => {
 
   describe('X-Transfer controller', () => {
     const amount = '10000000000';
-    const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
-    const senderAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
+    const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+    const sender = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
     const xTransferUrl = '/x-transfer';
     const xTransferBatchUrl = '/x-transfer-batch';
 
@@ -335,7 +335,7 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          address,
+          recipient,
         })
         .expect(400);
     });
@@ -345,7 +345,7 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           from: unknownChain,
-          address,
+          recipient,
         })
         .expect(400);
     });
@@ -355,7 +355,7 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           to: unknownChain,
-          address,
+          recipient,
         })
         .expect(400);
     });
@@ -366,7 +366,7 @@ describe('XCM API (e2e)', () => {
         .send({
           from: 'Acala',
           to: 'Basilisk',
-          address,
+          recipient,
         })
         .expect(400);
     });
@@ -377,7 +377,7 @@ describe('XCM API (e2e)', () => {
         .send({
           from: 'Acala',
           to: 'Basilisk',
-          address,
+          recipient,
           currency: 'UknownSymbol',
         })
         .expect(400);
@@ -391,16 +391,16 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           currency,
         })
         .expect(201)
@@ -415,16 +415,16 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           currency,
         })
         .expect(201)
@@ -440,7 +440,7 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          address,
+          recipient,
           currency,
         })
         .expect(400);
@@ -458,14 +458,14 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to1)
         .currency(currency)
-        .address(address1)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(address1)
         .addToBatch()
         .from(from)
         .to(to2)
         .currency(currency)
-        .address(address2)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(address2)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -477,15 +477,15 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to: to1,
-              address: address1,
-              senderAddress,
+              sender,
+              recipient: address1,
               currency,
             },
             {
               from,
               to: to2,
-              address: address2,
-              senderAddress,
+              sender,
+              recipient: address2,
               currency,
             },
           ],
@@ -501,7 +501,7 @@ describe('XCM API (e2e)', () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
       const invalidCurrency = { symbol: 'INVALID', amount };
-      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
@@ -510,7 +510,7 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address,
+              recipient,
               currency: invalidCurrency,
             },
           ],
@@ -529,7 +529,7 @@ describe('XCM API (e2e)', () => {
       const from2: TChain = 'Moonriver';
       const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount };
-      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
@@ -538,13 +538,13 @@ describe('XCM API (e2e)', () => {
             {
               from: from1,
               to,
-              address,
+              recipient,
               currency,
             },
             {
               from: from2, // Different 'from' chain
               to,
-              address,
+              recipient,
               currency,
             },
           ],
@@ -573,7 +573,7 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address: invalidAddress,
+              recipient: invalidAddress,
               currency,
             },
           ],
@@ -608,7 +608,7 @@ describe('XCM API (e2e)', () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount };
-      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const invalidBatchMode = 'INVALID_MODE';
 
       return request(app.getHttpServer())
@@ -618,7 +618,7 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address,
+              recipient,
               currency,
             },
           ],
@@ -639,7 +639,7 @@ describe('XCM API (e2e)', () => {
           transfers: [
             {
               from,
-              address,
+              recipient,
               currency,
             },
           ],
@@ -654,7 +654,7 @@ describe('XCM API (e2e)', () => {
       const from: TChain = 'AssetHubKusama';
       const to: TChain = 'Basilisk';
       const currency = { symbol: 'USDT', amount: '-1000' }; // Negative amount
-      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
@@ -663,7 +663,7 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address,
+              recipient,
               currency,
             },
           ],
@@ -679,21 +679,21 @@ describe('XCM API (e2e)', () => {
       const to1: TChain = 'Basilisk';
       const to2: TChain = 'Moonriver';
       const currency = { id: 1984, amount };
-      const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
-      const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
+      const recipient1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const recipient2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
       const builder = Builder()
         .from(from)
         .to(to1)
         .currency(currency)
-        .address(address1)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient1)
         .addToBatch()
         .from(from)
         .to(to2)
         .currency(currency)
-        .address(address2)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient2)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH });
@@ -705,15 +705,15 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to: to1,
-              address: address1,
-              senderAddress,
+              sender: sender,
+              recipient: recipient1,
               currency,
             },
             {
               from,
               to: to2,
-              address: address2,
-              senderAddress,
+              sender: sender,
+              recipient: recipient2,
               currency,
             },
           ],
@@ -734,8 +734,8 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -747,8 +747,8 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address,
-              senderAddress,
+              sender,
+              recipient,
               currency,
             },
           ],
@@ -770,8 +770,8 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .xcmVersion(xcmVersion)
         .addToBatch();
 
@@ -784,8 +784,8 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address,
-              senderAddress,
+              sender,
+              recipient,
               currency,
               xcmVersion,
             },
@@ -810,8 +810,8 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to('Polkadot')
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -824,8 +824,8 @@ describe('XCM API (e2e)', () => {
               from,
               to: 'Polkadot',
               currency,
-              address,
-              senderAddress,
+              sender,
+              recipient,
             },
           ],
           options: {
@@ -848,8 +848,8 @@ describe('XCM API (e2e)', () => {
         .from('Kusama')
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .addToBatch();
 
       const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
@@ -862,8 +862,8 @@ describe('XCM API (e2e)', () => {
               from: 'Kusama',
               to,
               currency,
-              address,
-              senderAddress,
+              sender,
+              recipient,
             },
           ],
           options: {
@@ -883,16 +883,16 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           currency,
         })
         .expect(201)
@@ -914,14 +914,14 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to)
         .currency({ location: Override(currency), amount })
-        .address(address)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          address,
+          recipient,
           currency: { location: Override(currency), amount },
         })
         .expect(201)
@@ -940,7 +940,7 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          address,
+          recipient,
           currency,
           feeAsset: currency,
         })
@@ -1011,16 +1011,16 @@ describe('XCM API (e2e)', () => {
         .feeAsset({
           location: feeAsset,
         })
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           currency: createCurrency('1000000000'),
           feeAsset: { location: feeAsset },
         })
@@ -1038,8 +1038,8 @@ describe('XCM API (e2e)', () => {
         .from('AssetHubKusama')
         .to('Kusama')
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
@@ -1047,8 +1047,8 @@ describe('XCM API (e2e)', () => {
           from: 'AssetHubKusama',
           to: 'Kusama',
           currency,
-          address,
-          senderAddress,
+          sender,
+          recipient,
         })
         .expect(201)
         .expect((await tx.getEncodedData()).asHex());
@@ -1062,8 +1062,8 @@ describe('XCM API (e2e)', () => {
           symbol: 'KSM',
           amount,
         })
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
@@ -1074,8 +1074,8 @@ describe('XCM API (e2e)', () => {
             symbol: 'KSM',
             amount,
           },
-          address,
-          senderAddress,
+          sender,
+          recipient,
         })
         .expect(201)
         .expect((await tx.getEncodedData()).asHex());
@@ -1091,8 +1091,8 @@ describe('XCM API (e2e)', () => {
         .from('AssetHubKusama')
         .to('Kusama')
         .currency(currency)
-        .address(address)
-        .senderAddress(senderAddress)
+        .sender(sender)
+        .recipient(recipient)
         .xcmVersion(Version.V3)
         .build();
       return request(app.getHttpServer())
@@ -1101,8 +1101,8 @@ describe('XCM API (e2e)', () => {
           from: 'AssetHubKusama',
           to: 'Kusama',
           currency,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           xcmVersion: Version.V3,
         })
         .expect(201)
@@ -1119,8 +1119,8 @@ describe('XCM API (e2e)', () => {
             symbol: 'ACA',
             amount,
           },
-          address,
-          senderAddress,
+          sender,
+          recipient,
         })
         .expect(400);
     });
@@ -1136,7 +1136,7 @@ describe('XCM API (e2e)', () => {
             symbol: 'KSM',
             amount,
           },
-          address,
+          recipient,
           xcmVersion: 'V6',
         })
         .expect(400);
@@ -1154,8 +1154,8 @@ describe('XCM API (e2e)', () => {
           from,
           to: 'Kusama',
           currency,
-          address,
-          senderAddress,
+          sender,
+          recipient,
           pallet: 'Balances',
           method: 'transfer',
         })
@@ -1242,8 +1242,8 @@ describe('XCM API (e2e)', () => {
     const transferInfo: XTransferDto = {
       from: 'Hydration',
       to: 'AssetHubPolkadot',
-      senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      sender: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       currency: { symbol: 'DOT', amount: '10000000000' },
     };
 

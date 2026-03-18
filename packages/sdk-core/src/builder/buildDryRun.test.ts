@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { dryRun } from '../transfer'
-import type { TBypassOptions, TDryRunResult, TSendBaseOptionsWithSenderAddress } from '../types'
+import type { TBypassOptions, TDryRunResult, TSendBaseOptionsWithSender } from '../types'
 import { buildDryRun } from './buildDryRun'
 
 vi.mock('@paraspell/sdk-common')
@@ -16,11 +16,10 @@ describe('buildDryRun', () => {
   const baseOptions = {
     from: 'AssetHubPolkadot',
     to: 'Acala',
-    address: 'ADDR',
-    senderAddress: 'SENDER',
+    sender: 'SENDER',
     currency: { symbol: 'DOT' },
     feeAsset: { symbol: 'USDT' }
-  } as TSendBaseOptionsWithSenderAddress<unknown, unknown, unknown>
+  } as TSendBaseOptionsWithSender<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -36,16 +35,6 @@ describe('buildDryRun', () => {
     expect(dryRun).not.toHaveBeenCalled()
   })
 
-  it('throws when address is a TLocation', () => {
-    vi.mocked(isTLocation).mockReturnValueOnce(false).mockReturnValueOnce(true)
-
-    expect(() => buildDryRun(api, tx, baseOptions)).toThrow(
-      'Location address is not supported for XCM fee calculation.'
-    )
-
-    expect(dryRun).not.toHaveBeenCalled()
-  })
-
   it('calls dryRun with mapped args when both are non-TLocation', async () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(dryRun).mockResolvedValue({} as TDryRunResult)
@@ -55,19 +44,17 @@ describe('buildDryRun', () => {
     const res = await buildDryRun(api, tx, baseOptions, bypassOptions)
     expect(res).toEqual({})
 
-    expect(isTLocation).toHaveBeenCalledTimes(2)
+    expect(isTLocation).toHaveBeenCalledTimes(1)
     expect(isTLocation).toHaveBeenNthCalledWith(1, baseOptions.to)
-    expect(isTLocation).toHaveBeenNthCalledWith(2, baseOptions.address)
 
     expect(dryRun).toHaveBeenCalledTimes(1)
     expect(dryRun).toHaveBeenCalledWith({
       api,
       tx,
-      address: baseOptions.senderAddress,
       origin: baseOptions.from,
       destination: baseOptions.to,
       currency: baseOptions.currency,
-      senderAddress: baseOptions.senderAddress,
+      sender: baseOptions.sender,
       feeAsset: baseOptions.feeAsset,
       bypassOptions
     })

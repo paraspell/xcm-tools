@@ -71,7 +71,7 @@ describe('Manta', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
@@ -81,7 +81,7 @@ describe('Manta', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
@@ -91,7 +91,7 @@ describe('Manta', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -102,7 +102,7 @@ describe('Manta', () => {
         module: 'Assets',
         method: 'transfer',
         params: {
-          target: { Id: mockOptions.address },
+          target: { Id: mockOptions.recipient },
           id: 1n,
           amount: BigInt(mockOptions.assetInfo.amount)
         }
@@ -113,7 +113,7 @@ describe('Manta', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address',
+        recipient: 'address',
         balance: 500n,
         isAmountAll: true
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -127,7 +127,7 @@ describe('Manta', () => {
         method: 'transfer',
         params: {
           id: 1n,
-          target: { Id: mockOptions.address },
+          target: { Id: mockOptions.recipient },
           amount: mockOptions.balance
         }
       })

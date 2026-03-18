@@ -24,8 +24,8 @@ describe('createTypeThenAutoReserve', () => {
     api: mkApi(),
     destChain: 'Acala',
     destination: 'Acala',
-    address: 'Alice',
-    senderAddress: 'Bob',
+    recipient: 'Alice',
+    sender: 'Bob',
     currency: { symbol: 'DOT' }
   } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 

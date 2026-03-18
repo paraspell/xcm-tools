@@ -69,7 +69,7 @@ describe('Kintsugi', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
@@ -83,7 +83,7 @@ describe('Kintsugi', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -94,7 +94,7 @@ describe('Kintsugi', () => {
         module: 'Tokens',
         method: 'transfer',
         params: {
-          dest: mockOptions.address,
+          dest: mockOptions.recipient,
           currency_id: { ForeignAsset: 1 },
           value: BigInt(mockOptions.assetInfo.amount)
         }
@@ -105,7 +105,7 @@ describe('Kintsugi', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address',
+        recipient: 'address',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -118,7 +118,7 @@ describe('Kintsugi', () => {
         module: 'Tokens',
         method: 'transfer_all',
         params: {
-          dest: mockOptions.address,
+          dest: mockOptions.recipient,
           currency_id: { ForeignAsset: 1 },
           keep_alive: false
         }

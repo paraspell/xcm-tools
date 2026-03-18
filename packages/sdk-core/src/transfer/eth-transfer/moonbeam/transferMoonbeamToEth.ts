@@ -16,7 +16,7 @@ import {
   UnsupportedOperationError
 } from '../../../errors'
 import { type TEvmBuilderOptions } from '../../../types'
-import { abstractDecimals, assertHasId, assertSenderAddress } from '../../../utils'
+import { abstractDecimals, assertHasId, assertSender } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -29,7 +29,7 @@ const XCDOT = '0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080'
 
 export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
   from: TSubstrateChain,
-  { api, to, signer, address, ahAddress, currency }: TEvmBuilderOptions<TApi, TRes, TSigner>
+  { api, to, signer, recipient, ahAddress, currency }: TEvmBuilderOptions<TApi, TRes, TSigner>
 ) => {
   if (!ahAddress) {
     throw new MissingParameterError('ahAddress')
@@ -67,19 +67,19 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
     }
   })
 
-  const senderAddress = signer.account?.address
+  const sender = signer.account?.address
 
-  assertSenderAddress(senderAddress)
+  assertSender(sender)
   assertHasId(ethAsset)
 
   await api.init(from, TX_CLIENT_TIMEOUT_MS)
 
   const messageId = await generateMessageId(
     api,
-    senderAddress,
+    sender,
     getParaId(from),
     ethAsset.assetId,
-    address,
+    recipient,
     amount
   )
 
@@ -90,9 +90,9 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
       api,
       chain: from,
       destination: to,
-      address,
+      recipient,
       scenario: 'ParaToPara',
-      senderAddress,
+      sender,
       ahAddress,
       assetInfo: { ...foundAsset, amount },
       currency,

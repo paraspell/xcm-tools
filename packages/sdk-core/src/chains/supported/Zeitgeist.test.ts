@@ -48,7 +48,7 @@ describe('Zeitgeist', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', isNative: true, amount: 100n },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
@@ -58,7 +58,7 @@ describe('Zeitgeist', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
@@ -68,7 +68,7 @@ describe('Zeitgeist', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
@@ -81,7 +81,7 @@ describe('Zeitgeist', () => {
         module: 'AssetManager',
         method: 'transfer',
         params: {
-          dest: { Id: mockOptions.address },
+          dest: { Id: mockOptions.recipient },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
         }

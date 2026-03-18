@@ -46,7 +46,7 @@ describe('transferMoonbeamEvm', () => {
   const mockSigner = { account: '0xabc', chain: { id: 1284 } } as unknown as WalletClient
   const mockFrom = 'Moonbeam'
   const mockTo = 'AssetHubPolkadot'
-  const mockAddress = 'some-address'
+  const mockRecipient = 'some-address'
   const mockCurrency = { symbol: 'GLMR', amount: '1000000' }
   const mockForeignAsset = {
     symbol: 'xcPINK2',
@@ -74,7 +74,7 @@ describe('transferMoonbeamEvm', () => {
       from: mockFrom,
       to: mockTo,
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: mockCurrency
     })
     expect(formatAssetIdToERC20).not.toHaveBeenCalled()
@@ -98,7 +98,7 @@ describe('transferMoonbeamEvm', () => {
         from: mockFrom,
         to: mockTo,
         signer: mockSigner,
-        address: mockAddress,
+        recipient: mockRecipient,
         currency: mockCurrency
       })
     ).rejects.toThrow('Currency must be a foreign asset with valid assetId')
@@ -111,7 +111,7 @@ describe('transferMoonbeamEvm', () => {
       from: mockFrom,
       to: mockTo,
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: mockCurrency
     })
     expect(formatAssetIdToERC20).toHaveBeenCalledWith(mockForeignAsset.assetId)
@@ -127,7 +127,7 @@ describe('transferMoonbeamEvm', () => {
       from: 'Moonbeam',
       to: 'AssetHubPolkadot',
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: { symbol: 'xcPINK', amount: '1000000' }
     })
     expect(mockViemContract.write.transferMultiCurrencies).toHaveBeenCalledWith([
@@ -147,7 +147,7 @@ describe('transferMoonbeamEvm', () => {
       from: 'Moonbeam',
       to: 'AssetHubPolkadot',
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: { symbol: 'SOME_TOKEN', amount: '1234' }
     })
     expect(mockViemContract.write.transfer).toHaveBeenCalledWith([
@@ -164,7 +164,7 @@ describe('transferMoonbeamEvm', () => {
       from: mockFrom,
       to: mockTo,
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: mockCurrency
     })
     expect(result).toBe('0xMockTxHash')
@@ -177,7 +177,7 @@ describe('transferMoonbeamEvm', () => {
         from: 'Moonbeam',
         to: 'AssetHubPolkadot',
         signer: mockSigner,
-        address: mockAddress,
+        recipient: mockRecipient,
         currency: []
       } as TEvmBuilderOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
@@ -191,7 +191,7 @@ describe('transferMoonbeamEvm', () => {
         from: 'Moonbeam',
         to: 'AssetHubPolkadot',
         signer: mockSigner,
-        address: mockAddress,
+        recipient: mockRecipient,
         currency: {
           location: { type: 'Override', value: { parents: 1, interior: {} } },
           amount: 1000
@@ -209,7 +209,7 @@ describe('transferMoonbeamEvm', () => {
       from: 'Moonbeam',
       to: 'Moonbeam',
       signer: mockSigner,
-      address: mockAddress,
+      recipient: mockRecipient,
       currency: { symbol: 'xcDOT', amount: '5000000' }
     } as TEvmBuilderOptions<unknown, unknown, unknown>
 

@@ -41,7 +41,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
     currency,
     forwardedXcms,
     asset,
-    address,
+    recipient,
     feeAsset,
     originFee,
     tx,
@@ -95,7 +95,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
     const sufficient = await isSufficientDestination(
       api,
       destination,
-      address,
+      recipient,
       currency.amount,
       asset,
       fee

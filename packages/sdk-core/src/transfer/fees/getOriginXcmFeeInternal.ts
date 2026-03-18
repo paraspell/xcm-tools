@@ -18,7 +18,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
   tx,
   origin,
   destination,
-  senderAddress,
+  sender,
   disableFallback,
   feeAsset,
   currency,
@@ -41,13 +41,13 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
   if (!hasDryRunSupport(origin)) {
-    const { partialFee: rawFee } = await api.getPaymentInfo(tx, senderAddress)
+    const { partialFee: rawFee } = await api.getPaymentInfo(tx, sender)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
     const sufficient = await isSufficientOrigin(
       api,
       origin,
       destination,
-      senderAddress,
+      sender,
       paddedFee,
       {
         ...currency,
@@ -71,7 +71,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
     tx,
     chain: origin,
     destination,
-    address: senderAddress,
+    address: sender,
     asset: {
       ...asset,
       amount
@@ -91,7 +91,7 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
       }
     }
 
-    const { partialFee: rawFee } = await api.getPaymentInfo(tx, senderAddress)
+    const { partialFee: rawFee } = await api.getPaymentInfo(tx, sender)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
 
     return {
