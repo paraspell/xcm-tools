@@ -41,7 +41,7 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
-  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
+  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) })
 
   if (!needsMultiHop) {
     return [
@@ -182,7 +182,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
   let exchangeToDestXcm: unknown[]
 
   if (isEthereumDest) {
-    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol }, null)
+    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol })
 
     const messageId = await generateMessageId(
       api,

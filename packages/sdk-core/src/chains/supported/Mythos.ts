@@ -28,7 +28,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
 ): Promise<TSerializedExtrinsics> => {
   const { api, assetInfo: asset, senderAddress, address } = options
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
+  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
 
   assertHasId(ethAsset)
   assertAddressIsString(address)

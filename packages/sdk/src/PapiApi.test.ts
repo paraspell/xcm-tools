@@ -217,7 +217,7 @@ describe('PapiApi', () => {
       const result = await papiApi.resolveFeeAsset(createOptions())
 
       expect(accountCurrencyMapGetValue).toHaveBeenCalledWith('addr')
-      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: '1001' }, null)
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: '1001' })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
 
       vi.mocked(findAssetInfoOrThrow).mockReset()

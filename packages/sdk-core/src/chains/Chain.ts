@@ -389,7 +389,7 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
-    const isRegisteredOnAh = findAssetInfo(assetHubChain, { location: asset.location }, null)
+    const isRegisteredOnAh = findAssetInfo(assetHubChain, { location: asset.location })
 
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
@@ -529,7 +529,7 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
 
-    const ethAssetInfo = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
+    const ethAssetInfo = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
 
     const systemAssetInfo = findNativeAssetInfoOrThrow(getRelayChainOf(this.chain))
     const shouldIncludeFeeAsset =

@@ -1811,7 +1811,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.resolveFeeAsset(baseOptions)
 
       expect(accountCurrencyMapMock).toHaveBeenCalledWith(baseOptions.address)
-      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: assetId }, null)
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Hydration', { id: assetId })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
   })

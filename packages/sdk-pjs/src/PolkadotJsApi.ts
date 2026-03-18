@@ -273,7 +273,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId }, null)
+      asset: findAssetInfoOrThrow(chain, { id: assetId })
     }
   }
 

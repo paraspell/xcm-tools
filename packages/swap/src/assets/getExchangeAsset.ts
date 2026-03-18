@@ -43,7 +43,7 @@ export const getExchangeAsset = (
       }
     }
 
-    asset = findAssetInfoBySymbol(null, otherAssets, nativeAssets, currency.symbol);
+    asset = findAssetInfoBySymbol(otherAssets, nativeAssets, currency.symbol);
   } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
     asset = findAssetInfoByLoc(assets, currency.location);
   } else if ('id' in currency) {

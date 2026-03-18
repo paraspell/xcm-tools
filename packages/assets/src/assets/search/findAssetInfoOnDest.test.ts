@@ -67,11 +67,7 @@ describe('findAssetOnDest', () => {
       currencyInput,
       mockDestinationChain
     )
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationChain,
-      { location: mockLocation },
-      null
-    )
+    expect(findAssetInfo).toHaveBeenCalledWith(mockDestinationChain, { location: mockLocation })
     expect(result).toEqual(mockDestinationAsset)
     expect(findAssetInfoOrThrow).toHaveBeenCalledTimes(1)
   })
@@ -210,11 +206,7 @@ describe('findAssetOnDest', () => {
     )
 
     expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
-    expect(findAssetInfo).toHaveBeenCalledWith(
-      mockDestinationChain,
-      { location: mockLocation },
-      null
-    )
+    expect(findAssetInfo).toHaveBeenCalledWith(mockDestinationChain, { location: mockLocation })
     expect(result).toEqual(mockDestinationAsset)
   })
 })

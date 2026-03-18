@@ -61,10 +61,10 @@ const throwIfDuplicate = (
 }
 
 export const findAssetInfoBySymbol = (
-  destination: TChain | null,
   otherAssets: TAssetInfo[],
   nativeAssets: TAssetInfo[],
-  symbol: TCurrencySymbolValue
+  symbol: TCurrencySymbolValue,
+  destination?: TChain
 ): TAssetInfo | undefined => {
   const isSpecifier = isSymbolSpecifier(symbol)
   let assetsMatches: TAssetInfo[] = []

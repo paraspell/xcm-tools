@@ -36,7 +36,7 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
   const asset = findAssetInfoOrThrow(origin, currency, destination)
   let currentAsset =
     origin === swapConfig?.exchangeChain
-      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, null)
+      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo)
       : asset
 
   let hasPassedExchange = origin === swapConfig?.exchangeChain

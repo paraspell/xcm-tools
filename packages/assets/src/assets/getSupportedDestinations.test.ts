@@ -35,7 +35,7 @@ describe('getSupportedDestinations', () => {
 
     const result = getSupportedDestinations(origin, currency)
 
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(origin, currency, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(origin, currency)
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(origin, currency, 'Kusama')
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(origin, currency, 'Acala')
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith(origin, currency, 'Moonbeam')

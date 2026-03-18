@@ -31,7 +31,7 @@ describe('getTokenBalance', () => {
     const spy = vi.spyOn(WETH9__factory, 'connect').mockReturnValue(fakeWeth9)
     const addressSpy = vi.spyOn(fakeSigner, 'getAddress')
     const result = await getTokenBalance(fakeSigner, tokenSymbol)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol })
     expect(spy).toHaveBeenCalledWith(tokenAddress, fakeSigner)
     expect(addressSpy).toHaveBeenCalled()
     expect(fakeWeth9.balanceOf).toHaveBeenCalledWith('0xSignerAddress')
