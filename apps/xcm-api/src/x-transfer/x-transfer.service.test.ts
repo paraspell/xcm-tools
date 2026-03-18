@@ -120,6 +120,13 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
+vi.mock('@paraspell/swap', async (importActual) => ({
+  ...(await importActual()),
+  getExchangePairs: vi
+    .fn()
+    .mockReturnValue([[{}, {}]] as [TAssetInfo, TAssetInfo][]),
+}));
+
 describe('XTransferService', () => {
   let service: XTransferService;
 
@@ -991,6 +998,13 @@ describe('XTransferService', () => {
     it('should return para eth transfer fees', async () => {
       const result = await service.getParaEthFees();
       expect(result).toEqual([0n, 0n]);
+    });
+  });
+
+  describe('getExchangePairs', () => {
+    it('should return exchange pairs', () => {
+      const pairs = service.getExchangePairs('AcalaDex');
+      expect(pairs).toEqual([[{}, {}]]);
     });
   });
 });
