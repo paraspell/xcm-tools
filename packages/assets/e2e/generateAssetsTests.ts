@@ -59,13 +59,6 @@ export const generateAssetsTests = () => {
             expect(asset).toHaveProperty('existentialDeposit')
           })
         })
-
-        it('should support its native asset via hasSupportForAsset', () => {
-          const nativeSymbol = assetsObj.nativeAssetSymbol
-          if (nativeSymbol && chain !== 'BifrostPaseo') {
-            expect(hasSupportForAsset(chain, nativeSymbol)).toBe(true)
-          }
-        })
       })
 
       describe('isChainEvm', () => {
@@ -160,30 +153,6 @@ export const generateAssetsTests = () => {
               }
             })
           }
-        })
-
-        describe('hasSupportForAsset', () => {
-          it('should return boolean value', () => {
-            const symbol = getNativeAssetSymbol(chain)
-            const value = hasSupportForAsset(chain, symbol)
-            expect(value).toBeTypeOf('boolean')
-          })
-
-          it('should return true for native asset', () => {
-            const symbol = getNativeAssetSymbol(chain)
-            const value = hasSupportForAsset(chain, symbol)
-            if (chain !== 'BifrostPaseo') {
-              expect(value).toBe(true)
-            }
-          })
-
-          it('should return true for non-native asset', () => {
-            const otherAssets = getOtherAssets(chain)
-            otherAssets.forEach(asset => {
-              const value = hasSupportForAsset(chain, asset.symbol)
-              expect(value).toBe(true)
-            })
-          })
         })
 
         describe('getAssetDecimals', () => {

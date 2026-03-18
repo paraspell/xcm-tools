@@ -109,7 +109,6 @@ export const ASSET_QUERIES = [
   'FEE_ASSETS',
   'ALL_SYMBOLS',
   'DECIMALS',
-  'HAS_SUPPORT',
   'PARA_ID',
   'CONVERT_SS58',
   'ASSET_BALANCE',

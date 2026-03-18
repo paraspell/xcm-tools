@@ -26,7 +26,6 @@ import {
   SUBSTRATE_CHAINS,
   CHAINS,
 } from '@paraspell/sdk';
-import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { XTransferDto } from '../src/x-transfer/dto/XTransferDto';
@@ -138,16 +137,6 @@ describe('XCM API (e2e)', () => {
               .query({ symbol })
               .expect(200)
               .expect((res) => expect(Number(res.text)).toEqual(decimals));
-          });
-
-          const hasSupportUrl = `/assets/${chain}/has-support`;
-          it(`Has support for asset - ${hasSupportUrl} (GET)`, () => {
-            const hasSupport = hasSupportForAsset(chain, symbol);
-            return request(app.getHttpServer())
-              .get(hasSupportUrl)
-              .query({ symbol })
-              .expect(200)
-              .expect((res) => expect(Boolean(res.text)).toEqual(hasSupport));
           });
         }
       }
@@ -1180,93 +1169,6 @@ describe('XCM API (e2e)', () => {
         .expect((res) => {
           expect(res.body).toBeDefined();
         });
-    });
-  });
-
-  describe('Router controller', () => {
-    const routerUrl = '/router';
-
-    const routerOptions: RouterDto = {
-      from: 'Astar',
-      exchange: 'HydrationDex',
-      to: 'BifrostPolkadot',
-      currencyFrom: { symbol: 'BNC' },
-      currencyTo: { symbol: 'ASTR' },
-      amount: '10000000000000000000',
-      senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-      recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-      slippagePct: '1',
-    };
-
-    it(`Generate router call - manual exchange select - ${routerUrl}`, async () => {
-      return request(app.getHttpServer())
-        .post(routerUrl)
-        .send(routerOptions)
-        .expect(201)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(2);
-          data.forEach((txInfo: any) => {
-            expect(txInfo).toHaveProperty('tx');
-            expect(txInfo).toHaveProperty('chain');
-            expect(txInfo).toHaveProperty('type');
-            expect(txInfo.tx).toBeTypeOf('string');
-          });
-        });
-    });
-
-    it(`Generate router call - automatic exchange select - ${routerUrl}`, async () => {
-      const automaticSelectOptions = {
-        ...routerOptions,
-        exchange: undefined,
-      };
-
-      return request(app.getHttpServer())
-        .post(routerUrl)
-        .send(automaticSelectOptions)
-        .expect(201)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(2);
-          data.forEach((txInfo: any) => {
-            expect(txInfo).toHaveProperty('tx');
-            expect(txInfo).toHaveProperty('chain');
-            expect(txInfo).toHaveProperty('type');
-            expect(txInfo.tx).toBeTypeOf('string');
-          });
-        });
-    });
-
-    it(`Generate router call - getBestAmountOut - ${routerUrl}`, async () => {
-      const bestAmountOutOptions = {
-        ...routerOptions,
-      };
-
-      return request(app.getHttpServer())
-        .post(`${routerUrl}/best-amount-out`)
-        .send(bestAmountOutOptions)
-        .expect(201)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(Array.isArray(data)).not.toBeTruthy();
-        });
-    });
-
-    it(`Router best-amount-out - invalid legacy body returns 400 - ${routerUrl}`, async () => {
-      const invalidBody = {
-        fromAsset: 'DOT',
-        toAsset: 'USDT',
-        amount: 1000000000,
-        fromChain: 'polkadot',
-        toChain: 'statemint',
-      };
-
-      return request(app.getHttpServer())
-        .post(`${routerUrl}/best-amount-out`)
-        .send(invalidBody)
-        .expect(400);
     });
   });
 
