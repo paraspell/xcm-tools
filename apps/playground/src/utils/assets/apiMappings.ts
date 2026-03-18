@@ -14,7 +14,6 @@ export const getApiEndpoint = (func: TAssetsQuery, chain: string): string => {
     FEE_ASSETS: `/assets/${chain}/fee-assets`,
     ALL_SYMBOLS: `/assets/${chain}/all-symbols`,
     DECIMALS: `/assets/${chain}/decimals`,
-    HAS_SUPPORT: `/assets/${chain}/has-support`,
     SUPPORTED_DESTINATIONS: `/supported-destinations`,
     PARA_ID: `/chains/${chain}/para-id`,
     CONVERT_SS58: `/convert-ss58`,
