@@ -88,7 +88,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
     func === 'DECIMALS' ||
-    func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'SUPPORTED_DESTINATIONS';
@@ -105,8 +104,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
-    const usesSymbol =
-      func === 'ASSET_ID' || func === 'DECIMALS' || func === 'HAS_SUPPORT';
+    const usesSymbol = func === 'ASSET_ID' || func === 'DECIMALS';
     return onSubmit({
       ...formValues,
       ...(usesSymbol && { symbol: formValues.currency }),
