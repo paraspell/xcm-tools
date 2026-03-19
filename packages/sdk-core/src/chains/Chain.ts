@@ -52,8 +52,8 @@ import type {
   IXTokensTransfer,
   TPolkadotXCMTransferOptions,
   TScenario,
-  TSendInternalOptions,
   TSerializedExtrinsics,
+  TTransferInternalOptions,
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
@@ -124,7 +124,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     return this._version
   }
 
-  async transfer(sendOptions: TSendInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  async transfer(transferOptions: TTransferInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const {
       api,
       assetInfo: asset,
@@ -142,7 +142,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       method,
       keepAlive,
       transactOptions
-    } = sendOptions
+    } = transferOptions
     const scenario = resolveScenario(this.chain, destination)
     const paraId = resolveParaId(paraIdTo, destination)
     const destChain = resolveDestChain(this.chain, paraId)
@@ -150,7 +150,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     const isLocalTransfer = this.chain === destination
     if (isLocalTransfer) {
       return this.transferLocal({
-        ...sendOptions,
+        ...transferOptions,
         keepAlive: keepAlive ?? true
       })
     }
@@ -161,7 +161,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       )
     }
 
-    this.throwIfTempDisabled(sendOptions, destChain)
+    this.throwIfTempDisabled(transferOptions, destChain)
     this.throwIfCantReceive(destChain)
 
     const isRelayAsset =
@@ -238,7 +238,7 @@ abstract class Chain<TApi, TRes, TSigner> {
         return api.deserializeExtrinsics(await promise)
       }
 
-      const shouldUseTeleport = this.shouldUseNativeAssetTeleport(sendOptions)
+      const shouldUseTeleport = this.shouldUseNativeAssetTeleport(transferOptions)
 
       const isAhToOtherPara =
         this.chain.startsWith('AssetHub') && destChain && !isTrustedChain(destChain)
@@ -332,7 +332,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   throwIfTempDisabled(
-    options: TSendInternalOptions<TApi, TRes, TSigner>,
+    options: TTransferInternalOptions<TApi, TRes, TSigner>,
     destChain?: TChain
   ): void {
     const isSendingDisabled = this.isSendingTempDisabled(options)
@@ -354,7 +354,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     }
   }
 
-  isSendingTempDisabled(_options: TSendInternalOptions<TApi, TRes, TSigner>): boolean {
+  isSendingTempDisabled(_options: TTransferInternalOptions<TApi, TRes, TSigner>): boolean {
     return false
   }
 
@@ -370,7 +370,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   shouldUseNativeAssetTeleport({
     assetInfo: asset,
     to
-  }: TSendInternalOptions<TApi, TRes, TSigner>): boolean {
+  }: TTransferInternalOptions<TApi, TRes, TSigner>): boolean {
     if (isTLocation(to) || isSubstrateBridge(this.chain, to) || isExternalChain(to)) return false
 
     const isAHPOrigin = this.chain.includes('AssetHub')
@@ -403,7 +403,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     return getNativeAssetSymbol(this.chain)
   }
 
-  async transferLocal(options: TSendInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  async transferLocal(options: TTransferInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
     const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll } = options
 
     if (isTLocation(recipient)) {

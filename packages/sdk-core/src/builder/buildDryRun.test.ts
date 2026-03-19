@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { dryRun } from '../transfer'
-import type { TBypassOptions, TDryRunResult, TSendBaseOptionsWithSender } from '../types'
+import type { TBypassOptions, TDryRunResult, TTransferBaseOptionsWithSender } from '../types'
 import { buildDryRun } from './buildDryRun'
 
 vi.mock('@paraspell/sdk-common')
@@ -19,7 +19,7 @@ describe('buildDryRun', () => {
     sender: 'SENDER',
     currency: { symbol: 'DOT' },
     feeAsset: { symbol: 'USDT' }
-  } as TSendBaseOptionsWithSender<unknown, unknown, unknown>
+  } as TTransferBaseOptionsWithSender<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

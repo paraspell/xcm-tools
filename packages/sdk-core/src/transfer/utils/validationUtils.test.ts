@@ -20,7 +20,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination, TTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 import {
   validateAssetSpecifiers,
@@ -290,7 +290,7 @@ describe('validateTransact', () => {
     sender: 'addr1',
     recipient: 'addr2',
     transactOptions: { call: '0x123' }
-  } as TSendOptions<unknown, unknown, unknown>
+  } as TTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

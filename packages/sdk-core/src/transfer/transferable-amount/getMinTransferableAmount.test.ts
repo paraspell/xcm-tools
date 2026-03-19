@@ -17,7 +17,7 @@ import type {
   TDryRunResult,
   TGetMinTransferableAmountOptions,
   TGetXcmFeeResult,
-  TSendBaseOptionsWithSender
+  TTransferBaseOptionsWithSender
 } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
@@ -51,7 +51,7 @@ describe('getMinTransferableAmountInternal', () => {
     unknown,
     unknown,
     unknown,
-    TSendBaseOptionsWithSender<unknown, unknown, unknown>
+    TTransferBaseOptionsWithSender<unknown, unknown, unknown>
   >
 
   const baseOptions = {

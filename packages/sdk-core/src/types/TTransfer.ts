@@ -65,7 +65,7 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
-export type TSendBaseOptions<TApi, TRes, TSigner> = {
+export type TTransferBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain
    */
@@ -127,8 +127,8 @@ export type TSendBaseOptions<TApi, TRes, TSigner> = {
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes, TSigner> = WithApi<
-  TSendBaseOptions<TApi, TRes, TSigner>,
+export type TTransferOptions<TApi, TRes, TSigner> = WithApi<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
   TApi,
   TRes,
   TSigner
@@ -147,26 +147,26 @@ export type WithRequiredSwapOptions<TBase, TApi, TRes, TSigner> = Omit<TBase, 's
   swapOptions: TSwapOptions<TApi, TRes, TSigner>
 }
 
-export type TSendOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
-  Omit<TSendOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
+export type TTransferOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  Omit<TTransferOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
   TApi,
   TRes,
   TSigner
 >
 
-export type TSendBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
-  TSendBaseOptions<TApi, TRes, TSigner>,
+export type TTransferBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
   TApi,
   TRes,
   TSigner
 >
 
-export type TSendBaseOptionsWithSender<TApi, TRes, TSigner> = WithRequiredSender<
-  TSendBaseOptions<TApi, TRes, TSigner>
+export type TTransferBaseOptionsWithSender<TApi, TRes, TSigner> = WithRequiredSender<
+  TTransferBaseOptions<TApi, TRes, TSigner>
 >
 
-export type TSendInternalOptions<TApi, TRes, TSigner> = Omit<
-  TSendBaseOptions<TApi, TRes, TSigner>,
+export type TTransferInternalOptions<TApi, TRes, TSigner> = Omit<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
   'from' | 'feeAsset' | 'version'
 > & {
   api: IPolkadotApi<TApi, TRes, TSigner>
@@ -247,7 +247,7 @@ export type TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner> = {
 export type TBridgeStatus = 'Normal' | 'Halted'
 
 export type TTransferLocalOptions<TApi, TRes, TSigner> = Omit<
-  TSendInternalOptions<TApi, TRes, TSigner>,
+  TTransferInternalOptions<TApi, TRes, TSigner>,
   'recipient'
 > & {
   recipient: string
