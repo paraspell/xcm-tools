@@ -1,7 +1,7 @@
 import type {
   GeneralBuilder as GeneralBuilderCore,
   TBuilderOptions,
-  TSendBaseOptions
+  TTransferBaseOptions
 } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
 import type { AbstractProvider } from 'ethers'
@@ -22,7 +22,7 @@ export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
 }
 
 export type GeneralBuilder<
-  T extends Partial<TSendBaseOptions<TPjsApi, Extrinsic, TPjsSigner>> = object
+  T extends Partial<TTransferBaseOptions<TPjsApi, Extrinsic, TPjsSigner>> = object
 > = GeneralBuilderCore<TPjsApi, Extrinsic, TPjsSigner, T>
 
 export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {

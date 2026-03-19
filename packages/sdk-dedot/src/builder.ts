@@ -1,7 +1,7 @@
 import type {
   GeneralBuilder as GeneralBuilderCore,
   TBuilderOptions,
-  TSendBaseOptions,
+  TTransferBaseOptions,
 } from "@paraspell/sdk-core";
 import { Builder as BuilderImpl } from "@paraspell/sdk-core";
 
@@ -26,6 +26,6 @@ export const Builder = (api?: TBuilderOptions<TDedotApiOrUrl>) => {
 
 export type GeneralBuilder<
   T extends Partial<
-    TSendBaseOptions<TDedotApi, TDedotExtrinsic, TDedotSigner>
+    TTransferBaseOptions<TDedotApi, TDedotExtrinsic, TDedotSigner>
   > = object,
 > = GeneralBuilderCore<TDedotApi, TDedotExtrinsic, TDedotSigner, T>;

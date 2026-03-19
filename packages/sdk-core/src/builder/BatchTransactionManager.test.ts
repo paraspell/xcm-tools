@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import type { TBatchedSendOptions, TSendBaseOptions } from '../types'
+import type { TBatchedTransferOptions, TTransferBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
@@ -22,12 +22,12 @@ const createBuilder = () =>
     unknown,
     unknown,
     unknown,
-    TSendBaseOptions<unknown, unknown, unknown>
+    TTransferBaseOptions<unknown, unknown, unknown>
   >
 
-const createSendOptions = (
-  overrides: Partial<TBatchedSendOptions<unknown, unknown, unknown>> = {}
-): TBatchedSendOptions<unknown, unknown, unknown> => ({
+const createTransferOptions = (
+  overrides: Partial<TBatchedTransferOptions<unknown, unknown, unknown>> = {}
+): TBatchedTransferOptions<unknown, unknown, unknown> => ({
   from: 'Acala',
   api: mockApi,
   to: 'Hydration',
@@ -46,7 +46,7 @@ describe('BatchTransactionManager', () => {
     it('adds a transaction to the manager', () => {
       const manager = new BatchTransactionManager()
       expect(manager.isEmpty()).toBe(true)
-      manager.addTransaction(createSendOptions())
+      manager.addTransaction(createTransferOptions())
       expect(manager.isEmpty()).toBe(false)
     })
   })
@@ -59,7 +59,7 @@ describe('BatchTransactionManager', () => {
 
     it('returns false when transactions are present', () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction(createSendOptions())
+      manager.addTransaction(createTransferOptions())
       expect(manager.isEmpty()).toBe(false)
     })
   })
@@ -74,8 +74,8 @@ describe('BatchTransactionManager', () => {
 
     it('calls sendTransaction for each added transaction and batches them with batchAll', async () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction(createSendOptions())
-      manager.addTransaction(createSendOptions())
+      manager.addTransaction(createTransferOptions())
+      manager.addTransaction(createTransferOptions())
       vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
@@ -85,7 +85,7 @@ describe('BatchTransactionManager', () => {
     it('uses batch when BATCH mode is selected', async () => {
       const spy = vi.spyOn(mockApi, 'callBatchMethod')
       const manager = new BatchTransactionManager()
-      manager.addTransaction(createSendOptions())
+      manager.addTransaction(createTransferOptions())
       vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH })
@@ -95,7 +95,7 @@ describe('BatchTransactionManager', () => {
 
     it('uses batchAll when BATCH_ALL mode is selected', async () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction(createSendOptions())
+      manager.addTransaction(createTransferOptions())
       vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
@@ -105,8 +105,8 @@ describe('BatchTransactionManager', () => {
 
     it('should fail if different origins are used', async () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction(createSendOptions())
-      manager.addTransaction(createSendOptions({ from: 'Karura' }))
+      manager.addTransaction(createTransferOptions())
+      manager.addTransaction(createTransferOptions({ from: 'Karura' }))
       vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
 
       await expect(

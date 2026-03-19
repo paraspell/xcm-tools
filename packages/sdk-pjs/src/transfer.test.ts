@@ -1,4 +1,4 @@
-import type { TSendOptions } from '@paraspell/sdk-core'
+import type { TTransferOptions } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -25,7 +25,7 @@ describe('Transfer function using PolkadotJsAPI', () => {
 
   const options = {
     api: mockApi
-  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'> & {
+  } as unknown as Omit<TTransferOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'> & {
     api: TPjsApiOrUrl
   }
 
