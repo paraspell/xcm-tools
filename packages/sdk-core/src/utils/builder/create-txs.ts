@@ -25,7 +25,7 @@ export const computeOverridenAmount = <TApi, TRes, TSigner>(
   const amount = (options.currency as WithComplexAmount<TCurrencyCore>).amount
 
   const config = api.getConfig()
-  if (isConfig(config) && config.abstractDecimals && typeof amount !== 'bigint') {
+  if (!(isConfig(config) && config.abstractDecimals === false) && typeof amount !== 'bigint') {
     const base = relative ? Number(amount) : 0
     return Number(increaseAmount) + base
   } else {

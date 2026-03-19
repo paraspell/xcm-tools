@@ -53,15 +53,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
-  builderConfig?: TBuilderConfig<TUrl>
+  config?: TBuilderConfig<TUrl>
 ) => {
-  const config: TBuilderConfig<TUrl> = {
-    ...builderConfig,
-    abstractDecimals: true
-  }
-
   // If builderConfig override is provided, it means we're using chopsticks
-  const usingChopsticks = !!builderConfig
+  const usingChopsticks = !!config
 
   const describeGroup = usingChopsticks ? describe.concurrent : describe.sequential
 
