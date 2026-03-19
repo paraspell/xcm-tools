@@ -203,9 +203,7 @@ export const EvmTransfer = () => {
         );
       }
 
-      await EvmBuilder({
-        abstractDecimals: true,
-      })
+      await EvmBuilder()
         .from(from)
         .to(to)
         .currency(currencyInput)
@@ -214,9 +212,7 @@ export const EvmTransfer = () => {
         .signer(signer as WalletClient)
         .build();
     } else {
-      await EvmBuilderPJS(provider, {
-        abstractDecimals: true,
-      })
+      await EvmBuilderPJS(provider)
         .from(from)
         .to(to)
         .currency(currencyInput)
