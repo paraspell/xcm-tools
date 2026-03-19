@@ -17,8 +17,8 @@ export const prepareExtrinsics = async (
     currencyTo,
     amount,
     evmSenderAddress,
-    senderAddress,
-    recipientAddress,
+    sender,
+    recipient,
     builderOptions,
   } = options;
 
@@ -41,8 +41,8 @@ export const prepareExtrinsics = async (
             amount: BigInt(amount),
           } as WithAmount<TAssetInfo>,
           assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-          sender: evmSenderAddress ?? senderAddress,
-          recipient: recipientAddress ?? senderAddress,
+          sender: evmSenderAddress ?? sender,
+          recipient: recipient ?? sender,
           currencyTo,
           feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
           calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
@@ -88,7 +88,7 @@ export const prepareExtrinsics = async (
           exchange,
           destination,
           amount: amountOut,
-          senderAddress,
+          sender,
           builderOptions,
         })
       : undefined;

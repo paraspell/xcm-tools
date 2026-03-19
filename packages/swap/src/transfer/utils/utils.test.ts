@@ -122,7 +122,7 @@ describe('transfer utils', () => {
       const customSenderAddress = '5D...CustomAddress';
       const options: TBuildToExchangeTxOptions = {
         ...transferParams,
-        senderAddress: customSenderAddress,
+        sender: customSenderAddress,
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',

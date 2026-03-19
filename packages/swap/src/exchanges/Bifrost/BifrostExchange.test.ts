@@ -78,7 +78,7 @@ describe('BifrostExchange', () => {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
-      senderAddress: '5xxxxxx',
+      sender: '5xxxxxx',
       slippagePct: '0.5',
     } as TSwapOptions;
     const mockToDestTransactionFee = 1000n;

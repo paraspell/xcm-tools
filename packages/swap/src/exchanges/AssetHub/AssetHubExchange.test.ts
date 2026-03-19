@@ -56,7 +56,7 @@ describe('AssetHubExchange', () => {
       assetFrom: { symbol: 'ASSET1', decimals: 10, isNative: true, location: assetFromML },
       assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
       amount: 1000n,
-      senderAddress: 'sender',
+      sender: 'sender',
       slippagePct: '5',
       origin: undefined,
     } as TSwapOptions;
@@ -174,7 +174,7 @@ describe('AssetHubExchange', () => {
 
     const baseOpts = {
       amount: 1000n,
-      senderAddress: 'sender',
+      sender: 'sender',
       slippagePct: '5',
       origin: undefined,
     };
