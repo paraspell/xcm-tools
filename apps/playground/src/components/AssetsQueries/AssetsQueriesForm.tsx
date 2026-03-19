@@ -79,11 +79,9 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const { currencyOptions, currencyMap } = useAssetCurrencyOptions(chain);
 
   const showCurrency =
-    func === 'ASSET_ID' ||
     func === 'ASSET_LOCATION' ||
     func === 'ASSET_RESERVE_CHAIN' ||
     func === 'ASSET_INFO' ||
-    func === 'DECIMALS' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'SUPPORTED_DESTINATIONS';

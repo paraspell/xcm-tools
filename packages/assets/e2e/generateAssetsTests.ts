@@ -1,13 +1,10 @@
 import {
-  getAssetDecimals,
-  getAssetId,
   getAssets,
   getAssetsObject,
   getNativeAssets,
   getNativeAssetSymbol,
   getOtherAssets,
   getRelayChainSymbol,
-  hasSupportForAsset,
   isChainEvm
 } from '../src'
 import { CHAINS, isExternalChain, TChain } from '@paraspell/sdk-common'
@@ -65,16 +62,6 @@ export const generateAssetsTests = () => {
         it('should return boolean value', () => {
           const value = isChainEvm(chain)
           expect(value).toBeTypeOf('boolean')
-        })
-      })
-
-      describe('getAssetId', () => {
-        it('should return string value for every foreign asset', () => {
-          const assets = getOtherAssets(chain)
-          assets.forEach(asset => {
-            const assetId = getAssetId(chain, asset.symbol)
-            if (assetId !== null) expect(assetId).toBeTypeOf('string')
-          })
         })
       })
 
@@ -153,17 +140,6 @@ export const generateAssetsTests = () => {
               }
             })
           }
-        })
-
-        describe('getAssetDecimals', () => {
-          it('should return valid decimals for all available assets', () => {
-            const assets = getAssets(chain)
-            assets.forEach(asset => {
-              const decimals = getAssetDecimals(chain, asset.symbol)
-              expect(decimals).toBeTypeOf('number')
-              expect(decimals).toBeGreaterThanOrEqual(0)
-            })
-          })
         })
 
         describe('hasDryRunSupport', () => {

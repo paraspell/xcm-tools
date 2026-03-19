@@ -3,8 +3,6 @@ import {
   findAssetInfo,
   findAssetInfoOrThrow,
   getAllAssetsSymbols,
-  getAssetDecimals,
-  getAssetId,
   getAssetLocation,
   getAssetReserveChain,
   getAssetsObject,
@@ -24,14 +22,6 @@ import type { FormValuesResolved } from '../../components/AssetsQueries/AssetsQu
 import type { TAssetsQuery } from '../../types';
 import { importSdk } from '../importSdk';
 
-const resolveSymbol = (formValues: FormValuesResolved): string => {
-  const { currency } = formValues;
-  if (currency.isCustomCurrency) {
-    return currency.customCurrency;
-  }
-  return currency.currency?.symbol ?? '';
-};
-
 export const callSdkFunc = async (
   formValues: FormValuesResolved,
   apiType: TApiType,
@@ -42,8 +32,6 @@ export const callSdkFunc = async (
 
   const sdkActions: Record<TAssetsQuery, () => Promise<unknown>> = {
     ASSETS_OBJECT: () => Promise.resolve(getAssetsObject(chain)),
-    ASSET_ID: () =>
-      Promise.resolve(getAssetId(chain, resolveSymbol(formValues))),
     ASSET_LOCATION: () =>
       Promise.resolve(getAssetLocation(chain, resolvedCurrency!)),
     ASSET_RESERVE_CHAIN: () => {
@@ -59,8 +47,6 @@ export const callSdkFunc = async (
       Promise.resolve(getSupportedAssets(chain, destination)),
     FEE_ASSETS: () => Promise.resolve(getFeeAssets(chain)),
     ALL_SYMBOLS: () => Promise.resolve(getAllAssetsSymbols(chain)),
-    DECIMALS: () =>
-      Promise.resolve(getAssetDecimals(chain, resolveSymbol(formValues))),
     PARA_ID: () => Promise.resolve(getParaId(chain)),
     CONVERT_SS58: () => Promise.resolve(sdk.convertSs58(address, chain)),
     ASSET_BALANCE: () =>

@@ -98,7 +98,6 @@ export const API_URL = import.meta.env.VITE_API_URL as string;
 
 export const ASSET_QUERIES = [
   'ASSETS_OBJECT',
-  'ASSET_ID',
   'ASSET_LOCATION',
   'ASSET_RESERVE_CHAIN',
   'ASSET_INFO',
@@ -108,7 +107,6 @@ export const ASSET_QUERIES = [
   'SUPPORTED_ASSETS',
   'FEE_ASSETS',
   'ALL_SYMBOLS',
-  'DECIMALS',
   'PARA_ID',
   'CONVERT_SS58',
   'ASSET_BALANCE',
