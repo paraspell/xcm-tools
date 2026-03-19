@@ -128,15 +128,13 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   /**
    * Specifies the recipient address on the destination chain.
    *
-   * @param recipientAddress - The recipient address.
+   * @param recipient - The recipient address.
    * @returns The current builder instance.
    */
-  recipientAddress(
-    address: string | undefined,
-  ): RouterBuilderCore<T & { recipientAddress: string | undefined }> {
+  recipient(address: string | undefined): RouterBuilderCore<T & { recipient: string | undefined }> {
     return new RouterBuilderCore(this._builderOptions, {
       ...this._options,
-      recipientAddress: address,
+      recipient: address,
     });
   }
 
@@ -146,10 +144,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param senderAddress - The sender address.
    * @returns The current builder instance.
    */
-  senderAddress(address: string): RouterBuilderCore<T & { senderAddress: string }> {
+  sender(address: string): RouterBuilderCore<T & { sender: string }> {
     return new RouterBuilderCore(this._builderOptions, {
       ...this._options,
-      senderAddress: address,
+      sender: address,
     });
   }
 
@@ -278,8 +276,8 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
  *   .currencyTo({ symbol: 'ASTR' })
  *   .amount(1000000n)
  *   .slippagePct('1')
- *   .senderAddress('sender_address')
- *   .recipientAddress('recipient_address')
+ *   .sender('sender_address')
+ *   .recipient('recipient_address')
  *   .signer(yourSigner)
  *   .onStatusChange((status) => {
  *     console.log(status);

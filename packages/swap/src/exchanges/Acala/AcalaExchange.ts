@@ -30,8 +30,7 @@ class AcalaExchange extends ExchangeChain {
     options: TSwapOptions,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { papiApi, assetFrom, assetTo, amount, senderAddress, origin, isForFeeEstimation } =
-      options;
+    const { papiApi, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
@@ -55,7 +54,7 @@ class AcalaExchange extends ExchangeChain {
 
     const balance = await getBalance({
       api: papiApi,
-      address: senderAddress,
+      address: sender,
       chain: this.chain,
     });
 

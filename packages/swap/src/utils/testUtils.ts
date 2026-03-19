@@ -11,6 +11,6 @@ export const MOCK_TRANSFER_OPTIONS: TBuildTransactionsOptions = {
   currencyTo: { symbol: 'GLMR' },
   amount: '10000000000000000000',
   slippagePct: '1',
-  senderAddress: MOCK_ADDRESS,
-  recipientAddress: MOCK_ADDRESS,
+  sender: MOCK_ADDRESS,
+  recipient: MOCK_ADDRESS,
 };

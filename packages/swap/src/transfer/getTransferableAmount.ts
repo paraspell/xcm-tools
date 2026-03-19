@@ -15,7 +15,7 @@ const computeLocalTransferableAmount = async (
   dex: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ): Promise<bigint> => {
-  const { exchange, senderAddress } = options;
+  const { exchange, sender } = options;
 
   const currency: TCurrencyCore = {
     location: exchange.assetFrom.location,
@@ -24,7 +24,7 @@ const computeLocalTransferableAmount = async (
   const balance = await getBalance({
     api: exchange.apiPapi,
     chain: exchange.baseChain,
-    address: senderAddress,
+    address: sender,
     currency,
   });
 
@@ -58,7 +58,7 @@ export const getTransferableAmount = async (
     const builder = createToExchangeBuilder({
       origin: transformedOptions.origin,
       exchange: transformedOptions.exchange,
-      senderAddress: transformedOptions.senderAddress,
+      sender: transformedOptions.sender,
       evmSenderAddress: transformedOptions.evmSenderAddress,
       amount: transformedOptions.amount,
       builderOptions,

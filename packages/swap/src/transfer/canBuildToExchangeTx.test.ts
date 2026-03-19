@@ -45,7 +45,7 @@ describe('canBuildToExchangeTx', () => {
     expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
     expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
       amount: BigInt(defaultOptions.amount),
-      senderAddress: 'fallback_address',
+      sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,
@@ -179,7 +179,7 @@ describe('canBuildToExchangeTx', () => {
     expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
     expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
       amount: BigInt(getBestAmountOutOptions.amount),
-      senderAddress: 'fallback_address',
+      sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,

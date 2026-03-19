@@ -41,13 +41,13 @@ export const getMinTransferableAmount = async (
 
   const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
 
-  const { origin, exchange, senderAddress, evmSenderAddress, amount } = options;
+  const { origin, exchange, sender, evmSenderAddress, amount } = options;
 
   if (origin) {
     const builder = createToExchangeBuilder({
       origin,
       exchange,
-      senderAddress,
+      sender,
       evmSenderAddress,
       amount,
       builderOptions,

@@ -22,7 +22,7 @@ describe('getSwapFee', () => {
 
   const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
   const options = {
-    senderAddress: '0xSender',
+    sender: '0xSender',
     exchange: { apiPapi: 'apiInstance', assetFrom: dotAsset },
     amount: '100',
   } as unknown as TTransformedOptions<TBuildTransactionsOptions>;

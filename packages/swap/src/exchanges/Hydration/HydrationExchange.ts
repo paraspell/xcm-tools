@@ -31,7 +31,7 @@ class HydrationExchange extends ExchangeChain {
     options: TSwapOptions,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { origin, assetFrom, assetTo, senderAddress, slippagePct, amount } = options;
+    const { origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
     const {
       api: { router: tradeRouter },
@@ -75,7 +75,7 @@ class HydrationExchange extends ExchangeChain {
     const substrateTx = await txBuilderFactory
       .trade(trade)
       .withSlippage(Number(slippagePct))
-      .withBeneficiary(senderAddress)
+      .withBeneficiary(sender)
       .build();
 
     const tx = substrateTx.get();

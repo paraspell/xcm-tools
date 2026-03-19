@@ -21,7 +21,7 @@ export const canBuildToExchangeTx = async (
       from && from !== exchangeChain && originApi && assetFromOrigin
         ? await buildToExchangeExtrinsic({
             amount: BigInt(amount),
-            senderAddress: FALLBACK_FEE_CALC_ADDRESS,
+            sender: FALLBACK_FEE_CALC_ADDRESS,
             evmSenderAddress: FALLBACK_FEE_CALC_EVM_ADDRESS,
             origin: {
               api: originApi,

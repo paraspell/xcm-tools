@@ -22,7 +22,7 @@ export type TSwapOptions = {
   assetTo: TAssetInfo;
   amount: bigint;
   slippagePct: string;
-  senderAddress: string;
+  sender: string;
   feeCalcAddress: string;
   origin?: TOriginInfo;
   isForFeeEstimation?: boolean;
@@ -114,7 +114,7 @@ export type TTransferOptions = {
   /**
    * The sender address.
    */
-  senderAddress: string;
+  sender: string;
   /**
    * The EVM injector address. Used when dealing with EVM chains.
    */
@@ -122,7 +122,7 @@ export type TTransferOptions = {
   /**
    * The recipient address.
    */
-  recipientAddress?: string;
+  recipient?: string;
   /**
    * The slippage percentage.
    */
@@ -152,9 +152,9 @@ export type TGetBestAmountOutOptions = Omit<
   | 'onStatusChange'
   | 'signer'
   | 'evmSigner'
-  | 'recipientAddress'
+  | 'recipient'
   | 'slippagePct'
-  | 'senderAddress'
+  | 'sender'
   | 'evmSenderAddress'
 >;
 
@@ -249,7 +249,7 @@ export type TRouterPlan = TTransaction[];
 
 export type TExecuteRouterPlanOptions = {
   signer: PolkadotSigner;
-  senderAddress: string;
+  sender: string;
   destination?: TChain;
   evmSigner?: PolkadotSigner;
   evmSenderAddress?: string;
@@ -267,7 +267,7 @@ export type TPreparedExtrinsics = {
 export type TBuildToExchangeTxOptions = {
   origin: TOriginInfo;
   exchange: TExchangeInfo;
-  senderAddress: string;
+  sender: string;
   evmSenderAddress?: string;
   amount: bigint;
   builderOptions?: TRouterBuilderOptions;
@@ -277,6 +277,6 @@ export type TBuildFromExchangeTxOptions = {
   exchange: TExchangeInfo;
   destination: TDestinationInfo;
   amount: bigint;
-  senderAddress: string;
+  sender: string;
   builderOptions?: TRouterBuilderOptions;
 };
